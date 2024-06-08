@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -10,6 +11,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 public class DialogHeaderController implements Initializable {
+  private final Debouncer debouncer = new Debouncer();
 
   private double xOffset;
   private double yOffset;
@@ -21,6 +23,8 @@ public class DialogHeaderController implements Initializable {
   private Label titleLabel;
 
   private Stage stage;
+  private DialogController dialogController;
+  private String id;
 
   @FXML
   private void onCloseClick() {
@@ -50,5 +54,27 @@ public class DialogHeaderController implements Initializable {
 
   public void setTitle(String title) {
     titleLabel.setText(title);
+  }
+
+  public void enableStateListener(Stage stage, DialogController dialogController, String id) {
+    this.dialogController = dialogController;
+    this.id = id;
+    stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+  }
+
+  @FXML
+  public void onDragDone() {
+    debouncer.debounce("position", () -> {
+      int y = (int) stage.getY();
+      int x = (int) stage.getX();
+      int width = (int) stage.getWidth();
+      int height = (int) stage.getHeight();
+      LocalUISettings.saveLocation(id, x, y, width, height);
+
+      dialogController.onResized(x, y, width, height);
+    }, 500);
   }
 }

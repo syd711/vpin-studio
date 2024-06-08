@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.discord.DiscordChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordOfflineChannelMessageFactory;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
@@ -14,6 +15,8 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -27,6 +30,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,6 +62,9 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
   @Autowired
   private HighscoreBackupService highscoreBackupService;
 
+  @Autowired
+  private HighscoreParsingService highscoreParsingService;
+
   @Override
   public void competitionStarted(@NonNull Competition competition) {
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
@@ -78,18 +86,21 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
               }
               else {
                 subText += "\nThe highscore of this table has not been resetted.";
-                Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
+                Optional<Highscore> hs = highscoreService.getHighscore(game, true);
                 if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
-                  subText += "\nHere is the current highscore:\n\n```" + hs.get().getRaw() + "```";
+                  String raw = hs.get().getRaw();
+                  List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+                  String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
+                  subText += "\nHere is the current highscore:\n\n" + highscoreList;
                 }
               }
               discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", subText);
             }
+          }
 
-            if (competition.isHighscoreReset()) {
-              if (highscoreBackupService.backup(game)) {
-                highscoreService.resetHighscore(game);
-              }
+          if (competition.isHighscoreReset()) {
+            if (highscoreBackupService.backup(game)) {
+              highscoreService.resetHighscore(game);
             }
           }
         }
@@ -125,7 +136,9 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
             else {
               Platform.runLater(() -> {
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);
-                String imageMessage = "Here are the final results:\n```" + scoreSummary.getRaw() + "```You can duplicate the competition to continue it with another table or duration.";
+                List<Score> scores = highscoreParsingService.parseScores(new Date(), scoreSummary.getRaw(), game.getId(), -1);
+                String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
+                String imageMessage = "Here are the final results:\n" + highscoreList + "\nYou can duplicate the competition to continue it with another table or duration.";
                 discordService.sendMessage(serverId, channelId, message, image, competition.getName() + ".png", imageMessage);
               });
             }

@@ -7,10 +7,19 @@ public class GameRoom {
 
   private int roomID;
   private String name;
+  private String url;
 
-  private List<Game> games = new ArrayList<>();
+  private List<IScoredGame> games = new ArrayList<>();
 
   private Settings settings;
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
   public Settings getSettings() {
     return settings;
@@ -36,11 +45,23 @@ public class GameRoom {
     this.name = name;
   }
 
-  public List<Game> getGames() {
+  public List<IScoredGame> getGames() {
     return games;
   }
 
-  public void setGames(List<Game> games) {
+  public IScoredGame getGameByVps(String vpsTableId, String vpsVersionId) {
+    for (IScoredGame game : this.games) {
+      List<String> tags = game.getTags();
+      for (String tag : tags) {
+        if(tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
+          return game;
+        }
+      }
+    }
+    return null;
+  }
+
+  public void setGames(List<IScoredGame> games) {
     this.games = games;
   }
 }

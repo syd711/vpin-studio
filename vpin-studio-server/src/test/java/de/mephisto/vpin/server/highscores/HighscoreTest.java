@@ -29,7 +29,7 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 6000, 4));
     newScores.add(new Score(new Date(), -1, "FFF", null, "5001", 5001, 5));
 
-    List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    List<Integer> changedPositions = highscoreService.calculateChangedPositions("", oldScores, newScores);
     assertTrue(changedPositions.size() == 1);
     assertTrue(changedPositions.get(0).equals(5));
   }
@@ -52,7 +52,7 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 0, 4));
     newScores.add(new Score(new Date(), -1, "DDD", null, "6000", 0, 5));
 
-    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(null, oldScores, newScores);
     assertEquals(1, changedPositions.size());
     assertEquals(1, (int) changedPositions.get(0));
   }
@@ -92,7 +92,7 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 4));
     newScores.add(new Score(new Date(), -1, "DDD", null, "6001", 6001, 5));
 
-    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions("", oldScores, newScores);
     assertEquals(2, changedPositions.size());
     assertEquals(1, (int) changedPositions.get(0));
     assertEquals(5, (int) changedPositions.get(1));
@@ -116,7 +116,7 @@ public class HighscoreTest {
     newScores.add(new Score(new Date(), -1, "BBB", null, "8000", 8000, 4));
     newScores.add(new Score(new Date(), -1, "CCC", null, "7000", 7000, 5));
 
-    List<Integer>  changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+    List<Integer>  changedPositions = highscoreService.calculateChangedPositions("", oldScores, newScores);
     assertEquals(3, changedPositions.size());
     assertEquals(1, (int) changedPositions.get(0));
     assertEquals(2, (int) changedPositions.get(1));

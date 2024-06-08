@@ -17,8 +17,6 @@ public class SystemTest extends AbstractVPinServerTest {
     assertTrue(systemService.getPinUPDatabaseFile().exists());
     assertTrue(systemService.getPinemhiCommandFile().exists());
     assertTrue(systemService.getBackupFolder().exists());
-
-    assertNotNull(systemService.getSystemSummary());
     assertNotNull(systemService.getArchiveType());
 
     assertFalse(systemService.getScreenInfos().isEmpty());

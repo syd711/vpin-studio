@@ -16,6 +16,12 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+/**
+ * How to add a new nvram?
+ * - paste the resetted nvram into ./resources/nvrams
+ * - execute this class
+ * - push changes of the nvrams project
+ */
 public class NVRamSynchronizer {
   private final static Logger LOG = LoggerFactory.getLogger(NVRamSynchronizer.class);
 

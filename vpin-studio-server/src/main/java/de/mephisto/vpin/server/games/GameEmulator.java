@@ -7,16 +7,17 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class GameEmulator {
   private final static String VPREG_STG = "VPReg.stg";
 
-  private final File installationFolder;
-  private final File tablesFolder;
+  private File installationFolder;
+  private File tablesFolder;
   private File backglassServerDirectory;
   private final File gameMediaFolder;
   private final File mameFolder;
@@ -25,6 +26,7 @@ public class GameEmulator {
   private final File altColorFolder;
   private final File musicFolder;
   private final File nvramFolder;
+  private final File cfgFolder;
 
   private File romFolder;
 
@@ -44,6 +46,10 @@ public class GameEmulator {
   private final String vpxExeName;
   private final String gameExt;
 
+  private String backglassServerFolder;
+  private boolean vpxEmulator;
+  private List<String> altVPXExeNames = new ArrayList<>();
+
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.name = emulator.getName();
@@ -57,9 +63,26 @@ public class GameEmulator {
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
 
-    this.installationFolder = new File(emulator.getEmuLaunchDir());
-    this.tablesFolder = new File(emulator.getDirGames());
-    this.backglassServerDirectory = new File(emulator.getDirGames());
+    if (emulator.getEmuLaunchDir() != null) {
+      this.installationFolder = new File(emulator.getEmuLaunchDir());
+      String[] files = this.installationFolder.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          if(!name.startsWith("VPinball")) {
+            return false;
+          }
+          return name.endsWith(".exe");
+        }
+      });
+      if (files != null) {
+        this.setAltVPXExeNames(Arrays.asList(files));
+      }
+    }
+
+    if (emulator.getDirGames() != null) {
+      this.tablesFolder = new File(emulator.getDirGames());
+      this.backglassServerDirectory = new File(emulator.getDirGames());
+    }
 
     this.gameMediaFolder = new File(emulator.getDirMedia());
     this.musicFolder = new File(installationFolder, "Music");
@@ -73,6 +96,8 @@ public class GameEmulator {
     this.nvramFolder = new File(mameFolder, "nvram");
     this.nvramDirectory = this.nvramFolder.getAbsolutePath();
 
+    this.cfgFolder = new File(mameFolder, "cfg");
+
     this.altSoundFolder = new File(mameFolder, "altsound");
     this.altSoundDirectory = this.altSoundFolder.getAbsolutePath();
 
@@ -83,6 +108,28 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+
+    this.vpxEmulator = emulator.isVisualPinball();
+  }
+
+  public List<String> getAltVPXExeNames() {
+    return altVPXExeNames;
+  }
+
+  public void setAltVPXExeNames(List<String> altVPXExeNames) {
+    this.altVPXExeNames = altVPXExeNames;
+  }
+
+  public boolean isVpxEmulator() {
+    return vpxEmulator;
+  }
+
+  public void setVpxEmulator(boolean vpxEmulator) {
+    this.vpxEmulator = vpxEmulator;
+  }
+
+  public String getGameFileName(@NonNull File file) {
+    return file.getAbsolutePath().substring(getTablesFolder().getAbsolutePath().length() + 1);
   }
 
   public String getGameExt() {
@@ -150,11 +197,23 @@ public class GameEmulator {
   }
 
   public List<String> getAltExeNames() {
-    String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
-    if (exeFiles == null) {
-      exeFiles = new String[]{};
+    if (isVpxEmulator() && installationFolder != null && installationFolder.exists()) {
+      String[] exeFiles = installationFolder.list((dir, name) -> name.endsWith(".exe") && name.toLowerCase().contains("vpin"));
+      if (exeFiles == null) {
+        exeFiles = new String[]{};
+      }
+      return Arrays.asList(exeFiles);
     }
-    return Arrays.asList(exeFiles);
+
+    return Collections.emptyList();
+  }
+
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
   }
 
   @NonNull
@@ -165,11 +224,20 @@ public class GameEmulator {
 
   public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
     this.backglassServerDirectory = backglassServerDirectory;
+    this.backglassServerFolder = backglassServerDirectory.getAbsolutePath();
   }
 
   @NonNull
   @JsonIgnore
   public File getB2STableSettingsXml() {
+    if (this.backglassServerDirectory != null) {
+      File xml = new File(this.backglassServerDirectory, "B2STableSettings.xml");
+      if (xml.exists()) {
+        return xml;
+      }
+    }
+
+    //simply assume the legacy default
     return new File(this.tablesFolder, "B2STableSettings.xml");
   }
 
@@ -177,6 +245,12 @@ public class GameEmulator {
   @JsonIgnore
   public File getNvramFolder() {
     return nvramFolder;
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getCfgFolder() {
+    return cfgFolder;
   }
 
   @NonNull
@@ -239,6 +313,15 @@ public class GameEmulator {
     return tablesFolder;
   }
 
+  @Nullable
+  @JsonIgnore
+  public File getTableBackupsFolder() {
+    if (isVpxEmulator()) {
+      return new File(tablesFolder.getParentFile(), "Tables (Backups)/");
+    }
+    return null;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -256,6 +339,6 @@ public class GameEmulator {
 
   @Override
   public String toString() {
-    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getVPXExe().getName() + ")";
+    return "\"" + this.name + "\" (ID: " + this.id + "/" + this.getName() + " [" + tablesDirectory + "])";
   }
 }

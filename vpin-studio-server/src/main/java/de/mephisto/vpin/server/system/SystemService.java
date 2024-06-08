@@ -1,17 +1,18 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.keyevent.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -19,6 +20,7 @@ import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
 import javafx.stage.Screen;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,6 +40,7 @@ import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -65,6 +68,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Value("${server.port}")
   private int port;
+
+  private ScoringDB db;
 
   private ApplicationContext context;
 
@@ -184,14 +189,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return backupFolder;
   }
 
-  public SystemSummary getSystemSummary() {
-    SystemSummary info = new SystemSummary();
-    info.setPinupSystemDirectory(getPinUPSystemFolder().getAbsolutePath());
-    info.setScreenInfos(getScreenInfos());
-    info.setArchiveType(this.getArchiveType());
-    return info;
-  }
-
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
     StringBuilder b = new StringBuilder(label);
     b.append(":");
@@ -298,15 +295,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public File getBagdeFile(String badge) {
+  public File getBadgeFile(String badge) {
     File folder = new File(SystemService.RESOURCES, COMPETITION_BADGES);
     return new File(folder, badge + ".png");
   }
 
   public boolean killProcesses(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     boolean success = false;
     for (ProcessHandle process : filteredProceses) {
       String cmd = process.info().command().get();
@@ -321,19 +318,39 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean isProcessRunning(String name) {
     List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
-      .collect(Collectors.toList());
+        .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains(name)))
+        .collect(Collectors.toList());
     return !filteredProceses.isEmpty();
   }
 
+  public List<ProcessHandle> getProcesses() {
+    return ProcessHandle.allProcesses()
+        .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+  }
 
   public boolean isVPXRunning() {
-    List<ProcessHandle> allProcesses = ProcessHandle.allProcesses()
-      .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
+    return isVPXRunning(getProcesses());
+  }
+
+  public boolean isVPXRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
-      String cmdName = p.info().command().get();
-      if (cmdName.contains("Visual Pinball") || cmdName.contains("VisualPinball") || cmdName.contains("VPinball")) {
-        return true;
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        if (cmdName.toLowerCase().contains("Visual Pinball".toLowerCase()) || cmdName.toLowerCase().contains("VisualPinball".toLowerCase()) || cmdName.toLowerCase().contains("VPinball".toLowerCase())) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public boolean isPopperMenuRunning(List<ProcessHandle> allProcesses) {
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        if (cmdName.contains("PinUpMenu.exe")) {
+          return true;
+        }
       }
     }
     return false;
@@ -341,19 +358,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean killPopper() {
     List<ProcessHandle> pinUpProcesses = ProcessHandle
-      .allProcesses()
-      .filter(p -> p.info().command().isPresent() &&
-        (
-          p.info().command().get().contains("PinUpMenu") ||
-            p.info().command().get().contains("PinUpDisplay") ||
-            p.info().command().get().contains("PinUpPlayer") ||
-            p.info().command().get().contains("VPXStarter") ||
-            p.info().command().get().contains("PinUpPackEditor") ||
-            p.info().command().get().contains("VPinballX") ||
-            p.info().command().get().startsWith("VPinball") ||
-            p.info().command().get().contains("B2SBackglassServerEXE") ||
-            p.info().command().get().contains("DOF")))
-      .collect(Collectors.toList());
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains("PinUpMenu") ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("PinUpPackEditor") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
       LOG.info("No PinUP processes found, termination canceled.");
@@ -467,7 +484,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public boolean setMaintenanceMode(boolean enabled) {
     Platform.runLater(() -> {
-      OverlayWindowFX.getInstance().setMaintenanceVisible(enabled);
+      ServerFX.getInstance().setMaintenanceVisible(enabled);
     });
     return enabled;
   }
@@ -475,6 +492,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public void shutdown() {
     ((ConfigurableApplicationContext) context).close();
     System.exit(0);
+  }
+
+  public void systemShutdown() {
+    ShutdownThread.shutdown();
   }
 
   public File getComponentArchiveFolder(ComponentType type) {
@@ -489,6 +510,40 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return folder;
   }
 
+  public ScoringDB getScoringDatabase() {
+    if (db == null) {
+      db = new ScoringDB();
+    }
+    return db;
+  }
+
+  private void loadingScoringDB() {
+    db = ScoringDB.load();
+  }
+
+  private static File getScoringDBFile() {
+    return new File(SystemInfo.RESOURCES, ScoringDB.SCORING_DB_NAME);
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext context) throws BeansException {
+    this.context = context;
+  }
+
+  public String backup() {
+    File source = new File(RESOURCES, "vpin-studio.db");
+    String name = FilenameUtils.getBaseName(source.getName()) + "_" + new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss").format(new Date()) + ".db";
+    File targetFolder = new File(RESOURCES, "backups/");
+    File target = new File(targetFolder, name);
+    try {
+      targetFolder.mkdirs();
+      FileUtils.copyFile(source, target);
+    } catch (IOException e) {
+      LOG.error("Failed to backup DB: " + e.getMessage(), e);
+    }
+    return target.getName();
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
     if (!available(port)) {
@@ -499,6 +554,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return;
     }
 
+    this.loadingScoringDB();
+    new Thread(() -> {
+      Thread.currentThread().setName("ScoringDB Updater");
+      if (!new File("./").getAbsolutePath().contains("workspace")) {
+        ScoringDB.update();
+      }
+      this.loadingScoringDB();
+    }).start();
+
     initBaseFolders();
     initVPinTableManagerIcon();
 
@@ -507,10 +571,5 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
 
     logSystemInfo();
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext context) throws BeansException {
-    this.context = context;
   }
 }

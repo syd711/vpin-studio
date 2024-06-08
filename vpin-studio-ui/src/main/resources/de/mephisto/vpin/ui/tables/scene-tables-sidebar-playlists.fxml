@@ -50,19 +50,25 @@
                   <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The color assignment will be stored as menu color in PinUP Popper." />
                </children>
                <VBox.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                  <Insets />
                </VBox.margin>
             </VBox>
             <ScrollPane hbarPolicy="NEVER">
                <content>
-                    <VBox fx:id="dataBox">
+                    <VBox fx:id="dataBox" spacing="3.0">
                      <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        <Insets bottom="6.0" top="6.0" />
                      </padding>
                     </VBox>
                </content>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
             </ScrollPane>
          </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
       </VBox>
    </center>
 </BorderPane>

@@ -1,8 +1,7 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoreItemController;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
@@ -22,7 +21,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,38 +59,34 @@ public class MenuCustomViewController implements Initializable {
   private MenuCustomTileEntryController tile3Controller;
   private MenuCustomTileEntryController tile4Controller;
 
-  public void setGame(GameRepresentation game, GameStatus status) {
+  public void setGame(GameRepresentation game, GameStatus status, VpsTable tableById) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");
 
-    String extTableId = game.getExtTableId();
-    String extVersion = game.getExtTableVersionId();
-    if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = VPS.getInstance().getTableById(extTableId);
-      if (tableById != null) {
-        VpsTableVersion version = tableById.getVersion(extVersion);
-        if (version != null) {
-          this.versionLabel.setText(version.getComment());
-          List<String> authors = version.getAuthors();
-          if (authors != null && !authors.isEmpty()) {
-            this.authorsLabel.setText(String.join(", ", authors));
-          }
+    // when game is mapped to VPS Table
+    if (tableById != null) {
+      String extVersion = game.getExtTableVersionId();
+      VpsTableVersion version = tableById.getTableVersionById(extVersion);
+      if (version != null) {
+        this.versionLabel.setText(version.getComment());
+        List<String> authors = version.getAuthors();
+        if (authors != null && !authors.isEmpty()) {
+          this.authorsLabel.setText(String.join(", ", authors));
         }
-        else {
-          this.versionLabel.setText(tableById.getManufacturer() + " (" + tableById.getYear() + ")");
-          List<String> designers = tableById.getDesigners();
-          if (designers != null && !designers.isEmpty()) {
-            this.authorsLabel.setText(String.join(", ", designers));
-          }
+      }
+      else {
+        this.versionLabel.setText(tableById.getManufacturer() + " (" + tableById.getYear() + ")");
+        List<String> designers = tableById.getDesigners();
+        if (designers != null && !designers.isEmpty()) {
+          this.authorsLabel.setText(String.join(", ", designers));
         }
       }
     }
 
-
     InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
     if (imageStream == null) {
-      imageStream = OverlayWindowFX.class.getResourceAsStream("avatar-blank.png");
+      imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(imageStream);
     wheelImage.setImage(image);

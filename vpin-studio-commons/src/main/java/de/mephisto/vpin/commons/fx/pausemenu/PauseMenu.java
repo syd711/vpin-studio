@@ -1,8 +1,13 @@
 package de.mephisto.vpin.commons.fx.pausemenu;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -12,6 +17,8 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -31,10 +38,11 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.File;
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 
+import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
 import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
@@ -49,6 +57,8 @@ public class PauseMenu extends Application {
 
   private static Robot robot;
 
+  private static List<PopperScreenAsset> screenAssets = new ArrayList<>();
+
   static {
     try {
       robot = new Robot();
@@ -58,7 +68,7 @@ public class PauseMenu extends Application {
   }
 
   public static void main(String[] args) {
-    OverlayWindowFX.client = new VPinStudioClient("localhost");
+    ServerFX.client = new VPinStudioClient("localhost");
     PRODUCTION_USE = false;
     launch(args);
     PauseMenu.togglePauseMenu();
@@ -71,6 +81,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
+    pauseMenuStage.setTitle("Pause Menu");
     pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
@@ -125,7 +136,6 @@ public class PauseMenu extends Application {
 
       scalePauseMenuStage(root, screenBounds);
       scene.setFill(Color.TRANSPARENT);
-      stage.setTitle(de.mephisto.vpin.commons.fx.UIDefaults.MANAGER_TITLE);
       stage.setScene(scene);
 
       StateMananger.getInstance().init(loader.getController());
@@ -157,47 +167,95 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu() {
+    togglePauseMenu(null);
+  }
+
+  public static void togglePauseMenu(@Nullable GameStatus status) {
     if (!visible) {
-      GameStatus status = client.getGameStatusService().getStatus();
-      if (!status.isActive()) {
-        LOG.info("Skipped showing start menu: no game status found.");
-        return;
+      try {
+        if (status == null) {
+          status = client.getGameStatusService().getStatus();
+        }
+        if (!status.isActive()) {
+          LOG.info("Skipped showing start menu: no game status found.");
+          return;
+        }
+        else {
+          LOG.info("Found game status for " + status.getGameId());
+        }
+
+        togglePauseKey(0);
+
+        //re-assign key, because they might have been changed
+        PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
+        //reload card settings to resolve actual target screen
+        CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+        PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+        StateMananger.getInstance().setControls(pinUPControls, pauseMenuSettings);
+
+        PopperScreen cardScreen = null;
+        if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+          cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+        }
+
+        PopperScreen tutorialScreen = PopperScreen.BackGlass;
+        if (pauseMenuSettings.getVideoScreen() != null) {
+          tutorialScreen = pauseMenuSettings.getVideoScreen();
+        }
+
+        PinUPPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
+
+        visible = true;
+        GameRepresentation game = client.getGameService().getGame(status.getGameId());
+
+        String extTableId = game.getExtTableId();
+        VpsTable tableById = client.getVpsService().getTableById(extTableId);
+
+        StateMananger.getInstance().setGame(game, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
+        stage.getScene().setCursor(Cursor.NONE);
+
+        new Thread(() -> {
+          Platform.runLater(() -> {
+            try {
+              screenAssets.clear();
+              PauseMenuStyle style = pauseMenuSettings.getStyle();
+              if (style == null) {
+                style = PauseMenuStyle.embedded;
+              }
+
+              if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
+                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+
+                List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
+                if (!videoTutorials.isEmpty()) {
+                  VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
+                  String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
+                  ChromeLauncher.showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
+                }
+              }
+              LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");
+            } catch (Exception e) {
+              LOG.error("Failed to prepare pause menu screens: " + e.getMessage(), e);
+            }
+          });
+
+          ServerFX.toFront(stage, visible);
+          ServerFX.toFront(stage, visible);
+          ServerFX.toFront(stage, visible);
+          ServerFX.toFront(stage, visible);
+        }).start();
+        ServerFX.forceShow(stage);
+      } catch (Exception e) {
+        LOG.error("Failed to init pause menu: " + e.getMessage(), e);
       }
-
-      togglePauseKey(0);
-
-      //re-assign key, because they might have been changed
-      PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
-      StateMananger.getInstance().setControls(pinUPControls);
-
-      //reload card settings to resolve actual target screen
-      CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-      PopperScreen screen = null;
-      if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-        screen = PopperScreen.valueOf(cardSettings.getPopperScreen());
-      }
-
-      PinUPPlayerDisplay screenDisplay = client.getPinUPPopperService().getScreenDisplay(PopperScreen.BackGlass);
-      PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-
-      visible = true;
-      GameRepresentation game = client.getGameService().getGame(status.getGameId());
-      StateMananger.getInstance().setGame(game, status, screen, screenDisplay, pauseMenuSettings);
-      stage.getScene().setCursor(Cursor.NONE);
-      new Thread(() -> {
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
-        OverlayWindowFX.toFront(stage, visible);
-      }).start();
-      OverlayWindowFX.forceShow(stage);
     }
     else {
-      exit();
+      exitPauseMenu();
     }
   }
 
-  public static void exit() {
+  public static void exitPauseMenu() {
     StateMananger.getInstance().exit();
     if (!PRODUCTION_USE) {
       Platform.runLater(() -> {
@@ -208,10 +266,21 @@ public class PauseMenu extends Application {
       LOG.info("Exited pause menu");
       stage.hide();
 
+      Platform.runLater(()-> {
+        try {
+          Thread.sleep(SELECTION_SCALE_DURATION);
+        } catch (InterruptedException e) {
+          //
+        }
+        screenAssets.stream().forEach(asset -> {
+          asset.getScreenStage().hide();
+          asset.dispose();
+        });
+      });
+
+
       try {
-        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("sendKeys.bat", "Visual Pinball Player", ""));
-        executor.setDir(new File("./resources"));
-        executor.executeCommand();
+        NirCmd.focusWindow("Visual Pinball Player");
       } catch (Exception e) {
         LOG.error("Failed to execute focus command: " + e.getMessage(), e);
       }
@@ -235,8 +304,9 @@ public class PauseMenu extends Application {
       robot.keyPress(KeyEvent.VK_P);
       Thread.sleep(100);
       robot.keyRelease(KeyEvent.VK_P);
-    } catch (InterruptedException e) {
-      throw new RuntimeException(e);
+      LOG.info("Sending Pause key 'P'");
+    } catch (Exception e) {
+      LOG.error("Failed sending pause key toggle: " + e.getMessage(), e);
     }
   }
 }

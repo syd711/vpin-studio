@@ -9,7 +9,7 @@ public class HighscoreChangeEvent {
 
   @NonNull
   private final Game game;
-  @NonNull
+
   private final int scoreCount;
   @NonNull
   private final Score oldScore;

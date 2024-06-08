@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,20 +29,24 @@ public class VPXCommandLineService {
   @Autowired
   private PinUPConnector pinUPConnector;
 
-  public boolean execute(@NonNull Game game, @NonNull String commandParam) {
+  public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
     File gameFile = game.getGameFile();
     File vpxExe = game.getEmulator().getVPXExe();
 
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
     String altLaunchExe = tableDetails.getAltLaunchExe();
-    if (!StringUtils.isEmpty(altLaunchExe)) {
+    if(altExe != null) {
+      vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
+    }
+    else if (!StringUtils.isEmpty(altLaunchExe)) {
       vpxExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
     }
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
       LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
@@ -62,9 +67,10 @@ public class VPXCommandLineService {
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
+      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
       LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
@@ -97,8 +103,9 @@ public class VPXCommandLineService {
     GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getVPXExe();
     try {
-      List<String> strings = Arrays.asList(vpxExe.getAbsolutePath());
+      List<String> strings = Arrays.asList(vpxExe.getName());
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+      executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();

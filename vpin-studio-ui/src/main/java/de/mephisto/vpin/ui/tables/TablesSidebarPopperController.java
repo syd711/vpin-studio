@@ -1,14 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
+import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -199,52 +198,30 @@ public class TablesSidebarPopperController implements Initializable {
   private void onTableEdit() {
     if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableDataDialog(this.game.get());
+        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
       }
       return;
     }
 
-    TableDialogs.openTableDataDialog(this.game.get());
+    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
     this.refreshView(this.game);
   }
 
   @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for \"" + game.get().getGameDisplayName() + "\"?",
-        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
-        "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplyClicked()) {
-        try {
-          boolean checked = result.isChecked();
-          client.getPinUPPopperService().autoFillTableDetails(this.game.get().getId(), checked);
-          EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-        }
+      TableDetails td = TableDialogs.openAutoFill(this.game.get());
+      if (td != null) {
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
       }
     }
   }
 
   @FXML
   private void onAutoFillAll() {
-    if (this.game.isPresent()) {
-      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill data for all " + client.getGameService().getGamesCached().size() + " tables?",
-        "Cancel", "Continue", "This fills missing entries with data taken from the table metadata and the Virtual Pinball Spreadsheet.",
-        "Make sure that the table is mapped in the \"Virtual Pinball Spreadsheet\" section to get an optimal result!", "Overwrite existing values", false);
-      if (!result.isApplyClicked()) {
-        try {
-          boolean checked = result.isChecked();
-          ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getGamesCached(), checked));
-          EventManager.getInstance().notifyTablesChanged();
-        } catch (Exception e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
-        }
-      }
-    }
+    TableDialogs.openAutoFillAll();
   }
-
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
@@ -259,6 +236,8 @@ public class TablesSidebarPopperController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      autoFillBtn.setVisible(game.isVpxGame());
+
       tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
 
       extrasPanel.setVisible(tableDetails.isPopper15());
@@ -301,7 +280,7 @@ public class TablesSidebarPopperController implements Initializable {
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
 
       if (tableDetails.getStatus() > 0) {
-        Optional<TableDataController.TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+        Optional<TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
         }
@@ -325,6 +304,9 @@ public class TablesSidebarPopperController implements Initializable {
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
+      isMod.setText("-");
+      status.setText("-");
+      emulatorLabel.setText("-");
       dateAdded.setText("-");
       gameName.setText("-");
       gameFileName.setText("-");
@@ -346,7 +328,17 @@ public class TablesSidebarPopperController implements Initializable {
       altRunMode.setText("-");
       url.setText("-");
       designedBy.setText("-");
-      notes.setText("-");
+      notes.setText("");
+      gDetails.setText("");
+      gLog.setText("");
+      gPlayLog.setText("");
+      gNotes.setText("");
+      webDbId.setText("-");
+      custom2.setText("-");
+      custom3.setText("-");
+      custom4.setText("-");
+      custom5.setText("-");
+      gameVersion.setText("-");
     }
   }
 
@@ -356,6 +348,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
 
     Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));

@@ -1,10 +1,14 @@
 package de.mephisto.vpin.restclient.games;
 
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.Date;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {
@@ -31,11 +35,11 @@ public class GameRepresentation {
   private boolean disabled;
   private boolean updateAvailable;
   private int id;
+  private String notes;
   private Date modified;
   private GameMediaRepresentation gameMedia;
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
-  private boolean pupPackAvailable;
   private ValidationState validationState;
   private String hsFileName;
   private boolean romExists;
@@ -53,7 +57,51 @@ public class GameRepresentation {
   private String extTableVersionId;
   private String extVersion;
   private int emulatorId;
-  private List<String> updates;
+  private String pupPackName;
+  private Long templateId;
+  private boolean pupPackAvailable;
+  private boolean vpxGame;
+  private VPSChanges vpsUpdates = new VPSChanges();
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
+  public boolean isVpxGame() {
+    return vpxGame;
+  }
+
+  public void setVpxGame(boolean vpxGame) {
+    this.vpxGame = vpxGame;
+  }
+
+  public String getPupPackName() {
+    return pupPackName;
+  }
+
+  public boolean isPupPackAvailable() {
+    return pupPackAvailable;
+  }
+
+  public void setPupPackAvailable(boolean pupPackAvailable) {
+    this.pupPackAvailable = pupPackAvailable;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
+  }
 
   public Date getDateAdded() {
     return dateAdded;
@@ -63,12 +111,12 @@ public class GameRepresentation {
     this.dateAdded = dateAdded;
   }
 
-  public List<String> getUpdates() {
-    return updates;
+  public VPSChanges getVpsUpdates() {
+    return vpsUpdates;
   }
 
-  public void setUpdates(List<String> updates) {
-    this.updates = updates;
+  public void setUpdates(VPSChanges updates) {
+    this.vpsUpdates = updates;
   }
 
   public String getExtVersion() {
@@ -285,14 +333,6 @@ public class GameRepresentation {
 
   public void setDirectB2SAvailable(boolean directB2SAvailable) {
     this.directB2SAvailable = directB2SAvailable;
-  }
-
-  public boolean isPupPackAvailable() {
-    return pupPackAvailable;
-  }
-
-  public void setPupPackAvailable(boolean pupPackAvailable) {
-    this.pupPackAvailable = pupPackAvailable;
   }
 
   public String getRom() {

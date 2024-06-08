@@ -6,9 +6,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.dialogs.POVExportProgressModel;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -21,7 +18,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class TablesSidebarPovController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPovController.class);
@@ -31,9 +28,6 @@ public class TablesSidebarPovController implements Initializable {
 
   @FXML
   private VBox dataBox;
-
-  @FXML
-  private Button povExportBtn;
 
   @FXML
   private Button uploadBtn;
@@ -213,7 +207,7 @@ public class TablesSidebarPovController implements Initializable {
   @FXML
   private void onPOVUpload() {
     if (game.isPresent()) {
-      TableDialogs.openPovUploadDialog(tablesSidebarController, game.get());
+      TableDialogs.directPovUpload(Studio.stage, game.get());
     }
   }
 
@@ -232,31 +226,6 @@ public class TablesSidebarPovController implements Initializable {
     }
   }
 
-  @FXML
-  private void onPOVExport() {
-    if (game.isPresent()) {
-      GameRepresentation g = game.get();
-      if (!g.isGameFileAvailable()) {
-        return;
-      }
-
-      if (g.isPovAvailable()) {
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-Export POV file for table '" + this.game.get().getGameDisplayName() + "'?", "This will overwrite the POV file with the table values.");
-        if (result.isPresent() && !result.get().equals(ButtonType.OK)) {
-          return;
-        }
-      }
-
-      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new POVExportProgressModel("Export POV Settings", g));
-      if (!resultModel.getResults().isEmpty()) {
-        EventManager.getInstance().notifyTableChange(g.getId(), null);
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "POV export failed, check log for details.");
-      }
-    }
-  }
-
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
@@ -268,9 +237,9 @@ public class TablesSidebarPovController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g) {
     uploadBtn.setDisable(g.isEmpty());
+    deleteBtn.setDisable(g.isEmpty());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
-    povExportBtn.setDisable(true);
     deleteBtn.setDisable(true);
     reloadBtn.setDisable(true);
 
@@ -279,7 +248,6 @@ public class TablesSidebarPovController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      povExportBtn.setDisable(!game.isGameFileAvailable());
 
       deleteBtn.setDisable(!game.isPovAvailable());
       dataBox.setVisible(game.isPovAvailable());

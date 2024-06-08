@@ -12,7 +12,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
@@ -20,12 +20,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
-import java.util.zip.ZipInputStream;
 
 public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpa.class);
@@ -97,7 +94,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null);
+        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
         game = gameService.getGame(newGameId);
       }
 

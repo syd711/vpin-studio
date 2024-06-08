@@ -5,11 +5,13 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
@@ -31,9 +33,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.stage.WindowEvent;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +52,13 @@ import java.util.Optional;
 
 public class WidgetFactory {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetFactory.class);
+
+  public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
+  public static final String DISABLED_COLOR = "#B0ABAB";
+  public static final String ERROR_COLOR = "#FF3333";
+  public static final String UPDATE_COLOR = "#CCFF66";
+  public static final String TODO_COLOR = UPDATE_COLOR;
+  public static final String OK_COLOR = "#66FF66";
 
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
@@ -94,7 +105,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateStar() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(14);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2f-flare");
     return fontIcon;
   }
@@ -103,7 +114,7 @@ public class WidgetFactory {
   public static FontIcon createUpdateIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
     fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
     return fontIcon;
   }
@@ -131,7 +142,7 @@ public class WidgetFactory {
   public static FontIcon createAlertIcon(String s) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral(s);
     return fontIcon;
   }
@@ -180,6 +191,14 @@ public class WidgetFactory {
     return fontIcon;
   }
 
+  public static FontIcon createUnsupportedIcon() {
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("bi-x-circle");
+    return fontIcon;
+  }
+
   public static FontIcon createExclamationIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
@@ -207,7 +226,7 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createPlaylistIcon(PlaylistRepresentation playlist) {
+  public static Label createPlaylistIcon(Playlist playlist) {
     Label label = new Label();
     label.setTooltip(new Tooltip(playlist.getName()));
     FontIcon fontIcon = new FontIcon();
@@ -220,16 +239,20 @@ public class WidgetFactory {
 
   public static Stage createStage() {
     Stage stage = new Stage();
-    stage.getIcons().add(new Image(OverlayWindowFX.class.getResourceAsStream("logo-64.png")));
+    stage.getIcons().add(new Image(ServerFX.class.getResourceAsStream("logo-64.png")));
     return stage;
   }
 
   public static Stage createDialogStage(Class clazz, Stage owner, String title, String fxml) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
-    return createDialogStage(fxmlLoader, owner, title);
+    return createDialogStage(fxmlLoader, owner, title, null);
   }
 
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title) {
+    return createDialogStage(fxmlLoader, owner, title, null);
+  }
+
+  public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
     Parent root = null;
 
     try {
@@ -251,6 +274,28 @@ public class WidgetFactory {
     stage.initStyle(StageStyle.UNDECORATED);
     stage.setTitle(title);
     stage.setUserData(controller);
+
+    if (stateId != null) {
+      stage.setResizable(true);
+
+      Rectangle position = LocalUISettings.getPosition(stateId);
+      if (position != null) {
+        stage.setX(position.getX());
+        stage.setY(position.getY());
+
+        stage.setWidth(position.getWidth());
+        stage.setHeight(position.getHeight());
+      }
+
+      stage.setOnShowing(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          Platform.runLater(() -> {
+            dialogHeaderController.enableStateListener(stage, controller, stateId);
+          });
+        }
+      });
+    }
 
     stage.initOwner(owner);
     Scene scene = new Scene(root);
@@ -401,7 +446,7 @@ public class WidgetFactory {
     }
   }
 
-  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean ignored, boolean previewEnabled) {
+  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
@@ -409,19 +454,8 @@ public class WidgetFactory {
       }
     }
 
-    if (ignored) {
-      Label label = new Label("Screen is ignored");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      if (mediaItem != null) {
-        label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
-      }
-      parent.setCenter(label);
-    }
-
     if (mediaItem == null) {
-      Label label = new Label("No media found");
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
-      parent.setCenter(label);
+      createNoMediaLabel(parent);
     }
 
     if (!previewEnabled) {
@@ -438,14 +472,18 @@ public class WidgetFactory {
       parent.setCenter(label);
     }
 
-    if (!ignored && previewEnabled && mediaItem != null) {
+    if (previewEnabled && mediaItem != null) {
       addMediaItemToBorderPane(client, mediaItem, parent);
     }
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
-    boolean portraitMode = client.getSystemService().getScreenInfo().isPortraitMode();
+  public static void createNoMediaLabel(BorderPane parent) {
+    Label label = new Label("No media found");
+    label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+    parent.setCenter(label);
+  }
 
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
@@ -456,10 +494,19 @@ public class WidgetFactory {
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
 
+    double prefWidth = parent.getPrefWidth();
+    if(prefWidth <= 0) {
+      prefWidth = ((Pane)parent.getParent()).getWidth();
+    }
+    double prefHeight = parent.getPrefHeight();
+    if(prefHeight <= 0) {
+      prefHeight =  ((Pane)parent.getParent()).getHeight();
+    }
+
     if (baseType.equals("image") && !audioOnly) {
       ImageView imageView = new ImageView();
-      imageView.setFitWidth(parent.getPrefWidth() - 10);
-      imageView.setFitHeight(parent.getPrefHeight() - 60);
+      imageView.setFitWidth(prefWidth - 10);
+      imageView.setFitHeight(prefHeight - 60);
       imageView.setPreserveRatio(true);
 
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
@@ -473,7 +520,7 @@ public class WidgetFactory {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, portraitMode, false);
+      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, false);
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
@@ -482,12 +529,12 @@ public class WidgetFactory {
     return null;
   }
 
-  public static class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+  public static class PlaylistBackgroundImageListCell extends ListCell<Playlist> {
 
     public PlaylistBackgroundImageListCell() {
     }
 
-    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+    protected void updateItem(Playlist item, boolean empty) {
       super.updateItem(item, empty);
       setGraphic(null);
       setText(null);

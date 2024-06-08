@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -13,7 +13,7 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PlayerRankingsPreferencesController implements Initializable {
 
@@ -43,7 +43,7 @@ public class PlayerRankingsPreferencesController implements Initializable {
     SpinnerValueFactory.IntegerSpinnerValueFactory factoryC = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
     spinnerCompetitions.setValueFactory(factoryC);
 
-    PreferenceEntryRepresentation idle = OverlayWindowFX.client.getPreference(PreferenceNames.RANKING_POINTS);
+    PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.RANKING_POINTS);
     String pointsString = idle.getValue();
     if(pointsString == null) {
       pointsString = UIDefaults.DEFAULT_POINTS;

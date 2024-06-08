@@ -75,6 +75,17 @@ public class ScreensPub {
   }
 
   @NonNull
+  public boolean isTransparent(@NonNull PopperScreen screen) {
+    int id = screen.getCode();
+    for (ScreenEntry entry : this.entries) {
+      if (entry.getScreenNum() == id) {
+        return entry.isTransparent();
+      }
+    }
+    return false;
+  }
+
+  @NonNull
   public List<ScreenEntry> getEntries() {
     return entries;
   }

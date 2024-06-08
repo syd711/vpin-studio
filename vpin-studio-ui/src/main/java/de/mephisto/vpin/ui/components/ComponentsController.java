@@ -4,11 +4,11 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -53,6 +52,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private Tab freezyTab;
+
+  @FXML
+  private Tab serumTab;
 
   @FXML
   private Tab flexDMDTab;
@@ -135,10 +137,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
 
-    preferencesChanged();
+    preferencesChanged(PreferenceType.uiSettings);
 
-
-    NavigationController.setInitialController("scene-components.fxml", this, root);
     NavigationController.setBreadCrumb(Arrays.asList("System Manager"));
     try {
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
@@ -153,6 +153,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(mameTab, "tab-mame.fxml");
     loadTab(flexDMDTab, "tab-flexdmd.fxml");
     loadTab(freezyTab, "tab-freezy.fxml");
+    loadTab(serumTab, "tab-serum.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());
@@ -183,8 +184,10 @@ public class ComponentsController implements Initializable, StudioFXController, 
   }
 
   @Override
-  public void preferencesChanged() {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    hint.setVisible(!uiSettings.isHideComponentWarning());
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.uiSettings)) {
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      hint.setVisible(!uiSettings.isHideComponentWarning());
+    }
   }
 }

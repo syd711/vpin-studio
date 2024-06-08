@@ -23,7 +23,6 @@
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Only emulators with a backglass server configuration are shown." textFill="WHITE" />
             <VBox>
                <children>
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
@@ -36,6 +35,14 @@
                         </ComboBox>
                      </children>
                   </HBox>
+                  <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="No matching emulator found." textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets left="79.0" top="3.0" />
+                     </VBox.margin>
+                     <padding>
+                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                     </padding>
+                  </Label>
                   <CheckBox fx:id="pluginsCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Activate Plugins" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -52,6 +59,25 @@
                      </font>
                   </CheckBox>
                   <Label layoutX="10.0" layoutY="156.0" styleClass="checkbox-description" text="If enabled, a pop-up window will be shown if no matching backglass file was found." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="fuzzyMatchingCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Disable Fuzzy Matching" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="145.0" styleClass="checkbox-description" text="If checked, directb2s files must not have the same name as the VPX file anymore." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="205.0" styleClass="checkbox-description" text="(You can enable fuzzy matching, but note that the VPin Studio does not support it " textFill="WHITE" wrapText="true">
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="10.0" layoutY="227.0" styleClass="checkbox-description" text="and will always only look for exact matches when looking for .directb2s files)." textFill="WHITE" wrapText="true" />
+                  <CheckBox fx:id="startModeCheckbox" layoutX="10.0" layoutY="107.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Launch as .exe" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
+                  <Label layoutX="10.0" layoutY="252.0" styleClass="checkbox-description" text="Configures the default start mode of the backglass server to &quot;in EXE&quot;." textFill="WHITE" wrapText="true" />
+                  <Label layoutX="10.0" layoutY="312.0" styleClass="checkbox-description" text="This should improve performance." textFill="WHITE" wrapText="true" />
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

@@ -22,8 +22,6 @@ public class Preferences {
 
   private String ignoredValidations;
 
-  private String ignoredMedia;
-
   private String systemName;
 
   private String systemPreset;
@@ -50,14 +48,6 @@ public class Preferences {
 
   private String discordBotAllowList;
 
-  private String discordVpsChannelId;
-
-  @Column(name = "discordVpsTableFilterEnabled", nullable = false, columnDefinition = "boolean default true")
-  private boolean discordVpsTableFilterEnabled;
-
-  @Column(name = "discordVpsRefreshIntervalMin", nullable = false, columnDefinition = "int default 60")
-  private int discordVpsRefreshIntervalMin;
-
   private String vpbmInternalHostId;
 
   private String vpbmExternalHostId;
@@ -71,12 +61,16 @@ public class Preferences {
 
   private String highscoreCardSettings;
 
+  private String highscoreCardTemplates;
+
   private String pauseMenuSettings;
 
-  @Column(length = 1024)
+  private String validationSettings;
+
+  private String notificationSettings;
+
   private String uiSettings;
 
-  @Column(length = 1024)
   private String serverSettings;
 
   @Column(length = 1024)
@@ -104,6 +98,22 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getNotificationSettings() {
+    return notificationSettings;
+  }
+
+  public void setNotificationSettings(String notificationSettings) {
+    this.notificationSettings = notificationSettings;
+  }
+
+  public String getValidationSettings() {
+    return validationSettings;
+  }
+
+  public void setValidationSettings(String validationSettings) {
+    this.validationSettings = validationSettings;
+  }
 
   public String getDofSettings() {
     return dofSettings;
@@ -138,30 +148,6 @@ public class Preferences {
 
   public void setTournamentSettings(String tournamentSettings) {
     this.tournamentSettings = tournamentSettings;
-  }
-
-  public String getDiscordVpsChannelId() {
-    return discordVpsChannelId;
-  }
-
-  public void setDiscordVpsChannelId(String discordVpsChannelId) {
-    this.discordVpsChannelId = discordVpsChannelId;
-  }
-
-  public boolean getDiscordVpsTableFilterEnabled() {
-    return discordVpsTableFilterEnabled;
-  }
-
-  public void setDiscordVpsTableFilterEnabled(boolean discordVpsTableFilterEnabled) {
-    this.discordVpsTableFilterEnabled = discordVpsTableFilterEnabled;
-  }
-
-  public int getDiscordVpsRefreshIntervalMin() {
-    return discordVpsRefreshIntervalMin;
-  }
-
-  public void setDiscordVpsRefreshIntervalMin(int discordVpsRefreshIntervalMin) {
-    this.discordVpsRefreshIntervalMin = discordVpsRefreshIntervalMin;
   }
 
   public String getHighscoreCardSettings() {
@@ -404,14 +390,6 @@ public class Preferences {
     this.id = id;
   }
 
-  public String getIgnoredMedia() {
-    return ignoredMedia;
-  }
-
-  public void setIgnoredMedia(String ignoredMedia) {
-    this.ignoredMedia = ignoredMedia;
-  }
-
   public String getIgnoredValidations() {
     return ignoredValidations;
   }
@@ -420,5 +398,11 @@ public class Preferences {
     this.ignoredValidations = ignoredValidations;
   }
 
+  public String getHighscoreCardTemplates() {
+    return highscoreCardTemplates;
+  }
 
+  public void setHighscoreCardTemplates(String highscoreCardTemplates) {
+    this.highscoreCardTemplates = highscoreCardTemplates;
+  }
 }

@@ -60,4 +60,9 @@ public class Score {
   public void setWins(int wins) {
     this.wins = wins;
   }
+
+  @Override
+  public String toString() {
+    return "iScored score " + this.getName() + " - " + this.score + " / " + this.game;
+  }
 }

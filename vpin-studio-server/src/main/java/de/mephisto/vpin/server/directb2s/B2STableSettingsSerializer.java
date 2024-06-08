@@ -142,10 +142,10 @@ public class B2STableSettingsSerializer {
         node.setTextContent(String.valueOf(settings.getGlowIndex()));
         break;
       }
-//      case "StartAsEXE": {
-//        node.setTextContent(intValue(settings.isStartAsEXE()));
-//        break;
-//      }
+      case "StartAsEXE": {
+        node.setTextContent(intValue(settings.isStartAsEXE()));
+        break;
+      }
       case "StartBackground": {
         node.setTextContent(intValue(settings.isStartBackground()));
         break;

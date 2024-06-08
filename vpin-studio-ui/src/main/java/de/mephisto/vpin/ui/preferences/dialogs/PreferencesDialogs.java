@@ -1,0 +1,50 @@
+package de.mephisto.vpin.ui.preferences.dialogs;
+
+import de.mephisto.vpin.restclient.util.ini.IniSettings;
+import de.mephisto.vpin.ui.preferences.DiscordBotPreferencesController;
+import de.mephisto.vpin.ui.util.Dialogs;
+import javafx.stage.Stage;
+import org.jnativehook.GlobalScreen;
+
+public class PreferencesDialogs {
+  public static void openBotWhitelistDialog(DiscordBotPreferencesController preferencesController) {
+    Stage stage = Dialogs.createStudioDialogStage(DiscordBotAllowListDialogController.class, "preference-bot-allowlist-dialog.fxml", "Bot Allow-List");
+    DiscordBotAllowListDialogController controller = (DiscordBotAllowListDialogController) stage.getUserData();
+    controller.setPreferencesController(preferencesController);
+    stage.showAndWait();
+  }
+
+  public static void openBotServerIdTutorial() {
+    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-server-id-tutorial.fxml", "Server ID Instructions");
+    stage.showAndWait();
+  }
+
+  public static void openBotTokenTutorial() {
+    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-token-tutorial.fxml", "Bot Token Instructions");
+    stage.showAndWait();
+  }
+
+  public static void openButtonRecorder() {
+    Stage stage = Dialogs.createStudioDialogStage(TablePauseBtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", "Button Recorder");
+    TablePauseBtnRecorderDialogController controller = (TablePauseBtnRecorderDialogController) stage.getUserData();
+    stage.showAndWait();
+    GlobalScreen.removeNativeKeyListener(controller);
+  }
+
+  public static void openBotTutorial() {
+    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-tutorial.fxml", "Discord Bot Instructions");
+    stage.showAndWait();
+  }
+
+  public static void openPINemHiUIDialog(IniSettings settings) {
+    Stage stage = Dialogs.createStudioDialogStage(PINemHiUIPreferenceController.class, "preference-pinemhi-ui.fxml", "PINemHi UI Settings");
+    PINemHiUIPreferenceController controller = (PINemHiUIPreferenceController) stage.getUserData();
+    controller.setSettings(settings);
+    stage.showAndWait();
+  }
+
+  public static void openPauseMenuTestDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(TablePauseTestDialogController.class, "preference-table-pause-test-dialog.fxml", "Pause Menu Test");
+    stage.showAndWait();
+  }
+}

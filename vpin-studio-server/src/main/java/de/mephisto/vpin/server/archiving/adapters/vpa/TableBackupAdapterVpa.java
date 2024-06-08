@@ -19,8 +19,8 @@ import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.server.util.ZipUtil;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -175,15 +175,15 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
 
       // DMDs
-      if (game.getUltraDMDFolder().exists()) {
-        packageInfo.setUltraDMD(true);
-        zipFile(game.getUltraDMDFolder(), gameFolderName + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
-      }
-
-      if (game.getFlexDMDFolder().exists()) {
-        packageInfo.setFlexDMD(true);
-        zipFile(game.getFlexDMDFolder(), gameFolderName + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
-      }
+//      if (game.getUltraDMDFolder().exists()) {
+//        packageInfo.setUltraDMD(true);
+//        zipFile(game.getUltraDMDFolder(), gameFolderName + "/Tables/" + game.getUltraDMDFolder().getName(), zipOut);
+//      }
+//
+//      if (game.getFlexDMDFolder().exists()) {
+//        packageInfo.setFlexDMD(true);
+//        zipFile(game.getFlexDMDFolder(), gameFolderName + "/Tables/" + game.getFlexDMDFolder().getName(), zipOut);
+//      }
 
       // Music and sounds
       if (game.isAltSoundAvailable()) {

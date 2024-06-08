@@ -5,14 +5,17 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -22,7 +25,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1020.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -40,254 +43,338 @@
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <GridPane hgap="3.0" vgap="3.0">
-                                      <columnConstraints>
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
-                                      </columnConstraints>
-                                      <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="100.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
-                                      </rowConstraints>
+                                    <VBox fx:id="detailsRoot">
                                        <children>
-                                          <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Every table will be added to the first playlist that is found." />
-                                             </tooltip>
-                                          </Label>
-                                          <Label styleClass="default-text" text="Game Display Name:" textFill="WHITE" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="106.0" styleClass="default-text" text="ROM Name:" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="168.0" styleClass="default-text" text="Tags:" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="259.0" styleClass="default-text" text="Custom Launch Parameters:" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="380.0" styleClass="default-text" text="DOF Parameters:" GridPane.rowIndex="12">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Alternative Run Mode:" GridPane.rowIndex="13">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="532.0" styleClass="default-text" text="Notes:" GridPane.rowIndex="14" GridPane.valignment="TOP">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="gameName" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="tags" layoutX="173.0" layoutY="163.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="launchCustomVar" layoutX="173.0" layoutY="224.0" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="dof" layoutX="173.0" layoutY="344.0" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="altRunMode" layoutX="173.0" layoutY="436.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Game Version:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="14" />
-                                          <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="romName" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label layoutX="13.0" layoutY="220.0" styleClass="default-text" text="Custom 2:" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="13.0" layoutY="253.0" styleClass="default-text" text="Custom 3:" GridPane.rowIndex="11">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="custom2" layoutX="213.0" layoutY="216.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="custom3" layoutX="213.0" layoutY="249.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <HBox GridPane.rowIndex="15" GridPane.valignment="TOP">
+                                          <VBox>
                                              <children>
-                                                <Label text="Table Volume:  " textFill="WHITE">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                                <Label>
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
-                                                   </tooltip>
-                                                </Label>
+                                                <BorderPane>
+                                                   <left>
+                                                      <Label styleClass="default-title" text="Table Details" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </left>
+                                                   <right>
+                                                      <Label fx:id="databaseIdLabel" alignment="CENTER_RIGHT" prefWidth="200.0" styleClass="default-text" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </right>
+                                                </BorderPane>
+                                                <GridPane hgap="3.0" vgap="3.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" />
+                                                  </columnConstraints>
+                                                  <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                    <RowConstraints minHeight="10.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                  </rowConstraints>
+                                                   <children>
+                                                      <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <tooltip>
+                                                            <Tooltip text="Every table will be added to the first playlist that is found." />
+                                                         </tooltip>
+                                                      </Label>
+                                                      <Label styleClass="default-text" text="Game Screen Name:" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label layoutX="10.0" layoutY="137.0" styleClass="default-text" text="Game File Name:" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Game Name:" textFill="WHITE" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <VBox spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                         <children>
+                                                            <TextField fx:id="gameName">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </VBox>
+                                                      <TextField fx:id="gameFileName" layoutX="168.0" layoutY="132.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Game Version:*" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="gameVersion" layoutX="191.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <TextField fx:id="gameDisplayName" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini). Renaming of VPX files located in subfolders is not supported." wrapText="true" />
+                                                         </tooltip>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <GridPane.margin>
+                                                            <Insets left="3.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                      <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="300.0" text="Changing the game name will also rename all media assets linked to this table." wrapText="true" />
+                                                         </tooltip>
+                                                         <GridPane.margin>
+                                                            <Insets left="3.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                      <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                                                         <children>
+                                                            <Button fx:id="fixVersionBtn" mnemonicParsing="false" onAction="#onVersionFix" text="Fix Version" textFill="WHITE">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil-outline" iconSize="18" />
+                                                               </graphic>
+                                                            </Button>
+                                                            <Label>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the PinUP Popper database." wrapText="true" />
+                                                               </tooltip>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="2">
+                                                         <children>
+                                                            <Label>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="300.0" text="If enabled, the screen name will be updated on table version selection." wrapText="true" />
+                                                               </tooltip>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets left="6.0" />
+                                                               </HBox.margin>
+                                                            </Label>
+                                                         </children>
+                                                      </HBox>
+                              
+                                    
+                              
+                                                         </children>
+                                                   <VBox.margin>
+                                                      <Insets top="12.0" />
+                                                   </VBox.margin>
+                                                </GridPane>
                                              </children>
-                                          </HBox>
-                                          <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
-                                          <Label text="Status:" textFill="WHITE" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                          <VBox fx:id="vpsPanel" styleClass="navigation-panel">
                                              <children>
-                                                <ComboBox fx:id="launcherCombo" prefHeight="30.0" prefWidth="306.0" />
-                                                <Label>
+                                                <Label styleClass="default-title" text="Virtual Pinball Spreadsheet Entry" textFill="WHITE">
                                                    <font>
-                                                      <Font size="14.0" />
+                                                      <Font name="System Bold" size="14.0" />
                                                    </font>
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                                   </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="If no value is set, the PinUP Popper default will be used." />
-                                                   </tooltip>
                                                 </Label>
+                                                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                                                   <children>
+                                                      <SplitMenuButton mnemonicParsing="false" onAction="#onAutoMatch" text="Auto-Match" textFill="WHITE">
+                                                         <items>
+                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoMatchAll" text="Auto-Match All">
+                                                               <graphic>
+                                                                  <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </FontIcon>
+                                                               </graphic>
+                                                            </MenuItem>
+                                                         </items>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Tries to resolve the matching VPS table and version entry automatically." />
+                                                         </tooltip>
+                                                      </SplitMenuButton>
+                                                      <Button fx:id="vpsResetBtn" mnemonicParsing="false" onAction="#onVpsReset" text="Reset" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link-variant-off" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Resets the assigned VPS table mapping." />
+                                                         </tooltip>
+                                                      </Button>
+                                                      <CheckBox fx:id="autoFillCheckbox" mnemonicParsing="false" text="Auto-Apply Meta Data" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </CheckBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="12.0" />
+                                                   </VBox.margin>
+                                                </HBox>
+                                                <GridPane hgap="3.0" vgap="3.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="188.0" minWidth="188.0" prefWidth="188.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="128.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label text="Name:" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <HBox spacing="6.0" GridPane.columnIndex="1">
+                                                         <children>
+                                                            <TextField fx:id="nameField" alignment="BASELINE_LEFT" prefHeight="30.0" prefWidth="412.0" promptText="Enter Table Name...">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </HBox>
+                                                      <Label layoutX="10.0" layoutY="168.0" text="Table Version:" textFill="WHITE" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <padding>
+                                                            <Insets top="3.0" />
+                                                         </padding>
+                                                      </Label>
+                                                      <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                         <children>
+                                                            <ComboBox fx:id="tableVersionsCombo" prefWidth="487.0" />
+                                                         </children>
+                                                      </HBox>
+                                                      <Label alignment="CENTER_RIGHT" contentDisplay="RIGHT" textAlignment="JUSTIFY" textFill="WHITE" GridPane.columnIndex="1" GridPane.halignment="RIGHT">
+                                                         <graphic>
+                                                            <FontIcon iconLiteral="mdi2d-database-search-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <GridPane.margin>
+                                                            <Insets right="6.0" />
+                                                         </GridPane.margin>
+                                                      </Label>
+                                                      <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="2">
+                                                         <children>
+                                                            <Button fx:id="openVpsTableBtn" mnemonicParsing="false" onAction="#onVpsTableOpen" styleClass="link-component">
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                               </graphic>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                            </Button>
+                                                            <Button fx:id="copyTableBtn" mnemonicParsing="false" onAction="#onCopyTableId">
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                               </graphic>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <tooltip>
+                                                                  <Tooltip text="Copy VPS Table URL" />
+                                                               </tooltip>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                      <HBox spacing="6.0" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                                         <children>
+                                                            <Button fx:id="openVpsTableVersionBtn" mnemonicParsing="false" onAction="#onVpsTableVersionOpen" styleClass="link-component">
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" iconSize="18" />
+                                                               </graphic>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <HBox.margin>
+                                                                  <Insets />
+                                                               </HBox.margin>
+                                                               <tooltip>
+                                                                  <Tooltip text="Download Table" />
+                                                               </tooltip>
+                                                            </Button>
+                                                            <Button fx:id="copyTableVersionBtn" mnemonicParsing="false" onAction="#onCopyTableVersion">
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                                               </graphic>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <tooltip>
+                                                                  <Tooltip text="Copy VPS Table Version URL" />
+                                                               </tooltip>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="6.0" />
+                                                   </VBox.margin>
+                                                </GridPane>
                                              </children>
-                                          </HBox>
-                                          <Label text="Alternative Launcher:" textFill="WHITE" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="22.0" layoutY="61.0" styleClass="default-text" text="Popper Database Id:" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="databaseIdLabel" layoutX="22.0" layoutY="28.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Changing the game file name will also rename the depending files (.directb2s, .ini)" wrapText="true" />
-                                             </tooltip>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <GridPane.margin>
-                                                <Insets left="3.0" />
-                                             </GridPane.margin>
-                                          </Label>
-                                          <Label GridPane.columnIndex="2" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Changing the game name will also rename all media assets linked to this table." wrapText="true" />
-                                             </tooltip>
-                                             <GridPane.margin>
-                                                <Insets left="3.0" />
-                                             </GridPane.margin>
-                                          </Label>
-                                          <Button fx:id="applyRomBtn" mnemonicParsing="false" onAction="#onRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Button>
-                  
-                        
-                  
-                                             </children>
-                                       <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                       </padding>
-                                    </GridPane>
+                                             <padding>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </padding>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </VBox.margin>
+                                          </VBox>
+                                       </children>
+                                    </VBox>
                                  </content>
                                  <padding>
                                     <Insets right="6.0" />
@@ -295,501 +382,598 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Info">
+                        <Tab fx:id="scoreDataTab" closable="false" text="Score Data">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
+                        </Tab>
+                        <Tab closable="false" text="Meta Data">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <GridPane hgap="3.0" vgap="3.0">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="60.0" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                       </rowConstraints>
+                                    <VBox prefHeight="827.0" prefWidth="751.0">
                                        <children>
-                                          <Label layoutX="13.0" layoutY="120.0">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <Label styleClass="default-text" text="Game Type:">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </Label>
-                                             </graphic>
-                                          </Label>
-                                          <ComboBox fx:id="gameTypeCombo" prefWidth="150.0" GridPane.columnIndex="1" />
-                                          <TextField fx:id="gameTheme" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="Game Theme:" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                          <VBox>
                                              <children>
-                                                <TextField fx:id="gameYear" prefHeight="30.0" prefWidth="100.0">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
+                                                <BorderPane>
+                                                   <left>
+                                                      <Label styleClass="default-title" text="Meta Data Information" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                         <font>
+                                                            <Font name="System Bold" size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </left>
+                                                   <right>
+                                                      <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                         <items>
+                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                               <graphic>
+                                                                  <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                     <font>
+                                                                        <Font size="14.0" />
+                                                                     </font>
+                                                                  </FontIcon>
+                                                               </graphic>
+                                                            </MenuItem>
+                                                         </items>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
+                                                         </tooltip>
+                                                      </SplitMenuButton>
+                                                   </right>
+                                                </BorderPane>
+                                                <GridPane hgap="3.0" vgap="3.0">
+                                                   <columnConstraints>
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="410.0" minWidth="410.0" prefWidth="410.0" />
+                                                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                                                   </columnConstraints>
+                                                   <rowConstraints>
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                      <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                   </rowConstraints>
+                                                   <children>
+                                                      <Label layoutX="13.0" layoutY="120.0" GridPane.rowIndex="1">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <Label styleClass="default-text" text="Game Type:*">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </Label>
+                                                         </graphic>
+                                                      </Label>
+                                                      <ComboBox fx:id="gameTypeCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                      <TextField fx:id="gameTheme" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="Game Theme:*" GridPane.rowIndex="2">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <HBox alignment="CENTER_LEFT" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                         <children>
+                                                            <TextField fx:id="gameYear" prefHeight="30.0" prefWidth="100.0">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                            </TextField>
+                                                         </children>
+                                                      </HBox>
+                                                      <Label styleClass="default-text" text="Game Year:*" GridPane.rowIndex="3">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label styleClass="default-text" text="Manufacturer:*" GridPane.rowIndex="4">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="manufacturer" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="Author:*" GridPane.rowIndex="5">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="author" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="Category:*" GridPane.rowIndex="6">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="category" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="Number of Players:*" GridPane.rowIndex="7">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Spinner fx:id="numberOfPlayers" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                                      <Label styleClass="default-text" text="Game Rating:" GridPane.rowIndex="8">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Spinner fx:id="gameRating" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                                      <Label styleClass="default-text" text="IPDB Number:*" GridPane.rowIndex="9">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="IPDBNum" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="URL:*" GridPane.rowIndex="10">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="url" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Label styleClass="default-text" text="Designed By:*" GridPane.rowIndex="11">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="designedBy" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <Button mnemonicParsing="false" onAction="#onUrlProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                         </tooltip>
+                                                         <GridPane.margin>
+                                                            <Insets />
+                                                         </GridPane.margin>
+                                                      </Button>
+                                                      <TextArea fx:id="notes" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                                      <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="13">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label styleClass="default-text" text="Tags:" GridPane.rowIndex="12">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <TextField fx:id="tags" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </TextField>
+                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" />
+                                                      <Label text="Status:" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                   </children>
+                                                   <VBox.margin>
+                                                      <Insets top="6.0" />
+                                                   </VBox.margin>
+                                                </GridPane>
                                              </children>
-                                          </HBox>
-                                          <Label styleClass="default-text" text="Game Year:" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label styleClass="default-text" text="Manufacturer:" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="manufacturer" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="Author:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="author" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="Category;" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="category" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="Number of Players:" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Spinner fx:id="numberOfPlayers" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                                          <Label styleClass="default-text" text="Game Rating:" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Spinner fx:id="gameRating" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                          <Label styleClass="default-text" text="IPDB Number:" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="IPDBNum" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="URL:" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="url" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label styleClass="default-text" text="Designed By:" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="designedBy" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Button mnemonicParsing="false" onAction="#onUrlProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
-                                             </tooltip>
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </Button>
+                                             <VBox.margin>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </VBox.margin>
+                                          </VBox>
                                        </children>
-                                       <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                                       </padding>
-                                    </GridPane>
+                                    </VBox>
                                  </content>
+                                 <padding>
+                                    <Insets right="1.0" />
+                                 </padding>
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Screens">
+                        <Tab fx:id="extrasTab" closable="false" text=" Customization ">
                            <content>
-                              <VBox>
-                                 <children>
-                                    <Label text="All screens hide during gameplay. You can keep displays on. " textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                       <VBox.margin>
-                                          <Insets bottom="12.0" />
-                                       </VBox.margin>
-                                    </Label>
-                                    <GridPane>
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="234.400048828125" minWidth="10.0" prefWidth="137.60003967285155" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="547.9999603271483" minWidth="450.0" prefWidth="547.9999603271483" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                       </rowConstraints>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox>
                                        <children>
-                                          <Label text="Topper" GridPane.rowIndex="3">
+                                          <Label styleClass="default-title" text="Launch and Runtime Customizations" textFill="WHITE">
                                              <font>
-                                                <Font size="14.0" />
+                                                <Font name="System Bold" size="14.0" />
                                              </font>
+                                             <VBox.margin>
+                                                <Insets bottom="9.0" />
+                                             </VBox.margin>
                                           </Label>
-                                          <Label text="DMD (4:1 slim)" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label layoutX="10.0" layoutY="45.0" text="Backglass:" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <CheckBox fx:id="backglassCheckbox" layoutX="170.0" layoutY="45.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Playfield:" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <CheckBox fx:id="playfieldCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label layoutX="10.0" layoutY="76.0" text="Music:" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                          <GridPane hgap="3.0" vgap="3.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                                             </rowConstraints>
                                              <children>
-                                                <CheckBox fx:id="musicCheckbox" mnemonicParsing="false">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </CheckBox>
-                                                <Label>
+                                                <Label layoutX="253.0" layoutY="16.0" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="Check this only if your table uses files from the music folder." wrapText="true" />
+                                                      <Tooltip text="Every table will be added to the first playlist that is found." />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Custom 4:" textFill="WHITE" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="custom4" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <TextField fx:id="custom5" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="13.0" layoutY="86.0" styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="10">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Is Mod:" GridPane.rowIndex="12">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="13">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Web Link:" GridPane.rowIndex="11">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="webDbId" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <TextField fx:id="webLink" layoutX="171.0" layoutY="115.0" GridPane.columnIndex="1" GridPane.rowIndex="11">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <TextField fx:id="tourneyId" layoutX="171.0" layoutY="148.0" GridPane.columnIndex="1" GridPane.rowIndex="13">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="12">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                   </tooltip>
+                                                   <GridPane.margin>
+                                                      <Insets />
+                                                   </GridPane.margin>
+                                                </Button>
+                                                <Label styleClass="default-text" text="Custom 2:" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="custom2" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <TextField fx:id="custom3" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Label styleClass="default-text" text="Custom 3:" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="launchCustomVar" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Label styleClass="default-text" text="Custom Launch Parameters:" GridPane.rowIndex="3">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
+                                                   <children>
+                                                      <ComboBox fx:id="launcherCombo" prefHeight="30.0" prefWidth="306.0" />
+                                                      <Label>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="If no value is set, the PinUP Popper default will be used." />
+                                                         </tooltip>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <Label text="Alternative Launcher:" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="altRunMode" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <Label styleClass="default-text" text="Alternative Run Mode:" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <Label styleClass="default-text" text="DOF Parameters:" GridPane.rowIndex="8">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextField fx:id="dof" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                                <HBox GridPane.rowIndex="15">
+                                                   <children>
+                                                      <Label text="Table Volume:  " textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Label>
+                                                      <Label>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
+                                                         </tooltip>
+                                                      </Label>
+                                                   </children>
+                                                </HBox>
+                                                <Slider fx:id="volumeSlider" blockIncrement="1.0" majorTickUnit="10.0" minorTickCount="10" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="100.0" GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                                                <Label fx:id="hintCustom2" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom3" layoutX="667.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom4" layoutX="667.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintCustom5" layoutX="667.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
+                                                   </tooltip>
+                                                </Label>
+                                                <Label fx:id="hintWebId" layoutX="667.0" layoutY="251.0" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                    </tooltip>
                                                 </Label>
                                              </children>
-                                          </HBox>
-                                          <Label layoutX="10.0" layoutY="137.0" text="Full DMD/Apron:" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="168.0" text="Wheelbar:" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="198.0" text="Loading:" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="228.0" text="Other:" GridPane.rowIndex="11">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="259.0" text="Flyer:" GridPane.rowIndex="12">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="289.0" text="Help:" GridPane.rowIndex="13">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="wheelbarCheckbox" layoutX="245.0" layoutY="168.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="loadingCheckbox" layoutX="245.0" layoutY="198.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="otherCheckbox" layoutX="245.0" layoutY="228.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="flyerCheckbox" layoutX="245.0" layoutY="259.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="helpCheckbox" layoutX="245.0" layoutY="289.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="13">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label layoutX="10.0" layoutY="106.0" text="Use Emulator Defaults:">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" text="Hide All:" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <CheckBox fx:id="useEmuDefaultsCheckbox" layoutX="245.0" layoutY="106.0" mnemonicParsing="false" GridPane.columnIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <CheckBox fx:id="hideAllCheckbox" layoutX="245.0" layoutY="15.0" mnemonicParsing="false" prefHeight="0.0" prefWidth="19.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                       </children>
-                                    </GridPane>
-                                 </children>
-                                 <padding>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="15.0" />
-                                 </padding>
-                              </VBox>
-                           </content>
-                        </Tab>
-                        <Tab fx:id="extrasTab" closable="false" text="Extras">
-                           <content>
-                              <ScrollPane hbarPolicy="NEVER">
-                                 <content>
-                                    <GridPane hgap="3.0" vgap="3.0">
-                                       <columnConstraints>
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="303.800048828125" minWidth="10.0" prefWidth="200.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="450.0" minWidth="450.0" prefWidth="450.0" />
-                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
-                                       </columnConstraints>
-                                       <rowConstraints>
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
-                                          <RowConstraints minHeight="10.0" prefHeight="100.0" valignment="TOP" vgrow="SOMETIMES" />
-                                       </rowConstraints>
-                                       <children>
-                                          <Label layoutX="253.0" layoutY="16.0" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <tooltip>
-                                                <Tooltip text="Every table will be added to the first playlist that is found." />
-                                             </tooltip>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Custom 4:" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="10.0" layoutY="532.0" styleClass="default-text" text="Details:" GridPane.rowIndex="7">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="custom4" GridPane.columnIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="custom5" layoutX="173.0" layoutY="466.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextArea fx:id="gDetails" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                                          <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="Custom 5:" textFill="WHITE" GridPane.rowIndex="1">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="13.0" layoutY="80.0" styleClass="default-text" text="Notes:" GridPane.rowIndex="8">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="13.0" layoutY="184.0" styleClass="default-text" text="Log:" GridPane.rowIndex="9">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label styleClass="default-text" text="Alternative ROM Name:" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="altRomName" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <Label layoutX="13.0" layoutY="86.0" styleClass="default-text" text="Web DB Id:" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Is Mod:" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextArea fx:id="gNotes" layoutX="171.0" layoutY="181.0" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                          <TextArea fx:id="gLog" layoutX="171.0" layoutY="284.0" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                                          <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Tournament Id:" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <Label layoutX="13.0" layoutY="120.0" styleClass="default-text" text="Web Link:" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextField fx:id="webDbId" layoutX="171.0" layoutY="81.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="webLink" layoutX="171.0" layoutY="115.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <TextField fx:id="tourneyId" layoutX="171.0" layoutY="148.0" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                          <CheckBox fx:id="modCheckbox" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </CheckBox>
-                                          <Label layoutX="13.0" layoutY="455.0" styleClass="default-text" text="Play Log:" GridPane.rowIndex="10">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Label>
-                                          <TextArea fx:id="gPlayLog" editable="false" layoutX="171.0" layoutY="455.0" prefHeight="90.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                                          <Button mnemonicParsing="false" onAction="#onWeblinkProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="4">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
-                                             </tooltip>
-                                             <GridPane.margin>
-                                                <Insets />
-                                             </GridPane.margin>
-                                          </Button>
-                                          <Button fx:id="applyAltRomBtn" mnemonicParsing="false" onAction="#onAltRomApply" text="Apply" GridPane.columnIndex="2" GridPane.rowIndex="2">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Button>
+                                          </GridPane>
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                        </padding>
-                                    </GridPane>
+                                    </VBox>
                                  </content>
                               </ScrollPane>
                            </content>
+                        </Tab>
+                        <Tab closable="false" text="Extras">
+                           <content>
+                              <ScrollPane hbarPolicy="NEVER">
+                                 <content>
+                                    <VBox>
+                                       <children>
+                                          <Label styleClass="default-title" text="Table Extras" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                             <VBox.margin>
+                                                <Insets bottom="8.0" />
+                                             </VBox.margin>
+                                          </Label>
+                                          <GridPane hgap="3.0" vgap="3.0">
+                                             <columnConstraints>
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="550.0" minWidth="550.0" prefWidth="550.0" />
+                                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="60.0" minWidth="60.0" prefWidth="60.0" />
+                                             </columnConstraints>
+                                             <rowConstraints>
+                                                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                                             </rowConstraints>
+                                             <children>
+                                                <Label fx:id="databaseIdLabel1" layoutX="22.0" layoutY="28.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="gDetails" prefHeight="240.0" GridPane.columnIndex="1">
+                                                   <GridPane.margin>
+                                                      <Insets />
+                                                   </GridPane.margin>
+                                                </TextArea>
+                                                <Label styleClass="default-text" text="Details:*">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="gNotes" prefHeight="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <Label styleClass="default-text" text="Notes:" GridPane.rowIndex="1">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="gLog" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                <Label styleClass="default-text" text="Log:" GridPane.rowIndex="2">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                                <TextArea fx:id="gPlayLog" editable="false" prefHeight="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <Label styleClass="default-text" text="Play Log:" GridPane.rowIndex="3">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Label>
+                                             </children>
+                                          </GridPane>
+                                       </children>
+                                       <padding>
+                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                       </padding>
+                                    </VBox>
+                                 </content>
+                                 <padding>
+                                    <Insets right="6.0" />
+                                 </padding>
+                              </ScrollPane>
+                           </content>
+                        </Tab>
+                        <Tab fx:id="screensTab" closable="false" text="Screens" />
+                        <Tab fx:id="statisticsTab" closable="false" text="Statistics">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                          </content>
                         </Tab>
                      </tabs>
                   </TabPane>
@@ -804,8 +988,36 @@
                <BorderPane.margin>
                   <Insets bottom="6.0" />
                </BorderPane.margin>
-               <top>
-                  <Label fx:id="titleLabel" text="title" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+               <right>
+                  <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="prevButton" mnemonicParsing="false" onAction="#onPrevious">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2a-arrow-left-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the previous entry in the current selection. [Page-Up]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="nextButton" mnemonicParsing="false" onAction="#onNext">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-forward" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Jump to the next entry in the current selection. [Page-Down]" wrapText="true" />
+                           </tooltip>
+                        </Button>
+                     </children>
+                  </HBox>
+               </right>
+               <left>
+                  <Label fx:id="titleLabel" styleClass="default-title" text="title" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -813,30 +1025,39 @@
                         <Insets bottom="12.0" />
                      </BorderPane.margin>
                   </Label>
-               </top>
+               </left>
             </BorderPane>
          </top>
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <bottom>
-            <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-               <children>
-                <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-                     <HBox.margin>
-                        <Insets right="12.0" />
-                     </HBox.margin>
-                  </Button>
-                  <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
-                     <HBox.margin>
-                        <Insets />
-                     </HBox.margin>
-                  </Button>
-               </children>
+            <BorderPane BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets left="12.0" top="12.0" />
                </BorderPane.margin>
-            </HBox>
+               <center>
+                  <HBox alignment="BASELINE_RIGHT" spacing="6.0">
+                     <children>
+                      <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
+                           <HBox.margin>
+                              <Insets right="6.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
+                        <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="saveBtn1" layoutX="702.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save &amp; Close" />
+                     </children>
+                  </HBox>
+               </center>
+               <left>
+                  <Label text="* starred fields may be overwritten on auto-fill" BorderPane.alignment="CENTER" />
+               </left>
+            </BorderPane>
          </bottom>
       </BorderPane>
    </center>

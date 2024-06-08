@@ -2,10 +2,13 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,6 +36,9 @@ public class VPXService {
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
+
+  @Autowired
+  private PinUPConnector pinUPConnector;
 
   public POV getPOV(Game game) {
     try {
@@ -137,8 +143,8 @@ public class VPXService {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
-          Map<String, String> values = VPXUtil.readTableInfo(gameFile);
-          if(values != null) {
+          Map<String, Object> values = VPXUtil.readTableInfo(gameFile);
+          if (values != null) {
             return new TableInfo(values);
           }
         } catch (Exception e) {
@@ -161,13 +167,12 @@ public class VPXService {
     return null;
   }
 
-  public boolean saveSources(Game game, String base64Source) {
+  public boolean importVBS(Game game, String vbs, boolean useTempFile) {
     if (game != null) {
       File gameFile = game.getGameFile();
       if (gameFile.exists()) {
         try {
-          byte[] decoded = Base64.getDecoder().decode(base64Source);
-          VPXUtil.writeGameData(gameFile, decoded);
+          VPXUtil.importVBS(gameFile, vbs, useTempFile);
           LOG.info("Written table sources " + gameFile.getAbsolutePath());
           return true;
         } catch (IOException e) {
@@ -193,11 +198,11 @@ public class VPXService {
     return false;
   }
 
-  public boolean play(Game game) {
+  public boolean play(@Nullable Game game, @Nullable String altExe) {
     systemService.killPopper();
 
     if (game != null) {
-      return vpxCommandLineService.execute(game, "-Play");
+      return vpxCommandLineService.execute(game, "-Play", altExe);
     }
 
     return vpxCommandLineService.launch();
@@ -215,5 +220,10 @@ public class VPXService {
     }
     LOG.error("No game found reading checksum of " + game.getGameDisplayName());
     return null;
+  }
+
+  public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+    MusicInstallationUtil.unpack(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+    return true;
   }
 }

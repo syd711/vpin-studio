@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PopperCustomOptionsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.PopperCustomOptionsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -39,7 +39,8 @@
                   <CheckBox fx:id="showInfoInGame" mnemonicParsing="false" styleClass="preference-checkbox" text="Show Info In Game" />
                   <Label styleClass="checkbox-description" text="If enabled this will allow the info/help/other keys to be active during gameplay." textFill="WHITE" />
                   <CheckBox fx:id="popUPHideAnykey" mnemonicParsing="false" styleClass="preference-checkbox" text="Pop Up Hide On Any Key" />
-                  <Label styleClass="checkbox-description" text="Normally you have to press info key and then info key again to close. you can have it use any button press to close the info key." textFill="WHITE" />
+                  <Label styleClass="checkbox-description" text="Normally you have to press info key and then info key again to close. " textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="You can have it use any button press to close the info key." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="510.0" styleClass="checkbox-description" text="Note if this is on, then all info/help/other screens will close with any key." textFill="WHITE" />
                   <CheckBox fx:id="pauseOnLoad" mnemonicParsing="false" styleClass="preference-checkbox" text="Pause Displays On Load" />
                   <Label styleClass="checkbox-description" text="If you have lower end PC and use a higher end loading video or just want to load games faster," textFill="WHITE" />
@@ -53,8 +54,10 @@
                   <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="If enabled the table audio is muted during table." textFill="WHITE" />
                   <CheckBox fx:id="joyAxisMove" layoutX="34.0" layoutY="776.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Joystick Axis Move" />
                   <Label layoutX="34.0" layoutY="815.0" styleClass="checkbox-description" text="Enable to support joystick axis moving mapped to buttons to allow joystick analogue movement in wheelbar." textFill="WHITE" />
-                  <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Volume Change (v1.4.6)" />
+                  <CheckBox fx:id="volumeChange" layoutX="34.0" layoutY="836.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Volume Change" />
                   <Label layoutX="34.0" layoutY="875.0" styleClass="checkbox-description" text="This will change volume back to original when returning from games. You can disable it with this." textFill="WHITE" />
+                  <CheckBox fx:id="useAltWheels" layoutX="34.0" layoutY="891.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use Alt Wheels" />
+                  <Label layoutX="34.0" layoutY="929.0" styleClass="checkbox-description" text="Use your own wheels for an altmode." textFill="WHITE" />
                   <GridPane vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="585.3999938964844" minWidth="10.0" prefWidth="160.0" />
@@ -75,7 +78,7 @@
                               <Label styleClass="preference-description" text="Normally you press the exit emulator key once and it will close emulator/game." textFill="WHITE" />
                               <VBox>
                                  <children>
-                                    <Label styleClass="preference-description" text="You can set this to 2/3 and it will require you to press the exit emulator X times in a row to exit emulator." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="You can set this to 2/3 and it will require you to press the exit emulator X times to exit emulator." textFill="WHITE" />
                                  </children>
                               </VBox>
                            </children>
@@ -115,7 +118,8 @@
                               <Label styleClass="preference-description" text="Set to delay startup of menu after game in milliseconds." textFill="WHITE" />
                               <VBox>
                                  <children>
-                                    <Label styleClass="preference-description" text="Some hardware dmd, DOF and slower systems need to 'wait' after vpx/emu closes to re-init all those devices." textFill="WHITE" />
+                                    <Label styleClass="preference-description" text="Some hardware dmd, DOF and slower systems need to 'wait' after vpx/emu closes" textFill="WHITE" />
+                                    <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="to re-init all those devices." textFill="WHITE" />
                                  </children>
                               </VBox>
                            </children>
@@ -211,7 +215,7 @@
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
                         <Label text="Rapid Fire Count:" textFill="WHITE">
@@ -221,8 +225,9 @@
                         </Label>
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Label styleClass="preference-description" text="This is the 'mute' next/prior key count… so that it doesn't sound a 'strange' when repeating a lot of keys in a row." textFill="WHITE" />
+                              <Label styleClass="preference-description" text="This is the 'mute' next/prior key count… so that it doesn't sound a 'strange'" textFill="WHITE" />
                               <VBox />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="when repeating a lot of keys in a row." textFill="WHITE" />
                            </children>
                         </VBox>
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">
@@ -322,7 +327,8 @@
                            <children>
                               <Label styleClass="preference-description" text="This is a timeout where Popper will auto-hide after so many seconds." textFill="WHITE" />
                               <VBox />
-                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="For Future Pinball some tables may take longer to load and you may want to increase to something like 150." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="For Future Pinball some tables may take longer to load" textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="and you may want to increase to something like 150." textFill="WHITE" />
                            </children>
                         </VBox>
                         <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1">

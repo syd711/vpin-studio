@@ -7,11 +7,13 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -19,11 +21,11 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.OverlayPreferencesController">
    <center>
-      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
-            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
                   <Label styleClass="preference-subtitle" text="Overlay &amp; Pause Menu">
                      <VBox.margin>
                         <Insets />
@@ -34,9 +36,75 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
+                  <Label styleClass="preference-subtitle" text="Input Settings" />
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="These are experimental settings. You can try these if you are facing issues navigating the pause menu." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="371.2000732421875" minWidth="10.0" prefWidth="161.5999755859375" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="591.2000244140625" minWidth="10.0" prefWidth="591.2000244140625" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="preference-label" text="Key Input Debounce:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Spinner fx:id="inputDebounceSpinner" prefHeight="26.0" prefWidth="118.0" />
+                              <Label styleClass="default-text" text="milliseconds" textFill="WHITE">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label styleClass="preference-description" text="This will avoid repetitive input events caused by controllers for the given amount of time." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="12.0" styleClass="preference-label" text="Button Bindings:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label layoutX="171.0" layoutY="45.0" styleClass="preference-description" text="Record your cabinet button inputs if the pause menu navigation does not work." textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onButtonRecord" text="Cabinet Button Recorder" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="The recording can only be done on the cabinet." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                     </children>
+                  </GridPane>
                   <Label layoutX="34.0" layoutY="886.0" styleClass="preference-subtitle" text="Overlay Preferences">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <CheckBox fx:id="showOverlayOnStartupCheckbox" mnemonicParsing="false" text="Show Overlay on Startup" textFill="WHITE">
@@ -156,42 +224,36 @@
                         <Insets />
                      </VBox.margin>
                   </GridPane>
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Pause Menu Preferences">
+                  <HBox alignment="BASELINE_LEFT" spacing="6.0">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
-                  </Label>
-                  <VBox styleClass="info-container">
                      <children>
-                        <Label styleClass="default-text" text="Attention: If you are using the GL version of Visual Pinball, the pause menu will open with some stuttering.">
-                           <font>
-                              <Font name="System Bold" size="12.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="17.0" layoutY="17.0" styleClass="default-text" text="Be patient, it will appear." />
-                        <Label layoutX="17.0" layoutY="57.0" text="Make sure to have the pause key of VPX bound to &quot;P&quot;. The menu will only work with VPX 10.8." textFill="WHITE">
+                        <Label styleClass="preference-subtitle" text="Pause Menu Preferences" />
+                        <Label>
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="400.0" text="Attention: If you are using the GL version of Visual Pinball, the pause menu will open with some stuttering. Be patient, it will appear." wrapText="true" />
+                           </tooltip>
                         </Label>
                      </children>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                     </padding>
-                  </VBox>
+                  </HBox>
                   <GridPane alignment="BASELINE_RIGHT" vgap="6.0">
                      <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.5999755859375" minWidth="180.0" prefWidth="209.5999755859375" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" prefWidth="581.6000244140625" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="209.5999755859375" minWidth="180.0" prefWidth="186.4000244140625" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="650.0" minWidth="350.0" prefWidth="563.5999755859375" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="145.199951171875" minWidth="1.6000244140625455" prefWidth="3.2000732421875" />
                      </columnConstraints>
                      <rowConstraints>
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
@@ -206,8 +268,8 @@
                                     <Insets top="3.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="When the overlay key is pressed for a paused game, the pause menu will be shown. " textFill="WHITE" />
-                              <Label styleClass="checkbox-description" text="This saves one key binding." textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="When the overlay key is pressed for a paused game, " textFill="WHITE" />
+                              <Label styleClass="checkbox-description" text="the pause menu will be shown instead. This saves one key binding." textFill="WHITE" />
                            </children>
                         </VBox>
                         <Label styleClass="preference-label" text="Pause Menu Key:" textFill="WHITE" GridPane.rowIndex="1">
@@ -221,44 +283,17 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="preference-label" text="Pause Menu Browser:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
+                           <GridPane.margin>
+                              <Insets top="4.0" />
+                           </GridPane.margin>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <children>
-                              <CheckBox fx:id="userInternalBrowserCheckbox" mnemonicParsing="false" text="Use internal browser (not recommended)" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="3.0" />
-                                 </VBox.margin>
-                              </CheckBox>
-                              <Label styleClass="checkbox-description" text="By default, the pause menu requires the Chrome browser to be installed on the cabinet." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="You can use the internal browser instead, but this one has issues with the playback" textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="of YouTube videos (loading spinner is not hiding)." textFill="WHITE" />
-                              <CheckBox fx:id="autoplayCheckbox" layoutX="10.0" layoutY="13.0" mnemonicParsing="false" text="Auto-Play Videos" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="6.0" />
-                                 </VBox.margin>
-                              </CheckBox>
-                              <Label layoutX="10.0" layoutY="33.0" styleClass="checkbox-description" text="Instruction videos will start playing when the entry is selected." textFill="WHITE" />
-                              <Label layoutX="10.0" layoutY="55.0" styleClass="checkbox-description" text="Use this option if the video playback does not start on &quot;Start&quot; button pressed." textFill="WHITE" />
-                           </children>
-                        </VBox>
-                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="3">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
-                           <children>
-                              <TextField fx:id="videoAuthorsAllowList">
+                              <TextField fx:id="videoAuthorsAllowList" promptText="e.g. &quot;Kongedam&quot;">
                                  <VBox.margin>
                                     <Insets top="3.0" />
                                  </VBox.margin>
@@ -269,6 +304,53 @@
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
                            </children>
                         </VBox>
+                        <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <children>
+                              <ComboBox fx:id="pauseMenuStyleCombo" prefHeight="30.0" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="When the Popper screens are used, the first assets of the &quot;Other2&quot;, &quot;Info&quot; and &quot;Help&quot; screens are shown on the configured screen locations." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="193.0" styleClass="preference-label" text="Tutorial Video Screen:" textFill="WHITE" GridPane.rowIndex="3">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <ComboBox fx:id="tutorialScreenCombo" prefHeight="30.0" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="400.0" text="Select the target screen where the browser should be opened for the playback of tutorial videos." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
+                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Button>
                      </children>
                      <opaqueInsets>
                         <Insets />

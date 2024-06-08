@@ -33,7 +33,7 @@ public class MenuItemSelectionState extends MenuState {
   MenuState enter() {
     PauseMenuItem item = menuController.getSelection();
     if (item.getItemType().equals(PauseMenuItemTypes.exit)) {
-      PauseMenu.exit();
+      PauseMenu.exitPauseMenu();
     }
     else if (item.getYouTubeUrl() != null) {
       menuController.showYouTubeVideo(item);
@@ -43,12 +43,13 @@ public class MenuItemSelectionState extends MenuState {
 
   @Override
   MenuState back() {
-    PauseMenu.exit();
+    PauseMenu.exitPauseMenu();
     return null;
   }
 
   private void checkAutoPlay() {
-    if (menuController.getPauseMenuSettings().isAutoplay()) {
+    boolean autoPlay = true;
+    if (autoPlay) {
       PauseMenuItem item = menuController.getSelection();
       if (item.getYouTubeUrl() != null) {
         new Thread(() -> {

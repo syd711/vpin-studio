@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.popper;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -26,29 +27,7 @@ public class GameMediaItem {
     this.gameId = game.getId();
     this.screen = screen;
     this.uri = "poppermedia/" + game.getId() + "/" + screen.name();
-    determineMimeType();
-  }
-
-  private void determineMimeType() {
-    try {
-      this.mimeType = Files.probeContentType(file.toPath());
-      if (this.mimeType == null) {
-        String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
-        if (suffix.endsWith("apng")) {
-          this.mimeType = "image/apng";
-        }
-
-        if(this.mimeType == null && suffix.endsWith("png")) {
-          this.mimeType = "image/png";
-        }
-        else if(this.mimeType == null && suffix.endsWith("mp4")) {
-          this.mimeType = "video/mp4";
-        }
-      }
-    } catch (IOException e) {
-      LOG.error("Failed to determine mimetype for " + file.getAbsolutePath() + ": " + e.getMessage(), e);
-      this.mimeType = "image/png";
-    }
+    this.mimeType = MimeTypeUtil.determineMimeType(file);
   }
 
   @JsonIgnore

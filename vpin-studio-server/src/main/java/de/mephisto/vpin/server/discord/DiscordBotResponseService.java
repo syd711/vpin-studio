@@ -11,7 +11,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
@@ -45,7 +45,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
   private DiscordService discordService;
 
   @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreParsingService highscoreParser;
 
   @Autowired
   private VpbmService vpbmService;
@@ -83,7 +83,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               builder.append(msg);
             }
             else {
-              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game, game.getGameDisplayName());
+              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game);
               String msg = DiscordBotCommandResponseFactory.createActiveCompetitionMessage(activeCompetition, game, highscores);
               builder.append(msg);
             }
@@ -111,7 +111,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
               if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
-              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game, game.getGameDisplayName());
+              ScoreSummary highscores = highscoreService.getScoreSummary(cmd.getServerId(), game);
               return () -> DiscordBotCommandResponseFactory.createHighscoreMessage(game, highscores);
             }
           }

@@ -1,22 +1,28 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,6 +32,9 @@ import java.util.ResourceBundle;
 
 public class AltColorUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -39,14 +48,10 @@ public class AltColorUploadController implements Initializable, DialogController
   @FXML
   private Button fileBtn;
 
-  @FXML
-  private Label titleLabel;
-
   private File selection;
 
   private boolean result = false;
   private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -62,7 +67,7 @@ public class AltColorUploadController implements Initializable, DialogController
       stage.close();
 
       Platform.runLater(() -> {
-        AltColorUploadProgressModel model = new AltColorUploadProgressModel(tablesSidebarController, this.game.getId(), "ALT Color Upload", selection, "altcolor");
+        AltColorUploadProgressModel model = new AltColorUploadProgressModel(this.game.getId(), "ALT Color Upload", selection, "altcolor");
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -77,7 +82,7 @@ public class AltColorUploadController implements Initializable, DialogController
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select ALT Color");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.pac", "*.vni", "*.pal", "*.cRZ"));
+        new FileChooser.ExtensionFilter("ALT Color (Package)", "*.zip", "*.rar", "*.pac", "*.vni", "*.pal", "*.cRZ"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);
@@ -93,25 +98,29 @@ public class AltColorUploadController implements Initializable, DialogController
   private void refreshSelection() {
     this.uploadBtn.setDisable(selection == null);
 
-    if(selection.getName().toLowerCase().endsWith(".zip")) {
+    String suffix = FilenameUtils.getExtension(selection.getName());
+    if (PackageUtil.isSupportedArchive(suffix)) {
       this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
       this.fileNameField.setDisable(true);
       this.fileBtn.setDisable(true);
       this.cancelBtn.setDisable(true);
 
       Platform.runLater(() -> {
-        String analyze = AltColorArchiveAnalyzer.analyze(selection);
+        String analyze = UploadAnalysisDispatcher.validateArchive(selection, AssetType.ALT_COLOR);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);
         this.cancelBtn.setDisable(false);
 
         if (analyze != null) {
+          this.fileNameField.setText("");
+          this.uploadBtn.setDisable(true);
           result = false;
           WidgetFactory.showAlert(Studio.stage, analyze);
           return;
         }
         this.uploadBtn.setDisable(false);
+
       });
     }
     else {
@@ -126,6 +135,12 @@ public class AltColorUploadController implements Initializable, DialogController
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip", "pac", "vni", "pal", "cRZ"));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -139,16 +154,11 @@ public class AltColorUploadController implements Initializable, DialogController
 
   public void setGame(GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Select ALT color file or package for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
   }
 
   public void setFile(File file) {
     this.selection = file;
-    if(selection != null) {
+    if (selection != null) {
       Platform.runLater(() -> {
         refreshSelection();
       });

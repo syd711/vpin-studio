@@ -33,6 +33,19 @@ public class ScreenEntry {
     }
   }
 
+  public boolean isTransparent() {
+    try {
+      String transparency = record.get(4);
+      if (StringUtils.isEmpty(transparency) || transparency.equals("0")) {
+        return false;
+      }
+      return transparency.trim().equals("1");
+    } catch (Exception e) {
+      LOG.warn("Invalid transparency value: " + e.getMessage());
+      return false;
+    }
+  }
+
   @Nullable
   public ScreenMode getScreenMode() {
     try {

@@ -195,7 +195,7 @@ public class SubscriptionDialogController implements Initializable, DialogContro
   }
 
   public void setCompetition(List<CompetitionRepresentation> all, CompetitionRepresentation selectedCompetition) {
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> games = client.getGameService().getVpxGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (StringUtils.isEmpty(game.getRom())) {

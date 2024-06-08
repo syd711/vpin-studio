@@ -1,9 +1,10 @@
 package de.mephisto.vpin.server.assets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
@@ -23,7 +24,6 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
@@ -33,7 +33,7 @@ public class AssetFactory {
   static {
     try {
       GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, OverlayWindowFX.class.getResourceAsStream("digital_counter_7.ttf")));
+      ge.registerFont(Font.createFont(Font.TRUETYPE_FONT, ServerFX.class.getResourceAsStream("digital_counter_7.ttf")));
     } catch (Exception e) {
       LOG.error("Error loading font: " + e.getMessage(), e);
     }
@@ -58,7 +58,7 @@ public class AssetFactory {
         name = name.substring(0, 34) + "...";
       }
 
-      String table = game.getGameFileName();
+      String table = game.getGameDisplayName();
       if (table.length() > 36) {
         table = table.substring(0, 35) + "...";
       }
@@ -292,6 +292,7 @@ public class AssetFactory {
       font = new Font("Digital Counter 7", Font.PLAIN, scoreSize);
       graphics.setFont(font);
       String score = summary.getScores().get(0).getScore();
+      score = ScoreFormatUtil.formatScore(score);
       textWidth = graphics.getFontMetrics().stringWidth(score);
       while (textWidth > 500) {
         font = new Font("Digital Counter 7", Font.PLAIN, scoreSize--);

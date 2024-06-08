@@ -1,17 +1,17 @@
 package de.mephisto.vpin.ui.competitions;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -38,11 +38,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
@@ -158,12 +160,13 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     if (c != null) {
       CompetitionRepresentation newCmp = null;
       try {
-        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", c));
+        ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Creating Subscription", Arrays.asList(c)));
         Platform.runLater(() -> {
           onReload();
           tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
@@ -180,7 +183,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
         onReload();
         tableView.getSelectionModel().select(newCmp);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
     }
@@ -228,7 +232,10 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
     client.clearWheelCache();
 
     tableView.setVisible(false);
-    tableStack.getChildren().add(loadingOverlay);
+
+    if (!tableStack.getChildren().contains(loadingOverlay)) {
+      tableStack.getChildren().add(loadingOverlay);
+    }
 
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     discordStatus = client.getDiscordService().getDiscordStatus(guildId);
@@ -299,13 +306,15 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
     columnName.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       Label label = new Label(value.getName());
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return new SimpleObjectProperty(label);
     });
@@ -313,19 +322,21 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
     columnTable.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
-      GameRepresentation game = client.getGame(value.getGameId());
+      GameRepresentation game = client.getGameCached(value.getGameId());
       Label label = new Label("- not available anymore -");
+      label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (game != null) {
         label = new Label(game.getGameDisplayName());
+        label.getStyleClass().add("default-text");
       }
 
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = OverlayWindowFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
-      if(gameMediaItem != null) {
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }
       ImageView view = new ImageView(image);
@@ -361,6 +372,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
         Label label = new Label(discordServer.getName());
+        label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
@@ -375,14 +387,19 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       hBox.setAlignment(Pos.CENTER_LEFT);
       PlayerRepresentation discordPlayer = client.getDiscordService().getDiscordPlayer(value.getDiscordServerId(), Long.valueOf(value.getOwner()));
       if (discordPlayer != null) {
-        Image image = new Image(client.getCachedUrlImage(discordPlayer.getAvatarUrl()));
-        ImageView view = new ImageView(image);
+        InputStream cachedUrlImage = client.getCachedUrlImage(discordPlayer.getAvatarUrl());
+        if (cachedUrlImage == null) {
+          cachedUrlImage = Studio.class.getResourceAsStream("avatar-blank.png");
+        }
+        Image image = new Image(cachedUrlImage);
+        ImageView view = new ImageView();
         view.setPreserveRatio(true);
         view.setFitWidth(50);
         view.setFitHeight(50);
         CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
 
         Label label = new Label(discordPlayer.getName());
+        label.getStyleClass().add("default-text");
         label.setStyle(getLabelCss(value));
         hBox.getChildren().addAll(view, label);
       }
@@ -403,7 +420,8 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
 
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 
@@ -415,6 +433,34 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
         }
       });
       return row;
+    });
+
+    columnServer.setSortable(false);
+    columnCompetitionOwner.setSortable(false);
+
+    tableView.setSortPolicy(new Callback<TableView<CompetitionRepresentation>, Boolean>() {
+      @Override
+      public Boolean call(TableView<CompetitionRepresentation> gameRepresentationTableView) {
+        CompetitionRepresentation selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if (!gameRepresentationTableView.getSortOrder().isEmpty()) {
+          TableColumn<CompetitionRepresentation, ?> column = gameRepresentationTableView.getSortOrder().get(0);
+          if (column.equals(columnName)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> o.getName()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+          else if (column.equals(columnTable)) {
+            Collections.sort(tableView.getItems(), Comparator.comparing(o -> client.getGameCached(o.getGameId()).getGameDisplayName()));
+            if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+              Collections.reverse(tableView.getItems());
+            }
+            return true;
+          }
+        }
+        return true;
+      }
     });
 
     validationError.setVisible(false);

@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.popper;
 
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.GameStatusService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,20 +30,26 @@ public class PopperResource {
   @Autowired
   private PopperService popperService;
 
+  @Autowired
+  private GameStatusService gameStatusService;
+
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@RequestParam("table") String table) {
     LOG.info("Received popper game launch event for " + table.trim());
-    File tableFile = new File(table.trim());
-    Game game = gameService.getGameByFilename(tableFile.getName());
+    Game game = resolveGame(table);
+    if (game == null) {
+      LOG.warn("No game found for name '" + table);
+      return false;
+    }
+
+    if (gameStatusService.getStatus().getGameId() == game.getId()) {
+      LOG.info("Skipped launch event, since the game has been marked as active already.");
+      return false;
+    }
 
     new Thread(() -> {
-      if (game == null) {
-        LOG.warn("No game found for name '" + table);
-      }
-      else {
-        Thread.currentThread().setName("Popper Game Launch Thread");
-        popperService.notifyTableStatusChange(game, true);
-      }
+      Thread.currentThread().setName("Popper Game Launch Thread");
+      popperService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
   }
@@ -50,17 +57,20 @@ public class PopperResource {
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table) {
     LOG.info("Received popper game exit event for " + table.trim());
-    File tableFile = new File(table.trim());
-    Game game = gameService.getGameByFilename(tableFile.getName());
+    Game game = resolveGame(table);
+    if (game == null) {
+      LOG.warn("No game found for name '" + table);
+      return false;
+    }
+
+    if (!gameStatusService.getStatus().isActive()) {
+      LOG.info("Skipped exit event, since the no game is currently running.");
+      return false;
+    }
 
     new Thread(() -> {
-      if (game == null) {
-        LOG.warn("No game found for name '" + table);
-      }
-      else {
-        Thread.currentThread().setName("Popper Game Exit Thread");
-        popperService.notifyTableStatusChange(game, false);
-      }
+      Thread.currentThread().setName("Popper Game Exit Thread");
+      popperService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
   }
@@ -70,4 +80,15 @@ public class PopperResource {
     popperService.notifyPopperLaunch();
     return true;
   }
+
+  private Game resolveGame(String table) {
+    File tableFile = new File(table.trim());
+    Game game = gameService.getGameByFilename(tableFile.getName());
+    if (game == null && tableFile.getParentFile() != null) {
+      game = gameService.getGameByFilename(tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+    }
+    LOG.info("PopperResource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
+    return game;
+  }
+
 }

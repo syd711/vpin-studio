@@ -3,9 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class VPSAssetsDialogController implements DialogController, AutoCompleteTextFieldChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(VPSAssetsDialogController.class);
@@ -79,12 +81,12 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
   public void setGame(GameRepresentation game) {
     this.game = game;
 
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable tableById = VPS.getInstance().getTableById(game.getExtTableId());
+      VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
       if (tableById != null) {
         refreshTableView(tableById);
         return;
@@ -92,12 +94,10 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     }
 
     String term = game.getGameDisplayName();
-    List<VpsTable> vpsTables = VPS.getInstance().find(term, game.getRom());
+    List<VpsTable> vpsTables = client.getVpsService().find(term, game.getRom());
     if (!vpsTables.isEmpty()) {
       VpsTable vpsTable = vpsTables.get(0);
       refreshTableView(vpsTable);
-
-      saveExternalTableId(vpsTable.getId());
     }
   }
 
@@ -105,24 +105,15 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     dataRoot.getChildren().removeAll(dataRoot.getChildren());
     autoCompleteNameField.reset();
 
-    TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", vpsTable.getPupPackFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "Backglasses", vpsTable.getB2sFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", vpsTable.getAltSoundFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "ALT Color", vpsTable.getAltColorFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "Sound", vpsTable.getSoundFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "Topper", vpsTable.getTopperFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "ROM", vpsTable.getRomFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", vpsTable.getWheelArtFiles());
-
-    TablesSidebarVpsController.addSection(dataRoot, "POV", vpsTable.getPovFiles());
-
+    TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), false);
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());
 
@@ -132,26 +123,13 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     }
   }
 
-  private void saveExternalTableId(String id) {
-    try {
-      if (!id.equals(game.getExtTableId())) {
-        game.setExtTableId(id);
-        Studio.client.getGameService().saveGame(game);
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to set external game id: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error updating external game reference: " + e.getMessage());
-    }
-  }
-
   @Override
   public void onChange(String value) {
-    List<VpsTable> tables = VPS.getInstance().getTables();
+    List<VpsTable> tables = client.getVpsService().getTables();
     Optional<VpsTable> selectedEntry = tables.stream().filter(t -> t.getDisplayName().equalsIgnoreCase(value)).findFirst();
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
       refreshTableView(vpsTable);
-      saveExternalTableId(vpsTable.getId());
     }
   }
 

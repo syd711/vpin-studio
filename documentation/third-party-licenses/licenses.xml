@@ -137,12 +137,38 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>commons-beanutils</groupId>
+      <artifactId>commons-beanutils</artifactId>
+      <version>1.9.2</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>the apache software license, version 2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
       <version>1.15</version>
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>apache-2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>2.15.1</version>
+      <licenses>
+        <license>
+          <name>Apache-2.0</name>
           <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
           <file>apache-2.0 - license-2.0.txt</file>
@@ -181,7 +207,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>2.11.1</version>
+      <version>2.20.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -189,7 +215,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>1.0.0</version>
+      <version>2.20.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -197,7 +223,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>2.11.1</version>
+      <version>2.20.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -213,7 +239,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>2.11.1</version>
+      <version>2.20.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -229,7 +255,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>2.11.1</version>
+      <version>2.20.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -276,6 +302,19 @@
           <url>http://www.eclipse.org/legal/epl-v10.html</url>
           <distribution>repo</distribution>
           <file>eclipse public license - v 1.0 - epl-v10.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>me.xdrop</groupId>
+      <artifactId>fuzzywuzzy</artifactId>
+      <version>1.4.0</version>
+      <licenses>
+        <license>
+          <name>GPL 2</name>
+          <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
+          <distribution>repo</distribution>
+          <file>gpl 2 - gpl-2.0.html</file>
         </license>
       </licenses>
     </dependency>
@@ -345,6 +384,24 @@
     <dependency>
       <groupId>net.sf.sevenzipjbinding</groupId>
       <artifactId>sevenzipjbinding</artifactId>
+      <version>16.02-2.01</version>
+      <licenses>
+        <license>
+          <name>LGPL</name>
+          <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
+          <distribution>repo</distribution>
+          <file>lgpl - lgpl-2.1.html</file>
+        </license>
+        <license>
+          <name>unRAR restriction</name>
+          <url>http://www.7-zip.org/license.txt</url>
+          <file>unrar restriction - license.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>net.sf.sevenzipjbinding</groupId>
+      <artifactId>sevenzipjbinding-all-platforms</artifactId>
       <version>16.02-2.01</version>
       <licenses>
         <license>
@@ -674,7 +731,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -688,7 +744,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -702,7 +757,6 @@
           <name>GPLv2+CE</name>
           <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -716,7 +770,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -730,7 +783,6 @@
           <name>GPLv2+CE</name>
           <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -744,7 +796,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -758,7 +809,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -772,7 +822,6 @@
           <name>GPLv2+CE</name>
           <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -786,7 +835,6 @@
           <name>GPLv2+CE</name>
           <url>http://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>
@@ -800,7 +848,6 @@
           <name>GPLv2+CE</name>
           <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
           <distribution>repo</distribution>
-          <file>gplv2+ce - gplv2+ce.html</file>
           <comments>GNU General Public License version 2 with the Classpath Exception</comments>
         </license>
       </licenses>

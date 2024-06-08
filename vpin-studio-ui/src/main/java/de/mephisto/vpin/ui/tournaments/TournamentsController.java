@@ -6,9 +6,11 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.fxml.FXML;
@@ -20,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
@@ -32,9 +35,9 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -100,6 +103,9 @@ public class TournamentsController implements Initializable, StudioFXController 
   private Button dashboardBtn;
 
   @FXML
+  private Button dashboardReloadBtn;
+
+  @FXML
   private Button copyTokenBtn;
 
   @FXML
@@ -116,6 +122,9 @@ public class TournamentsController implements Initializable, StudioFXController 
 
   @FXML
   private Hyperlink discordLink;
+
+  @FXML
+  private Hyperlink websiteLink;
 
   @FXML
   private VBox avatarPane;
@@ -143,6 +152,31 @@ public class TournamentsController implements Initializable, StudioFXController 
             desktop.browse(new URI(link));
           } catch (Exception e) {
             LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onDashboardReload() {
+    WebEngine webEngine = dashboardWebView.getEngine();
+    webEngine.reload();
+  }
+
+  @FXML
+  private void opnWebsiteOpen() {
+    if (this.tournamentTreeModel.isPresent()) {
+      TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
+      Tournament tournament = treeModel.getTournament();
+      String link = tournament.getWebsite();
+      if (!StringUtils.isEmpty(link)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(link));
+          } catch (Exception e) {
+            LOG.error("Failed to open website link: " + e.getMessage(), e);
           }
         }
       }
@@ -203,39 +237,68 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshHighscores(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!highscoresPane.isExpanded()) {
       return;
     }
 
+    scoreList.getStyleClass().remove("media-container");
     scoreList.getChildren().removeAll(scoreList.getChildren());
-    if (tournamentTreeModel.isPresent() && tournamentTreeModel.get().isLeaf()) {
+    if (tournamentTreeModel.isPresent() && !tournamentTreeModel.get().getValue().isTournamentNode()) {
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
-      VpsTable vpsTable = value.getVpsTable();
       Tournament tournament = value.getTournament();
       List<TableScore> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
+      highscores = highscores.stream().filter(h -> h.getVpsTableId().equals(value.getVpsTable().getId())).collect(Collectors.toList());
+
       if (highscores.isEmpty()) {
         Label label = new Label("No scores found.");
         label.getStyleClass().add("default-text");
         scoreList.getChildren().add(label);
       }
       else {
-        Label label = new Label("Highscores for \"" + vpsTable.getDisplayName() + "\"");
-        label.getStyleClass().add("default-text");
-        scoreList.getChildren().add(label);
+        Collections.sort(highscores, (o1, o2) -> (int) (o2.getScore() - o1.getScore()));
+        int position = 1;
         for (TableScore highscore : highscores) {
+          GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
+          if(game != null ) {
+            try {
+              FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
+              Pane row = loader.load();
+              row.setPrefWidth(600);
+              WidgetPlayerScoreController controller = loader.getController();
+              controller.setData(game, position, highscore);
+              scoreList.getChildren().add(row);
+              position++;
+            } catch (IOException e) {
+              LOG.error("failed to load score component: " + e.getMessage(), e);
+            }
+          }
+        }
 
+        if(position == 1) {
+          Label label = new Label("No scores found.");
+          label.getStyleClass().add("default-text");
+          scoreList.getChildren().add(label);
+        }
+        else {
+          scoreList.getStyleClass().add("media-container");
         }
       }
+    }
+    else {
+      Label label = new Label("Select a table to view submitted scores.");
+      label.getStyleClass().add("default-text");
+      scoreList.getChildren().add(label);
     }
   }
 
   private void refreshMetaData(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!metaDataPane.isExpanded()) {
       return;
     }
 
     copyTokenBtn.setDisable(tournamentTreeModel.isEmpty());
     discordLink.setText("-");
+    websiteLink.setText("-");
     dashboardLink.setText("-");
     uuidLabel.setText("-");
     startLabel.setText("-");
@@ -252,16 +315,21 @@ public class TournamentsController implements Initializable, StudioFXController 
       Tournament tournament = treeModel.getTournament();
       TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
-      ownerLabel.setText(owner.getDisplayName());
+      if (owner != null) {
+        ownerLabel.setText(owner.getDisplayName());
+        avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
+      }
+
       nameLabel.setText(tournament.getDisplayName());
       visibilityLabel.setText(tournament.getVisibility() != null && tournament.getVisibility().equals(TournamentVisibility.publicTournament) ? "public" : "private");
       uuidLabel.setText(tournament.getUuid());
-      avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
+
       createdAtLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getCreationDate()));
       startLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getStartDate()));
-      endLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()));
+      endLabel.setText(tournament.getEndDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tournament.getEndDate()) : "-");
       remainingLabel.setText(DateUtil.formatDuration(tournament.getStartDate(), tournament.getEndDate()));
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
+      websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");
       dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl() : "-");
       descriptionLabel.setText(tournament.getDescription());
     }
@@ -275,7 +343,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshDashboard(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if(!metaDataPane.isExpanded()) {
+    if (!metaDataPane.isExpanded()) {
       return;
     }
 
@@ -286,6 +354,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       dashboardUrl = tournament.getDashboardUrl();
     }
     dashboardBtn.setDisable(dashboardUrl == null);
+    dashboardReloadBtn.setDisable(dashboardUrl == null);
     dashboardWebView.setVisible(dashboardUrl != null);
     dashboardStatusLabel.setVisible(dashboardUrl == null);
 
@@ -301,7 +370,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshUsers(Optional<TreeItem<TournamentTreeModel>> model) {
-    if(!tournamentMembersPane.isExpanded()) {
+    if (!tournamentMembersPane.isExpanded()) {
       return;
     }
 
@@ -315,7 +384,7 @@ public class TournamentsController implements Initializable, StudioFXController 
         membersBox.getChildren().add(WidgetFactory.createDefaultLabel("The tournament is not active."));
       }
       else {
-        List<TournamentMember> memberList = maniaClient.getTournamentClient().getTournamentMembers(tournament);
+        List<TournamentMember> memberList = maniaClient.getTournamentClient().getTournamentMembers(tournament.getId());
         if (memberList.isEmpty()) {
           membersBox.getChildren().add(WidgetFactory.createDefaultLabel("No players have joined this tournament yet."));
         }

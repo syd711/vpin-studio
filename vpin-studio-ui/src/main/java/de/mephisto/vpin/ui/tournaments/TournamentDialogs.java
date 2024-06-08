@@ -1,23 +1,26 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentBrowserDialogController;
 import de.mephisto.vpin.ui.tournaments.dialogs.TournamentEditDialogController;
+import de.mephisto.vpin.ui.tournaments.dialogs.TournamentTableSelectorDialogController;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.vps.dialogs.VPSTableSelectorDialogController;
-import de.mephisto.vpin.ui.vps.containers.VpsSelection;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.scene.control.TreeItem;
 import javafx.stage.Stage;
 
 public class TournamentDialogs {
 
-  public static Tournament openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
+  public static TournamentCreationModel openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentEditDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentEditDialogController controller = (TournamentEditDialogController) stage.getUserData();
-    controller.setTournament(tournament);
+    controller.setTournament(stage, tournament);
     stage.showAndWait();
 
-    return controller.getTournament();
+    return controller.getTournamentData();
   }
 
   public static Tournament openTournamentBrowserDialog() {
@@ -28,12 +31,14 @@ public class TournamentDialogs {
     return controller.getTournament();
   }
 
-  public static VpsSelection openTableSelectionDialog(Stage parent) {
-    Stage stage = Dialogs.createStudioDialogStage(parent, VPSTableSelectorDialogController.class, "dialog-vps-table-selector.fxml", "Virtual Pinball Spreadsheet - Table Selection");
-    VPSTableSelectorDialogController controller = (VPSTableSelectorDialogController) stage.getUserData();
+  public static TournamentTable openTableSelectionDialog(Stage parent, Tournament tournament, TournamentTable tournamentTable) {
+    Stage stage = Dialogs.createStudioDialogStage(parent, TournamentTableSelectorDialogController.class, "dialog-tournament-table-selector.fxml", "Tournament - Table Selection");
+    TournamentTableSelectorDialogController controller = (TournamentTableSelectorDialogController) stage.getUserData();
+    controller.setTournamentTable(tournament, tournamentTable);
+
     stage.showAndWait();
 
-    return controller.getSelection();
+    return controller.getTournamentTable();
   }
 
 }

@@ -11,6 +11,15 @@ public class ScanResult {
   private String hsFileName;
   private String someTextFile;
   private String tableName;
+  private String pupPackName;
+
+  public String getPupPackName() {
+    return pupPackName;
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
 
   public String getSomeTextFile() {
     return someTextFile;
@@ -43,6 +52,9 @@ public class ScanResult {
   }
 
   public void setHsFileName(String hsFileName) {
+    while (hsFileName.contains("\\")) {
+      hsFileName = hsFileName.substring(hsFileName.indexOf("\\") + 1);
+    }
     this.hsFileName = hsFileName;
   }
 

@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.vps;
 
 
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.ui.vps.containers.VpsVersionContainer;
+import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.scene.control.ListCell;
 
 public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
@@ -14,7 +14,7 @@ public class VpsTableVersionCell extends ListCell<VpsTableVersion> {
     setGraphic(null);
     setText(null);
     if (item != null) {
-      setGraphic(new VpsVersionContainer(item));
+      setGraphic(new VpsVersionContainer(item, "", false));
     }
   }
 }

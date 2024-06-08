@@ -82,10 +82,11 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
   private Label validationTitle;
 
   @FXML
-  private CheckBox resetCheckbox;
+  private Label validationDescription;
 
   @FXML
-  private Label validationDescription;
+  private CheckBox resetCheckbox;
+
 
   @FXML
   private Label nvramLabel;
@@ -165,7 +166,7 @@ public class CompetitionOfflineDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> games = client.getGameService().getVpxGamesCached();
     ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
     tableCombo.getItems().addAll(gameRepresentations);
     tableCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {

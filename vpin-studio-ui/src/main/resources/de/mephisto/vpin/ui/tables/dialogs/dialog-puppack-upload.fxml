@@ -5,11 +5,14 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.PupPackUploadController">
+<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.PupPackUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -17,51 +20,69 @@
       <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
          <top>
             <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </BorderPane.margin>
                <center>
-                  <HBox>
+                  <GridPane vgap="3.0" BorderPane.alignment="CENTER">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="154.39994354248046" minWidth="10.0" prefWidth="154.39994354248046" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
                      <children>
-                        <TextField fx:id="fileNameField" editable="false" prefHeight="26.0" prefWidth="375.0">
-                           <HBox.margin>
-                              <Insets right="12.0" />
-                           </HBox.margin>
+                        <Label fx:id="titleLabel" text="PUP Pack File:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="fileNameField" editable="false" prefWidth="400.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" prefHeight="26.0" prefWidth="99.0" text="Select File...">
+                        <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <HBox.margin>
-                              <Insets />
-                           </HBox.margin></Button>
+                           <GridPane.margin>
+                              <Insets left="6.0" />
+                           </GridPane.margin></Button>
+                        <Label fx:id="titleLabel1" text="Matching Table:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="tableLabel" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label fx:id="titleLabel11" layoutX="10.0" layoutY="83.0" text="Resolved ROM Name:" textFill="WHITE" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="romLabel" layoutX="121.0" layoutY="83.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                      </children>
-                  </HBox>
+                     <BorderPane.margin>
+                        <Insets top="6.0" />
+                     </BorderPane.margin>
+                  </GridPane>
                </center>
                <top>
-                  <Label fx:id="titleLabel" text="PUP Pack File:" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                  <VBox BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="6.0" />
-                     </BorderPane.margin>
-                  </Label>
-               </top>
-               <BorderPane.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </BorderPane.margin>
-               <bottom>
-                  <VBox BorderPane.alignment="TOP_LEFT">
-                     <BorderPane.margin>
-                        <Insets top="12.0" />
                      </BorderPane.margin>
                      <children>
                         <Label styleClass="preference-description" text="Download a PUP pack and upload it here." />
                         <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The file will be analyzed and extracted into the correct folder." />
                      </children>
                   </VBox>
-               </bottom>
+               </top>
             </BorderPane>
          </top>
          <bottom>

@@ -12,36 +12,24 @@ import java.io.File;
 public class PupPackInstallerJob implements Job {
 
   private final PupPacksService pupPacksService;
-  private final File pupArchive;
+  private final File pupTmpArchive;
   private final File pupVideosFolder;
-  private final Game game;
+  private final String pupPackFolderInArchive;
+  @NonNull
+  private final String rom;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupArchive, @NonNull File pupVideosFolder, @NonNull Game game) {
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
     this.pupPacksService = pupPacksService;
-    this.pupArchive = pupArchive;
+    this.pupTmpArchive = pupTmpArchive;
     this.pupVideosFolder = pupVideosFolder;
-    this.game = game;
+    this.pupPackFolderInArchive = pupPackFolderInArchive;
+    this.rom = rom;
   }
 
   @Override
   public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unpack(pupArchive, pupVideosFolder, game.getRom(), game.getTableName());
-    if (!pupArchive.delete() && unzip.getError() == null) {
-      return JobExecutionResultFactory.error("Failed to delete temporary file.");
-    }
-
-    if (StringUtils.isEmpty(unzip.getError())) {
-      File target = new File(pupVideosFolder, game.getRom());
-      if (!target.exists() && !StringUtils.isEmpty(game.getTableName())) {
-        target = new File(pupVideosFolder, game.getTableName());
-      }
-
-      if(!target.exists()) {
-        return JobExecutionResultFactory.error("Extracting PUP pack failed. Folder not found: " + target.getAbsolutePath());
-      }
-
-      pupPacksService.loadPupPack(target);
-    }
+    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom);
+    pupPacksService.loadPupPack(rom);
     return unzip;
   }
 
@@ -52,6 +40,6 @@ public class PupPackInstallerJob implements Job {
 
   @Override
   public String getStatus() {
-    return "Unzipping PUP pack for \"" + game.getGameDisplayName() + "\"";
+    return "Unpacking PUP pack";
   }
 }

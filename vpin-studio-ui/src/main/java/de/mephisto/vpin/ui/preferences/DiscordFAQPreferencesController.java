@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 

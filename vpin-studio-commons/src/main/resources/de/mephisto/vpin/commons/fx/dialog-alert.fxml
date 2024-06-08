@@ -9,7 +9,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="400.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.ConfirmationDialogController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="400.0" styleClass="navigation-panel" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.ConfirmationDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -24,11 +24,11 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label fx:id="helpLabel1" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
+            <Label fx:id="helpLabel1" maxWidth="800.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>
-            <Label fx:id="helpLabel2" layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true" />
+            <Label fx:id="helpLabel2" layoutX="10.0" layoutY="43.0" maxWidth="800.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true" />
          </children>
          <BorderPane.margin>
             <Insets bottom="24.0" left="24.0" right="24.0" top="12.0" />

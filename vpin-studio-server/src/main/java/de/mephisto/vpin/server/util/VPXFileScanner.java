@@ -30,13 +30,16 @@ public class VPXFileScanner {
 
   private final static List<String> PATTERN_TABLENAME = Arrays.asList("TableName");
   private final static List<String> PATTERN_ROM = Arrays.asList("cGameName", "cgamename", "RomSet1", "GameName");
+  private final static List<String> PATTERN_PUP_PACK = Arrays.asList("pGameName", "pgamename");
 
   private final static List<Pattern> romNamePatternList = new ArrayList<>();
   private final static List<Pattern> tableNamePatternList = new ArrayList<>();
+  private final static List<Pattern> pupPackPatternList = new ArrayList<>();
 
   static {
     PATTERN_ROM.forEach(p -> romNamePatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
     PATTERN_TABLENAME.forEach(p -> tableNamePatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
+    PATTERN_PUP_PACK.forEach(p -> pupPackPatternList.add(Pattern.compile(".*" + p + ".*=.*\".*\".*")));
   }
 
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
@@ -180,6 +183,7 @@ public class VPXFileScanner {
       l = line;
 
       lineSearchRom(result, line);
+      lineSearchPupPack(result, line);
       lineSearchTableName(result, line);
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
@@ -230,6 +234,21 @@ public class VPXFileScanner {
     if (patternMatch != -1) {
       String pattern = PATTERN_ROM.get(patternMatch);
       result.setRom(extractLineValue(line, pattern));
+    }
+  }
+
+  /**
+   * Single line eval for rom name
+   */
+  private static void lineSearchPupPack(@NonNull ScanResult result, @NonNull String line) {
+    if (!StringUtils.isEmpty(result.getPupPackName()) || line.startsWith("'")) {
+      return;
+    }
+
+    int patternMatch = matchesPatterns(pupPackPatternList, line);
+    if (patternMatch != -1) {
+      String pattern = PATTERN_PUP_PACK.get(patternMatch);
+      result.setPupPackName(extractLineValue(line, pattern));
     }
   }
 

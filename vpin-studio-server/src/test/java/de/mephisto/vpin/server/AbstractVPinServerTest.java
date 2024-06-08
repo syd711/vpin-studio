@@ -16,12 +16,13 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.popper.PopperResource;
 import de.mephisto.vpin.server.popper.PopperServiceResource;
+import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,7 +90,7 @@ abstract public class AbstractVPinServerTest {
   protected PopperResource popperResource;
 
   @Autowired
-  protected HighscoreParser highscoreParser;
+  protected HighscoreParsingService highscoreParsingService;
 
   @Autowired
   protected PopperServiceResource popperServiceResource;

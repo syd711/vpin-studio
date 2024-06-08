@@ -32,7 +32,7 @@
             <Font name="System Italic" size="14.0" />
          </font>
          <VBox.margin>
-            <Insets left="170.0" />
+            <Insets bottom="6.0" left="170.0" />
          </VBox.margin>
       </Label>
    </children>

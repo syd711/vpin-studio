@@ -423,8 +423,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     this.downloadLinkField.setText("-");
     this.vpsLinkField.setText("-");
 
-    if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+    VpsTable vpsTable = client.getVpsService().getTableById(game.getExtTableId());
+    if (vpsTable!=null) {
       vpsLinkField.setText(VPS.getVpsTableUrl(game.getExtTableId()));
 
       if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
@@ -526,7 +526,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
       validate();
     });
 
-    List<GameRepresentation> games = client.getGameService().getGamesCached();
+    List<GameRepresentation> games = client.getGameService().getVpxGamesCached();
     List<GameRepresentation> filtered = new ArrayList<>();
     for (GameRepresentation game : games) {
       if (StringUtils.isEmpty(game.getRom())) {

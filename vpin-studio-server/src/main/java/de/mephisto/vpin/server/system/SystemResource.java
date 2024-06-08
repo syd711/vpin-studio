@@ -1,31 +1,42 @@
 package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
+import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.zip.ZipOutputStream;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.system.SystemService.COMPETITION_BADGES;
@@ -43,9 +54,18 @@ public class SystemResource {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
   @GetMapping("/startupTime")
   public Date startupTime() {
     return startupTime;
+  }
+
+  @GetMapping("/pausemenu/test/{gameId}/{duration}")
+  public boolean testPauseMenu(@PathVariable("gameId") int gameId, @PathVariable("duration") int duration) {
+    ServerFX.getInstance().testPauseMenu(gameId, duration);
+    return true;
   }
 
   @GetMapping("/logs")
@@ -60,16 +80,92 @@ public class SystemResource {
     return "";
   }
 
+  @GetMapping("/download/logs")
+  public void downloadArchiveFile(HttpServletResponse response) {
+    InputStream in = null;
+    OutputStream out = null;
+    try {
+      File target = new File("vpin-studio-logs.zip");
+      if (target.exists() && !target.delete()) {
+        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete existing logs archive.");
+      }
+
+      FileOutputStream fos = new FileOutputStream(target);
+      ZipOutputStream zipOut = new ZipOutputStream(fos);
+
+      File logs = new File("./");
+      File[] logFiles = logs.listFiles((dir, name) -> name.endsWith(".log"));
+      for (File logFile : logFiles) {
+        ZipUtil.zipFile(logFile, logFile.getName(), zipOut);
+      }
+
+//      File studioDB = new File(RESOURCES, "vpin-studio.db");
+//      if (studioDB.exists()) {
+//        ZipUtil.zipFile(studioDB, studioDB.getName(), zipOut);
+//      }
+
+      File popperDB = systemService.getPinUPDatabaseFile();
+      if (popperDB.exists()) {
+        ZipUtil.zipFile(popperDB, popperDB.getName(), zipOut);
+      }
+
+      zipOut.close();
+      fos.close();
+
+      in = new FileInputStream(target);
+      out = response.getOutputStream();
+      IOUtils.copy(in, out);
+      response.flushBuffer();
+      LOG.info("Finished exporting log files.");
+    } catch (IOException ex) {
+      LOG.info("Error writing logs: " + ex.getLocalizedMessage(), ex);
+      throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing file to output stream");
+    } finally {
+      try {
+        if (in != null) {
+          in.close();
+        }
+        if (out != null) {
+          out.close();
+        }
+      } catch (IOException e) {
+        LOG.error("Erorr closing streams: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @GetMapping("/info")
-  @ResponseBody
   public SystemSummary info() {
-    return systemService.getSystemSummary();
+    SystemSummary info = new SystemSummary();
+    info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
+    info.setScreenInfos(systemService.getScreenInfos());
+    info.setArchiveType(systemService.getArchiveType());
+    info.setSystemId(SystemUtil.getBoardSerialNumber());
+    info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
+    return info;
+  }
+
+
+  @GetMapping("/scoringdb")
+  public ScoringDB get() {
+    return systemService.getScoringDatabase();
   }
 
   @GetMapping("/shutdown")
   public boolean shutdown() {
     systemService.shutdown();
     return true;
+  }
+
+  @GetMapping("/systemshutdown")
+  public boolean systemShutdown() {
+    systemService.systemShutdown();
+    return true;
+  }
+
+  @GetMapping("/backup")
+  public String backup() {
+    return systemService.backup();
   }
 
   @GetMapping("/maintenance/{enabled}")
@@ -100,9 +196,44 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/clientupdate/{version}/download/start")
+  public boolean downloadClientUpdate(@PathVariable("version") String version) {
+    new Thread(() -> {
+      Thread.currentThread().setName("Client Update Downloader");
+      Updater.downloadUpdate(version, Updater.UI_ZIP);
+    }).start();
+    return true;
+  }
+
+  @GetMapping("/clientupdate/install")
+  public boolean installRemoteClientUpdate() {
+    systemService.killProcesses("javaw.exe");
+    File uiZip = new File("./", Updater.UI_ZIP);
+    if (uiZip.exists()) {
+      if (!ZipUtil.unzip(uiZip, new File("./"))) {
+        LOG.error("Extraction of " + uiZip.getAbsolutePath() + " failed.");
+        return false;
+      }
+      if (!uiZip.delete()) {
+        LOG.error("Failed to delete client archive: " + uiZip.getAbsolutePath());
+        return false;
+      }
+      return true;
+    }
+    else {
+      LOG.error("Failed to download client UI, missing file.");
+    }
+    return false;
+  }
+
   @GetMapping("/update/download/status")
   public int updateDownloadStatus() {
     return Updater.getDownloadProgress(Updater.SERVER_ZIP, Updater.SERVER_ZIP_SIZE);
+  }
+
+  @GetMapping("/clientupdate/download/status")
+  public int updateClientDownloadStatus() {
+    return Updater.getDownloadProgress(Updater.UI_ZIP, Updater.UI_ZIP_SIZE);
   }
 
   @GetMapping("/update/install")
@@ -119,14 +250,38 @@ public class SystemResource {
     return true;
   }
 
+  @GetMapping("/restart")
+  public boolean restart() throws IOException {
+    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\nwscript server.vbs\nexit");
+    List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./"));
+    executor.executeCommandAsync();
+    new Thread(() -> {
+      try {
+        Thread.sleep(1000);
+        systemService.shutdown();
+      } catch (InterruptedException e) {
+        //ignore
+      }
+    }).start();
+    return true;
+  }
+
   @GetMapping("/autostart/installed")
   public boolean autostart() {
-    return ServerInstallationUtil.isInstalled();
+    return new File("./server.vbs").exists();
   }
 
   @GetMapping("/autostart/install")
   public boolean installService() {
     try {
+      File disabled = new File("./server.vbs.bak");
+      File file = new File("./server.vbs");
+      if (disabled.exists()) {
+        FileUtils.moveFile(disabled, file);//TODO mpf
+        return true;
+      }
       return ServerInstallationUtil.install();
     } catch (IOException e) {
       return false;
@@ -134,8 +289,11 @@ public class SystemResource {
   }
 
   @GetMapping("/autostart/uninstall")
-  public boolean uninstallService() {
-    return ServerInstallationUtil.uninstall();
+  public boolean uninstallService() throws IOException {
+    File file = new File("./server.vbs");
+    File disabled = new File("./server.vbs.bak");
+    FileUtils.moveFile(file, disabled);
+    return true;
   }
 
   @GetMapping("/version")

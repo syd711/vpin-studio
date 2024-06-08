@@ -1,1 +1,1 @@
-put a JRE+FX environment here
+put an unpacked JRE+FX environment here

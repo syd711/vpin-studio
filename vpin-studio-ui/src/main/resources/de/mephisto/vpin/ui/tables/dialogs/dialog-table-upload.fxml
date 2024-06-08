@@ -2,10 +2,13 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,114 +16,357 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="700.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableUploadController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableUploadController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
-         <children>
-          <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
-               <HBox.margin>
-                  <Insets right="12.0" />
-               </HBox.margin>
-            </Button>
-            <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
-               <HBox.margin>
-                  <Insets />
-               </HBox.margin>
-            </Button>
-         </children>
+      <BorderPane BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
-      </HBox>
+         <center>
+            <HBox alignment="BASELINE_RIGHT">
+               <children>
+                <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+                     <HBox.margin>
+                        <Insets right="12.0" />
+                     </HBox.margin>
+                  </Button>
+                  <Button fx:id="uploadBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onUploadClick" styleClass="submit-button" text="Upload">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </center>
+         <left>
+            <Label text="* You can also upload complete table bundles." BorderPane.alignment="CENTER" />
+         </left>
+      </BorderPane>
    </bottom>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
             <VBox>
                <children>
-                  <GridPane vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.199951171875" minWidth="10.0" prefWidth="136.599951171875" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" prefWidth="539.000048828125" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label fx:id="titleLabel" text="VPX File:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <children>
-                              <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="395.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="Upload To Emulator:" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                           <children>
-                              <Label styleClass="preference-description" text="Selected VPX files will be uploaded to the &quot;Tables&quot; folder of the VPX emulator." textFill="WHITE" wrapText="true" />
-                           </children>
-                        </HBox>
-                     </children>
+                  <HBox spacing="12.0">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin>
-                  </GridPane>
-                  <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="Upload and Import to PinUP Popper" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </RadioButton>
-                  <Label styleClass="checkbox-description" text="The uploaded table will be visible as new game in the &quot;Games Manager&quot; of PinUP Popper." textFill="WHITE" wrapText="true" />
-                  <RadioButton fx:id="uploadRadio" mnemonicParsing="false" text="Upload Only" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
+                     <children>
+                        <VBox>
+                           <children>
+                              <GridPane hgap="3.0" vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="333.199951171875" minWidth="10.0" prefWidth="164.8" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" prefWidth="432.000048828125" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="657.399951171875" minWidth="10.0" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="583.9999023437499" minWidth="10.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="CENTER" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label fx:id="titleLabel" text="VPX File/Archive:*" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <children>
+                                          <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="450.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="titleLabel1" layoutX="10.0" layoutY="49.0" text="Upload To Emulator:" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
+                                    <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <children>
+                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Popper Database" textFill="WHITE">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </CheckBox>
+                                          <Label prefHeight="40.0" prefWidth="18.0">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip prefWidth="300.0" text="The matching entry of the Virtual Pinball Spreadsheet will be resolved automatically, the matching entries data will be used to fill the database entry of the table." wrapText="true" />
+                                             </tooltip>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                             </graphic>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                    <Label fx:id="titleLabel2" layoutX="10.0" layoutY="49.0" text="Auto-Fill:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="titleLabel21" layoutX="10.0" layoutY="83.0" text="Target Folder:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <GridPane.margin>
+                                          <Insets top="4.0" />
+                                       </GridPane.margin>
+                                    </Label>
+                                    <VBox prefWidth="400.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <children>
+                                          <HBox alignment="CENTER_LEFT" spacing="6.0">
+                                             <children>
+                                                <CheckBox fx:id="subfolderCheckbox" mnemonicParsing="false" text="Upload to separate subfolder" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </CheckBox>
+                                                <Label prefHeight="40.0" prefWidth="18.0">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="300.0" text="This will upload the VPX into a subfolder of the emulators &quot;tables&quot; folder if you prefer to organize your tables this way." wrapText="true" />
+                                                   </tooltip>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Label>
+                                             </children>
+                                             <VBox.margin>
+                                                <Insets />
+                                             </VBox.margin>
+                                          </HBox>
+                                          <TextField fx:id="subfolderText" disable="true" prefWidth="326.0">
+                                             <VBox.margin>
+                                                <Insets left="26.0" />
+                                             </VBox.margin>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </TextField>
+                                       </children>
+                                       <GridPane.margin>
+                                          <Insets top="-8.0" />
+                                       </GridPane.margin>
+                                       <padding>
+                                          <Insets right="102.0" />
+                                       </padding>
+                                    </VBox>
+                                    <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="115.0" text="Resolved VPX File:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="tableNameLabel" layoutX="10.0" layoutY="181.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Button fx:id="fileBtn" mnemonicParsing="false" onAction="#onFileSelect" text="Select File..." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Button>
+                                 </children>
+                              </GridPane>
+                           </children>
+                        </VBox>
+                        <VBox fx:id="readmeBox">
+                           <children>
+                              <Label fx:id="titleLabel11" text="README.txt" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <TextArea fx:id="readmeTextField" prefHeight="162.0" prefWidth="500.0" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets top="6.0" />
+                                 </VBox.margin>
+                              </TextArea>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="420.0" spacing="12.0">
+                     <children>
+                        <VBox fx:id="uploadImportBox" prefWidth="400.0" styleClass="selection-panel">
+                           <children>
+                              <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="Upload and Import to PinUP Popper" textFill="WHITE" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <Label styleClass="checkbox-description" text="The uploaded table will be visible as new game in the &quot;Games Manager&quot; of PinUP Popper." textFill="WHITE" wrapText="true" />
+                              <Label layoutX="10.0" layoutY="30.0" styleClass="default-headline" text="Import Additional Assets" textFill="WHITE" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets left="26.0" top="12.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Label fx:id="noAssetsLabel" layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="No archive selected or the selected file it does not contain additional assets." textFill="WHITE" wrapText="true" />
+                              <VBox fx:id="assetsBox" spacing="6.0">
+                                 <children>
+                                    <Label styleClass="preference-description" text="The following additional assets have been found:" textFill="WHITE" wrapText="true" />
+                                    <CheckBox fx:id="assetAltSoundCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetAltColorCheckbox" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetBackglassCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetCfgCheckbox" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text=".cfg File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetDmdCheckbox" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetIniCheckbox" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text=".ini File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetMusicCheckbox" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="Music Pack" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetMediaCheckbox" mnemonicParsing="false" text="Media Pack for Popper Screens" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetNvRamCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text=".nv File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetPupPackCheckbox" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetPovCheckbox" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text=".pov File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <CheckBox fx:id="assetRomCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" top="12.0" />
+                                 </VBox.margin>
+                              </VBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                        <VBox fx:id="uploadReplaceBox" prefWidth="400.0" styleClass="selection-panel">
+                           <children>
+                              <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="Upload and Replace" textFill="WHITE" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </RadioButton>
+                              <Label styleClass="checkbox-description" text="The uploaded table will replace the selected table. Popper assets will be kept." textFill="WHITE" wrapText="true" />
+                              <VBox>
+                                 <children>
+                                    <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filename when replacing table." textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label styleClass="checkbox-description" text="If enabled, the existing VPX filename is kept instead of using uploads file name." textFill="WHITE" wrapText="true" />
+                                    <CheckBox fx:id="keepDisplayNamesCheckbox" mnemonicParsing="false" text="Keep existing display name when replacing table." textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <Label styleClass="checkbox-description" text="If enabled, the existing display name of the table is kept insteaf of using the uploads file name." textFill="WHITE" wrapText="true" />
+                                    <CheckBox fx:id="backupTableOnOverwriteCheckbox" layoutX="10.0" layoutY="58.0" mnemonicParsing="false" text="Create backup from existing table." textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="6.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
+                                    <Label layoutX="10.0" layoutY="78.0" styleClass="checkbox-description" text="If enabled, the existing VPX file will be copied into the &quot;Tables (Backups)&quot; folder of the emulator." textFill="WHITE" wrapText="true" />
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="26.0" top="6.0" />
+                                 </VBox.margin>
+                              </VBox>
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                        <VBox fx:id="uploadCloneBox" prefWidth="400.0" styleClass="selection-panel">
+                           <children>
+                              <RadioButton fx:id="uploadAndCloneRadio" mnemonicParsing="false" text="Upload and Clone" textFill="WHITE" wrapText="true">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <Label styleClass="checkbox-description" text="The uploaded table will be imported into PinUP Popper using the selected table as template. Backglass and Popper screen assets will be copied too." textFill="WHITE" wrapText="true" />
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </RadioButton>
-                  <Label styleClass="checkbox-description" text="The selected file will be uploaded into the tables folder of VPX and won't be visible here." />
-                  <RadioButton fx:id="uploadAndReplaceRadio" mnemonicParsing="false" text="Upload and Replace" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </RadioButton>
-                  <Label styleClass="checkbox-description" text="The uploaded table will replace the selected table. Popper assets will be kept." textFill="WHITE" wrapText="true" />
-                  <RadioButton fx:id="uploadAndCloneRadio" mnemonicParsing="false" text="Upload and Clone" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </RadioButton>
-                  <Label styleClass="checkbox-description" text="The uploaded table will be imported into PinUP Popper using the selected table as template." textFill="WHITE" wrapText="true" />
+                  </HBox>
                </children>
             </VBox>
          </center>

@@ -29,12 +29,12 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox layoutX="10.0" layoutY="10.0" minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
@@ -47,12 +47,12 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox layoutX="489.0" layoutY="10.0" minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
@@ -65,7 +65,7 @@
                         </Label>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" />
+                              <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
                         </ScrollPane>
                      </children>

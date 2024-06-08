@@ -3,8 +3,6 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.popper.PinUPConnector;
@@ -44,7 +42,8 @@ public class DMDService implements InitializingBean {
           return true;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to delete DMD directory for " + game + ": " + e.getMessage(), e);
     }
     return false;
@@ -56,9 +55,9 @@ public class DMDService implements InitializingBean {
     String tableName = String.valueOf(game.getTableName());
 
     List<String> folderNames = Arrays.asList(rom.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-      rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
-      tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
-      tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
+        rom.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase(),
+        tableName.toLowerCase() + "." + DMDPackageTypes.FlexDMD.name().toLowerCase(),
+        tableName.toLowerCase() + "." + DMDPackageTypes.UltraDMD.name().toLowerCase());
 
     File dmdFolder = null;
     File[] subFolders = game.getEmulator().getTablesFolder().listFiles(File::isDirectory);
@@ -106,9 +105,17 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public JobExecutionResult installDMDPackage(Game game, File archive) {
-    DMDInstallationUtil.unzip(archive, game.getEmulator().getTablesFolder());
-    return JobExecutionResultFactory.empty();
+  public void installDMDPackage(File archive, String dmdPath, int emulatorId) {
+    File tablesFolder = pinUPConnector.getGameEmulator(emulatorId).getTablesFolder();
+    if (archive.getName().toLowerCase().endsWith(".zip")) {
+      DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
+    }
+    else if (archive.getName().toLowerCase().endsWith(".rar")) {
+      DMDInstallationUtil.unrar(archive, tablesFolder, dmdPath);
+    }
+    else {
+      throw new UnsupportedOperationException("Unsupported archive format for DMD pack " + archive.getName());
+    }
   }
 
   public ComponentSummary getFreezySummary(int emulatorId) {

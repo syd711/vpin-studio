@@ -1,25 +1,22 @@
 package de.mephisto.vpin.server.popper;
 
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vps.VpsTableDataChangedListener;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -35,13 +32,11 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PopperService implements InitializingBean, VpsTableDataChangedListener {
+public class PopperService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperService.class);
 
   private final List<PopperStatusChangeListener> listeners = new ArrayList<>();
@@ -50,19 +45,24 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
   private SystemService systemService;
 
   @Autowired
-  private GameService gameService;
-
-  @Autowired
   private PinUPConnector pinUPConnector;
 
   @Autowired
   private VPXService vpxService;
 
   @Autowired
-  private VpsService vpsService;
+  private PreferencesService preferencesService;
 
   @Autowired
-  private PreferencesService preferencesService;
+  private CardService cardService;
+
+  @Autowired
+  private HighscoreService highscoreService;
+
+  @Autowired
+  private VpsService vpsService;
+
+  private ServerSettings serverSettings;
 
   public PinUPControl getPinUPControlFor(PopperScreen screen) {
     return pinUPConnector.getPinUPControlFor(screen);
@@ -72,60 +72,59 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getControls();
   }
 
-  private GameRepresentation activeGame;
-
   @SuppressWarnings("unused")
   public void addPopperStatusChangeListener(PopperStatusChangeListener listener) {
     this.listeners.add(listener);
   }
 
   public GameList getImportTables() {
-    List<GameEmulator> emulators = pinUPConnector.getGameEmulators();
+    List<GameEmulator> emulators = pinUPConnector.getVpxGameEmulators();
     GameList list = new GameList();
     for (GameEmulator emulator : emulators) {
       File vpxTablesFolder = emulator.getTablesFolder();
-      File[] files = vpxTablesFolder.listFiles((dir, name) -> name.endsWith(".vpx"));
-      if (files != null) {
-        List<Game> games = pinUPConnector.getGames();
-        List<String> filesNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-        for (File file : files) {
-          if (!filesNames.contains(file.getName())) {
-            GameListItem item = new GameListItem();
-            item.setName(file.getName());
-            item.setEmuId(emulator.getId());
-            list.getItems().add(item);
-          }
+      List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+      List<Game> games = pinUPConnector.getGames();
+      List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+      for (File file : files) {
+        String gameFileName = emulator.getGameFileName(file);
+        if (!emulatorGameFileNames.contains(gameFileName)) {
+          GameListItem item = new GameListItem();
+          item.setName(file.getName());
+          item.setFileName(file.getAbsolutePath());
+          item.setEmuId(emulator.getId());
+          list.getItems().add(item);
         }
       }
     }
+    Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
     return list;
-  }
-
-  public JobExecutionResult importTable(GameListItem item) {
-    GameEmulator emulator = pinUPConnector.getGameEmulator(item.getEmuId());
-    File tableFile = new File(emulator.getTablesFolder(), item.getName());
-    if (tableFile.exists()) {
-      int result = importVPXGame(tableFile, true, -1, item.getEmuId());
-      if (result > 0) {
-        gameService.scanGame(result);
-      }
-    }
-    return JobExecutionResultFactory.ok("Imported " + item.getName(), -1);
   }
 
   public int importVPXGame(File file, boolean importToPopper, int playListId, int emuId) {
     if (importToPopper) {
       int gameId = pinUPConnector.importGame(file, emuId);
       if (gameId >= 0 && playListId >= 0) {
-        pinUPConnector.addToPlaylist(playListId, gameId);
+        pinUPConnector.addToPlaylist(playListId, gameId, 0);
       }
       return gameId;
     }
     return -1;
   }
 
-  public void notifyTableStatusChange(final Game game, final boolean started) {
-    TableStatusChangedEvent event = () -> game;
+  public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
+    TableStatusChangedEvent event = new TableStatusChangedEvent() {
+      @NotNull
+      @Override
+      public Game getGame() {
+        return game;
+      }
+
+      @Override
+      public TableStatusChangedOrigin getOrigin() {
+        return origin;
+      }
+    };
+
     for (PopperStatusChangeListener listener : this.listeners) {
       if (started) {
         listener.tableLaunched(event);
@@ -168,11 +167,27 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     }
   }
 
+  /**
+   * moved from VpsService to break circular dependency.
+   * The method here get TableDetail from popper and save it after automatching
+   */
+  public TableDetails autoMatch(Game game, boolean overwrite) {
+    TableDetails tableDetails = getTableDetails(game.getId());
+    if (vpsService.autoMatch(game, tableDetails, overwrite)) {
+      saveTableDetails(tableDetails, game.getId(), false);
+      return tableDetails;
+    }
+    return null;
+  }
+
   @NonNull
-  public TableDetails autofillTableDetails(Game game, boolean overwrite) {
-    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-    if (!StringUtils.isEmpty(game.getExtTableId())) {
-      VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
+    String vpsTableId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableId());
+    String vpsTableVersionId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
+    TableInfo tableInfo = vpxService.getTableInfo(game);
+
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      VpsTable vpsTable = vpsService.getTableById(vpsTableId);
       if (vpsTable != null) {
         if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && vpsTable.getYear() > 0) {
           tableDetails.setGameYear(vpsTable.getYear());
@@ -207,13 +222,14 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
           try {
             GameType gameType = GameType.valueOf(vpsTable.getType());
             tableDetails.setGameType(gameType);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             //ignore
           }
         }
 
-        if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
-          VpsTableVersion tableVersion = vpsTable.getVersion(game.getExtTableVersionId());
+        if (!StringUtils.isEmpty(vpsTableVersionId)) {
+          VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
           if (tableVersion != null) {
             if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableVersion.getVersion())) {
               tableDetails.setGameVersion(tableVersion.getVersion());
@@ -226,36 +242,63 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
               }
             }
 
-            if (overwrite || StringUtils.isEmpty(tableDetails.getNotes())) {
-              tableDetails.setNotes(tableVersion.getComment());
-            }
-
-            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
-              if (tableVersion.getFeatures() != null) {
-                tableDetails.setTags(String.join(", ", tableVersion.getFeatures()));
+            if (overwrite || (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null)) {
+              if (tableInfo != null) {
+                StringBuilder details = new StringBuilder();
+                if (!StringUtils.isEmpty(tableVersion.getComment())) {
+                  details.append("VPS Comment:\n");
+                  details.append(tableVersion.getComment());
+                }
+                String tableDescription = tableInfo.getTableDescription();
+                details.append("\n\n");
+                details.append(tableDescription);
+                tableDetails.setgDetails(details.toString());
               }
             }
+
+            if (overwrite || (StringUtils.isEmpty(tableDetails.getgNotes()) && tableInfo != null && tableInfo.getTableRules() != null)) {
+              if (tableInfo != null) {
+                tableDetails.setgNotes(tableInfo.getTableRules());
+              }
+            }
+
+//            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
+//              if (tableVersion.getFeatures() != null) {
+//                String tags = String.join(", ", tableVersion.getFeatures());
+//                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
+//                if (!tableDetailTags.contains(tags)) {
+//                  tableDetailTags = tableDetailTags + ", " + tags;
+//                }
+//                tableDetails.setTags(tableDetailTags);
+//              }
+//            }
+            LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
           }
         }
         else {
-          fillTableInfoWithVpxData(game, tableDetails, overwrite);
+          fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
         }
       }
     }
     else {
-      fillTableInfoWithVpxData(game, tableDetails, overwrite);
+      fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
     }
 
-    pinUPConnector.saveTableDetails(game.getId(), tableDetails);
-    LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+    if (simulate) {
+      LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+    else {
+      pinUPConnector.saveTableDetails(game.getId(), tableDetails);
+      LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+
     return tableDetails;
   }
 
   /**
    * Some fallback: we use the VPX script metadata for popper if the VPS version data has not been applied.
    */
-  private void fillTableInfoWithVpxData(@NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
-    TableInfo tableInfo = vpxService.getTableInfo(game);
+  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
     if (tableInfo != null) {
       if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
         tableDetails.setGameVersion(tableInfo.getTableVersion());
@@ -272,6 +315,10 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getTableDetails(gameId);
   }
 
+  public void updateTableFileUpdated(int gameId) {
+    pinUPConnector.updateTableFileUpdated(gameId);
+  }
+
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails oldDetails = getTableDetails(gameId);
@@ -279,66 +326,82 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
 
     //fix input and save input
     String gameFilename = updatedTableDetails.getGameFileName();
-    if (!gameFilename.endsWith(".vpx")) {
+    if (game.isVpxGame() && !gameFilename.endsWith(".vpx")) {
       gameFilename = gameFilename + ".vpx";
       updatedTableDetails.setGameFileName(gameFilename);
     }
     pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
 
-    //start renaming
-    try {
-      if (!String.valueOf(game.getRom()).equals(String.valueOf(updatedTableDetails.getRomName())) && !StringUtils.isEmpty(updatedTableDetails.getRomName())) {
-        game.setRom(updatedTableDetails.getRomName());
-        gameService.save(game);
-      }
-
-      if (!String.valueOf(game.getTableName()).equals(String.valueOf(updatedTableDetails.getRomAlt())) && !StringUtils.isEmpty(updatedTableDetails.getRomAlt())) {
-        game.setTableName(updatedTableDetails.getRomAlt());
-        gameService.save(game);
-      }
-    } catch (Exception e) {
-      LOG.error("Error updating table for table details: " + e.getMessage());
-    }
-
     //for upload and replace, we do not need any renaming
-    if (!renamingChecks) {
-      return updatedTableDetails;
+    if (game.isVpxGame()) {
+      if (!renamingChecks) {
+        runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+        return updatedTableDetails;
+      }
+
+      //rename game filename which results in renaming VPX related files
+      if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
+        String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
+        String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
+        if (!existingName.equalsIgnoreCase(name)) {
+          if (game.getGameFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name);
+          }
+
+          if (game.getDirectB2SFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
+          }
+
+          if (game.getPOVFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
+          }
+
+          if (game.getResFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
+          }
+
+          if (game.getIniFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
+          }
+
+          if (game.getVBSFile().exists()) {
+            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getVBSFile(), name);
+          }
+          LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
+        }
+        else {
+          //revert to old value
+          updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
+          pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
+          LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
+        }
+      }
     }
 
-    //rename game filename which results in renaming VPX related files
-    if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
-      String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-      if (de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name)) {
-        if (game.getDirectB2SFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
-        }
-
-        if (game.getPOVFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
-        }
-
-        if (game.getResFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
-        }
-
-        if (game.getIniFile().exists()) {
-          de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
-        }
-        LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
-      }
-      else {
-        //revert to old value
-        updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
-        pinUPConnector.saveTableDetails(gameId, updatedTableDetails);
-        LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
-      }
-    }
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
       renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
     }
+
+    if (game.isVpxGame()) {
+      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
+    }
+
     return updatedTableDetails;
+  }
+
+  public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
+    String existingRom = String.valueOf(oldDetails.getRomName());
+    boolean romChanged = !String.valueOf(newDetails.getRomName()).equalsIgnoreCase(existingRom);
+
+    String existingHsName = String.valueOf(oldDetails.getMappedValue(serverSettings.getMappingHsFileName()));
+    boolean hsChanged = !String.valueOf(newDetails.getMappedValue(serverSettings.getMappingHsFileName())).equalsIgnoreCase(existingHsName);
+    if (romChanged || hsChanged) {
+      LOG.info("Game highscore data fields have been changed, triggering score check.");
+      highscoreService.scanScore(game);
+      cardService.generateCard(game);
+    }
   }
 
   public boolean restart() {
@@ -352,7 +415,7 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
       File wheelIcon = gameMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
 
-      File badgeFile = systemService.getBagdeFile(badge);
+      File badgeFile = systemService.getBadgeFile(badge);
       if (badgeFile.exists()) {
         augmenter.augment(badgeFile);
       }
@@ -402,7 +465,8 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
             LOG.info("Cloned PinUP Popper media: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
           }
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.info("Failed to clone popper media: " + e.getMessage(), e);
       }
     }
@@ -448,6 +512,11 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getGameEmulators();
   }
 
+
+  public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
+    return pinUPConnector.getPupPlayerDisplays();
+  }
+
   @Nullable
   public PinUPPlayerDisplay getPupPlayerDisplay(@NonNull PopperScreen screen) {
     List<PinUPPlayerDisplay> pupPlayerDisplays = pinUPConnector.getPupPlayerDisplays();
@@ -470,21 +539,22 @@ public class PopperService implements InitializingBean, VpsTableDataChangedListe
     return pinUPConnector.getGameEmulator(id);
   }
 
-  @Override
-  public void tableDataChanged(@NotNull Game game) {
-    try {
-      ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-      boolean autoApply = serverSettings.isVpsAutoApplyToPopper();
-      autofillTableDetails(game, autoApply);
-    } catch (Exception e) {
-      LOG.error("Failed to execute auto-filling of game details: " + e.getMessage(), e);
-    }
+  public int getVersion() {
+    return pinUPConnector.getSqlVersion();
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyPopperExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
-    vpsService.addVpsTableDataChangeListener(this);
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
   }
 }

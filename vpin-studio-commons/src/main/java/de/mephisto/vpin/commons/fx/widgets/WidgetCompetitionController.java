@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
@@ -85,7 +86,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    Image image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+    Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
 
     Rank firstRank = new Rank(Ranking.FIRST, Tile.YELLOW_ORANGE);
     turnoverTile = TileBuilder.create().skinType(Tile.SkinType.TURNOVER)
@@ -183,7 +184,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       }
 
       if (competition.isActive()) {
-        ScoreListRepresentation competitionScores = OverlayWindowFX.client.getCompetitionScoreList(competition.getId());
+        ScoreListRepresentation competitionScores = ServerFX.client.getCompetitionScoreList(competition.getId());
         if (!competitionScores.getScores().isEmpty()) {
           if (highscoresGraphTile != null) {
             statsWidget.getChildren().remove(highscoresGraphTile);
@@ -206,11 +207,15 @@ public class WidgetCompetitionController extends WidgetController implements Ini
                 turnoverTile.setText(currentScore.getPlayer().getName());
                 String avatarUrl = currentScore.getPlayer().getAvatarUrl();
                 if (!StringUtils.isEmpty(avatarUrl)) {
-                  Image image = new Image(OverlayWindowFX.client.getCachedUrlImage(avatarUrl));
-                  turnoverTile.setImage(new Image(avatarUrl));
+                  InputStream cachedUrlImage = ServerFX.client.getCachedUrlImage(avatarUrl);
+                  if(cachedUrlImage == null) {
+                    cachedUrlImage = ServerFX.class.getResourceAsStream("avatar-blank.png");
+                  }
+                  Image image = new Image(cachedUrlImage);
+                  turnoverTile.setImage(image);
                 } else if (currentScore.getPlayer().getAvatar() != null) {
                   AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
-                  turnoverTile.setImage(new Image(OverlayWindowFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
+                  turnoverTile.setImage(new Image(ServerFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
                 }
               } else {
                 turnoverTile.setText(currentScore.getPlayerInitials());
@@ -231,7 +236,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
         root.setVisible(true);
         if (competition != null) {
           if (competition.getType().equals(CompetitionType.DISCORD.name())) {
-            DiscordServer discordServer = OverlayWindowFX.client.getDiscordServer(competition.getDiscordServerId());
+            DiscordServer discordServer = ServerFX.client.getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
               titleLabel.setText("Discord: " + discordServer.getName());
             } else {

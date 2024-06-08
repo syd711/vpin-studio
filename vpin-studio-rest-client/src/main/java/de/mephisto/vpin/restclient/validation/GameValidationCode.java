@@ -4,6 +4,7 @@ public interface GameValidationCode {
   int CODE_NO_ROM = 1;
   int CODE_ROM_NOT_EXISTS = 3;
   int CODE_VPX_NOT_EXISTS = 4;
+  int CODE_NVOFFSET_MISMATCH = 5;
 
   int CODE_NO_DIRECTB2S_OR_PUPPACK = 20;
   int CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED = 21;
@@ -23,6 +24,7 @@ public interface GameValidationCode {
 
   int CODE_ALT_SOUND_NOT_ENABLED = 50;
   int CODE_ALT_SOUND_FILE_MISSING = 51;
+  int CODE_FORCE_STEREO = 52;
 
   int CODE_PUP_PACK_FILE_MISSING = 60;
 
@@ -32,4 +34,6 @@ public interface GameValidationCode {
   int CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED = 81;
   int CODE_ALT_COLOR_FILES_MISSING = 82;
   int CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING = 84;
+
+  int CODE_OUTDATED_RECORDING = 90;
 }

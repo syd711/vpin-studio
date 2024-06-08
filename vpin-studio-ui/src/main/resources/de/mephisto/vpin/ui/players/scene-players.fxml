@@ -93,11 +93,11 @@
                                  <font>
                                     <Font size="14.0" />
                                  </font>
+                                 <BorderPane.margin>
+                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                 </BorderPane.margin>
                               </Label>
                            </top>
-                           <padding>
-                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                           </padding>
                         </BorderPane>
                      </content>
                   </ScrollPane>

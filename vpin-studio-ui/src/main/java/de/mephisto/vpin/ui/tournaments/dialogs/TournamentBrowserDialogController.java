@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchTableSummary;
 import de.mephisto.vpin.ui.tournaments.view.TournamentSearchText;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -26,6 +27,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -76,6 +78,9 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
   @FXML
   private Hyperlink discordLink;
+
+  @FXML
+  private Hyperlink websiteLink;
 
   @FXML
   private Label descriptionText;
@@ -144,6 +149,24 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   }
 
   @FXML
+  private void onWebsiteOpen() {
+    if (this.selection.isPresent()) {
+      TournamentSearchResultItem item = selection.get();
+      String link = item.getWebsite();
+      if (!StringUtils.isEmpty(link)) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(link));
+          } catch (Exception e) {
+            LOG.error("Failed to open website link: " + e.getMessage(), e);
+          }
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onDiscordLink() {
     if (this.selection.isPresent()) {
       TournamentSearchResultItem item = selection.get();
@@ -177,14 +200,13 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       });
     }, 300));
 
-    //TODO mania
-//    avatarColumn.setCellValueFactory(cellData -> {
-//      TournamentSearchResultItem value = cellData.getValue();
-//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
-//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-//      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
-//      return new SimpleObjectProperty<>(imageView);
-//    });
+    avatarColumn.setCellValueFactory(cellData -> {
+      TournamentSearchResultItem value = cellData.getValue();
+      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
+      return new SimpleObjectProperty<>(imageView);
+    });
 
     nameColumn.setCellValueFactory(cellData -> {
       TournamentSearchResultItem value = cellData.getValue();
@@ -257,9 +279,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         new Thread(() -> {
           Platform.runLater(() -> {
             for (TournamentSearchResultItem result : results) {
-              //TODO mania
-//              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
-//              client.getCachedUrlImage(avatarUrl);
+              String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(result.getOwnerUuid());
+              client.getCachedUrlImage(avatarUrl);
             }
             tableView.setItems(FXCollections.observableList(results));
             if (!results.isEmpty()) {
@@ -282,16 +303,17 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     endLabel.setText("-");
     remainingLabel.setText("-");
     discordLink.setText("-");
+    websiteLink.setText("-");
     ownerLabel.setText("-");
     descriptionText.setText("-");
     avatarPane.getChildren().removeAll(avatarPane.getChildren());
     saveBtn.setDisable(true);
 
+
     if (selection.isPresent()) {
       TournamentSearchResultItem item = selection.get();
 
-      //TODO mania
-//      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
+      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
 
       nameLabel.setText(item.getDisplayName());
       startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
@@ -300,15 +322,17 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       if (!StringUtils.isEmpty(item.getDiscordLink())) {
         discordLink.setText(item.getDiscordLink());
       }
+      if (!StringUtils.isEmpty(item.getWebsite())) {
+        websiteLink.setText(item.getWebsite());
+      }
       if (!StringUtils.isEmpty(item.getDescription())) {
         descriptionText.setText(item.getDescription());
       }
 
       ownerLabel.setText(item.getOwnerName());
-      //TODO mania
-//      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
-//      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-//      avatarPane.getChildren().add(imageView);
+      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      avatarPane.getChildren().add(imageView);
     }
   }
 

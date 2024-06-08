@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -20,380 +21,392 @@
 
 <BorderPane fx:id="directb2sRoot" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController">
     <center>
-        <VBox BorderPane.alignment="CENTER">
-         <children>
-            <VBox alignment="TOP_CENTER" maxHeight="310.0" minHeight="310.0" prefHeight="310.0">
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+              <VBox>
                <children>
-                  <GridPane hgap="6.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.599951171875" minWidth="10.0" prefWidth="260.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="284.80003356933594" minWidth="10.0" prefWidth="260.0" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
+                  <VBox alignment="TOP_CENTER" maxHeight="310.0" minHeight="310.0" prefHeight="310.0">
                      <children>
-                        <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.rowIndex="1">
-                           <center>
-                              <ImageView fx:id="thumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
-                                 <BorderPane.margin>
-                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                 </BorderPane.margin>
-                              </ImageView>
-                           </center>
-                           <bottom>
-                              <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                           </bottom>
-                        </BorderPane>
-                        <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <center>
-                              <ImageView fx:id="dmdThumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
-                                 <BorderPane.margin>
-                                    <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
-                                 </BorderPane.margin>
-                              </ImageView>
-                           </center>
-                           <bottom>
-                              <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
-                                 <padding>
-                                    <Insets left="3.0" />
-                                 </padding>
-                              </Label>
-                           </bottom>
-                        </BorderPane>
-                        <Label text="Background Preview" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="10.0" layoutY="14.0" text="DMD Preview" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                     <padding>
-                        <Insets left="12.0" right="12.0" top="12.0" />
-                     </padding>
-                  </GridPane>
-               </children>
-            </VBox>
-            <BorderPane>
-               <VBox.margin>
-                  <Insets left="12.0" top="6.0" />
-               </VBox.margin>
-            </BorderPane>
-            <ScrollPane fx:id="dataBoxScrollPane" hbarPolicy="NEVER">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-               <content>
-                  <VBox fx:id="dataBox">
-                     <children>
-                        <GridPane vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="307.599951171875" minWidth="10.0" prefWidth="147.8000244140625" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="461.6" minWidth="10.0" prefWidth="346.0000244140625" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="581.6000061035156" minWidth="10.0" prefWidth="69.99997558593748" />
-                          </columnConstraints>
-                          <rowConstraints>
+                        <GridPane hgap="6.0">
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.599951171875" minWidth="10.0" prefWidth="260.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="12.0" minWidth="12.0" prefWidth="12.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="284.80003356933594" minWidth="10.0" prefWidth="260.0" />
+                           </columnConstraints>
+                           <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
+                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
                            <children>
-                              <Label text="Grill Visibility:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Hidden:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="DMD Visibility:" textFill="WHITE" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="83.0" text="Skip Lamp Frames:" textFill="WHITE" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="116.0" text="Skip GI Frames:" textFill="WHITE" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="150.0" text="Skip Solenoid Frames:" textFill="WHITE" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="184.0" text="Skip LED Frames:" textFill="WHITE" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="251.0" text="Start Background:" textFill="WHITE" GridPane.rowIndex="11">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="12">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="Backglass Settings" textFill="WHITE">
+                              <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.rowIndex="1">
+                                 <center>
+                                    <ImageView fx:id="thumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                                       <BorderPane.margin>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </BorderPane.margin>
+                                    </ImageView>
+                                 </center>
+                                 <bottom>
+                                    <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                       <padding>
+                                          <Insets left="3.0" />
+                                       </padding>
+                                    </Label>
+                                 </bottom>
+                              </BorderPane>
+                              <BorderPane maxHeight="260.0" minHeight="260.0" prefHeight="260.0" styleClass="media-container" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                                 <center>
+                                    <ImageView fx:id="dmdThumbnailImage" fitHeight="230.0" fitWidth="250.0" pickOnBounds="true" preserveRatio="true">
+                                       <BorderPane.margin>
+                                          <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
+                                       </BorderPane.margin>
+                                    </ImageView>
+                                 </center>
+                                 <bottom>
+                                    <Label fx:id="dmdResolutionLabel" textFill="WHITE" BorderPane.alignment="BOTTOM_LEFT">
+                                       <padding>
+                                          <Insets left="3.0" />
+                                       </padding>
+                                    </Label>
+                                 </bottom>
+                              </BorderPane>
+                              <Label text="Background Preview" textFill="WHITE">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                              <ComboBox fx:id="hideDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                              <Spinner fx:id="skipLampFrames" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                              <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                              <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
-                              <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
-                              <Label layoutX="10.0" layoutY="251.0" text="Used LED Type:" textFill="WHITE" GridPane.rowIndex="8">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="9">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
-                              <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
-                              <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                              <ComboBox fx:id="usedLEDType" layoutX="176.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                              <Label GridPane.columnIndex="2" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                              <Label layoutX="540.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                              <Label layoutX="540.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                              <Label layoutX="540.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
-                                 </tooltip>
-                              </Label>
-                           </children>
-                        </GridPane>
-                        <GridPane vgap="3.0">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="295.199951171875" minWidth="10.0" prefWidth="170.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="447.99998474121094" minWidth="10.0" prefWidth="447.99998474121094" />
-                          </columnConstraints>
-                          <rowConstraints>
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Author:" textFill="WHITE" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="83.0" text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="116.0" text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="8">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="9">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="nameLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="typeLabel" layoutX="150.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="authorLabel" layoutX="150.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="artworkLabel" layoutX="150.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="grillLabel" layoutX="150.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="150.0" text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="b2sElementsLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label text="DirectB2S File Metadata" textFill="WHITE">
+                              <Label layoutX="10.0" layoutY="14.0" text="DMD Preview" textFill="WHITE" GridPane.columnIndex="2">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="bulbsLabel" layoutX="180.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
                            </children>
+                           <padding>
+                              <Insets left="12.0" right="12.0" top="12.0" />
+                           </padding>
                         </GridPane>
                      </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
                   </VBox>
-               </content>
-            </ScrollPane>
-            <VBox fx:id="emptyDataBox">
-               <children>
-                  <Label text="No directb2 file found." textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                  <BorderPane>
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets left="12.0" top="6.0" />
                      </VBox.margin>
-                  </Label>
-                  <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                  </BorderPane>
+                  <ScrollPane fx:id="dataBoxScrollPane" hbarPolicy="NEVER">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <content>
+                        <VBox fx:id="dataBox">
+                           <children>
+                              <GridPane vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="160.0" prefWidth="180.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.4000244140625" minWidth="299.1999816894531" prefWidth="338.4000244140625" />
+                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="40.800018310546875" minWidth="1.5999755859375" prefWidth="1.5999755859375" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Grill Visibility:" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="15.0" text="B2S DMD Hidden:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="49.0" text="DMD Visibility:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="83.0" text="Skip Lamp Frames:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="116.0" text="Skip GI Frames:" textFill="WHITE" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="150.0" text="Skip Solenoid Frames:" textFill="WHITE" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="184.0" text="Skip LED Frames:" textFill="WHITE" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="251.0" text="Start Background:" textFill="WHITE" GridPane.rowIndex="11">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="13">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="Backglass Settings" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="hideGrill" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                    <ComboBox fx:id="hideDMD" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <Spinner fx:id="skipLampFrames" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                    <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                                    <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                    <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                                    <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="10">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <ComboBox fx:id="glowing" layoutX="173.0" layoutY="380.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                                    <Label layoutX="10.0" layoutY="251.0" text="Used LED Type:" textFill="WHITE" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="352.0" text="LED Bulb Light On:" textFill="WHITE" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="lightBulbOn" layoutX="176.0" layoutY="352.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                                    <CheckBox fx:id="startBackground" layoutX="176.0" layoutY="520.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                                    <CheckBox fx:id="hideB2SDMD" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                    <ComboBox fx:id="usedLEDType" layoutX="176.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <Label GridPane.columnIndex="2" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                    <Label layoutX="540.0" layoutY="150.0" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                    <Label layoutX="540.0" layoutY="184.0" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                    <Label layoutX="540.0" layoutY="217.0" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="Only enabled for backglasses with illuminations." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="385.0" text="Start as EXE:" textFill="WHITE" GridPane.rowIndex="12">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <CheckBox fx:id="startAsExe" layoutX="176.0" layoutY="386.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                                 </children>
+                              </GridPane>
+                              <GridPane vgap="3.0">
+                                <columnConstraints>
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="320.0" />
+                                </columnConstraints>
+                                <rowConstraints>
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                </rowConstraints>
+                                 <children>
+                                    <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="49.0" text="Author:" textFill="WHITE" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="83.0" text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="116.0" text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="184.0" text="Number of Players:" textFill="WHITE" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="217.0" text="File Size:" textFill="WHITE" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="251.0" text="Modification Date:" textFill="WHITE" GridPane.rowIndex="10">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="nameLabel" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="typeLabel" layoutX="150.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="authorLabel" layoutX="150.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="artworkLabel" layoutX="150.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="grillLabel" layoutX="150.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="playersLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="filesizeLabel" layoutX="150.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="modificationDateLabel" layoutX="150.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="150.0" text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="b2sElementsLabel" layoutX="150.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label text="DirectB2S File Metadata" textFill="WHITE">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="10.0" layoutY="217.0" text="Bulbs:" textFill="WHITE" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="bulbsLabel" layoutX="180.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                 </children>
+                              </GridPane>
+                           </children>
+                           <padding>
+                              <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                           </padding>
+                        </VBox>
+                     </content>
+                  </ScrollPane>
+                  <VBox fx:id="emptyDataBox">
+                     <children>
+                        <Label text="No directb2 file found." textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label styleClass="preference-description" text="Open the &quot;Visual Pinball Spreadsheet&quot; section to find additional resources.">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="42.0" styleClass="preference-description" text="Upload downloaded resources here." />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </VBox.margin>
+                  </VBox>
                </children>
-               <VBox.margin>
-                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-               </VBox.margin>
-            </VBox>
-         </children>
-        </VBox>
+              </VBox>
+         </content>
+      </ScrollPane>
     </center>
    <top>
       <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
@@ -410,6 +423,21 @@
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
                </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+               </graphic>
+            </Button>
+            <Separator layoutX="176.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" text="Backglass Manager">
                <font>
                   <Font size="14.0" />
                </font>

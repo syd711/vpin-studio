@@ -2,7 +2,7 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveRestoreDescriptor;
-import de.mephisto.vpin.restclient.popper.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
@@ -15,9 +15,9 @@ public class InstallingMenuState extends MenuState {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private final MenuState parentState;
   private final MenuController menuController;
-  private final PlaylistRepresentation playlist;
+  private final Playlist playlist;
 
-  public InstallingMenuState(MenuState parentState, MenuController menuController, PlaylistRepresentation playlist) {
+  public InstallingMenuState(MenuState parentState, MenuController menuController, Playlist playlist) {
     this.parentState = parentState;
     this.menuController = menuController;
     this.playlist = playlist;
@@ -61,7 +61,7 @@ public class InstallingMenuState extends MenuState {
       descriptor.setArchiveSourceId(archiveDescriptor.getSource().getId());
       descriptor.setFilename(archiveDescriptor.getFilename());
 
-//      List<PlaylistRepresentation> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
+//      List<Playlist> playlists = Menu.client.getPlaylistsService().getStaticPlaylists();
 //      if (playlist != null) {
 //        descriptor.setPlaylistId(playlist.getId());
 //      }

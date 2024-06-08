@@ -1,3 +1,9 @@
+.debug {
+    -fx-border-style: solid;
+    -fx-border-color: green;
+    -fx-border-width: 2;
+}
+
 /**
  * Colors
  */
@@ -21,6 +27,19 @@
    -fx-green: #33CC00;
 }
 
+.filter-component {
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-7;
+    -fx-border-width: 0 1 0 0;
+    -fx-border-width: 1;
+}
+
+.toggle-button-selected {
+    -fx-background-color: #6666FFAA;
+}
+
+.toggle-selected {
+}
 
 /**
  * Main
@@ -216,6 +235,49 @@
     -fx-font-size : 16px;
     -fx-background-color: transparent;
     -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.ghost-button-tiny {
+    -fx-font-color: -fx-font-2;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
+.ghost-button-tiny:hover {
+    -fx-font-color: #fff8f8;
+    -fx-font-size : 14px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.table-media-button {
+    -fx-font-color: #FFFFFF;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #FFFFFF;
+}
+
+.table-media-button:hover {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: #28333566;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: #fff8f8;
+    -fx-cursor: hand;
+}
+
+.table-media-button-selected {
+    -fx-font-color: #fff8f8;
+    -fx-background-color: black;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: green;
+    -fx-border-width: 1px;
+    -fx-border-radius: 4px;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
 }
@@ -840,6 +902,10 @@
 	-fx-background-color: white;
 }
 
+.text-field {
+  -fx-prompt-text-fill: -fx-base-3;
+}
+
 
 
 .scroll-pane > .viewport {
@@ -946,16 +1012,26 @@
     -fx-base : #338800;
 }
 
+.split-menu-button .arrow {
+    -fx-background-color: white;
+}
+
+.text-button {
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-base : -fx-info-background;
+}
+
 .folder-component {
-    -fx-font-color: #000000;
-    -fx-text-fill: #000000;
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
     -fx-base : #CC9933;
 }
 
 
 .link-component {
-    -fx-font-color: #000000;
-    -fx-text-fill: #000000;
+    -fx-font-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
     -fx-base : #3399FF;
 }
 
@@ -981,16 +1057,14 @@
     -fx-font-size : 12px;
 }
 
-.maintenance-selected {
+.action-selected {
     -fx-text-fill: #FFFFFF;
     -fx-background-color: #FF3333;
     -fx-border-color: #990000;
-    -fx-border-radius: 2 2 2 2;
     -fx-border-style: solid solid solid solid;
-    -fx-border-width: 2;
+    -fx-border-width: 1;
     -fx-border-insets: 0 0 0 0;
-    -fx-padding: 3 6 3 6;
-    -fx-background-radius: 2px;
+    -fx-background-radius: 2 2 2 2;
 }
 
 .progress-bar > .track {
@@ -1032,3 +1106,136 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-border-radius: 4 4 4 4;
 }
+
+.pretty-list-view {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+.pretty-list-view: focused {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: black;
+    -fx-border-width: 1;
+}
+.pretty-list-view .list-cell: hover {
+    -fx-border-width: 1;
+    -fx-background-color: #3e3e71;
+    -fx-text-background-color: #6666FF;
+}
+.pretty-list-view .list-cell: odd{
+    -fx-background-color: #303733;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view .list-cell: odd:hover{
+    -fx-background-color: #3e3e71;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view .list-cell: even{
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #283335;
+}
+.pretty-list-view .list-cell: even:hover{
+    -fx-background-color: #3e3e71;
+    -fx-text-fill: #FFFFFF;
+}
+
+.pretty-list-view .list-cell:selected {
+    -fx-text-background-color: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #5252b8;
+}
+.pretty-list-view:row-selection .list-cell:filled:hover {
+    -fx-background-color: #5252b8;
+    -fx-text-fill: #FFFFFF;
+}
+.pretty-list-view:focused .list-cell:filled:focused:selected:hover {
+    -fx-text-background-color: #FFFFFF;
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-color: #6666FFAA;
+ }
+
+
+.edit-mode-border {
+    -fx-border-color: #6666FF;
+    -fx-border-style: solid;
+    -fx-border-width: 3;
+}
+
+.edit-mode-container {
+    -fx-background-color: #6666FF;
+}
+
+.edit-button {
+    -fx-background-color: #5555FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-weight: bold;
+    -fx-border-radius: 3 3 3 3;
+    -fx-font-size: 14px;
+    -fx-border-color: #FFFFFF;
+    -fx-text-fill: #DDDDDD;
+}
+
+.edit-button:hover {
+    -fx-background-color: #7777FF;
+    -fx-border-style: solid solid solid solid;
+    -fx-font-size: 14px;
+    -fx-border-color: #6666FF;
+}
+
+.custom-toggle-button {
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-font-size: 14px;
+}
+
+.custom-toggle-button:selected {
+    -fx-background-color: #333366; /* Selected button color */
+    -fx-text-fill: white; /* Text color when selected */
+    -fx-border-color: #333366; /* Border color when selected */
+    -fx-border-radius: 5px; /* Rounded corners */
+}
+
+.dnd-dashed-border {
+    -fx-border-color: white;
+    -fx-border-width: 3;
+    -fx-border-style: segments(15, 15, 15, 15);
+}
+
+
+.selection-panel {
+    -fx-background-color: #272b2f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #272b2f;
+}
+
+.selection-panel:hover {
+    -fx-background-color: #272b3f;
+}
+.selection-panel-selected {
+    -fx-background-color: #272b3f;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-width: 1 1 1 1;
+    -fx-border-radius: 6 6 6 6;
+    -fx-border-color: #6666FF;
+}
+
+
+/**
+ * Color Picker custom color hiding
+.color-palette .hyperlink, .color-palette .separator {
+    visibility: hidden;
+}
+.color-palette {
+    -fx-padding: 15 15 -30 15;
+}
+ */
+
+ .tooltip {
+    -fx-show-delay: 250ms;
+    -fx-show-duration: 10s;
+ }

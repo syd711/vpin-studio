@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.util.ini.IniSettings;
 import de.mephisto.vpin.restclient.util.ini.IniSettingsChangeListener;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -24,7 +25,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class PINemHiPreferencesController implements Initializable, IniSettingsChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PINemHiPreferencesController.class);

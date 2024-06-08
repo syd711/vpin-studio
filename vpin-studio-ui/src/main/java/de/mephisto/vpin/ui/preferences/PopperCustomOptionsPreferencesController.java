@@ -81,6 +81,9 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   private CheckBox muteLaunchAudio;
 
   @FXML
+  private CheckBox useAltWheels;
+
+  @FXML
   private Spinner<Integer> wheelUpdateMS;
 
   @FXML
@@ -263,11 +266,24 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
       customOptions.setVolumeChange(t1);
       save();
     });
+
+    useAltWheels.setSelected(customOptions.isUseAltWheels());
+    useAltWheels.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      customOptions.setUseAltWheels(t1);
+      save();
+    });
   }
 
   private void save() {
     try {
+      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+          Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+        }
+        return;
+      }
       Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+
     } catch (DatabaseLockException e) {
       LOG.error("Failed to save custom options: " + e.getMessage(), e);
       if (!Dialogs.openPopperRunningWarning(Studio.stage)) {

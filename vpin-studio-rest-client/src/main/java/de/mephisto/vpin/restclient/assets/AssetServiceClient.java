@@ -6,8 +6,10 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -26,7 +28,9 @@ public class AssetServiceClient extends VPinStudioClientService {
   public boolean uploadDefaultBackgroundFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "assets/background";
-      new RestTemplate().exchange(url, HttpMethod.POST, createUpload(file, gameId, null, AssetType.DEFAULT_BACKGROUND, listener), Boolean.class);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.DEFAULT_BACKGROUND, listener);
+      new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      finalizeUpload(upload);
       return true;
     } catch (Exception e) {
       LOG.error("Default background upload failed: " + e.getMessage(), e);
@@ -34,7 +38,7 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean regenerateGameAssets(int gameId) {
+  public boolean deleteGameAssets(int gameId) {
     try {
       getRestClient().delete(API + "assets/background/" + gameId);
       return true;
@@ -44,27 +48,36 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
-    String url = API + "poppermedia/" + id + "/" + screen.name();
-    if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
-      byte[] bytes = getRestClient().readBinary(url);
-      if (bytes == null) {
-        bytes = new byte[]{};
-      }
-      client.getImageCache().put(url, bytes);
-    }
-
-    if (screen.equals(PopperScreen.Wheel)) {
-      byte[] imageBytes = client.getImageCache().get(url);
-      if (imageBytes == null || imageBytes.length == 0) {
+  @Nullable
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
+    try {
+      if (screen == null) {
         return null;
       }
-      return new ByteArrayInputStream(imageBytes);
-    }
 
-    byte[] bytes = getRestClient().readBinary(url);
-    if (bytes != null) {
-      return new ByteArrayInputStream(bytes);
+      String url = API + "poppermedia/" + id + "/" + screen.name();
+      if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
+        byte[] bytes = getRestClient().readBinary(url);
+        if (bytes == null) {
+          bytes = new byte[]{};
+        }
+        client.getImageCache().put(url, bytes);
+      }
+
+      if (screen.equals(PopperScreen.Wheel)) {
+        byte[] imageBytes = client.getImageCache().get(url);
+        if (imageBytes == null || imageBytes.length == 0) {
+          return null;
+        }
+        return new ByteArrayInputStream(imageBytes);
+      }
+
+      byte[] bytes = getRestClient().readBinary(url);
+      if (bytes != null) {
+        return new ByteArrayInputStream(bytes);
+      }
+    } catch (Exception e) {
+      LOG.error("Error reading game media item for " + id + " and " + screen + ": " + e.getMessage(), e);
     }
     return null;
   }

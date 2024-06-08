@@ -1,17 +1,22 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
-import de.mephisto.vpin.server.util.UploadUtil;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FilenameUtils;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -42,12 +48,32 @@ public class PupPacksResource {
   @Autowired
   private GameValidationService validationService;
 
+  @Autowired
+  private UniversalUploadService universalUploadService;
+
+
+  @DeleteMapping("{id}")
+  public boolean delete(@PathVariable("id") int id) {
+    return pupPacksService.delete(gameService.getGame(id));
+  }
+
+  @GetMapping("/menu")
+  public PupPackRepresentation getPupPack() {
+    PupPack pupPack = pupPacksService.getMenuPupPack();
+    if (pupPack != null) {
+      pupPack.load();
+      return toPupPackRepresentation(null, pupPack);
+    }
+    return null;
+  }
+
   @GetMapping("/{gameId}")
   public PupPackRepresentation getPupPack(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
     if (game != null) {
       PupPack pupPack = pupPacksService.getPupPack(game);
       if (pupPack != null) {
+        pupPack.load();
         return toPupPackRepresentation(game, pupPack);
       }
     }
@@ -87,40 +113,48 @@ public class PupPacksResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult upload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam(value = "uploadType", required = false) String uploadType,
-                                   @RequestParam("objectId") Integer gameId) {
+  public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
+      descriptor.getAssetsToImport().add(AssetType.PUP_PACK);
+      descriptor.upload();
 
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found for PUP pack upload.");
-        return JobExecutionResultFactory.error("No game found for PUP pack upload.");
-      }
+      File tempFile = new File(descriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis(tempFile);
+      analysis.analyze();
 
-      String extension = FilenameUtils.getExtension(file.getOriginalFilename());
-      File pupArchive = File.createTempFile(FilenameUtils.getBaseName(file.getOriginalFilename()), "." + extension);
-      LOG.info("Uploading " + pupArchive.getAbsolutePath());
-      UploadUtil.upload(file, pupArchive);
-      JobExecutionResult jobExecutionResult = pupPacksService.installPupPack(game, pupArchive);
-      gameService.resetUpdate(gameId, VpsDiffTypes.pupPack);
-      return jobExecutionResult;
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "PUP pack upload failed: " + e.getMessage());
+      descriptor.setAsync(true);
+      universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.PUP_PACK);
+
+      //these ROM names can differ, see PinBlob which uses a different ROM than PUP Pack
+      List<Game> gamesByRom = gameService.getKnownGames(-1);
+      String romFromPupPack = analysis.getRomFromPupPack();
+      String romFromZip = analysis.getRomFromArchive();
+      for (Game gameByRom : gamesByRom) {
+        if (!StringUtils.isEmpty(gameByRom.getRom())) {
+          String gameRom = gameByRom.getRom();
+          if (gameRom.equalsIgnoreCase(String.valueOf(romFromPupPack)) || gameRom.equalsIgnoreCase(String.valueOf(romFromZip))) {
+            gameService.resetUpdate(gameByRom.getId(), VpsDiffTypes.pupPack);
+          }
+        }
+      }
+      return descriptor;
+    }
+    catch (
+        Exception e) {
+      LOG.error(AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
     }
   }
 
-  private PupPackRepresentation toPupPackRepresentation(Game game, @NonNull PupPack pupPack) {
+  private PupPackRepresentation toPupPackRepresentation(@Nullable Game game, @NonNull PupPack pupPack) {
     PupPackRepresentation representation = new PupPackRepresentation();
     representation.setSize(pupPack.getSize());
     representation.setScriptOnly(pupPack.isScriptOnly());
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
-    representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
     representation.setOptions(pupPack.getOptions());
     representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
     representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
@@ -129,7 +163,15 @@ public class PupPacksResource {
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
-    representation.setValidationStates(validationService.validatePupPack(game));
+    representation.setName(pupPack.getName());
+    representation.setHelpTransparency(pupPack.isTransparent(PopperScreen.GameHelp));
+    representation.setInfoTransparency(pupPack.isTransparent(PopperScreen.GameInfo));
+    representation.setOther2Transparency(pupPack.isTransparent(PopperScreen.Other2));
+
+    if (game != null) {
+      representation.setEnabled(!pupPacksService.isPupPackDisabled(game));
+      representation.setValidationStates(validationService.validatePupPack(game));
+    }
     return representation;
   }
 }

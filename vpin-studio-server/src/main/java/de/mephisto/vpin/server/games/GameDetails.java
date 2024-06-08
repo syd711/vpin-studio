@@ -35,9 +35,15 @@ public class GameDetails {
   @Column(length = 1024)
   public String updates;
 
+  private String notes;
+
+  private Long templateId;
+
   private String romName;
 
   private String tableName;
+
+  private String pupPack;
 
   private String extTableId;
 
@@ -51,6 +57,22 @@ public class GameDetails {
 
   private int nvOffset;
 
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
+  }
+
+  public String getPupPack() {
+    return pupPack;
+  }
+
+  public void setPupPack(String pupPack) {
+    this.pupPack = pupPack;
+  }
+
   public String getUpdates() {
     return updates;
   }
@@ -63,6 +85,15 @@ public class GameDetails {
     return extTableId;
   }
 
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
+  @Deprecated // stored this in Popper
   public void setExtTableId(String extTableId) {
     this.extTableId = extTableId;
   }
@@ -71,6 +102,7 @@ public class GameDetails {
     return extTableVersionId;
   }
 
+  @Deprecated // stored this in Popper
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
   }

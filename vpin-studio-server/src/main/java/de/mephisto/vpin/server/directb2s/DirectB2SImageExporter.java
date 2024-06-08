@@ -15,9 +15,9 @@ import java.io.IOException;
 public class DirectB2SImageExporter {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SImageExporter.class);
 
-  private final DirectB2SData data;
+  private final DirectB2SDataExtractor data;
 
-  public DirectB2SImageExporter(@NonNull DirectB2SData data) {
+  public DirectB2SImageExporter(@NonNull DirectB2SDataExtractor data) {
     this.data = data;
   }
 
@@ -27,7 +27,7 @@ public class DirectB2SImageExporter {
   }
 
   public void extractDMD(@NonNull File target) throws VPinStudioException {
-    if (data.getDmdBase64() != null) {
+    if (data.getDmdBase64()!=null) {
       byte[] bytes = DatatypeConverter.parseBase64Binary(data.getDmdBase64());
       write(bytes, target);
     }

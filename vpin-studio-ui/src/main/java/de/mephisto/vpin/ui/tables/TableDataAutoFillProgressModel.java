@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -53,8 +54,8 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      client.getPinUPPopperService().autoFillTableDetails(next.getId(), overwrite);
-      progressResultModel.addProcessed();
+      TableDetails tableDetails = client.getPinUPPopperService().autoFillTableDetails(next.getId(), overwrite);
+      progressResultModel.addProcessed(tableDetails);
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);
     }

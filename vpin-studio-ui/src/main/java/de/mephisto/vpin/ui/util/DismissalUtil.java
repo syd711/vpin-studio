@@ -39,6 +39,9 @@ public class DismissalUtil {
     if (ignoredValidations == null) {
       ignoredValidations = new ArrayList<>();
     }
+    else {
+      ignoredValidations = new ArrayList<>(ignoredValidations);
+    }
 
     if (!ignoredValidations.contains(validationState.getCode())) {
       ignoredValidations.add(validationState.getCode());
@@ -68,19 +71,5 @@ public class DismissalUtil {
     } catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
-    EventManager.getInstance().notifyTableChange(game.getId(), game.getRom());
-  }
-
-  private static void dismissAll(GameRepresentation game) {
-    List<Integer> ignoredValidations = new ArrayList<>();
-    ignoredValidations.add(-1);
-    game.setIgnoredValidations(ignoredValidations);
-
-    try {
-      client.getGameService().saveGame(game);
-    } catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, e.getMessage());
-    }
-    EventManager.getInstance().notifyTableChange(game.getId(), null);
   }
 }

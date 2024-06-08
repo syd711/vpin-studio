@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.Playlist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +34,17 @@ public class PlaylistService {
     return pinUPConnector.getPlayList(playlistId);
   }
 
-  public Playlist addToPlaylist(int playlistId, int gameId) {
-    pinUPConnector.addToPlaylist(playlistId, gameId);
+  public void removeFromPlaylists(int gameId) {
+    pinUPConnector.deleteFromPlaylists(gameId);
+  }
+
+  public Playlist addToPlaylist(int playlistId, int gameId, int favMode) {
+    pinUPConnector.addToPlaylist(playlistId, gameId, favMode);
+    return pinUPConnector.getPlayList(playlistId);
+  }
+
+  public Playlist updatePlaylistGame(int playlistId, int gameId, int favMode) {
+    pinUPConnector.updatePlaylistGame(playlistId, gameId, favMode);
     return pinUPConnector.getPlayList(playlistId);
   }
 }

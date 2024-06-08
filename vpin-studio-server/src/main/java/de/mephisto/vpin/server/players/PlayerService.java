@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.highscores.Score;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -55,15 +56,24 @@ public class PlayerService {
     return Collections.emptyList();
   }
 
+  public String getAdminPlayerInitials() {
+    Player adminPlayer = getAdminPlayer();
+    if (adminPlayer != null) {
+      return adminPlayer.getInitials();
+    }
+    return null;
+  }
+
+  @Nullable
+  public Player getAdminPlayer() {
+    List<Player> buildInPlayers = getBuildInPlayers();
+    return buildInPlayers.stream().filter(Player::isAdministrative).findFirst().orElse(null);
+  }
+
   @Nullable
   public Player getPlayerForInitials(long serverId, @Nullable String initials) {
     if (StringUtils.isEmpty(initials)) {
       return null;
-    }
-
-    Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);
-    if (discordPlayer != null) {
-      return discordPlayer;
     }
 
     List<Player> players = playerRepository.findByInitials(initials.toUpperCase());
@@ -73,6 +83,11 @@ public class PlayerService {
 
     if (!players.isEmpty()) {
       return players.get(0);
+    }
+
+    Player discordPlayer = discordService.getPlayerByInitials(serverId, initials);
+    if (discordPlayer != null) {
+      return discordPlayer;
     }
 
     return null;
@@ -134,6 +149,13 @@ public class PlayerService {
       else {
         initials.put(player.getInitials(), player);
       }
+    }
+  }
+
+  public void validateInitials(Score newScore) {
+    String defaultInitials = getAdminPlayerInitials();
+    if (String.valueOf(newScore.getPlayerInitials()).equals("???") && defaultInitials != null && newScore.getNumericScore() > 0) {
+      newScore.setPlayerInitials(defaultInitials);
     }
   }
 }

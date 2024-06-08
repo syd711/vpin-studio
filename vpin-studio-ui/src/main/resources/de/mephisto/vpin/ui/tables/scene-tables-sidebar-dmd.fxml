@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -60,7 +61,7 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="49.0" text="Bundle Type:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" text="DMD Type:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -135,6 +136,17 @@
                </graphic>
             </Button>
             <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <Button fx:id="dmdDeviceBtn" mnemonicParsing="false" onAction="#onDmdDevice" styleClass="text-button" text="DmdDevice.ini" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="PinUP Popper Setup" />
+               </tooltip>
+            </Button>
             <Button fx:id="flexDMDUIBtn" mnemonicParsing="false" onAction="#onFlexDMDUI" styleClass="external-component" text="FlexDMD Helper">
                <font>
                   <Font size="14.0" />

@@ -1,33 +1,49 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
+import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Spinner;
+import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class CardGenerationPreferencesController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(CardGenerationPreferencesController.class);
+  public static Debouncer debouncer = new Debouncer();
 
   @FXML
   private ComboBox<String> popperScreenCombo;
 
   @FXML
   private ComboBox<String> rotationCombo;
+
+  @FXML
+  private ComboBox<String> cardSizeCombo;
 
   @FXML
   private Label validationError;
@@ -41,40 +57,81 @@ public class CardGenerationPreferencesController implements Initializable {
   @FXML
   private RadioButton cardPosPlayfieldRadio;
 
+  @FXML
+  private VBox transparencyHelp;
+  private PupPackRepresentation menuPupPack;
+  private CardSettings cardSettings;
+  private ResolutionChangeListener resolutionChangeListener;
+
+  @FXML
+  private void onScreenHelp() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI("https://github.com/syd711/vpin-studio/wiki/Troubleshooting#why-do-my-transparent-highscore-cards-have-a-black-background"));
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open discord link: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    ObservedProperties properties = Studio.client.getProperties(PreferenceNames.HIGHSCORE_CARD_SETTINGS);
+    menuPupPack = client.getPupPackService().getMenuPupPack();
+    validationError.managedProperty().bindBidirectional(validationError.visibleProperty());
+    transparencyHelp.setVisible(false);
+
+    cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
 
     popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
-    BindingUtil.bindComboBox(popperScreenCombo, properties, "popperScreen");
-    popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> onScreenChange());
+    popperScreenCombo.setValue(cardSettings.getPopperScreen() != null ? cardSettings.getPopperScreen() : "");
+    popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      cardSettings.setPopperScreen(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+      onScreenChange();
+    });
+
+    resolutionChangeListener = new ResolutionChangeListener();
+    cardSizeCombo.setItems(FXCollections.observableList(Arrays.asList(HighscoreCardResolution.qHD.toString(), HighscoreCardResolution.HDReady.toString(), HighscoreCardResolution.HD.toString())));
+    cardSizeCombo.setValue(cardSettings.getCardResolution() != null ? cardSettings.getCardResolution().toString() : HighscoreCardResolution.HDReady.toString());
+    cardSizeCombo.valueProperty().addListener(resolutionChangeListener);
 
     rotationCombo.setItems(FXCollections.observableList(Arrays.asList("0", "90", "180", "270")));
-    BindingUtil.bindComboBox(rotationCombo, properties, "notificationRotation");
-
-    BindingUtil.bindSpinner(highscoreCardDuration, properties, "notificationTime", 0, 30);
-
-    cardPosPlayfieldRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+    rotationCombo.setValue(cardSettings.getNotificationRotation());
+    rotationCombo.valueProperty().addListener(new ChangeListener<String>() {
       @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        rotationCombo.setDisable(!newValue);
-        cardPosPopperRadio.setSelected(!newValue);
-        properties.set("notificationOnPopperScreen", String.valueOf(!newValue));
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        cardSettings.setNotificationRotation(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
       }
     });
 
-    cardPosPopperRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        rotationCombo.setDisable(newValue);
-        cardPosPlayfieldRadio.setSelected(!newValue);
-        properties.set("notificationOnPopperScreen", String.valueOf(newValue));
-      }
-    });
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 30, cardSettings.getNotificationTime());
+    highscoreCardDuration.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("cardDuration", () -> {
+      int value1 = Integer.parseInt(String.valueOf(t1));
+      cardSettings.setNotificationTime(value1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    }, 500));
 
-    boolean notificationOnPopperScreen = properties.getProperty("notificationOnPopperScreen", false);
+    boolean notificationOnPopperScreen = cardSettings.isNotificationOnPopperScreen();
     cardPosPopperRadio.setSelected(notificationOnPopperScreen);
     cardPosPlayfieldRadio.setSelected(!notificationOnPopperScreen);
+
+    cardPosPlayfieldRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      rotationCombo.setDisable(!newValue);
+      cardPosPopperRadio.setSelected(!newValue);
+      cardSettings.setNotificationOnPopperScreen(false);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    });
+
+    cardPosPopperRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      rotationCombo.setDisable(newValue);
+      cardPosPlayfieldRadio.setSelected(!newValue);
+      cardSettings.setNotificationOnPopperScreen(true);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+    });
 
     onScreenChange();
   }
@@ -84,7 +141,7 @@ public class CardGenerationPreferencesController implements Initializable {
     highscoreCardDuration.setDisable(selectedItem == null);
 
     if (!StringUtils.isEmpty(selectedItem)) {
-      PinUPControl fn = Studio.client.getPinUPPopperService().getPinUPControlFor(PopperScreen.valueOf(selectedItem));
+      PinUPControl fn = client.getPinUPPopperService().getPinUPControlFor(PopperScreen.valueOf(selectedItem));
 
       String msg = null;
       if (fn != null) {
@@ -99,8 +156,41 @@ public class CardGenerationPreferencesController implements Initializable {
 
       validationError.setVisible(msg != null);
       validationError.setText(msg);
-    } else {
+    }
+    else {
       validationError.setVisible(false);
+    }
+
+    transparencyHelp.setVisible(false);
+    if (menuPupPack != null && popperScreenCombo.getValue() != null) {
+      String value = popperScreenCombo.getValue();
+      if (!StringUtils.isEmpty(value)) {
+        PopperScreen screen = PopperScreen.valueOf(value);
+        transparencyHelp.setVisible(
+            (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
+                (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
+                (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
+        );
+      }
+    }
+  }
+
+  class ResolutionChangeListener implements ChangeListener<String> {
+    @Override
+    public void changed(ObservableValue observable, String oldValue, String newValue) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Change Highscore Card Size?", "Change the default highscore card size to " + newValue + "?", "All table default backgrounds will be re-genererated. Revisit you highscore card layouts afterwards.", "Change Resolution");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        cardSettings.setCardResolution(HighscoreCardResolution.valueOfString(newValue));
+        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        Platform.runLater(() -> {
+          ProgressDialog.createProgressDialog(new GenerateAllBackgroundsProgressModel(client.getGameService().getVpxGamesCached()));
+        });
+      }
+      else {
+        cardSizeCombo.valueProperty().removeListener(resolutionChangeListener);
+        cardSizeCombo.setValue(oldValue);
+        cardSizeCombo.valueProperty().addListener(resolutionChangeListener);
+      }
     }
   }
 }

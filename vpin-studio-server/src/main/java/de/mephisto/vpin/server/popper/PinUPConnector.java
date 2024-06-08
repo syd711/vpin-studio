@@ -1,9 +1,13 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -28,7 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class PinUPConnector implements InitializingBean {
+public class PinUPConnector implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
@@ -37,12 +41,20 @@ public class PinUPConnector implements InitializingBean {
 
   public static final String POST_SCRIPT = "PostScript";
   public static final String LAUNCH_SCRIPT = "LaunchScript";
+  public static final int DB_VERSION = 64;
+  public static final String IS_FAV = "isFav";
+  public static final String POPPER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
   private String dbFilePath;
 
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
+  private int sqlVersion = DB_VERSION;
+  private ServerSettings serverSettings;
 
   public GameEmulator getGameEmulator(int emulatorId) {
     return this.emulators.get(emulatorId);
@@ -50,6 +62,10 @@ public class PinUPConnector implements InitializingBean {
 
   public List<GameEmulator> getGameEmulators() {
     return new ArrayList<>(this.emulators.values());
+  }
+
+  public List<GameEmulator> getVpxGameEmulators() {
+    return this.emulators.values().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
 
   public List<GameEmulator> getBackglassGameEmulators() {
@@ -62,20 +78,21 @@ public class PinUPConnector implements InitializingBean {
   public GameEmulator getDefaultGameEmulator() {
     Collection<GameEmulator> values = emulators.values();
     for (GameEmulator value : values) {
-      if (value.getDescription() != null && value.getDescription().contains("default")) {
+      if (value.getDescription() != null && value.isVpxEmulator() && value.getDescription().contains("default")) {
         return value;
       }
     }
 
     for (GameEmulator value : values) {
-      if (value.getNvramFolder().exists()) {
+      if (value.isVpxEmulator() && value.getNvramFolder().exists()) {
         return value;
       }
       else {
         LOG.error(value + " has no nvram folder \"" + value.getNvramFolder().getAbsolutePath() + "\"");
       }
     }
-    throw new UnsupportedOperationException("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
+    LOG.error("Failed to determine emulator for highscores, no VPinMAME/nvram folder could be resolved (" + emulators.size() + " VPX emulators found).");
+    return null;
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -105,7 +122,8 @@ public class PinUPConnector implements InitializingBean {
     try {
       String url = "jdbc:sqlite:" + dbFilePath;
       return DriverManager.getConnection(url);
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to connect to sqlite: " + e.getMessage(), e);
     }
     return null;
@@ -115,7 +133,8 @@ public class PinUPConnector implements InitializingBean {
     if (conn != null) {
       try {
         conn.close();
-      } catch (SQLException e) {
+      }
+      catch (SQLException e) {
         LOG.error("Error disconnecting from sqlite: " + e.getMessage());
       }
     }
@@ -134,7 +153,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -157,7 +177,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to load altexe list: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -168,11 +189,9 @@ public class PinUPConnector implements InitializingBean {
 
   @NonNull
   public TableDetails getTableDetails(int id) {
-    int sqlVersion = this.getSqlVersion();
-
     Connection connect = connect();
     TableDetails manifest = null;
-    List<String> altExeList = getAltExeList();
+    List<String> altExeList = Collections.emptyList();//getAltExeList();
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
@@ -226,6 +245,8 @@ public class PinUPConnector implements InitializingBean {
         manifest.setAltRunMode(rs.getString("AltRunMode"));
         manifest.setUrl(rs.getString("WebLinkURL"));
         manifest.setDesignedBy(rs.getString("DesignedBy"));
+        manifest.setMediaSearch(rs.getString("MediaSearch"));
+        manifest.setSpecial(rs.getString("Special"));
 
         manifest.setAltLaunchExe(rs.getString("ALTEXE"));
 
@@ -234,7 +255,7 @@ public class PinUPConnector implements InitializingBean {
         manifest.getLauncherList().addAll(altExeList);
 
         //check for popper DB update 1.5
-        if (sqlVersion >= 64) {
+        if (sqlVersion >= DB_VERSION) {
           manifest.setWebGameId(rs.getString("WEBGameID"));
           manifest.setRomAlt(rs.getString("ROMALT"));
           manifest.setMod(rs.getInt("ISMOD") == 1);
@@ -254,7 +275,8 @@ public class PinUPConnector implements InitializingBean {
           loadGameExtras(connect, manifest, id);
         }
       }
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -262,89 +284,113 @@ public class PinUPConnector implements InitializingBean {
     return manifest;
   }
 
-  public void saveTableDetails(int id, TableDetails manifest) {
+  public void updateTableFileUpdated(int id) {
+    Connection connect = this.connect();
+    try {
+      String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
+      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setObject(1, ts);
+      preparedStatement.setInt(2, id);
+
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save table details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void saveTableDetails(int id, TableDetails tableDetails) {
     Connection connect = this.connect();
     try {
       StringBuilder stmtBuilder = new StringBuilder("UPDATE Games SET ");
       List<Object> params = new ArrayList<>();
 
-      int sqlVersion = getSqlVersion();
-
       stmtBuilder.append("'EMUID' = ?, ");
-      params.add(manifest.getEmulatorId());
+      params.add(tableDetails.getEmulatorId());
       stmtBuilder.append("'GameName' = ?, ");
-      params.add(manifest.getGameName());
+      params.add(tableDetails.getGameName());
       stmtBuilder.append("'GameDisplay' = ?, ");
-      params.add(manifest.getGameDisplayName());
+      params.add(tableDetails.getGameDisplayName());
       stmtBuilder.append("'GameFileName' = ?, ");
-      params.add(manifest.getGameFileName());
+      params.add(tableDetails.getGameFileName());
       stmtBuilder.append("'GameTheme' = ?, ");
-      params.add(manifest.getGameTheme());
+      params.add(tableDetails.getGameTheme());
       stmtBuilder.append("'Notes' = ?, ");
-      params.add(manifest.getNotes());
+      params.add(tableDetails.getNotes());
       stmtBuilder.append("'GameYear' = ?, ");
-      params.add(manifest.getGameYear());
+      params.add(tableDetails.getGameYear());
       stmtBuilder.append("'ROM' = ?, ");
-      params.add(manifest.getRomName());
+      params.add(tableDetails.getRomName());
       stmtBuilder.append("'Manufact' = ?, ");
-      params.add(manifest.getManufacturer());
+      params.add(tableDetails.getManufacturer());
       stmtBuilder.append("'NumPlayers' = ?, ");
-      params.add(manifest.getNumberOfPlayers());
+      params.add(tableDetails.getNumberOfPlayers());
       stmtBuilder.append("'TAGS' = ?, ");
-      params.add(manifest.getTags());
+      params.add(tableDetails.getTags() != null ? tableDetails.getTags() : "");
       stmtBuilder.append("'Category' = ?, ");
-      params.add(manifest.getCategory());
+      params.add(tableDetails.getCategory() != null ? tableDetails.getCategory() : "");
       stmtBuilder.append("'Author' = ?, ");
-      params.add(manifest.getAuthor());
+      params.add(tableDetails.getAuthor() != null ? tableDetails.getAuthor() : "");
       stmtBuilder.append("'sysVolume' = ?, ");
-      params.add(manifest.getVolume());
+      params.add(tableDetails.getVolume());
       stmtBuilder.append("'LaunchCustomVar' = ?, ");
-      params.add(manifest.getLaunchCustomVar());
+      params.add(tableDetails.getLaunchCustomVar());
       stmtBuilder.append("'GKeepDisplays' = ?, ");
-      params.add(manifest.getKeepDisplays());
+      params.add(tableDetails.getKeepDisplays());
       stmtBuilder.append("'GameRating' = ?, ");
-      params.add(manifest.getGameRating());
+      params.add(tableDetails.getGameRating());
       stmtBuilder.append("'ALTEXE' = ?, ");
-      params.add(manifest.getAltLaunchExe());
+      params.add(tableDetails.getAltLaunchExe());
       stmtBuilder.append("'GameType' = ?, ");
-      params.add(manifest.getGameType() != null ? manifest.getGameType().name() : null);
+      params.add(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : null);
       stmtBuilder.append("'GAMEVER' = ?, ");
-      params.add(manifest.getGameVersion());
+      params.add(tableDetails.getGameVersion());
       stmtBuilder.append("'DOFStuff' = ?, ");
-      params.add(manifest.getDof());
+      params.add(tableDetails.getDof());
       stmtBuilder.append("'IPDBNum' = ?, ");
-      params.add(manifest.getIPDBNum());
+      params.add(tableDetails.getIPDBNum() != null ? tableDetails.getIPDBNum() : "");
       stmtBuilder.append("'AltRunMode' = ?, ");
-      params.add(manifest.getAltRunMode());
+      params.add(tableDetails.getAltRunMode() != null ? tableDetails.getAltRunMode() : "");
       stmtBuilder.append("'WebLinkURL' = ?, ");
-      params.add(manifest.getUrl());
+      params.add(tableDetails.getUrl());
       stmtBuilder.append("'DesignedBy' = ?, ");
-      params.add(manifest.getDesignedBy());
+      params.add(tableDetails.getDesignedBy());
       stmtBuilder.append("'Visible' = ?, ");
-      params.add(manifest.getStatus());
+      params.add(tableDetails.getStatus());
       stmtBuilder.append("'CUSTOM2' = ?, ");
-      params.add(manifest.getCustom2());
+      params.add(tableDetails.getCustom2());
       stmtBuilder.append("'CUSTOM3' = ?, ");
-      params.add(manifest.getCustom3());
+      params.add(tableDetails.getCustom3());
+      stmtBuilder.append("'MediaSearch' = ?, ");
+      params.add(tableDetails.getMediaSearch() != null ? tableDetails.getMediaSearch() : "");
+      stmtBuilder.append("'Special' = ?, ");
+      params.add(tableDetails.getSpecial());
 
       //check for popper DB update 1.5
-      if (sqlVersion >= 64) {
+      if (sqlVersion >= DB_VERSION) {
         stmtBuilder.append("'WEBGameID' = ?, ");
-        params.add(manifest.getWebGameId());
+        params.add(tableDetails.getWebGameId());
         stmtBuilder.append("'ROMALT' = ?, ");
-        params.add(manifest.getRomAlt());
+        params.add(tableDetails.getRomAlt());
         stmtBuilder.append("'ISMOD' = ?, ");
-        params.add(manifest.isMod());
+        params.add(tableDetails.isMod());
         stmtBuilder.append("'WebLink2URL' = ?, ");
-        params.add(manifest.getWebLink2Url());
+        params.add(tableDetails.getWebLink2Url());
         stmtBuilder.append("'TourneyID' = ?, ");
-        params.add(manifest.getTourneyId());
+        params.add(tableDetails.getTourneyId());
         stmtBuilder.append("'CUSTOM4' = ?, ");
-        params.add(manifest.getCustom4());
+        params.add(tableDetails.getCustom4());
         stmtBuilder.append("'CUSTOM5' = ?, ");
-        params.add(manifest.getCustom5());
+        params.add(tableDetails.getCustom5());
 
-        importGameExtraValues(id, manifest.getgLog(), manifest.getgNotes(), manifest.getgPlayLog(), manifest.getgDetails());
+        importGameExtraValues(id, tableDetails.getgLog(), tableDetails.getgNotes(), tableDetails.getgPlayLog(), tableDetails.getgDetails());
       }
 
       stmtBuilder.append("DateUpdated=? WHERE GameID=?");
@@ -357,7 +403,7 @@ public class PinUPConnector implements InitializingBean {
         index++;
       }
 
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
 
@@ -367,7 +413,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.setInt(index, id);
       preparedStatement.executeUpdate();
       preparedStatement.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -381,19 +428,65 @@ public class PinUPConnector implements InitializingBean {
     try {
       String gameName = filename.replaceAll("'", "''");
       Statement statement = connect.createStatement();
-      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "';");
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName = '" + gameName + "' OR GameFileName LIKE '%\\" + gameName + "';");
       while (rs.next()) {
         info = createGame(connect, rs);
       }
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
     return info;
+  }
+
+  @NonNull
+  public List<Game> getGamesByEmulator(int emulatorId) {
+    Connection connect = this.connect();
+    List<Game> result = new ArrayList<>();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where EMUID = " + emulatorId);
+      while (rs.next()) {
+        result.add(createGame(connect, rs));
+      }
+
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read game by emulatorId '" + emulatorId + "': " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
+  }
+
+  @NonNull
+  public List<Game> getGamesByFilename(String filename) {
+    Connection connect = this.connect();
+    List<Game> result = new ArrayList<>();
+    try {
+      String gameName = filename.replaceAll("'", "''");
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Games where GameFileName LIKE '%" + gameName + "%';");
+      while (rs.next()) {
+        Game game = createGame(connect, rs);
+        result.add(game);
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+    return result;
   }
 
   @Nullable
@@ -410,7 +503,8 @@ public class PinUPConnector implements InitializingBean {
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -429,7 +523,8 @@ public class PinUPConnector implements InitializingBean {
       script = rs.getString("StartupBatch");
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read startup script: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -452,8 +547,9 @@ public class PinUPConnector implements InitializingBean {
       version = rs.getInt("SQLVersion");
       rs.close();
       statement.close();
-    } catch (SQLException e) {
-      LOG.error("Failed to read startup script: " + e.getMessage(), e);
+    }
+    catch (SQLException e) {
+      LOG.warn("Failed to PinUP Popper Database version: " + e.getMessage() + ", using legacy database schema.", e);
     } finally {
       this.disconnect(connect);
     }
@@ -468,7 +564,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Update of startup script successful.");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update startup script script:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -488,7 +585,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed get custom options: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -504,7 +602,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Updated of custom options");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -520,7 +619,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Updated of ROM of " + game + " to " + rom);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update ROM:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -536,7 +636,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.executeUpdate();
       preparedStatement.close();
       LOG.info("Updated of \"" + field + "\" of \"" + game + "\" to \"" + value + "\"");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update \"" + field + "\2: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -557,7 +658,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read field value \"" + field + "\": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -566,10 +668,20 @@ public class PinUPConnector implements InitializingBean {
   }
 
   public int importGame(@NonNull File file, int emuId) {
-    String name = FilenameUtils.getBaseName(file.getName());
-    String gameFileName = file.getName();
-    String gameDisplayName = name.replaceAll("-", " ").replaceAll("_", " ");
-    return importGame(emuId, name, gameFileName, gameDisplayName, null);
+    GameEmulator gameEmulator = getGameEmulator(emuId);
+    String baseName = FilenameUtils.getBaseName(file.getName());
+    String formattedBaseName = baseName;//.replaceAll(" ", "-");
+    Game gameByName = getGameByName(formattedBaseName);
+    int count = 1;
+    while (gameByName != null) {
+      formattedBaseName = FilenameUtils.getBaseName(file.getName()) + count;
+      LOG.info("Found existing gamename that exists while importing \"" + file.getName() + "\", trying again with \"" + formattedBaseName + "\"");
+      gameByName = getGameByName(formattedBaseName);
+    }
+
+    String gameFileName = gameEmulator.getGameFileName(file);
+    String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
+    return importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
   }
 
   /**
@@ -578,30 +690,43 @@ public class PinUPConnector implements InitializingBean {
    *
    * @return the generated game id.
    */
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar) {
+  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded) VALUES (?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated) " +
+          "VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
       preparedStatement.setString(4, gameDisplayName);
       preparedStatement.setInt(5, 1);
-      preparedStatement.setString(6, launchCustomVar);
-      SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+      preparedStatement.setString(6, launchCustomVar != null ? launchCustomVar : "");
+
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
       String ts = sdf.format(timestamp);
       preparedStatement.setString(7, ts);
+      preparedStatement.setString(8, sdf.format(dateFileUpdated));
+
       int affectedRows = preparedStatement.executeUpdate();
       preparedStatement.close();
 
-      LOG.info("Added game entry for '" + gameName + "' / '" + gameFileName + "'");
+      LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
-          return keys.getInt(1);
+          int id = keys.getInt(1);
+          Game game = getGame(id);
+          updateGamesField(game, "Author", "");
+          updateGamesField(game, "TAGS", "");
+          updateGamesField(game, "Category", "");
+          updateGamesField(game, "MediaSearch", "");
+          updateGamesField(game, "IPDBNum", "");
+          updateGamesField(game, "AltRunMode", "");
+          return id;
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -634,7 +759,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Deleted game entry with id " + gameId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -650,7 +776,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Deleted game stats entry with id " + gameId);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update game stats table:" + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -680,15 +807,16 @@ public class PinUPConnector implements InitializingBean {
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
         }
         else {
-          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
         }
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -724,17 +852,18 @@ public class PinUPConnector implements InitializingBean {
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGameIds(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
         }
         else {
-          playlist.setGameIds(getGameIdsFromPlaylist(playlist.getId()));
+          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
         }
 
         result.add(playlist);
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -749,28 +878,46 @@ public class PinUPConnector implements InitializingBean {
       Statement stmt = connect.createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update PlayList: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
   }
 
-  public void addToPlaylist(int playlistId, int gameId) {
+  public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed) VALUES (?,?,?,?,?)");
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, " + IS_FAV + ") VALUES (?,?,?,?,?,?)");
       preparedStatement.setInt(1, playlistId);
       preparedStatement.setInt(2, gameId);
       preparedStatement.setInt(3, 1);
       preparedStatement.setInt(4, 0);
       preparedStatement.setInt(5, 0);
+      preparedStatement.setInt(6, favMode);
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
       LOG.info("Added game " + gameId + " to playlist " + playlistId);
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+    } finally {
+      this.disconnect(connect);
+    }
+  }
+
+  public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
+    Connection connect = this.connect();
+    String sql = "UPDATE PlayListDetails SET " + IS_FAV + " = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update playlist [" + sql + "]: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
@@ -785,7 +932,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Removed game " + gameId + " from all playlists");
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -802,7 +950,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.close();
 
       LOG.info("Removed game " + gameId + " from playlist " + playlistId);
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -824,7 +973,8 @@ public class PinUPConnector implements InitializingBean {
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read playlist for gameId: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -852,11 +1002,14 @@ public class PinUPConnector implements InitializingBean {
         e.setLaunchScript(rs.getString("LaunchScript"));
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
+
         result.add(e);
       }
+
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -883,7 +1036,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -910,7 +1064,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -958,7 +1113,8 @@ public class PinUPConnector implements InitializingBean {
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1005,7 +1161,8 @@ public class PinUPConnector implements InitializingBean {
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to functions: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1027,7 +1184,8 @@ public class PinUPConnector implements InitializingBean {
         rs.close();
         statement.close();
       }
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1051,7 +1209,8 @@ public class PinUPConnector implements InitializingBean {
       }
 
 
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1076,7 +1235,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1098,7 +1258,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to get start time: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1113,7 +1274,8 @@ public class PinUPConnector implements InitializingBean {
       Statement statement = connect.createStatement();
       statement.execute("DELETE FROM Games WHERE EMUID = 1;");
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to delete games: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1135,7 +1297,8 @@ public class PinUPConnector implements InitializingBean {
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -1144,21 +1307,29 @@ public class PinUPConnector implements InitializingBean {
   }
 
   @NonNull
-  private List<Integer> getGameIdsFromPlaylist(int id) {
-    List<Integer> result = new ArrayList<>();
+  private List<PlaylistGame> getGameIdsFromPlaylist(int id) {
+    List<PlaylistGame> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE PlayListID = " + id);
 
       while (rs.next()) {
+        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        result.add(gameId);
+        game.setId(gameId);
+
+        int favMode = rs.getInt(IS_FAV);
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+
+        result.add(game);
       }
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -1167,21 +1338,24 @@ public class PinUPConnector implements InitializingBean {
   }
 
 
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
-    List<Integer> result = new ArrayList<>();
+  private List<PlaylistGame> getGameIdsFromSqlPlaylist(String sql) {
+    List<PlaylistGame> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(sql);
 
       while (rs.next()) {
+        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        result.add(gameId);
+        game.setId(gameId);
+        result.add(game);
       }
 
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     } finally {
       disconnect(connect);
@@ -1204,7 +1378,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1222,12 +1397,13 @@ public class PinUPConnector implements InitializingBean {
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(POST_SCRIPT);
-      if(script == null) {
+      if (script == null) {
         script = "";
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1243,7 +1419,8 @@ public class PinUPConnector implements InitializingBean {
       stmt.executeUpdate(sql);
       stmt.close();
       LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1271,6 +1448,14 @@ public class PinUPConnector implements InitializingBean {
 
     String rom = rs.getString("ROM");
     game.setRom(rom);
+    String tableName = rs.getString("ROMALT");
+    game.setTableName(tableName);
+
+    //TODO add VPS ids here
+    if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
+      String highscoreFilename = rs.getString(serverSettings.getMappingHsFileName());
+      game.setHsFileName(highscoreFilename);
+    }
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
@@ -1278,11 +1463,16 @@ public class PinUPConnector implements InitializingBean {
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
     game.setDateAdded(rs.getDate("DateAdded"));
+    game.setDateUpdated(rs.getDate("DateUpdated"));
 
     game.setVersion(rs.getString("GAMEVER"));
 
     File vpxFile = new File(emulator.getTablesFolder(), gameFileName);
     game.setGameFile(vpxFile);
+
+    game.setExtTableId(rs.getString(serverSettings.getMappingVpsTableId()));
+    game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableVersionId()));
+    game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
 
     return game;
   }
@@ -1300,7 +1490,8 @@ public class PinUPConnector implements InitializingBean {
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read table stats info: " + e.getMessage(), e);
     }
   }
@@ -1319,11 +1510,11 @@ public class PinUPConnector implements InitializingBean {
         manifest.setgNotes(gNotes);
         manifest.setgPlayLog(gPlayLog);
         manifest.setgDetails(gDetails);
-
       }
       rs.close();
       statement.close();
-    } catch (SQLException e) {
+    }
+    catch (SQLException e) {
       LOG.error("Failed to read table stats info: " + e.getMessage(), e);
     }
   }
@@ -1349,7 +1540,8 @@ public class PinUPConnector implements InitializingBean {
       preparedStatement.setString(5, gDetails);
       preparedStatement.executeUpdate();
       preparedStatement.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
@@ -1409,17 +1601,91 @@ public class PinUPConnector implements InitializingBean {
               LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
             }
             result.add(display);
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
           }
         }
       }
 
       LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to get player displays: " + e.getMessage(), e);
     }
     return result;
+  }
+
+  public static boolean isValidVPXEmulator(Emulator emulator) {
+    if (!emulator.isVisualPinball()) {
+      return false;
+    }
+
+    if (!emulator.isVisible()) {
+      LOG.warn("Ignoring " + emulator + ", because the emulator is not visible.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirGames())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirRoms())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
+      return false;
+    }
+
+    if (StringUtils.isEmpty(emulator.getDirMedia())) {
+      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
+      return false;
+    }
+
+    return true;
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+  }
+
+  public void loadEmulators() {
+    List<Emulator> ems = this.getEmulators();
+    this.emulators.clear();
+    for (Emulator emulator : ems) {
+      try {
+        if (!emulator.isVisible()) {
+          continue;
+        }
+
+        if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
+          continue;
+        }
+
+        if (!emulator.isEnabled()) {
+          continue;
+        }
+
+        GameEmulator gameEmulator = new GameEmulator(emulator);
+        emulators.put(emulator.getId(), gameEmulator);
+
+        if (gameEmulator.isVpxEmulator()) {
+          initVisualPinballXScripts(emulator);
+        }
+        LOG.info("Loaded Emulator: " + gameEmulator);
+      }
+      catch (Exception e) {
+        LOG.error("Emulator initialization failed: " + e.getMessage(), e);
+      }
+    }
+
+    if (this.emulators.isEmpty()) {
+      LOG.error("****************************************************************************************");
+      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in PinUP Popper.");
+      LOG.error("****************************************************************************************");
+    }
   }
 
   @Override
@@ -1427,18 +1693,9 @@ public class PinUPConnector implements InitializingBean {
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 
-    List<Emulator> ems = this.getEmulators();
-    for (Emulator emulator : ems) {
-      if (!emulator.isVisualPinball()) {
-        continue;
-      }
+    sqlVersion = this.getSqlVersion();
 
-      GameEmulator gameEmulator = new GameEmulator(emulator);
-      emulators.put(emulator.getId(), gameEmulator);
-      initVisualPinballXScripts(emulator);
-      LOG.info("Loaded Emulator: " + gameEmulator);
-    }
-    LOG.info("Finished Popper scripts configuration check.");
+    this.loadEmulators();
 
     getPupPlayerDisplays();
 
@@ -1484,5 +1741,9 @@ public class PinUPConnector implements InitializingBean {
         }
       }
     }
+
+    preferencesService.addChangeListener(this);
+    this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
   }
+
 }

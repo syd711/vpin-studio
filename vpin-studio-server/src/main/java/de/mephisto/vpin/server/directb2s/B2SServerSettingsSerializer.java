@@ -77,14 +77,14 @@ public class B2SServerSettingsSerializer {
         node.setTextContent(intValue(settings.isPluginsOn()));
         break;
       }
-//      case "DefaultStartMode": {
-//        node.setTextContent(String.valueOf(settings.getDefaultStartMode()));
-//        break;
-//      }
-//      case "DisableFuzzyMatching": {
-//        node.setTextContent(intValue(settings.isDisableFuzzyMatching()));
-//        break;
-//      }
+      case "DefaultStartMode": {
+        node.setTextContent(String.valueOf(settings.getDefaultStartMode()));
+        break;
+      }
+      case "DisableFuzzyMatching": {
+        node.setTextContent(intValue(settings.isDisableFuzzyMatching()));
+        break;
+      }
 //      case "IsLampsStateLogOn": {
 //        node.setTextContent(intValue(settings.isLampsStateLogOn()));
 //        break;

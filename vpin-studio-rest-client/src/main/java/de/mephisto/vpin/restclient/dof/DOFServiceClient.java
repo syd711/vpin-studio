@@ -29,7 +29,7 @@ public class DOFServiceClient extends VPinStudioClientService {
     }
   }
 
-  public JobExecutionResult sync() {
-    return getRestClient().get(API + "dof/sync", JobExecutionResult.class);
+  public JobExecutionResult sync(boolean wait) {
+    return getRestClient().get(API + "dof/sync/" + wait, JobExecutionResult.class);
   }
 }

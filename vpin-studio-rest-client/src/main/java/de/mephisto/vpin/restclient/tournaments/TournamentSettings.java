@@ -7,6 +7,24 @@ public class TournamentSettings extends JsonSettings {
   private String defaultDiscordLink;
   private String defaultDashboardUrl;
   private String defaultDescription;
+  private String defaultWebsite;
+  private boolean submitAllScores = true;
+
+  public boolean isSubmitAllScores() {
+    return submitAllScores;
+  }
+
+  public void setSubmitAllScores(boolean submitAllScores) {
+    this.submitAllScores = submitAllScores;
+  }
+
+  public String getDefaultWebsite() {
+    return defaultWebsite;
+  }
+
+  public void setDefaultWebsite(String defaultWebsite) {
+    this.defaultWebsite = defaultWebsite;
+  }
 
   public boolean isEnabled() {
     return enabled;

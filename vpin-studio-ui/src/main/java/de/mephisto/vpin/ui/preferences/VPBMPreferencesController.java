@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,8 +55,8 @@ public class VPBMPreferencesController implements Initializable {
       this.thisHostText.setText(hostIds.getInternalHostId());
     }
 
-    BindingUtil.bindTextField(externalHostText, PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, "");
-    BindingUtil.bindTextField(thisHostText, PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, "");
+    PreferenceBindingUtil.bindTextField(externalHostText, PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, "");
+    PreferenceBindingUtil.bindTextField(thisHostText, PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, "");
 
     new Thread(() -> {
       Platform.runLater(() -> {

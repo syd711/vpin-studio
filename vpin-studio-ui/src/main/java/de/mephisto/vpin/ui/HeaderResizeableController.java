@@ -2,12 +2,13 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
-import de.mephisto.vpin.ui.util.LocalUISettings;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -43,6 +44,8 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private BorderPane header;
+
+  private static MouseEvent event;
 
   @FXML
   private void onMouseClick(MouseEvent e) {
@@ -87,7 +90,9 @@ public class HeaderResizeableController implements Initializable {
         int x = (int) stage.getX();
         int width = (int) stage.getWidth();
         int height = (int) stage.getHeight();
-        LocalUISettings.saveLocation(x, y, width, height);
+        if (width > 0 && height > 0) {
+          LocalUISettings.saveLocation(x, y, width, height);
+        }
       }, 500);
     }
   }
@@ -95,7 +100,7 @@ public class HeaderResizeableController implements Initializable {
   @FXML
   private void onMaximize() {
     FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
-    helper.switchWindowedMode(null);
+    helper.switchWindowedMode(event);
   }
 
   @FXML
@@ -110,17 +115,24 @@ public class HeaderResizeableController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     header.setUserData(this);
-    titleLabel.setText("VPin Studio - " + Studio.getVersion());
+    titleLabel.setText("VPin Studio (" + Studio.getVersion() + ")");
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
     if (!StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
     }
-    titleLabel.setText("VPin Studio - " + name);
+    titleLabel.setText("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
     stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
     stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+
+    header.setOnMouseMoved(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        HeaderResizeableController.event = event;
+      }
+    });
   }
 }

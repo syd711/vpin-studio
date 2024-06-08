@@ -1,13 +1,13 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.image.Image;
@@ -20,6 +20,7 @@ import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PauseMenuItemsFactory {
@@ -30,46 +31,69 @@ public class PauseMenuItemsFactory {
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
 
-    item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
-    if (imageStream != null) {
-      Image scoreImage = new Image(imageStream);
+    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+      item = new PauseMenuItem(PauseMenuItemTypes.highscores, "Highscores", "Highscore Card", new Image(PauseMenu.class.getResourceAsStream("highscores.png")));
+      InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), cardScreen);
+      if (imageStream != null) {
+        Image scoreImage = new Image(imageStream);
+        item.setDataImage(scoreImage);
+        pauseMenuItems.add(item);
+      }
+
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.GameInfo)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+      }
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.Other2)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
+      }
+      if (cardScreen == null || !cardScreen.equals(PopperScreen.GameHelp)) {
+        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
+      }
+    }
+
+    if (pauseMenuSettings.getStyle() == null || pauseMenuSettings.getStyle().equals(PauseMenuStyle.embedded)) {
+      createTutorialEntries(game, pauseMenuSettings, pauseMenuItems);
+    }
+    return pauseMenuItems;
+  }
+
+  private static void createTutorialEntries(GameRepresentation game, PauseMenuSettings pauseMenuSettings, List<PauseMenuItem> pauseMenuItems) {
+    PauseMenuItem item;
+    List<VpsTutorialUrls> videoTutorials = getVideoTutorials(game, pauseMenuSettings);
+    for (VpsTutorialUrls videoTutorial : videoTutorials) {
+      item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + videoTutorial.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
+      String ytUrl = createYouTubeUrl(videoTutorial);
+      item.setYouTubeUrl(ytUrl);
+      LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
+      String url = "https://img.youtube.com/vi/" + videoTutorial.getYoutubeId() + "/0.jpg";
+      Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
       item.setDataImage(scoreImage);
       pauseMenuItems.add(item);
     }
+  }
 
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.GameInfo)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
-    }
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.Other2)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, PopperScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
-    }
-    if (cardScreen == null || !cardScreen.equals(PopperScreen.GameHelp)) {
-      loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, PopperScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
-    }
+  public static String createYouTubeUrl(VpsTutorialUrls tutorialUrl) {
+    return "https://www.youtube.com/embed/" + tutorialUrl.getYoutubeId() + "?autoplay=1&controls=1";
+  }
 
-
+  public static List<VpsTutorialUrls> getVideoTutorials(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings) {
+    List<VpsTutorialUrls> tutorials = new ArrayList<>();
     String extTableId = game.getExtTableId();
     if (!StringUtils.isEmpty(extTableId)) {
-      VpsTable tableById = VPS.getInstance().getTableById(extTableId);
+      VpsTable tableById = PauseMenu.client.getVpsService().getTableById(extTableId);
       if (tableById != null) {
         List<VpsTutorialUrls> tutorialFiles = tableById.getTutorialFiles();
         if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
           String authorAllowList = pauseMenuSettings.getAuthorAllowList() == null ? "" : pauseMenuSettings.getAuthorAllowList();
-          List<String> authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
+          List<String> authorNames = Collections.emptyList();
+          if (!StringUtils.isEmpty(authorAllowList)) {
+            authorNames = Arrays.asList(authorAllowList.toLowerCase().split(","));
+          }
 
           for (VpsTutorialUrls tutorialFile : tutorialFiles) {
             boolean excludeTutorial = excludeTutorial(authorNames, tutorialFile);
-
             if (!excludeTutorial && !StringUtils.isEmpty(tutorialFile.getYoutubeId())) {
-              item = new PauseMenuItem(PauseMenuItemTypes.help, "Help", "YouTube: " + tutorialFile.getTitle(), new Image(PauseMenu.class.getResourceAsStream("video.png")));
-              String ytUrl = "https://www.youtube.com/embed/" + tutorialFile.getYoutubeId() + "?autoplay=1&controls=1";
-              item.setYouTubeUrl(ytUrl);
-              LOG.info("\"" + game.getGameDisplayName() + "\": found tutorial video " + ytUrl);
-              String url = "https://img.youtube.com/vi/" + tutorialFile.getYoutubeId() + "/0.jpg";
-              Image scoreImage = new Image(PauseMenu.client.getCachedUrlImage(url));
-              item.setDataImage(scoreImage);
-              pauseMenuItems.add(item);
+              tutorials.add(tutorialFile);
             }
           }
         }
@@ -78,20 +102,18 @@ public class PauseMenuItemsFactory {
         LOG.warn("The table \"" + game.getGameDisplayName() + "\" is not mapped against VPS, no additional tutorials links will be loaded.");
       }
     }
-
-
-    return pauseMenuItems;
+    return tutorials;
   }
 
   private static boolean excludeTutorial(List<String> authorAllowList, VpsTutorialUrls tutorialFile) {
-    if(authorAllowList.isEmpty()) {
+    if (authorAllowList.isEmpty()) {
       return false;
     }
 
     List<String> authors = tutorialFile.getAuthors();
     if (!authorAllowList.isEmpty()) {
       for (String author : authors) {
-        if(authorAllowList.contains(author.toLowerCase())) {
+        if (authorAllowList.contains(author.toLowerCase())) {
           return false;
         }
       }

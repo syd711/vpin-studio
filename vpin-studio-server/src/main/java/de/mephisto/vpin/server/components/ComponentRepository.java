@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ComponentRepository extends JpaRepository<Component, Long> {
+public interface ComponentRepository extends JpaRepository<Component, ComponentType> {
 
   Optional<Component> findByType(ComponentType type);
 }

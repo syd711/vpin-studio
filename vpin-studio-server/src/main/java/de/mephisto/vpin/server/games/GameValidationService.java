@@ -1,26 +1,44 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.AltColorArchiveAnalyzer;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
+import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.listeners.OfflineCompetitionChangeListenerImpl;
+import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 
@@ -28,9 +46,30 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
  * See ValidationTexts
  */
 @Service
-public class GameValidationService implements InitializingBean {
+public class GameValidationService implements InitializingBean, PreferenceChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(GameValidationService.class);
 
   private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
+
+  private static long start = 0;
+  private static long end = 0;
+  private static long total = 0;
+
+  public static void metricsStart() {
+    start = System.currentTimeMillis();
+  }
+
+  public static void metricsEnd() {
+    long duration = System.currentTimeMillis() - start;
+    total += duration;
+  }
+
+  public static void metricFinished() {
+    LOG.info("Validation Service took " + total + "ms.");
+    start = 0;
+    end = 0;
+    total = 0;
+  }
 
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
@@ -62,11 +101,29 @@ public class GameValidationService implements InitializingBean {
   @Autowired
   private MameService mameService;
 
+  @Autowired
+  private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private SystemService systemService;
+
+  @Autowired
+  private HighscoreService highscoreService;
+
+  @Autowired
+  private MameRomAliasService mameRomAliasService;
+
+  @Autowired
+  private GameDetailsRepository gameDetailsRepository;
+
   private Preferences preferences;
+  private ServerSettings serverSettings;
+  private ValidationSettings validationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
+    GameValidationService.metricsStart();
     List<ValidationState> result = new ArrayList<>();
-    boolean isVPX = game.getEmulator().isVpx();
+    boolean isVPX = game.isVpxGame();
 
     if (isVPX && isValidationEnabled(game, CODE_VPX_NOT_EXISTS)) {
       if (!game.getGameFile().exists()) {
@@ -95,7 +152,24 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
+      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = pinUPConnector.getGame(otherGameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+              if (findFirst) {
+                return result;
+              }
+            }
+          }
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (!game.isDirectB2SAvailable() && !game.isPupPackAvailable()) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
         if (findFirst) {
@@ -111,129 +185,13 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-
-    if (isValidationEnabled(game, CODE_NO_AUDIO)) {
-      List<File> audio = game.getPinUPMedia(PopperScreen.Audio);
-      if (audio.isEmpty()) {
-        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
-        if (findFirst) {
-          return result;
-        }
-      }
+    //screen assets are validated for all emulators
+    List<ValidationState> screenValidationResult = validateScreenAssets(game, findFirst, result);
+    if (screenValidationResult != null) {
+      return screenValidationResult;
     }
 
-    if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
-      List<File> audioLaunch = game.getPinUPMedia(PopperScreen.AudioLaunch);
-      if (audioLaunch.isEmpty()) {
-        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, CODE_NO_APRON)) {
-      List<File> apron = game.getPinUPMedia(PopperScreen.Menu);
-      if (apron.isEmpty()) {
-        result.add(GameValidationStateFactory.create(CODE_NO_APRON));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_INFO)) {
-      List<File> info = game.getPinUPMedia(PopperScreen.GameInfo);
-      if (info.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_HELP)) {
-      List<File> help = game.getPinUPMedia(PopperScreen.GameHelp);
-      if (help.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_TOPPER)) {
-      List<File> topper = game.getPinUPMedia(PopperScreen.Topper);
-      if (topper.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_BACKGLASS)) {
-      List<File> backglass = game.getPinUPMedia(PopperScreen.BackGlass);
-      if (backglass.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_DMD)) {
-      List<File> dmd = game.getPinUPMedia(PopperScreen.DMD);
-      if (dmd.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_PLAYFIELD)) {
-      List<File> playfield = game.getPinUPMedia(PopperScreen.PlayField);
-      if (playfield.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
-      List<File> loading = game.getPinUPMedia(PopperScreen.Loading);
-      if (loading.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_OTHER2)) {
-      List<File> other2 = game.getPinUPMedia(PopperScreen.Other2);
-      if (other2.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
-      List<File> wheels = game.getPinUPMedia(PopperScreen.Wheel);
-      if (wheels.isEmpty()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
-        if (findFirst) {
-          return result;
-        }
-      }
-    }
-
-
-    if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
+    if (isVPX && isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
       if (game.isPupPackAvailable() && !game.getPupPack().getMissingResources().isEmpty()) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources()));
         if (findFirst) {
@@ -242,7 +200,7 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-    if (isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
+    if (isVPX && isValidationEnabled(game, CODE_VPS_MAPPING_MISSING)) {
       if (StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VPS_MAPPING_MISSING));
         if (findFirst) {
@@ -251,36 +209,237 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-    List<ValidationState> validationStates = validateAltSound(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
+    if (isVPX) {
+      List<ValidationState> validationStates = validateAltSound(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateRecordings(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateAltColor(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
+      }
+
+      validationStates = validateForceStereo(game);
+      if (!validationStates.isEmpty()) {
+        result.add(validationStates.get(0));
+        if (findFirst) {
+          return result;
+        }
       }
     }
 
-    validationStates = validateAltColor(game);
-    if (!validationStates.isEmpty()) {
-      result.add(validationStates.get(0));
-      if (findFirst) {
-        return result;
-      }
-    }
-
+    GameValidationService.metricsEnd();
     return result;
   }
 
-  public List<ValidationState> validateRom(Game game) {
-    List<ValidationState> result = new ArrayList<>();
-    if (isValidationEnabled(game, GameValidationCode.CODE_NO_ROM)) {
-      if (StringUtils.isEmpty(game.getRom())) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_ROM));
+  private @Nullable List<ValidationState> validateScreenAssets(@NotNull Game game, boolean findFirst, List<ValidationState> result) {
+    if (isValidationEnabled(game, CODE_NO_AUDIO)) {
+      if (!validScreenAssets(game, PopperScreen.Audio)) {
+        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
+        if (findFirst) {
+          return result;
+        }
       }
     }
 
-    if (isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && game.isRomRequired()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
+    if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
+      if (!validScreenAssets(game, PopperScreen.AudioLaunch)) {
+        result.add(GameValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, CODE_NO_APRON)) {
+      if (!validScreenAssets(game, PopperScreen.Menu)) {
+        result.add(GameValidationStateFactory.create(CODE_NO_APRON));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_INFO)) {
+      if (!validScreenAssets(game, PopperScreen.GameInfo)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_HELP)) {
+      if (!validScreenAssets(game, PopperScreen.GameHelp)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_TOPPER)) {
+      if (!validScreenAssets(game, PopperScreen.Topper)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_BACKGLASS)) {
+      if (!validScreenAssets(game, PopperScreen.BackGlass)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_DMD)) {
+      if (!validScreenAssets(game, PopperScreen.DMD)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_PLAYFIELD)) {
+      if (!validScreenAssets(game, PopperScreen.PlayField)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
+      if (!validScreenAssets(game, PopperScreen.PlayField)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_OTHER2)) {
+      if (!validScreenAssets(game, PopperScreen.Other2)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
+      if (!validScreenAssets(game, PopperScreen.Wheel)) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+    return null;
+  }
+
+  private boolean validScreenAssets(Game game, PopperScreen popperScreen) {
+    List<File> screenAssets = game.getPinUPMedia(popperScreen);
+    ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
+    if (!screenAssets.isEmpty()) {
+      if (config.getOption().equals(ValidatorOption.empty)) {
+        return false;
+      }
+
+      for (File file : screenAssets) {
+        String mimeType = MimeTypeUtil.determineMimeType(file);
+        if (mimeType != null) {
+          if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
+            return false;
+          }
+          if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return false;
+          }
+          if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return false;
+          }
+        }
+      }
+    }
+    else {
+      if (config.getOption().equals(ValidatorOption.mandatory)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private List<ValidationState> validateForceStereo(Game game) {
+    List<ValidationState> result = new ArrayList<>();
+
+    if (isValidationEnabled(game, CODE_FORCE_STEREO) && !StringUtils.isEmpty(game.getRom())) {
+      MameOptions gameOptions = mameService.getOptions(game.getRom());
+      MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
+
+      if (gameOptions.isExistInRegistry()) {
+        //no in registry, so check against defaults
+        if (!gameOptions.isForceStereo()) {
+          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+        }
+      }
+      else {
+        //no in registry, so check against defaults
+        if (!options.isForceStereo()) {
+          result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
+        }
+      }
+    }
+    return result;
+  }
+
+  public List<ValidationState> validateRecordings(Game game) {
+    if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
+      return Collections.emptyList();
+    }
+    Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
+    PopperScreen[] values = PopperScreen.values();
+    List<ValidationState> result = new ArrayList<>();
+    for (PopperScreen screen : values) {
+      //only validate playfield and backglass
+      if (!(PopperScreen.BackGlass.equals(screen) || PopperScreen.PlayField.equals(screen))) {
+        continue;
+      }
+
+      if (media.containsKey(screen.name())) {
+        List<GameMediaItem> gameMediaItems = media.get(screen.name());
+        for (GameMediaItem gameMediaItem : gameMediaItems) {
+          String name = gameMediaItem.getName();
+          Date modified = new Date(gameMediaItem.getFile().lastModified());
+          if (name.endsWith(".mp4")) {
+            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
+            }
+            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(modified)) {
+              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
+            }
+          }
+        }
       }
     }
     return result;
@@ -293,7 +452,6 @@ public class GameValidationService implements InitializingBean {
     List<ValidationState> result = new ArrayList<>();
 
     MameOptions options = mameService.getOptions(MameOptions.DEFAULT_KEY);
-    MameOptions gameOptions = mameService.getOptions(game.getRom());
 
     AltColor altColor = altColorService.getAltColor(game);
     AltColorTypes altColorType = altColor.getAltColorType();
@@ -323,17 +481,17 @@ public class GameValidationService implements InitializingBean {
     switch (altColorType) {
       case pal: {
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING)) {
-          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
-            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
-          }
-          else if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
+//          if (altColor.contains("pin2dmd.pal") && !altColor.contains("pin2dmd.vni")) {
+//            result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.vni"));
+//          }
+          if (!altColor.contains("pin2dmd.pal") && altColor.contains("pin2dmd.vni")) {
             result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, "pin2dmd.pal"));
           }
         }
         break;
       }
       case serum: {
-        String name = game.getRom() + AltColorArchiveAnalyzer.SERUM_SUFFIX;
+        String name = game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX;
         if (isValidationEnabled(game, CODE_ALT_COLOR_FILES_MISSING) && !altColor.contains(name)) {
           result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_FILES_MISSING, name));
         }
@@ -344,22 +502,24 @@ public class GameValidationService implements InitializingBean {
       }
     }
 
-    if (gameOptions.isExistInRegistry()) {
-      //no in registry, so check against defaults
-      if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+    if (!StringUtils.isEmpty(game.getRom())) {
+      MameOptions gameOptions = mameService.getOptions(game.getRom());
+      if (gameOptions.isExistInRegistry()) {
+        if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !gameOptions.isColorizeDmd()) {
+          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !gameOptions.isUseExternalDmd()) {
+          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+        }
       }
-      if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !gameOptions.isUseExternalDmd()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
-      }
-    }
-    else {
-      //no in registry, so check against defaults
-      if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
-      }
-      if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !options.isUseExternalDmd()) {
-        result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+      else {
+        //no in registry, so check against defaults
+        if (isValidationEnabled(game, CODE_ALT_COLOR_COLORIZE_DMD_ENABLED) && !options.isColorizeDmd()) {
+          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED));
+        }
+        if (isValidationEnabled(game, CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED) && !options.isUseExternalDmd()) {
+          result.add(GameValidationStateFactory.create(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED));
+        }
       }
     }
     return result;
@@ -398,14 +558,11 @@ public class GameValidationService implements InitializingBean {
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
-    if (mediaCodeToScreen.containsKey(code)) {
-      PopperScreen popperScreen = mediaCodeToScreen.get(code);
-      if (preferences.getIgnoredMedia() != null && Arrays.asList(preferences.getIgnoredMedia().split(",")).contains(popperScreen.name())) {
-        return false;
-      }
+    List<Integer> ignoredValidations = game.getIgnoredValidations();
+    if (ignoredValidations == null) {
+      return false;
     }
 
-    List<Integer> ignoredValidations = game.getIgnoredValidations();
     if (ignoredValidations.contains(code)) {
       return false;
     }
@@ -420,8 +577,186 @@ public class GameValidationService implements InitializingBean {
     return true;
   }
 
+  public boolean hasMissingAssets(List<ValidationState> states) {
+    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.isEmpty()) {
+      return false;
+    }
+
+    if (codes.contains(CODE_NO_AUDIO)
+        || codes.contains(CODE_NO_AUDIO_LAUNCH)
+        || codes.contains(CODE_NO_APRON)
+        || codes.contains(CODE_NO_INFO)
+        || codes.contains(CODE_NO_HELP)
+        || codes.contains(CODE_NO_TOPPER)
+        || codes.contains(CODE_NO_BACKGLASS)
+        || codes.contains(CODE_NO_DMD)
+        || codes.contains(CODE_NO_PLAYFIELD)
+        || codes.contains(CODE_NO_LOADING)
+        || codes.contains(CODE_NO_OTHER2)
+        || codes.contains(CODE_NO_WHEEL_IMAGE)) {
+      return true;
+    }
+    return false;
+  }
+
+  public boolean hasOtherIssues(List<ValidationState> states) {
+    List<Integer> codes = states.stream().map(s -> s.getCode()).collect(Collectors.toList());
+    if (codes.isEmpty()) {
+      return false;
+    }
+
+    if (codes.contains(CODE_NO_DIRECTB2S_OR_PUPPACK)
+        || codes.contains(CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED)
+        || codes.contains(CODE_NO_ROM)
+        || codes.contains(CODE_ROM_NOT_EXISTS)
+        || codes.contains(CODE_VPX_NOT_EXISTS)
+        || codes.contains(CODE_ALT_SOUND_NOT_ENABLED)
+        || codes.contains(CODE_ALT_SOUND_FILE_MISSING)
+        || codes.contains(CODE_FORCE_STEREO)
+        || codes.contains(CODE_PUP_PACK_FILE_MISSING)
+        || codes.contains(CODE_ALT_COLOR_COLORIZE_DMD_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_EXTERNAL_DMD_NOT_ENABLED)
+        || codes.contains(CODE_ALT_COLOR_FILES_MISSING)
+        || codes.contains(CODE_ALT_COLOR_DMDDEVICE_FILES_MISSING)
+    ) {
+      return true;
+    }
+    return false;
+  }
+
+  public GameScoreValidation validateHighscoreStatus(Game game, GameDetails gameDetails, TableDetails tableDetails) {
+    GameScoreValidation validation = new GameScoreValidation();
+    validation.setValidScoreConfiguration(true);
+
+    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    ScoringDB scoringDB = systemService.getScoringDatabase();
+    List<String> vpRegEntries = highscoreService.getVPRegEntries();
+    List<String> highscoreFiles = highscoreService.getHighscoreFiles();
+
+    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
+    boolean aliasedRom = false;
+    if (!StringUtils.isEmpty(originalRom)) {
+      aliasedRom = true;
+      rom = originalRom;
+    }
+
+    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
+    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+
+    //the highscore file was found
+    if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {
+      validation.setHighscoreFilenameIcon(GameScoreValidation.OK_ICON);
+      validation.setHighscoreFilenameIconColor(GameScoreValidation.OK_COLOR);
+      validation.setHighscoreFilenameStatus(GameScoreValidation.STATUS_HSFILE_MATCH_FOUND);
+      return validation;
+    }
+
+    //aliased ROM was found as nvram file
+    if (aliasedRom && (scoringDB.getSupportedNvRams().contains(rom) || scoringDB.getSupportedNvRams().contains(rom.toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName))) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_ALIASED_MATCH_FOUND);
+      return validation;
+    }
+
+    //the ROM was found as nvram file
+    if (scoringDB.getSupportedNvRams().contains(String.valueOf(rom)) || scoringDB.getSupportedNvRams().contains(String.valueOf(rom).toLowerCase()) || scoringDB.getSupportedNvRams().contains(tableName)) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_MATCH_FOUND);
+      return validation;
+    }
+
+    //the ROM was found as VPReg.stg entry
+    if (vpRegEntries.contains(String.valueOf(rom)) || vpRegEntries.contains(tableName)) {
+      validation.setRomIcon(GameScoreValidation.OK_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_VPREG_STG_MATCH_FOUND);
+      return validation;
+    }
+
+    //not played and no highscore file found
+    if (!played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+      validation.setHighscoreFilenameIcon(GameScoreValidation.UNPLAYED_ICON);
+      validation.setHighscoreFilenameIconColor(GameScoreValidation.OK_COLOR);
+      validation.setHighscoreFilenameStatus(GameScoreValidation.STATUS_NOT_PLAYED_HSFILE_NOT_FOUND);
+      return validation;
+    }
+
+    //not played and the ROM VPReg.stg entry not found
+    if (!played && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
+      validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
+      validation.setRomIconColor(GameScoreValidation.OK_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
+      return validation;
+    }
+
+    //no fields are set
+    if (StringUtils.isEmpty(rom) && StringUtils.isEmpty(tableName) && StringUtils.isEmpty(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_FIELDS_NOT_SET);
+      return validation;
+    }
+
+    //ROM is not supported
+    if (!StringUtils.isEmpty(rom) && (scoringDB.getNotSupported().contains(rom) || (!scoringDB.getSupportedNvRams().contains(rom)) && !scoringDB.getSupportedNvRams().contains(rom.toLowerCase()))) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_ROM_NOT_SUPPORTED);
+      return validation;
+    }
+
+    //Highscore file is not supported
+    if (!StringUtils.isEmpty(hsName) && scoringDB.getNotSupported().contains(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_HSFILE_NOT_SUPPORTED);
+      return validation;
+    }
+
+    //game has been played, but the text file has not been generated
+    if (played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_PLAYED_HSFILE_NOT_FOUND);
+      return validation;
+    }
+
+    //game has been played, but the .nvram or VPReg has not been found
+    if (played && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+      validation.setValidScoreConfiguration(false);
+      validation.setRomIcon(GameScoreValidation.ERROR_ICON);
+      validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
+      validation.setRomStatus(GameScoreValidation.STATUS_PLAYED_NO_MATCH_FOUND);
+      return validation;
+    }
+
+    return validation;
+  }
+
   @Override
   public void afterPropertiesSet() {
+    preferences = preferencesService.getPreferences();
+    preferencesService.addChangeListener(this);
+    this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+    this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    }
+    if (propertyName.equals(PreferenceNames.VALIDATION_SETTINGS)) {
+      validationSettings = preferencesService.getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
+    }
     preferences = preferencesService.getPreferences();
   }
 }

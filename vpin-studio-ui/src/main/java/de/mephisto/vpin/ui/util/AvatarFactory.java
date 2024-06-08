@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.ui.Studio;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.scene.control.Control;
@@ -28,6 +29,10 @@ public class AvatarFactory {
   }
 
   public static ImageView create(InputStream in) {
+    if (in == null) {
+      in = Studio.class.getResourceAsStream("avatar-blank.png");
+    }
+
     Image image = new Image(in);
     ImageView imageView = new ImageView(image);
     imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);

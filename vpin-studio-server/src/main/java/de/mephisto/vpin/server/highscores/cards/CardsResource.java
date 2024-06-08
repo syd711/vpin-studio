@@ -17,8 +17,6 @@ import org.springframework.web.server.ResponseStatusException;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -36,25 +34,34 @@ public class CardsResource {
   @Autowired
   private CardService cardService;
 
-  @GetMapping("/preview/{gameId}")
-  public ResponseEntity<byte[]> generateCard(@PathVariable("gameId") int gameId) throws Exception {
+  @GetMapping("/preview/{gameId}/{templateId}")
+  public ResponseEntity<byte[]> generateCardTemplatePreview(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) throws Exception {
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      return RequestUtil.serializeImage(cardService.generateSampleCard(game));
+      return RequestUtil.serializeImage(cardService.generateTemplateTableCardFile(game, templateId));
+    }
+    throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
+  }
+
+  @GetMapping("/preview/{gameId}")
+  public ResponseEntity<byte[]> generateCardPreview(@PathVariable("gameId") int gameId) throws Exception {
+    Game game = gameService.getGame(gameId);
+    if (game != null) {
+      return RequestUtil.serializeImage(cardService.generateTableCardFile(game));
     }
     throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + gameId);
   }
 
   @GetMapping("/generate/{gameId}")
-  public boolean generateCards(@PathVariable("gameId") int gameId) throws Exception {
+  public boolean generateCards(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
-    return cardService.generateCard(game, false);
+    return cardService.generateCard(game);
   }
 
-  @GetMapping("/generatesample/{gameId}")
-  public boolean generateSampleCard(@PathVariable("gameId") int gameId) throws Exception {
+  @GetMapping("/generatesample/{gameId}/{templateId}")
+  public boolean generateSampleCardWithTemplate(@PathVariable("gameId") int gameId, @PathVariable("templateId") int templateId) {
     Game game = gameService.getGame(gameId);
-    return cardService.generateCard(game, true);
+    return cardService.generateCard(game, true, templateId);
   }
 
   @GetMapping("/backgrounds")
@@ -64,13 +71,15 @@ public class CardsResource {
 
   @GetMapping("/background/{name}")
   public ResponseEntity<byte[]> getBackground(@PathVariable("name") String imageName) throws Exception {
+    String image = imageName.replaceAll("\\+", " ");
     File folder = new File(SystemService.RESOURCES, "backgrounds");
-    File[] files = folder.listFiles((dir, name) -> URLEncoder.encode(FilenameUtils.getBaseName(name), StandardCharsets.UTF_8).equals(imageName));
-    if (files != null) {
+    File[] files = folder.listFiles((dir, name) -> FilenameUtils.getBaseName(name).equals(image));
+    if (files != null && files.length > 0) {
       return RequestUtil.serializeImage(files[0]);
     }
     return ResponseEntity.notFound().build();
   }
+
 
   @PostMapping(value = "/backgroundupload")
   public Boolean upload(@RequestPart(value = "file", required = false) MultipartFile file, HttpServletRequest request) throws IOException {

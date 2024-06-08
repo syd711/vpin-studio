@@ -6,10 +6,14 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.Score;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.Date;
+import java.util.List;
 
 public class DiscordOfflineChannelMessageFactory {
   private static final String COMPETITION_FINISHED_TEMPLATE =
@@ -26,7 +30,7 @@ public class DiscordOfflineChannelMessageFactory {
   }
 
 
-  public static String createHighscoreCreatedMessage(@NonNull HighscoreChangeEvent event, @Nullable String raw) {
+  public static String createHighscoreCreatedMessage(@NonNull HighscoreParsingService highscoreParsingService, @NonNull HighscoreChangeEvent event, @Nullable String raw) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
     Score oldScore = event.getOldScore();
@@ -47,13 +51,15 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
+      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+      String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
+      msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }
 
     return msg;
   }
 
-  public static String createCompetitionHighscoreCreatedMessage(@NonNull Competition competition, @NonNull HighscoreChangeEvent event, @Nullable String raw) {
+  public static String createCompetitionHighscoreCreatedMessage(@NonNull HighscoreParsingService highscoreParsingService, @NonNull Competition competition, @NonNull HighscoreChangeEvent event, @Nullable String raw) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
     Score oldScore = event.getOldScore();
@@ -72,7 +78,9 @@ public class DiscordOfflineChannelMessageFactory {
     msg = msg + getBeatenMessage(oldScore, newScore);
 
     if (!StringUtils.isEmpty(raw)) {
-      msg = msg + "\nHere is the current highscore:\n```" + raw + "```";
+      List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
+      String highscoreList = DiscordChannelMessageFactory.createHighscoreList(scores, -1);
+      msg = msg + "\nHere is the current highscore:\n" + highscoreList;
     }
 
     return msg;

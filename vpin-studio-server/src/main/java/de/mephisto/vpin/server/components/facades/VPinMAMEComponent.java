@@ -29,7 +29,7 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @Override
   public List<GithubRelease> loadReleases() throws IOException {
-    return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx")));
+    return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "osx")));
   }
 
   @NotNull
@@ -58,7 +58,7 @@ public class VPinMAMEComponent implements ComponentFacade {
   }
 
   @Override
-  public boolean isSkipRootFolder() {
-    return true;
+  public List<String> getRootFolderIndicators() {
+    return Arrays.asList("VPMAlias.txt");
   }
 }

@@ -2,13 +2,15 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentSummaryEntry;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -68,7 +70,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   }
 
   protected void initialize() {
-    openFolderButton.setDisable(!client.getSystemService().isLocal());
+    openFolderButton.setDisable(!SystemUtil.isFolderActionSupported());
 
     client.getPreferenceService().addListener(this);
 
@@ -107,7 +109,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       Parent builtInRoot = loader.load();
       ComponentSummaryEntryController controller = loader.getController();
 
-      if(componentCustomValues.getChildren().isEmpty()) {
+      if (componentCustomValues.getChildren().isEmpty()) {
         Label label = new Label("Installation Details");
         label.getStyleClass().add("preference-subtitle");
         HBox box = new HBox(label);
@@ -128,7 +130,7 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   protected void openFolder(File file) {
     try {
       if (file.exists()) {
-        new ProcessBuilder("explorer.exe", file.getAbsolutePath()).start();
+        SystemUtil.openFolder(file);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder\"" + file.getAbsolutePath() + "\" does not exist.");
@@ -159,28 +161,12 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
   }
 
   protected void editFile(File file) {
-    try {
-      if (file.exists()) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-          try {
-            desktop.edit(file);
-          } catch (Exception e) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute \"" + file.getAbsolutePath() + "\": " + e.getMessage());
-          }
-        }
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-    }
+    Dialogs.editFile(file);
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    if(key.equals(PreferenceNames.SYSTEM_PRESET)) {
+    if (key.equals(PreferenceNames.SYSTEM_PRESET)) {
       componentUpdateController.refresh(null, null);
     }
   }

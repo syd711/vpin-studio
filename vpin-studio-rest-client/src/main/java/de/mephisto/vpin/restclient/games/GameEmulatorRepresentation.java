@@ -1,5 +1,8 @@
 package de.mephisto.vpin.restclient.games;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GameEmulatorRepresentation {
   private int id;
   private String name;
@@ -16,6 +19,35 @@ public class GameEmulatorRepresentation {
 
   private String mameDirectory;
   private String nvramDirectory;
+
+
+  private String backglassServerFolder;
+  private boolean vpxEmulator;
+  private List<String> altVPXExeNames = new ArrayList<>();
+
+  public List<String> getAltVPXExeNames() {
+    return altVPXExeNames;
+  }
+
+  public void setAltVPXExeNames(List<String> altVPXExeNames) {
+    this.altVPXExeNames = altVPXExeNames;
+  }
+
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
+  }
+
+  public boolean isVpxEmulator() {
+    return vpxEmulator;
+  }
+
+  public void setVpxEmulator(boolean vpxEmulator) {
+    this.vpxEmulator = vpxEmulator;
+  }
 
   public String getName() {
     return name;

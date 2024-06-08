@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>2.11.2</version>
+    <version>2.20.1</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -126,7 +126,25 @@
         <version>2.6</version>
         <executions>
           <execution>
-            <id>copy-from-jdk</id>
+            <id>copy-installation-notes</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>./</directory>
+                  <includes>
+                    <include>installation.txt</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-from-jdk-win</id>
             <phase>package</phase>
             <goals>
               <goal>copy-resources</goal>
@@ -139,6 +157,42 @@
                   <excludes>
                     <exclude>**/*.zip</exclude>
                   </excludes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-from-jdk-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../</directory>
+                  <includes>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>copy-from-jdk-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/../Output/VPin-Studio/</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>${basedir}/../</directory>
+                  <includes>
+                    <include>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</include>
+                  </includes>
                 </resource>
               </resources>
             </configuration>
@@ -174,7 +228,8 @@
                 <resource>
                   <directory>./</directory>
                   <includes>
-                    <include>VPin-Studio.sh</include>
+                    <include>VPin-Studio-linux_x64.sh</include>
+                    <include>VPin-Studio-macosx_aarch64.sh</include>
                   </includes>
                 </resource>
               </resources>
@@ -266,9 +321,50 @@
               <arguments>
                 <argument>a</argument>
                 <argument>-tzip</argument>
-                <argument>VPin-Studio-Client.zip</argument>
+                <argument>vpin-studio-ui-jar.zip</argument>
                 <argument>vpin-studio-ui.jar</argument>
-                <argument>VPin-Studio.sh</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>zip-ui-jar-linux</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>a</argument>
+                <argument>-tzip</argument>
+                <argument>VPin-Studio-Client-linux-x64.zip</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-linux_x64.tar.gz</argument>
+                <argument>vpin-studio-ui.jar</argument>
+                <argument>VPin-Studio-linux_x64.sh</argument>
+                <argument>resources/vpsdb.json</argument>
+                <argument>installation.txt</argument>
+              </arguments>
+            </configuration>
+          </execution>
+          <execution>
+            <id>zip-ui-jar-osx-arm</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>${basedir}/../Output/VPin-Studio/resources/7z.exe</executable>
+              <workingDirectory>${basedir}/../Output/VPin-Studio/</workingDirectory>
+              <arguments>
+                <argument>a</argument>
+                <argument>-tzip</argument>
+                <argument>VPin-Studio-Client-macosx_aarch64.zip</argument>
+                <argument>zulu11.72.19-ca-fx-jre11.0.23-macosx_aarch64.tar.gz</argument>
+                <argument>vpin-studio-ui.jar</argument>
+                <argument>VPin-Studio-macosx_aarch64.sh</argument>
+                <argument>resources/vpsdb.json</argument>
+                <argument>installation.txt</argument>
               </arguments>
             </configuration>
           </execution>

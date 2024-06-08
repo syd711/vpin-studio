@@ -117,7 +117,7 @@ public class ComponentService implements InitializingBean {
           artifactArchive.delete();
         }
 
-        install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+        install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList(), componentFacade.getDiffList());
         boolean diff = install.isDiffering();
         if (!diff) {
           component.setInstalledVersion(githubRelease.getTag());
@@ -173,11 +173,11 @@ public class ComponentService implements InitializingBean {
       ComponentFacade componentFacade = getComponentFacade(type);
       File targetFolder = componentFacade.getTargetFolder(emulator);
       if (simulate) {
-        return releaseArtifact.simulateInstall(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
+        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
       }
 
       //we have a real installation from here on
-      install = releaseArtifact.install(targetFolder, componentFacade.isSkipRootFolder(), componentFacade.getExclusionList());
+      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
       if (install.getStatus() == null) {
         //unzipping was successful
         component.setInstalledVersion(githubRelease.getTag());
@@ -249,6 +249,9 @@ public class ComponentService implements InitializingBean {
       }
       case freezy: {
         return new FreezyComponent();
+      }
+      case serum: {
+        return new SerumComponent();
       }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + type);

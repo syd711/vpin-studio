@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -50,8 +49,7 @@ public class VpsDBDownloadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      VPS.getInstance().update();
-      VPS.getInstance().reload();
+      Studio.client.getVpsService().update();
     } catch (Exception e) {
       LOG.error("VPS database download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Download Failed", "VPS database download failed: " + e.getMessage());

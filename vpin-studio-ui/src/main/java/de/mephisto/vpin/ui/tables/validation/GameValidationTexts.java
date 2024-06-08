@@ -14,7 +14,7 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
  */
 public class GameValidationTexts {
 
-  private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or disable the screen in the preferences.";
+  private final static String NO_MEDIA_TEXT = "Dismiss this message if the table does not support this media or format.";
 
   public static LocalizedValidation validate(@NonNull GameRepresentation game) {
     String label = null;
@@ -45,6 +45,11 @@ public class GameValidationTexts {
         text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM in the \"Script Details\" section.";
         break;
       }
+      case CODE_NVOFFSET_MISMATCH: {
+        label = "\"NVOffset\" mismatch found.";
+        text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" set, but table \"" + state.getOptions().get(0) + "\" has the NVOffset value \"" + state.getOptions().get(2) + "\".";
+        break;
+      }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
         label = "No PUP pack and no directb2s file found.";
         text = "No additional media has been found. Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";
@@ -56,62 +61,62 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_AUDIO: {
-        label = "No audio media set.";
+        label = invalidAssetMessage("Audio");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_AUDIO_LAUNCH: {
-        label = "No audio launch media set.";
+        label = invalidAssetMessage("Audio Launch");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_APRON: {
-        label = "No full DMD media set.";
+        label = invalidAssetMessage("Full DMD");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_INFO: {
-        label = "No info card set.";
+        label = invalidAssetMessage("Info");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_HELP: {
-        label = "No help card set.";
+        label = invalidAssetMessage("Help");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_TOPPER: {
-        label = "No topper media set.";
+        label = invalidAssetMessage("Topper");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_BACKGLASS: {
-        label = "No backglass media set.";
+        label = invalidAssetMessage("Backglass");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_DMD: {
-        label = "No DMD media set.";
+        label = invalidAssetMessage("DMD");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_LOADING: {
-        label = "No loading video set.";
+        label = invalidAssetMessage("Loading");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_PLAYFIELD: {
-        label = "No playfield video set.";
+        label = invalidAssetMessage("Playfield");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_OTHER2: {
-        label = "No media for \"Other2\" set.";
+        label = invalidAssetMessage("Other2");
         text = NO_MEDIA_TEXT;
         break;
       }
       case CODE_NO_WHEEL_IMAGE: {
-        label = "No wheel icon set.";
+        label = invalidAssetMessage("Wheel");
         text = NO_MEDIA_TEXT;
         break;
       }
@@ -125,12 +130,22 @@ public class GameValidationTexts {
         text = "Audio files of this ALT sound package are missing. Open the ALT sound editor for details.";
         break;
       }
+      case CODE_FORCE_STEREO: {
+        label = "Force Stereo not enabled.";
+        text = "Enable \"Force Stereo\" for this table in the VPinMAME settings.";
+        break;
+      }
+      case CODE_OUTDATED_RECORDING: {
+        label = "Outdated recording found.";
+        text = "The file \"" + state.getOptions().get(0) + "\" is newer than the recording \"" + state.getOptions().get(1) + "\" of screen \"" + state.getOptions().get(2) + "\"";
+        break;
+      }
       case CODE_PUP_PACK_FILE_MISSING: {
         label = "PUP pack media file missing.";
         if (state.getOptions().size() > 1) {
           label = "PUP pack media files missing.";
         }
-        if(state.getOptions().size() > 2) {
+        if (state.getOptions().size() > 2) {
           List<String> entries = state.getOptions().subList(0, 2);
           text = "The trigger.pup file references invalid file(s): \"" + String.join("\", \"", entries) + "\" (+" + (state.getOptions().size() - 2) + " more entries)";
         }
@@ -171,5 +186,9 @@ public class GameValidationTexts {
 
 
     return new LocalizedValidation(label, text);
+  }
+
+  private static String invalidAssetMessage(String name) {
+    return "Assets for screen \"" + name + "\" do not match with the configured screen validator configuration.";
   }
 }

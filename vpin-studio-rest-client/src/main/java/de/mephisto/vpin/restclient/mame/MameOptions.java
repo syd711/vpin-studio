@@ -20,8 +20,17 @@ public class MameOptions {
   private boolean useExternalDmd;
   private boolean colorizeDmd;
   private boolean soundMode;
+  private boolean forceStereo;
 
   private boolean existInRegistry;
+
+  public boolean isForceStereo() {
+    return forceStereo;
+  }
+
+  public void setForceStereo(boolean forceStereo) {
+    this.forceStereo = forceStereo;
+  }
 
   public boolean isCompactDisplay() {
     return compactDisplay;

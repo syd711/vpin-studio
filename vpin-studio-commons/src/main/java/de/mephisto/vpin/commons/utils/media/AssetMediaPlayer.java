@@ -44,10 +44,22 @@ abstract public class AssetMediaPlayer extends BorderPane {
     return label;
   }
 
+  protected Label getEncodingNotSupportedLabel(@Nullable GameMediaItemRepresentation mediaItem) {
+    Label label = new Label("        Media available\n(encoding not supported)");
+    label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
+    label.setUserData(mediaItem);
+    return label;
+  }
+
   public void disposeMedia() {
     if (getMediaPlayer() != null) {
       try {
         getMediaPlayer().stop();
+      } catch (Exception e) {
+        LOG.info("Stopping media view: " + e.getMessage());
+      }
+
+      try {
         final ExecutorService executor = Executors.newFixedThreadPool(1);
         final Future<?> future = executor.submit(() -> {
           getMediaPlayer().dispose();
@@ -55,13 +67,21 @@ abstract public class AssetMediaPlayer extends BorderPane {
 
         future.get(500, TimeUnit.MILLISECONDS);
         executor.shutdownNow();
-        LOG.info("Disposed " + this.url);
-      } catch (Exception e) {
-        LOG.warn("Error disposing media view: " + e.getMessage());
+      }
+      catch (Exception e) {
+        LOG.info("Disposing media view: " + e.getMessage());
       }
     }
     else {
       LOG.warn("No mediaplayer found for " + url);
     }
+  }
+
+  public void setSize(double fitWidth, double fitHeight) {
+
+  }
+
+  public void setMediaViewSize(double fitWidth, double fitHeight) {
+
   }
 }

@@ -56,7 +56,7 @@ public class BackglassComponent implements ComponentFacade {
   }
 
   @Override
-  public boolean isSkipRootFolder() {
-    return true;
+  public List<String> getRootFolderIndicators() {
+    return Arrays.asList("README.txt");
   }
 }

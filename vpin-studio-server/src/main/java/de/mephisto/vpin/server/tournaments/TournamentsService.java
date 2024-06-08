@@ -1,11 +1,19 @@
 package de.mephisto.vpin.server.tournaments;
 
-import com.google.common.annotations.VisibleForTesting;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
+import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
+import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,16 +26,28 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class TournamentsService implements InitializingBean {
+public class TournamentsService implements InitializingBean, PreferenceChangedListener, PopperStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
-
-  private VPinManiaClient maniaClient;
 
   @Value("${vpinmania.server.host}")
   private String maniaHost;
 
   @Autowired
   private PreferencesService preferencesService;
+
+  @Autowired
+  private HighscoreService highscoreService;
+
+  @Autowired
+  private TournamentSynchronizer tournamentSynchronizer;
+
+  @Autowired
+  private PopperService popperService;
+
+  @Autowired
+  private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
+
+  private VPinManiaClient maniaClient;
 
   public TournamentConfig getConfig() {
     TournamentConfig config = new TournamentConfig();
@@ -50,15 +70,59 @@ public class TournamentsService implements InitializingBean {
     return preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
   }
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    String cabinetId = SystemUtil.getBoardSerialNumber();
-    maniaClient = new VPinManiaClient(maniaHost, cabinetId);
-    LOG.info("VPin Mania client created for host " + maniaHost);
+  public boolean synchronize(TournamentMetaData metaData) {
+    return tournamentSynchronizer.synchronize(metaData);
   }
 
-  @VisibleForTesting
-  public void setCabinetId(String id) {
-    maniaClient.setCabinetId(id);
+  public boolean synchronize() {
+    return tournamentSynchronizer.synchronize();
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(propertyName)) {
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      this.tournamentsHighscoreChangeListener.setCabinet(cabinet);
+      LOG.info("Registered Tournaments HighscoreChangeListener");
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    if (Features.TOURNAMENTS_ENABLED) {
+      try {
+        TournamentConfig config = getConfig();
+        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaClient.getTournamentClient().getTournaments();
+
+        tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
+        highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
+
+        preferencesService.addChangeListener(this);
+        preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
+
+        tournamentSynchronizer.setClient(maniaClient);
+        tournamentSynchronizer.synchronize();
+
+        popperService.addPopperStatusChangeListener(this);
+      } catch (Exception e) {
+        Features.TOURNAMENTS_ENABLED = false;
+        LOG.info("Error initializing tournament service: " + e.getMessage(), e);
+      }
+    }
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+    new Thread(() -> {
+      Game game = event.getGame();
+      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
+      tournamentSynchronizer.synchronize(game);
+    }).start();
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+
   }
 }

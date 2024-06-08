@@ -2,21 +2,25 @@ package de.mephisto.vpin.server.highscores;
 
 import com.google.common.annotations.VisibleForTesting;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -44,7 +49,7 @@ public class HighscoreService implements InitializingBean {
   private CompetitionsRepository competitionsRepository;
 
   @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreParsingService highscoreParser;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -58,11 +63,40 @@ public class HighscoreService implements InitializingBean {
   @Autowired
   private ScoreFilter scoreFilter;
 
+  @Autowired
+  private PlayerService playerService;
+
   private boolean pauseHighscoreEvents;
 
   private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
+  private final List<String> vpRegEntries = new ArrayList<>();
+  private final List<String> highscoreFiles = new ArrayList<>();
+
+  public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
+    HighscoreFiles highscoreFiles = new HighscoreFiles();
+
+    VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
+    highscoreFiles.setVpRegEntries(reg.getEntries());
+
+    File userFolder = game.getEmulator().getUserFolder();
+    if (userFolder.exists()) {
+      File[] files = userFolder.listFiles((dir, name) -> name.endsWith(".txt"));
+      if (files != null) {
+        highscoreFiles.setTextFiles(Arrays.stream(files).map(File::getName).collect(Collectors.toList()));
+      }
+    }
+
+    File nvramFolder = game.getEmulator().getNvramFolder();
+    if (nvramFolder.exists()) {
+      File[] files = nvramFolder.listFiles((dir, name) -> name.endsWith(".nv"));
+      if (files != null) {
+        highscoreFiles.setNvRams(Arrays.stream(files).map(f -> FilenameUtils.getBaseName(f.getName())).collect(Collectors.toList()));
+      }
+    }
+    return highscoreFiles;
+  }
 
   public boolean resetHighscore(@NonNull Game game) {
     try {
@@ -102,7 +136,8 @@ public class HighscoreService implements InitializingBean {
 
       deleteScores(game.getId(), true);
       return result;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset highscore: " + e.getMessage(), e);
     }
     return false;
@@ -239,12 +274,11 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns a list of all scores for the given game
    *
-   * @param game        the game to retrieve the highscores for
-   * @param displayName the optional display name/name of the table the summary is for
+   * @param game the game to retrieve the highscores for
    * @return all highscores of the given player
    */
   @NonNull
-  public ScoreSummary getScoreSummary(long serverId, Game game, @Nullable String displayName) {
+  public ScoreSummary getScoreSummary(long serverId, Game game) {
     ScoreSummary summary = new ScoreSummary(new ArrayList<>(), new Date());
     Optional<Highscore> highscore = highscoreRepository.findByGameId(game.getId());
     if (highscore.isPresent()) {
@@ -254,19 +288,6 @@ public class HighscoreService implements InitializingBean {
         summary.setRaw(h.getRaw());
         summary.getScores().addAll(scores);
       }
-
-      HighscoreMetadata metadata = new HighscoreMetadata();
-      metadata.setDisplayName(displayName);
-      metadata.setModified(h.getLastModified());
-      metadata.setScanned(h.getLastScanned());
-      metadata.setFilename(h.getFilename());
-      metadata.setType(h.getType() != null ? HighscoreType.valueOf(h.getType()) : null);
-      metadata.setStatus(h.getStatus());
-      summary.setMetadata(metadata);
-    }
-    else {
-      HighscoreMetadata metadata = highscoreResolver.readHighscore(game);
-      summary.setMetadata(metadata);
     }
     return summary;
   }
@@ -322,15 +343,18 @@ public class HighscoreService implements InitializingBean {
 
 
   @NonNull
-  public Optional<Highscore> getOrCreateHighscore(@NonNull Game game) {
+  public Optional<Highscore> getHighscore(@NonNull Game game, boolean forceScan) {
     Optional<Highscore> highscore = Optional.empty();
     try {
       highscore = highscoreRepository.findByGameId(game.getId());
-      if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
-        HighscoreMetadata metadata = scanScore(game);
-        return updateHighscore(game, metadata);
+      if (forceScan) {
+        if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
+          HighscoreMetadata metadata = scanScore(game);
+          return updateHighscore(game, metadata);
+        }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error updating highscores for \"" + game.getGameDisplayName() + "\"/" + game.getId() + ": " + e.getMessage(), e);
     }
     return highscore;
@@ -338,9 +362,17 @@ public class HighscoreService implements InitializingBean {
 
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game) {
-    HighscoreMetadata highscoreMetadata = highscoreResolver.readHighscore(game);
+    if (!game.isVpxGame()) {
+      throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");
+    }
+    HighscoreMetadata highscoreMetadata = readHighscore(game);
     updateHighscore(game, highscoreMetadata);
     return highscoreMetadata;
+  }
+
+  @NonNull
+  public HighscoreMetadata readHighscore(@NonNull Game game) {
+    return highscoreResolver.readHighscore(game);
   }
 
   /**
@@ -419,14 +451,13 @@ public class HighscoreService implements InitializingBean {
     List<Score> newScores = highscoreParser.parseScores(newHighscore.getLastModified(), newHighscore.getRaw(), game.getId(), serverId);
     List<Score> oldScores = getOrCloneOldHighscores(oldHighscore, game, oldRaw, serverId, newScores);
     if (!oldScores.isEmpty()) {
-      List<Integer> changedPositions = calculateChangedPositions(oldScores, newScores);
+      List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
       if (changedPositions.isEmpty()) {
         LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
       }
       else {
         LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
         if (!changedPositions.isEmpty()) {
-
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
             Score oldScore = oldScores.get(changedPosition - 1);
@@ -501,7 +532,7 @@ public class HighscoreService implements InitializingBean {
   /**
    * Returns the highscore difference position, starting from 1.
    */
-  public List<Integer> calculateChangedPositions(@NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
+  public List<Integer> calculateChangedPositions(@NonNull String gameDisplayName, @NonNull List<Score> oldScores, @NonNull List<Score> newScores) {
     List<Integer> changes = new ArrayList<>();
     try {
       for (int i = 0; i < newScores.size(); i++) {
@@ -510,13 +541,20 @@ public class HighscoreService implements InitializingBean {
           continue;
         }
 
+        if (i >= oldScores.size()) {
+          LOG.warn("The number of score entries of the old scores and the new scores do differ: " + oldScores.size() + " vs. " + newScores.size());
+          continue;
+        }
+
+
         boolean notFound = oldScores.stream().noneMatch(score -> score.matches(newScore));
         if (notFound) {
           changes.add(newScore.getPosition());
-          LOG.info("Calculated changed score: [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
+          LOG.info(gameDisplayName + ": Calculated changed score [" + newScore + "] has beaten [" + oldScores.get(newScore.getPosition() - 1) + "]");
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Failed to calculate score change: " + e.getMessage(), e);
     }
     return changes;
@@ -554,13 +592,72 @@ public class HighscoreService implements InitializingBean {
       return;
     }
 
+    refreshAvailableScores();
+
     for (HighscoreChangeListener listener : listeners) {
       listener.highscoreUpdated(game, highscore);
+    }
+  }
+
+  public void refreshAvailableScores() {
+    this.refreshHighscoreFiles();
+    this.refreshVPRegEntries();
+  }
+
+  public List<String> getVPRegEntries() {
+    return this.vpRegEntries;
+  }
+
+  public List<String> getHighscoreFiles() {
+    return highscoreFiles;
+  }
+
+  public void refreshVPRegEntries() {
+    try {
+      List<File> vpRegFiles = new ArrayList<>();
+      vpRegEntries.clear();
+      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      for (GameEmulator gameEmulator : gameEmulators) {
+        File vpRegFile = gameEmulator.getVPRegFile();
+        if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
+          vpRegFiles.add(vpRegFile);
+          VPReg reg = new VPReg(vpRegFile);
+          vpRegEntries.addAll(reg.getEntries());
+        }
+      }
+      LOG.info("Highscore Service read " + vpRegEntries.size() + " VPReg.stg entries");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to refresh VPReg entries: " + e.getMessage(), e);
+    }
+  }
+
+
+  public void refreshHighscoreFiles() {
+    try {
+      highscoreFiles.clear();
+      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      for (GameEmulator gameEmulator : gameEmulators) {
+        File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
+        if (files != null) {
+          for (File file : files) {
+            if (!highscoreFiles.contains(file.getName())) {
+              highscoreFiles.add(file.getName());
+            }
+          }
+        }
+      }
+      LOG.info("Highscore Service read " + highscoreFiles.size() + " highscore text files");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to refresh highscore filenames: " + e.getMessage(), e);
     }
   }
 
   @Override
   public void afterPropertiesSet() {
     this.highscoreResolver = new HighscoreResolver(systemService);
+    this.refreshVPRegEntries();
+    this.refreshHighscoreFiles();
   }
 }

@@ -16,8 +16,8 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class PupPack {
   private final static Logger LOG = LoggerFactory.getLogger(PupPack.class);
@@ -33,18 +33,20 @@ public class PupPack {
 
   private boolean scriptOnly = false;
 
-
   private final File packFolder;
+
+  private List<File> files = new ArrayList<>();
   private List<String> options = new ArrayList<>();
   private List<String> txtFiles = new ArrayList<>();
   private String selectedOption = null;
   private List<String> missingResources = new ArrayList<>();
 
-  private long size;
+  private long size = 0;
 
   public PupPack(@NonNull File packFolder) {
     playlistPup = new File(packFolder, PLAYLISTS_PUP);
     this.packFolder = packFolder;
+    this.init();
   }
 
   public boolean isScriptOnly() {
@@ -110,18 +112,27 @@ public class PupPack {
     return this.packFolder;
   }
 
-  public ScreenMode getScreenMode(PopperScreen dmd) {
-    return this.screensPup.getScreenMode(dmd);
+  public ScreenMode getScreenMode(PopperScreen screen) {
+    return this.screensPup.getScreenMode(screen);
+  }
+
+  public boolean isTransparent(PopperScreen screen) {
+    return this.screensPup.isTransparent(screen);
   }
 
   public void load() {
+    if (size == 0) {
+      setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
+    }
+  }
+
+  private void init() {
     try {
       screensPup = new ScreensPub(new File(packFolder, SCREENS_PUP));
       triggersPup = new TriggersPup(new File(packFolder, TRIGGERS_PUP));
 
-      setSize(org.apache.commons.io.FileUtils.sizeOfDirectory(packFolder));
-
-      Collection<File> txtFiles = org.apache.commons.io.FileUtils.listFiles(packFolder, new String[]{"txt"}, true);
+      files = new ArrayList<>(org.apache.commons.io.FileUtils.listFiles(packFolder, null, true));
+      List<File> txtFiles = files.stream().filter(f -> FilenameUtils.getExtension(f.getName()).equalsIgnoreCase("txt")).collect(Collectors.toList());
       for (File txtFile : txtFiles) {
         if (txtFile.length() > 0) {
           String path = txtFile.getAbsolutePath().replaceAll("\\\\", "/");
@@ -152,7 +163,7 @@ public class PupPack {
               File playlistsPup = new File(optionFolder, PLAYLISTS_PUP);
 
               if (screensPup.exists() && triggersPup.exists() && triggersPup.canRead() && playlistsPup.exists()
-                && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
+                  && this.screensPup.exists() && this.triggersPup.exists() && this.playlistPup.exists()) {
                 long length = screensPup.length() + triggersPup.length() + playlistsPup.length();
                 if (length == this.playlistPup.length() + this.screensPup.length() + this.triggersPup.length()) {
                   selectedOption = option;
@@ -180,7 +191,8 @@ public class PupPack {
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load PUP pack \"" + packFolder.getAbsolutePath() + "\": " + e.getMessage());
     }
   }
@@ -217,7 +229,8 @@ public class PupPack {
           return JobExecutionResultFactory.error(err, out);
         }
         return JobExecutionResultFactory.ok(out, -1);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
         return JobExecutionResultFactory.error("Error executing shutdown: " + e.getMessage());
       } finally {
@@ -233,6 +246,18 @@ public class PupPack {
 
   public File getOptionFile(String option) {
     return new File(packFolder, option + ".bat");
+  }
+
+  public boolean containsFileWithSuffixes(String... suffixes) {
+    for (File file : files) {
+      String ending = FilenameUtils.getExtension(file.getName());
+      for (String suffix : suffixes) {
+        if (suffix.equalsIgnoreCase(ending)) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   @Override

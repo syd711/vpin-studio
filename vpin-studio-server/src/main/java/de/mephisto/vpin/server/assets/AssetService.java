@@ -40,6 +40,9 @@ public class AssetService {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
+  @Autowired
+  private SystemService systemService;
+
   public Asset save(Asset asset) {
     return assetRepository.saveAndFlush(asset);
   }
@@ -70,7 +73,8 @@ public class AssetService {
 
       InputStream in = ResourceLoader.class.getResourceAsStream("empty-preview.png");
       return IOUtils.toByteArray(in);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load default image: " + e.getMessage(), e);
     }
     return null;
@@ -137,7 +141,8 @@ public class AssetService {
       }
 
       return asset.get();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Failed to get competition background " + e.getMessage());
     }
     return null;

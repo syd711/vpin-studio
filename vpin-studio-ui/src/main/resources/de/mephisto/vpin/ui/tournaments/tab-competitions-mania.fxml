@@ -3,9 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
@@ -29,8 +27,7 @@
                       <TreeTableColumn fx:id="columnName" prefWidth="330.0" text="Name" />
                         <TreeTableColumn fx:id="columnDate" prefWidth="260.0" style="-fx-alignment: CENTER;" text="Start /End" />
                         <TreeTableColumn fx:id="columnStatus" prefWidth="100.0" style="-fx-alignment: CENTER;" text="Status" />
-                      <TreeTableColumn fx:id="columnTable" prefWidth="300.0" text="Table" />
-                        <TreeTableColumn fx:id="columnVPSTable" prefWidth="250.0" text="Table Data" />
+                      <TreeTableColumn fx:id="columnTable" prefWidth="360.0" text="Table" />
                         <TreeTableColumn fx:id="columnVPSVersion" prefWidth="400.0" text="Table Version" />
                     </columns>
                   </TreeTableView>
@@ -51,23 +48,21 @@
                                 <Font size="14.0" />
                             </font>
                             <graphic>
-                                <FontIcon iconColor="WHITE" iconLiteral="sil-reload" iconSize="18" />
+                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                      <tooltip>
                         <Tooltip text="Reload Tournaments" />
                      </tooltip>
                         </Button>
-                  <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Synchronize" textFill="WHITE">
-                     <items>
-                        <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Synchronize All" />
-                     </items>
+                  <Separator layoutX="802.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="sil-refresh" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
                      </graphic>
-                  </SplitMenuButton>
+                  </Button>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="createBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCreate" text="Create" textFill="WHITE">
                             <font>
@@ -93,15 +88,6 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                             </graphic>
                         </Button>
-                  <Separator layoutX="802.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="browseBtn" layoutX="380.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBrowse" text="Browse" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-search-outline" iconSize="18" />
-                     </graphic>
-                  </Button>
                         <Separator layoutX="364.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="duplicateBtn" layoutX="547.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
                             <font>

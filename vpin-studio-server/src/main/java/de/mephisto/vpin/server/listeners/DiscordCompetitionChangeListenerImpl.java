@@ -18,7 +18,7 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -40,9 +40,6 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
   private CompetitionService competitionService;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private HighscoreService highscoreService;
 
   @Autowired
@@ -62,6 +59,10 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
 
   @Autowired
   private DiscordChannelMessageFactory discordChannelMessageFactory;
+
+  @Autowired
+  private VpsService vpsService;
+
 
   @Override
   public void competitionStarted(@NonNull Competition competition) {
@@ -93,7 +94,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
           //do not emit these messages asynchronously, because a finish check is triggered right afterwards and would finish the competition if no message is found
           String imageMessage = description;
           if (!StringUtils.isEmpty(game.getExtTableId())) {
-            VpsTable vpsTable = VPS.getInstance().getTableById(game.getExtTableId());
+            VpsTable vpsTable = vpsService.getTableById(game.getExtTableId());
             imageMessage += "\n\nVirtual Pinball Spreadsheet:\n" + VPS.getVpsTableUrl(game.getExtTableId());
 
             if (!StringUtils.isEmpty(game.getExtTableVersionId())) {
@@ -174,7 +175,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
               Platform.runLater(() -> {
                 String description = "";
                 if (!scoreSummary.getScores().isEmpty()) {
-                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores());
+                  description = "Here are the final results:\n" + DiscordChannelMessageFactory.createHighscoreList(scoreSummary.getScores(), competition.getScoreLimit());
                 }
                 description = description + "\nYou can duplicate the competition to continue it with another table or duration.";
                 byte[] image = assetService.getCompetitionFinishedCard(competition, game, winner, scoreSummary);

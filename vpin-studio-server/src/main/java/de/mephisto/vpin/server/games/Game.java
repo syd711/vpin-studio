@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -9,12 +10,17 @@ import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -31,6 +37,7 @@ public class Game {
   private boolean disabled;
   private boolean updateAvailable;
   private Date dateAdded;
+  private Date dateUpdated;
   private int id;
   private int nvOffset;
   private String hsFileName;
@@ -39,20 +46,23 @@ public class Game {
   private File gameFile;
 
   private ValidationState validationState;
-  private List<Integer> ignoredValidations;
+  private List<Integer> ignoredValidations = new ArrayList<>();
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
 
   private String assets;
   private PupPack pupPack;
-  private List<Integer> playlists;
+  private List<Integer> playlists = new ArrayList<>();
 
+  private String pupPackName;
+  private Long templateId;
   private SystemService systemService;
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
-  private List<String> updates;
+  private String notes;
+  private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
 
@@ -60,6 +70,45 @@ public class Game {
 
   public Game(@NonNull SystemService systemService) {
     this.systemService = systemService;
+  }
+
+  public String getPupPackName() {
+    if (this.pupPack != null) {
+      return this.pupPack.getName();
+    }
+    return pupPackName;
+  }
+
+  public Date getDateUpdated() {
+    return dateUpdated;
+  }
+
+  public void setDateUpdated(Date dateUpdated) {
+    this.dateUpdated = dateUpdated;
+  }
+
+  public String getNotes() {
+    return notes;
+  }
+
+  public void setNotes(String notes) {
+    this.notes = notes;
+  }
+
+  public boolean isVpxGame() {
+    return this.emulator.isVpxEmulator();
+  }
+
+  public void setPupPackName(String pupPackName) {
+    this.pupPackName = pupPackName;
+  }
+
+  public Long getTemplateId() {
+    return templateId;
+  }
+
+  public void setTemplateId(Long templateId) {
+    this.templateId = templateId;
   }
 
   public Date getDateAdded() {
@@ -106,6 +155,7 @@ public class Game {
     return extTableId;
   }
 
+  @Deprecated // stored this in Popper
   public void setExtTableId(String extTableId) {
     this.extTableId = extTableId;
   }
@@ -114,6 +164,7 @@ public class Game {
     return extTableVersionId;
   }
 
+  @Deprecated // stored this in Popper
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
   }
@@ -126,12 +177,29 @@ public class Game {
     this.disabled = disabled;
   }
 
-  public List<String> getUpdates() {
-    return updates;
+  public VPSChanges getVpsUpdates() {
+    return vpsChanges;
   }
 
-  public void setUpdates(List<String> updates) {
-    this.updates = updates;
+  public void setVpsUpdates(VPSChanges vpsChanges) {
+    if (vpsChanges != null) {
+      this.vpsChanges = vpsChanges;
+    }
+  }
+
+  @JsonIgnore
+  public Image getWheelImage() {
+    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    Image image = null;
+    if (gameMediaItem != null) {
+      try {
+        BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
+        image = SwingFXUtils.toFXImage(bufferedImage, null);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }
+    return image;
   }
 
   @JsonIgnore
@@ -215,34 +283,40 @@ public class Game {
   }
 
   @JsonIgnore
+  @Nullable
+  public File getHighscoreFile() {
+    HighscoreType highscoreType = getHighscoreType();
+    if(highscoreType != null) {
+      switch (highscoreType) {
+        case EM: {
+          return getHighscoreTextFile();
+        }
+        case VPReg: {
+          return getEmulator().getVPRegFile();
+        }
+        case NVRam: {
+          return getNvRamFile();
+        }
+      }
+    }
+    return null;
+  }
+
+  @JsonIgnore
   @NonNull
   public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
     File emulatorMediaFolder = this.emulator.getGameMediaFolder();
     return new File(emulatorMediaFolder, screen.name());
   }
 
-  @JsonIgnore
-  @NonNull
-  public File getUltraDMDFolder() {
-    String folderName = this.getRom() + ".UltraDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
-  }
-
-  @JsonIgnore
-  @NonNull
-  public File getFlexDMDFolder() {
-    String folderName = getRom() + ".FlexDMD";
-    return new File(this.getGameFile().getParentFile(), folderName);
-  }
-
   @NonNull
   public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
     String baseFilename = getGameName();
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.startsWith(baseFilename));
+    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
     if (mediaFiles != null) {
-      Pattern plainMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z]*");
-      Pattern screenMatcher  = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z]*");
-      return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getAbsolutePath()).matches()).collect(Collectors.toList());
+      Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
+      Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
+      return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
     }
     return Collections.emptyList();
   }
@@ -288,20 +362,26 @@ public class Game {
   @NonNull
   @JsonIgnore
   public File getPOVFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".pov");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".pov");
   }
 
 
   @NonNull
   @JsonIgnore
   public File getIniFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".ini");
+  }
+
+  @NonNull
+  @JsonIgnore
+  public File getVBSFile() {
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".vbs");
   }
 
   @NonNull
   @JsonIgnore
   public File getResFile() {
-    return new File(emulator.getTablesFolder(), FilenameUtils.getBaseName(gameFileName) + ".res");
+    return new File(getGameFile().getParentFile(), FilenameUtils.getBaseName(gameFileName) + ".res");
   }
 
   @NonNull
@@ -346,9 +426,7 @@ public class Game {
   }
 
   public boolean isDirectB2SAvailable() {
-    String name = FilenameUtils.getBaseName(this.getGameFileName());
-    String directB2SName = name + ".directb2s";
-    return new File(emulator.getTablesFolder(), directB2SName).exists();
+    return getDirectB2SFile().exists();
   }
 
   public boolean isGameFileAvailable() {
@@ -492,7 +570,7 @@ public class Game {
   @JsonIgnore
   public File getDirectB2SFile() {
     String baseName = FilenameUtils.getBaseName(this.getGameFileName());
-    return new File(emulator.getTablesFolder(), baseName + ".directb2s");
+    return new File(getGameFile().getParentFile(), baseName + ".directb2s");
   }
 
   @Nullable
@@ -500,6 +578,9 @@ public class Game {
   public File getCroppedDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;
@@ -510,6 +591,9 @@ public class Game {
   public File getDMDPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
+      if (!StringUtils.isEmpty(getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DMD);
     }
     return null;
@@ -521,24 +605,24 @@ public class Game {
     File nvRamFolder = new File(emulator.getMameFolder(), "nvram");
 
     String rom = getRom();
-    File aliasedNvFile = new File(nvRamFolder, rom + ".nv");
-    if (aliasedNvFile.exists() && getNvOffset() == 0) {
-      return aliasedNvFile;
+    File defaultNvRam = new File(nvRamFolder, rom + ".nv");
+    if (defaultNvRam.exists() && getNvOffset() == 0) {
+      return defaultNvRam;
     }
 
-    //else, we can check if a nv file with the alias and version exists
-    File versionNVAliasedFile = new File(emulator.getMameFolder(), rom + " v" + getNvOffset() + ".nv");
-    if (versionNVAliasedFile.exists()) {
-      return versionNVAliasedFile;
-    }
-
-    //if the text file exists, the current nv file contains the highscore of this table
-    File versionTextFile = new File(emulator.getMameFolder(), getRom() + " v" + getNvOffset() + ".txt");
+    //if the text file exists, the version matches with the current table, so this one was played last and the default nvram has the latest score
+    File versionTextFile = new File(nvRamFolder, getRom() + " v" + getNvOffset() + ".txt");
     if (versionTextFile.exists()) {
-      return versionTextFile;
+      return defaultNvRam;
     }
 
-    return aliasedNvFile;
+    //else, we can check if a nv file with the alias and version exists which means the another table with the same rom has been played after this table
+    File nvOffsettedNvRam = new File(nvRamFolder, rom + " v" + getNvOffset() + ".nv");
+    if (nvOffsettedNvRam.exists()) {
+      return nvOffsettedNvRam;
+    }
+
+    return defaultNvRam;
   }
 
 
@@ -547,6 +631,9 @@ public class Game {
   public File getRawDefaultPicture() {
     if (this.getRom() != null) {
       File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
+      if (!StringUtils.isEmpty(this.getRomAlias())) {
+        subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRomAlias());
+      }
       return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
     }
     return null;

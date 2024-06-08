@@ -51,6 +51,9 @@ public class MamePreferencesController implements Initializable {
   @FXML
   private CheckBox soundMode;
 
+  @FXML
+  private CheckBox forceStereo;
+
   private void saveOptions() {
     MameOptions options = new MameOptions();
     options.setRom(MameOptions.DEFAULT_KEY);
@@ -67,6 +70,7 @@ public class MamePreferencesController implements Initializable {
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
     options.setSoundMode(soundMode.isSelected());
+    options.setForceStereo(forceStereo.isSelected());
 
     try {
       client.getMameService().saveOptions(options);
@@ -75,7 +79,7 @@ public class MamePreferencesController implements Initializable {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
     }
 
-    PreferencesController.markDirty();
+    PreferencesController.markDirty(PreferenceType.serverSettings);
   }
 
   @Override
@@ -105,5 +109,7 @@ public class MamePreferencesController implements Initializable {
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     soundMode.setSelected(options.isColorizeDmd());
     soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    forceStereo.setSelected(options.isForceStereo());
+    forceStereo.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 }

@@ -9,8 +9,8 @@ import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.ZipUtil;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
+import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -152,7 +152,7 @@ public class HighscoreBackupUtil {
   }
 
   public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) {
-    Optional<Highscore> hs = highscoreService.getOrCreateHighscore(game);
+    Optional<Highscore> hs = highscoreService.getHighscore(game, true);
     if (hs.isPresent()) {
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;
@@ -200,7 +200,7 @@ public class HighscoreBackupUtil {
         return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case EM: {
-        File target = new File(gameEmulator.getInstallationFolder(), highscoreBackup.getHighscoreFilename());
+        File target = new File(gameEmulator.getUserFolder(), highscoreBackup.getHighscoreFilename());
         return ZipUtil.writeZippedFile(archiveFile, highscoreBackup.getHighscoreFilename(), target);
       }
       case VPReg: {

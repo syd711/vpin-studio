@@ -2,24 +2,29 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.MenuButton;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.io.File;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -33,7 +38,16 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private Button updateBtn;
 
   @FXML
+  private Button popperMenuBtn;
+
+  @FXML
   private MenuButton jobBtn;
+
+  @FXML
+  private MenuItem dofSyncEntry;
+
+  @FXML
+  private MenuItem popperEntry;
 
   @FXML
   private ToggleButton maintenanceBtn;
@@ -45,7 +59,10 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private HBox toolbarHBox;
 
   @FXML
-  private Button preferencesBtn;
+  private SplitMenuButton preferencesBtn;
+
+  @FXML
+  private ProgressIndicator jobProgress;
 
   private String newVersion;
 
@@ -58,7 +75,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     boolean maintenanceMode = EventManager.getInstance().isMaintenanceMode();
     if (!maintenanceMode) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Maintenance Mode", "Switch cabinet to maintenance mode?",
-        "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
+          "The maintenance mode will be automatically turned off on disconnect or exit.", "Enable Maintenance Mode");
       if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
         return;
       }
@@ -70,10 +87,10 @@ public class ToolbarController implements Initializable, StudioEventListener {
   public void maintenanceEnabled(boolean b) {
     if (maintenanceBtn.isVisible()) {
       if (b) {
-        maintenanceBtn.getStyleClass().add("maintenance-selected");
+        maintenanceBtn.getStyleClass().add("action-selected");
       }
       else {
-        maintenanceBtn.getStyleClass().remove("maintenance-selected");
+        maintenanceBtn.getStyleClass().remove("action-selected");
       }
     }
   }
@@ -89,9 +106,40 @@ public class ToolbarController implements Initializable, StudioEventListener {
     }
   }
 
+
+  @FXML
+  private void onPopper() {
+    client.getPinUPPopperService().restartPopper();
+  }
+
+  @FXML
+  private void onPopperMenu() {
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+      try {
+        String pinupSystemDirectory = client.getSystemService().getSystemSummary().getPinupSystemDirectory();
+        File file = new File(pinupSystemDirectory, "PinUpMenuSetup.exe");
+        if (!file.exists()) {
+          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        }
+        else {
+          desktop.open(file);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to open PinUpMenuSetup.exe: " + e.getMessage(), e);
+      }
+    }
+  }
+
   @FXML
   private void onDisconnect() {
-    client.getSystemService().setMaintenanceMode(false);
+    try {
+      client.getSystemService().setMaintenanceMode(false);
+    }
+    catch (Exception e) {
+      LOG.error("Exception ignored, Cannot set maintenance mode, system may be done", e);
+    }
     Studio.stage.close();
     NavigationController.refreshControllerCache();
     NavigationController.refreshViewCache();
@@ -110,57 +158,91 @@ public class ToolbarController implements Initializable, StudioEventListener {
     client.clearCache();
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
-    updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
-
-    this.jobBtn.setDisable(true);
-    this.messagesBtn.setDisable(true);
-    this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
-
-    EventManager.getInstance().addListener(this);
-
-    JobPoller.destroy();
-    JobPoller.create(this.jobBtn, this.messagesBtn);
-
-    runUpdateCheck();
-
+  @FXML
+  private void onDOFSyn() {
+    Studio.client.getDofService().sync(false);
     JobPoller.getInstance().setPolling();
-
-    this.messagesBtn.setDisable(client.getJobsService().getResults().isEmpty());
   }
 
   private void runUpdateCheck() {
     try {
       updateBtn.setVisible(false);
-      String os = System.getProperty("os.name");
-      if (os.contains("Windows")) {
-        new Thread(() -> {
-          String serverVersion = client.getSystemService().getVersion();
-          String clientVersion = Studio.getVersion();
+      new Thread(() -> {
+        String serverVersion = client.getSystemService().getVersion();
+        String clientVersion = Studio.getVersion();
 
-          String updateServerVersion = Updater.checkForUpdate(serverVersion);
-          String updateClientVersion = Updater.checkForUpdate(clientVersion);
+        String updateServerVersion = Updater.checkForUpdate(serverVersion);
+        String updateClientVersion = Updater.checkForUpdate(clientVersion);
 
-          if (updateClientVersion != null) {
-            Platform.runLater(() -> {
-              newVersion = updateClientVersion;
-              updateBtn.setText("Version " + updateClientVersion + " available");
-              updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
-            });
-          }
-          else if (updateServerVersion != null) {
-            Platform.runLater(() -> {
-              newVersion = updateServerVersion;
-              updateBtn.setText("Version " + updateServerVersion + " available");
-              updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
-            });
-          }
-        }).start();
-      }
-    } catch (Exception e) {
+        if (updateClientVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateClientVersion;
+            updateBtn.setText("Version " + updateClientVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateClientVersion));
+          });
+        }
+        else if (updateServerVersion != null) {
+          Platform.runLater(() -> {
+            newVersion = updateServerVersion;
+            updateBtn.setText("Version " + updateServerVersion + " available");
+            updateBtn.setVisible(!StringUtils.isEmpty(updateServerVersion));
+          });
+        }
+      }).start();
+    }
+    catch (Exception e) {
       LOG.error("Failed to run update check: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.serverSettings)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = (settings.isValidDOFFolder() || settings.isValidDOFFolder32()) && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
+    updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
+    messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
+    popperMenuBtn.managedProperty().bindBidirectional(popperMenuBtn.visibleProperty());
+
+    popperMenuBtn.setVisible(client.getSystemService().isLocal());
+
+    this.jobBtn.setDisable(true);
+    this.jobProgress.setDisable(true);
+    this.jobProgress.setProgress(0);
+
+    Image image1 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    ImageView view1 = new ImageView(image1);
+    view1.setPreserveRatio(true);
+    view1.setFitHeight(18);
+    popperEntry.setGraphic(view1);
+
+    Image image2 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    ImageView view2 = new ImageView(image2);
+    view2.setPreserveRatio(true);
+    view2.setFitHeight(18);
+    popperMenuBtn.setGraphic(view2);
+
+    this.messagesBtn.setVisible(false);
+    this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
+
+    EventManager.getInstance().addListener(this);
+
+    JobPoller.destroy();
+    JobPoller.create(this.jobBtn, this.jobProgress, this.messagesBtn);
+
+    runUpdateCheck();
+
+    JobPoller.getInstance().setPolling();
+
+    this.messagesBtn.setVisible(!client.getJobsService().getResults().isEmpty());
+
+    preferencesChanged(PreferenceType.serverSettings);
   }
 }

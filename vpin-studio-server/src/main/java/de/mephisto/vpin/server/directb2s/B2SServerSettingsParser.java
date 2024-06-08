@@ -5,10 +5,7 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
+import org.w3c.dom.*;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.XMLConstants;
@@ -60,14 +57,20 @@ public class B2SServerSettingsParser extends DefaultHandler {
         settings.setPluginsOn(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;
       }
-//      case "DefaultStartMode": {
-//        settings.setDefaultStartMode(Integer.parseInt(node.getTextContent().trim()));
-//        break;
-//      }
-//      case "DisableFuzzyMatching": {
-//        settings.setDisableFuzzyMatching(Integer.parseInt(node.getTextContent().trim()) == 1);
-//        break;
-//      }
+      case "DefaultStartMode": {
+        int defaultStartMode = DirectB2ServerSettings.EXE_START_MODE;
+        try {
+          defaultStartMode = Integer.parseInt(node.getTextContent().trim());
+        } catch (Exception e) {
+          LOG.error("Failed to read start mode (using EXE as default): " + e.getMessage());
+        }
+        settings.setDefaultStartMode(defaultStartMode);
+        break;
+      }
+      case "DisableFuzzyMatching": {
+        settings.setDisableFuzzyMatching(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
 //      case "IsLampsStateLogOn": {
 //        settings.setLampsStateLogOn(Integer.parseInt(node.getTextContent().trim()) == 1);
 //        break;

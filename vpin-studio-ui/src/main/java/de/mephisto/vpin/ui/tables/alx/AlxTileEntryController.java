@@ -1,12 +1,10 @@
 package de.mephisto.vpin.ui.tables.alx;
 
-import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
 
 import java.net.URL;
 import java.util.ResourceBundle;

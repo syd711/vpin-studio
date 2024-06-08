@@ -4,10 +4,12 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -60,6 +62,12 @@ public class PreferenceResource {
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           return preferencesService.getJsonPreference(key, PauseMenuSettings.class);
+        }
+        case PreferenceNames.VALIDATION_SETTINGS: {
+          return preferencesService.getJsonPreference(key, ValidationSettings.class);
+        }
+        case PreferenceNames.NOTIFICATION_SETTINGS: {
+          return preferencesService.getJsonPreference(key, NotificationSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

@@ -43,7 +43,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
     Studio.client.getPreferenceService().setPreferences(prefs);
 
-    PreferencesController.markDirty();
+    PreferencesController.markDirty(PreferenceType.serverSettings);
   }
 
 

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.players.Player;
 import org.apache.commons.lang3.StringUtils;
 
@@ -91,8 +93,8 @@ public class Score {
 
     Score score = (Score) obj;
     return score.getPlayerInitials().equalsIgnoreCase(this.getPlayerInitials())
-      && score.getPosition() == this.getPosition()
-      && score.getNumericScore() == this.getNumericScore();
+        && score.getPosition() == this.getPosition()
+        && score.getNumericScore() == this.getNumericScore();
   }
 
   public void setScore(String score) {
@@ -101,7 +103,7 @@ public class Score {
 
   public boolean matches(Score newScore) {
     return this.playerInitials != null && this.playerInitials.equals(newScore.getPlayerInitials())
-      && this.score != null && this.numericScore == newScore.getNumericScore();
+        && this.score != null && this.numericScore == newScore.getNumericScore();
 
   }
 
@@ -111,7 +113,18 @@ public class Score {
     if (this.player != null) {
       name = this.player.getName();
     }
-    return "#" + this.getPosition() + " " + name + "   " + this.getScore();
+
+    return "#" + this.getPosition() + " " + name + "   " + getFormattedScore();
+  }
+
+  @JsonIgnore
+  public String getFormattedScore() {
+    String scoreString = this.getScore();
+    String formattedScore = ScoreFormatUtil.formatScore(scoreString);
+    if (!formattedScore.equals("0")) {
+      scoreString = formattedScore;
+    }
+    return scoreString;
   }
 
   public Score cloneEmpty() {

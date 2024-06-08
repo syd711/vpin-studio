@@ -97,10 +97,15 @@ public class AltSoundLoader {
   }
 
   private int getInt(String value) {
-    if (StringUtils.isEmpty(value)) {
-      return 0;
-    }
+    try {
+      if (StringUtils.isEmpty(value)) {
+        return 0;
+      }
 
-    return Integer.parseInt(value.trim());
+      return Integer.parseInt(value.trim());
+    } catch (NumberFormatException e) {
+      LOG.error("AltSoundLoader failed to format value '" + value + "' (" + e.getMessage() + ")");
+    }
+    return 0;
   }
 }

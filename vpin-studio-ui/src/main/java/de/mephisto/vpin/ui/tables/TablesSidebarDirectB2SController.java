@@ -3,12 +3,18 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.drophandler.DirectB2SFileDropEventHandler;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.models.B2SGlowing;
+import de.mephisto.vpin.ui.tables.models.B2SLedType;
+import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -22,10 +28,13 @@ import javafx.scene.image.WritableImage;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -33,25 +42,27 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
-public class TablesSidebarDirectB2SController implements Initializable {
+import static de.mephisto.vpin.ui.Studio.client;
+
+public class TablesSidebarDirectB2SController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarDirectB2SController.class);
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
 
   //WE ARE CONFIGURING HIDE FIELDS HERE; SO VALUES ARE SET HERE INVERTED
-  private final static List<TablesSidebarDirectB2SController.Visibility> VISIBILITIES = Arrays.asList(new TablesSidebarDirectB2SController.Visibility(0, "Visible"),
-      new TablesSidebarDirectB2SController.Visibility(1, "Hidden"),
-      new TablesSidebarDirectB2SController.Visibility(2, "Standard"));
+  public final static List<B2SVisibility> VISIBILITIES = Arrays.asList(new B2SVisibility(0, "Visible"),
+      new B2SVisibility(1, "Hidden"),
+      new B2SVisibility(2, "Standard"));
 
-  private final static List<TablesSidebarDirectB2SController.LEDType> LED_TYPES = Arrays.asList(new TablesSidebarDirectB2SController.LEDType(1, "Simple LEDs"),
-      new TablesSidebarDirectB2SController.LEDType(2, "Dream7 LEDs"));
+  public final static List<B2SLedType> LED_TYPES = Arrays.asList(new B2SLedType(1, "Simple LEDs"),
+      new B2SLedType(2, "Dream7 LEDs"));
 
-  private final static List<TablesSidebarDirectB2SController.Glowing> GLOWINGS = Arrays.asList(new TablesSidebarDirectB2SController.Glowing(0, "Off"),
-      new TablesSidebarDirectB2SController.Glowing(1, "Low"),
-      new TablesSidebarDirectB2SController.Glowing(2, "Medium"),
-      new TablesSidebarDirectB2SController.Glowing(3, "High"),
-      new TablesSidebarDirectB2SController.Glowing(-1, "Default"));
+  public final static List<B2SGlowing> GLOWINGS = Arrays.asList(new B2SGlowing(0, "Off"),
+      new B2SGlowing(1, "Low"),
+      new B2SGlowing(2, "Medium"),
+      new B2SGlowing(3, "High"),
+      new B2SGlowing(-1, "Default"));
 
   @FXML
   private Label nameLabel;
@@ -102,6 +113,9 @@ public class TablesSidebarDirectB2SController implements Initializable {
   private Button uploadBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private VBox dataBox;
 
   @FXML
@@ -116,13 +130,16 @@ public class TablesSidebarDirectB2SController implements Initializable {
   //-- Editors
 
   @FXML
-  private ComboBox<Visibility> hideGrill;
+  private ComboBox<B2SVisibility> hideGrill;
 
   @FXML
   private CheckBox hideB2SDMD;
 
   @FXML
-  private ComboBox<Visibility> hideDMD;
+  private CheckBox startAsExe;
+
+  @FXML
+  private ComboBox<B2SVisibility> hideDMD;
 
   @FXML
   private Spinner<Integer> skipLampFrames;
@@ -140,16 +157,19 @@ public class TablesSidebarDirectB2SController implements Initializable {
   private CheckBox lightBulbOn;
 
   @FXML
-  private ComboBox<Glowing> glowing;
+  private ComboBox<B2SGlowing> glowing;
 
   @FXML
-  private ComboBox<LEDType> usedLEDType;
+  private ComboBox<B2SLedType> usedLEDType;
 
   @FXML
   private CheckBox startBackground;
 
   @FXML
   private CheckBox bringBGFromTop;
+
+  @FXML
+  private Button backglassManagerBtn;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -165,6 +185,30 @@ public class TablesSidebarDirectB2SController implements Initializable {
   }
 
   @FXML
+  private void onBackglassManager() {
+    TableDialogs.openDirectB2sManagerDialog(tablesSidebarController);
+  }
+
+
+  @FXML
+  private void onDelete(ActionEvent e) {
+    try {
+      if (this.game.isPresent()) {
+        GameRepresentation gameRepresentation = this.game.get();
+        if (tableData!=null) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
+          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+            client.getBackglassServiceClient().deleteBackglass(tableData.toDirectB2S());
+            EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
+          }
+        }
+      }
+    } catch (Exception ex) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
+    }
+  }
+
+  @FXML
   private void onUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     if (game.isPresent()) {
@@ -174,9 +218,12 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    if (game.isPresent() && game.get().isDirectB2SAvailable()) {
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
-      MediaUtil.openMedia(new ByteArrayInputStream(bytesEncoded));
+    if (tableData!=null) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+        MediaUtil.openMedia(in);
+      } catch (IOException ioe) {
+        LOG.error("Cannot open media for game " + game.get().getId(), ioe);
+      }
     }
   }
 
@@ -184,6 +231,13 @@ public class TablesSidebarDirectB2SController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBoxScrollPane.managedProperty().bindBidirectional(dataBoxScrollPane.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+
+
+    Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
+    ImageView view5 = new ImageView(image5);
+    view5.setFitWidth(18);
+    view5.setFitHeight(18);
+    backglassManagerBtn.setGraphic(view5);
 
     dataBoxScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
@@ -251,15 +305,23 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
     lightBulbOn.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setGlowBulbOn(newValue);
+      save();
+    });
+
+    startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setStartAsEXE(newValue);
+      save();
     });
 
     usedLEDType.setItems(FXCollections.observableList(LED_TYPES));
     usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      tableSettings.setUsedLEDType(t1.getId());
-      glowing.setDisable(t1.getId() == 1);
-      lightBulbOn.setDisable(t1.getId() == 1);
-      lightBulbOn.setSelected(false);
-      save();
+      if (t1!=null) {
+        tableSettings.setUsedLEDType(t1.getId());
+        glowing.setDisable(t1.getId() == 1);
+        lightBulbOn.setDisable(t1.getId() == 1);
+        lightBulbOn.setSelected(false);
+        save();
+      }
     });
 
     startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
@@ -278,7 +340,7 @@ public class TablesSidebarDirectB2SController implements Initializable {
       GameRepresentation g = this.game.get();
       try {
         if (this.saveEnabled) {
-          Studio.client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
+          this.tableSettings = client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
         }
       } catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
@@ -288,18 +350,31 @@ public class TablesSidebarDirectB2SController implements Initializable {
   }
 
 
+  private void setSaveEnabled(boolean b) {
+    if (b) {
+      try {
+        Thread.sleep(DEBOUNCE_MS + 100);
+      } catch (InterruptedException e) {
+        throw new RuntimeException(e);
+      }
+    }
+
+    this.saveEnabled = b;
+  }
+
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    setSaveEnabled(false);
+
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
+    deleteBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
-
-    this.saveEnabled = false;
 
     this.tableSettings = null;
 
@@ -319,11 +394,11 @@ public class TablesSidebarDirectB2SController implements Initializable {
     dmdResolutionLabel.setText("");
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
-      this.tableSettings = Studio.client.getBackglassServiceClient().getTableSettings(g.get().getId());
-      this.tableData = Studio.client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
+      this.tableSettings = client.getBackglassServiceClient().getTableSettings(g.get().getId());
+      this.tableData = client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
 
       nameLabel.setText(tableData.getName());
-      typeLabel.setText(this.getTableType(tableData.getTableType()));
+      typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
       authorLabel.setText(tableData.getAuthor());
       artworkLabel.setText(tableData.getArtwork());
       grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
@@ -335,44 +410,51 @@ public class TablesSidebarDirectB2SController implements Initializable {
 
       hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
-      byte[] bytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getBackgroundBase64());
-      if (bytesEncoded != null) {
-        Image image = new Image(new ByteArrayInputStream(bytesEncoded));
-        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
-          PixelReader reader = image.getPixelReader();
-          image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+      if (tableData.isBackgroundAvailable()) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+          Image image = new Image(in);
+          if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
+            PixelReader reader = image.getPixelReader();
+            image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
+          }
+          thumbnailImage.setImage(image);
+          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        } catch (IOException ioe) {
+          LOG.error("Cannot load background Image for game "+g.get().getId(), ioe);
         }
-        thumbnailImage.setImage(image);
-        resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
       }
       else {
         thumbnailImage.setImage(null);
         resolutionLabel.setText("Failed to read image data.");
       }
 
-      byte[] dmdBytesEncoded = org.apache.commons.codec.binary.Base64.decodeBase64(tableData.getDmdBase64());
-      if (dmdBytesEncoded != null) {
-        Image image = new Image(new ByteArrayInputStream(dmdBytesEncoded));
-        dmdThumbnailImage.setImage(image);
-        dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+      if (tableData.isDmdImageAvailable()) {
+        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
+          Image image = new Image(in);
+          dmdThumbnailImage.setImage(image);
+          dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
+        } catch (IOException ioe) {
+          LOG.error("Cannot load DMD Image for game "+g.get().getId(), ioe);
+        }
       }
       else {
         dmdResolutionLabel.setText("No DMD background available.");
       }
 
       if (tableSettings != null) {
-        hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().get());
+        hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
         hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
-        hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().get());
+        hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
         skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
         skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
         skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
         skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
         lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-        glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
-        usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().get());
+        glowing.setValue(GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().orElse(null));
+        usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
         startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
         bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+        startAsExe.selectedProperty().setValue(tableSettings.isStartAsEXE());
       }
 
 
@@ -384,147 +466,18 @@ public class TablesSidebarDirectB2SController implements Initializable {
       glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
       lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2);
 
-      this.saveEnabled = true;
+      setSaveEnabled(true);
     }
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
-
-    directb2sRoot.setOnDragOver(new FileDragEventHandler(directb2sRoot, true, "directb2s"));
-    directb2sRoot.setOnDragDropped(new DirectB2SFileDropEventHandler(tablesSidebarController));
   }
 
-  private String getTableType(int type) {
-    switch (type) {
-      case 1: {
-        return "Electro Mechanical";
-      }
-      case 2: {
-        return "Solid State Electronic";
-      }
-      case 3: {
-        return "Solid State Electronic with DMD";
-      }
-      case 4: {
-        return "Original";
-      }
-      default: {
-        return "-";
-      }
-    }
-  }
-
-
-  static class Visibility {
-    private int id;
-    private String name;
-
-    public Visibility(int id, String name) {
-      this.id = id;
-      this.name = name;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public void setId(int id) {
-      this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof TablesSidebarDirectB2SController.Visibility)) return false;
-
-      TablesSidebarDirectB2SController.Visibility that = (TablesSidebarDirectB2SController.Visibility) o;
-      return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-      return id;
-    }
-
-    @Override
-    public String toString() {
-      return name;
-    }
-  }
-
-
-  static class Glowing {
-    private int id;
-    private String name;
-
-    public Glowing(int id, String name) {
-      this.id = id;
-      this.name = name;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public void setId(int id) {
-      this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof TablesSidebarDirectB2SController.Glowing)) return false;
-
-      TablesSidebarDirectB2SController.Glowing that = (TablesSidebarDirectB2SController.Glowing) o;
-      return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-      return id;
-    }
-
-    @Override
-    public String toString() {
-      return name;
-    }
-  }
-
-  static class LEDType {
-    private int id;
-    private String name;
-
-    public LEDType(int id, String name) {
-      this.id = id;
-      this.name = name;
-    }
-
-    public int getId() {
-      return id;
-    }
-
-    public void setId(int id) {
-      this.id = id;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (!(o instanceof TablesSidebarDirectB2SController.LEDType)) return false;
-
-      TablesSidebarDirectB2SController.LEDType that = (TablesSidebarDirectB2SController.LEDType) o;
-      return id == that.id;
-    }
-
-    @Override
-    public int hashCode() {
-      return id;
-    }
-
-    @Override
-    public String toString() {
-      return name;
+  @Override
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.backglassServer)) {
+      this.setGame(this.game);
     }
   }
 }

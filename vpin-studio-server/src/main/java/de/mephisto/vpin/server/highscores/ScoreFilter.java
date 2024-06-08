@@ -32,7 +32,7 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
       LOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
       return true;
     }
-    if (score.getPlayerInitials().equalsIgnoreCase("???")) {
+    if (playerService.getAdminPlayer() == null && score.getPlayerInitials().equalsIgnoreCase("???")) {
       LOG.info("Filtered highscore update \"" + score + "\": player initials are ???");
       return true;
     }

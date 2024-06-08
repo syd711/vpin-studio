@@ -2,25 +2,37 @@ package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import de.mephisto.vpin.server.games.UniversalUploadService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
+import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_TYPE;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @RestController
@@ -33,6 +45,12 @@ public class VPXResource {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   @GetMapping("/script/{id}")
   public String script(@PathVariable("id") int id) {
@@ -56,8 +74,38 @@ public class VPXResource {
 
   @PutMapping("/sources/{id}")
   public boolean saveSources(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    String base64Source = (String) values.get("source");
-    return vpxService.saveSources(gameService.getGame(id), base64Source);
+    String source = (String) values.get("source");
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    return vpxService.importVBS(gameService.getGame(id), source, serverSettings.isKeepVbsFiles());
+  }
+
+
+  @GetMapping("/screenshot/{id}")
+  public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id) throws IOException {
+    try {
+      Game game = gameService.getGame(id);
+      if (game != null) {
+        File file = game.getGameFile();
+        byte[] bytes = VPXUtil.readScreenshot(file);
+        if (bytes == null || bytes.length == 0) {
+          InputStream in = ResourceLoader.class.getResourceAsStream("empty-preview.png");
+          bytes = IOUtils.toByteArray(in);
+        }
+
+        ByteArrayResource bytesResource = new ByteArrayResource(bytes);
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set(CONTENT_LENGTH, String.valueOf(bytes.length));
+        responseHeaders.set(CONTENT_TYPE, "image/png");
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
+        responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
+        responseHeaders.set("Cache-Control", "public, max-age=3600");
+        return ResponseEntity.ok().headers(responseHeaders).body(bytesResource);
+      }
+      return ResponseEntity.notFound().build();
+    } catch (Exception e) {
+      LOG.error("Screenshot extraction failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Screenshot extraction failed: " + e.getMessage());
+    }
   }
 
   @GetMapping("/pov/{id}")
@@ -72,7 +120,8 @@ public class VPXResource {
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    return vpxService.play(gameService.getGame(id));
+    String altExe = (String) values.get("altExe");
+    return vpxService.play(gameService.getGame(id), altExe);
   }
 
   @PostMapping("/pov/{id}")
@@ -85,40 +134,56 @@ public class VPXResource {
     return vpxService.delete(gameService.getGame(id));
   }
 
+  @PostMapping("/music/upload")
+  public UploadDescriptor uploadMusic(@RequestParam(value = "file", required = false) MultipartFile file) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
+    try {
+      descriptor.setAcceptAllAudioAsMusic(true);
+      descriptor.getAssetsToImport().add(AssetType.MUSIC);
+      descriptor.upload();
+      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
+      return descriptor;
+    } catch (Exception e) {
+      LOG.error("POV upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Music upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
+    }
+  }
 
   @PostMapping("/pov/upload")
-  public JobExecutionResult povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                      @RequestParam(value = "uploadType", required = false) String uploadType,
-                                      @RequestParam("objectId") Integer gameId) {
+  public UploadDescriptor povUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                    @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found POV upload.");
-        return JobExecutionResultFactory.error("No game found for POV upload.");
-      }
-
-      String name = FilenameUtils.getBaseName(game.getGameFileName());
-      File out = File.createTempFile(name, ".pov");
-      LOG.info("Uploading " + out.getAbsolutePath());
-      UploadUtil.upload(file, out);
-
-      if (game.getPOVFile().exists() && !game.getPOVFile().delete()) {
-        return JobExecutionResultFactory.error("Failed to delete " + game.getPOVFile().getAbsolutePath());
-      }
-
-      FileUtils.copyFile(out, game.getPOVFile());
-      out.deleteOnExit();
-      out.delete();
-
+      descriptor.getAssetsToImport().add(AssetType.POV);
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
       gameService.resetUpdate(gameId, VpsDiffTypes.pov);
-      return JobExecutionResultFactory.empty();
+      return descriptor;
     } catch (Exception e) {
+      LOG.error("POV upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "POV upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
+    }
+  }
+
+  @PostMapping("/ini/upload")
+  public UploadDescriptor iniUpload(@RequestParam(value = "file", required = false) MultipartFile file,
+                                    @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+    try {
+      descriptor.getAssetsToImport().add(AssetType.INI);
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
+      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
+      return descriptor;
+    } catch (Exception e) {
+      LOG.error("INI upload failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
+    } finally {
+      descriptor.finalizeUpload();
     }
   }
 }

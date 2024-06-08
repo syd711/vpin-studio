@@ -2,9 +2,7 @@ package de.mephisto.vpin.restclient.system;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.system.ScreenInfo;
-import de.mephisto.vpin.restclient.system.SystemData;
-import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.RestTemplate;
@@ -37,9 +35,24 @@ public class SystemServiceClient extends VPinStudioClientService {
     return url.contains("localhost") || url.contains("127.0.0.1");
   }
 
+  public String backup() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/backup", String.class);
+  }
+
   public void shutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/shutdown", Boolean.class);
+  }
+
+  public void restart() {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/restart", Boolean.class);
+  }
+
+  public void systemShutdown() {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);
   }
 
   public boolean autostartInstalled() {
@@ -79,17 +92,17 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public int getRemoteClientProgress() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/download/client/status", Integer.class);
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/clientupdate/download/status", Integer.class);
   }
 
   public void startRemoteClientUpdate(String version) {
     final RestTemplate restTemplate = new RestTemplate();
-    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/" + version + "/download/client/start", Boolean.class);
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/clientupdate/" + version + "/download/start", Boolean.class);
   }
 
   public boolean installRemoteClientUpdate() {
     final RestTemplate restTemplate = new RestTemplate();
-    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/update/client/install", Boolean.class);
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/clientupdate/install", Boolean.class);
   }
 
   public String getVersion() {
@@ -104,6 +117,10 @@ public class SystemServiceClient extends VPinStudioClientService {
 
   public SystemSummary getSystemSummary() {
     return getRestClient().getCached(API + "system/info", SystemSummary.class);
+  }
+
+  public ScoringDB getScoringDatabase() {
+    return getRestClient().getCached(API + "system/scoringdb", ScoringDB.class);
   }
 
   public void setMaintenanceMode(boolean maintenanceMode) {
@@ -133,4 +150,8 @@ public class SystemServiceClient extends VPinStudioClientService {
     getRestClient().clearCache(API + "system/info");
   }
 
+  public void testPauseMenu(GameRepresentation game, Integer value) {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/pausemenu/test/" + game.getId() + "/" + value, Boolean.class);
+  }
 }

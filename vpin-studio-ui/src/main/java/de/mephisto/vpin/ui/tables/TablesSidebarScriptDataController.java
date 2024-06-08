@@ -2,23 +2,23 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.ScriptDownloadProgressModel;
-import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
+import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.*;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -41,12 +42,6 @@ public class TablesSidebarScriptDataController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarScriptDataController.class);
 
   @FXML
-  private Label labelRom;
-
-  @FXML
-  private Label labelRomAlias;
-
-  @FXML
   private Label labelNVOffset;
 
   @FXML
@@ -56,22 +51,7 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Label labelFilesize;
 
   @FXML
-  private Label labelHSFilename;
-
-  @FXML
-  private Label labelTableName;
-
-  @FXML
   private Label labelLastModified;
-
-  @FXML
-  private Button editHsFileNameBtn;
-
-  @FXML
-  private Button editRomNameBtn;
-
-  @FXML
-  private Button romUploadBtn;
 
   @FXML
   private Button inspectBtn;
@@ -81,18 +61,6 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private SplitMenuButton scanBtn;
-
-  @FXML
-  private Button openEMHighscoreBtn;
-
-  @FXML
-  private Button editAliasBtn;
-
-  @FXML
-  private Button deleteAliasBtn;
-
-  @FXML
-  private Button editTableNameBtn;
 
   @FXML
   private Button vpSaveEditBtn;
@@ -105,6 +73,12 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   private Button openTableRulesBtn;
+
+  @FXML
+  private Button viewScreenshotBtn;
+
+  @FXML
+  private Button screenshotBtn;
 
   @FXML
   private Label tableNameLabel;
@@ -134,20 +108,12 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Label releaseDateLabel;
 
   @FXML
-  private VBox errorBox;
-
-  @FXML
-  private Label errorTitle;
-
-  @FXML
-  private Label errorText;
+  private ImageView screenshotView;
 
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
 
-  private ValidationState validationState;
-  private SystemSummary systemSummary;
   private TableInfo tableInfo;
 
   // Add a public no-args constructor
@@ -157,6 +123,23 @@ public class TablesSidebarScriptDataController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
+  }
+
+  @FXML
+  private void onScreenshotView() {
+    if (this.game.isPresent()) {
+      String url = client.getURL("vpx/screenshot/" + game.get().getId());
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      MediaUtil.openMedia(cachedUrlImage);
+    }
+  }
+
+
+  @FXML
+  private void onScreenshot() {
+    if (this.game.isPresent()) {
+      this.loadScreenshot(this.game.get(), true);
+    }
   }
 
   @FXML
@@ -208,53 +191,9 @@ public class TablesSidebarScriptDataController implements Initializable {
     if (this.game.isPresent()) {
       try {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.get().getEmulatorId());
-        new ProcessBuilder("explorer.exe", new File(emulatorRepresentation.getTablesDirectory()).getAbsolutePath()).start();
+        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       } catch (Exception e) {
         LOG.error("Failed to open Explorer: " + e.getMessage(), e);
-      }
-    }
-  }
-
-  @FXML
-  private void onHsFileNameEdit() {
-    GameRepresentation gameRepresentation = game.get();
-    String fs = WidgetFactory.showInputDialog(Studio.stage, "EM Highscore Filename", "Enter EM Highscore Filename",
-      "Enter the name of the highscore file for this table.", "If available, the file is located in the 'VisualPinball\\User' folder.", gameRepresentation.getHsFileName());
-    if (fs != null) {
-      gameRepresentation.setHsFileName(fs);
-
-      try {
-        Studio.client.getGameService().saveGame(gameRepresentation);
-        this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
-      } catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, e.getMessage());
-      }
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-    }
-  }
-
-  @FXML
-  public void onAliasEdit() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      String rom = g.getRom();
-      String alias = g.getRomAlias();
-      TableDialogs.openAliasMappingDialog(g, alias, rom);
-    }
-  }
-
-
-  @FXML
-  public void onDeleteAlias() {
-    if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-      String alias = g.getRomAlias();
-
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Alias", "Delete alias \"" + alias + "\" for ROM \"" + g.getRom() + "\"?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        Studio.client.getRomService().deleteAliasMapping(emulatorRepresentation.getId(), alias);
-        EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
       }
     }
   }
@@ -262,17 +201,14 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @FXML
   public void onEdit() {
-    this.game.ifPresent(gameRepresentation -> tablesSidebarController.getTablesController().showScriptEditor(gameRepresentation));
+    VBSManager.getInstance().edit(this.game);
   }
 
   @FXML
   public void onScanAll() {
-    if (this.game.isPresent()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Scan all " + client.getGameService().getGamesCached().size() + " tables?");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", client.getGameService().getGamesCached()));
-        EventManager.getInstance().notifyTablesChanged();
-      }
+    boolean scanned = TableDialogs.openScanAllDialog(client.getGameService().getVpxGamesCached());
+    if (scanned) {
+      EventManager.getInstance().notifyTablesChanged();
     }
   }
 
@@ -296,83 +232,6 @@ public class TablesSidebarScriptDataController implements Initializable {
     }
   }
 
-  @FXML
-  public void onRomUpload() {
-    onRomUploads(tablesSidebarController);
-  }
-
-  public static void onRomUploads(TablesSidebarController tablesSidebarController) {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        boolean uploaded = TableDialogs.openRomUploadDialog();
-        if (uploaded) {
-          tablesSidebarController.getTablesController().onReload();
-        }
-      }
-    }
-    else {
-      boolean uploaded = TableDialogs.openRomUploadDialog();
-      if (uploaded) {
-        tablesSidebarController.getTablesController().onReload();
-      }
-    }
-  }
-
-  @FXML
-  private void onTableNameEdit() {
-    GameRepresentation gameRepresentation = game.get();
-    TableDialogs.openTableDataDialog(gameRepresentation, 3);
-//    String tableName = WidgetFactory.showInputDialog(Studio.stage, "Alternative ROM Name", "Enter Alternative ROM Name",
-//      "Enter the value for the \"Alternative ROM Name\" (or \"TableName\" property).",
-//      "The value is configured for some tables and used during highscore extraction.",
-//      gameRepresentation.getTableName());
-//    if (tableName != null) {
-//      gameRepresentation.setTableName(tableName);
-//      try {
-//        Studio.client.getGameService().saveGame(gameRepresentation);
-//        tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
-//      } catch (Exception e) {
-//        LOG.error("Saving tablename failed: " + e.getMessage(), e);
-//        WidgetFactory.showAlert(Studio.stage, "Saving tablename failed: " + e.getMessage());
-//      }
-//      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-//    }
-  }
-
-  @FXML
-  private void onRomEdit() {
-    GameRepresentation gameRepresentation = game.get();
-    TableDialogs.openTableDataDialog(gameRepresentation, 0);
-//    String romName = WidgetFactory.showInputDialog(Studio.stage, "ROM Name", "ROM Name", "The ROM name will be used for highscore and PUP pack resolving.", "Open the VPX table script editor to search for the ROM name.", gameRepresentation.getRom());
-//    if (romName != null) {
-//      gameRepresentation.setRom(romName);
-//      try {
-//        Studio.client.getGameService().saveGame(gameRepresentation);
-//        this.tablesSidebarController.getTablesSidebarHighscoresController().refreshView(game, true);
-//      } catch (Exception e) {
-//        LOG.info("Error saving updated ROM name: " + e.getMessage(), e);
-//        WidgetFactory.showAlert(Studio.stage, "Error saving updated ROM name: " + e.getMessage());
-//      }
-//      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-//    }
-  }
-
-  @FXML
-  private void onEMHighscore() {
-    if (this.game.isPresent()) {
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
-
-      File folder = new File(emulatorRepresentation.getUserDirectory());
-      File file = new File(folder, game.get().getHsFileName());
-      if (file.exists()) {
-        try {
-          Desktop.getDesktop().open(file);
-        } catch (IOException e) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file \"" + game.get().getHsFileName() + "\": " + e.getMessage());
-        }
-      }
-    }
-  }
 
   @FXML
   private void onInspect() {
@@ -398,29 +257,16 @@ public class TablesSidebarScriptDataController implements Initializable {
     }
   }
 
-  @FXML
-  private void onDismiss() {
-    GameRepresentation g = game.get();
-    DismissalUtil.dismissValidation(g, this.validationState);
-  }
-
   public void refreshView(Optional<GameRepresentation> g) {
     tableInfo = null;
-    errorBox.setVisible(false);
-
-    editHsFileNameBtn.setDisable(g.isEmpty());
-    editRomNameBtn.setDisable(g.isEmpty());
-    editTableNameBtn.setDisable(g.isEmpty());
-    romUploadBtn.setDisable(g.isEmpty());
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
-    openEMHighscoreBtn.setVisible(Studio.client.getSystemService().isLocal());
-    openEMHighscoreBtn.setDisable(true);
 
     inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
     scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    editAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    deleteAliasBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    viewScreenshotBtn.setDisable(g.isEmpty());
+    screenshotBtn.setDisable(g.isEmpty());
+    screenshotView.setImage(null);
 
     tableNameLabel.setText("-");
     authorWebsiteLabel.setText("-");
@@ -453,55 +299,32 @@ public class TablesSidebarScriptDataController implements Initializable {
         openTableDescriptionBtn.setDisable(StringUtils.isEmpty(tableInfo.getTableDescription()));
       }
 
-      deleteAliasBtn.setDisable(StringUtils.isEmpty(game.getRomAlias()));
-
-      if (Studio.client.getSystemService().isLocal()) {
-        if (!StringUtils.isEmpty(game.getHsFileName())) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
-          File folder = new File(emulatorRepresentation.getUserDirectory());
-          File file = new File(folder, game.getHsFileName());
-          openEMHighscoreBtn.setDisable(!file.exists());
-        }
-      }
-
-      labelRom.setText(!StringUtils.isEmpty(game.getRom()) ? game.getRom() : "-");
-      labelRomAlias.setText(!StringUtils.isEmpty(game.getRomAlias()) ? game.getRomAlias() : "-");
       labelNVOffset.setText(game.getNvOffset() > 0 ? String.valueOf(game.getNvOffset()) : "-");
       labelFilename.setText(game.getGameFileName() != null ? game.getGameFileName() : "-");
       labelFilesize.setText(game.getGameFileSize() > 0 ? FileUtils.readableFileSize(game.getGameFileSize()) : "-");
-      labelTableName.setText(!StringUtils.isEmpty(game.getTableName()) ? game.getTableName() : "-");
       labelLastModified.setText(game.getModified() != null ? DateFormat.getDateTimeInstance().format(game.getModified()) : "-");
-      labelHSFilename.setStyle("");
-      if (!StringUtils.isEmpty(game.getHsFileName())) {
-        labelHSFilename.setText(game.getHsFileName());
-      }
-      else if (!StringUtils.isEmpty(game.getTableName())) {
-        labelHSFilename.setStyle("-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;");
-        labelHSFilename.setText(game.getTableName() + ".txt");
-      }
-      else {
-        labelHSFilename.setText("-");
-      }
 
-      List<ValidationState> validationStates = Studio.client.getGameService().getRomValidations(game.getId());
-      errorBox.setVisible(!validationStates.isEmpty());
-      if (!validationStates.isEmpty()) {
-        validationState = validationStates.get(0);
-        LocalizedValidation validationResult = GameValidationTexts.getValidationResult(game, validationState);
-        errorTitle.setText(validationResult.getLabel());
-        errorText.setText(validationResult.getText());
-      }
+      loadScreenshot(game, false);
     }
     else {
-      labelRom.setText("-");
-      labelRomAlias.setText("-");
       labelNVOffset.setText("-");
       labelFilename.setText("-");
       labelFilesize.setText("-");
       labelLastModified.setText("-");
-      labelTableName.setText("-");
-      labelHSFilename.setText("-");
     }
+  }
+
+  private void loadScreenshot(GameRepresentation game, boolean reload) {
+    Platform.runLater(() -> {
+      String url = client.getURL("vpx/screenshot/" + game.getId());
+      if (reload) {
+        client.getImageCache().clear(url);
+      }
+      InputStream cachedUrlImage = client.getCachedUrlImage(url);
+      Image image = new Image(cachedUrlImage);
+      screenshotView.setImage(image);
+      viewScreenshotBtn.setDisable(false);
+    });
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
@@ -510,8 +333,6 @@ public class TablesSidebarScriptDataController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    systemSummary = Studio.client.getSystemService().getSystemSummary();
-    errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     vpSaveEditBtn.setDisable(!Studio.client.getSystemService().isLocal());
   }
 

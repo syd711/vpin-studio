@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -37,7 +37,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.commons.fx.OverlayWindowFX.client;
+import static de.mephisto.vpin.commons.fx.ServerFX.client;
 
 public class WidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetPlayerRankController.class);
@@ -102,7 +102,7 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       RankedPlayerRepresentation value = cellData.getValue();
       HBox hBox = new HBox();
 
-      Image image = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
+      Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
       ImageView view = new ImageView(image);
 
       view.setPreserveRatio(true);
@@ -127,8 +127,12 @@ public class WidgetPlayerRankController extends WidgetController implements Init
           in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
         }
 
+        if (in == null) {
+          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
+        }
+
         final InputStream data = in;
-        if(data != null) {
+        if (data != null) {
           Platform.runLater(() -> {
             Image i = new Image(data);
             view.setImage(i);
@@ -184,7 +188,8 @@ public class WidgetPlayerRankController extends WidgetController implements Init
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }

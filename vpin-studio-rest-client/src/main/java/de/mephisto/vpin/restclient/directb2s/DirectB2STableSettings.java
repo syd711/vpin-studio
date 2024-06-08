@@ -17,6 +17,14 @@ public class DirectB2STableSettings {
   private boolean startBackground = false;
   private boolean formToFront = false;
 
+  public boolean isStartAsEXE() {
+    return startAsEXE;
+  }
+
+  public void setStartAsEXE(boolean startAsEXE) {
+    this.startAsEXE = startAsEXE;
+  }
+
   public String getRom() {
     return rom;
   }

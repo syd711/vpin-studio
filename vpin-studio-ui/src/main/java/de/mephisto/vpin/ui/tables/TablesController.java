@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -10,6 +11,7 @@ import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
@@ -33,7 +35,10 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
@@ -73,6 +78,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
 
   @FXML
+  private TablesAssetViewSidebarController assetViewSideBarController; //fxml magic! Not unused
+
+  @FXML
   private StackPane editorRootStack;
 
   private Node sidePanelRoot;
@@ -94,7 +102,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableOverviewController.setRootController(this);
       tablesSideBarController.setTablesController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -103,7 +112,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       tablesStatisticsTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -113,7 +123,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       repositoryController = loader.getController();
       repositoryController.setRootController(this);
       tableRepositoryTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -124,7 +135,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
 
@@ -144,19 +156,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
-
-    Image image2 = new Image(Studio.class.getResourceAsStream("vpx.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setFitWidth(18);
-    view2.setFitHeight(18);
-    tablesTab.setGraphic(view2);
   }
 
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
       if (t1.intValue() == 0) {
         NavigationController.setBreadCrumb(Arrays.asList("Tables"));
-        tablesSideBarController.setVisible(true);
+        tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
         tableOverviewController.initSelection();
@@ -164,7 +170,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (t1.intValue() == 1) {
         NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
         vpsTablesController.refresh(vpsTablesController.getSelection());
@@ -172,7 +178,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else if (t1.intValue() == 2) {
         NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
         root.setRight(null);
@@ -180,7 +186,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
-        tablesSideBarController.setVisible(false);
+        tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
         repositoryController.initSelection();
@@ -201,9 +207,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return tableOverviewController;
   }
 
+  public TablesAssetViewSidebarController getAssetViewSideBarController() {
+    return assetViewSideBarController;
+  }
+
   public VpsTablesSidebarController getVpsTablesSidebarController() {
     return vpsTablesSidebarController;
   }
+
 
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
@@ -228,10 +239,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
         }
       });
     }
+    else if (jobType.equals(JobType.TABLE_IMPORT)) {
+      Platform.runLater(() -> {
+        tableOverviewController.refreshFilterId();
+        tableOverviewController.onReload();
+      });
+    }
     else if (jobType.equals(JobType.POV_INSTALL)
-      || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-      || jobType.equals(JobType.DIRECTB2S_INSTALL)
-      || jobType.equals(JobType.TABLE_IMPORT)) {
+        || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
+        || jobType.equals(JobType.DIRECTB2S_INSTALL)) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
@@ -245,15 +261,25 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
-    if (id > 0 ) {
+    if (id > 0) {
       this.tableOverviewController.reload(id);
     }
 
     if (!StringUtils.isEmpty(rom)) {
-      this.tableOverviewController.reloadByRom(rom);
-    }
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
+    }  
     if (!StringUtils.isEmpty(gameName)) {
-      this.tableOverviewController.reloadByGameName(rom);
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
+      for (GameRepresentation g : gamesByRom) {
+        if (id!=g.getId()) { 
+          this.tableOverviewController.reload(g.getId());
+        }
+      }
     }
   }
 
@@ -262,10 +288,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void preferencesChanged() {
-    Platform.runLater(() -> {
-      this.tableOverviewController.onReload();
-    });
+  public void preferencesChanged(PreferenceType preferenceType) {
+    if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings)) {
+      Platform.runLater(() -> {
+        this.tableOverviewController.onReload();
+      });
+    }
   }
 
   public TabPane getTabPane() {
@@ -274,6 +302,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tablesChanged() {
-    preferencesChanged();
+    preferencesChanged(PreferenceType.uiSettings);
   }
 }

@@ -18,6 +18,9 @@ public class CompetitionValidationTexts {
     if(competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       typeName = "subscription";
     }
+    if(competition.getType().equals(CompetitionType.ISCORED.name())) {
+      typeName = "iScored subscription";
+    }
 
     switch (code) {
       case DISCORD_SERVER_NOT_FOUND: {
@@ -32,7 +35,7 @@ public class CompetitionValidationTexts {
       }
       case GAME_NOT_FOUND: {
         label = "No matching table found.";
-        text = "The configured table for this " + typeName + " does not exist anymore.";
+        text = "No matching table was found for this " + typeName + ".";
         break;
       }
       default: {

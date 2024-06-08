@@ -15,7 +15,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -34,7 +34,7 @@ public class DiscordCompetitionService {
   private DiscordService discordService;
 
   @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreParsingService highscoreParser;
 
   @Autowired
   private DiscordChannelMessageFactory discordChannelMessageFactory;
@@ -63,7 +63,7 @@ public class DiscordCompetitionService {
         ScoreList scoreHistory = highscoreService.getScoresBetween(competition.getGameId(), startDate, new Date(), competition.getDiscordServerId());
         List<ScoreSummary> versionedScores = new ArrayList<>(scoreHistory.getScores());
 
-        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game, null);
+        ScoreSummary latestScore = highscoreService.getScoreSummary(competition.getDiscordServerId(), game);
         versionedScores.add(latestScore);
 
         //oldest versionedScores first to replay in the correct order
@@ -81,7 +81,7 @@ public class DiscordCompetitionService {
             oldScores = versionedScoreSummary.cloneEmptyScores();
           }
 
-          List<Integer> changedPositions = highscoreService.calculateChangedPositions(oldScores, newScores);
+          List<Integer> changedPositions = highscoreService.calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
           if (!changedPositions.isEmpty()) {
             LOG.info("Calculated " + changedPositions.size() + " score differences for score created at " + versionedScoreSummary.getCreatedAt());
             for (Integer changedPosition : changedPositions) {

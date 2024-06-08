@@ -14,11 +14,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
 public class ProgressDialogController implements Initializable, DialogController {
+  private final static Logger LOG = LoggerFactory.getLogger(ProgressDialogController.class);
 
   @FXML
   private Label titleLabel;
@@ -49,7 +52,7 @@ public class ProgressDialogController implements Initializable, DialogController
       progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);
     }
 
-    progressResultModel = new ProgressResultModel(progressBar);
+    progressResultModel = new ProgressResultModel(progressBar, progressBarLabel);
     progressBarLabel.setText("");
     service = new Service() {
       @Override
@@ -108,11 +111,12 @@ public class ProgressDialogController implements Initializable, DialogController
                 }
               });
             } catch (Exception e) {
+              LOG.error("Error in Progress Dialog model: " + e.getMessage(), e);
               Platform.runLater(() -> {
                 stage.close();
               });
               Platform.runLater(() -> {
-                WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
+                WidgetFactory.showAlert(Studio.stage, "Error", "Error in progressing: " + e.getMessage());
               });
             }
             return null;

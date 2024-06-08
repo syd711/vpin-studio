@@ -1,11 +1,15 @@
 package de.mephisto.vpin.ui.tournaments.dialogs;
 
-import de.mephisto.vpin.commons.fx.*;
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.LoadingOverlayController;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.Game;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
-import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -16,13 +20,11 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.ui.tournaments.TournamentDialogs;
-import de.mephisto.vpin.ui.tournaments.TournamentHelper;
-import de.mephisto.vpin.ui.tournaments.view.GameCellContainer;
+import de.mephisto.vpin.ui.tournaments.*;
+import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
-import de.mephisto.vpin.ui.vps.containers.VpsSelection;
-import de.mephisto.vpin.ui.vps.containers.VpsTableContainer;
-import de.mephisto.vpin.ui.vps.containers.VpsVersionContainer;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
@@ -34,7 +36,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -43,14 +44,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +70,7 @@ import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class TournamentEditDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentEditDialogController.class);
@@ -74,6 +79,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private ComboBox<String> tournamentBadgeCombo;
+
+  @FXML
+  private CheckBox highscoreReset;
 
   @FXML
   private ComboBox<String> startTime;
@@ -94,6 +102,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Button addTableBtn;
 
   @FXML
+  private Button editTableBtn;
+
+  @FXML
   private Button deleteTableBtn;
 
   @FXML
@@ -107,6 +118,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private TextField discordLinkText;
+
+  @FXML
+  private TextField websiteLinkText;
 
   @FXML
   private TextArea descriptionText;
@@ -133,13 +147,16 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Button openDiscordBtn;
 
   @FXML
+  private Button openWesiteBtn;
+
+  @FXML
   private StackPane rootStack;
 
   @FXML
   private TableView<TournamentTreeModel> tableView;
 
   @FXML
-  private TableColumn<TournamentTreeModel, String> statusColumn;
+  private TableColumn<TournamentTreeModel, Label> statusColumn;
 
   @FXML
   private TableColumn<TournamentTreeModel, String> tableColumn;
@@ -150,13 +167,17 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   @FXML
   private TableColumn<TournamentTreeModel, String> vpsTableVersionColumn;
 
+  private Stage stage;
   private Tournament tournament;
 
   private List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
+  private Cabinet cabinet;
+  private TreeItem<TournamentTreeModel> result;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    result = null;
     this.tournament = null;
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -178,12 +199,78 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   }
 
   @FXML
+  private void onWebsiteOpen() {
+    String link = this.websiteLinkText.getText();
+    if (!StringUtils.isEmpty(link)) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+        try {
+          desktop.browse(new URI(link));
+        } catch (Exception e) {
+          LOG.error("Failed to open discord link: " + e.getMessage(), e);
+        }
+      }
+    }
+  }
+
+  @FXML
   private void onTableAdd(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    VpsSelection vpsSelection = TournamentDialogs.openTableSelectionDialog(stage);
-    if (vpsSelection.getTable() != null) {
-      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsSelection.getTable(), vpsSelection.getVersion());
-      tableSelection.add(new TournamentTreeModel(null, gameByVpsTable, vpsSelection.getTable(), vpsSelection.getVersion()));
+
+    TournamentTable tournamentTable = new TournamentTable();
+    tournamentTable.setEnabled(true);
+    TournamentTable result = TournamentDialogs.openTableSelectionDialog(stage, this.tournament, tournamentTable);
+    if (result != null) {
+      tournamentTable.setTournamentId(this.tournament.getId());
+
+      VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
+      VpsTableVersion vpsTableVersion = null;
+      if (vpsTable != null) {
+        vpsTableVersion = vpsTable.getTableVersionById(tournamentTable.getVpsVersionId());
+      }
+
+      GameRepresentation game = client.getGameService().getGameByVpsTable(tournamentTable.getVpsTableId(), tournamentTable.getVpsVersionId());
+      tableSelection.add(new TournamentTreeModel(null, game, tournamentTable, vpsTable, vpsTableVersion));
+      reloadTables();
+    }
+  }
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        TournamentTreeModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+          doTableEdit(stage, selectedItem);
+        }
+      }
+    }
+  }
+
+  @FXML
+  private void onTableEdit(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+
+    TournamentTreeModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      doTableEdit(stage, selectedItem);
+    }
+  }
+
+  @FXML
+  private void doTableEdit(Stage stage, TournamentTreeModel selection) {
+    TournamentTable updatedTournamentTable = TournamentDialogs.openTableSelectionDialog(stage, this.tournament, selection.getTournamentTable());
+    if (updatedTournamentTable != null) {
+      GameRepresentation game = client.getGameService().getGameByVpsTable(selection.getTournamentTable().getVpsTableId(), selection.getTournamentTable().getVpsVersionId());
+      selection.setGame(game);
+
+      VpsTable vpsTable = client.getVpsService().getTableById(selection.getTournamentTable().getVpsTableId());
+      VpsTableVersion vpsTableVersion = null;
+      if (vpsTable != null) {
+        vpsTableVersion = vpsTable.getTableVersionById(selection.getTournamentTable().getVpsVersionId());
+      }
+      selection.setVpsTable(vpsTable);
+      selection.setVpsTableVersion(vpsTableVersion);
       reloadTables();
     }
   }
@@ -201,17 +288,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    if (TournamentHelper.isOwner(this.tournament)) {
-      ObservableList<TournamentTreeModel> items = this.tableView.getItems();
-      List<String> tableEntries = new ArrayList<>();
-      for (TournamentTreeModel item : items) {
-        String entry = item.getVpsTable().getId() + "#";
-        if (item.getVpsTableVersion() != null) {
-          entry += item.getVpsTableVersion().getId();
+    if (TournamentHelper.isOwner(this.tournament, cabinet)) {
+      List<TournamentTable> children = new ArrayList<>();
+      for (TournamentTreeModel tournamentTreeModel : this.tableSelection) {
+        if (!tournamentTreeModel.isTournamentNode()) {
+          children.add(tournamentTreeModel.getTournamentTable());
         }
-        tableEntries.add(entry);
       }
-      tournament.setTableIds(String.join(",", tableEntries));
+
+      this.result = TournamentTreeModel.create(this.tournament, children);
     }
     stage.close();
   }
@@ -227,9 +312,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     validationContainer.setVisible(true);
     this.saveBtn.setDisable(true);
     this.openDiscordBtn.setDisable(true);
+    this.openWesiteBtn.setDisable(true);
 
     if (!StringUtils.isEmpty(this.discordLinkText.getText())) {
       openDiscordBtn.setDisable(false);
+    }
+    if (!StringUtils.isEmpty(this.websiteLinkText.getText())) {
+      openWesiteBtn.setDisable(false);
     }
 
     Date startDate = tournament.getStartDate();
@@ -264,14 +353,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @Override
   public void onDialogCancel() {
-    this.tournament = null;
+    this.result = null;
   }
 
-  public void setTournament(Tournament selectedTournament) {
+  public void setTournament(Stage stage, Tournament selectedTournament) {
+    this.stage = stage;
     this.tournament = selectedTournament;
     this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(TournamentVisibility.privateTournament));
 
-    boolean isOwner = TournamentHelper.isOwner(selectedTournament);
+    boolean isOwner = TournamentHelper.isOwner(selectedTournament, cabinet);
     boolean editable = isOwner && !selectedTournament.isActive();
     if (tournament.getUuid() == null) {
       editable = true;
@@ -279,7 +369,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.iscoredReloadBtn.setDisable(!isOwner);
     this.addTableBtn.setDisable(!isOwner);
-    this.deleteTableBtn.setDisable(!isOwner);
+    this.deleteTableBtn.setDisable(!isOwner || selectedTournament.getId() > 0);
 
     tournamentBadgeCombo.setDisable(isOwner && tournament.getUuid() != null);
     this.nameField.setText(selectedTournament.getDisplayName());
@@ -290,6 +380,9 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.discordLinkText.setDisable(!isOwner);
     this.dashboardUrlField.setText(selectedTournament.getDashboardUrl());
     this.dashboardUrlField.setDisable(!isOwner);
+    this.websiteLinkText.setText(selectedTournament.getWebsite());
+    this.websiteLinkText.setDisable(!isOwner);
+
     this.visibilityCheckbox.setDisable(!isOwner);
 
     this.startDatePicker.setValue(selectedTournament.getStartDate().toInstant().atZone(ZoneId.systemDefault()).toLocalDate());
@@ -306,31 +399,27 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.tournament = selectedTournament;
 
-    List<String> tableIdList = this.tournament.getTableIdList();
-    for (String s : tableIdList) {
-      String[] split = s.split("#");
-      VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-      VpsTableVersion vpsVersion = null;
-      if (split.length == 2) {
-        vpsVersion = vpsTable.getVersion(split[1]);
-      }
+    List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(this.tournament.getId());
+    for (TournamentTable tournamentTable : tournamentTables) {
+      VpsTable vpsTable = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
+      VpsTableVersion vpsVersion = vpsTable.getTableVersionById(tournamentTable.getVpsVersionId());
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-      this.tableSelection.add(new TournamentTreeModel(tournament, game, vpsTable, vpsVersion));
+      this.tableSelection.add(new TournamentTreeModel(tournament, game, tournamentTable, vpsTable, vpsVersion));
     }
 
     if (!isOwner) {
       this.saveBtn.setText("Join Tournament");
     }
-    else if(isOwner && tournament.getUuid() != null) {
+    else if (isOwner && tournament.getUuid() != null) {
       this.saveBtn.setText("Update Tournament");
     }
 
     Platform.runLater(() -> {
-      rootStack.getChildren().add(loadingOverlay);
       if (isOwner && this.tableSelection.isEmpty()) {
         loadIScoredTables();
       }
       else {
+        rootStack.getChildren().add(loadingOverlay);
         reloadTables();
       }
     });
@@ -338,50 +427,72 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   @FXML
   private void loadIScoredTables() {
-    new Thread(() -> {
-      Platform.runLater(() -> {
-        String dashboardUrl = this.dashboardUrlField.getText();
-        iscoredScoresEnabled.setSelected(false);
-        this.tableSelection.clear();
-        this.tableView.refresh();
+    String dashboardUrl = this.dashboardUrlField.getText();
+    iscoredScoresEnabled.setSelected(false);
+    this.tableSelection.clear();
+    this.tableView.refresh();
 
-        if (!StringUtils.isEmpty(dashboardUrl)) {
-          try {
-            GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
-            iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
+    if (!StringUtils.isEmpty(dashboardUrl)) {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl));
+      if (!progressDialog.getResults().isEmpty()) {
+        GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
+        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
-            List<Game> games = gameRoom.getGames();
-            for (Game game : games) {
-              List<String> tags = game.getTags();
-              Optional<String> first = tags.stream().filter(t -> t.startsWith(VPS.BASE_URL)).findFirst();
-              if (first.isPresent()) {
-                String vpsUrl = first.get();
-                String idSegment = vpsUrl.substring(vpsUrl.lastIndexOf("/") + 1);
-                String[] split = idSegment.split("#");
-                VpsTable vpsTable = VPS.getInstance().getTableById(split[0]);
-                VpsTableVersion vpsVersion = null;
-                if (vpsTable != null && split.length > 1) {
-                  vpsVersion = vpsTable.getVersion(split[1]);
-                }
-                GameRepresentation gameRep = null;
-                if (vpsTable != null) {
-                  gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-                }
-                this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, vpsTable, vpsVersion));
-                this.tableView.refresh();
+        List<IScoredGame> games = gameRoom.getGames();
+        for (IScoredGame game : games) {
+          List<String> tags = game.getTags();
+          Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
+          if (first.isPresent()) {
+            try {
+              String vpsUrl = first.get();
+              URL url = new URL(vpsUrl);
+              String idSegment = url.getQuery();
+
+              String tableId = idSegment.substring(idSegment.indexOf("=") + 1);
+              if (tableId.contains("&")) {
+                tableId = tableId.substring(0, tableId.indexOf("&"));
               }
+              else if (tableId.contains("#")) {
+                tableId = tableId.substring(0, tableId.indexOf("#"));
+              }
+
+              VpsTable vpsTable = client.getVpsService().getTableById(tableId);
+
+              String[] split = vpsUrl.split("#");
+              VpsTableVersion vpsVersion = null;
+              if (vpsTable != null && split.length > 1) {
+                vpsVersion = vpsTable.getTableVersionById(split[1]);
+              }
+              GameRepresentation gameRep = null;
+              if (vpsTable != null) {
+                gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+              }
+
+              TournamentTable tournamentTable = new TournamentTable();
+              tournamentTable.setEnabled(!game.isDisabled());
+              tournamentTable.setVpsTableId(vpsTable.getId());
+              tournamentTable.setVpsVersionId(vpsVersion.getId());
+              tournamentTable.setTournamentId(this.tournament.getId());
+              tournamentTable.setDisplayName(vpsTable.getDisplayName());
+
+              this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
+              this.tableView.refresh();
+            } catch (Exception e) {
+              LOG.error("Failed to parse table list: " + e.getMessage(), e);
+              WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
             }
-          } catch (Exception e) {
-            LOG.warn("Failed to load iscored dashboard: " + e.getMessage());
           }
         }
-        reloadTables();
-      });
-    }).start();
+      }
+    }
+    reloadTables();
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    cabinet = maniaClient.getCabinetClient().getCabinet();
+
+    editTableBtn.setDisable(true);
     validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
@@ -413,6 +524,19 @@ public class TournamentEditDialogController implements Initializable, DialogCont
           nameField.setText(sub);
         }
         tournament.setDisplayName(nameField.getText());
+        validate();
+      });
+    }, 500));
+
+    websiteLinkText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("websiteLinkText", () -> {
+      Platform.runLater(() -> {
+        if (websiteLinkText.getText() != null) {
+          if (websiteLinkText.getText().length() > 1024) {
+            String sub = websiteLinkText.getText().substring(0, 1024);
+            websiteLinkText.setText(sub);
+          }
+          tournament.setWebsite(websiteLinkText.getText());
+        }
         validate();
       });
     }, 500));
@@ -474,37 +598,32 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     statusColumn.setCellValueFactory(cellData -> {
       TournamentTreeModel value = cellData.getValue();
+      TournamentTable tournamentTable = cellData.getValue().getTournamentTable();
+
+      Label label = new Label();
       if (value.getGame() == null) {
-        return new SimpleObjectProperty(WidgetFactory.createExclamationIcon());
+        label.setGraphic(WidgetFactory.createExclamationIcon());
+      }
+      else {
+        label.setGraphic(WidgetFactory.createCheckIcon(null));
       }
 
-      return new SimpleObjectProperty(WidgetFactory.createCheckIcon(null));
+      if (!tournamentTable.isEnabled()) {
+        ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf("#B0ABAB"));
+      }
+
+      return new SimpleObjectProperty<>(label);
     });
 
     tableColumn.setCellValueFactory(cellData -> {
       GameRepresentation game = cellData.getValue().getGame();
-      if (game != null) {
-        return new SimpleObjectProperty(new GameCellContainer(game));
-      }
-
-      HBox cell = new HBox(12);
-      cell.setAlignment(Pos.CENTER_LEFT);
-      Image gameIcon = new Image(OverlayWindowFX.class.getResourceAsStream("avatar-blank.png"));
-      ImageView imageView = new ImageView(gameIcon);
-      imageView.setPreserveRatio(true);
-      imageView.setFitWidth(UIDefaults.DEFAULT_AVATARSIZE);
-      cell.getChildren().add(imageView);
-
-      Label label = new Label("Table not installed");
-      label.setStyle("-fx-padding: 3 6 3 6;");
-      label.getStyleClass().add("error-title");
-      cell.getChildren().add(label);
-      return new SimpleObjectProperty(cell);
+      return new SimpleObjectProperty(new TournamentTableGameCellContainer(game, tournament, cellData.getValue().getTournamentTable()));
     });
 
     vpsTableColumn.setCellValueFactory(cellData -> {
       VpsTable vpsTable = cellData.getValue().getVpsTable();
-      return new SimpleObjectProperty(new VpsTableContainer(vpsTable));
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
+      return new SimpleObjectProperty(new VpsTableContainer(vpsTable, customStyle));
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
@@ -512,13 +631,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion));
+      String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {
       @Override
       public void onChanged(Change<? extends TournamentTreeModel> c) {
-        deleteTableBtn.setDisable(!TournamentHelper.isOwner(tournament) || c == null || c.getList().isEmpty());
+        deleteTableBtn.setDisable(!TournamentHelper.isOwner(tournament, cabinet) || c == null || c.getList().isEmpty());
+        editTableBtn.setDisable(!TournamentHelper.isOwner(tournament, cabinet) || c == null || c.getList().isEmpty());
       }
     });
 
@@ -532,8 +653,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     }
   }
 
-  public Tournament getTournament() {
-    return tournament;
+  public TournamentCreationModel getTournamentData() {
+    if (result != null) {
+      TournamentCreationModel model = new TournamentCreationModel();
+      model.setNewTournamentModel(this.result);
+      model.setResetHighscore(highscoreReset.isSelected());
+      model.setBadge(tournamentBadgeCombo.getValue());
+      return model;
+    }
+    return null;
   }
 
   static class TournamentImageCell extends ListCell<String> {

@@ -9,6 +9,9 @@ open module de.mephisto.vpin.restclient {
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.mania;
   requires de.mephisto.vpin.connectors.vps;
+  requires de.mephisto.vpin.connectors.iscored;
+  requires spring.boot;
+  requires sevenzipjbinding;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;
@@ -25,6 +28,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.altcolor;
   exports de.mephisto.vpin.restclient.archiving;
   exports de.mephisto.vpin.restclient.assets;
+  exports de.mephisto.vpin.restclient.notifications;
   exports de.mephisto.vpin.restclient.competitions;
   exports de.mephisto.vpin.restclient.directb2s;
   exports de.mephisto.vpin.restclient.highscores;
@@ -35,7 +39,6 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.vpbm;
   exports de.mephisto.vpin.restclient.system;
   exports de.mephisto.vpin.restclient.util.ini;
-  exports de.mephisto.vpin.restclient.util.properties;
   exports de.mephisto.vpin.restclient.dmd;
   exports de.mephisto.vpin.restclient.components;
   exports de.mephisto.vpin.restclient.cards;
@@ -43,4 +46,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.tournaments;
   exports de.mephisto.vpin.restclient.preferences;
   exports de.mephisto.vpin.restclient.vps;
+  exports de.mephisto.vpin.restclient.textedit;
 }

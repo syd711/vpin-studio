@@ -2,23 +2,26 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="repositoryAccordionVBox" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesSidebarController">
    <children>
       <Accordion fx:id="vpsTableAccordion">
         <panes>
-          <TitledPane fx:id="tableDetailsPane" layoutX="1.0" text="Table Details">
+          <TitledPane fx:id="tableDetailsPane" layoutX="1.0">
                <content>
                   <BorderPane styleClass="accordion-container">
                      <center>
@@ -53,7 +56,7 @@
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="70.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
                                                 <Label layoutX="10.0" layoutY="15.0" text="IPDB Url:" textFill="WHITE">
@@ -71,7 +74,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="7">
+                                                <Label layoutX="10.0" layoutY="150.0" text="Updated:" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -96,7 +99,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label fx:id="updated" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                <Label fx:id="updated" layoutX="139.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -112,10 +115,13 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <Label layoutX="10.0" layoutY="184.0" text="Features:" textFill="WHITE" GridPane.rowIndex="6">
+                                                <Label layoutX="10.0" layoutY="184.0" text="Features:" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
+                                                   <GridPane.margin>
+                                                      <Insets top="3.0" />
+                                                   </GridPane.margin>
                                                 </Label>
                                                 <Label fx:id="typeLabel" layoutX="110.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                                    <font>
@@ -127,7 +133,11 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <HBox fx:id="features" alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                <FlowPane fx:id="features" hgap="3.0" prefHeight="200.0" prefWidth="200.0" rowValignment="TOP" vgap="3.0" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                                                   <GridPane.margin>
+                                                      <Insets top="6.0" />
+                                                   </GridPane.margin>
+                                                </FlowPane>
                                              </children>
                                           </GridPane>
                                        </children>
@@ -146,6 +156,26 @@
                      </padding>
                   </BorderPane>
                </content>
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <right>
+                        <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onVpsBtn" styleClass="link-component" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Open Table on https://virtual-pinball-spreadsheet.web.app/" />
+                           </tooltip>
+                        </Button>
+                     </right>
+                     <left>
+                        <Label text="Table Details" BorderPane.alignment="CENTER" />
+                     </left>
+                  </BorderPane>
+               </graphic>
             </TitledPane>
         </panes>
       </Accordion>

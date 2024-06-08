@@ -8,8 +8,8 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -17,10 +17,12 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionSavingProgressModel.class);
 
   private final Iterator<CompetitionRepresentation> iterator;
+  private final List<CompetitionRepresentation> competitions;
 
-  public CompetitionSavingProgressModel(String title, CompetitionRepresentation competition) {
+  public CompetitionSavingProgressModel(String title, List<CompetitionRepresentation> competitions) {
     super(title);
-    this.iterator = Arrays.asList(competition).iterator();
+    this.iterator = competitions.iterator();
+    this.competitions = competitions;
   }
 
   @Override
@@ -35,7 +37,7 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
 
   @Override
   public boolean isIndeterminate() {
-    return true;
+    return false;
   }
 
   @Override
@@ -45,7 +47,7 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
 
   @Override
   public int getMax() {
-    return 1;
+    return competitions.size();
   }
 
   @Override
@@ -53,7 +55,6 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
     try {
       CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(next);
       progressResultModel.addProcessed(newCmp);
-      Thread.sleep(6000);
     } catch (Exception e) {
       LOG.error("Failed to save competitions data: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Competition Update Failed", "Failed to save competitions data: " + e.getMessage());

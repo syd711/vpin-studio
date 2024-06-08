@@ -1,19 +1,20 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
+import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.BindingUtil;
+import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
-import de.mephisto.vpin.ui.util.ScreenModel;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
-import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,17 +22,17 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.net.URI;
 import java.net.URL;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class OverlayPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayPreferencesController.class);
+
+  @FXML
+  private Button recordBtn;
 
   @FXML
   private ComboBox<String> overlayKeyCombo;
@@ -40,13 +41,16 @@ public class OverlayPreferencesController implements Initializable {
   private ComboBox<String> pauseMenuKeyCombo;
 
   @FXML
+  private ComboBox<PopperScreen> tutorialScreenCombo;
+
+  @FXML
+  private ComboBox<PauseMenuStyle> pauseMenuStyleCombo;
+
+  @FXML
   private CheckBox showOverlayOnStartupCheckbox;
 
   @FXML
   private CheckBox pauseMenuCheckbox;
-
-  @FXML
-  private CheckBox userInternalBrowserCheckbox;
 
   @FXML
   private RadioButton radioA;
@@ -61,16 +65,18 @@ public class OverlayPreferencesController implements Initializable {
   private RadioButton radioD;
 
   @FXML
-  private CheckBox autoplayCheckbox;
-
-  @FXML
   private TextField videoAuthorsAllowList;
 
   @FXML
-  private Button externalPageButton;
+  private Spinner<Integer> inputDebounceSpinner;
 
   @FXML
   private TextField externalPageUrl;
+
+  @FXML
+  private void onPauseTest() {
+    PreferencesDialogs.openPauseMenuTestDialog();
+  }
 
   @FXML
   private void onOpenExternalPage() {
@@ -86,15 +92,23 @@ public class OverlayPreferencesController implements Initializable {
     }
   }
 
+  @FXML
+  private void onButtonRecord() {
+    PreferencesDialogs.openButtonRecorder();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     List<String> keyNames = Keys.getKeyNames();
     keyNames.add(0, "");
     overlayKeyCombo.setItems(FXCollections.observableList(keyNames));
     pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
+    pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
-    BindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
-    BindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
+    recordBtn.setDisable(!client.getSystemService().isLocal());
+
+    PreferenceBindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
+    PreferenceBindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
 
     radioA.setUserData("");
     radioB.setUserData("-hs-plrs-offline");
@@ -151,6 +165,16 @@ public class OverlayPreferencesController implements Initializable {
 
 
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100000, pauseMenuSettings.getInputDebounceMs());
+    factory.setAmountToStepBy(100);
+    inputDebounceSpinner.setValueFactory(factory);
+    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce("inputDebounce", () -> {
+      int value1 = Integer.parseInt(String.valueOf(t1));
+      pauseMenuSettings.setInputDebounceMs(value1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    }, 1000));
+
     pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
@@ -158,22 +182,23 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
-    userInternalBrowserCheckbox.setSelected(pauseMenuSettings.isUseInternalBrowser());
-    userInternalBrowserCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setUseInternalBrowser(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
-    });
-
-    autoplayCheckbox.setSelected(pauseMenuSettings.isAutoplay());
-    autoplayCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setAutoplay(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
-    });
-
     pauseMenuKeyCombo.setValue(pauseMenuSettings.getKey());
     pauseMenuKeyCombo.setDisable(pauseMenuCheckbox.isSelected());
     pauseMenuKeyCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setKey(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    pauseMenuStyleCombo.setValue(pauseMenuSettings.getStyle());
+    pauseMenuStyleCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setStyle(newValue);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
+    });
+
+    tutorialScreenCombo.setItems(FXCollections.observableList(Arrays.asList(PopperScreen.Audio, PopperScreen.DMD, PopperScreen.GameHelp, PopperScreen.GameInfo, PopperScreen.Menu, PopperScreen.Other2, PopperScreen.Topper)));
+    tutorialScreenCombo.setValue(pauseMenuSettings.getVideoScreen());
+    tutorialScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      pauseMenuSettings.setVideoScreen(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 

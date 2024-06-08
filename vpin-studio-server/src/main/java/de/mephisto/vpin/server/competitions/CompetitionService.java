@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
@@ -33,7 +33,7 @@ public class CompetitionService implements InitializingBean {
   private HighscoreService highscoreService;
 
   @Autowired
-  private HighscoreParser highscoreParser;
+  private HighscoreParsingService highscoreParser;
 
   @Autowired
   private PlayerService playerService;
@@ -48,7 +48,7 @@ public class CompetitionService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private CompetitionValidator campaignValidationService;
+  private CompetitionValidator competitionValidator;
 
   @Autowired
   private TournamentsService maniaService;
@@ -86,28 +86,36 @@ public class CompetitionService implements InitializingBean {
   public List<Competition> getOfflineCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.OFFLINE.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getDiscordCompetitions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.DISCORD.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions() {
     return competitionsRepository
         .findByTypeOrderByEndDateDesc(CompetitionType.SUBSCRIPTION.name())
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
+        .collect(Collectors.toList());
+  }
+
+
+  public List<Competition> getIScoredSubscriptions() {
+    return competitionsRepository
+        .findByTypeOrderByEndDateDesc(CompetitionType.ISCORED.name())
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
   public List<Competition> getSubscriptions(String rom) {
     return competitionsRepository
         .findByTypeAndRomOrderByName(CompetitionType.SUBSCRIPTION.name(), rom)
-        .stream().map(c -> campaignValidationService.validate(c))
+        .stream().map(c -> competitionValidator.validate(c))
         .collect(Collectors.toList());
   }
 
@@ -176,7 +184,7 @@ public class CompetitionService implements InitializingBean {
       return discordService.getScoreSummary(highscoreParser, competition.getUuid(), serverId, channelId);
     }
 
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
 
@@ -330,7 +338,7 @@ public class CompetitionService implements InitializingBean {
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       return discordService.getScoreSummary(this.highscoreParser, competition.getUuid(), serverId, competition.getDiscordChannelId());
     }
-    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()), null);
+    return highscoreService.getScoreSummary(serverId, gameService.getGame(competition.getGameId()));
   }
 
   @Override

@@ -1,30 +1,42 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
+import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class PupPackUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadController.class);
+
+  @FXML
+  private Node root;
 
   @FXML
   private TextField fileNameField;
@@ -39,13 +51,17 @@ public class PupPackUploadController implements Initializable, DialogController 
   private Button fileBtn;
 
   @FXML
-  private Label titleLabel;
+  private Label tableLabel;
+
+  @FXML
+  private Label romLabel;
 
   private File selection;
+  private Stage stage;
 
   private boolean result = false;
-  private GameRepresentation game;
-  private TablesSidebarController tablesSidebarController;
+
+  private UploaderAnalysis analysis;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -61,7 +77,7 @@ public class PupPackUploadController implements Initializable, DialogController 
       stage.close();
 
       Platform.runLater(() -> {
-        PupPackUploadProgressModel model = new PupPackUploadProgressModel(tablesSidebarController, this.game.getId(), "PUP Pack Upload", selection, "puppack");
+        PupPackUploadProgressModel model = new PupPackUploadProgressModel(null, "PUP Pack Upload", selection);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -80,22 +96,24 @@ public class PupPackUploadController implements Initializable, DialogController 
 
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
-      refreshSelection(stage);
+      refreshSelection();
     }
   }
 
-  private void refreshSelection(Stage stage) {
+  private void refreshSelection() {
     this.fileNameField.setText("Analyzing \"" + selection.getName() + "\", please wait...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);
     this.cancelBtn.setDisable(true);
 
 
-    ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackAnalyzeProgressModel(this.game.getRom(), this.game.getTableName(), "PUP Pack Analysis", this.selection));
+    analysis = UploadAnalysisDispatcher.analyzeArchive(this.selection);
+    refreshMatchingGame(analysis);
+    String validation = analysis.validateAssetType(AssetType.PUP_PACK);
 
-    if (!resultModel.getResults().isEmpty()) {
+    if (validation != null) {
       result = false;
-      WidgetFactory.showAlert(stage, String.valueOf(resultModel.getResults().get(0)));
+      WidgetFactory.showAlert(stage, "Invalid Pup Pack", validation);
       this.fileNameField.setText("");
       this.fileBtn.setDisable(false);
       this.fileNameField.setDisable(false);
@@ -107,7 +125,6 @@ public class PupPackUploadController implements Initializable, DialogController 
       this.fileBtn.setDisable(false);
       this.cancelBtn.setDisable(false);
       this.uploadBtn.setDisable(false);
-      this.cancelBtn.setDisable(false);
     }
   }
 
@@ -116,6 +133,12 @@ public class PupPackUploadController implements Initializable, DialogController 
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
   }
 
   @Override
@@ -127,21 +150,41 @@ public class PupPackUploadController implements Initializable, DialogController 
     return result;
   }
 
-  public void setGame(GameRepresentation game) {
-    this.game = game;
-    this.titleLabel.setText("Select PUP pack for \"" + game.getGameDisplayName() + "\":");
-  }
-
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
-  }
-
-  public void setFile(File file, Stage stage) {
+  public void setFile(File file, UploaderAnalysis uploaderAnalysis, Stage stage) {
     this.selection = file;
-    if(selection != null) {
-      Platform.runLater(() -> {
-        refreshSelection(stage);
-      });
+    this.stage = stage;
+    if (selection != null) {
+      refreshMatchingGame(uploaderAnalysis);
+      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileNameField.setDisable(false);
+      this.fileBtn.setDisable(false);
+      this.cancelBtn.setDisable(false);
+      this.uploadBtn.setDisable(false);
+    }
+  }
+
+  private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
+    tableLabel.setText("-");
+    romLabel.setText("-");
+    this.uploadBtn.setDisable(true);
+    if (uploaderAnalysis == null) {
+      return;
+    }
+
+    String rom = uploaderAnalysis.getRomFromPupPack();
+    if (rom == null) {
+      return;
+    }
+    romLabel.setText(rom);
+    this.uploadBtn.setDisable(false);
+
+    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
+    for (GameRepresentation gameRepresentation : gamesCached) {
+      String gameRom = gameRepresentation.getRom();
+      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        tableLabel.setText(gameRepresentation.getGameDisplayName());
+        break;
+      }
     }
   }
 }

@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TitledPane?>
@@ -73,6 +74,7 @@
                                         <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                       </rowConstraints>
@@ -142,12 +144,12 @@
                                                 </Button>
                                              </children>
                                           </HBox>
-                                          <Label layoutX="10.0" layoutY="150.0" text="Owner:" GridPane.rowIndex="9">
+                                          <Label layoutX="10.0" layoutY="150.0" text="Owner:" GridPane.rowIndex="10">
                                              <font>
                                                 <Font name="System Bold" size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label fx:id="ownerLabel" layoutX="120.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
+                                          <Label fx:id="ownerLabel" layoutX="120.0" layoutY="116.0" text="-" GridPane.columnIndex="1" GridPane.rowIndex="10">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -188,6 +190,16 @@
                                              </font>
                                           </Label>
                                           <Hyperlink fx:id="dashboardLink" onAction="#onDashboardOpen" text="-" GridPane.columnIndex="1" GridPane.rowIndex="8">
+                                             <GridPane.margin>
+                                                <Insets left="-4.0" />
+                                             </GridPane.margin>
+                                          </Hyperlink>
+                                          <Label layoutX="10.0" layoutY="284.0" text="Website:" GridPane.rowIndex="9">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <Hyperlink fx:id="websiteLink" layoutX="134.0" layoutY="281.0" onAction="#opnWebsiteOpen" text="-" GridPane.columnIndex="1" GridPane.rowIndex="9">
                                              <GridPane.margin>
                                                 <Insets left="-4.0" />
                                              </GridPane.margin>
@@ -233,7 +245,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox fx:id="scoreList">
+                              <VBox fx:id="scoreList" spacing="6.0">
                                  <padding>
                                     <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                                  </padding>
@@ -288,15 +300,18 @@
                                        <children>
                                           <Label fx:id="dashboardStatusLabel" styleClass="default-text" text="This tournament has no dashboard URL.">
                                              <VBox.margin>
-                                                <Insets bottom="12.0" />
+                                                <Insets />
                                              </VBox.margin>
+                                             <padding>
+                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                             </padding>
                                           </Label>
-                                          <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="560.0" />
+                                          <WebView fx:id="dashboardWebView" prefHeight="800.0" prefWidth="580.0" />
                                        </children>
                                     </VBox>
                                  </content>
                                  <BorderPane.margin>
-                                    <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                    <Insets />
                                  </BorderPane.margin>
                               </ScrollPane>
                            </center>
@@ -309,6 +324,15 @@
                                        </font>
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="16" />
+                                       </graphic>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                    <Button fx:id="dashboardReloadBtn" mnemonicParsing="false" onAction="#onDashboardReload" text="Reload" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                        </graphic>
                                     </Button>
                                 </items>
@@ -326,6 +350,9 @@
               </panes>
             </Accordion>
          </children>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
       </VBox>
    </right>
 </BorderPane>

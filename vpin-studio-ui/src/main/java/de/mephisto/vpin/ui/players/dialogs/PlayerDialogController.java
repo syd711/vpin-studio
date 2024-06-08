@@ -1,11 +1,11 @@
 package de.mephisto.vpin.ui.players.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
@@ -40,6 +40,7 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerDialogController.class);
@@ -76,6 +77,7 @@ public class PlayerDialogController implements Initializable, DialogController {
   private Tile avatar;
 
   private File avatarFile;
+  private Cabinet cabinet;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -89,7 +91,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     Platform.runLater(() -> {
-      if (!StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
+      if (Features.TOURNAMENTS_ENABLED && !StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
         Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
         if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
           return;
@@ -99,7 +101,7 @@ public class PlayerDialogController implements Initializable, DialogController {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
-        if(o instanceof PlayerRepresentation) {
+        if (o instanceof PlayerRepresentation) {
           this.player = (PlayerRepresentation) o;
         }
         else {
@@ -200,12 +202,16 @@ public class PlayerDialogController implements Initializable, DialogController {
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       adminRoleCheckbox.setSelected(player.isAdministrative());
-      tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
+      tournamentPlayerCheckbox.setSelected(cabinet != null && !StringUtils.isEmpty(player.getTournamentUserUuid()));
+      tournamentPlayerCheckbox.setDisable(cabinet == null);
       refreshAvatar();
+    }
+    else {
+      this.adminRoleCheckbox.setSelected(players.stream().filter(PlayerRepresentation::isAdministrative).findFirst().isEmpty());
     }
 
     for (PlayerRepresentation other : players) {
-      if(other.getId() != this.player.getId() && other.isAdministrative()) {
+      if (other.getId() != this.player.getId() && other.isAdministrative()) {
         this.adminRoleCheckbox.setDisable(true);
         break;
       }
@@ -215,6 +221,11 @@ public class PlayerDialogController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
+    tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
+
+    if (Features.TOURNAMENTS_ENABLED) {
+      cabinet = maniaClient.getCabinetClient().getCabinet();
+    }
 
     this.player = new PlayerRepresentation();
     nameField.setText(player.getName());
@@ -244,9 +255,6 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
     this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
-
-    TournamentSettings settings = client.getTournamentsService().getSettings();
-    this.tournamentGroup.setVisible(settings.isEnabled());
 
     this.nameField.requestFocus();
   }

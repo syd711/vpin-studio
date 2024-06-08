@@ -128,7 +128,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return true;
   }
 
-  public <T> T post(String path, Object model, Class<T> entityType) throws Exception {
+  public <T> T post(String path, Object model, Class<T> entityType) {
     long start = System.currentTimeMillis();
     HttpHeaders headers = new HttpHeaders();
     headers.setContentType(MediaType.APPLICATION_JSON);
@@ -158,7 +158,7 @@ public class RestClient implements ClientHttpRequestInterceptor {
     return exchange;
   }
 
-  public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) throws Exception {
+  public <T> T exchange(String path, HttpMethod method, HttpEntity requestEntity, Class<T> entityClass) {
     String url = baseUrl + path;
     ResponseEntity<T> response = restTemplate.exchange(url, method, requestEntity, entityClass);
     return response.getBody();

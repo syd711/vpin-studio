@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -12,12 +12,10 @@ import javafx.scene.control.TextField;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.util.BindingUtil.debouncer;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class HighscorePreferencesController implements Initializable {
 
@@ -29,7 +27,7 @@ public class HighscorePreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    PreferenceEntryRepresentation entry = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_TITLES);
+    PreferenceEntryRepresentation entry = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_TITLES);
 
     String titles = entry.getValue();
     if (StringUtils.isEmpty(titles)) {
@@ -39,11 +37,11 @@ public class HighscorePreferencesController implements Initializable {
 
     titlesField.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce(PreferenceNames.HIGHSCORE_TITLES, () -> {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_TITLES, t1);
-      PreferencesController.markDirty();
+      PreferencesController.markDirty(PreferenceType.serverSettings);
     }, 500));
 
 
-    boolean filerEnabled = OverlayWindowFX.client.getPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED).getBooleanValue(false);
+    boolean filerEnabled = ServerFX.client.getPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED).getBooleanValue(false);
     filterCheckbox.setSelected(filerEnabled);
     filterCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       client.getPreferenceService().setPreference(PreferenceNames.HIGHSCORE_FILTER_ENABLED, t1);

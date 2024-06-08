@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
-import de.mephisto.vpin.commons.fx.OverlayWindowFX;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import javafx.fxml.FXML;
@@ -67,7 +67,7 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(OverlayWindowFX.client.getCompetitionBackground(gameId));
+    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(gameId));
     BackgroundImage myBI = new BackgroundImage(backgroundImage,
         BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
         BackgroundSize.DEFAULT);

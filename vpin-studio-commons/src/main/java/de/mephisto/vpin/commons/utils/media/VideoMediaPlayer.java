@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
@@ -19,16 +20,18 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private final String mimeType;
 
-  private final boolean portraitMode;
   private final boolean dialogRendering;
 
   private GameMediaItemRepresentation mediaItem;
   private MediaView mediaView;
+  private Media media;
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType, boolean portraitMode) {
+  private double fitWidth = -1;
+  private double fitHeight = -1;
+
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType) {
     super(parent, url);
     this.mimeType = mimeType;
-    this.portraitMode = portraitMode;
     this.dialogRendering = true;
 
     if (screenName.equalsIgnoreCase("PlayField")) {
@@ -41,11 +44,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.render();
   }
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, @NonNull String mimeType, boolean portraitMode, boolean dialogRendering) {
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, @NonNull String mimeType, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;
-    this.portraitMode = portraitMode;
     this.dialogRendering = dialogRendering;
 
     if (mediaItem.getScreen().equalsIgnoreCase("PlayField")) {
@@ -60,83 +62,99 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private void render() {
     String baseType = mimeType.split("/")[0];
+    String mediaType = mimeType.split("/")[1];
 
-    Media media = new Media(url);
+    if (mediaType.equalsIgnoreCase("quicktime")) {
+      parent.setCenter(getEncodingNotSupportedLabel(mediaItem));
+      return;
+    }
+
+    media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
     mediaPlayer.setAutoPlay(baseType.equals("video"));
     mediaPlayer.setCycleCount(-1);
     mediaPlayer.setMute(true);
     mediaPlayer.setOnError(() -> {
       LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
-
-      if (retryCounter < 5) {
-        retryCounter++;
-        Platform.runLater(() -> {
-          super.disposeMedia();
-          try {
-            Thread.sleep(500);
-          } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-          }
-          render();
-        });
-      }
-      else {
-        parent.setCenter(getErrorLabel(mediaItem));
-      }
+      disposeMedia();
+      parent.setCenter(getErrorLabel(mediaItem));
     });
 
     mediaView = new MediaView(mediaPlayer);
     mediaView.setUserData(mediaItem);
     mediaView.setPreserveRatio(true);
+    mediaView.setVisible(false);
 
-    if (PopperScreen.PlayField.equals(screen)) {
-      if (dialogRendering) {
-        mediaView.setFitWidth(MEDIA_SIZE);
-        mediaView.setFitHeight(MEDIA_SIZE);
-        mediaView.setRotate(90);
-      }
-      else {
-        this.scalePlayfieldForSidebar();
-      }
-    }
-    else if (PopperScreen.Loading.equals(screen)) {
-      if (dialogRendering) {
-        mediaView.setFitWidth(MEDIA_SIZE);
-        mediaView.setFitHeight(MEDIA_SIZE);
-        mediaView.setRotate(90);
-      }
-      else {
-        this.scaleLoadingForSidebar();
-      }
-    }
-    else {
-      mediaView.setFitWidth(parent.getPrefWidth() - 12);
-      mediaView.setFitHeight(parent.getPrefHeight() - 50);
-    }
+    mediaPlayer.setOnReady(() -> {
+      scaleMediaView();
+      mediaView.setVisible(true);
+    });
 
     this.setCenter(mediaView);
     parent.setCenter(this);
   }
 
-  private void scalePlayfieldForSidebar() {
-    mediaView.setFitWidth(250);
-    if (!portraitMode) {
-      mediaView.rotateProperty().set(90);
-      mediaView.setFitWidth(440);
-      mediaView.setX(0);
-      mediaView.setY(0);
-      mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 96);
+  private void scaleMediaView() {
+    if (fitWidth > 0 || fitHeight > 0) {
+      mediaView.setFitWidth(fitWidth);
+      mediaView.setFitHeight(fitWidth);
+      return;
     }
-  }
 
-  private void scaleLoadingForSidebar() {
-    mediaView.setFitWidth(150);
-    if (!portraitMode) {
-      mediaView.rotateProperty().set(90);
-      mediaView.setFitWidth(70);
-      mediaView.setX(0);
-      mediaView.setY(0);
+    double prefWidth = parent.getPrefWidth();
+    if (prefWidth <= 0) {
+      prefWidth = ((Pane) parent.getParent()).getWidth();
+    }
+    double prefHeight = parent.getPrefHeight();
+    if (prefHeight <= 0) {
+      prefHeight = ((Pane) parent.getParent()).getHeight();
+    }
+    prefWidth = prefWidth - 12;
+    prefHeight = prefHeight - 12;
+
+    if (!dialogRendering) {
+      prefHeight = prefHeight - 32;
+    }
+
+    if (PopperScreen.PlayField.equals(screen)) {
+      if (media.getWidth() > media.getHeight()) {
+        mediaView.setRotate(90);
+        mediaView.setFitWidth(prefHeight);
+        mediaView.setFitHeight(prefWidth);
+
+        if (!dialogRendering) {
+          mediaView.setX(0);
+          mediaView.setY(0);
+          Platform.runLater(() -> {
+            double ratio = (double) media.getWidth() / media.getHeight();
+            if (ratio > 1.5) {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+            }
+            else {
+              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
+            }
+          });
+        }
+      }
+      else {
+        mediaView.setFitWidth(prefWidth);
+        mediaView.setFitHeight(prefHeight);
+      }
+    }
+    else if (PopperScreen.Loading.equals(screen)) {
+      if (media.getWidth() > media.getHeight()) {
+        mediaView.setRotate(90);
+        mediaView.setFitWidth(prefHeight);
+        mediaView.setFitHeight(prefWidth);
+      }
+      else {
+        mediaView.setFitWidth(prefWidth);
+        mediaView.setFitHeight(prefHeight);
+      }
+    }
+    else {
+      mediaView.setFitWidth(prefWidth);
+      mediaView.setFitHeight(prefHeight);
     }
   }
 
@@ -148,6 +166,28 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     else {
       mediaView.setFitWidth(parent.getPrefWidth() - 12);
       mediaView.setFitHeight(parent.getPrefHeight() - 50);
+    }
+  }
+
+  @Override
+  public void setSize(double fitWidth, double fitHeight) {
+    this.fitHeight = fitHeight;
+    this.fitWidth = fitWidth;
+  }
+
+  @Override
+  public void setMediaViewSize(double fitWidth, double fitHeight) {
+    if(this.mediaView != null) {
+      this.mediaView.setFitHeight(fitHeight);
+      this.mediaView.setFitWidth(fitWidth);
+    }
+  }
+
+  @Override
+  public void disposeMedia() {
+    super.disposeMedia();
+    if (mediaView != null) {
+      this.mediaView.setMediaPlayer(null);
     }
   }
 }

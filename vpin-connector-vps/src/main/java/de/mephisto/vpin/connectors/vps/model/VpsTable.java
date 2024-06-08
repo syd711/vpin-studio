@@ -3,9 +3,10 @@ package de.mephisto.vpin.connectors.vps.model;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class VpsTable {
+public class VpsTable implements VPSEntity {
   private String id;
   private String name;
   private List<String> features;
@@ -30,6 +31,20 @@ public class VpsTable {
   private String type;
   private int year;
   private long updatedAt;
+
+  //------------------
+  public VpsTableVersion getTableVersionById(String extTableVersionId) {
+    if (this.tableFiles != null && extTableVersionId != null) {
+      for (VpsTableVersion tableFile : this.tableFiles) {
+        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
+          return tableFile;
+        }
+      }
+    }
+    return null;
+  }
+
+  //------------------
 
   public List<VpsTutorialUrls> getTutorialFiles() {
     return tutorialFiles;
@@ -144,10 +159,10 @@ public class VpsTable {
   }
 
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if(t.getTableFormat() == null) {
+    if (t.getTableFormat() == null || t.getTableFormat().length()==0)  {
       return true;
     }
-    return t.getTableFormat() != null && t.getTableFormat().equals(tableFormat) && !(t.getUrls() == null || t.getUrls().isEmpty());
+    return t.getTableFormat().equals(tableFormat);
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {
@@ -210,12 +225,15 @@ public class VpsTable {
 
   public String getDisplayName() {
     String result = this.name;
-    if(this.manufacturer != null && this.manufacturer.length() >0) {
-      result = result + " | " + this.manufacturer;
+    if (this.manufacturer != null && this.manufacturer.trim().length() > 0) {
+      result = result + " (" + this.manufacturer;
     }
 
-    if(this.year > 0) {
-      result = result + " (" + this.year + ")";
+    if (this.year > 0) {
+      result = result + " " + this.year + ")";
+    }
+    else {
+      result = result + ")";
     }
 
     return result;
@@ -246,14 +264,16 @@ public class VpsTable {
     return this.getName();
   }
 
-  public VpsTableVersion getVersion(String extTableVersionId) {
-    if (this.tableFiles != null) {
-      for (VpsTableVersion tableFile : this.tableFiles) {
-        if (tableFile.getId().equalsIgnoreCase(extTableVersionId)) {
-          return tableFile;
-        }
-      }
-    }
-    return null;
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    VpsTable vpsTable = (VpsTable) o;
+    return Objects.equals(id, vpsTable.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 }

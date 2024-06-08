@@ -31,7 +31,7 @@ public class AssetsTest extends AbstractVPinServerTest {
     Competition competition = super.createOfflineCompetition(AbstractVPinServerTest.VPREG_TABLE_NAME);
     competition.setWinnerInitials("FFF");
     Game game = gameService.getGame(competition.getGameId());
-    ScoreSummary scoreSummary = highscoreService.getScoreSummary(0, game, null);
+    ScoreSummary scoreSummary = highscoreService.getScoreSummary(0, game);
 
     Player player = new Player();
     player.setInitials("FFF");

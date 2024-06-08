@@ -9,15 +9,15 @@
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="root" minWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
-    <children>
-        <Accordion fx:id="tableAccordion">
+
+<BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
+   <center>
+        <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
             <panes>
-                <TitledPane fx:id="titledPaneMedia" prefHeight="1110.0" prefWidth="600.0">
+                <TitledPane fx:id="titledPaneMedia" maxHeight="1.7976931348623157E308" prefHeight="1100.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
@@ -42,7 +42,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open PinUP Popper setup" />
@@ -85,7 +85,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PinUP Popper Table Settings" BorderPane.alignment="CENTER" />
+                                <Label text="PinUP Popper Table Data" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -113,7 +113,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open backglass server settings" />
@@ -200,7 +200,8 @@
                         <Label text="ALT Sound" BorderPane.alignment="CENTER" />
                      </left>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
             <TitledPane fx:id="titledPaneAltColor" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
@@ -225,7 +226,8 @@
                         </Label>
                      </left>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPanePov" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
@@ -277,7 +279,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open highscore settings" />
@@ -289,31 +291,6 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPaneMetadata" expanded="false">
-               <graphic>
-                  <BorderPane prefWidth="560.0">
-                     <left>
-                        <Label text="Script Details" textFill="WHITE" BorderPane.alignment="CENTER">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </left>
-                     <right>
-                        <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component" BorderPane.alignment="CENTER">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Open script in Visual Pinball X" />
-                           </tooltip>
-                           <font>
-                              <Font size="10.0" />
-                           </font>
-                        </Button>
-                     </right>
-                  </BorderPane>
-               </graphic></TitledPane>
             <TitledPane fx:id="titledPaneMame" expanded="false" layoutX="10.0" layoutY="260.0">
                 <graphic>
                     <BorderPane prefWidth="560.0">
@@ -328,7 +305,7 @@
                                     <Font size="10.0" />
                                  </font>
                                  <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="sil-settings" />
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
                                     <Tooltip text="Open VPin MAME settings" />
@@ -360,7 +337,34 @@
                         </Button>
                      </right>
                   </BorderPane>
-               </graphic></TitledPane>
+               </graphic>
+            </TitledPane>
+                <TitledPane fx:id="titledPaneMetadata" expanded="false">
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <left>
+                        <Label text="Script Details" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </left>
+                     <right>
+                        <Button fx:id="scriptBtn" mnemonicParsing="false" onAction="#onScript" styleClass="external-component" BorderPane.alignment="CENTER">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Open script in Visual Pinball X" />
+                           </tooltip>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </right>
+                  </BorderPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
                     <graphic>
                         <BorderPane prefWidth="560.0">
@@ -382,5 +386,5 @@
                 </TitledPane>
             </panes>
         </Accordion>
-    </children>
-</VBox>
+   </center>
+</BorderPane>

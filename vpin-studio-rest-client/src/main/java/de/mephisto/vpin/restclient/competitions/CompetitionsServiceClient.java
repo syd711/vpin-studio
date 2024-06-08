@@ -2,8 +2,6 @@ package de.mephisto.vpin.restclient.competitions;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -58,6 +56,11 @@ public class CompetitionsServiceClient extends VPinStudioClientService {
 
   public List<CompetitionRepresentation> getSubscriptions() {
     return Arrays.asList(getRestClient().get(API + "competitions/subscriptions", CompetitionRepresentation[].class));
+  }
+
+
+  public List<CompetitionRepresentation> getIScoredSubscriptions() {
+    return Arrays.asList(getRestClient().get(API + "competitions/iscored", CompetitionRepresentation[].class));
   }
 
   public List<CompetitionRepresentation> getFinishedCompetitions(int limit) {

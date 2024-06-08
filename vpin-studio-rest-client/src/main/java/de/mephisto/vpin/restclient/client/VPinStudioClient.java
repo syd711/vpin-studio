@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.alx.AlxServiceClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetServiceClient;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.cards.HighscoreCardTemplatesServiceClient;
 import de.mephisto.vpin.restclient.cards.HighscoreCardsServiceClient;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
@@ -19,7 +20,10 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
-import de.mephisto.vpin.restclient.games.*;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatusServiceClient;
+import de.mephisto.vpin.restclient.games.GamesServiceClient;
+import de.mephisto.vpin.restclient.games.NVRamsServiceClient;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
@@ -33,9 +37,8 @@ import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
+import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
-import de.mephisto.vpin.restclient.util.properties.ObservedProperties;
-import de.mephisto.vpin.restclient.util.properties.ObservedPropertyChangeListener;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
@@ -43,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.lang.NonNull;
+import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
@@ -50,48 +54,47 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.util.*;
+import java.util.List;
 
-public class VPinStudioClient implements ObservedPropertyChangeListener, OverlayClient {
+public class VPinStudioClient implements OverlayClient {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   public final static String API = "api/v1/";
-
-  private final Map<String, ObservedProperties> observedProperties = new HashMap<>();
 
   private final RestClient restClient;
 
   private final AltSoundServiceClient altSoundServiceClient;
   private final AltColorServiceClient altColorServiceClient;
   private final ArchiveServiceClient archiveServiceClient;
+  private final AlxServiceClient alxServiceClient;
   private final AssetServiceClient assetServiceClient;
   private final CompetitionsServiceClient competitions;
   private final ComponentServiceClient componentServiceClient;
   private final BackglassServiceClient backglassServiceClient;
-  private final DOFServiceClient dofServiceClient;
   private final DiscordServiceClient discordServiceClient;
+  private final DMDServiceClient dmdServiceClient;
+  private final DOFServiceClient dofServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
+  private final HighscoreCardTemplatesServiceClient highscoreCardTemplatesServiceClient;
+  private final HigscoreBackupServiceClient higscoreBackupServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
+  private final MameServiceClient mameServiceClient;
+  private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
   private final PinUPPopperServiceClient pinUPPopperServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
-  private final DMDServiceClient dmdServiceClient;
   private final SystemServiceClient systemServiceClient;
-  private final MameServiceClient mameServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
-  private final NVRamsServiceClient nvRamsServiceClient;
-  private final VpxServiceClient vpxServiceClient;
-  private final VpbmServiceClient vpbmServiceClient;
-  private final RomServiceClient romServiceClient;
-  private final VpsServiceClient vpsServiceClient;
+  private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
-  private final HigscoreBackupServiceClient higscoreBackupServiceClient;
-  private final AlxServiceClient alxServiceClient;
+  private final VpbmServiceClient vpbmServiceClient;
+  private final VpxServiceClient vpxServiceClient;
+  private final VpsServiceClient vpsServiceClient;
 
   public VPinStudioClient(String host) {
     restClient = RestClient.createInstance(host);
@@ -111,6 +114,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
+    this.highscoreCardTemplatesServiceClient = new HighscoreCardTemplatesServiceClient(this);
     this.imageCache = new ImageCache(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
@@ -119,10 +123,10 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
+    this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
     this.vpsServiceClient = new VpsServiceClient(this);
     this.vpbmServiceClient = new VpbmServiceClient(this);
-    this.romServiceClient = new RomServiceClient(this);
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
@@ -138,6 +142,14 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public HighscoreCardTemplatesServiceClient getHighscoreCardTemplatesClient() {
+    return highscoreCardTemplatesServiceClient;
+  }
+
+  public TextEditorServiceClient getTextEditorService() {
+    return textEditorServiceClient;
   }
 
   public GameStatusServiceClient getGameStatusService() {
@@ -175,6 +187,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   public VpsServiceClient getVpsService() {
     return vpsServiceClient;
   }
+
   public HigscoreBackupServiceClient getHigscoreBackupService() {
     return higscoreBackupServiceClient;
   }
@@ -189,10 +202,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
 
   public PinVolServiceClient getPinVolService() {
     return pinVolServiceClient;
-  }
-
-  public RomServiceClient getRomService() {
-    return romServiceClient;
   }
 
   public AltColorServiceClient getAltColorService() {
@@ -327,7 +336,7 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
   }
 
@@ -371,37 +380,11 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     });
   }
 
-  public ObservedProperties getProperties(String propertiesName) {
-    if (!observedProperties.containsKey(propertiesName)) {
-      Map<String, Object> result = restClient.get(VPinStudioClientService.API + "properties/" + propertiesName, Map.class);
-      Properties properties = new Properties();
-      properties.putAll(result);
-      ObservedProperties observedProperties = new ObservedProperties(propertiesName, properties);
-      observedProperties.setObserver(this);
-      this.observedProperties.put(propertiesName, observedProperties);
-    }
-
-    return this.observedProperties.get(propertiesName);
-  }
-
   public String getURL(String segment) {
     if (!segment.startsWith("http") && !segment.contains(VPinStudioClientService.API)) {
       return restClient.getBaseUrl() + VPinStudioClientService.API + segment;
     }
     return segment;
-  }
-
-  @Override
-  public void changed(String propertiesName, String key, Optional<String> updatedValue) {
-    try {
-      Map<String, Object> model = new HashMap<>();
-      model.put(key, updatedValue.get());
-      Boolean result = restClient.put(VPinStudioClientService.API + "properties/" + propertiesName, model);
-      ObservedProperties obsprops = this.observedProperties.get(propertiesName);
-      obsprops.notifyChange(key, updatedValue.get());
-    } catch (Exception e) {
-      LOG.error("Failed to upload changed properties: " + e.getMessage(), e);
-    }
   }
 
   public void clearCache() {
@@ -410,7 +393,6 @@ public class VPinStudioClient implements ObservedPropertyChangeListener, Overlay
     getGameService().clearCache();
     getSystemService().clearCache();
     getPupPackService().clearCache();
-    getMameService().clearCache();
     getDmdService().clearCache();
   }
 

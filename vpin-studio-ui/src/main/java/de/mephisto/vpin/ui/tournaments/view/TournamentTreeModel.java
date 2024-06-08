@@ -1,12 +1,13 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
 import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.TreeItem;
 import org.apache.commons.lang3.StringUtils;
 
@@ -15,50 +16,43 @@ import java.util.List;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TournamentTreeModel {
-  private final Tournament tournament;
-  private final VpsTableVersion vpsTableVersion;
-  private final VpsTable vpsTable;
-  private final GameRepresentation game;
+  private Tournament tournament;
+  private TournamentTable tournamentTable;
+  private VpsTableVersion vpsTableVersion;
+  private VpsTable vpsTable;
+  private GameRepresentation game;
 
   private boolean highscoreAvailable;
 
-  public static void expandTreeView(TreeItem<?> item){
-    if(item != null && !item.isLeaf()){
+  public static void expandTreeView(TreeItem<?> item) {
+    if (item != null && !item.isLeaf()) {
       item.setExpanded(true);
-      for(TreeItem<?> child:item.getChildren()){
+      for (TreeItem<?> child : item.getChildren()) {
         expandTreeView(child);
       }
     }
   }
 
-  public static TreeItem<TournamentTreeModel> create(Tournament tournament) {
-    TreeItem<TournamentTreeModel> tournamentNode = new TreeItem<>(new TournamentTreeModel(tournament, null, null, null));
-    List<String> tableIdList = tournament.getTableIdList();
-    for (String s : tableIdList) {
+  public static TreeItem<TournamentTreeModel> create(Tournament tournament, List<TournamentTable> tournamentTables) {
+    TreeItem<TournamentTreeModel> tournamentNode = new TreeItem<>(new TournamentTreeModel(tournament, null, null, null, null));
+    for (TournamentTable tournamentTable : tournamentTables) {
+      VpsTable table = client.getVpsService().getTableById(tournamentTable.getVpsTableId());
       VpsTableVersion version = null;
-      VpsTable table = null;
       GameRepresentation game = null;
-      String[] split = s.split("#");
-      if (split.length > 0) {
-        String tableId = split[0];
-        table = VPS.getInstance().getTableById(tableId);
-        if (table != null && split.length == 2) {
-          String versionId = split[1];
-          if(!StringUtils.isEmpty(versionId)) {
-            version = table.getVersion(versionId);
-          }
-          game = client.getGameService().getGameByVpsTable(table, version);
-        }
+      if (!StringUtils.isEmpty(tournamentTable.getVpsVersionId())) {
+        version = table.getTableVersionById(tournamentTable.getVpsVersionId());
+        game = client.getGameService().getGameByVpsTable(table, version);
       }
 
-      TournamentTreeModel model = new TournamentTreeModel(tournament, game, table, version);
+      TournamentTreeModel model = new TournamentTreeModel(tournament, game, tournamentTable, table, version);
       tournamentNode.getChildren().add(new TreeItem<>(model));
     }
     return tournamentNode;
   }
 
-  public TournamentTreeModel(Tournament tournament, GameRepresentation game, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
+  public TournamentTreeModel(@Nullable Tournament tournament, @Nullable GameRepresentation game, @Nullable TournamentTable tournamentTable, VpsTable vpsTable, VpsTableVersion vpsTableVersion) {
     this.tournament = tournament;
+    this.tournamentTable = tournamentTable;
     this.vpsTable = vpsTable;
     this.vpsTableVersion = vpsTableVersion;
     this.game = game;
@@ -67,6 +61,38 @@ public class TournamentTreeModel {
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
       highscoreAvailable = !StringUtils.isEmpty(summary.getRaw());
     }
+  }
+
+  public void setTournament(Tournament tournament) {
+    this.tournament = tournament;
+  }
+
+  public void setTournamentTable(TournamentTable tournamentTable) {
+    this.tournamentTable = tournamentTable;
+  }
+
+  public void setVpsTableVersion(VpsTableVersion vpsTableVersion) {
+    this.vpsTableVersion = vpsTableVersion;
+  }
+
+  public void setVpsTable(VpsTable vpsTable) {
+    this.vpsTable = vpsTable;
+  }
+
+  public void setGame(GameRepresentation game) {
+    this.game = game;
+    if (game != null) {
+      ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(game.getId());
+      highscoreAvailable = !StringUtils.isEmpty(summary.getRaw());
+    }
+  }
+
+  public TournamentTable getTournamentTable() {
+    return tournamentTable;
+  }
+
+  public boolean isTournamentNode() {
+    return this.tournamentTable == null;
   }
 
   public GameRepresentation getGame() {

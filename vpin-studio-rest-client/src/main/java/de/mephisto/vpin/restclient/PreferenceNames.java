@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient;
 
 public interface PreferenceNames {
   String IGNORED_VALIDATIONS = "ignoredValidations";
-  String IGNORED_MEDIA = "ignoredMedia";
+  String VALIDATION_SETTINGS = "validationSettings";
 
   String SYSTEM_NAME = "systemName";
   String SYSTEM_PRESET = "systemPreset";
@@ -29,6 +29,7 @@ public interface PreferenceNames {
 
   String UI_SETTINGS = "uiSettings";
   String SERVER_SETTINGS = "serverSettings";
+  String NOTIFICATION_SETTINGS = "notificationSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
@@ -37,10 +38,6 @@ public interface PreferenceNames {
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
-  String DISCORD_VPS_CHANNEL_ID = "discordVpsChannelId";
-  String DISCORD_VPS_TABLE_FILTER_ENABLED = "discordVpsTableFilterEnabled";
-  String DISCORD_VPS_REFRESH_INTERVAL_MIN = "discordVpsRefreshIntervalMin";
-
   String TOURNAMENTS_SETTINGS = "tournamentSettings";
 
   String RANKING_POINTS = "rankingPoints";

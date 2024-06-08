@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -23,113 +25,55 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_HEIGHT;
-import static de.mephisto.vpin.server.system.DefaultPictureService.DEFAULT_MEDIA_SIZE;
-
 public class CardGraphics {
   private final static Logger LOG = LoggerFactory.getLogger(CardGraphics.class);
 
-  private final int ROW_SEPARATOR;
-  private final int WHEEL_PADDING;
-
-  private String TITLE_TEXT = "Highscores";
-
-  private final String SCORE_FONT_NAME;
-  private final int SCORE_FONT_STYLE;
-  private final int SCORE_FONT_SIZE;
-
-  private final String TITLE_FONT_NAME;
-  private final int TITLE_FONT_STYLE;
-  private final int TITLE_FONT_SIZE;
-
-  private final String TABLE_FONT_NAME;
-  private final int TABLE_FONT_STYLE;
-  private final int TABLE_FONT_SIZE;
-
-  private final String FONT_COLOR;
-
-  private final int PADDING;
-
-  private final boolean RAW_HIGHSCORE;
-  private final boolean USE_DIRECTB2S;
-  private final boolean GRAY_SCALE;
-  private final boolean TRANSPARENT_BACKGROUND;
-  private final boolean RENDER_TABLE_NAME;
-
-  private final int BLUR_PIXELS;
-
   private final DefaultPictureService directB2SService;
+  private final HighscoreCardResolution highscoreCardResolution;
   private final ScoreSummary summary;
-  private final CardSettings cardSettings;
+  private final CardTemplate template;
   private final Game game;
 
-  public CardGraphics(DefaultPictureService directB2SService, CardSettings cardSettings, Game game, ScoreSummary summary) {
+  public CardGraphics(DefaultPictureService directB2SService, HighscoreCardResolution highscoreCardResolution, CardTemplate template, Game game, ScoreSummary summary) {
     this.directB2SService = directB2SService;
-    this.cardSettings = cardSettings;
+    this.highscoreCardResolution = highscoreCardResolution;
+    this.template = template;
     this.game = game;
     this.summary = summary;
-
-    ROW_SEPARATOR = cardSettings.getCardHighscoresRowSeparator();
-    WHEEL_PADDING = cardSettings.getCardHighscoresRowPaddingLeft();
-
-    TITLE_TEXT = cardSettings.getCardTitleText();
-
-    SCORE_FONT_NAME = cardSettings.getCardScoreFontName();
-    SCORE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardScoreFontStyle());
-    SCORE_FONT_SIZE = cardSettings.getCardScoreFontSize();
-
-    TITLE_FONT_NAME = cardSettings.getCardTitleFontName();
-    TITLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTitleFontStyle());
-    TITLE_FONT_SIZE = cardSettings.getCardTitleFontSize();
-
-    TABLE_FONT_NAME = cardSettings.getCardTableFontName();
-    TABLE_FONT_STYLE = ImageUtil.convertFontPosture(cardSettings.getCardTableFontStyle());
-    TABLE_FONT_SIZE = cardSettings.getCardTableFontSize();
-
-    FONT_COLOR = cardSettings.getCardFontColor();
-
-    PADDING = cardSettings.getCardPadding();
-
-    RAW_HIGHSCORE = cardSettings.isCardRawHighscore();
-    USE_DIRECTB2S = cardSettings.isCardUseDirectB2S();
-    GRAY_SCALE = cardSettings.isCardGrayScale();
-
-    BLUR_PIXELS = cardSettings.getCardBlur();
-
-    TRANSPARENT_BACKGROUND = cardSettings.getTransparentBackground();
-    RENDER_TABLE_NAME = cardSettings.getRenderTableName();
   }
 
   public BufferedImage draw() throws Exception {
     BufferedImage backgroundImage = getBackgroundImage();
 
-    if (!TRANSPARENT_BACKGROUND) {
-      if (BLUR_PIXELS > 0) {
-        backgroundImage = ImageUtil.blurImage(backgroundImage, BLUR_PIXELS);
+    if (!template.isTransparentBackground()) {
+      if (template.getBlur() > 0) {
+        backgroundImage = ImageUtil.blurImage(backgroundImage, template.getBlur());
       }
 
-      if (GRAY_SCALE) {
+      if (template.isGrayScale()) {
         backgroundImage = ImageUtil.grayScaleImage(backgroundImage);
       }
 
-      float alphaWhite = cardSettings.getCardAlphacompositeWhite();
-      float alphaBlack = cardSettings.getCardAlphacompositeBlack();
+      float alphaWhite = template.getAlphaWhite();
+      float alphaBlack = template.getAlphaBlack();
       ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
     }
 
     renderCardData(backgroundImage, game);
-    int borderWidth = cardSettings.getCardBorderWidth();
+    int borderWidth = template.getBorderWidth();
     ImageUtil.drawBorder(backgroundImage, borderWidth);
 
     return backgroundImage;
   }
 
   private BufferedImage getBackgroundImage() throws IOException {
-    if (TRANSPARENT_BACKGROUND) {
-      BufferedImage bufferedImage = new BufferedImage(DEFAULT_MEDIA_SIZE, DEFAULT_MEDIA_HEIGHT, BufferedImage.TYPE_INT_ARGB);
+    if (template.isTransparentBackground()) {
+      BufferedImage bufferedImage = new BufferedImage(highscoreCardResolution.toWidth(), highscoreCardResolution.toHeight(), BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
-      g2.setBackground(new Color(0, true));
+
+      int value = 255 - (255 * template.getTransparentPercentage() / 100);
+      g2.setBackground(new Color(0, 0, 0, value));
       g2.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
       g2.dispose();
@@ -137,9 +81,9 @@ public class CardGraphics {
     }
 
     File backgroundsFolder = new File(SystemService.RESOURCES + "backgrounds");
-    File sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".jpg");
+    File sourceImage = new File(backgroundsFolder, template.getBackground() + ".jpg");
     if (!sourceImage.exists()) {
-      sourceImage = new File(backgroundsFolder, cardSettings.getCardBackground() + ".png");
+      sourceImage = new File(backgroundsFolder, template.getBackground() + ".png");
     }
     if (!sourceImage.exists()) {
       File[] backgrounds = backgroundsFolder.listFiles((dir, name) -> name.endsWith(".png") || name.endsWith(".jpg"));
@@ -149,12 +93,12 @@ public class CardGraphics {
     }
     if (!sourceImage.exists()) {
       throw new UnsupportedOperationException("No background images have been found, " +
-        "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
+          "make sure that folder " + backgroundsFolder.getAbsolutePath() + " contains valid images.");
     }
 
     File croppedDefaultPicture = directB2SService.generateCroppedDefaultPicture(game);
     BufferedImage backgroundImage = null;
-    if (croppedDefaultPicture == null || !USE_DIRECTB2S) {
+    if (croppedDefaultPicture == null || !template.isUseDirectB2S()) {
       BufferedImage sImage = ImageUtil.loadImage(sourceImage);
       backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
     }
@@ -176,97 +120,150 @@ public class CardGraphics {
    */
   private void renderCardData(BufferedImage image, Game game) throws Exception {
     Graphics g = image.getGraphics();
-    ImageUtil.setDefaultColor(g, FONT_COLOR);
     int imageWidth = image.getWidth();
 
-    g.setFont(new Font(TITLE_FONT_NAME, TITLE_FONT_STYLE, TITLE_FONT_SIZE));
-
-    String title = TITLE_TEXT;
-    int titleWidth = g.getFontMetrics().stringWidth(title);
-    int titleY = TITLE_FONT_SIZE + PADDING;
-    g.drawString(title, imageWidth / 2 - titleWidth / 2, titleY);
-
-    g.setFont(new Font(TABLE_FONT_NAME, TABLE_FONT_STYLE, TABLE_FONT_SIZE));
-
-    int tableNameY = titleY;
-    if (RENDER_TABLE_NAME) {
-      String tableName = game.getGameDisplayName();
-      tableNameY = tableNameY + TABLE_FONT_SIZE + TABLE_FONT_SIZE / 2;
-      int width = g.getFontMetrics().stringWidth(tableName);
-      g.drawString(tableName, imageWidth / 2 - width / 2, tableNameY);
+    if (template.isRenderCanvas()) {
+      renderCanvas(image, g);
     }
 
-    if (RAW_HIGHSCORE) {
-      int yStart = tableNameY + TABLE_FONT_SIZE;
-      renderRawScore(game, image.getHeight(), image.getWidth(), g, yStart);
+    ImageUtil.setDefaultColor(g, template.getFontColor());
+    int currentY = template.getMarginTop();
+    if (template.isRenderTitle()) {
+      String titleFontName = template.getTitleFontName();
+      int titleFontStyle = ImageUtil.convertFontPosture(template.getTitleFontStyle());
+      int titleFontSize = template.getTitleFontSize();
+      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+
+      String title = template.getTitle();
+      int titleWidth = g.getFontMetrics().stringWidth(title);
+      currentY = titleFontSize;
+      g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
+      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+
+      currentY = currentY + template.getPadding();
+    }
+
+    if (template.isRenderTableName()) {
+      String tableFontName = template.getTableFontName();
+      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int tableFontSize = template.getTableFontSize();
+      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+
+      String tableName = game.getGameDisplayName();
+      int width = g.getFontMetrics().stringWidth(tableName);
+      while (width > highscoreCardResolution.toWidth() - template.getMarginLeft() - template.getMarginRight()) {
+        tableFontSize = tableFontSize - 1;
+        g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+        width = g.getFontMetrics().stringWidth(tableName);
+      }
+      currentY = currentY + tableFontSize;
+      int tableNameX = ((imageWidth - template.getMarginLeft() - template.getMarginRight()) / 2 - width / 2) + template.getMarginLeft();
+      g.drawString(tableName, tableNameX, currentY);
+
+      currentY = currentY + template.getPadding();
+    }
+
+    if (template.isRawScore()) {
+      renderRawScore(game, image.getHeight(), image.getWidth(), g, currentY);
     }
     else {
-      renderScorelist(game, g, title, tableNameY);
+      renderScorelist(game, g, template.getTitle(), currentY); //TODO why title?
     }
   }
 
-  private void renderScorelist(Game game, Graphics g, String title, int tableNameY) throws IOException {
-    g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, SCORE_FONT_SIZE));
-    int count = 0;
-    int scoreWidth = 0;
+  private void renderCanvas(BufferedImage image, Graphics g) {
+    Color decode = Color.decode("#FFFFFF");
+    if (template.getCanvasBackground() != null) {
+      decode = Color.decode(template.getCanvasBackground());
+    }
+    int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
+    g.setColor(new Color(decode.getRed(), decode.getGreen(), decode.getBlue(), value));
+    g.fillRoundRect(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
+  }
 
-    List<String> scores = new ArrayList<>();
-    for (Score score : summary.getScores()) {
-      String scoreString = score.getPosition() + ". " + score.getPlayerInitials() + " " + score.getScore();
-      scores.add(scoreString);
+  private void renderScorelist(Game game, Graphics g, String title, int currentY) throws IOException {
+    g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), template.getScoreFontSize()));
 
-      int singleScoreWidth = g.getFontMetrics().stringWidth(title);
-      if (scoreWidth < singleScoreWidth) {
-        scoreWidth = singleScoreWidth;
-      }
-      count++;
-      if (count == 3) {
-        break;
+    currentY = currentY + template.getTableFontSize() / 2;
+
+    int wheelSize = 3 * template.getScoreFontSize() + 3 * template.getRowMargin();
+    if (template.isRenderWheelIcon()) {
+      //draw wheel icon
+      int wheelY = currentY + template.getRowMargin();
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
+        File wheelIconFile = defaultMediaItem.getFile();
+        WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
+        if (augmenter.getBackupWheelIcon().exists()) {
+          wheelIconFile = augmenter.getBackupWheelIcon();
+        }
+        BufferedImage wheelImage = ImageIO.read(wheelIconFile);
+        g.drawImage(wheelImage, template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
       }
     }
-
-    tableNameY = tableNameY + TABLE_FONT_SIZE / 2;
-
-    //draw wheel icon
-    int wheelY = tableNameY + ROW_SEPARATOR;
-    int wheelSize = 3 * SCORE_FONT_SIZE + 3 * ROW_SEPARATOR;
-
-
-    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
-    if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
-      File wheelIconFile = defaultMediaItem.getFile();
-      WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
-      if (augmenter.getBackupWheelIcon().exists()) {
-        wheelIconFile = augmenter.getBackupWheelIcon();
-      }
-      BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-      g.drawImage(wheelImage, WHEEL_PADDING, wheelY, wheelSize, wheelSize, null);
-    }
-
 
     //the wheelsize should match the height of three score entries
-    int scoreX = WHEEL_PADDING + wheelSize + WHEEL_PADDING;
-    int scoreY = tableNameY;
-    for (String score : scores) {
-      scoreY = scoreY + SCORE_FONT_SIZE + ROW_SEPARATOR;
-      g.drawString(score, scoreX, scoreY);
+    int scoreX = template.getMarginLeft();
+    if (template.isRenderWheelIcon()) {
+      scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
+    }
+    int scoreY = currentY;
+
+    int count = 0;
+
+    int scoreLength = 0;
+    List<Score> scores = summary.getScores();
+    for (Score score : scores) {
+      if (score.getFormattedScore().length() > scoreLength) {
+        scoreLength = score.getFormattedScore().length();
+      }
+    }
+
+    for (Score score : summary.getScores()) {
+      int initialX = scoreX;
+      scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
+
+      String renderString = score.getPlayerInitials() + " ";
+      if (template.isRenderPositions()) {
+        renderString = score.getPosition() + ". " + renderString;
+      }
+      int singleScoreWidth = g.getFontMetrics().stringWidth(renderString);
+      g.drawString(renderString, initialX, scoreY);
+
+      initialX = initialX + singleScoreWidth + template.getPadding();
+      String scoreText = score.getFormattedScore();
+      while (scoreText.length() < scoreLength) {
+        scoreText = " " + scoreText;
+      }
+      g.drawString(scoreText, initialX, scoreY);
+
+      count++;
+
+      if (template.getMaxScores() > 0 && count == template.getMaxScores()) {
+        break;
+      }
     }
   }
 
   private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
-    int remainingHeight = imageHeight - yStart - PADDING;
-    int remainingWidth = imageWidth - 2 * PADDING;
+    int wheelWidth = template.getWheelSize();
+    if (!template.isRenderWheelIcon()) {
+      wheelWidth = 0;
+    }
+
+    int remainingHeight = imageHeight - yStart - template.getMarginBottom();
+    int remainingWidth = imageWidth - template.getMarginLeft() + template.getMarginRight() - wheelWidth;
     String raw = summary.getRaw().trim();
     String[] lines = raw.split("\n");
 
     int fontSize = remainingHeight / lines.length;
-    if (fontSize > SCORE_FONT_SIZE) {
-      fontSize = SCORE_FONT_SIZE;
+    if (fontSize > template.getScoreFontSize()) {
+      fontSize = template.getScoreFontSize();
     }
     else if (fontSize < 20) {
       fontSize = 20;
     }
-    g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, fontSize));
+    g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
 
     //debug frame
 //    g.drawRect(PADDING, yStart, remainingWidth, remainingHeight);
@@ -275,7 +272,7 @@ public class CardGraphics {
     List<TextColumn> textColumns = createTextColumns(textBlocks, g, remainingHeight);
     while (fontSize > 20 && textColumns.size() > 1) {
       int downScale = g.getFont().getSize() - 1;
-      g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, downScale));
+      g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), downScale));
       textColumns = createTextColumns(textBlocks, g, remainingHeight);
     }
 
@@ -286,28 +283,21 @@ public class CardGraphics {
     int remainingXSpace = remainingWidth - columnsWidth;
 
     int x = 0;
-    int wheelWidth = PADDING * 2 + TABLE_FONT_SIZE * 2;
-
-    boolean renderWheel = remainingXSpace > (wheelWidth + PADDING);
-    if (remainingXSpace > 250) {
-      wheelWidth = 250;
-    }
-
     //file exists && there is place to render it
     GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
-    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && renderWheel) {
+    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && template.isRenderWheelIcon()) {
       File wheelIconFile = defaultMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
       if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-      x = (remainingXSpace - wheelWidth) / 2;
+      x = (remainingXSpace) / 2;
       g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
-      x = x + wheelWidth + PADDING;
+      x = x + wheelWidth + template.getPadding();
     }
     else {
-      x = (remainingWidth - columnsWidth) / 2;
+      x = (imageWidth - columnsWidth) / 2;
     }
 
     yStart = yStart + g.getFont().getSize();
@@ -325,28 +315,13 @@ public class CardGraphics {
     return width;
   }
 
-  private int centerYToRemainingSpace(List<TextColumn> textColumns, int yStart, int remainingHeight) {
-    int maxHeight = computeMaxHeight(textColumns);
-    return yStart + ((remainingHeight - maxHeight) / 2);
-  }
-
   private void scaleDownToWidth(int imageWidth, Graphics g, List<TextColumn> textColumns) {
     int width = computeTotalWidth(textColumns);
     while (width >= imageWidth) {
       int fontSize = g.getFont().getSize() - 1;
-      g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, fontSize));
+      g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
       width = computeTotalWidth(textColumns);
     }
-  }
-
-  private int computeMaxHeight(List<TextColumn> columns) {
-    int height = 0;
-    for (TextColumn column : columns) {
-      if (column.getHeight() > height) {
-        height = column.getHeight();
-      }
-    }
-    return height;
   }
 
   private int computeTotalWidth(List<TextColumn> columns) {
@@ -365,7 +340,7 @@ public class CardGraphics {
     for (TextBlock block : blocks) {
       while (block.getHeight() > remainingHeight) {
         int fontSize = g.getFont().getSize() - 1;
-        g.setFont(new Font(SCORE_FONT_NAME, SCORE_FONT_STYLE, fontSize));
+        g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
       }
     }
 

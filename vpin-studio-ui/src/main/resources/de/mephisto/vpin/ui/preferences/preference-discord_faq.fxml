@@ -89,8 +89,8 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Since the highscore initials are only three characters long, every user has adapt their nickname on the configured server," textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname, separated by the pipe symbol &quot;|&quot; and within " textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="348.0" styleClass="preference-description" text="square brackets, e.g &quot;My Nickname | [ABC]&quot;." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="328.0" styleClass="preference-description" text="so it can be matched against a highscore. The initials must be part of the nickname," textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="371.0" styleClass="preference-description" text="separated by the pipe symbol &quot;|&quot; and within  square brackets, e.g &quot;My Nickname | [ABC]&quot;." textFill="WHITE" />
                   <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../screenshots/nickname-example.png" />
@@ -111,7 +111,8 @@
                   <Label layoutX="34.0" layoutY="361.0" styleClass="preference-description" text="Once your Discord bot is configured correctly, you can start a new online competition in the &quot;Competitions&quot; section." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="569.0" styleClass="preference-description" text="If you want your other VPin owners to join your competition or you want to join theirs, exchange the OAuth2 URL " textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="591.0" styleClass="preference-description" text="from the Discord application interface with them (see &quot;How To: Create a Discord Bot&quot;, section 4).." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-description" text="The administrator of the Discord server can execute the URL and add the VPin bots to the server, so that they or you can join a competition." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="634.0" styleClass="preference-description" text="The administrator of the Discord server can execute the URL and add the VPin bots to the server, " textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="612.0" styleClass="preference-description" text="so that they or you can join a competition." textFill="WHITE" />
                   <ImageView fitHeight="380.0" fitWidth="704.0" layoutX="34.0" layoutY="420.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../screenshots/bot/bot-deployment-1.png" />
@@ -143,8 +144,8 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;, update the nickname and save the changes." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="The name is only changed for the specific server." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="592.0" styleClass="preference-description" text="Invoke the context menu on your username in the member list. Click on &quot;Edit Server Profile&quot;," textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="preference-description" text="update the nickname and save the changes. The name is only changed for the specific server." textFill="WHITE">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>

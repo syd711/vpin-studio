@@ -1,27 +1,38 @@
 package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.util.PackageUtil;
-import de.mephisto.vpin.server.util.UploadUtil;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.File;
+import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.xml.bind.DatatypeConverter;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -39,9 +50,79 @@ public class DirectB2SResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private UniversalUploadService universalUploadService;
+
   @GetMapping("/{id}")
-  public DirectB2SData getData(@PathVariable("id") int id) {
-    return backglassService.getDirectB2SData(id);
+  public DirectB2SData getData(@PathVariable("id") int gameId) {
+    return backglassService.getDirectB2SData(gameId);
+  }
+
+  @GetMapping("/background/{emuId}/{filename}")
+  public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+    return download(backglassService.getBackgroundBase64(emuId, filename), filename, ".png");
+  }
+  @GetMapping("/dmdimage/{emuId}/{filename}")
+  public ResponseEntity<Resource> getDmdImage(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+    // first decoding done by the RestService but an extra one is needed
+    filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
+    return download(backglassService.getDmdBase64(emuId, filename), filename, ".dmd.png");
+  }
+
+  protected ResponseEntity<Resource> download(String base64, String filename, String extension) {
+    String name = StringUtils.indexOf(filename, '/')>=0? StringUtils.substringAfterLast(filename, "/"): filename;
+    name = StringUtils.substringBeforeLast(name, ".") + extension;
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
+    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+    headers.add("Pragma", "no-cache");
+    headers.add("Expires", "0");
+
+    if (base64==null) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    }
+
+    byte[] image = DatatypeConverter.parseBase64Binary(base64);
+    ByteArrayResource resource = new ByteArrayResource(image);
+
+    return ResponseEntity.ok()
+            .headers(headers)
+            .contentLength(resource.contentLength())
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .body(resource);
+  }
+
+  @PostMapping("/get")
+  public DirectB2SData getData(@RequestBody DirectB2S directB2S) {
+    return backglassService.getDirectB2SData(directB2S);
+  }
+
+  @PostMapping("/delete")
+  public boolean deleteBackglass(@RequestBody DirectB2S directB2S) {
+    return backglassService.deleteBackglass(directB2S.getEmulatorId(), directB2S.getFileName());
+  }
+
+  @PutMapping
+  public boolean updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+    int emulatorId = (Integer) values.get("emulatorId");
+    String fileName = (String) values.get("fileName");
+    String newName = (String) values.get("newName");
+    if (values.containsKey("newName") && !StringUtils.isEmpty(newName)) {
+      return backglassService.rename(emulatorId, fileName, newName);
+    }
+
+    if (values.containsKey("duplicate")) {
+      return backglassService.duplicate(emulatorId, fileName);
+    }
+    return false;
+  }
+
+  @GetMapping
+  public List<DirectB2S> getBackglasses() {
+    return backglassService.getBackglasses();
   }
 
   @GetMapping("/tablesettings/{gameId}")
@@ -73,53 +154,21 @@ public class DirectB2SResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult directb2supload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                            @RequestParam(value = "uploadType", required = false) String uploadType,
-                                            @RequestParam("objectId") Integer gameId) {
+  public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
+                                          @RequestParam("objectId") Integer gameId) {
+    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      if (file == null) {
-        LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
-      }
-
-      Game game = gameService.getGame(gameId);
-      if (game == null) {
-        LOG.error("No game found for upload.");
-        return JobExecutionResultFactory.error("No game found for upload.");
-      }
-      File directB2SFile = game.getDirectB2SFile();
-      if (directB2SFile.exists() && !directB2SFile.delete()) {
-        return JobExecutionResultFactory.error("Failed to delete " + directB2SFile.getAbsolutePath());
-      }
-
-      String originalFilename = FilenameUtils.getBaseName(file.getOriginalFilename());
-      String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      if (StringUtils.isEmpty(suffix)) {
-        throw new UnsupportedOperationException("The uploaded file has no valid suffix \"" + suffix + "\"");
-      }
-
-      File tempFile = File.createTempFile(FilenameUtils.getBaseName(originalFilename), "." + suffix);
-      LOG.info("Uploading " + tempFile.getAbsolutePath());
-
-      boolean upload = UploadUtil.upload(file, tempFile);
-      if (!upload) {
-        return JobExecutionResultFactory.error("Upload failed, check logs for details.");
-      }
-
-      if (suffix.equalsIgnoreCase("directb2s")) {
-        FileUtils.copyFile(tempFile, directB2SFile);
-      }
-      else if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("zip")) {
-        PackageUtil.unpackTargetFile(tempFile, directB2SFile, ".directb2s");
-      }
-      else {
-        throw new UnsupportedOperationException("The uploaded file has an invalid suffix \"" + suffix + "\"");
-      }
+      descriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
+      descriptor.upload();
+      universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
+      return descriptor;
     } catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
-    return JobExecutionResultFactory.empty();
+    finally {
+      descriptor.finalizeUpload();
+    }
   }
 }

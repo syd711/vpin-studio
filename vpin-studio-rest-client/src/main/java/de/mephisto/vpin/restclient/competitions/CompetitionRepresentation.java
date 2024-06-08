@@ -36,6 +36,12 @@ public class CompetitionRepresentation {
 
   private long discordServerId;
 
+  private String url;
+
+  private String vpsTableId;
+
+  private String vpsTableVersionId;
+
   private String winnerInitials;
 
   private String uuid;
@@ -47,6 +53,30 @@ public class CompetitionRepresentation {
   private boolean highscoreReset;
 
   private String rom;
+
+  public String getVpsTableId() {
+    return vpsTableId;
+  }
+
+  public void setVpsTableId(String vpsTableId) {
+    this.vpsTableId = vpsTableId;
+  }
+
+  public String getVpsTableVersionId() {
+    return vpsTableVersionId;
+  }
+
+  public void setVpsTableVersionId(String vpsTableVersionId) {
+    this.vpsTableVersionId = vpsTableVersionId;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
   public int getScoreLimit() {
     return scoreLimit;
@@ -269,6 +299,10 @@ public class CompetitionRepresentation {
       return true;
     }
 
+    if (getType().equals(CompetitionType.ISCORED.name())) {
+      return true;
+    }
+
     long now = new Date().getTime();
     long start = getStartDate().getTime();
     long end = getEndDate().getTime();
@@ -277,6 +311,9 @@ public class CompetitionRepresentation {
 
   public boolean isPlanned() {
     if (getType().equals(CompetitionType.SUBSCRIPTION.name())) {
+      return false;
+    }
+    if (getType().equals(CompetitionType.ISCORED.name())) {
       return false;
     }
     return getStartDate().after(new Date());

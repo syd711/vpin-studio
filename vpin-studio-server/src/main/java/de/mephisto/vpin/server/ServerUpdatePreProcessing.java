@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.system.SystemService;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +18,18 @@ import java.util.List;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
-  private final static List<String> resources = Arrays.asList("PinVol.exe", "maintenance.jpg", "sendKeys.bat");
+  private final static List<String> resources = Arrays.asList("PinVol.exe", "nircmd.exe", "vpxtool.exe", "maintenance.jpg", ScoringDB.SCORING_DB_NAME);
 
   public static void execute() {
+    try {
+      SevenZip.initSevenZipFromPlatformJAR();
+      LOG.info("7z initalized.");
+    }
+    catch (SevenZipNativeInitializationException e) {
+      LOG.error("Failed to initialize sevenzip: " + e.getMessage());
+    }
+
+
     new Thread(() -> {
       Thread.currentThread().setName("ServerUpdatePreProcessing");
       runResourcesCheck();
@@ -60,7 +72,8 @@ public class ServerUpdatePreProcessing {
         }
       }
       LOG.info("Finished NVRam synchronization, there are currently " + nvRams.size() + " resetted nvrams available.");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to sync nvrams: " + e.getMessage(), e);
     }
   }

@@ -16,10 +16,12 @@ import java.util.stream.Collectors;
 public class VPS {
   private final static Logger LOG = LoggerFactory.getLogger(VPS.class);
 
-  public final static String URL = "https://fraesh.github.io/vps-db/vpsdb.json";
-  public final static String BASE_URL = "https://virtual-pinball-spreadsheet.web.app";
+  public final static String URL = "https://virtualpinballspreadsheet.github.io/vps-db/db/vpsdb.json";
+  public final static String BASE_URL = "https://virtualpinballspreadsheet.github.io";
 
-  private static ObjectMapper objectMapper;
+  private static final ObjectMapper objectMapper;
+
+  private boolean skipUpdates = false;
 
   static {
     objectMapper = new ObjectMapper();
@@ -29,58 +31,40 @@ public class VPS {
 
   private List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
-  private final List<String> versionIndicators = Arrays.asList("vpw", "bigus", "salas", "tasty", "thalamus", "VPinWorkshop", "Paulie");
-
   private List<VpsTable> tables;
-
-  private static VPS instance;
 
   public void addChangeListener(VpsSheetChangedListener listener) {
     this.listeners.add(listener);
   }
 
-  public static VPS loadInstance(InputStream in) {
-    VPS instance = new VPS();
-    try {
-      instance.tables = loadTables(in);
-      return instance;
-    } catch (Exception e) {
-      LOG.error("Failed to load VPS stream: " + e.getMessage(), e);
+  //----------------- 
+
+   public static String getVpsTableUrl(String tableId, String versionId) {
+     String url = getVpsTableUrl(tableId);
+     if (versionId != null) {
+       url += "#" + versionId;
+     }
+     return url;
+   }
+
+   public static String getVpsTableUrl(String tableId) {
+     return BASE_URL + "/?game=" + tableId + "&fileType=table";
     }
-    return null;
-  }
 
-  public static String getVpsTableUrl(String tableId, String versionId) {
-    String url = BASE_URL + "/game/" + tableId;
-    if (versionId != null) {
-      url += "#" + versionId;
-    }
-    return url;
-  }
-
-  public static String getVpsTableUrl(String tableId) {
-    return BASE_URL + "/game/" + tableId;
-  }
-
-  public static VPS getInstance() {
-    if (instance == null) {
-      instance = new VPS();
-    }
-    return instance;
-  }
-
+    public static boolean isVpsTableUrl(String url) {
+     return url.startsWith(BASE_URL);
+   }
+   public static String getVpsBaseUrl() {
+     return BASE_URL;
+   }
+ 
+  //----------------- 
+  
   public VPS() {
-    if (!this.getVpsDbFile().exists()) {
-      try {
-        if (this.getVpsDbFile().getParentFile().exists()) {
-          this.getVpsDbFile().getParentFile().mkdirs();
-        }
-        update();
-      } catch (Exception e) {
-        LOG.error("Failed to initialize VPS db: " + e.getMessage(), e);
-      }
+    File vpsDbFile = this.getVpsDbFile();
+    if (!vpsDbFile.getParentFile().exists()) {
+      vpsDbFile.getParentFile().mkdirs();
     }
-    this.tables = loadTables(null);
   }
 
   public VpsTable getTableById(String id) {
@@ -91,49 +75,7 @@ public class VPS {
     return tables;
   }
 
-  public VpsTableVersion findVersion(VpsTable table, String tableFileName, String tableName, String version) {
-    List<VpsTableVersion> tableFiles = table.getTableFiles();
-    if (tableFiles.size() == 1) {
-      return tableFiles.get(0);
-    }
-
-    for (VpsTableVersion tableVersion : tableFiles) {
-      if (tableVersion.getTableFormat() != null && tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
-        continue;
-      }
-
-      if (version != null && tableVersion.toString().toLowerCase().contains(version.toLowerCase())) {
-        return tableVersion;
-      }
-
-      String versionString = tableVersion.toString();
-      for (String versionIndicator : versionIndicators) {
-        if (versionMatches(versionString, tableFileName, tableName, versionIndicator)) {
-          return tableVersion;
-        }
-      }
-    }
-
-    for (VpsTableVersion tableVersion : tableFiles) {
-      if (tableVersion.getTableFormat() == null || !tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
-        return tableVersion;
-      }
-    }
-
-    if (!tableFiles.isEmpty()) {
-      return tableFiles.get(0);
-    }
-    return null;
-  }
-
-  private boolean versionMatches(String version, String tableFileName, String tableName, String term) {
-    if (version.toLowerCase().contains(term.toLowerCase())) {
-      if (tableFileName.toLowerCase().contains(term) || tableName.toLowerCase().contains(term)) {
-        return true;
-      }
-    }
-    return false;
-  }
+  //----------------- FINDERS
 
   public List<VpsTable> find(String searchTerm) {
     return find(searchTerm, null);
@@ -157,7 +99,8 @@ public class VPS {
     while (results.isEmpty()) {
       if (term.contains(" ")) {
         term = term.substring(0, term.lastIndexOf(" "));
-      } else {
+      }
+      else {
         break;
       }
       results = findInternal(term, rom);
@@ -193,7 +136,9 @@ public class VPS {
     return results;
   }
 
-  public static File getVpsDbFile() {
+ //----------------- LOADERS
+
+  private File getVpsDbFile() {
     File folder = new File("./resources");
     if (!folder.exists()) {
       folder = new File("../resources");
@@ -201,36 +146,34 @@ public class VPS {
     return new File(folder, "vpsdb.json");
   }
 
-  private static List<VpsTable> loadTables(InputStream in) {
+  public void loadTables(InputStream in) {
     try {
-      if (in == null) {
-        in = new FileInputStream(getVpsDbFile());
-      }
-
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
-      return Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures().contains(VpsFeatures.VPX))
-          .collect(Collectors.toList());
-    } catch (Exception e) {
+      this.tables = Arrays.stream(vpsTables)
+        .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
+        .collect(Collectors.toList());
+        LOG.info(this.tables.size() + " Tables loaded from database");
+      } catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);
-    } finally {
-      try {
-        in.close();
-      } catch (IOException e) {
-        //ignore
-      }
+      this.tables = Collections.emptyList();
     }
-    return Collections.emptyList();
   }
 
   public List<VpsDiffer> update() {
+    if(skipUpdates) {
+      LOG.warn("VPS updates are skipped.");
+      return Collections.emptyList();
+    }
+
+    File vpsDbFile = getVpsDbFile();
+
     try {
       LOG.info("Downloading " + VPS.URL);
       java.net.URL url = new URL(VPS.URL);
       HttpURLConnection connection = (HttpURLConnection) url.openConnection();
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
-      File tmp = new File(getVpsDbFile().getParentFile(), getVpsDbFile().getName() + ".tmp");
+      File tmp = new File(vpsDbFile.getParentFile(), vpsDbFile.getName() + ".tmp");
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete existing tmp file vpsdb.json.tmp");
       }
@@ -244,58 +187,86 @@ public class VPS {
       fileOutputStream.close();
 
       long oldSize = 0;
-      if (getVpsDbFile().exists()) {
-        oldSize = getVpsDbFile().length();
+      if (vpsDbFile.exists()) {
+        oldSize = vpsDbFile.length();
       }
 
-      if (getVpsDbFile().exists() && !getVpsDbFile().delete()) {
+      if (vpsDbFile.exists() && !vpsDbFile.delete()) {
         LOG.error("Failed to delete vpsdb.json");
       }
 
-      if (!tmp.renameTo(getVpsDbFile())) {
+      if (!tmp.renameTo(vpsDbFile)) {
         LOG.error("Failed to rename vpsdb.json");
         return Collections.emptyList();
       }
 
-      LOG.info("Written " + getVpsDbFile().getAbsolutePath() + ", (" + oldSize + " vs " + getVpsDbFile().length() + " bytes)");
+      LOG.info("Written " + vpsDbFile.getAbsolutePath() + ", (" + oldSize + " vs " + vpsDbFile.length() + " bytes)");
+    } catch (IOException e) {
+      LOG.error("VPS download failed: " + e.getMessage());
+    }
 
-      VPS newInstance = new VPS();
-      List<VpsDiffer> diffs = this.diff(this.tables, newInstance.getTables());
+    // save old tables
+    List<VpsTable> oldTables = this.tables;
+
+    if (reload()) {
+      
+      List<VpsDiffer> diffs = this.diff(oldTables, this.tables);
       if (!diffs.isEmpty()) {
         LOG.info("VPS download detected " + diffs.size() + " changes, notifying " + listeners.size() + " listeners...");
         for (VpsSheetChangedListener listener : listeners) {
           listener.vpsSheetChanged(diffs);
           LOG.info("Notified VPS change listener \"" + listener.getClass().getName() + "\"");
         }
-      } else {
+      }
+      else {
         LOG.info("VPS had no changes, skipped update listeners.");
       }
-
-      this.reload();
       return diffs;
-    } catch (IOException e) {
-      LOG.error("VPS download failed: " + e.getMessage());
     }
     return Collections.emptyList();
   }
-
+  
   public Date getChangeDate() {
     return new Date(getVpsDbFile().lastModified());
   }
 
-  public void reload() {
-    this.tables = loadTables(null);
+  public boolean reload() {
+    File vpsDbFile = getVpsDbFile();
+    if (vpsDbFile.exists()) {
+      try (InputStream fin = new FileInputStream(vpsDbFile)) {
+        loadTables(fin);
+        return true;
+      } 
+      catch (IOException e) {
+        LOG.error("Failed to reload VPS file: " + e.getMessage(), e);
+      }
+    }
+    return false;
+  }
+
+    //----------------- DIFFS
+
+  public VpsDiffer diffById(List<VpsTable> oldTables, List<VpsTable> newTables, String id) {
+    Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equals(id)).findFirst();
+    Optional<VpsTable> newTable = newTables.stream().filter(t -> t.getId().equals(id)).findFirst();
+
+    return new VpsDiffer(newTable.orElse(null), oldTable.orElse(null));
   }
 
   public List<VpsDiffer> diff(List<VpsTable> oldTables, List<VpsTable> newTables) {
+    if (oldTables == null || newTables == null) {
+      LOG.info("Skipping VPS diff, because lists are empty.");
+      return Collections.emptyList();
+    }
+
     LOG.info("Differing " + oldTables.size() + " old tables against " + newTables.size() + " new tables.");
     List<VpsDiffer> diff = new ArrayList<>();
     for (VpsTable newTable : newTables) {
       Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
       VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
-      List<VpsDiffTypes> differences = tableDiff.getDifferences();
-      if (!differences.isEmpty()) {
-        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + differences.stream().map(Enum::name).collect(Collectors.joining(", ")));
+      VPSChanges changes = tableDiff.getChanges();
+      if (!changes.isEmpty()) {
+        LOG.info("Updates for \"" + newTable.getDisplayName() + "\": " + changes.getChanges().stream().map(c -> c.getDiffType().toString()).collect(Collectors.joining(", ")));
         diff.add(tableDiff);
       }
     }

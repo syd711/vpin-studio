@@ -10,7 +10,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParser;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.connectors.discord.Permissions.*;
 
 @Service
-public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver, ApplicationContextAware {
+public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
   public static final int MAX_VPS_ENTRIES = 24;
 
@@ -43,7 +43,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   private PreferencesService preferencesService;
 
   private DiscordBotCommandListener botCommandListener;
-  private ApplicationContext applicationContext;
 
   @NonNull
   public DiscordBotStatus getStatus(long serverId) {
@@ -256,7 +255,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
    * @param channelId the discord channel id
    */
   @NonNull
-  public ScoreSummary getScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull String uuid, long serverId, long channelId) {
+  public ScoreSummary getScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull String uuid, long serverId, long channelId) {
     if (this.discordClient != null) {
       List<DiscordMessage> competitionUpdates = discordClient.getPinnedMessages(serverId, channelId);
       for (DiscordMessage pinnedMessage : competitionUpdates) {
@@ -485,7 +484,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     return category;
   }
 
-  private ScoreSummary toScoreSummary(@NonNull HighscoreParser highscoreParser, @NonNull DiscordMessage message) {
+  private ScoreSummary toScoreSummary(@NonNull HighscoreParsingService highscoreParser, @NonNull DiscordMessage message) {
     List<Score> scores = new ArrayList<>();
     ScoreSummary summary = new ScoreSummary(scores, message.getCreatedAt());
     String raw = message.getRaw();
@@ -740,11 +739,6 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     }
 
     return status;
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
   }
 
   @Override

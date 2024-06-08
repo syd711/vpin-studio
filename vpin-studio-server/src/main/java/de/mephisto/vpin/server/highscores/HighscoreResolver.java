@@ -1,24 +1,23 @@
 package de.mephisto.vpin.server.highscores;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
+import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.vpreg.VPReg;
-import de.mephisto.vpin.server.util.vpreg.VPRegScoreSummary;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -26,28 +25,19 @@ class HighscoreResolver {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
   public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
-  private List<String> supportedRoms;
   private final SystemService systemService;
+  private final ScoringDB scoringDB;
 
   public HighscoreResolver(@NonNull SystemService systemService) {
     this.systemService = systemService;
-    this.loadSupportedScores();
-  }
-
-  private void loadSupportedScores() {
-    try {
-      String roms = readPINemHiStatus("-lr");
-      this.supportedRoms = Arrays.asList(roms.split("\n"));
-    } catch (Exception e) {
-      LOG.error("Failed to load supported rom names from PINemHi: " + e.getMessage(), e);
-    }
+    this.scoringDB = systemService.getScoringDatabase();
   }
 
   /**
    * Return a highscore object for the given table or null if no highscore has been achieved or created yet.
    */
   @NonNull
-  public HighscoreMetadata readHighscore(Game game) {
+  public synchronized HighscoreMetadata readHighscore(Game game) {
     HighscoreMetadata metadata = new HighscoreMetadata();
     metadata.setScanned(new Date());
     try {
@@ -70,7 +60,7 @@ class HighscoreResolver {
         rawScore = readVPRegHighscore(game, metadata);
       }
       if (rawScore == null) {
-        rawScore = parseHSFileHighscore(game, metadata);
+        rawScore = readHSFileHighscore(game, metadata);
       }
 
       if (rawScore == null) {
@@ -89,29 +79,18 @@ class HighscoreResolver {
     return metadata;
   }
 
-  private String parseHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+  private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = game.getAlternateHighscoreTextFile();
     }
 
-    if(hsFile != null && hsFile.exists()) {
+    if (hsFile != null && hsFile.exists()) {
       metadata.setType(HighscoreType.EM);
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
-      FileInputStream fileInputStream = null;
-      try {
-        fileInputStream = new FileInputStream(hsFile);
-        List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-        return HighscoreRawToMachineReadableConverter.convertToMachineReadable(lines);
-      } catch (IOException e) {
-        LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
-      } finally {
-        if (fileInputStream != null) {
-          fileInputStream.close();
-        }
-      }
+      return TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, hsFile);
     }
     return null;
   }
@@ -120,16 +99,22 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+    if (game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
+      return null;
+    }
+
+    if (game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
+      return null;
+    }
+
     File vpRegFile = game.getEmulator().getVPRegFile();
     VPReg reg = new VPReg(vpRegFile, game.getRom(), game.getTableName());
-
-    //TODO cleanup metadata usage
     if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(vpRegFile.getCanonicalPath());
       metadata.setModified(new Date(vpRegFile.lastModified()));
 
-      VPRegScoreSummary summary = reg.readHighscores();
+      ScoreParsingSummary summary = reg.readHighscores();
       if (summary != null) {
         metadata.setRaw(summary.toRaw());
       }
@@ -159,17 +144,23 @@ class HighscoreResolver {
 
       String nvRamFileName = nvRam.getCanonicalFile().getName().toLowerCase();
       String nvRamName = FilenameUtils.getBaseName(nvRamFileName).toLowerCase();
+      if (nvRamFileName.contains(" ")) {
+        LOG.info("Stripping NV offset from nvram file \"" + nvRamFileName + "\" to check if supported.");
+        nvRamName = nvRamFileName.substring(0, nvRamFileName.indexOf(" "));
+      }
+
       metadata.setFilename(nvRam.getCanonicalPath());
       metadata.setModified(new Date(nvRam.lastModified()));
 
-      if (!this.supportedRoms.contains(nvRamName)) {
+      List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
+      if (!supportedNvRams.contains(nvRamName) || scoringDB.getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
-        LOG.info(msg);
         metadata.setStatus(msg);
         return null;
       }
+      metadata.setType(HighscoreType.NVRam);
 
-      return executePINemHi(nvRamFileName, metadata);
+      return executePINemHi(nvRam);
     } catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
@@ -178,58 +169,11 @@ class HighscoreResolver {
     return null;
   }
 
-  private String readPINemHiStatus(String cmd) {
+  private String executePINemHi(@NonNull File nvRam) throws Exception {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
-      List<String> commands = Arrays.asList(commandFile.getName(), cmd);
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(commandFile.getParentFile());
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      return standardOutputFromCommand.toString();
+      return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
     } catch (Exception e) {
-      LOG.error("Failed to read pinemhi data: " + e.getMessage(), e);
-    }
-    return "";
-  }
-
-  private String executePINemHi(@NonNull String nvRamFileName, @NonNull HighscoreMetadata metadata) throws Exception {
-    metadata.setType(HighscoreType.NVRam);
-    File commandFile = systemService.getPinemhiCommandFile();
-    try {
-      List<String> commands = Arrays.asList(commandFile.getName(), nvRamFileName);
-      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(commandFile.getParentFile());
-      executor.executeCommand();
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        String error = "Pinemhi command (" + commandFile.getCanonicalPath() + " " + nvRamFileName + ") failed: " + standardErrorFromCommand;
-        LOG.error(error);
-        metadata.setStatus(error);
-        throw new Exception(error);
-      }
-      String stdOut = standardOutputFromCommand.toString();
-
-      //check for pre-formatting
-      List<String> list = Arrays.asList(stdOut.trim().split("\n"));
-      if(list.size() < 5) {
-        LOG.info("Converting nvram highscore data of \"" + nvRamFileName + "\" to a readable format, because output length are only " + list.size() + " lines.");
-        String raw = HighscoreRawToMachineReadableConverter.convertToMachineReadable(list);
-        if(raw == null) {
-          LOG.info("Invalid pinemhi output for " + nvRamFileName + ":\n" + stdOut);
-          metadata.setStatus("Invalid parsing output, maybe the nvram has been resetted?");
-        }
-        else {
-          return raw;
-        }
-      }
-      return stdOut;
-    } catch (Exception e) {
-      String msg = commandFile.getCanonicalPath() + " command failed for directory " + commandFile.getCanonicalPath() + ": " + e.getMessage();
-      metadata.setStatus(msg);
-      LOG.error(msg);
       throw e;
     }
   }
