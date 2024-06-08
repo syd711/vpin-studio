@@ -36,6 +36,11 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "altsound/restore/" + gameId, AltSound.class);
   }
 
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "altsound/clearcache", Boolean.class);
+  }
+
   public boolean isAltSoundEnabled(int gameId) {
     return getRestClient().get(API + "altsound/enabled/" + gameId, Boolean.class);
   }

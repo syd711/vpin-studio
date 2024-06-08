@@ -151,19 +151,12 @@ public class TablesSidebarAltSoundController implements Initializable {
     this.reloadBtn.setDisable(true);
     tablesSidebarController.getTablesController().closeEditors();
 
-    Platform.runLater(() -> {
-      new Thread(() -> {
-        this.game.ifPresent(gameRepresentation -> {
-          Studio.client.getMameService().clearCacheFor(gameRepresentation.getRom());
-          EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
-        });
-
-        Platform.runLater(() -> {
-          this.reloadBtn.setDisable(false);
-          this.refreshView(this.game);
-        });
-      }).start();
-    });
+    if(game.isPresent()) {
+      Platform.runLater(() -> {
+        ProgressDialog.createProgressDialog(new AltSoundRefreshProgressModel(game.get()));
+        this.reloadBtn.setDisable(false);
+      });
+    }
   }
 
   @FXML

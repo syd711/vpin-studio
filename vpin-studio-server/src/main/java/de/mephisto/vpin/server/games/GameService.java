@@ -118,7 +118,7 @@ public class GameService implements InitializingBean {
     start = System.currentTimeMillis();
 
     for (Game game : games) {
-      applyGameDetails(game, null, false);
+      applyGameDetails(game, null, false, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
@@ -182,7 +182,7 @@ public class GameService implements InitializingBean {
     for (Game game : games) {
       GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
       if (gameDetails != null) {
-        applyGameDetails(game, gameDetails, false);
+        applyGameDetails(game, gameDetails, false, false);
       }
       else {
         if (!killedPopper) {
@@ -192,6 +192,7 @@ public class GameService implements InitializingBean {
         }
       }
     }
+    GameValidationService.metricFinished();
     games.sort(Comparator.comparing(Game::getGameDisplayName));
     return games;
   }
@@ -204,7 +205,7 @@ public class GameService implements InitializingBean {
                 (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
     for (Game game : games) {
-      applyGameDetails(game, null, false);
+      applyGameDetails(game, null, false, false);
     }
     return games;
   }
@@ -393,7 +394,7 @@ public class GameService implements InitializingBean {
   public synchronized Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
-      applyGameDetails(game, null, false);
+      applyGameDetails(game, null, false, true);
       return game;
     }
     return null;
@@ -469,7 +470,7 @@ public class GameService implements InitializingBean {
     try {
       game = pinUPConnector.getGame(gameId);
       if (game != null) {
-        applyGameDetails(game, null, true);
+        applyGameDetails(game, null, true, true);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game);
@@ -534,7 +535,7 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private synchronized void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan) {
+  private synchronized void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan, boolean forceScoreScan) {
     if (gameDetails == null) {
       gameDetails = gameDetailsRepository.findByPupId(game.getId());
     }
@@ -641,12 +642,11 @@ public class GameService implements InitializingBean {
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
 
-
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
-    Optional<Highscore> highscore = this.highscoreService.getOrCreateHighscore(game);
+    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!

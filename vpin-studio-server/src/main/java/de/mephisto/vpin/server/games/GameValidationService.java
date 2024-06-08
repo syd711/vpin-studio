@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.listeners.OfflineCompetitionChangeListenerImpl;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
@@ -29,6 +30,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,8 +47,29 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
  */
 @Service
 public class GameValidationService implements InitializingBean, PreferenceChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(GameValidationService.class);
 
   private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
+
+  private static long start = 0;
+  private static long end = 0;
+  private static long total = 0;
+
+  public static void metricsStart() {
+    start = System.currentTimeMillis();
+  }
+
+  public static void metricsEnd() {
+    long duration = System.currentTimeMillis() - start;
+    total += duration;
+  }
+
+  public static void metricFinished() {
+    LOG.info("Validation Service took " + total + "ms.");
+    start = 0;
+    end = 0;
+    total = 0;
+  }
 
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
@@ -97,6 +121,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private ValidationSettings validationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
+    GameValidationService.metricsStart();
     List<ValidationState> result = new ArrayList<>();
     boolean isVPX = game.isVpxGame();
 
@@ -218,6 +243,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    GameValidationService.metricsEnd();
     return result;
   }
 

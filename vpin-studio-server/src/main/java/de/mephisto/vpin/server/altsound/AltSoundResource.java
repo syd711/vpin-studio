@@ -63,6 +63,10 @@ public class AltSoundResource {
     return altSoundService.delete(gameService.getGame(id));
   }
 
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return altSoundService.clearCache();
+  }
 
   @PostMapping("/save/{id}")
   public AltSound save(@PathVariable("id") int id, @RequestBody AltSound altSound) throws Exception {
