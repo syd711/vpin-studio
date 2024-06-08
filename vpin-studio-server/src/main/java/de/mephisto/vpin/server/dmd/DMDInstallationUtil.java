@@ -1,11 +1,18 @@
 package de.mephisto.vpin.server.dmd;
 
+import net.sf.sevenzipjbinding.ExtractOperationResult;
+import net.sf.sevenzipjbinding.IInArchive;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
+import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
+import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -60,8 +67,56 @@ public class DMDInstallationUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+  }
+
+  public static void unrar(File archiveFile, File tablesFolder, String dmdFolder) {
+    if (dmdFolder.endsWith("/")) {
+      dmdFolder.substring(0, dmdFolder.length() - 1);
+    }
+
+    String dmdFolderName = dmdFolder;
+    if (dmdFolderName.contains("/")) {
+      dmdFolderName = dmdFolderName.substring(dmdFolderName.lastIndexOf("/") + 1);
+    }
+
+    try {
+      RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
+      RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
+      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+
+      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+        if (item.isFolder()) {
+          continue;
+        }
+
+        String name = item.getPath().replaceAll("\\\\", "/");
+        if (name.startsWith(dmdFolder)) {
+          String subPath = name.substring(name.indexOf(dmdFolderName));
+          File targetFile = new File(tablesFolder, subPath);
+          targetFile.getParentFile().mkdirs();
+          if (targetFile.exists() && !targetFile.delete()) {
+            LOG.error("Failed to delete existing DMD file " + targetFile.getAbsolutePath());
+            continue;
+          }
+
+          RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
+          RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
+          ExtractOperationResult result = item.extractSlow(fos);
+          LOG.info("Unrar \"" + targetFile.getAbsolutePath() + "\":" + result.name());
+          fos.close();
+          rafOut.close();
+        }
+      }
+      inArchive.close();
+      randomAccessFileStream.close();
+      randomAccessFile.close();
+    }
+    catch (Exception e) {
+      LOG.error("Unrar of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
   }
 }
