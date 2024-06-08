@@ -597,7 +597,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         if (match.isPresent()) {
           setSelection(match.get());
           if (uiSettings.isAutoEditTableData()) {
-            TableDialogs.openTableDataDialog(this, match.get());
+            Platform.runLater(() -> {
+              TableDialogs.openTableDataDialog(this, match.get());
+            });
           }
         }
       };

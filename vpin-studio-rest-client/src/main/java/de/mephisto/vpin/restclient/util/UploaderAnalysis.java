@@ -160,9 +160,6 @@ public class UploaderAnalysis<T> {
     else if (suffix.equalsIgnoreCase(AssetType.RAR.name())) {
       analyzeRar();
     }
-    else {
-      throw new UnsupportedOperationException("Unknown archive type to analyze: " + suffix);
-    }
   }
 
   private void analyzeZip() throws IOException {
@@ -498,13 +495,17 @@ public class UploaderAnalysis<T> {
   private boolean isMusic(boolean forceMusicFolder) {
     for (String name : fileNamesWithPath) {
       String suffix = FilenameUtils.getExtension(name);
-      if (musicSuffixes.contains(suffix)) {
-        if (forceMusicFolder && name.toLowerCase().contains("music/")) {
-          return true;
-        }
-        else {
-          return true;
-        }
+      if (!musicSuffixes.contains(suffix)) {
+        continue;
+      }
+      if (getPupPackRootDirectory() != null && name.startsWith(getPupPackRootDirectory())) {
+        continue;
+      }
+      if (forceMusicFolder && name.toLowerCase().contains("music/")) {
+        return true;
+      }
+      else {
+        return true;
       }
     }
     return false;
