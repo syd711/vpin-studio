@@ -126,7 +126,7 @@ public class MusicInstallationUtil {
         if (item.isFolder()) {
           continue;
         }
-        String name = item.getPath();
+        String name = item.getPath().replaceAll("\\\\", "/");
         if (name.toLowerCase().contains("macosx")) {
           continue;
         }
@@ -142,7 +142,7 @@ public class MusicInstallationUtil {
             target = new File(musicFolder, relativeName);
           }
           else {
-            String fileName = name.replaceAll("\\\\", "/");
+            String fileName = name;
             if (fileName.contains("/")) {
               fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
             }

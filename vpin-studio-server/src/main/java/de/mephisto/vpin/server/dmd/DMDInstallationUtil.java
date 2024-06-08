@@ -43,7 +43,7 @@ public class DMDInstallationUtil {
         }
 
         String name = zipEntry.getName().replaceAll("\\\\", "/");
-        if (name.startsWith(dmdFolder)) {
+        if (name.contains(dmdFolder)) {
           String subPath = name.substring(name.indexOf(dmdFolderName));
           File targetFile = new File(tablesFolder, subPath);
           targetFile.getParentFile().mkdirs();
@@ -94,7 +94,7 @@ public class DMDInstallationUtil {
         }
 
         String name = item.getPath().replaceAll("\\\\", "/");
-        if (name.startsWith(dmdFolder)) {
+        if (name.contains(dmdFolder)) {
           String subPath = name.substring(name.indexOf(dmdFolderName));
           File targetFile = new File(tablesFolder, subPath);
           targetFile.getParentFile().mkdirs();

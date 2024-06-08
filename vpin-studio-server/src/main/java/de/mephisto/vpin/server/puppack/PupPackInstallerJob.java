@@ -14,18 +14,21 @@ public class PupPackInstallerJob implements Job {
   private final PupPacksService pupPacksService;
   private final File pupTmpArchive;
   private final File pupVideosFolder;
+  private final String pupPackFolderInArchive;
+  @NonNull
   private final String rom;
 
-  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String rom) {
+  public PupPackInstallerJob(@NonNull PupPacksService pupPacksService, @NonNull File pupTmpArchive, @NonNull File pupVideosFolder, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
     this.pupPacksService = pupPacksService;
     this.pupTmpArchive = pupTmpArchive;
     this.pupVideosFolder = pupVideosFolder;
+    this.pupPackFolderInArchive = pupPackFolderInArchive;
     this.rom = rom;
   }
 
   @Override
   public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, rom);
+    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom);
     pupPacksService.loadPupPack(rom);
     return unzip;
   }
@@ -37,6 +40,6 @@ public class PupPackInstallerJob implements Job {
 
   @Override
   public String getStatus() {
-    return "Unzipping PUP pack";
+    return "Unpacking PUP pack";
   }
 }

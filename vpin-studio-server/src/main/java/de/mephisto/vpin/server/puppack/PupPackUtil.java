@@ -23,17 +23,17 @@ import java.util.zip.ZipInputStream;
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static JobExecutionResult unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String rom) {
+  public static JobExecutionResult unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
-      return unzip(archiveFile, destinationDir, rom);
+      return unzip(archiveFile, destinationDir, pupPackFolderInArchive, rom);
     }
     else if (archiveFile.getName().toLowerCase().endsWith(".rar")) {
-      return unrar(archiveFile, destinationDir, rom);
+      return unrar(archiveFile, destinationDir, pupPackFolderInArchive, rom);
     }
     throw new UnsupportedOperationException("Unsupported archive format for PUP pack " + archiveFile.getName());
   }
 
-  public static JobExecutionResult unrar(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String rom) {
+  public static JobExecutionResult unrar(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
@@ -44,8 +44,8 @@ public class PupPackUtil {
           continue;
         }
 
-        String name = item.getPath();
-        File newFile = toTargetFile(destinationDir, rom, name);
+        String name = item.getPath().replaceAll("\\\\", "/");
+        File newFile = toTargetFile(destinationDir, pupPackFolderInArchive, name, rom);
         if (newFile != null) {
           newFile.getParentFile().mkdirs();
           RandomAccessFile rafOut = new RandomAccessFile(newFile, "rw");
@@ -67,7 +67,7 @@ public class PupPackUtil {
     return JobExecutionResultFactory.empty();
   }
 
-  public static JobExecutionResult unzip(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String rom) {
+  public static JobExecutionResult unzip(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
     try {
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
@@ -88,7 +88,7 @@ public class PupPackUtil {
           continue;
         }
 
-        File newFile = toTargetFile(destinationDir, rom, name);
+        File newFile = toTargetFile(destinationDir, pupPackFolderInArchive, name, rom);
         if (newFile != null) {
           newFile.getParentFile().mkdirs();
           FileOutputStream fos = new FileOutputStream(newFile);
@@ -114,11 +114,10 @@ public class PupPackUtil {
   }
 
   @Nullable
-  private static File toTargetFile(@NonNull File packPackDir, @NonNull String rom, @NonNull String name) {
+  private static File toTargetFile(@NonNull File packPackDir, @NonNull String pupPackFolderInArchive, @NonNull String name, @NonNull String rom) {
     File folder = new File(packPackDir, rom);
-
-    if (name.contains(rom)) {
-      String fileName = name.substring(name.indexOf(rom) + rom.length());
+    if (name.contains(pupPackFolderInArchive)) {
+      String fileName = name.substring(name.indexOf(pupPackFolderInArchive) + pupPackFolderInArchive.length());
       File targetFile = new File(folder, fileName);
       return targetFile;
     }

@@ -18,3 +18,4 @@
 - **VPX Monitor**: Fixed wrong table resolving for the VPX monitor, was a bit hasty there.
 - **Universal Uploader:** Fixed issue that the table overview was stuck in "Loading" mode until the **Table Data Manager** dialog was closed.
 - **Universal Uploader / Table Upload Dialog:** Fixed hidden upload of PUP packs. For some assets, e.g. PUP packs the corresponding checkbox was not displayed.
+- **Universal Uploader:** Fixed various extraction issues for some PUP packs in combination with Popper assets and DMD bundles.

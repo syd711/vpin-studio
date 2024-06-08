@@ -624,7 +624,7 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  private String getPupPackRootDirectory() {
+  public String getPupPackRootDirectory() {
     String match = null;
     for (String name : fileNamesWithPath) {
       if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
@@ -643,6 +643,10 @@ public class UploaderAnalysis<T> {
 
   private static boolean isPopperMediaFile(PopperScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
     if (screen.equals(PopperScreen.GameInfo)) {
+      return false;
+    }
+
+    if (!screen.equals(PopperScreen.Menu) && !screen.equals(PopperScreen.DMD) && fileNameWithPath.contains("DMD/")) {
       return false;
     }
 
@@ -676,8 +680,14 @@ public class UploaderAnalysis<T> {
     }
 
     //ignore DMD files from DMD bundles
-    if (screen.equals(PopperScreen.DMD) && fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
-      return false;
+    if (screen.equals(PopperScreen.DMD)) {
+      if (fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
+        return false;
+      }
+
+      if (fileNameWithPath.contains("UltraDMD")) {
+        return false;
+      }
     }
 
     return true;
