@@ -550,6 +550,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           overlayModeCheckbox.setDisable(!getCardTemplate().isTransparentBackground());
           overlayModeCheckbox.setSelected(getCardTemplate().isOverlayMode());
           screensComboBox.setDisable(!getCardTemplate().isOverlayMode() || !getCardTemplate().isTransparentBackground());
+
+          if(newValue && alphaPercentageSpinner.getValue() <= 0) {
+            alphaPercentageSpinner.setValue(50);
+          }
         }
       });
 
