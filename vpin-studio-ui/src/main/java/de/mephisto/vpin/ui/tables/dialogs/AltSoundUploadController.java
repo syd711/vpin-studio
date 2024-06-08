@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -151,7 +152,7 @@ public class AltSoundUploadController implements Initializable, DialogController
       emulatorRepresentation = t1;
     });
 
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "zip"));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       refreshSelection();

@@ -32,10 +32,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import net.sf.sevenzipjbinding.SevenZip;
+import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -115,13 +118,24 @@ public class Studio extends Application {
       LauncherController controller = loader.getController();
       controller.setStage(stage);
       stage.show();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
     try {
+      try {
+        File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
+        sevenZipTempFolder.mkdirs();
+        SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
+      }
+      catch (SevenZipNativeInitializationException e) {
+        LOG.error("Failed to initialize SevenZip: " + e.getMessage(), e);
+        System.exit(0);
+      }
+
       SystemSummary systemSummary = client.getSystemService().getSystemSummary();
       if (!systemSummary.isPopper15()) {
         WidgetFactory.showAlert(new Stage(), "Invalid PinUP Popper version.", "Please install version 1.5 or higher to use VPin Studio.");
@@ -159,7 +173,8 @@ public class Studio extends Application {
         Parent root = null;
         try {
           root = loader.load();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           throw new RuntimeException(e);
         }
 
@@ -223,7 +238,8 @@ public class Studio extends Application {
         VBSManager.getInstance();
       });
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
     }
   }
@@ -248,10 +264,11 @@ public class Studio extends Application {
     try {
       if (Features.TOURNAMENTS_ENABLED) {
         TournamentConfig config = Studio.client.getTournamentsService().getConfig();
-        SystemSummary summary =  Studio.client.getSystemService().getSystemSummary();
+        SystemSummary summary = Studio.client.getSystemService().getSystemSummary();
         Studio.maniaClient = new VPinManiaClient(config.getUrl(), summary.getSystemId());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());
     }
   }
@@ -263,7 +280,8 @@ public class Studio extends Application {
       properties.load(resourceAsStream);
       resourceAsStream.close();
       return properties.getProperty("vpin.studio.version");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read version number: " + e.getMessage(), e);
     }
     return null;

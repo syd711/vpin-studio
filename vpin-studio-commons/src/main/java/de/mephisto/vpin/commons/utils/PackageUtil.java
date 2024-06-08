@@ -3,12 +3,10 @@ package de.mephisto.vpin.commons.utils;
 import java.io.File;
 
 public class PackageUtil {
-  public static boolean isSupportedArchive(String suffix) {
-    return suffix.equalsIgnoreCase("zip");
-  }
+  public static String[] ARCHIVE_SUFFIXES = {"zip", "rar"};
 
-  public static boolean isArchive(String suffix) {
-    return suffix.equalsIgnoreCase("zip") || suffix.equalsIgnoreCase("7z") || suffix.equalsIgnoreCase("rar");
+  public static boolean isSupportedArchive(String suffix) {
+    return suffix.equalsIgnoreCase("zip") || suffix.equalsIgnoreCase("rar");
   }
 
   public static String contains(File file, String suffix) {

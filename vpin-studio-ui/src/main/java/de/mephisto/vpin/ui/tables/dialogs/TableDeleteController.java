@@ -211,9 +211,5 @@ public class TableDeleteController implements Initializable, DialogController {
     highscoreCheckbox.setDisable(hasNonSelectedVariant);
     altSoundCheckbox.setDisable(hasNonSelectedVariant);
     altColorCheckbox.setDisable(hasNonSelectedVariant);
-    vbsCheckbox.setDisable(hasNonSelectedVariant);
-    iniCheckbox.setDisable(hasNonSelectedVariant);
-    resCheckbox.setDisable(hasNonSelectedVariant);
-    povCheckbox.setDisable(hasNonSelectedVariant);
   }
 }

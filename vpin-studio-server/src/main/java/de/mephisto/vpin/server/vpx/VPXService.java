@@ -223,7 +223,7 @@ public class VPXService {
   }
 
   public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unzip(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+    MusicInstallationUtil.unpack(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

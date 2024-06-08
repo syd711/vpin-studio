@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -40,7 +41,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.function.Consumer;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -281,7 +281,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", ".rar"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     setSelection(true);
@@ -295,9 +295,9 @@ public class TableUploadController implements Initializable, DialogController {
     uploadBtn.setDisable(true);
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
-      readmeBox.setVisible(suffix.equalsIgnoreCase("zip"));
+      readmeBox.setVisible(PackageUtil.isSupportedArchive(suffix));
 
-      if (suffix.equalsIgnoreCase("zip")) {
+      if (PackageUtil.isSupportedArchive(suffix)) {
         this.fileBtn.setDisable(true);
         this.cancelBtn.setDisable(true);
 
@@ -406,7 +406,7 @@ public class TableUploadController implements Initializable, DialogController {
 
     assetRomCheckbox.setText("ROM");
     if (assetRomCheckbox.isSelected()) {
-      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromZip() + ")");
+      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
     }
 
 
@@ -424,7 +424,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip"));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip", "rar"));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       setSelection(true);

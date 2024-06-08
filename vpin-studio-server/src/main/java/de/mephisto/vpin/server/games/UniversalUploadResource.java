@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -12,7 +13,6 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,7 +92,8 @@ public class UniversalUploadResource {
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
       uploadDescriptor.setError("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       uploadDescriptor.finalizeUpload();
       LOG.info("Import finished, took " + (System.currentTimeMillis() - start) + " ms.");
     }
@@ -273,10 +274,13 @@ public class UniversalUploadResource {
       tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName());
     }
     File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadedFileName());
-    if(FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(AssetType.ZIP.name())) {
-      targetVPXFile = new File(tablesFolder, analysis.getVpxFileName());
-    }
 
+    for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
+      if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
+        targetVPXFile = new File(tablesFolder, analysis.getVpxFileName());
+        break;
+      }
+    }
     targetVPXFile = FileUtils.uniqueFile(targetVPXFile);
 
     LOG.info("Resolve target VPX: " + targetVPXFile.getAbsolutePath());
