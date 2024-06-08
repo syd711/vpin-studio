@@ -176,6 +176,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   @Override
+  public void setMediaViewSize(double fitWidth, double fitHeight) {
+    if(this.mediaView != null) {
+      this.mediaView.setFitHeight(fitHeight);
+      this.mediaView.setFitWidth(fitWidth);
+    }
+  }
+
+  @Override
   public void disposeMedia() {
     super.disposeMedia();
     if (mediaView != null) {

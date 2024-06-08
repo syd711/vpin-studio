@@ -664,6 +664,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private void refreshOverlayBackgroundPreview() {
     if (assetMediaPlayer != null) {
       assetMediaPlayer.disposeMedia();
+      assetMediaPlayer.setMediaViewSize(0, 0);
     }
     mediaPlayerControl.setVisible(false);
     previewOverlayPanel.setVisible(false);
