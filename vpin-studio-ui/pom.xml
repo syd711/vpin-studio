@@ -70,17 +70,6 @@
             <version>12.3.1</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-rest-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-assets</artifactId>
-            <version>1.0.0</version>
-        </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-mania-rest-client</artifactId>
@@ -100,16 +89,6 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-iscored</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-vps</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -319,7 +298,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>de.mephisto.vpin.ui/de.mephisto.vpin.ui.Launcher</mainClass>
+                            <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>

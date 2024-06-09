@@ -143,99 +143,99 @@ public class Studio extends Application {
 
       Stage splash = createSplash();
 
-      Platform.runLater(() -> {
-        Studio.stage = stage;
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      Studio.stage = stage;
+      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
-        if (screenBounds.getWidth() > screenBounds.getHeight()) {
-          LOG.info("Window Mode: Landscape");
-        }
-        else {
-          LOG.info("Window Mode: Portrait");
-        }
+      if (screenBounds.getWidth() > screenBounds.getHeight()) {
+        LOG.info("Window Mode: Landscape");
+      }
+      else {
+        LOG.info("Window Mode: Portrait");
+      }
 
-        //replace the OverlayFX client with the Studio one
-        Studio.client = client;
-        createManiaClient();
-        ServerFX.client = Studio.client;
+      //replace the OverlayFX client with the Studio one
+      Studio.client = client;
+      createManiaClient();
+      ServerFX.client = Studio.client;
 
-        List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
-        if (!unknownGameIds.isEmpty()) {
-          LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
-          ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
-        }
+      List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
+      if (!unknownGameIds.isEmpty()) {
+        LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
+        ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
+      }
 
-        //force pre-caching, this way, the table overview does not need to execute single GET requests
+      //force pre-caching, this way, the table overview does not need to execute single GET requests
+      new Thread(() -> {
         Studio.client.getVpsService().invalidateAll();
+      }).start();;
 
-        FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
-        Parent root = null;
-        try {
-          root = loader.load();
-        }
-        catch (IOException e) {
-          throw new RuntimeException(e);
-        }
+      FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
+      Parent root = null;
+      try {
+        root = loader.load();
+      }
+      catch (IOException e) {
+        throw new RuntimeException(e);
+      }
 
-        Rectangle position = LocalUISettings.getPosition();
+      Rectangle position = LocalUISettings.getPosition();
 
-        Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
-        double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
-        double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-        if (position.getWidth() != -1) {
-          width = position.getWidth();
-          height = position.getHeight();
-        }
+      Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
+      double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
+      double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
+      if (position.getWidth() != -1) {
+        width = position.getWidth();
+        height = position.getHeight();
+      }
 
-        Scene scene = new Scene(root, width, height);
-        scene.setFill(Paint.valueOf("#212529"));
-        stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
-        stage.setScene(scene);
-        stage.setMinWidth(1280);
-        stage.setMinHeight(950);
-        stage.setResizable(true);
-        stage.initStyle(StageStyle.UNDECORATED);
+      Scene scene = new Scene(root, width, height);
+      scene.setFill(Paint.valueOf("#212529"));
+      stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
+      stage.setScene(scene);
+      stage.setMinWidth(1280);
+      stage.setMinHeight(950);
+      stage.setResizable(true);
+      stage.initStyle(StageStyle.UNDECORATED);
 
 
-        if (position.getX() != -1) {
-          stage.setX(position.getX());
-          stage.setY(position.getY());
-        }
-        else {
-          stage.setX((screenBounds.getWidth() / 2) - (width / 2));
-          stage.setY((screenBounds.getHeight() / 2) - (height / 2));
-        }
+      if (position.getX() != -1) {
+        stage.setX(position.getX());
+        stage.setY(position.getY());
+      }
+      else {
+        stage.setX((screenBounds.getWidth() / 2) - (width / 2));
+        stage.setY((screenBounds.getHeight() / 2) - (height / 2));
+      }
 
 //      ResizeHelper.addResizeListener(stage);
-        FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-        stage.setUserData(fxResizeHelper);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+      stage.setUserData(fxResizeHelper);
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-          public void handle(KeyEvent ke) {
-            if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
-              Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
-              stage.setWidth(1920);
-              stage.setHeight(1080);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
-              stage.setWidth(2560);
-              stage.setHeight(1440);
-              ke.consume();
-            }
+      scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
+            Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
+            ke.consume();
           }
-        });
-
-        client.setErrorHandler(errorHandler);
-        stage.show();
-        splash.hide();
-
-        //launch VPSMonitor
-        VBSManager.getInstance();
+          if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
+            stage.setWidth(1920);
+            stage.setHeight(1080);
+            ke.consume();
+          }
+          if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
+            stage.setWidth(2560);
+            stage.setHeight(1440);
+            ke.consume();
+          }
+        }
       });
+
+      client.setErrorHandler(errorHandler);
+      stage.show();
+      splash.hide();
+
+      //launch VPSMonitor
+      VBSManager.getInstance();
 
     }
     catch (Exception e) {

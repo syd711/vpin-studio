@@ -50,7 +50,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   
   private ServerSettings serverSettings;
 
-  public void initVisualPinballXScripts(Emulator emulator) {
+  private void initVisualPinballXScripts(Emulator emulator) {
     String emulatorName = emulator.getName();
     String emulatorStartupScript = this.getEmulatorStartupScript(emulatorName);
     if (!emulatorStartupScript.contains(CURL_COMMAND_TABLE_START)) {
@@ -956,8 +956,6 @@ public class PinUPConnectorImpl implements FrontendConnector {
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
 
-        initVisualPinballXScripts(e);
-
         result.add(e);
       }
 
@@ -969,6 +967,14 @@ public class PinUPConnectorImpl implements FrontendConnector {
     } finally {
       this.disconnect(connect);
     }
+
+    // init scripts
+    for (Emulator emu : result) {
+      if (emu.isVisualPinball()) {
+        initVisualPinballXScripts(emu);
+      }
+    }
+
     return result;
   }
 
