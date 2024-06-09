@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.popper.GameMedia;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -297,15 +296,14 @@ public class Game {
 
   @JsonIgnore
   @NonNull
-  public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
-    File emulatorMediaFolder = this.emulator.getGameMediaFolder();
-    return new File(emulatorMediaFolder, screen.name());
+  public File getMediaFolder(@NonNull PopperScreen screen) {
+    return this.emulator.getGameMediaFolder(screen);
   }
 
   @NonNull
-  public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
+  public List<File> getMediaFiles(@NonNull PopperScreen screen) {
     String baseFilename = getGameName();
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
+    File[] mediaFiles = getMediaFolder(screen).listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
     if (mediaFiles != null) {
       Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
       Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
@@ -320,8 +318,8 @@ public class Game {
     PopperScreen[] screens = PopperScreen.values();
     for (PopperScreen screen : screens) {
       List<GameMediaItem> itemList = new ArrayList<>();
-      List<File> pinUPMedia = getPinUPMedia(screen);
-      for (File file : pinUPMedia) {
+      List<File> mediaFiles = getMediaFiles(screen);
+      for (File file : mediaFiles) {
         GameMediaItem item = new GameMediaItem(this, screen, file);
         itemList.add(item);
       }

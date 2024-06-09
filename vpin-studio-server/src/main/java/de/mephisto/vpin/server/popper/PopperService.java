@@ -451,7 +451,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
           if (gameMediaItem.getFile().exists()) {
             File mediaFile = gameMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(clone.getPinUPMediaFolder(originalScreenValue), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(clone.getMediaFolder(originalScreenValue), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;

@@ -96,8 +96,8 @@ public class PopperMediaResource implements InitializingBean {
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = gameService.getGame(gameId);
     PopperScreen s = PopperScreen.valueOf(screen);
-    File pinpuSystemFolder = game.getPinUPMediaFolder(s);
-    File target = new File(pinpuSystemFolder, game.getGameName() + "." + asset.getFileSuffix());
+    File mediaFolder = game.getMediaFolder(s);
+    File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniquePopperAsset(target);
     }
@@ -193,8 +193,8 @@ public class PopperMediaResource implements InitializingBean {
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") PopperScreen screen, @PathVariable("file") String filename) {
     Game game = gameService.getGame(gameId);
-    File pinUPMediaFolder = game.getPinUPMediaFolder(screen);
-    File media = new File(pinUPMediaFolder, filename);
+    File mediaFolder = game.getMediaFolder(screen);
+    File media = new File(mediaFolder, filename);
     if (media.exists()) {
       return media.delete();
     }
@@ -223,8 +223,8 @@ public class PopperMediaResource implements InitializingBean {
 
   private boolean renameAsset(int gameId, PopperScreen screen, String oldName, String newName) {
     Game game = gameService.getGame(gameId);
-    List<File> pinUPMedia = game.getPinUPMedia(screen);
-    for (File file : pinUPMedia) {
+    List<File> mediaFiles = game.getMediaFiles(screen);
+    for (File file : mediaFiles) {
       if (file.getName().equals(oldName)) {
         File renamed = new File(file.getParentFile(), newName);
         if (file.renameTo(renamed)) {
@@ -238,9 +238,9 @@ public class PopperMediaResource implements InitializingBean {
 
   private boolean toFullscreenMedia(int gameId, PopperScreen screen) throws IOException {
     Game game = gameService.getGame(gameId);
-    List<File> pinUPMedia = game.getPinUPMedia(screen);
-    if (pinUPMedia.size() == 1) {
-      File mediaFile = pinUPMedia.get(0);
+    List<File> mediaFiles = game.getMediaFiles(screen);
+    if (mediaFiles.size() == 1) {
+      File mediaFile = mediaFiles.get(0);
       String name = mediaFile.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String suffix = FilenameUtils.getExtension(name);

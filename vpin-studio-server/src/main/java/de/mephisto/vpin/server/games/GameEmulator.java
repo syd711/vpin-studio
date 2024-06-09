@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +20,6 @@ public class GameEmulator {
   private File installationFolder;
   private File tablesFolder;
   private File backglassServerDirectory;
-  private final File gameMediaFolder;
   private final File mameFolder;
   private final File userFolder;
   private final File altSoundFolder;
@@ -82,12 +82,6 @@ public class GameEmulator {
     if (emulator.getDirGames() != null) {
       this.tablesFolder = new File(emulator.getDirGames());
       this.backglassServerDirectory = new File(emulator.getDirGames());
-    }
-
-    if (emulator.getDirMedia() != null) {
-      this.gameMediaFolder = new File(emulator.getDirMedia());
-    } else {
-      this.gameMediaFolder = null;
     }
 
     this.musicFolder = new File(installationFolder, "Music");
@@ -308,8 +302,8 @@ public class GameEmulator {
 
   @NonNull
   @JsonIgnore
-  public File getGameMediaFolder() {
-    return gameMediaFolder;
+  public File getGameMediaFolder(@NonNull PopperScreen screen) {
+    return new File(mediaDirectory, screen.name());
   }
 
   @NonNull

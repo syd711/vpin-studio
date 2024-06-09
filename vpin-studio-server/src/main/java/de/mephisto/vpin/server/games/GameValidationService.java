@@ -359,7 +359,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   private boolean validScreenAssets(Game game, PopperScreen popperScreen) {
-    List<File> screenAssets = game.getPinUPMedia(popperScreen);
+    List<File> screenAssets = game.getMediaFiles(popperScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
     if (!screenAssets.isEmpty()) {
