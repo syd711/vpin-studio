@@ -322,7 +322,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
-    int offset = 36;
     if (game.isEmpty()) {
       return;
     }
@@ -362,6 +361,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private void refreshOverlayBackgroundPreview() {
     if (assetMediaPlayer != null) {
       assetMediaPlayer.disposeMedia();
+      assetMediaPlayer.setMediaViewSize(0, 0);
     }
     previewOverlayPanel.setVisible(false);
 
@@ -514,9 +514,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private void refreshPreviewSize() {
     int width = (int) stage.getWidth();
     int height = (int) stage.getHeight();
-    cardPreview.setFitWidth(width - 700);
+    cardPreview.setFitWidth(width - 650);
     cardPreview.setFitHeight(height - 200);
-    previewPanel.setPrefWidth(width - 700);
+    previewPanel.setPrefWidth(width - 650);
   }
 
   @Override

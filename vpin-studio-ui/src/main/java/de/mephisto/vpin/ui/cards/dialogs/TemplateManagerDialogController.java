@@ -690,7 +690,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   public void setData(Stage stage, HighscoreCardsController highscoreCardsController) {
-    cardPreview.setFitWidth(stage.getWidth() - 500);
+    cardPreview.setFitWidth(stage.getWidth() - 450);
     cardPreview.setFitHeight(stage.getHeight() - 200);
 
     this.highscoreCardsController = highscoreCardsController;
