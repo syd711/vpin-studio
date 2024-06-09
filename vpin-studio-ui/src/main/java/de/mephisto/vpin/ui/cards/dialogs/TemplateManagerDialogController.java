@@ -212,22 +212,21 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
       Optional<CardTemplate> first = items.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
       if (first.isPresent()) {
-        CardTemplate template = first.get();
-        template.setName(s);
-        template.setId(null);
-        try {
-          CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(template);
-
-          Platform.runLater(() -> {
+        Platform.runLater(() -> {
+          CardTemplate template = first.get();
+          template.setName(s);
+          template.setId(null);
+          try {
+            CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(template);
             List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
             this.templateCombo.setItems(FXCollections.observableList(templates));
             this.templateCombo.setValue(newTemplate);
-          });
-        }
-        catch (Exception ex) {
-          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-        }
+          }
+          catch (Exception ex) {
+            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+          }
+        });
       }
     }
   }
@@ -242,14 +241,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private void onStart() {
-    if(assetMediaPlayer != null) {
+    if (assetMediaPlayer != null) {
       assetMediaPlayer.getMediaPlayer().play();
     }
   }
 
   @FXML
   private void onStop() {
-    if(assetMediaPlayer != null) {
+    if (assetMediaPlayer != null) {
       assetMediaPlayer.getMediaPlayer().pause();
     }
   }
@@ -551,6 +550,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           overlayModeCheckbox.setDisable(!getCardTemplate().isTransparentBackground());
           overlayModeCheckbox.setSelected(getCardTemplate().isOverlayMode());
           screensComboBox.setDisable(!getCardTemplate().isOverlayMode() || !getCardTemplate().isTransparentBackground());
+
+          if(newValue && alphaPercentageSpinner.getValue() <= 0) {
+            alphaPercentageSpinner.setValue(50);
+          }
         }
       });
 

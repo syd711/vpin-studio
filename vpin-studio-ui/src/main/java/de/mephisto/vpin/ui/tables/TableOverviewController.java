@@ -721,19 +721,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void reload(int id) {
+    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
-
-    //if the refreshed game is part of the current filter, refresh the whole view, not only the game
-/*    if (filteredIds.contains(refreshedGame.getId())) {
-      boolean reloadNeeded = onRefresh(tableFilterController.getFilterSettings());
-      if (reloadNeeded) {
-        return;
-      }
-    }*/
-
-    //Platform.runLater(() -> {
     tableView.getSelectionModel().getSelectedItems().removeListener(this);
-
     tableView.getSelectionModel().clearSelection();
 
     GameRepresentationModel model = null;
@@ -748,11 +739,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     tableView.getSelectionModel().getSelectedItems().addListener(this);
-    // select the reloaded game
-    tableView.getSelectionModel().select(model);
-
-    //tableView.refresh();
-    //});
+    tableView.getSelectionModel().select(selectedItem);
   }
 
   public void showScriptEditor(GameRepresentation game) {
@@ -889,6 +876,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     new Thread(() -> {
 
       GameRepresentation selection = getSelection();
+      GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
       GameEmulatorRepresentation value = this.emulatorCombo.getValue();
       int id = -1;
       if (value != null) {
@@ -932,6 +920,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.uploadTableBtn.setDisable(false);
 
         tableView.requestFocus();
+        tableView.getSelectionModel().select(selectedItem);
 
         for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
           reloadConsumer.accept(selection);
@@ -1982,6 +1971,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     @Override
     public void loaded() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      GameRepresentationModel that = (GameRepresentationModel) o;
+      return Objects.equals(game, that.game);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(game);
     }
   }
 }

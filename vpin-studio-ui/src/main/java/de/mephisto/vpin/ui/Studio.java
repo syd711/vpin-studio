@@ -133,7 +133,6 @@ public class Studio extends Application {
       }
       catch (SevenZipNativeInitializationException e) {
         LOG.error("Failed to initialize SevenZip: " + e.getMessage(), e);
-        System.exit(0);
       }
 
       SystemSummary systemSummary = client.getSystemService().getSystemSummary();

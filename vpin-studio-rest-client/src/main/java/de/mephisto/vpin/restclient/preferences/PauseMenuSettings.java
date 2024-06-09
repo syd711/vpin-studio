@@ -9,6 +9,7 @@ public class PauseMenuSettings extends JsonSettings {
   private String authorAllowList;
   private int inputDebounceMs = 0;
   private PopperScreen videoScreen = PopperScreen.Topper;
+  private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   private int customLaunchKey;
   private int customStartKey;
@@ -72,7 +73,7 @@ public class PauseMenuSettings extends JsonSettings {
     return customLeftKey;
   }
 
-  public void setCustomLeftKey(int customLeftKey) {
+  public void setCustomLeftKey(int customLeftKepy) {
     this.customLeftKey = customLeftKey;
   }
 
@@ -83,8 +84,6 @@ public class PauseMenuSettings extends JsonSettings {
   public void setCustomRightKey(int customRightKey) {
     this.customRightKey = customRightKey;
   }
-
-  private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   public PauseMenuStyle getStyle() {
     if(style == null) {

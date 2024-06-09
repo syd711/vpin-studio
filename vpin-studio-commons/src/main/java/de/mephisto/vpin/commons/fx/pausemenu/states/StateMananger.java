@@ -94,18 +94,10 @@ public class StateMananger implements NativeKeyListener, GameControllerInputList
   public void handle(int keyCode, int rawCode, String button) {
     LOG.info("Pause Menu Key Event [keyCode/keyCodeRaw]: " + keyCode + "/" + rawCode + "/" + button);
     if (LEFT.contains(rawCode) || isVPXMapped(keyCode, rawCode, leftFlip) || (RECORDED_LEFT != null && RECORDED_LEFT.equals(button)) || isRecordedMapped(rawCode, getKeyCode(RECORDED_LEFT))) {
-      if (menuController.isAtStart()) {
-        return;
-      }
-
       this.activeState = activeState.left();
       navPlayer.play();
     }
     else if (RIGHT.contains(rawCode) || isVPXMapped(keyCode, rawCode, rightFlip) || (RECORDED_RIGHT != null && RECORDED_RIGHT.equals(button)) || isRecordedMapped(rawCode, getKeyCode(RECORDED_RIGHT))) {
-      if (menuController.isAtEnd()) {
-        return;
-      }
-
       this.activeState = activeState.right();
       navPlayer.play();
     }
