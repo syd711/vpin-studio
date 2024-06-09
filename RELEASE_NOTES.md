@@ -23,3 +23,4 @@
 - **Performance Optimization**: Highscores are not re-scanned on table overview reload. This should save same time and since the data is fetched when the highscore section is opened, it should make no difference.
 - **Table Overview**: Fixed keeping the table selection on reload and other actions.
 - **Pause Menu**: Fixed missing update of pause menu preferences, caused by the previously introduced caching for preferences.
+- **Pause Menu**: Fixed launching of YT videos in Chrome when the Pause menu isn't visible anymore.
