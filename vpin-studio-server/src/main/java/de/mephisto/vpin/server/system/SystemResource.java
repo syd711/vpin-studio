@@ -141,7 +141,7 @@ public class SystemResource {
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
     info.setSystemId(SystemUtil.getBoardSerialNumber());
-    info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
+    info.setPopper15(pinUPConnector.isPopper15());
     return info;
   }
 

@@ -27,13 +27,13 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.popper.GameMediaItem;
 import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -105,10 +105,11 @@ public class GameService implements InitializingBean {
   private MameService mameService;
 
   @Autowired
-  private PopperService popperService;
+  private DMDService dmdService;
 
   @Autowired
-  private DMDService dmdService;
+  private DefaultPictureService defaultPictureService;
+
 
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
@@ -245,10 +246,10 @@ public class GameService implements InitializingBean {
       }
 
       if (descriptor.isDeleteDirectB2s()) {
-        if (!FileUtils.delete(game.getCroppedDefaultPicture())) {
+        if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
           success = false;
         }
-        if (!FileUtils.delete(game.getRawDefaultPicture())) {
+        if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
           success = false;
         }
         if (!FileUtils.delete(game.getDirectB2SFile())) {

@@ -5,10 +5,13 @@ import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.games.Game;
+
+import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +21,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Autowired
-  private PinUPConnector connector;
+  private PinUPConnectorImpl connector;
 
 
   @Test
@@ -29,11 +32,18 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
 
   @Test
   public void testGameAdding() {
-    int l = connector.importGame(EM_TABLE, 1);
+    int emuId = 1;
+    int count = connector.getGameCount(emuId);
+    
+    String baseName = FilenameUtils.getBaseName(EM_TABLE.getName());
+
+    int l = connector.importGame(emuId, baseName, baseName, baseName, null, new Date());
+    
+    assertEquals(count+1, connector.getGameCount(emuId));
     if (l > 0) {
       assertTrue(connector.deleteGame(l));
     }
-    assertTrue(l > 0);
+    assertEquals(count, connector.getGameCount(emuId));
   }
 
   @Test
@@ -52,7 +62,7 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
     List<Game> games = connector.getGames();
     assertFalse(games.isEmpty());
 
-    List<Integer> gameIds = connector.getGameIds();
+    List<Integer> gameIds = connector.getGameIds(1);
     assertFalse(gameIds.isEmpty());
 
     Game game = connector.getGame(games.get(0).getId());
@@ -61,7 +71,7 @@ public class PinUPConnectorTest extends AbstractVPinServerTest {
     Game gameByFilename = connector.getGameByFilename(game.getGameFile().getName());
     assertNotNull(gameByFilename);
 
-    assertNotEquals(connector.getGameCount(), 0);
+    assertNotEquals(connector.getGameCount(5), 0);
 
     assertNotNull(connector.getStartupScript());
     assertNotNull(connector.getEmulatorExitScript(EmulatorNames.VISUAL_PINBALL_X));

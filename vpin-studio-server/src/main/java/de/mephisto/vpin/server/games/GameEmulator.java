@@ -84,7 +84,12 @@ public class GameEmulator {
       this.backglassServerDirectory = new File(emulator.getDirGames());
     }
 
-    this.gameMediaFolder = new File(emulator.getDirMedia());
+    if (emulator.getDirMedia() != null) {
+      this.gameMediaFolder = new File(emulator.getDirMedia());
+    } else {
+      this.gameMediaFolder = null;
+    }
+
     this.musicFolder = new File(installationFolder, "Music");
 
     this.mameFolder = new File(installationFolder, "VPinMAME");

@@ -42,6 +42,7 @@ public class Game {
   private int nvOffset;
   private String hsFileName;
   private GameEmulator emulator;
+  private int emulatorId;
 
   private File gameFile;
 
@@ -57,7 +58,6 @@ public class Game {
 
   private String pupPackName;
   private Long templateId;
-  private SystemService systemService;
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
@@ -65,11 +65,6 @@ public class Game {
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
-
-  }
-
-  public Game(@NonNull SystemService systemService) {
-    this.systemService = systemService;
   }
 
   public String getPupPackName() {
@@ -263,6 +258,13 @@ public class Game {
 
   public void setEmulator(@NonNull GameEmulator emulator) {
     this.emulator = emulator;
+    this.emulatorId = emulator.getId();
+  }
+  public int getEmulatorId() {
+    return this.emulatorId;
+  }
+  public void setEmulatorId(int emuId) {
+    this.emulatorId = emuId;
   }
 
   public List<Integer> getIgnoredValidations() {
@@ -271,15 +273,6 @@ public class Game {
 
   public void setIgnoredValidations(List<Integer> ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
-  }
-
-  @JsonIgnore
-  public SystemService getSystemService() {
-    return systemService;
-  }
-
-  public void setSystemService(SystemService systemService) {
-    this.systemService = systemService;
   }
 
   @JsonIgnore
@@ -401,10 +394,6 @@ public class Game {
     return null;
   }
 
-  public int getEmulatorId() {
-    return this.emulator.getId();
-  }
-
   public boolean isPovAvailable() {
     return this.getPOVFile().exists();
   }
@@ -431,10 +420,6 @@ public class Game {
 
   public boolean isGameFileAvailable() {
     return this.getGameFile().exists();
-  }
-
-  public boolean isDefaultBackgroundAvailable() {
-    return this.getRawDefaultPicture() != null && this.getRawDefaultPicture().exists();
   }
 
   public String getHsFileName() {
@@ -573,32 +558,6 @@ public class Game {
     return new File(getGameFile().getParentFile(), baseName + ".directb2s");
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getCroppedDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
-      if (!StringUtils.isEmpty(getRomAlias())) {
-        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getDMDPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
-      if (!StringUtils.isEmpty(getRomAlias())) {
-        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DMD);
-    }
-    return null;
-  }
-
   @NonNull
   @JsonIgnore
   public File getNvRamFile() {
@@ -623,20 +582,6 @@ public class Game {
     }
 
     return defaultNvRam;
-  }
-
-
-  @Nullable
-  @JsonIgnore
-  public File getRawDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
-      if (!StringUtils.isEmpty(this.getRomAlias())) {
-        subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
-    }
-    return null;
   }
 
   @Override

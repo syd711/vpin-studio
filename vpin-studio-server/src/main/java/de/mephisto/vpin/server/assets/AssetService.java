@@ -40,8 +40,6 @@ public class AssetService {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-  @Autowired
-  private SystemService systemService;
 
   public Asset save(Asset asset) {
     return assetRepository.saveAndFlush(asset);
@@ -56,12 +54,12 @@ public class AssetService {
     try {
       Game game = gameService.getGame(gameId);
       if (game != null) {
-        File target = game.getRawDefaultPicture();
+        File target = defaultPictureService.getRawDefaultPicture(game);
         if (target != null && !target.exists()) {
           defaultPictureService.extractDefaultPicture(game);
         }
 
-        target = game.getRawDefaultPicture();
+        target = defaultPictureService.getRawDefaultPicture(game);
         if (target != null && target.exists()) {
           BufferedImage bufferedImage = ImageUtil.loadImage(target);
           return ImageUtil.toBytes(bufferedImage);
@@ -85,17 +83,7 @@ public class AssetService {
 
     Game game = gameService.getGame(gameId);
     if (game != null) {
-      if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-        if (!game.getCroppedDefaultPicture().delete()) {
-          LOG.error("Failed to delete default crop asset.");
-        }
-      }
-
-      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
-        if (!game.getRawDefaultPicture().delete()) {
-          LOG.error("Failed to delete default crop asset.");
-        }
-      }
+      defaultPictureService.deleteDefaultPictures(game);
     }
     return true;
   }
@@ -107,22 +95,19 @@ public class AssetService {
     }
 
     Game game = gameService.getGame(gameId);
-    if (game == null || game.getRawDefaultPicture() == null || game.getCroppedDefaultPicture() == null) {
+
+    File croppedDefaultPicture = defaultPictureService.getCroppedDefaultPicture(game);
+    File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
+
+    if (game == null || rawDefaultPicture == null || croppedDefaultPicture == null) {
       LOG.error("Invalid game data.");
       return false;
     }
 
-    if (game.getCroppedDefaultPicture().exists()) {
-      game.getCroppedDefaultPicture().delete();
-    }
-
-    if (game.getRawDefaultPicture().exists()) {
-      game.getRawDefaultPicture().delete();
-    }
-
-    File out = game.getRawDefaultPicture();
-    LOG.info("Uploading " + out.getAbsolutePath());
-    return UploadUtil.upload(file, out);
+    defaultPictureService.deleteDefaultPictures(game);
+    
+    LOG.info("Uploading " + rawDefaultPicture.getAbsolutePath());
+    return UploadUtil.upload(file, rawDefaultPicture);
   }
 
 
