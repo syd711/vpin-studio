@@ -4,6 +4,8 @@ import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
+import de.mephisto.vpin.commons.utils.controller.GameController;
+import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.popper.PinUPControl;
@@ -16,6 +18,7 @@ import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
+import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
@@ -29,7 +32,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class StateMananger implements NativeKeyListener {
+public class StateMananger implements NativeKeyListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
   private final MediaPlayer navPlayer;
@@ -44,9 +47,9 @@ public class StateMananger implements NativeKeyListener {
   private final List<Integer> RIGHT = new ArrayList<>();
   private final List<Integer> ENTER = new ArrayList<>();
 
-  private int RECORDED_LEFT = 0;
-  private int RECORDED_RIGHT = 0;
-  private int RECORDED_START = 0;
+  private String RECORDED_LEFT = null;
+  private String RECORDED_RIGHT = null;
+  private String RECORDED_START = null;
 
   private MenuController menuController;
   private boolean running = false;
@@ -85,11 +88,12 @@ public class StateMananger implements NativeKeyListener {
   public void init(MenuController controller) {
     this.menuController = controller;
     this.activeState = new MenuItemSelectionState(controller);
+
   }
 
-  public void handle(int keyCode, int rawCode) {
-    LOG.info("Pause Menu Key Event [keyCode/keyCodeRaw]: " + keyCode + "/" + rawCode);
-    if (LEFT.contains(rawCode) || isVPXMapped(keyCode, rawCode, leftFlip) || isRecordedMapped(rawCode, RECORDED_LEFT)) {
+  public void handle(int keyCode, int rawCode, String button) {
+    LOG.info("Pause Menu Key Event [keyCode/keyCodeRaw]: " + keyCode + "/" + rawCode + "/" + button);
+    if (LEFT.contains(rawCode) || isVPXMapped(keyCode, rawCode, leftFlip) || (RECORDED_LEFT != null && RECORDED_LEFT.equals(button)) || isRecordedMapped(rawCode, getKeyCode(RECORDED_LEFT))) {
       if (menuController.isAtStart()) {
         return;
       }
@@ -97,7 +101,7 @@ public class StateMananger implements NativeKeyListener {
       this.activeState = activeState.left();
       navPlayer.play();
     }
-    else if (RIGHT.contains(rawCode) || isVPXMapped(keyCode, rawCode, rightFlip) || isRecordedMapped(rawCode, RECORDED_RIGHT)) {
+    else if (RIGHT.contains(rawCode) || isVPXMapped(keyCode, rawCode, rightFlip) || (RECORDED_RIGHT != null && RECORDED_RIGHT.equals(button)) || isRecordedMapped(rawCode, getKeyCode(RECORDED_RIGHT))) {
       if (menuController.isAtEnd()) {
         return;
       }
@@ -105,10 +109,19 @@ public class StateMananger implements NativeKeyListener {
       this.activeState = activeState.right();
       navPlayer.play();
     }
-    else if (ENTER.contains(rawCode) || isVPXMapped(keyCode, rawCode, start) || isRecordedMapped(rawCode, RECORDED_START)) {
+    else if (ENTER.contains(rawCode) || isVPXMapped(keyCode, rawCode, start) || (RECORDED_START != null && RECORDED_START.equals(button)) || isRecordedMapped(rawCode, getKeyCode(RECORDED_START))) {
       enterPlayer.play();
       this.activeState = activeState.enter();
       LOG.info("Entered " + this.activeState);
+    }
+  }
+
+  private int getKeyCode(String value) {
+    try {
+      return Integer.parseInt(value);
+    }
+    catch (NumberFormatException e) {
+      return 0;
     }
   }
 
@@ -138,19 +151,39 @@ public class StateMananger implements NativeKeyListener {
     if (!running) {
       return;
     }
-
     Platform.runLater(() -> {
-      handle(nativeKeyEvent.getKeyCode(), nativeKeyEvent.getRawCode());
+      handle(nativeKeyEvent.getKeyCode(), nativeKeyEvent.getRawCode(), null);
       new Thread(() -> {
         try {
           Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION);
           GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
       }).start();
     });
+  }
 
+
+  @Override
+  public void controllerEvent(String name) {
+    GameController.getInstance().removeListener(StateMananger.getInstance());
+    if (!running) {
+      return;
+    }
+    Platform.runLater(() -> {
+      handle(-1, -1, name);
+      new Thread(() -> {
+        try {
+          Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION);
+          GameController.getInstance().addListener(StateMananger.getInstance());
+        }
+        catch (InterruptedException e) {
+          throw new RuntimeException(e);
+        }
+      }).start();
+    });
   }
 
   @Override
@@ -173,20 +206,34 @@ public class StateMananger implements NativeKeyListener {
     ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
     LOG.info("LEFT codes: " + String.join(", ", ENTER.stream().map(String::valueOf).collect(Collectors.toList())));
 
-    RECORDED_START = 0;
-    RECORDED_LEFT = 0;
-    RECORDED_RIGHT = 0;
+    RECORDED_START = null;
+    RECORDED_LEFT = null;
+    RECORDED_RIGHT = null;
     if (pauseMenuSettings.getCustomStartKey() > 0) {
-      LOG.info("Added custom pause menu key: START [" + pauseMenuSettings.getCustomStartKey() + "]");
-      RECORDED_START = pauseMenuSettings.getCustomStartKey();
+      LOG.info("Added custom start menu key: START [" + pauseMenuSettings.getCustomStartKey() + "]");
+      RECORDED_START = String.valueOf(pauseMenuSettings.getCustomStartKey());
     }
-    if (pauseMenuSettings.getCustomStartKey() > 0) {
-      LOG.info("Added custom pause menu key: LEFT [" + pauseMenuSettings.getCustomLeftKey() + "]");
-      RECORDED_LEFT = pauseMenuSettings.getCustomLeftKey();
+    else if (!StringUtils.isEmpty(pauseMenuSettings.getCustomStartButton())) {
+      LOG.info("Added custom start menu button: START [" + pauseMenuSettings.getCustomStartButton() + "]");
+      RECORDED_START = String.valueOf(pauseMenuSettings.getCustomStartButton());
     }
-    if (pauseMenuSettings.getCustomStartKey() > 0) {
-      LOG.info("Added custom pause menu key: RIGHT [" + pauseMenuSettings.getCustomRightKey() + "]");
-      RECORDED_RIGHT = pauseMenuSettings.getCustomRightKey();
+
+    if (pauseMenuSettings.getCustomLeftKey() > 0) {
+      LOG.info("Added custom left menu key: LEFT [" + pauseMenuSettings.getCustomLeftKey() + "]");
+      RECORDED_LEFT = String.valueOf(pauseMenuSettings.getCustomLeftKey());
+    }
+    else if (!StringUtils.isEmpty(pauseMenuSettings.getCustomLeftButton())) {
+      LOG.info("Added custom left menu button: LEFT [" + pauseMenuSettings.getCustomLeftButton() + "]");
+      RECORDED_LEFT = String.valueOf(pauseMenuSettings.getCustomLeftButton());
+    }
+
+    if (pauseMenuSettings.getCustomRightKey() > 0) {
+      LOG.info("Added custom right menu key: RIGHT [" + pauseMenuSettings.getCustomRightKey() + "]");
+      RECORDED_RIGHT = String.valueOf(pauseMenuSettings.getCustomRightKey());
+    }
+    else if (!StringUtils.isEmpty(pauseMenuSettings.getCustomRightButton())) {
+      LOG.info("Added custom right menu button: RIGHT [" + pauseMenuSettings.getCustomRightButton() + "]");
+      RECORDED_RIGHT = String.valueOf(pauseMenuSettings.getCustomRightButton());
     }
 
     leftFlip = VPXKeyManager.getInstance().getBinding(VPXKeyManager.LFlipKey);
@@ -196,6 +243,7 @@ public class StateMananger implements NativeKeyListener {
 
   public void setGame(GameRepresentation game, GameStatus status, VpsTable table, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
+    GameController.getInstance().addListener(StateMananger.getInstance());
     menuController.setGame(game, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
     running = true;
   }
