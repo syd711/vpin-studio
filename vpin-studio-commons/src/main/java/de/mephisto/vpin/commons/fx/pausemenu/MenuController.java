@@ -104,17 +104,14 @@ public class MenuController implements Initializable {
       Parent widgetRoot = loader.load();
       customView.setCenter(widgetRoot);
       customViewController = loader.getController();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to init custom controller: " + e.getMessage(), e);
     }
   }
 
-  public PauseMenuSettings getPauseMenuSettings() {
-    return pauseMenuSettings;
-  }
-
   public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, VpsTable vpsTable,
-      @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
+                      @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
@@ -172,37 +169,64 @@ public class MenuController implements Initializable {
       return;
     }
 
+    int duration = SELECTION_SCALE_DURATION;
     int oldIndex = selectionIndex;
+    int steps = 1;
     if (left) {
       if (selectionIndex <= 0) {
-        selectionIndex = 0;
-        return;
+        selectionIndex = pauseMenuItems.size() - 1;
+        duration = duration / pauseMenuItems.size();
+        steps = pauseMenuItems.size() - 1;
+        left = false;
       }
-      selectionIndex--;
+      else {
+        selectionIndex--;
+      }
     }
     else {
       if (selectionIndex == (pauseMenuItems.size() - 1)) {
-        return;
+        selectionIndex = 0;
+        duration = duration / pauseMenuItems.size();
+        steps = pauseMenuItems.size() - 1;
+        left = true;
       }
-      selectionIndex++;
+      else {
+        selectionIndex++;
+      }
     }
 
+    animateMenuSteps(left, oldIndex, steps, duration);
+  }
+
+  private void animateMenuSteps(boolean left, final int oldIndex, final int steps, int duration) {
     final Node node = menuItemsRow.getChildren().get(oldIndex);
-    Transition t1 = TransitionUtil.createTranslateByXTransition(node, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
-    Transition t2 = TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, SELECTION_SCALE_DURATION);
-    Transition t3 = TransitionUtil.createTranslateByYTransition(node, SELECTION_SCALE_DURATION, UIDefaults.SELECTION_HEIGHT_OFFSET);
+    Transition t1 = TransitionUtil.createTranslateByXTransition(node, duration, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
+    Transition t2 = TransitionUtil.createScaleTransition(node, UIDefaults.SELECTION_SCALE_DEFAULT, duration);
+    Transition t3 = TransitionUtil.createTranslateByYTransition(node, duration, UIDefaults.SELECTION_HEIGHT_OFFSET);
 
     //scroll whole game row
-    Transition t4 = TransitionUtil.createTranslateByXTransition(menuItemsRow, SELECTION_SCALE_DURATION, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE);
+    Transition t4 = TransitionUtil.createTranslateByXTransition(menuItemsRow, duration, left ? UIDefaults.THUMBNAIL_SIZE : -UIDefaults.THUMBNAIL_SIZE);
 
     Node oldSelection = currentSelection;
-    currentSelection = menuItemsRow.getChildren().get(selectionIndex);
-    Transition t5 = TransitionUtil.createTranslateByXTransition(currentSelection, SELECTION_SCALE_DURATION, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
-    Transition t6 = TransitionUtil.createScaleTransition(currentSelection, UIDefaults.SELECTION_SCALE, SELECTION_SCALE_DURATION);
-    Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, SELECTION_SCALE_DURATION, -UIDefaults.SELECTION_HEIGHT_OFFSET);
+    currentSelection = null;
+    if (left) {
+      currentSelection = menuItemsRow.getChildren().get(oldIndex - 1);
+    }
+    else {
+      currentSelection = menuItemsRow.getChildren().get(oldIndex + 1);
+    }
+    Transition t5 = TransitionUtil.createTranslateByXTransition(currentSelection, duration, left ? UIDefaults.SCROLL_OFFSET : -UIDefaults.SCROLL_OFFSET);
+    Transition t6 = TransitionUtil.createScaleTransition(currentSelection, UIDefaults.SELECTION_SCALE, duration);
+    Transition t7 = TransitionUtil.createTranslateByYTransition(currentSelection, duration, -UIDefaults.SELECTION_HEIGHT_OFFSET);
 
     ParallelTransition parallelTransition = new ParallelTransition(t1, t2, t3, t4, t5, t6, t7);
     parallelTransition.onFinishedProperty().set(event -> {
+      int updatedSteps = steps - 1;
+      int updatedOldIndex = left ? oldIndex - 1 : oldIndex + 1;
+      if (updatedSteps > 0) {
+        animateMenuSteps(left, updatedOldIndex, updatedSteps, duration);
+        return;
+      }
       updateSelection(oldSelection, currentSelection);
     });
     parallelTransition.play();
@@ -220,7 +244,8 @@ public class MenuController implements Initializable {
         try {
           mediaView.getMediaPlayer().stop();
           mediaView.getMediaPlayer().dispose();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           throw new RuntimeException(e);
         }
       }
@@ -270,7 +295,8 @@ public class MenuController implements Initializable {
         mediaView.getMediaPlayer().stop();
         mediaView.getMediaPlayer().dispose();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to dispose pause menu media: " + e.getMessage());
     }
 
@@ -278,7 +304,8 @@ public class MenuController implements Initializable {
     Platform.runLater(() -> {
       try {
         Thread.sleep(SELECTION_SCALE_DURATION * 2);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //
       }
       try {
@@ -287,7 +314,8 @@ public class MenuController implements Initializable {
           mediaView.getMediaPlayer().stop();
           mediaView.getMediaPlayer().dispose();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to dispose pause menu media: " + e.getMessage());
       }
 
@@ -392,4 +420,7 @@ public class MenuController implements Initializable {
     ChromeLauncher.exitBrowser();
   }
 
+  public boolean isVisible() {
+    return PauseMenu.visible;
+  }
 }
