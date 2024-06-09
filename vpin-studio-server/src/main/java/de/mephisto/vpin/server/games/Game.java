@@ -297,7 +297,7 @@ public class Game {
   @JsonIgnore
   @NonNull
   public File getMediaFolder(@NonNull PopperScreen screen) {
-    return this.emulator.getGameMediaFolder(screen);
+    return this.emulator.getGameMediaFolder(FilenameUtils.getBaseName(gameFileName), screen);
   }
 
   @NonNull

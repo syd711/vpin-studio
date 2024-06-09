@@ -173,6 +173,11 @@ public class PinballXConnector implements FrontendConnector {
   }
 
   @Override
+  public MediaAccessStrategy getMediaAccessStrategy() {
+    return new PinballXMediaAccessStrategy();
+  }
+
+  @Override
   public TableDetails getTableDetails(int id) {
     return this.tabledetails.get(id);
   }

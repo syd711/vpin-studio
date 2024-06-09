@@ -47,6 +47,8 @@ public interface FrontendConnector {
 
   @NonNull
   int getSqlVersion();
+  
+  boolean isPopper15();
 
   PopperCustomOptions getCustomOptions();
 
@@ -112,6 +114,6 @@ public interface FrontendConnector {
   @NonNull
   List<Integer> getGameIdsFromPlaylists();
 
-boolean isPopper15();
+  MediaAccessStrategy getMediaAccessStrategy();
 
 }

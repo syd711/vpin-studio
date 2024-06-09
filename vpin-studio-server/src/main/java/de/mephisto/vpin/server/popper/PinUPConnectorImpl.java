@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -1600,6 +1601,11 @@ public class PinUPConnectorImpl implements FrontendConnector {
     }
 
     return true;
+  }
+
+  @Override
+  public MediaAccessStrategy getMediaAccessStrategy() {
+    return ((mediaDirectory, tableName, screen) -> new File(mediaDirectory, screen.name()));
   }
 
   public void initialize(ServerSettings settings) {

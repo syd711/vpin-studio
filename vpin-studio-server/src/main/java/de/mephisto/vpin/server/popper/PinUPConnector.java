@@ -453,7 +453,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
           continue;
         }
 
-        GameEmulator gameEmulator = new GameEmulator(emulator);
+        GameEmulator gameEmulator = new GameEmulator(emulator, getFrontend().getMediaAccessStrategy());
         emulators.put(emulator.getId(), gameEmulator);
 
         LOG.info("Loaded Emulator: " + gameEmulator);
