@@ -736,6 +736,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       model = new GameRepresentationModel(refreshedGame);
       models.remove(index);
       models.add(index, model);
+      tableView.refresh();
     }
 
     tableView.getSelectionModel().getSelectedItems().addListener(this);

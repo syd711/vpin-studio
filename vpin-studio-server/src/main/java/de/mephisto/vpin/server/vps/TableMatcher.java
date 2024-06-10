@@ -14,198 +14,210 @@ import java.util.regex.Pattern;
 
 public class TableMatcher {
 
-	private double THRESHOLD_NOTFOUND = 3;
+  private double THRESHOLD_NOTFOUND = 3;
 
-	/** displayName pattern : Table (Manufacturer Year) */
-	static Pattern filePatter = Pattern.compile("(.*)\\((.*) (\\d\\d\\d\\d)\\).*");
+  /**
+   * displayName pattern : Table (Manufacturer Year)
+   */
+  static Pattern filePatter = Pattern.compile("(.*)\\((.*) (\\d\\d\\d\\d)\\).*");
 
-	private static TableMatcher instance = new TableMatcher();
+  private static TableMatcher instance = new TableMatcher();
 
-	public static TableMatcher getInstance() {
-		return instance;
-	}
+  public static TableMatcher getInstance() {
+    return instance;
+  }
 
-	public VpsTable findClosest(String displayName, String rom, List<VpsTable> tables) {
+  public VpsTable findClosest(String displayName, String rom, List<VpsTable> tables) {
 
-		final String _displayName = cleanChars(cleanWords(displayName));
-		final String _tableName;
-		final String _manuf;
-		int _year;
+    final String _displayName = cleanChars(cleanWords(displayName));
+    final String _tableName;
+    final String _manuf;
+    int _year;
 
-		Matcher match = filePatter.matcher(_displayName);
-		if (match.find()) {
-			_tableName = match.group(1).trim();
-			_manuf = match.group(2).trim();
-			_year = Integer.parseInt(match.group(3));
-		} else {
-			_tableName = null;
-			_manuf = null;
-			_year = -1;
-		}
+    Matcher match = filePatter.matcher(_displayName);
+    if (match.find()) {
+      _tableName = match.group(1).trim();
+      _manuf = match.group(2).trim();
+      _year = Integer.parseInt(match.group(3));
+    }
+    else {
+      _tableName = null;
+      _manuf = null;
+      _year = -1;
+    }
 
-		final double[] minDistance = new double[] { 10000 };
-		final VpsTable[] found = new VpsTable[1];
-		tables.stream()
-			.filter(table -> checkRom(rom, table))
-			.forEach(table -> {
-				double dist = getTableDistance(table, _displayName, _tableName, _manuf, _year);
-				if (dist < minDistance[0]) {
-					found[0] = table;
-					minDistance[0] = dist;
-				}
-			});
+    final double[] minDistance = new double[]{10000};
+    final VpsTable[] found = new VpsTable[1];
+    tables.stream()
+        .filter(table -> checkRom(rom, table))
+        .forEach(table -> {
+          double dist = getTableDistance(table, _displayName, _tableName, _manuf, _year);
+          if (dist < minDistance[0]) {
+            found[0] = table;
+            minDistance[0] = dist;
+          }
+        });
 
-		// return the closest table if the distance is not too high
-		return minDistance[0] < THRESHOLD_NOTFOUND ? found[0] : null;
-	}
+    // return the closest table if the distance is not too high
+    VpsTable vpsTable = minDistance[0] < THRESHOLD_NOTFOUND ? found[0] : null;
+    if (vpsTable == null) {
+      List<VpsTable> vpsTables = new LegacyTableMatcher(tables).find(displayName);
+      if (!vpsTables.isEmpty()) {
+        vpsTable = vpsTables.get(0);
+      }
+    }
+    return vpsTable;
+  }
 
-	/**
-	 * Take a table display name and a rom and compare it to the given VpsTable
-	 */
-	public boolean isClose(String displayName, String rom, VpsTable table) {
 
-		// first compare rom
-        if (!checkRom(rom, table)) {
-			return false;
-		}
+  /**
+   * Take a table display name and a rom and compare it to the given VpsTable
+   */
+  public boolean isClose(String displayName, String rom, VpsTable table) {
 
-		final String _displayName = cleanChars(cleanWords(displayName));
-		final String _tableName;
-		final String _manuf;
-		int _year;
+    // first compare rom
+    if (!checkRom(rom, table)) {
+      return false;
+    }
 
-		Matcher match = filePatter.matcher(_displayName);
-		if (match.find()) {
-			_tableName = match.group(1).trim();
-			_manuf = match.group(2).trim();
-			_year = Integer.parseInt(match.group(3));
-		} else {
-			_tableName = null;
-			_manuf = null;
-			_year = -1;
-		}
+    final String _displayName = cleanChars(cleanWords(displayName));
+    final String _tableName;
+    final String _manuf;
+    int _year;
 
-		double dist = getTableDistance(table, _displayName, _tableName, _manuf, _year);
-		return dist < THRESHOLD_NOTFOUND;
-	}
+    Matcher match = filePatter.matcher(_displayName);
+    if (match.find()) {
+      _tableName = match.group(1).trim();
+      _manuf = match.group(2).trim();
+      _year = Integer.parseInt(match.group(3));
+    }
+    else {
+      _tableName = null;
+      _manuf = null;
+      _year = -1;
+    }
 
-	private double getTableDistance(VpsTable table, String _displayName, String _tableName, String _manuf, int _year) {
-		String tableName = cleanChars(table.getName());
-		String manuf = table.getManufacturer();
-		String[] altmanufs = getAlternateManuf(manuf);
-		int year = table.getYear();
+    double dist = getTableDistance(table, _displayName, _tableName, _manuf, _year);
+    return dist < THRESHOLD_NOTFOUND;
+  }
 
-		double minDistance = 10000;
-		// return the minimal distance considering alternative manufacturer
-		for (String altmanuf : altmanufs) {
-			double dist = _tableName != null ? tableDistance(_tableName, _manuf, _year, tableName, altmanuf, year)
-					: tableDistance(_displayName, tableName, altmanuf, year);
-			if (dist < minDistance) {
-				minDistance = dist;
-			}
-		}
-		return minDistance;
-	}
+  private double getTableDistance(VpsTable table, String _displayName, String _tableName, String _manuf, int _year) {
+    String tableName = cleanChars(table.getName());
+    String manuf = table.getManufacturer();
+    String[] altmanufs = getAlternateManuf(manuf);
+    int year = table.getYear();
 
-	private double tableDistance(String _displayName, String tableName, String manuf, int year) {
-		double dist = 10000;
+    double minDistance = 10000;
+    // return the minimal distance considering alternative manufacturer
+    for (String altmanuf : altmanufs) {
+      double dist = _tableName != null ? tableDistance(_tableName, _manuf, _year, tableName, altmanuf, year)
+          : tableDistance(_displayName, tableName, altmanuf, year);
+      if (dist < minDistance) {
+        minDistance = dist;
+      }
+    }
+    return minDistance;
+  }
 
-		String clean = _displayName;
+  private double tableDistance(String _displayName, String tableName, String manuf, int year) {
+    double dist = 10000;
 
-		boolean confirmManuf = false;
-		if (clean.contains(manuf.toLowerCase())) {
-			clean = StringUtils.removeIgnoreCase(clean, manuf);
-			confirmManuf = true;
-		}
+    String clean = _displayName;
 
-		boolean confirmYear = false;
-		if (clean.contains(Integer.toString(year))) {
-			clean = StringUtils.removeIgnoreCase(clean, Integer.toString(year));
-			confirmYear = true;
-		}
+    boolean confirmManuf = false;
+    if (clean.contains(manuf.toLowerCase())) {
+      clean = StringUtils.removeIgnoreCase(clean, manuf);
+      confirmManuf = true;
+    }
 
-		double dTable = distance(clean, tableName);
+    boolean confirmYear = false;
+    if (clean.contains(Integer.toString(year))) {
+      clean = StringUtils.removeIgnoreCase(clean, Integer.toString(year));
+      confirmYear = true;
+    }
 
-		dist = (1 + dTable) * (confirmManuf ? 1 : 1.2) * (confirmYear ? 1 : 1.2);
-		return dist;
-	}
+    double dTable = distance(clean, tableName);
 
-	private double tableDistance(String _tableName, String _manuf, int _year,
-			String tableName, String manuf, int year) {
-		double dist = 10000;
+    dist = (1 + dTable) * (confirmManuf ? 1 : 1.2) * (confirmYear ? 1 : 1.2);
+    return dist;
+  }
 
-		double dTable = distance(tableName, _tableName) * 1;
-		double dManuf = distance(_manuf, manuf);
-		double dYear = _year == year ? 0 : Math.abs(_year - year) == 1 ? 1 : 5;
+  private double tableDistance(String _tableName, String _manuf, int _year,
+                               String tableName, String manuf, int year) {
+    double dist = 10000;
 
-		dist = (1 + dTable)
-				* (1 + dManuf / 35.0)
-				* (1 + dYear / 5.0);
-		return dist;
-	}
+    double dTable = distance(tableName, _tableName) * 1;
+    double dManuf = distance(_manuf, manuf);
+    double dYear = _year == year ? 0 : Math.abs(_year - year) == 1 ? 1 : 5;
 
-	public double distance(String str1, String str2) {
+    dist = (1 + dTable)
+        * (1 + dManuf / 35.0)
+        * (1 + dYear / 5.0);
+    return dist;
+  }
 
-		if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
-			return 0;
-		} 		
-		else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
-			return 5;
-		}
+  public double distance(String str1, String str2) {
 
-		int ratio = FuzzySearch.weightedRatio(str1, str2);
-		return ratio > 0 ? 10 * (100.0 / ratio - 1) : 10000;
+    if (StringUtils.isEmpty(str1) && StringUtils.isEmpty(str2)) {
+      return 0;
+    }
+    else if (StringUtils.isEmpty(str1) || StringUtils.isEmpty(str2)) {
+      return 5;
+    }
 
-		// Score 100 => distance = 0
-		// Score 75 => distance = 3
-	}
+    int ratio = FuzzySearch.weightedRatio(str1, str2);
+    return ratio > 0 ? 10 * (100.0 / ratio - 1) : 10000;
 
-	// ------------------------------------------------------
+    // Score 100 => distance = 0
+    // Score 75 => distance = 3
+  }
 
-	VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
+  // ------------------------------------------------------
 
-		if (tableInfo==null) {
-			return null;
-		}
+  VpsTableVersion findVersion(VpsTable table, Game game, TableInfo tableInfo) {
 
-		String tableInfoName = tableInfo.getTableName();
-		String tableInfoVersion = tableInfo.getTableVersion();
-		String tableInfoAuthor = tableInfo.getAuthorName();
+    if (tableInfo == null) {
+      return null;
+    }
 
-		if (StringUtils.isEmpty(tableInfoVersion) || StringUtils.isEmpty(tableInfoAuthor)) {
-			return null;
-		}
-		// clean tableInfo author field and parse it
-		String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
-		for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
-			tableInfoAuthors[i] = tableInfoAuthors[i].trim();
-		}
-		tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
+    String tableInfoName = tableInfo.getTableName();
+    String tableInfoVersion = tableInfo.getTableVersion();
+    String tableInfoAuthor = tableInfo.getAuthorName();
 
-		double distance = 10000;
-		VpsTableVersion foundVersion = null;
+    if (StringUtils.isEmpty(tableInfoVersion) || StringUtils.isEmpty(tableInfoAuthor)) {
+      return null;
+    }
+    // clean tableInfo author field and parse it
+    String[] tableInfoAuthors = StringUtils.split(tableInfoAuthor.toLowerCase(), ",/-&");
+    for (int i = 0, m = tableInfoAuthors.length; i < m; i++) {
+      tableInfoAuthors[i] = tableInfoAuthors[i].trim();
+    }
+    tableInfoAuthor = StringUtils.join(tableInfoAuthors, " ");
 
-		List<VpsTableVersion> tableFiles = table.getTableFiles();
-		for (VpsTableVersion tableVersion : tableFiles) {
-			if (tableVersion.getTableFormat() != null && tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
-				continue;
-			}
+    double distance = 10000;
+    VpsTableVersion foundVersion = null;
 
-			String name = tableVersion.getComment();
-			String v = tableVersion.getVersion();
-			String authors = null;
+    List<VpsTableVersion> tableFiles = table.getTableFiles();
+    for (VpsTableVersion tableVersion : tableFiles) {
+      if (tableVersion.getTableFormat() != null && tableVersion.getTableFormat().equalsIgnoreCase("FP")) {
+        continue;
+      }
 
-			// if match via name, rare but happens.., disconnect version match 
-			double dName = (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName))
-				? distance(name, tableInfoName): 5;
-			double dVersion = dName<0.5 ? 0: TableVersionMatcher.versionDistance(v, tableInfoVersion);
+      String name = tableVersion.getComment();
+      String v = tableVersion.getVersion();
+      String authors = null;
 
-			// The version cannot have a greater date than the last modification of the game file
-			// controversial, could be used as a criteria to bifurcate between to possible solutions
-			//long lastmodif = game.getGameFile().lastModified();
-			//if (lastmodif < tableVersion.getUpdatedAt()) {
-			//	continue;
-			//}
+      // if match via name, rare but happens.., disconnect version match
+      double dName = (StringUtils.isNotEmpty(name) && StringUtils.isNotEmpty(tableInfoName))
+          ? distance(name, tableInfoName) : 5;
+      double dVersion = dName < 0.5 ? 0 : TableVersionMatcher.versionDistance(v, tableInfoVersion);
+
+      // The version cannot have a greater date than the last modification of the game file
+      // controversial, could be used as a criteria to bifurcate between to possible solutions
+      //long lastmodif = game.getGameFile().lastModified();
+      //if (lastmodif < tableVersion.getUpdatedAt()) {
+      //	continue;
+      //}
 
 			/* Not really useful as it compares releaseDate with last update date
 			Calendar c = Calendar.getInstance();
@@ -215,133 +227,139 @@ public class TableMatcher {
 					? (tableInfo.getReleaseDate().contains(Integer.toString(year)) ? 1 : 2)
 					: 1.2;*/
 
-			List<String> tableVersionAuthors = tableVersion.getAuthors();
-			int nbFirstAuthorsFoundInFirst = 0;
-			double dAuthor = 0.0d;
-			if (StringUtils.isNotEmpty(tableInfoAuthor) && tableVersionAuthors!=null && tableVersionAuthors.size()>0) {
+      List<String> tableVersionAuthors = tableVersion.getAuthors();
+      int nbFirstAuthorsFoundInFirst = 0;
+      double dAuthor = 0.0d;
+      if (StringUtils.isNotEmpty(tableInfoAuthor) && tableVersionAuthors != null && tableVersionAuthors.size() > 0) {
 
-				authors = StringUtils.join(tableVersionAuthors, " ").toLowerCase();
+        authors = StringUtils.join(tableVersionAuthors, " ").toLowerCase();
 
-				// check if first authors of the table are also the first authors of the version
-				for (int i = 0, m = tableInfoAuthors.length; i<m; i++) {
-					for (int j = 0, n = tableVersionAuthors.size(); j<n && j<m; j++) {
-						int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersionAuthors.get(j).toLowerCase());
-						if (r>90) {
-							nbFirstAuthorsFoundInFirst++;
-							break;
-						}
-					}
-				}
-			
-				if (nbFirstAuthorsFoundInFirst==tableInfoAuthors.length) {
-					// reduce weight of version when all authors of the tables are also the first authors of the version
-					dVersion /= 3;
-				
-				} else {
+        // check if first authors of the table are also the first authors of the version
+        for (int i = 0, m = tableInfoAuthors.length; i < m; i++) {
+          for (int j = 0, n = tableVersionAuthors.size(); j < n && j < m; j++) {
+            int r = FuzzySearch.ratio(tableInfoAuthors[i], tableVersionAuthors.get(j).toLowerCase());
+            if (r > 90) {
+              nbFirstAuthorsFoundInFirst++;
+              break;
+            }
+          }
+        }
 
-					int r = FuzzySearch.weightedRatio(authors, tableInfoAuthor);
-					dAuthor = r>0? 100.0 / r - 1: 100;
-				}
-			}
+        if (nbFirstAuthorsFoundInFirst == tableInfoAuthors.length) {
+          // reduce weight of version when all authors of the tables are also the first authors of the version
+          dVersion /= 3;
 
-			double d = (1 + dVersion / 2) * (1 + dAuthor);
-			if (d < distance) {
-				distance = d;
-				foundVersion = tableVersion;
-			}
-		}
+        }
+        else {
 
-		return distance <= 1.5 ? foundVersion : null;
-	}
+          int r = FuzzySearch.weightedRatio(authors, tableInfoAuthor);
+          dAuthor = r > 0 ? 100.0 / r - 1 : 100;
+        }
+      }
 
-	/**
-	 * Take a rom and compare it with the one of the table
-	 * If rom is empty, verify the table does not use a rom
-	 * @return true if this is same rom
-	 */
-	public boolean checkRom(String rom, VpsTable table) {
-		List<VpsAuthoredUrls> romFiles = table.getRomFiles();
-		// if rom is empty, check the table does not use a rom
-		if (StringUtils.isEmpty(rom)) {
-			return romFiles == null || romFiles.size() == 0;
-		}
-		// else rom should be within the romFiles of the table if present
-		if (romFiles != null &&  romFiles.size()>0) {
-			boolean found = false;
-			for (VpsAuthoredUrls romFile : romFiles) {
-				found |= romFile.getVersion() != null 
-					// do not check equals, cf afm_113 && afm_113b 
-					&& (StringUtils.startsWithIgnoreCase(romFile.getVersion(), rom)
-						|| StringUtils.startsWithIgnoreCase(rom, romFile.getVersion()));
-			}
-			return found;
-		}
-		// else, conservative approach, check on name
-		return true;
-	}
+      double d = (1 + dVersion / 2) * (1 + dAuthor);
+      if (d < distance) {
+        distance = d;
+        foundVersion = tableVersion;
+      }
+    }
 
-	// ------------------------------------------------------
+    return distance <= 1.5 ? foundVersion : null;
+  }
 
-	private String[] getAlternateManuf(String manuf) {
-		if (manuf.equalsIgnoreCase("Bally") || manuf.equalsIgnoreCase("Midway")) {
-			return new String[] { "Bally", "Midway" };
-		} else if (manuf.equalsIgnoreCase("Original") || manuf.equalsIgnoreCase("TBA")) {
-			return new String[] { "Original", "TBA" };
-		} else if (manuf.equalsIgnoreCase("Mylstar") || manuf.equalsIgnoreCase("Gottlieb")) {
-			return new String[] { "Gottlieb", "Mylstar" };
-		} else if (manuf.toLowerCase().startsWith("Taito")) {
-			return new String[] { "Taito", "Taito do Brasil" };
-		} else if (manuf.toLowerCase().startsWith("Spooky")) {
-			return new String[] { "Spooky", "Spooky Pinball" };
-		}
+  /**
+   * Take a rom and compare it with the one of the table
+   * If rom is empty, verify the table does not use a rom
+   *
+   * @return true if this is same rom
+   */
+  public boolean checkRom(String rom, VpsTable table) {
+    List<VpsAuthoredUrls> romFiles = table.getRomFiles();
+    // if rom is empty, check the table does not use a rom
+    if (StringUtils.isEmpty(rom)) {
+      return romFiles == null || romFiles.size() == 0;
+    }
+    // else rom should be within the romFiles of the table if present
+    if (romFiles != null && romFiles.size() > 0) {
+      boolean found = false;
+      for (VpsAuthoredUrls romFile : romFiles) {
+        found |= romFile.getVersion() != null
+            // do not check equals, cf afm_113 && afm_113b
+            && (StringUtils.startsWithIgnoreCase(romFile.getVersion(), rom)
+            || StringUtils.startsWithIgnoreCase(rom, romFile.getVersion()));
+      }
+      return found;
+    }
+    // else, conservative approach, check on name
+    return true;
+  }
 
-		return new String[] { manuf };
-	}
+  // ------------------------------------------------------
 
-	// all lower case !
-	private static String[] exludedWords = {
-			"mod", "bigus", "salas", "tasty", "thalamus", "paulie", "starlion",
-			"vpx", "vpw", "vpinworkshop", "4k", "alt", "alt2", "(1)", "(2)"
-	};
+  private String[] getAlternateManuf(String manuf) {
+    if (manuf.equalsIgnoreCase("Bally") || manuf.equalsIgnoreCase("Midway")) {
+      return new String[]{"Bally", "Midway"};
+    }
+    else if (manuf.equalsIgnoreCase("Original") || manuf.equalsIgnoreCase("TBA")) {
+      return new String[]{"Original", "TBA"};
+    }
+    else if (manuf.equalsIgnoreCase("Mylstar") || manuf.equalsIgnoreCase("Gottlieb")) {
+      return new String[]{"Gottlieb", "Mylstar"};
+    }
+    else if (manuf.toLowerCase().startsWith("Taito")) {
+      return new String[]{"Taito", "Taito do Brasil"};
+    }
+    else if (manuf.toLowerCase().startsWith("Spooky")) {
+      return new String[]{"Spooky", "Spooky Pinball"};
+    }
 
-	private String cleanWords(String filename) {
+    return new String[]{manuf};
+  }
 
-		filename = filename.trim().toLowerCase();
+  // all lower case !
+  private static String[] exludedWords = {
+      "mod", "bigus", "salas", "tasty", "thalamus", "paulie", "starlion",
+      "vpx", "vpw", "vpinworkshop", "4k", "alt", "alt2", "(1)", "(2)"
+  };
 
-		filename = filename.replaceAll("the ", "");
-		filename = filename.replaceAll(", the", "");
+  private String cleanWords(String filename) {
 
-		// remove exluded words
-		for (String w : exludedWords) {
-			filename = filename.replace(w, "");
-		}
+    filename = filename.trim().toLowerCase();
 
-		// check if it ends with version, if yes remove
-		boolean hasVersion = false;
-		char ch;
-		while (Character.isDigit(ch = filename.charAt(filename.length() - 1)) || ch == '.' || ch == '_' || ch == '-'
-				|| ch == ' ') {
-			hasVersion = true;
-			filename = StringUtils.substring(filename, 0, -1);
-		}
-		if (hasVersion && filename.charAt(filename.length() - 1) == 'v') {
-			filename = StringUtils.substring(filename, 0, -1);
-		}
+    filename = filename.replaceAll("the ", "");
+    filename = filename.replaceAll(", the", "");
 
-		return filename;
-	}
+    // remove exluded words
+    for (String w : exludedWords) {
+      filename = filename.replace(w, "");
+    }
 
-	private String cleanChars(String filename) {
+    // check if it ends with version, if yes remove
+    boolean hasVersion = false;
+    char ch;
+    while (Character.isDigit(ch = filename.charAt(filename.length() - 1)) || ch == '.' || ch == '_' || ch == '-'
+        || ch == ' ') {
+      hasVersion = true;
+      filename = StringUtils.substring(filename, 0, -1);
+    }
+    if (hasVersion && filename.charAt(filename.length() - 1) == 'v') {
+      filename = StringUtils.substring(filename, 0, -1);
+    }
 
-		// replace underscore, ., -, ....
-		filename = StringUtils.replaceChars(filename, "_.,-'", " ");
+    return filename;
+  }
 
-		// remove double spaces
-		while (filename.contains("  ")) {
-			filename = filename.replace("  ", " ");
-		}
+  private String cleanChars(String filename) {
 
-		return filename.trim();
-	}
+    // replace underscore, ., -, ....
+    filename = StringUtils.replaceChars(filename, "_.,-'", " ");
+
+    // remove double spaces
+    while (filename.contains("  ")) {
+      filename = filename.replace("  ", " ");
+    }
+
+    return filename.trim();
+  }
 
 }

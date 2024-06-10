@@ -19,6 +19,7 @@ import java.util.List;
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "nircmd.exe", "vpxtool.exe", "maintenance.jpg", ScoringDB.SCORING_DB_NAME);
+  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   public static void execute() {
     try {
@@ -33,11 +34,33 @@ public class ServerUpdatePreProcessing {
 
 
     new Thread(() -> {
-      Thread.currentThread().setName("ServerUpdatePreProcessing");
-      runResourcesCheck();
-      synchronizeNVRams();
-      LOG.info("Finished resource updates check.");
+      try {
+        Thread.currentThread().setName("ServerUpdatePreProcessing");
+        runJvmCheck();
+        runResourcesCheck();
+        synchronizeNVRams();
+        LOG.info("Finished resource updates check.");
+      }
+      catch (Exception e) {
+        LOG.error("Server update failed: " + e.getMessage(), e);
+      }
     }).start();
+  }
+
+  private static void runJvmCheck() {
+    for (String resource : jvmFiles) {
+      File folder = new File("win32\\java\\bin\\");
+      if (folder.exists()) {
+        File check = new File("win32\\java\\bin\\", resource);
+        if (!check.exists()) {
+          LOG.info("Downloading missing JVM file " + check.getAbsolutePath());
+          Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/jvm/" + resource, check);
+        }
+      }
+      else {
+        LOG.warn("No JVM folder found: " + folder.getAbsolutePath());
+      }
+    }
   }
 
   private static void runResourcesCheck() {

@@ -229,7 +229,12 @@ public class UniversalUploadResource {
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     if (!keepExistingFilename) {
-      target = new File(existingVPXFile.getParentFile(), analysis.getVpxFileName());
+      String vpxFileName = analysis.getVpxFileName();
+      if (vpxFileName == null) {
+        vpxFileName = uploadDescriptor.getOriginalUploadFileName();
+      }
+      target = new File(existingVPXFile.getParentFile(), vpxFileName);
+      LOG.info("Resolved target VPX file \"" + target.getAbsolutePath() + "\"");
     }
 
     //copy file

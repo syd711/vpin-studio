@@ -42,17 +42,21 @@ public class AltSoundService implements InitializingBean {
   @Autowired
   private PinUPConnector pinUPConnector;
 
-  private final Map<String, AltSound> altSounds = new ConcurrentHashMap<>();
+  private final Map<String, AltSound> altSoundFolder2AltSound = new ConcurrentHashMap<>();
 
   public boolean isAltSoundAvailable(@NonNull Game game) {
-    return game.getAltSoundFolder() != null && altSounds.containsKey(game.getAltSoundFolder().getAbsolutePath());
+    return game.getAltSoundFolder() != null && altSoundFolder2AltSound.containsKey(game.getAltSoundFolder().getAbsolutePath());
   }
 
   public boolean delete(@NonNull Game game) {
     GameEmulator emulator = pinUPConnector.getGameEmulator(game.getEmulatorId());
-    File folder = new File(emulator.getAltSoundFolder(), game.getRom());
-    if (folder.exists()) {
-      return FileUtils.deleteFolder(folder);
+    if (!StringUtils.isEmpty(game.getRom())) {
+      File folder = new File(emulator.getAltSoundFolder(), game.getRom());
+      if (folder.exists()) {
+        altSoundFolder2AltSound.remove(game.getAltSoundFolder().getAbsolutePath());
+        LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
+        return FileUtils.deleteFolder(folder);
+      }
     }
     return false;
   }
@@ -60,7 +64,7 @@ public class AltSoundService implements InitializingBean {
   @NonNull
   public AltSound getAltSound(@NonNull Game game) {
     if (isAltSoundAvailable(game)) {
-      return altSounds.get(game.getAltSoundFolder().getAbsolutePath());
+      return altSoundFolder2AltSound.get(game.getAltSoundFolder().getAbsolutePath());
     }
     return new AltSound();
   }
@@ -121,7 +125,7 @@ public class AltSoundService implements InitializingBean {
 
   public boolean clearCache() {
     long start = System.currentTimeMillis();
-    this.altSounds.clear();
+    this.altSoundFolder2AltSound.clear();
     List<GameEmulator> vpxGameEmulators = pinUPConnector.getVpxGameEmulators();
     for (GameEmulator vpxGameEmulator : vpxGameEmulators) {
       File altSoundFolder = vpxGameEmulator.getAltSoundFolder();
@@ -139,14 +143,14 @@ public class AltSoundService implements InitializingBean {
         }
       }
     }
-    LOG.info("Loading of " + altSounds.size() + " ALTSounds finished, took " + (System.currentTimeMillis() - start) + "ms.");
+    LOG.info("Loading of " + altSoundFolder2AltSound.size() + " ALTSounds finished, took " + (System.currentTimeMillis() - start) + "ms.");
     return true;
   }
 
   private void loadAltSound(@Nullable File altSoundDir) {
     if (altSoundDir != null) {
       AltSound altSound = new AltSoundLoaderFactory(altSoundDir).load();
-      altSounds.put(altSoundDir.getAbsolutePath(), altSound);
+      altSoundFolder2AltSound.put(altSoundDir.getAbsolutePath(), altSound);
     }
   }
 

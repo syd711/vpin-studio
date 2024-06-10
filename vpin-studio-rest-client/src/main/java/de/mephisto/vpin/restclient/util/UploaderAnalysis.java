@@ -40,7 +40,6 @@ public class UploaderAnalysis<T> {
   private final List<String> fileNamesWithPath = new ArrayList<>();
   private final List<String> directories = new ArrayList<>();
 
-  private String error;
   private String readme;
 
   public UploaderAnalysis(File file) {
@@ -56,10 +55,6 @@ public class UploaderAnalysis<T> {
 
   public File getFile() {
     return file;
-  }
-
-  public String getError() {
-    return error;
   }
 
   public String getRomFromPupPack() {
