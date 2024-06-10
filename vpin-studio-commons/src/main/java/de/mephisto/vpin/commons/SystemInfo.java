@@ -43,7 +43,7 @@ public class SystemInfo {
     } catch (Exception e) {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);
     }
-    return new File("C:/vPinball/Visual Pinball");
+    return new File("C:/vPinball/PinUPSystem");
   }
 
   @NonNull

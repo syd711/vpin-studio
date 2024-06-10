@@ -566,9 +566,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     initBaseFolders();
     initVPinTableManagerIcon();
 
-    if (!getPinUPSystemFolder().exists()) {
-      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
-    }
+    // no more strongly required, as part of other frontends support 
+    //if (!getPinUPSystemFolder().exists()) {
+    //  throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
+    //}
 
     logSystemInfo();
   }
