@@ -42,6 +42,9 @@ public class ComponentService implements InitializingBean {
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
     ComponentType[] values = ComponentType.values();
+    // sort by visibility order
+    Arrays.sort(values, (a, b) -> a.getOrder()-b.getOrder());
+
     for (ComponentType value : values) {
       result.add(getComponent(value));
     }

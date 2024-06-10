@@ -1,9 +1,19 @@
 package de.mephisto.vpin.restclient.components;
 
 public enum ComponentType {
-  //do not change order, ordinal is used in DB
-  vpinmame, vpinball, b2sbackglass, freezy, flexdmd, serum;
+  //do not change order of declaration, ordinal is used in DB
+  vpinmame(1), vpinball(0), b2sbackglass(2), freezy(3), flexdmd(4), serum(5);
 
+  /** The order for display */
+  private int order;
+
+  ComponentType(int order) {
+    this.order = order;
+  }
+
+  public int getOrder() {
+    return order;
+  }
 
   @Override
   public String toString() {
