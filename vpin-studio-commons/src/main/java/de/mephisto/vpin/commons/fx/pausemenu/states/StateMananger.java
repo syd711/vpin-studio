@@ -90,18 +90,10 @@ public class StateMananger implements NativeKeyListener {
   public void handle(int keyCode, int rawCode) {
     LOG.info("Pause Menu Key Event [keyCode/keyCodeRaw]: " + keyCode + "/" + rawCode);
     if (LEFT.contains(rawCode) || isVPXMapped(keyCode, rawCode, leftFlip) || isRecordedMapped(rawCode, RECORDED_LEFT)) {
-      if (menuController.isAtStart()) {
-        return;
-      }
-
       this.activeState = activeState.left();
       navPlayer.play();
     }
     else if (RIGHT.contains(rawCode) || isVPXMapped(keyCode, rawCode, rightFlip) || isRecordedMapped(rawCode, RECORDED_RIGHT)) {
-      if (menuController.isAtEnd()) {
-        return;
-      }
-
       this.activeState = activeState.right();
       navPlayer.play();
     }

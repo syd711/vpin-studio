@@ -49,17 +49,20 @@ public class MenuItemSelectionState extends MenuState {
 
   private void checkAutoPlay() {
     boolean autoPlay = true;
-    if (autoPlay) {
+    if (autoPlay && menuController.isVisible()) {
       PauseMenuItem item = menuController.getSelection();
       if (item.getYouTubeUrl() != null) {
         new Thread(() -> {
           try {
             Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION * 2);
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             //ignore
           }
           Platform.runLater(() -> {
-            menuController.showYouTubeVideo(item);
+            if (menuController.isVisible()) {
+              menuController.showYouTubeVideo(item);
+            }
           });
         }).start();
       }
