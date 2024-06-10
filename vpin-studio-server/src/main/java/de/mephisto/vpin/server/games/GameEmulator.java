@@ -309,7 +309,7 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getGameMediaFolder(@NonNull String gameFileName, @NonNull PopperScreen screen) {
-    return mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen);
+    return mediaStrategy!=null? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen): null;
   }
 
   @NonNull

@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
@@ -16,7 +17,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.server.games.Game;
 
 @Service
 @Qualifier("PinballX")
@@ -24,6 +27,10 @@ public class PinballXConnector extends BaseConnector {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
+ /** The list of parsed Games from XML database */
+  protected List<Game> games;
+
+  protected Map<Integer, TableDetails> tabledetails;
 
   @Override
   public void initialize(ServerSettings settings) {
@@ -144,6 +151,24 @@ public class PinballXConnector extends BaseConnector {
 
     return e;
   }
+
+   //-----------------------------------------------------------
+   @Override
+   public List<Game> getGames() {
+     return games;
+   }
+ 
+   @Override
+   public TableDetails getTableDetails(int id) {
+     return this.tabledetails.get(id);
+   }
+ 
+   @Override
+   public void saveTableDetails(int id, TableDetails tableDetails) {
+     this.tabledetails.put(id, tableDetails);
+   }
+ 
+   //------------------------------------------------------------
 
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {

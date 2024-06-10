@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.frontend;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +14,6 @@ import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.Playlist;
 import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -23,12 +21,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public abstract class BaseConnector implements FrontendConnector {
 
   private final static Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
-
-  /** The list of parsed Games from XML database */
-  protected List<Game> games;
-
-  protected Map<Integer, TableDetails> tabledetails;
-
 
 
   protected String getEmulatorExtension(String emuName) {
@@ -45,49 +37,45 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public TableDetails getTableDetails(int id) {
-    return this.tabledetails.get(id);
-  }
-
-  @Override
   public void updateTableFileUpdated(int id) {
       //String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
   }
 
-  @Override
-  public void saveTableDetails(int id, TableDetails tableDetails) {
-    this.tabledetails.put(id, tableDetails);
-  }
-
-  @Override
-  public List<Game> getGames() {
-    return games;
-  }
 
   @Override
   public Game getGame(int id) {
-    return games.stream().filter(g -> g.getId()==id).findFirst().orElse(null);
+    return getGames().stream().filter(g -> g.getId()==id).findFirst().orElse(null);
   }
 
   @Override
   public Game getGameByFilename(String filename) {
-    return games.stream().filter(g -> g.getGameFileName()==filename).findFirst().orElse(null);
+    return getGames().stream().filter(g -> g.getGameFileName()==filename).findFirst().orElse(null);
   }
 
   @Override
   public List<Game> getGamesByEmulator(int emulatorId) {
-    return games.stream().filter(g -> g.getEmulatorId()==emulatorId).collect(Collectors.toList());
+    return getGames().stream().filter(g -> g.getEmulatorId()==emulatorId).collect(Collectors.toList());
   }
 
   @Override
   public List<Game> getGamesByFilename(String filename) {
     String gameName = filename.replaceAll("'", "''");
-    return games.stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameName)).collect(Collectors.toList());
+    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameName)).collect(Collectors.toList());
   }
 
   @Override
   public Game getGameByName(String gameName) {
-    return games.stream().filter(g -> g.getGameName()==gameName).findFirst().orElse(null);
+    return getGames().stream().filter(g -> g.getGameName()==gameName).findFirst().orElse(null);
+  }
+
+  @Override
+  public int getGameCount(int emuId) {
+    return getGames().stream().filter(g -> g.getEmulatorId()==emuId).collect(Collectors.counting()).intValue();
+  }
+
+  @Override
+  public List<Integer> getGameIds(int emuId) {
+    return getGames().stream().filter(g -> g.getEmulatorId()==emuId).map(g -> g.getId()).collect(Collectors.toList());
   }
 
   @Override
@@ -145,6 +133,10 @@ public int importGame(int emulatorId, String gameName, String gameFileName, Stri
     // DELETE FROM Games where GameID = ?
     // DELETE FROM GamesStats where GameID = ?
     return true;
+  }
+
+  @Override
+  public void deleteGames() {
   }
 
   //----------------------------
@@ -250,21 +242,8 @@ public int importGame(int emulatorId, String gameName, String gameFileName, Stri
     return null;
   }
 
-  @Override
-  public int getGameCount(int emuId) {
-    return games.stream().filter(g -> g.getEmulatorId()==emuId).collect(Collectors.counting()).intValue();
-  }
+ 
 
-  @Override
-  public List<Integer> getGameIds(int emuId) {
-    return games.stream().filter(g -> g.getEmulatorId()==emuId).map(g -> g.getId()).collect(Collectors.toList());
-  }
-
-  
-
-  @Override
-  public void deleteGames() {
-  }
 
   @Override
   public List<Integer> getGameIdsFromPlaylists() {
