@@ -235,7 +235,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   private void onApply(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
-    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, this.templateCombo.getSelectionModel().getSelectedItem().getId()));
+    Long id = this.templateCombo.getSelectionModel().getSelectedItem().getId();
+    Platform.runLater(() -> {
+      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, id));
+    });
     stage.close();
   }
 
@@ -551,7 +554,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
           overlayModeCheckbox.setSelected(getCardTemplate().isOverlayMode());
           screensComboBox.setDisable(!getCardTemplate().isOverlayMode() || !getCardTemplate().isTransparentBackground());
 
-          if(newValue && alphaPercentageSpinner.getValue() <= 0) {
+          if (newValue && alphaPercentageSpinner.getValue() <= 0) {
             alphaPercentageSpinner.setValue(50);
           }
         }

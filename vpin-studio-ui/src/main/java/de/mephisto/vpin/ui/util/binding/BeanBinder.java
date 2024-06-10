@@ -48,7 +48,11 @@ public class BeanBinder {
   public void bindComboBox(ComboBox<String> comboBox, Object beanObject, String property, String defaultValue) {
     String value = getProperty(beanObject, property, defaultValue);
     comboBox.setValue(value);
-    comboBox.valueProperty().addListener((observableValue, s, t1) -> setProperty(property, t1));
+    comboBox.valueProperty().addListener((observableValue, s, t1) -> {
+      Platform.runLater(()-> {
+        setProperty(property, t1);
+      });
+    });
   }
 
   public void bindCheckbox(CheckBox checkbox, Object beanObject, String property) {
