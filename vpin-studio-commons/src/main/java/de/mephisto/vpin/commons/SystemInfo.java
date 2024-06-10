@@ -19,6 +19,8 @@ public class SystemInfo {
   public final static String ARCHIVE_TYPE = "archive.type";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
+  private final static String VPX_REG_KEY_2 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\VPinballX.exe";
+
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
 
@@ -52,23 +54,38 @@ public class SystemInfo {
     if (!file.exists()) {
       file = new File(pinUPSystemInstallationFolder.getParent(), "Visual Pinball");
     }
-
     if (!file.exists()) {
       LOG.info("The system info could not derive the Visual Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-      String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
+      file = resolveVisualPinballInstallationFolder();
+    }
+    return file;
+  }
+  public File resolveVisualPinballInstallationFolder() {
+    String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
+    if (tablesDir != null) {
+      tablesDir = extractRegistryValue(tablesDir);
       if (tablesDir != null) {
-        tablesDir = extractRegistryValue(tablesDir);
-        if (tablesDir == null) {
-          return file;
-        }
         LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
-        file = new File(tablesDir);
+        File file = new File(tablesDir);
         if (file.exists()) {
           return file.getParentFile();
         }
       }
     }
-    return file;
+    // else
+    String vpxDir = readRegistry(VPX_REG_KEY_2, null);
+    if (vpxDir!=null) {
+      vpxDir = extractRegistryValue(vpxDir);
+      LOG.info("Resolve Visual Pinball tables folder " + vpxDir);
+      String exe = "VPinballX.exe";
+      if (StringUtils.endsWithIgnoreCase(vpxDir, exe)) {
+        File file = new File(StringUtils.removeEndIgnoreCase(vpxDir, exe));
+        if (file.exists()) {
+          return file;
+        }
+      }
+    }
+    return null;
   }
 
   public File resolveUserFolder(@NonNull File visualPinballInstallationFolder) {

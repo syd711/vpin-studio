@@ -114,6 +114,10 @@ public interface FrontendConnector {
   @NonNull
   List<Integer> getGameIdsFromPlaylists();
 
+  /**
+   * Returns the strategy to access files. 
+   * By returning a null value, it tells the frontend does not support media
+   */
   MediaAccessStrategy getMediaAccessStrategy();
 
 }

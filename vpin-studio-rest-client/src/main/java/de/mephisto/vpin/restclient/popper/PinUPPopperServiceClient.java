@@ -65,7 +65,7 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {
     List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.get(0);
+    return gameEmulators.size()>0? gameEmulators.get(0): null;
   }
 
   public PinUPPlayerDisplay getScreenDisplay(PopperScreen screen) {

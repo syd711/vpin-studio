@@ -121,6 +121,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   private FrontendConnector getFrontend() {
     return frontendsMap.get("pinUPConnectorImpl");
     //return frontendsMap.get("pinballXConnector");
+    //return frontendsMap.get("standaloneConnector");
   }
  
 
@@ -408,7 +409,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
-  public static boolean isValidVPXEmulator(Emulator emulator) {
+  public boolean isValidVPXEmulator(Emulator emulator) {
     if (!emulator.isVisualPinball()) {
       return false;
     }
@@ -428,7 +429,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       return false;
     }
 
-    if (StringUtils.isEmpty(emulator.getDirMedia())) {
+    if (getFrontend().getMediaAccessStrategy()!=null && StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
       return false;
     }
@@ -495,13 +496,30 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
     GameEmulator defaultEmulator = getDefaultGameEmulator();
     if (defaultEmulator != null) {
+      boolean b2sfolderSet = false;
       Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
-      if (pathEntry.isEmpty()) {
+      if (!pathEntry.isEmpty()) {
+        String path = String.valueOf(pathEntry.values().iterator().next());
+        if (path.contains("\"")) {
+          path = path.substring(1);
+          path = path.substring(0, path.indexOf("\""));
+          File exeFile = new File(path);
+          File b2sFolder = exeFile.getParentFile();
+          if (b2sFolder.exists()) {
+            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+            defaultEmulator.setBackglassServerDirectory(b2sFolder);
+            b2sfolderSet = true;
+          }
+        }
+      }
+      // second try
+      if (!b2sfolderSet || pathEntry.isEmpty()) {
         File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
-        File exeFile = new File(defaultEmulator.getTablesFolder(), "B2SBackglassServerEXE.exe");
-        if (!exeFile.exists()) {
+        File exeFile = new File(backglassServerDirectory, "B2SBackglassServerEXE.exe");
+        File installDirectory = defaultEmulator.getInstallationFolder();
+        if (!exeFile.exists() && installDirectory!=null && installDirectory.exists()) {
           //search recursively for the server exe file
-          Iterator<File> fileIterator = FileUtils.iterateFiles(backglassServerDirectory, new String[]{"exe"}, true);
+          Iterator<File> fileIterator = FileUtils.iterateFiles(installDirectory, new String[]{"exe"}, true);
           boolean found = false;
           while (fileIterator.hasNext()) {
             File next = fileIterator.next();
@@ -512,26 +530,12 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
               break;
             }
           }
-
           if (!found) {
             LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
           }
         }
         else {
           LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
-        }
-      }
-      else {
-        String path = String.valueOf(pathEntry.values().iterator().next());
-        if (path.contains("\"")) {
-          path = path.substring(1);
-          path = path.substring(0, path.indexOf("\""));
-          File exeFile = new File(path);
-          File b2sFolder = exeFile.getParentFile();
-          if (b2sFolder.exists()) {
-            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
-            defaultEmulator.setBackglassServerDirectory(b2sFolder);
-          }
         }
       }
     }

@@ -64,6 +64,7 @@ public class GameEmulator {
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
+    this.backglassServerFolder = StringUtils.defaultString(emulator.getDirB2S(), emulator.getDirGames());
     this.mediaStrategy = mediaStrategy;
 
     if (emulator.getEmuLaunchDir() != null) {
@@ -84,7 +85,9 @@ public class GameEmulator {
 
     if (emulator.getDirGames() != null) {
       this.tablesFolder = new File(emulator.getDirGames());
-      this.backglassServerDirectory = new File(emulator.getDirGames());
+    }
+    if (this.backglassServerFolder != null) {
+      this.backglassServerDirectory = new File(this.backglassServerFolder);
     }
 
     this.musicFolder = new File(installationFolder, "Music");

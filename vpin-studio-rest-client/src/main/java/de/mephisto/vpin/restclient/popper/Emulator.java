@@ -11,6 +11,8 @@ public class Emulator {
   private String dirMedia;
   private String dirGames;
   private String dirRoms;
+  /** opportunity for emulator to set a specific b2s folder, if null use dirGames */
+  private String dirB2S;
   private String emuLaunchDir;
   private String launchScript;
   private String gamesExt;
@@ -97,6 +99,14 @@ public class Emulator {
     this.dirGames = dirGames;
   }
 
+  public String getDirB2S() {
+    return dirB2S;
+  }
+
+  public void setDirB2S(String dirB2S) {
+    this.dirB2S = dirB2S;
+  }
+
   public String getName() {
     return name;
   }
@@ -161,4 +171,5 @@ public class Emulator {
   public String toString() {
     return "Emulator \"" + this.name + "\" (EMUID #" + this.id + ")";
   }
+
 }
