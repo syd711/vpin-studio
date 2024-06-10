@@ -42,7 +42,9 @@ public class FreezySummarizer {
       } finally {
         fileReader.close();
       }
-      String vniKey = iniConfiguration.getString("vni..key");
+
+      SubnodeConfiguration globalSection = iniConfiguration.getSection("global");
+      String vniKey = globalSection.getString("vni..key");
       if (StringUtils.isEmpty(vniKey)) {
         summary.addEntry("VNI Key", null, false, "\"vni.key\" not set in " + iniFile.getAbsolutePath(), "The \"vni.key\" must be set so that .pac files can be decoded.");
       }

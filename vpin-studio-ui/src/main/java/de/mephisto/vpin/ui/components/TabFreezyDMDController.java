@@ -97,17 +97,20 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
     clearCustomValues();
 
     GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-    ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
-    List<ComponentSummaryEntry> entries = freezySummary.getEntries();
-    for (ComponentSummaryEntry entry : entries) {
-      super.addCustomValue(entry);
+    if (defaultGameEmulator!=null) {
+      ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
+      List<ComponentSummaryEntry> entries = freezySummary.getEntries();
+      for (ComponentSummaryEntry entry : entries) {
+        super.addCustomValue(entry);
+      }
     }
   }
 
   @Override
   public void postProcessing(boolean simulate) {
     if (!simulate) {
-      onFlexDMD();
+      // called in TabFlexDMDController
+      //onFlexDMD();
     }
   }
 

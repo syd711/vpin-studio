@@ -134,8 +134,10 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release, artifact);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
-        ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
-        setText(log.toString());
+        if (resultModel.getResults().size()>0) {
+          ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
+          setText(log.toString());
+        }
 
         componentTab.postProcessing(simulate);
 

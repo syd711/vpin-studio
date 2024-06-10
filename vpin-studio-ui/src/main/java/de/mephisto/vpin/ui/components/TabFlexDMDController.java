@@ -26,7 +26,7 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
   @FXML
   private void onFolder() {
     GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-    File folder = new File(defaultGameEmulator.getInstallationDirectory());
+    File folder = new File(defaultGameEmulator.getMameDirectory());
     openFolder(folder);
   }
 
