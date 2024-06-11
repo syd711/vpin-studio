@@ -127,8 +127,12 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public String getVpxFileName() {
-    return getFileNameForAssetType(AssetType.VPX);
+  public String getVpxFileName(String fallback) {
+    String fileNameForAssetType = getFileNameForAssetType(AssetType.VPX);
+    if (fileNameForAssetType == null) {
+      return fallback;
+    }
+    return null;
   }
 
   public List<String> getPopperMediaFiles(PopperScreen screen) {

@@ -257,6 +257,7 @@ public class TableUploadController implements Initializable, DialogController {
                 Platform.runLater(() -> {
                   WidgetFactory.showAlert(stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
                 });
+                return;
               }
 
               result = Optional.of(uploadedAndImportedDescriptor);
@@ -319,10 +320,10 @@ public class TableUploadController implements Initializable, DialogController {
 
           tableTitleLabel.setVisible(true);
           tableNameLabel.setVisible(true);
-          tableNameLabel.setText(uploaderAnalysis.getVpxFileName());
+          tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
 
           this.fileNameField.setText(this.selection.getAbsolutePath());
-          this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName()));
+          this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
           this.cancelBtn.setDisable(false);
