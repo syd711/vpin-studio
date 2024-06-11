@@ -77,7 +77,9 @@ public class NotificationStageService extends Application {
   @Override
   public void start(Stage stage) {
     Notification notification1 = new Notification();
-    notification1.setTitle1("Test1");
+    notification1.setTitle1("This is a super long name with maybe too much text");
+    notification1.setTitle2("This is a super long name with maybe too much text");
+    notification1.setTitle3("This is a super long name with maybe too much text");
     notification1.setDurationSec(3);
 
     Notification notification2 = new Notification();
@@ -89,7 +91,7 @@ public class NotificationStageService extends Application {
     notification3.setDurationSec(3);
 
     showNotification(notification1);
-//    showNotification(notification2);
-//    showNotification(notification3);
+    showNotification(notification2);
+    showNotification(notification3);
   }
 }

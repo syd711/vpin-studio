@@ -55,7 +55,18 @@ public class NotificationStage {
       if (screenBounds.getWidth() > screenBounds.getHeight()) {
         LOG.info("Window Mode: Landscape");
         root.setRotate(-90);
-        root.setTranslateY((screenBounds.getHeight() / 2));
+        //WQHD
+        double y = (screenBounds.getHeight() / 2);
+        //HD
+        if (screenBounds.getHeight() < 1100) {
+          y = 600;
+        }
+        else if (screenBounds.getHeight() > 2000) {
+          y = 1000;
+        }
+
+        System.out.println(scaling);
+        root.setTranslateY(y);
         root.setTranslateX(-(screenBounds.getWidth() / 2));
         inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
         outTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) (screenBounds.getHeight() / 2));
@@ -66,16 +77,16 @@ public class NotificationStage {
       }
       else {
         LOG.info("Window Mode: Portrait");
-        root.setTranslateY(-(screenBounds.getHeight() / 2) + ((WIDTH * scaling) / 2));
-
-        double xTranslation = -(WIDTH * scaling) / 2 + getPortraitOffset(screenBounds);
-        root.setTranslateX(-(2 * xTranslation));
-        inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
-        outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getHeight() / 2));
+        root.setTranslateY(-500);
+        double width = root.getPrefWidth() * scaling * scaling;
+        double x = screenBounds.getWidth() - width;
+        root.setTranslateX(-x);
+        inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getWidth() / 2));
+        outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getWidth() / 2));
 
         stage.setY(0);
         stage.setX(0);
-        scene = new Scene(root, WIDTH * scaling, screenBounds.getHeight());
+        scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
 
       scene.setFill(Color.TRANSPARENT);
@@ -83,14 +94,6 @@ public class NotificationStage {
     } catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
-  }
-
-  private static int getPortraitOffset(Rectangle2D screenBounds) {
-    if (screenBounds.getHeight() == 2560) {
-      return 100;
-    }
-
-    return 100;
   }
 
 

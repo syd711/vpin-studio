@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootBorderPane" maxHeight="2400.0" maxWidth="2400.0" minHeight="2400.0" minWidth="2400.0" prefHeight="2400.0" prefWidth="2400.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.notifications.NotificationController">
+<BorderPane fx:id="rootBorderPane" maxHeight="2400.0" maxWidth="2400.0" minHeight="2400.0" minWidth="2400.0" prefHeight="2400.0" prefWidth="2400.0" styleClass="root" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.commons.fx.notifications.NotificationController">
    <center>
       <StackPane BorderPane.alignment="CENTER">
          <children>
@@ -39,15 +39,15 @@
             </ImageView>
             <VBox fx:id="labelContainer" alignment="CENTER_LEFT">
                <StackPane.margin>
-                  <Insets left="400.0" />
+                  <Insets left="130.0" />
                </StackPane.margin>
                <children>
-                  <Label fx:id="title1" maxWidth="1200.0" text="TITLE-------------------------" textFill="WHITE">
+                  <Label fx:id="title1" maxWidth="1350.0" text="TITLE-------------------------" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="84.0" />
                      </font>
                   </Label>
-                  <Label fx:id="title2" layoutX="10.0" layoutY="220.0" maxWidth="1200.0" text="TITLE" textFill="WHITE">
+                  <Label fx:id="title2" layoutX="10.0" layoutY="220.0" maxWidth="1350.0" text="TITLE" textFill="WHITE">
                      <font>
                         <Font size="72.0" />
                      </font>
@@ -55,7 +55,7 @@
                         <Insets top="-16.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="title3" layoutX="10.0" layoutY="362.0" maxWidth="1200.0" text="TITLE" textFill="WHITE">
+                  <Label fx:id="title3" layoutX="10.0" layoutY="362.0" maxWidth="1350.0" text="TITLE" textFill="WHITE">
                      <font>
                         <Font size="72.0" />
                      </font>
