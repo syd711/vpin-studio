@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.popper.PopperService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,6 +75,10 @@ public class UniversalUploadResource {
       analysis.analyze();
 
       String vpxFileName = analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName());
+      if (StringUtils.isEmpty(vpxFileName)) {
+        throw new Exception("Failed to resolve VPX filename from " + uploadDescriptor.getOriginalUploadFileName());
+      }
+
       File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, vpxFileName);
       importVPXFile(temporaryVPXFile, uploadDescriptor, analysis);
 
@@ -202,7 +207,7 @@ public class UniversalUploadResource {
     }
 
     TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
-    if(tableDetails == null) {
+    if (tableDetails == null) {
       throw new Exception("No table details found for the selected game to replace (ID: " + uploadDescriptor.getGameId() + ").");
     }
 
