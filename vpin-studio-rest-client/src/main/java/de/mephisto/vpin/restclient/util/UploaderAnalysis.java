@@ -132,7 +132,7 @@ public class UploaderAnalysis<T> {
     if (fileNameForAssetType == null) {
       return fallback;
     }
-    return null;
+    return fileNameForAssetType;
   }
 
   public List<String> getPopperMediaFiles(PopperScreen screen) {
