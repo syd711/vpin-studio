@@ -90,8 +90,13 @@ public class NotificationStageService extends Application {
     notification3.setTitle1("Test3");
     notification3.setDurationSec(3);
 
+    Notification notification4 = new Notification();
+    notification4.setTitle1("Test3");
+    notification4.setDurationSec(3);
+
     showNotification(notification1);
     showNotification(notification2);
     showNotification(notification3);
+//    showNotification(notification4);
   }
 }

@@ -19,6 +19,7 @@
                </VBox.margin>
             </Label>
             <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can configure the options for on-screen notifications here." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Every notification is only shown when no emulator is running." textFill="WHITE" />
             <VBox>
                <VBox.margin>
                   <Insets top="12.0" />
@@ -35,6 +36,9 @@
             <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
             <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Changes" />
             <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
+            <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
+            <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="Shows a notification everytime the VPin Studio completes a highscore scan on table exit." textFill="WHITE" />
+            <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
             <VBox fx:id="iScoredSettings">
                <children>
                   <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Posts" />

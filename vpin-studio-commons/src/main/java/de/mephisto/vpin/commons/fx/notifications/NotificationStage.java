@@ -62,7 +62,7 @@ public class NotificationStage {
           y = 600;
         }
         else if (screenBounds.getHeight() > 2000) {
-          y = 1000;
+          y = 1080;
         }
 
         System.out.println(scaling);
