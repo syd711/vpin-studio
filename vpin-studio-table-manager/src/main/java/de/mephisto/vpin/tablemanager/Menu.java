@@ -1,6 +1,6 @@
 package de.mephisto.vpin.tablemanager;
 
-import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.tablemanager.states.StateMananger;
 import javafx.application.Application;
@@ -17,7 +17,6 @@ import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.util.logging.Level;
 
 public class Menu extends Application {
@@ -73,8 +72,8 @@ public class Menu extends Application {
       MenuController controller = loader.getController();
       StateMananger.getInstance().init(controller);
 
-      PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
-      StateMananger.getInstance().setControls(pinUPControls);
+      FrontendControls frontendControls = client.getFrontendService().getPinUPControls();
+      StateMananger.getInstance().setControls(frontendControls);
 
       GlobalScreen.registerNativeHook();
       java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
@@ -83,9 +82,9 @@ public class Menu extends Application {
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
-        Menu.client.getPinUPPopperService().terminatePopper();
+        Menu.client.getFrontendService().terminatePopper();
         Thread shutdownHook = new Thread(() -> {
-          Menu.client.getPinUPPopperService().restartPopper();
+          Menu.client.getFrontendService().restartPopper();
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
       }

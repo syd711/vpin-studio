@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.Playlist;
+import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -99,7 +99,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      boolean locked = client.getPinUPPopperService().isPinUPPopperRunning();
+      boolean locked = client.getFrontendService().isPinUPPopperRunning();
       if (locked) {
         emptyDataBox.setVisible(false);
         dataRoot.setVisible(false);

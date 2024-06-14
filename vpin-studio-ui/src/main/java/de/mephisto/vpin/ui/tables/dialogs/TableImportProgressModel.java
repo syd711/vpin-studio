@@ -47,7 +47,7 @@ public class TableImportProgressModel extends ProgressModel<GameListItem> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameListItem next) {
     try {
-      JobExecutionResult jobExecutionResult = client.getPinUPPopperService().importTable(next);
+      JobExecutionResult jobExecutionResult = client.getFrontendService().importTable(next);
       progressResultModel.getResults().add(jobExecutionResult);
       LOG.info("Import finished: \"" + next.getName() + "\"");
     } catch (Exception e) {

@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -55,9 +55,9 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
     GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+    GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (item != null) {
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), PopperScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
       Image image = new Image(gameMediaItem);
       wheelImageView.setImage(image);
     }
@@ -91,9 +91,9 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     }
     else {
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);
         wheelImageView.setImage(image);
       }

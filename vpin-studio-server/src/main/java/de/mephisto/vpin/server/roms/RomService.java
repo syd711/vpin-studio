@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.roms;
 
-import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;

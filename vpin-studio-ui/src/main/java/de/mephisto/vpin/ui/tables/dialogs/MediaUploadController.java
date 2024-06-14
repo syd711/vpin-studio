@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
@@ -158,17 +158,17 @@ public class MediaUploadController implements Initializable, DialogController {
       this.uploadBtn.setDisable(false);
       this.cancelBtn.setDisable(false);
 
-      audioLabel.setText(formatReadable(audioLabel, analysis.getPopperMediaFiles(PopperScreen.Audio)));
-      audioLaunchLabel.setText(formatReadable(audioLaunchLabel, analysis.getPopperMediaFiles(PopperScreen.AudioLaunch)));
-      backglassLabel.setText(formatReadable(backglassLabel, analysis.getPopperMediaFiles(PopperScreen.BackGlass)));
-      apronLabel.setText(formatReadable(apronLabel, analysis.getPopperMediaFiles(PopperScreen.Menu)));
-      dmdLabel.setText(formatReadable(dmdLabel, analysis.getPopperMediaFiles(PopperScreen.DMD)));
-      helpLabel.setText(formatReadable(helpLabel, analysis.getPopperMediaFiles(PopperScreen.GameHelp)));
-      infoLabel.setText(formatReadable(infoLabel, analysis.getPopperMediaFiles(PopperScreen.GameInfo)));
-      loadingLabel.setText(formatReadable(loadingLabel, analysis.getPopperMediaFiles(PopperScreen.Loading)));
-      playfieldLabel.setText(formatReadable(playfieldLabel, analysis.getPopperMediaFiles(PopperScreen.PlayField)));
-      topperLabel.setText(formatReadable(topperLabel, analysis.getPopperMediaFiles(PopperScreen.Topper)));
-      wheelLabel.setText(formatReadable(wheelLabel, analysis.getPopperMediaFiles(PopperScreen.Wheel)));
+      audioLabel.setText(formatReadable(audioLabel, analysis.getPopperMediaFiles(VPinScreen.Audio)));
+      audioLaunchLabel.setText(formatReadable(audioLaunchLabel, analysis.getPopperMediaFiles(VPinScreen.AudioLaunch)));
+      backglassLabel.setText(formatReadable(backglassLabel, analysis.getPopperMediaFiles(VPinScreen.BackGlass)));
+      apronLabel.setText(formatReadable(apronLabel, analysis.getPopperMediaFiles(VPinScreen.Menu)));
+      dmdLabel.setText(formatReadable(dmdLabel, analysis.getPopperMediaFiles(VPinScreen.DMD)));
+      helpLabel.setText(formatReadable(helpLabel, analysis.getPopperMediaFiles(VPinScreen.GameHelp)));
+      infoLabel.setText(formatReadable(infoLabel, analysis.getPopperMediaFiles(VPinScreen.GameInfo)));
+      loadingLabel.setText(formatReadable(loadingLabel, analysis.getPopperMediaFiles(VPinScreen.Loading)));
+      playfieldLabel.setText(formatReadable(playfieldLabel, analysis.getPopperMediaFiles(VPinScreen.PlayField)));
+      topperLabel.setText(formatReadable(topperLabel, analysis.getPopperMediaFiles(VPinScreen.Topper)));
+      wheelLabel.setText(formatReadable(wheelLabel, analysis.getPopperMediaFiles(VPinScreen.Wheel)));
     }
   }
 

@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -84,7 +84,7 @@ public class CardGenerationPreferencesController implements Initializable {
 
     cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
 
-    popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", PopperScreen.Other2.name(), PopperScreen.GameInfo.name(), PopperScreen.GameHelp.name())));
+    popperScreenCombo.setItems(FXCollections.observableList(Arrays.asList("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name())));
     popperScreenCombo.setValue(cardSettings.getPopperScreen() != null ? cardSettings.getPopperScreen() : "");
     popperScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       cardSettings.setPopperScreen(newValue);
@@ -141,7 +141,7 @@ public class CardGenerationPreferencesController implements Initializable {
     highscoreCardDuration.setDisable(selectedItem == null);
 
     if (!StringUtils.isEmpty(selectedItem)) {
-      PinUPControl fn = client.getPinUPPopperService().getPinUPControlFor(PopperScreen.valueOf(selectedItem));
+      FrontendControl fn = client.getFrontendService().getPinUPControlFor(VPinScreen.valueOf(selectedItem));
 
       String msg = null;
       if (fn != null) {
@@ -165,11 +165,11 @@ public class CardGenerationPreferencesController implements Initializable {
     if (menuPupPack != null && popperScreenCombo.getValue() != null) {
       String value = popperScreenCombo.getValue();
       if (!StringUtils.isEmpty(value)) {
-        PopperScreen screen = PopperScreen.valueOf(value);
+        VPinScreen screen = VPinScreen.valueOf(value);
         transparencyHelp.setVisible(
-            (screen.equals(PopperScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
-                (screen.equals(PopperScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
-                (screen.equals(PopperScreen.Other2) && !menuPupPack.isOther2Transparency())
+            (screen.equals(VPinScreen.GameHelp) && !menuPupPack.isHelpTransparency()) ||
+                (screen.equals(VPinScreen.GameInfo) && !menuPupPack.isInfoTransparency()) ||
+                (screen.equals(VPinScreen.Other2) && !menuPupPack.isOther2Transparency())
         );
       }
     }

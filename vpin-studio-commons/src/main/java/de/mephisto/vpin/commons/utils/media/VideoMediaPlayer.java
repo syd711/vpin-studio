@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
@@ -16,7 +16,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
   public static final int MEDIA_SIZE = 280;
 
-  private PopperScreen screen;
+  private VPinScreen screen;
 
   private final String mimeType;
 
@@ -35,10 +35,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.dialogRendering = true;
 
     if (screenName.equalsIgnoreCase("PlayField")) {
-      screen = PopperScreen.PlayField;
+      screen = VPinScreen.PlayField;
     }
     else if (screenName.equalsIgnoreCase("Loading")) {
-      screen = PopperScreen.Loading;
+      screen = VPinScreen.Loading;
     }
 
     this.render();
@@ -51,10 +51,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.dialogRendering = dialogRendering;
 
     if (mediaItem.getScreen().equalsIgnoreCase("PlayField")) {
-      screen = PopperScreen.PlayField;
+      screen = VPinScreen.PlayField;
     }
     else if (mediaItem.getScreen().equalsIgnoreCase("Loading")) {
-      screen = PopperScreen.Loading;
+      screen = VPinScreen.Loading;
     }
 
     this.render();
@@ -116,7 +116,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       prefHeight = prefHeight - 32;
     }
 
-    if (PopperScreen.PlayField.equals(screen)) {
+    if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         mediaView.setFitWidth(prefHeight);
@@ -141,7 +141,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         mediaView.setFitHeight(prefHeight);
       }
     }
-    else if (PopperScreen.Loading.equals(screen)) {
+    else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         mediaView.setFitWidth(prefHeight);
@@ -159,7 +159,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public void scaleForDialog(String screen) {
-    if (PopperScreen.PlayField.name().equals(screen) || PopperScreen.Loading.name().equals(screen)) {
+    if (VPinScreen.PlayField.name().equals(screen) || VPinScreen.Loading.name().equals(screen)) {
       mediaView.setFitWidth(parent.getPrefWidth() - 300);
       mediaView.setFitHeight(parent.getPrefHeight() - 300);
     }

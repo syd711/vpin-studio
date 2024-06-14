@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -27,13 +27,13 @@ public class VPXCommandLineService {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
     File gameFile = game.getGameFile();
     File vpxExe = game.getEmulator().getVPXExe();
 
-    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+    TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
     if(altExe != null) {
       vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
@@ -100,7 +100,7 @@ public class VPXCommandLineService {
   }
 
   public boolean launch() {
-    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getVPXExe();
     try {
       List<String> strings = Arrays.asList(vpxExe.getName());

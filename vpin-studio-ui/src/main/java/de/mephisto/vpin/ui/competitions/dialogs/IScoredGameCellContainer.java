@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -35,7 +35,7 @@ public class IScoredGameCellContainer extends HBox {
 
     InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (subscription.getGameId() > 0) {
-      InputStream gameItem = client.getGameMediaItem(subscription.getGameId(), PopperScreen.Wheel);
+      InputStream gameItem = client.getGameMediaItem(subscription.getGameId(), VPinScreen.Wheel);
       if (gameItem != null) {
         gameMediaItem = gameItem;
       }

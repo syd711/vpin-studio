@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.popper.Playlist;
+import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
 import org.slf4j.Logger;

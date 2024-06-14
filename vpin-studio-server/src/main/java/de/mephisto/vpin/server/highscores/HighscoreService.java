@@ -15,7 +15,7 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -58,7 +58,7 @@ public class HighscoreService implements InitializingBean {
   private NVRamService nvRamService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private ScoreFilter scoreFilter;
@@ -259,7 +259,7 @@ public class HighscoreService implements InitializingBean {
       List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
-          Game game = pinUPConnector.getGame(score.getGameId());
+          Game game = frontendService.getGame(score.getGameId());
           if (game == null) {
             deleteScores(score.getGameId(), true);
             continue;
@@ -616,7 +616,7 @@ public class HighscoreService implements InitializingBean {
     try {
       List<File> vpRegFiles = new ArrayList<>();
       vpRegEntries.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File vpRegFile = gameEmulator.getVPRegFile();
         if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
@@ -636,7 +636,7 @@ public class HighscoreService implements InitializingBean {
   public void refreshHighscoreFiles() {
     try {
       highscoreFiles.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
         if (files != null) {

@@ -4,14 +4,18 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
+import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.*;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import javafx.application.Platform;
@@ -22,12 +26,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PopperStatusChangeListenerImpl implements InitializingBean, PopperStatusChangeListener {
+public class PopperStatusChangeListenerImpl implements InitializingBean, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperStatusChangeListenerImpl.class);
   public static final int EXIT_DELAY = 6000;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private DiscordService discordService;
@@ -85,13 +89,13 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
 
       String popperScreen = cardSettings.getPopperScreen();
       if (popperScreen != null && !popperScreen.isEmpty()) {
-        PopperScreen screen = PopperScreen.valueOf(popperScreen);
+        VPinScreen screen = VPinScreen.valueOf(popperScreen);
         GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
-            PinUPPlayerDisplay pupPlayerDisplay = null;
+            FrontendPlayerDisplay pupPlayerDisplay = null;
             if (cardSettings.isNotificationOnPopperScreen()) {
-              pupPlayerDisplay = popperService.getPupPlayerDisplay(screen);
+              pupPlayerDisplay = frontendStatusService.getPupPlayerDisplay(screen);
             }
             ServerFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
           });
@@ -122,7 +126,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   }
 
   @Override
-  public void popperLaunched() {
+  public void frontendLaunched() {
     LOG.info("Popper launch event");
     int activeTableId = (int) preferencesService.getPreferenceValue(PreferenceNames.ACTIVE_GAME);
     if (activeTableId >= 0) {
@@ -134,19 +138,19 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   }
 
   @Override
-  public void popperExited() {
+  public void frontendExited() {
     LOG.info("Popper exit event");
     discordService.setActivity(null);
   }
 
   @Override
-  public void popperRestarted() {
+  public void frontendRestarted() {
     LOG.info("Popper restarted event");
     discordService.setActivity(null);
   }
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    popperService.addPopperStatusChangeListener(this);
+    frontendStatusService.addPopperStatusChangeListener(this);
   }
 }

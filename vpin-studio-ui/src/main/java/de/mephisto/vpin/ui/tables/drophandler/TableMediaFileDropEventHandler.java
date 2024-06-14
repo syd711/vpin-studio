@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
@@ -26,18 +26,18 @@ import java.util.stream.Collectors;
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(TableMediaFileDropEventHandler.class);
 
-  private final PopperScreen screen;
+  private final VPinScreen screen;
   private final List<String> suffixes;
   private TableOverviewController tablesController;
   private TableAssetManagerDialogController dialogController;
 
-  public TableMediaFileDropEventHandler(TableOverviewController tablesController, PopperScreen screen, String... suffix) {
+  public TableMediaFileDropEventHandler(TableOverviewController tablesController, VPinScreen screen, String... suffix) {
     this.tablesController = tablesController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);
   }
 
-  public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, PopperScreen screen, String... suffix) {
+  public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, VPinScreen screen, String... suffix) {
     this.dialogController = dialogController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);

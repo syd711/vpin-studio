@@ -6,10 +6,10 @@ import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.commons.utils.VPXKeyManager;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import javafx.application.Platform;
@@ -157,20 +157,20 @@ public class StateMananger implements NativeKeyListener {
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
   }
 
-  public void setControls(PinUPControls pinUPControls, PauseMenuSettings pauseMenuSettings) {
+  public void setControls(FrontendControls frontendControls, PauseMenuSettings pauseMenuSettings) {
     VPXKeyManager.getInstance().reloadKeyBinding();
 
     LEFT.clear();
     RIGHT.clear();
     ENTER.clear();
 
-    LEFT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
+    LEFT.addAll(Arrays.asList(frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_PRIOR), KeyEvent.VK_LEFT, KeyEvent.VK_KP_LEFT));
     LOG.info("LEFT codes: " + String.join(", ", LEFT.stream().map(String::valueOf).collect(Collectors.toList())));
 
-    RIGHT.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
+    RIGHT.addAll(Arrays.asList(frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_NEXT), KeyEvent.VK_RIGHT, KeyEvent.VK_KP_RIGHT));
     LOG.info("RIGHT codes: " + String.join(", ", RIGHT.stream().map(String::valueOf).collect(Collectors.toList())));
 
-    ENTER.addAll(Arrays.asList(pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
+    ENTER.addAll(Arrays.asList(frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_START), KeyEvent.VK_1, KeyEvent.VK_ENTER));
     LOG.info("LEFT codes: " + String.join(", ", ENTER.stream().map(String::valueOf).collect(Collectors.toList())));
 
     RECORDED_START = 0;
@@ -194,7 +194,7 @@ public class StateMananger implements NativeKeyListener {
     start = VPXKeyManager.getInstance().getBinding(VPXKeyManager.StartGameKey);
   }
 
-  public void setGame(GameRepresentation game, GameStatus status, VpsTable table, PopperScreen cardScreen, PinUPPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(GameRepresentation game, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
     GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
     menuController.setGame(game, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
     running = true;

@@ -170,7 +170,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       // and calculate installed and unmapped in the non blocking thread
       this.installed = 0;
       this.unmapped = 0;
-      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         for (VpsTable vpsTable : vpsTables) {
           GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
           if (gameByVpsTable != null) {
@@ -224,7 +224,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     installedColumn.setCellValueFactory(cellData -> {
       VpsTable value = cellData.getValue();
-      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
         if (gameByVpsTable != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
@@ -402,7 +402,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     // run in a dedicated thread as getGameByVpsTable() can block UI
     new Thread(() -> {
       final GameRepresentation gameByVpsTable;
-      if (newSelection.isPresent() && !client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (newSelection.isPresent() && !client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
       } else {
         gameByVpsTable = null;

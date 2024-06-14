@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSource;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;

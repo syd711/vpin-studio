@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableScanProgressModel;
@@ -102,7 +102,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
   @FXML
   private void onEMHighscore() {
-    GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.getEmulatorId());
+    GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.getEmulatorId());
     File folder = new File(emulatorRepresentation.getUserDirectory());
     try {
       Desktop.getDesktop().open(folder);

@@ -49,7 +49,7 @@ public class BackglassPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
+      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
       noMatchFound.setVisible(gameEmulators.isEmpty());
       if (!gameEmulators.isEmpty()) {
         emulatorRepresentation = gameEmulators.get(0);

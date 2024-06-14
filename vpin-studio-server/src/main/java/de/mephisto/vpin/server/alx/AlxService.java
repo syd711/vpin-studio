@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.server.highscores.HighscoreVersion;
 import de.mephisto.vpin.server.highscores.HighscoreVersionRepository;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 public class AlxService {
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private HighscoreVersionRepository highscoreVersionRepository;
@@ -24,13 +24,13 @@ public class AlxService {
   public AlxSummary getAlxSummary(int gameId) {
     AlxSummary summary = new AlxSummary();
 
-    summary.setStartDate(pinUPConnector.getStartDate());
+    summary.setStartDate(frontendService.getStartDate());
 
     List<TableAlxEntry> alxData = new ArrayList<>();
     if (gameId > 0) {
-      alxData = pinUPConnector.getAlxData(gameId);
+      alxData = frontendService.getAlxData(gameId);
     } else {
-      alxData = pinUPConnector.getAlxData();
+      alxData = frontendService.getAlxData();
     }
 
     for (TableAlxEntry entry : alxData) {

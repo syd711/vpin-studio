@@ -8,7 +8,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
@@ -31,7 +31,7 @@ public class TextEditService {
   private final static Logger LOG = LoggerFactory.getLogger(TextEditService.class);
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private GameService gameService;
@@ -49,7 +49,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
           Path filePath = init.toPath();
@@ -63,11 +63,11 @@ public class TextEditService {
           break;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = pinUPConnector.getGame(textFile.getFileId());
+          Game game = frontendService.getGame(textFile.getFileId());
           File gameFile = game.getGameFile();
           String vbs = VPXUtil.exportVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
           textFile.setLastModified(new Date(gameFile.lastModified()));
@@ -94,7 +94,7 @@ public class TextEditService {
       VPinFile vPinFile = textFile.getvPinFile();
       switch (vPinFile) {
         case DmdDeviceIni: {
-          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File iniFile = new File(mameFolder, "DmdDevice.ini");
           File backup = new File(mameFolder, "DmdDevice.ini.bak");
@@ -115,12 +115,12 @@ public class TextEditService {
           return textFile;
         }
         case VPMAliasTxt: {
-          GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+          GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           mameRomAliasService.saveAliasFile(defaultGameEmulator, textFile.getContent());
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
-          Game game = pinUPConnector.getGame(textFile.getFileId());
+          Game game = frontendService.getGame(textFile.getFileId());
           if(game != null) {
             File gameFile = game.getGameFile();
             VPXUtil.importVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());

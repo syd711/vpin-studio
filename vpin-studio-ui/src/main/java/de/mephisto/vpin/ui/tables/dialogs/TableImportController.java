@@ -81,7 +81,7 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    GameList importableTables = client.getPinUPPopperService().getImportableTables();
+    GameList importableTables = client.getFrontendService().getImportableTables();
     saveBtn.setDisable(importableTables.getItems().isEmpty());
 
     if (importableTables.getItems().isEmpty()) {

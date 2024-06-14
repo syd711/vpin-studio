@@ -1,7 +1,7 @@
 package de.mephisto.vpin.tablemanager;
 
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -382,13 +382,13 @@ public class MenuController implements Initializable {
     if (o instanceof GameRepresentation) {
       GameRepresentation game = (GameRepresentation) o;
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item == null) {
         text = game.getGameDisplayName();
         wheel = new Image(Menu.class.getResourceAsStream("avatar-blank.png"));
       }
       else {
-        ByteArrayInputStream gameMediaItem = Menu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = Menu.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         wheel = new Image(gameMediaItem);
       }
     }

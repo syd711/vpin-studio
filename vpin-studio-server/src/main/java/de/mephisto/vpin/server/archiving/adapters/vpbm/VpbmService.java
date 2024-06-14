@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
@@ -40,7 +40,7 @@ public class VpbmService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   public File getArchiveFolder() {
     return new File(getArchivesFolder(), "backups/Visual Pinball X/");
@@ -76,7 +76,7 @@ public class VpbmService implements InitializingBean {
 
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
-    Game game = pinUPConnector.getGameByFilename(vpxName);
+    Game game = frontendService.getGameByFilename(vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
       File exportFile = new File(getExportFolder(), tablename);
@@ -222,7 +222,7 @@ public class VpbmService implements InitializingBean {
 
       File vPinballPath = new File(config.getVpinballBasePath());
       if (!vPinballPath.exists()) {
-        File vpBase = pinUPConnector.getDefaultGameEmulator().getInstallationFolder().getParentFile();
+        File vpBase = frontendService.getDefaultGameEmulator().getInstallationFolder().getParentFile();
         config.setVpinballBasePath(vpBase.getAbsolutePath());
         LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
         dirty = true;

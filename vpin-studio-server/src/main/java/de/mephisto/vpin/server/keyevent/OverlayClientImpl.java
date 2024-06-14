@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.server.assets.Asset;
@@ -24,7 +24,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -184,7 +184,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen) {
     try {
       Game game = gameService.getGame(id);
       GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);

@@ -1,8 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.PopperScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
@@ -100,7 +99,7 @@ public class PopperScreenController implements Initializable {
 
   private void showOnDisplay(PopperScreenAsset asset) throws IOException {
     Image image;
-    PinUPPlayerDisplay display = asset.getDisplay();
+    FrontendPlayerDisplay display = asset.getDisplay();
     String mimeType = asset.getMimeType();
 
     LOG.info("Showing asset on display \"" + display + "\"");

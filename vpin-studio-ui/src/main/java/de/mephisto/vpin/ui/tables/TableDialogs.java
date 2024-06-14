@@ -16,8 +16,8 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -57,7 +57,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDialogs {
 
-  public static void directAssetUpload(Stage stage, GameRepresentation game, PopperScreen screen) {
+  public static void directAssetUpload(Stage stage, GameRepresentation game, VPinScreen screen) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Media");
     fileChooser.getExtensionFilters().addAll(
@@ -89,7 +89,7 @@ public class TableDialogs {
   }
 
   public static void onRomUploads(File file) {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         boolean uploaded = TableDialogs.openRomUploadDialog(file);
         if (uploaded) {
@@ -246,7 +246,7 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+  public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
     GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
     GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
     GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
@@ -414,7 +414,7 @@ public class TableDialogs {
   }
 
   public static void openAutoMatch(GameRepresentation game) {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         onOpenAutoMatch(game);
       }

@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 
@@ -38,7 +38,7 @@ public interface OverlayClient {
 
   ScoreSummaryRepresentation getRecentScores(int count);
 
-  ByteArrayInputStream getGameMediaItem(int id, PopperScreen screen);
+  ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen);
 
   PreferenceEntryRepresentation getPreference(String key);
 

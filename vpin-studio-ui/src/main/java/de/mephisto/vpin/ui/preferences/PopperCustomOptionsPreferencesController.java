@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DatabaseLockException;
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
+import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;
@@ -98,12 +98,12 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   @FXML
   private CheckBox volumeChange;
 
-  private PopperCustomOptions customOptions;
+  private FrontendCustomOptions customOptions;
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    customOptions = Studio.client.getPinUPPopperService().getCustomOptions();
+    customOptions = Studio.client.getFrontendService().getCustomOptions();
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0);
     delayReturn.setValueFactory(factory);
@@ -276,13 +276,13 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
 
   private void save() {
     try {
-      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+          Studio.client.getFrontendService().saveCustomOptions(customOptions);
         }
         return;
       }
-      Studio.client.getPinUPPopperService().saveCustomOptions(customOptions);
+      Studio.client.getFrontendService().saveCustomOptions(customOptions);
 
     } catch (DatabaseLockException e) {
       LOG.error("Failed to save custom options: " + e.getMessage(), e);

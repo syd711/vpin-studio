@@ -3,10 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -25,10 +24,10 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
 
   private final Iterator<File> iterator;
   private final int gameId;
-  private final PopperScreen screen;
+  private final VPinScreen screen;
   private final List<File> files;
 
-  public TableMediaUploadProgressModel(int gameId, String title, List<File> files, PopperScreen screen) {
+  public TableMediaUploadProgressModel(int gameId, String title, List<File> files, VPinScreen screen) {
     super(title);
     this.gameId = gameId;
     this.files = files;
@@ -65,7 +64,7 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getPinUPPopperService().uploadMedia(next, gameId, screen, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getGameMediaService().uploadMedia(next, gameId, screen, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

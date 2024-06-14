@@ -7,7 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.Playlist;
+import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 
 public class TableOverviewPredicateFactory {

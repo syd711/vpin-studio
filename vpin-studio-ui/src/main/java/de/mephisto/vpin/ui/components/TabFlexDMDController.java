@@ -25,7 +25,7 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getMameDirectory());
     openFolder(folder);
   }
@@ -35,7 +35,7 @@ public class TabFlexDMDController extends AbstractComponentTab implements Initia
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+        GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
         File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");

@@ -4,7 +4,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,7 +23,7 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Override
   public void competitionChanged(@NonNull Competition competition) {
@@ -33,10 +33,10 @@ public class CompetitionChangeListenerImpl extends DefaultCompetitionChangeListe
     //the data has already been saved, check other changes, like the badge
     if (game != null && active) {
       if (competition.getBadge() != null) {
-        popperService.augmentWheel(game, competition.getBadge());
+        frontendStatusService.augmentWheel(game, competition.getBadge());
       }
     }
-    runCheckedDeAugmentation(competitionService, gameService, popperService);
+    runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
   }
 
   @Override

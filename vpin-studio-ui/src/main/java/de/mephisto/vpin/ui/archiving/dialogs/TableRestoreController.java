@@ -78,7 +78,7 @@ public class TableRestoreController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    List<GameEmulatorRepresentation> emulators = client.getPinUPPopperService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getVpxGameEmulators();
     ObservableList<GameEmulatorRepresentation> data = FXCollections.observableList(emulators);
     this.emulatorCombo.setItems(data);
     this.emulatorCombo.setValue(data.get(0));

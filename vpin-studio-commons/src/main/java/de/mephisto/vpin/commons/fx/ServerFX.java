@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -257,7 +257,7 @@ public class ServerFX extends Application {
     });
   }
 
-  public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable PinUPPlayerDisplay display, String mimeType, File file) {
+  public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable FrontendPlayerDisplay display, String mimeType, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {

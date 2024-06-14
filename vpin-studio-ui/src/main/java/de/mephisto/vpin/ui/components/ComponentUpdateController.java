@@ -76,7 +76,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
   @FXML
   private void onInstall() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         runInstall();
       }

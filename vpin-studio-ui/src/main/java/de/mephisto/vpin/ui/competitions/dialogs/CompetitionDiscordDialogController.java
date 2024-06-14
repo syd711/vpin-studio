@@ -16,7 +16,7 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -173,9 +173,9 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
 
     if (game != null) {
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation mediaItem = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation mediaItem = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (mediaItem != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);
         iconPreview.setImage(image);
 

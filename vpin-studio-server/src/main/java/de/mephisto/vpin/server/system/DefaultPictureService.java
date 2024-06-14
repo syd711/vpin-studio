@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -73,7 +73,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
       }
     }
 
-    GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.BackGlass);
+    GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.BackGlass);
     if (backGlassItem != null && backGlassItem.getFile().exists()) {
       String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {

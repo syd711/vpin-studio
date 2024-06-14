@@ -31,7 +31,7 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onRegister() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     if(defaultGameEmulator.getBackglassServerFolder() != null) {
       File folder = new File(defaultGameEmulator.getBackglassServerFolder());
       File exe = new File(folder, "B2SBackglassServerRegisterApp.exe");
@@ -45,7 +45,7 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     if(defaultGameEmulator.getBackglassServerFolder() != null) {
       File folder = new File(defaultGameEmulator.getBackglassServerFolder());
       openFolder(folder);

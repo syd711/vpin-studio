@@ -14,9 +14,9 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
-import de.mephisto.vpin.restclient.popper.GameType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.GameType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -286,7 +286,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAssetManager(ActionEvent e) {
     this.onCancelClick(e);
     Platform.runLater(() -> {
-      TableDialogs.openTableAssetsDialog(overviewController, this.game, PopperScreen.BackGlass);
+      TableDialogs.openTableAssetsDialog(overviewController, this.game, VPinScreen.BackGlass);
     });
   }
 
@@ -309,7 +309,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onAutoMatch() {
     boolean autofill = this.autoFillCheckbox.isSelected();
-    GameVpsMatch vpsMatch = client.getPinUPPopperService().autoMatch(game.getId(), autofill);
+    GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), autofill);
     if (vpsMatch != null) {
 
       String vpsTableMappingField = serverSettings.getMappingVpsTableId();
@@ -353,7 +353,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAutoFill() {
     try {
       LOG.info("Auto-fill table version " + tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId()));
-      TableDetails td = client.getPinUPPopperService().autoFillTableDetails(game.getId(), tableDetails);
+      TableDetails td = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
       if (td != null) {
         gameTypeCombo.setValue(td.getGameType());
         gameTheme.setText(td.getGameTheme());
@@ -446,7 +446,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVersionFix(ActionEvent e) {
-    TableDetails td = client.getPinUPPopperService().getTableDetails(game.getId());
+    TableDetails td = client.getFrontendService().getTableDetails(game.getId());
     String gVersion = game.getExtVersion();
     if (StringUtils.isEmpty(gVersion)) {
       VpsTableVersion value = this.tableVersionsCombo.getValue();
@@ -526,7 +526,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private String findDuplicate(String updated) {
-    GameList importableTables = client.getPinUPPopperService().getImportableTables();
+    GameList importableTables = client.getFrontendService().getImportableTables();
     List<GameListItem> items = importableTables.getItems();
     for (GameListItem item : items) {
       String name = item.getName();
@@ -579,7 +579,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (closeDialog) {
         stage.close();
       }
-      tableDetails = Studio.client.getPinUPPopperService().saveTableDetails(this.tableDetails, game.getId());
+      tableDetails = Studio.client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
       if (game.isVpxGame()) {
@@ -661,7 +661,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.serverSettings = overviewController.getServerSettings();
     this.uiSettings = overviewController.getUISettings();
     scoringDB = client.getSystemService().getScoringDatabase();
-    tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+    tableDetails = Studio.client.getFrontendService().getTableDetails(game.getId());
     highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
     if (game.isVpxGame()) {

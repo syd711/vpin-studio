@@ -88,7 +88,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onDmdDevice() {
     if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File ini = new File(folder, "DmdDevice.ini");
       Dialogs.editFile(ini);
@@ -115,7 +115,7 @@ public class TablesSidebarDMDController implements Initializable {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
         try {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
           File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
           if (!file.exists()) {
             WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");

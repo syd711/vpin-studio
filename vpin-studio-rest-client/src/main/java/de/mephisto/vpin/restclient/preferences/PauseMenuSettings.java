@@ -1,14 +1,14 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PauseMenuSettings extends JsonSettings {
   private String key;
   private boolean useOverlayKey;
   private String authorAllowList;
   private int inputDebounceMs = 0;
-  private PopperScreen videoScreen = PopperScreen.Topper;
+  private VPinScreen videoScreen = VPinScreen.Topper;
 
   private int customLaunchKey;
   private int customStartKey;
@@ -68,11 +68,11 @@ public class PauseMenuSettings extends JsonSettings {
     this.style = style;
   }
 
-  public PopperScreen getVideoScreen() {
+  public VPinScreen getVideoScreen() {
     return videoScreen;
   }
 
-  public void setVideoScreen(PopperScreen videoScreen) {
+  public void setVideoScreen(VPinScreen videoScreen) {
     this.videoScreen = videoScreen;
   }
 

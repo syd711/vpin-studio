@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.archiving.adapters;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpa.TableBackupAdapterVpa;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.TableBackupAdapterVpbm;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,14 +20,14 @@ public class TableBackupAdapterFactory {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private VpbmService vpbmService;
 
   public TableBackupAdapter createAdapter(@NonNull ArchiveSourceAdapter archiveSourceAdapter, @NonNull Game game) {
     ArchiveType archiveType = systemService.getArchiveType();
-    TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+    TableDetails tableDetails = frontendService.getTableDetails(game.getId());
 
     switch (archiveType) {
       case VPA: {

@@ -6,7 +6,7 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
@@ -465,17 +465,17 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
 
-      List<PopperScreen> popperScreens = new ArrayList<>(Arrays.asList(PopperScreen.values()));
-      popperScreens.remove(PopperScreen.Audio);
-      popperScreens.remove(PopperScreen.AudioLaunch);
-      popperScreens.remove(PopperScreen.GameInfo);
-      popperScreens.remove(PopperScreen.GameHelp);
-      popperScreens.remove(PopperScreen.DMD);
-      popperScreens.remove(PopperScreen.Wheel);
-      popperScreens.remove(PopperScreen.Other2);
-      popperScreens.remove(PopperScreen.PlayField);
-      popperScreens.remove(PopperScreen.Loading);
-      screensComboBox.setItems(FXCollections.observableList(popperScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
+      List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
+      VPinScreens.remove(VPinScreen.Audio);
+      VPinScreens.remove(VPinScreen.AudioLaunch);
+      VPinScreens.remove(VPinScreen.GameInfo);
+      VPinScreens.remove(VPinScreen.GameHelp);
+      VPinScreens.remove(VPinScreen.DMD);
+      VPinScreens.remove(VPinScreen.Wheel);
+      VPinScreens.remove(VPinScreen.Other2);
+      VPinScreens.remove(VPinScreen.PlayField);
+      VPinScreens.remove(VPinScreen.Loading);
+      screensComboBox.setItems(FXCollections.observableList(VPinScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
       screensComboBox.setDisable(!getCardTemplate().isOverlayMode());
 
       templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
@@ -674,7 +674,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
     GameRepresentation selectedItem = highscoreCardsController.getSelectedTable();
     if (selectedItem != null && getCardTemplate().getOverlayScreen() != null) {
-      PopperScreen overlayScreen = PopperScreen.valueOf(getCardTemplate().getOverlayScreen());
+      VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
       GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
