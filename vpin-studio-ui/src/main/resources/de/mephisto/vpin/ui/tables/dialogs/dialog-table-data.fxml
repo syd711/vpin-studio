@@ -615,7 +615,7 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="customTab" closable="false" text=" Customization ">
+                        <Tab fx:id="customizationTab" closable="false" text=" Customization ">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>

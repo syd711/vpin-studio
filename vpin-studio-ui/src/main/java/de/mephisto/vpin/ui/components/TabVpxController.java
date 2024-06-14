@@ -43,7 +43,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
   private void onStop() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getFrontendService().terminatePopper();
+      client.getFrontendService().terminateFrontend();
     }
   }
 

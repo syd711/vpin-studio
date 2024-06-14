@@ -14,13 +14,13 @@
    <top>
       <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
          <children>
-            <Label styleClass="preference-title" text="PINUP POPPER PREFERENCES" textFill="WHITE" />
+            <Label styleClass="preference-title" text="FRONTEND PREFERENCES" textFill="WHITE" />
             <Label styleClass="preference-subtitle" text="Reset Options">
                <VBox.margin>
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="If configured, the reset event will kill all PinUP Popper process (including VPX) and restart the UI. " textFill="WHITE">
+            <Label styleClass="preference-description" text="If configured, the reset event will kill all frontend processes (including VPX) and restart the UI. " textFill="WHITE">
                <VBox.margin>
                   <Insets bottom="6.0" top="12.0" />
                </VBox.margin>

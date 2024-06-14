@@ -89,7 +89,7 @@ public class TableDialogs {
   }
 
   public static void onRomUploads(File file) {
-    if (client.getFrontendService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         boolean uploaded = TableDialogs.openRomUploadDialog(file);
         if (uploaded) {
@@ -414,7 +414,7 @@ public class TableDialogs {
   }
 
   public static void openAutoMatch(GameRepresentation game) {
-    if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
+    if (Studio.client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         onOpenAutoMatch(game);
       }

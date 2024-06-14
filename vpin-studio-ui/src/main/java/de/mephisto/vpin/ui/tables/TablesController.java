@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -93,6 +94,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setInitialController("scene-tables.fxml", this, root);
     EventManager.getInstance().addListener(this);
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.equals(FrontendType.Popper)) {
+      tabPane.getTabs().remove(tableRepositoryTab);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(TableOverviewController.class.getResource("scene-tables-overview.fxml"));
@@ -269,15 +275,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (!StringUtils.isEmpty(rom)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) { 
+        if (id != g.getId()) { 
           this.tableOverviewController.reload(g, false);
         }
       }
-    }  
+    }
     if (!StringUtils.isEmpty(gameName)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) { 
+        if (id != g.getId()) { 
           this.tableOverviewController.reload(g, false);
         }
       }

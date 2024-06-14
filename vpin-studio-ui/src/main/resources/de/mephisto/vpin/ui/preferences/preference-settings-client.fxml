@@ -39,7 +39,7 @@
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the version stored in PinUP Popper" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
                   <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
                      <font>
@@ -154,7 +154,7 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="138.0" styleClass="preference-description" text="Using windows network share (e.g. \\localhost\vPinball) allows to to access remote folders of your VPin." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="942.0" styleClass="preference-description" text="Note that this feature is only supported for Windows clients. The share should be the root folder of your Baller installation." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="942.0" styleClass="preference-description" text="Note that this feature is only supported for Windows clients. The share should be the root folder of the frontend installation." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="964.0" styleClass="preference-description" text="You have to restart the Studio after applying changes." textFill="WHITE" />
                   <GridPane alignment="BASELINE_RIGHT">
                      <columnConstraints>

@@ -9,6 +9,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -179,19 +180,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextArea gPlayLog;
   
   @FXML
-  private Tab scoreDataTab;
-  @FXML
-  private Tab metaDataTab;
-  @FXML
-  private Tab customTab;
-  @FXML
-  private Tab extrasTab;
-  @FXML
-  private Tab screensTab;
-  @FXML
-  private Tab statisticsTab;
-
-  @FXML
   private Slider volumeSlider;
 
   @FXML
@@ -249,6 +237,21 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Label hintCustom5;
   @FXML
   private Label hintWebId;
+
+
+  @FXML
+  private Tab metaDataTab;
+  @FXML
+  private Tab extrasTab;
+  @FXML
+  private Tab customizationTab;
+  @FXML
+  private Tab scoreDataTab;
+  @FXML
+  private Tab screensTab;
+  @FXML
+  private Tab statisticsTab;
+
 
   @FXML
   private VBox detailsRoot;
@@ -601,6 +604,15 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    if (!frontendType.equals(FrontendType.Popper)) {
+      tabPane.getTabs().remove(metaDataTab);
+      tabPane.getTabs().remove(customizationTab);
+      tabPane.getTabs().remove(extrasTab);
+      tabPane.getTabs().remove(statisticsTab);
+    }
+
     hintCustom2.setVisible(false);
     hintCustom3.setVisible(false);
     hintCustom4.setVisible(false);
@@ -610,15 +622,21 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
-      Parent builtInRoot = loader.load();
-      tableStatisticsController = loader.getController();
-      statisticsTab.setContent(builtInRoot);
+    if (frontendType.equals(FrontendType.Popper)) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
+        Parent builtInRoot = loader.load();
+        tableStatisticsController = loader.getController();
+        statisticsTab.setContent(builtInRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load dialog-table-data-tab-statistics.fxml: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed to load dialog-table-data-tab-statistics.fxml: " + e.getMessage(), e);
+    else {
+
     }
+
 
     try {
       FXMLLoader loader = new FXMLLoader(TableDataTabScreensController.class.getResource("dialog-table-data-tab-screens.fxml"));
@@ -955,7 +973,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       // TAB Meta Data
 
       metaDataTab.setDisable(true);
-      customTab.setDisable(true);
+      customizationTab.setDisable(true);
       extrasTab.setDisable(true);
       screensTab.setDisable(true);
     }

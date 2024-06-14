@@ -1,36 +1,30 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.DatabaseLockException;
-import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameList;
+import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
 
-import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
- * Popper
+ * Frontend
  ********************************************************************************************************************/
 public class FrontendServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
-  private static final int CACHE_SIZE = 300;
   private static final String API_SEGMENT_FRONTEND = "frontend";
 
   private List<TableAssetSearch> cache = new ArrayList<>();
+
+  private FrontendType frontendType;
 
   public FrontendServiceClient(VPinStudioClient client) {
     super(client);
@@ -42,7 +36,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public FrontendType getFrontendType() {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/type", FrontendType.class);
+    if (frontendType == null) {
+      frontendType = getRestClient().get(API + API_SEGMENT_FRONTEND + "/type", FrontendType.class);
+    }
+    return frontendType;
   }
 
   public GameList getImportableTables() {
@@ -70,7 +67,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {
     List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.size()>0? gameEmulators.get(0): null;
+    return gameEmulators.size() > 0 ? gameEmulators.get(0) : null;
   }
 
   public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
@@ -102,15 +99,15 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/pincontrols", FrontendControls.class);
   }
 
-  public boolean isPinUPPopperRunning() {
+  public boolean isFrontendRunning() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/running", Boolean.class);
   }
 
-  public boolean terminatePopper() {
+  public boolean terminateFrontend() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/terminate", Boolean.class);
   }
 
-  public boolean restartPopper() {
+  public boolean restartFrontend() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/restart", Boolean.class);
   }
 
