@@ -94,10 +94,6 @@ public class TableDataTabScoreDataController implements Initializable {
   private GameRepresentation game;
   private TableDetails tableDetails;
 
-  public GameDetailsRepresentation getGameDetails() {
-    return gameDetails;
-  }
-
   @FXML
   private void onTableScan() {
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));

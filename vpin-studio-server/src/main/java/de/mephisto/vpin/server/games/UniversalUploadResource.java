@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
@@ -184,7 +185,9 @@ public class UniversalUploadResource {
       FileUtils.cloneFile(original.getIniFile(), target.getName());
       FileUtils.cloneFile(original.getResFile(), target.getName());
 
-      tableDetails = popperService.autoMatch(importedGame, true);
+      popperService.autoMatch(importedGame, true);
+      
+      tableDetails = popperService.getTableDetails(importedGame.getId());
       if (tableDetails != null && autoFill) {
         popperService.autoFill(importedGame, tableDetails, true, false);
       }
@@ -258,7 +261,9 @@ public class UniversalUploadResource {
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
 
-      tableDetails = popperService.autoMatch(game, true);
+      popperService.autoMatch(game, true);
+
+      tableDetails = popperService.getTableDetails(game.getId());
       if (tableDetails != null && autoFill) {
         popperService.autoFill(game, tableDetails, true, false);
       }
@@ -291,10 +296,13 @@ public class UniversalUploadResource {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        TableDetails tableDetails = popperService.autoMatch(game, true);
+        popperService.autoMatch(game, true);
+
+        TableDetails tableDetails = popperService.getTableDetails(game.getId());
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {
           popperService.autoFill(game, tableDetails, true, false);
         }
+
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
       }

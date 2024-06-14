@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.server.games.Game;
 
 @Service
 @Qualifier("PinballX")
@@ -27,19 +26,21 @@ public class PinballXConnector extends BaseConnector {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
- /** The list of parsed Games from XML database */
-  protected List<Game> games;
-
-  protected Map<Integer, TableDetails> tabledetails;
+  private Map<String, TableDetails> mapTableDetails;
 
   @Override
   public void initialize(ServerSettings settings) {
   }
-    
+  
+  protected File resolvePinballXFolder() {
+    return new File("C:/PinballX");
+  }
+
+
   @Override
-  public List<Emulator> getEmulators() {
+  protected List<Emulator> loadEmulators() {
     List<Emulator> emulators = new ArrayList<>();
-    File pinballXFolder = new File("C:/PinballX");
+    File pinballXFolder = resolvePinballXFolder();
     File pinballXIni = new File(pinballXFolder, "/Config/PinballX.ini");
     
     if (!pinballXIni.exists()) {
@@ -47,6 +48,8 @@ public class PinballXConnector extends BaseConnector {
       return emulators;
     }
     
+    mapTableDetails = new HashMap<>();
+
     INIConfiguration iniConfiguration = new INIConfiguration();
     //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
     //iniConfiguration.setSeparatorUsedInOutput("=");
@@ -64,11 +67,6 @@ public class PinballXConnector extends BaseConnector {
       "Future Pinball", "Visual Pinball", "Zaccaria", "Pinball FX2", "Pinball FX3", "Pinball Arcade"
     };
 
-    PinballXTableParser parser = new PinballXTableParser();
-
-    this.games = new ArrayList<>();
-    this.tabledetails = new HashMap<>();
-
     int emuId = 1;
     for (String emuName: emuNames) {
       String sectionName = emuName.replaceAll(" ", "");
@@ -76,11 +74,6 @@ public class PinballXConnector extends BaseConnector {
       if (!s.isEmpty()) {
         Emulator emu = createEmulator(s, pinballXFolder, emuId, emuName); 
         emulators.add(emu);
-        File pinballXDb = new File(pinballXFolder, "/Databases/" + emuName + "/" + emuName + ".xml");
-        if (pinballXDb.exists()) {
-          int nbAdded = parser.addGames(pinballXDb, games, tabledetails, emu);
-          LOG.info("Parsed games for emulator "+emuId + ", "+ emuName + ": " + nbAdded + " games");
-        }
         emuId++;
       }
     }
@@ -95,8 +88,6 @@ public class PinballXConnector extends BaseConnector {
 
     return emulators;
   }
-
-
 
   /*
   [System_1]
@@ -151,24 +142,44 @@ public class PinballXConnector extends BaseConnector {
 
     return e;
   }
+ 
+  @Override
+  protected List<String> loadGames(Emulator emu) {
+    File pinballXFolder = resolvePinballXFolder();
+    List<String> games = new ArrayList<>();
 
-   //-----------------------------------------------------------
-   @Override
-   public List<Game> getGames() {
-     return games;
-   }
- 
-   @Override
-   public TableDetails getTableDetails(int id) {
-     return this.tabledetails.get(id);
-   }
- 
-   @Override
-   public void saveTableDetails(int id, TableDetails tableDetails) {
-     this.tabledetails.put(id, tableDetails);
-   }
- 
-   //------------------------------------------------------------
+    File pinballXDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");
+    if (pinballXDb.exists()) {
+      PinballXTableParser parser = new PinballXTableParser();
+      parser.addGames(pinballXDb, games, mapTableDetails, emu);
+    }
+
+    return games;
+  }
+
+
+  //---------------------------------------------------
+
+  @Override
+  protected TableDetails getGameFromDb(String game) {
+    return mapTableDetails.get(game);
+  }
+  @Override
+  protected void updateGameInDb(String game, TableDetails details) {
+    mapTableDetails.put(game, details);
+  }
+
+  @Override
+  protected void dropGameFromDb(String game) {
+    mapTableDetails.remove(game);
+  }
+
+  @Override
+  protected void commitDb() {
+    //TODO implement persitence in XML
+  }
+
+  //------------------------------------------------------------
 
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {

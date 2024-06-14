@@ -119,7 +119,7 @@ public class GameService implements InitializingBean {
     start = System.currentTimeMillis();
 
     for (Game game : games) {
-      applyGameDetails(game, null, false, false);
+      applyGameDetails(game, false, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
@@ -181,16 +181,11 @@ public class GameService implements InitializingBean {
     }
     boolean killedPopper = false;
     for (Game game : games) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-      if (gameDetails != null) {
-        applyGameDetails(game, gameDetails, false, false);
-      }
-      else {
-        if (!killedPopper) {
-          LOG.info("New games have been found, automatically killing popper to release locks.");
-          systemService.killPopper();
-          killedPopper = true;
-        }
+      boolean newGame = applyGameDetails(game, false, false);
+      if (newGame && !killedPopper) {
+        LOG.info("New games have been found, automatically killing popper to release locks.");
+        systemService.killPopper();
+        killedPopper = true;
       }
     }
     GameValidationService.metricFinished();
@@ -206,7 +201,7 @@ public class GameService implements InitializingBean {
                 (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
     for (Game game : games) {
-      applyGameDetails(game, null, false, false);
+      applyGameDetails(game, false, false);
     }
     return games;
   }
@@ -395,7 +390,7 @@ public class GameService implements InitializingBean {
   public synchronized Game getGame(int id) {
     Game game = pinUPConnector.getGame(id);
     if (game != null) {
-      applyGameDetails(game, null, false, true);
+      applyGameDetails(game, false, true);
       return game;
     }
     return null;
@@ -471,7 +466,7 @@ public class GameService implements InitializingBean {
     try {
       game = pinUPConnector.getGame(gameId);
       if (game != null) {
-        applyGameDetails(game, null, true, true);
+        applyGameDetails(game, true, true);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
           highscoreService.scanScore(game);
@@ -536,10 +531,10 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private synchronized void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan, boolean forceScoreScan) {
-    if (gameDetails == null) {
-      gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    }
+  private synchronized boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
+
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    boolean newGame = (gameDetails == null);
 
     if (!game.isVpxGame()) {
       if (gameDetails == null) {
@@ -557,7 +552,7 @@ public class GameService implements InitializingBean {
       }
       game.setValidationState(validate.get(0));
       game.setNotes(gameDetails.getNotes());
-      return;
+      return newGame;
     }
 
     if (gameDetails == null || forceScan) {
@@ -572,11 +567,11 @@ public class GameService implements InitializingBean {
       String scannedTableName = scanResult.getTableName();
 
       TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-      if (StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+      if (tableDetails!=null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
 
-      if (StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+      if (tableDetails!=null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
         scannedTableName = tableDetails.getRomAlt();
       }
 
@@ -594,7 +589,6 @@ public class GameService implements InitializingBean {
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
     }
-
 
     //only apply legacy table name if the Popper fields are empty
     if (StringUtils.isEmpty(game.getTableName())) {
@@ -656,6 +650,8 @@ public class GameService implements InitializingBean {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
+
+    return newGame;
   }
 
   public List<ValidationState> validate(Game game) {
@@ -675,6 +671,14 @@ public class GameService implements InitializingBean {
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
     return getGame(game.getId());
+  }
+
+  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    gameDetails.setExtTableId(extTableId);
+    gameDetails.setExtTableVersionId(extTableVersionId);
+    gameDetailsRepository.saveAndFlush(gameDetails);
+    LOG.info("Linked game " + gameId + " to " + extTableId);
   }
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {

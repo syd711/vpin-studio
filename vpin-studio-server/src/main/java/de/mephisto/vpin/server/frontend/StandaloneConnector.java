@@ -1,11 +1,10 @@
 package de.mephisto.vpin.server.frontend;
 
 import java.io.File;
+import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -20,47 +19,40 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 @Service
 @Qualifier("Standalone")
 public class StandaloneConnector extends BaseConnector {
 
-  private final static Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
+  private static final Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
+
+  /** The default emulator id for VPX */
+  private static final int VPX_EMUID = 1;
 
   @Autowired
   private SystemService systemService;
   
-  protected Map<Integer, TableDetails> tabledetails;
-
-  private static final int VPX_EMUID = 1;
-
   @Override
   public void initialize(ServerSettings settings) {
   }
   
   //------------------------------------------------------
   @Override
-  public List<Emulator> getEmulators() {
-    
+  protected List<Emulator> loadEmulators() {
+
     List<Emulator> emulators = new ArrayList<>();
 
-    File vpxInstallDir = systemService.resolveVisualPinballInstallationFolder();
-    if (vpxInstallDir==null) {
-      // not found so default to standard Visual Piinball install directory
-      vpxInstallDir = new File("c:/Visual Pinball");
-    }
+    // so far only VPX is supported in standalone mode
     String emuName = "Visual Pinball";
-    File vpxTableDir = new File(vpxInstallDir, "tables");
-
-    Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName); 
-    vpxemu.setDescription("default");
-    vpxemu.setDirB2S(new File(vpxInstallDir, "B2SServer").getAbsolutePath());
-
-    emulators.add(vpxemu);
-
-    int nbAdded = 0; //addGames(vpxTableDir, games, tabledetails, vpxemu);
-    LOG.info("Parsed games for emulator " + VPX_EMUID + ", " + emuName + ": " + nbAdded + " games");
-
+    File vpxInstallDir = systemService.resolveVisualPinballInstallationFolder();
+    File vpxTableDir = vpxInstallDir!=null? new File(vpxInstallDir, "tables"): null;
+    if (vpxTableDir!=null && vpxTableDir.exists()) {
+      LOG.info("Visual Pinball tables folder detected in " + vpxTableDir.getAbsolutePath());
+      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName); 
+      vpxemu.setDescription("default");
+      emulators.add(vpxemu);
+    }
     return emulators;
   }
 
@@ -90,63 +82,54 @@ public class StandaloneConnector extends BaseConnector {
     return e;
   }
 
-  //-----------------------------------------------------------
+  /**
+   * Initial loading of Games from filesystem discovery
+   */
   @Override
-  public List<Game> getGames() {
-    File vpxInstallDir = systemService.resolveVisualPinballInstallationFolder();
-    if (vpxInstallDir==null) {
-      // not found so default to standard Visual Piinball install directory
-      vpxInstallDir = new File("c:/Visual Pinball");
-    }
-
-    this.tabledetails = new HashMap<>();
-    List<Game> games = new ArrayList<>();
-    if (vpxInstallDir.exists()) {
-      Iterator<File> tablesIterator = FileUtils.iterateFiles(new File(vpxInstallDir, "tables"), new String[]{"vpx"}, true);
-      int cnt = 1;
+  protected List<String> loadGames(Emulator emu) {
+    List<String> filenames = new ArrayList<>();
+    File vpxTableDir = new File(emu.getDirGames());
+    Path pTables = Path.of(emu.getDirGames());
+    if (vpxTableDir.exists()) {
+      Iterator<File> tablesIterator = FileUtils.iterateFiles(vpxTableDir, new String[]{"vpx"}, true);
       while (tablesIterator.hasNext()) {
-        Game g = createGame(tablesIterator.next(), cnt++);
-        games.add(g);
+        File tableFile = tablesIterator.next();
+
+        Path pfile = tableFile.toPath();
+        Path pRelative = pTables.relativize(pfile);
+        String gameFileName = pRelative.toString();
+        filenames.add(gameFileName);
       }
     }
-    return games;
+    return filenames;
   }
+ 
+  //------------------------------------------------------------
 
-  private Game createGame(File tableFile, int gameid) {
-    String tableName = StringUtils.removeEndIgnoreCase(tableFile.getName(), ".vpx");
-
-    Game game = new Game();
-    game.setId(gameid);
-    game.setGameName(tableName);
-    game.setGameFileName(tableName);
-    game.setGameDisplayName(tableName);
-    game.setGameFile(tableFile);
-
-    game.setEmulatorId(VPX_EMUID);
-
-    TableDetails detail = new TableDetails();
-    detail.setGameName(tableName);
-    detail.setGameFileName(tableName);
-    detail.setGameDisplayName(tableName);
-    detail.setEmulatorId(VPX_EMUID);
-
-    tabledetails.put(gameid, detail);
-    return game;
+  @Override
+  protected TableDetails getGameFromDb(String filename) {
+    return null;
   }
 
   @Override
-  public TableDetails getTableDetails(int id) {
-    return this.tabledetails.get(id);
+  protected void updateGameInDb(String filename, TableDetails details) {
+    // do nothing
   }
 
   @Override
-  public void saveTableDetails(int id, TableDetails tableDetails) {
-    this.tabledetails.put(id, tableDetails);
+  protected void dropGameFromDb(String filename) {
+    // do nothing
+  }
+
+  @Override
+  protected void commitDb() {
+    // do nothing
   }
 
   //------------------------------------------------------------
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
+    // no associated medias
     return null;
   }
 

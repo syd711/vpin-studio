@@ -143,11 +143,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = this.game.get();
-        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
-        tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
-        tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
-        client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+        client.getPinUPPopperService().vpsLink(gameRepresentation.getId(), null, null);
+        EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       } catch (Exception e) {
         LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
       }
@@ -274,10 +271,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         VpsTable vpsTable = selectedEntry.get();
-
-        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
-        tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), vpsTable.getId());
-        client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
+        client.getPinUPPopperService().vpsLink(gameRepresentation.getId(), vpsTable.getId(), null);
       }
       this.tableVersionsCombo.valueProperty().addListener(this);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -589,6 +583,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (newValue != null) {
           updatedId = newValue.getId();
         }
+        // check value of 
+        String oldTableId = gameRepresentation.getExtTableId();
+        String _oldVersionValue = gameRepresentation.getExtTableVersionId();
         String oldVersionValue = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
         if (!String.valueOf(oldValue).equals(oldVersionValue)) {
           tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), updatedId);

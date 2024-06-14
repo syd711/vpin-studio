@@ -34,7 +34,7 @@ public class VPXCommandLineService {
     File vpxExe = game.getEmulator().getVPXExe();
 
     TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-    String altLaunchExe = tableDetails.getAltLaunchExe();
+    String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
     if(altExe != null) {
       vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
     }

@@ -93,7 +93,6 @@ public class GameDetails {
     this.notes = notes;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableId(String extTableId) {
     this.extTableId = extTableId;
   }
@@ -102,7 +101,6 @@ public class GameDetails {
     return extTableVersionId;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
   }

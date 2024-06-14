@@ -503,7 +503,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   }
 
   @NonNull
-  public int getSqlVersion() {
+  public int getVersion() {
     int version = -1;
     Connection connect = this.connect();
     try {
@@ -523,7 +523,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   }
   @Override
   public boolean isPopper15() {
-    return getSqlVersion() >= PinUPConnectorImpl.DB_VERSION;
+    return getVersion() >= PinUPConnectorImpl.DB_VERSION;
   }
 
   public void updateStartupScript(@NonNull String content) {
@@ -580,61 +580,59 @@ public class PinUPConnectorImpl implements FrontendConnector {
     }
   }
 
-  public void updateRom(@NonNull Game game, String rom) {
+  @Override
+  public void setPupPackEnabled(@NonNull Game game, boolean enable) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET 'ROM'=? WHERE GameID=?");
-      preparedStatement.setString(1, rom);
-      preparedStatement.setInt(2, game.getId());
+      PreparedStatement preparedStatement;
+      if (enable) {
+        preparedStatement = connect.prepareStatement("UPDATE Games SET 'ROM'=?, 'LaunchCustomVar'='' WHERE GameID=?");
+        preparedStatement.setString(1, game.getRom());
+        preparedStatement.setInt(2, game.getId());
+      } else {
+        preparedStatement = connect.prepareStatement("UPDATE Games SET 'LaunchCustomVar'='HIDEPUP' WHERE GameID=?");
+        preparedStatement.setInt(1, game.getId());
+      }
       preparedStatement.executeUpdate();
       preparedStatement.close();
-      LOG.info("Updated of ROM of " + game + " to " + rom);
+      LOG.info("Updated of ROM of \"" + game + "\" to " + game.getRom());
+      LOG.info("Updated of LaunchCustomVar of \"" + game + "\" to \"" + (enable? "": "HIDEPUP") + "\"");
     }
     catch (Exception e) {
-      LOG.error("Failed to update ROM:" + e.getMessage(), e);
+      LOG.error("Failed to update \"LaunchCustomVar\" " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
   }
-
-  public void updateGamesField(@NonNull Game game, String field, String value) {
-    Connection connect = this.connect();
-    try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET '" + field + "'=? WHERE GameID=?");
-      preparedStatement.setString(1, value);
-      preparedStatement.setInt(2, game.getId());
-      preparedStatement.executeUpdate();
-      preparedStatement.close();
-      LOG.info("Updated of \"" + field + "\" of \"" + game + "\" to \"" + value + "\"");
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update \"" + field + "\2: " + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
-    }
-  }
-
 
   @Nullable
-  public String getGamesStringValue(@NonNull Game game, @NonNull String field) {
-    String value = null;
+  public boolean isPupPackDisabled(@NonNull Game game) {
+    String effectiveRom = game.getRom();
+    if (StringUtils.isEmpty(effectiveRom)) {
+      return false;
+    }
+
     Connection connect = this.connect();
     try {
       PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, game.getId());
       ResultSet rs = statement.executeQuery();
-      if (rs.next()) {
-        value = rs.getString(field);
+      String rom = null;
+      String custom = null;
+    if (rs.next()) {
+        rom = rs.getString("ROM");
+        custom = rs.getString("LaunchCustomVar");
+        return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
       }
       rs.close();
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read field value \"" + field + "\": " + e.getMessage(), e);
+      LOG.error("Failed to read \"LaunchCustomVar\": " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
     }
-    return value;
+    return false;
   }
 
   /**
@@ -646,8 +644,9 @@ public class PinUPConnectorImpl implements FrontendConnector {
   public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated) " +
-          "VALUES (?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
+      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
+          "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode) " +
+          "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
       preparedStatement.setString(2, gameName);
       preparedStatement.setString(3, gameFileName);
@@ -661,21 +660,20 @@ public class PinUPConnectorImpl implements FrontendConnector {
       preparedStatement.setString(7, ts);
       preparedStatement.setString(8, sdf.format(dateFileUpdated));
 
+      preparedStatement.setString(9, "");
+      preparedStatement.setString(10, "");
+      preparedStatement.setString(11, "");
+      preparedStatement.setString(12, "");
+      preparedStatement.setString(13, "");
+      preparedStatement.setString(14, "");
+
       preparedStatement.executeUpdate();
       preparedStatement.close();
 
       LOG.info("Added game entry for '" + gameName + "', file name '" + gameFileName + "'");
       try (ResultSet keys = preparedStatement.getGeneratedKeys()) {
         if (keys.next()) {
-          int id = keys.getInt(1);
-          Game game = getGame(id);
-          updateGamesField(game, "Author", "");
-          updateGamesField(game, "TAGS", "");
-          updateGamesField(game, "Category", "");
-          updateGamesField(game, "MediaSearch", "");
-          updateGamesField(game, "IPDBNum", "");
-          updateGamesField(game, "AltRunMode", "");
-          return id;
+          return keys.getInt(1);
         }
       }
     }
@@ -687,6 +685,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return -1;
   }
 
+  // no more used
   public boolean deleteGame(String name) {
     Game gameByFilename = getGameByFilename(name);
     if (gameByFilename != null) {
@@ -696,6 +695,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return false;
   }
 
+  @Override
   public boolean deleteGame(int id) {
     deleteFromPlaylists(id);
     deleteFromGames(id);
@@ -1131,6 +1131,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return controls;
   }
 
+  @Override
   public int getGameCount(int emuId) {
     int count = 0;
     Connection connect = this.connect();
@@ -1151,6 +1152,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return count;
   }
 
+  @Override
   public List<Integer> getGameIds(int emuId) {
     List<Integer> result = new ArrayList<>();
     Connection connect = this.connect();
@@ -1172,6 +1174,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   }
 
   @NonNull
+  @Override
   public List<Game> getGames() {
     Connection connect = this.connect();
     List<Game> results = new ArrayList<>();
@@ -1200,6 +1203,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   }
 
   @NonNull
+  @Override
   public java.util.Date getStartDate() {
     Connection connect = this.connect();
     Date date = null;
@@ -1221,6 +1225,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return date;
   }
 
+  @Override
   public void deleteGames() {
     Connection connect = this.connect();
     try {
@@ -1236,6 +1241,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
   }
 
   @NonNull
+  @Override
   public List<Integer> getGameIdsFromPlaylists() {
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
@@ -1620,7 +1626,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     File file = systemService.getPinUPDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 
-    sqlVersion = this.getSqlVersion();
+    sqlVersion = this.getVersion();
 
   }
 

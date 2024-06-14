@@ -10,12 +10,15 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SystemInfo {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
+  public final static String VISUAL_PINBALL_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
@@ -24,7 +27,8 @@ public class SystemInfo {
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
 
-
+  // Assumption is made that environment is installed via baller
+  // TODO add a way to force installation dir of Popper and referece it directly like for c:\PinupSystem
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
     try {
@@ -48,6 +52,7 @@ public class SystemInfo {
     return new File("C:/vPinball/PinUPSystem");
   }
 
+  // not used
   @NonNull
   public File resolveVisualPinballInstallationFolder(@NonNull File pinUPSystemInstallationFolder) {
     File file = new File(pinUPSystemInstallationFolder.getParent(), "VisualPinball");
@@ -60,7 +65,16 @@ public class SystemInfo {
     }
     return file;
   }
+  /**
+   * Frontends should know where Emulators are installed
+   * Method used by Standalone frontend to identify VPS installation directory
+   */
   public File resolveVisualPinballInstallationFolder() {
+    String vpxInstDirEnv = System.getenv("VpxInstDir");
+    if (!StringUtils.isEmpty(vpxInstDirEnv)) {
+      return new File(vpxInstDirEnv);
+    }
+
     String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
     if (tablesDir != null) {
       tablesDir = extractRegistryValue(tablesDir);
@@ -85,6 +99,18 @@ public class SystemInfo {
         }
       }
     }
+    // not found try to derive from pinup, case of baller installation
+    File pinupInstDir = resolvePinUPSystemInstallationFolder();
+    File vpxFile = new File(pinupInstDir.getParent(), "VisualPinball");
+    if (vpxFile.exists()) {
+      return vpxFile;
+    }
+    // not found try default Visual Pinball install directory
+    vpxFile = new File("c:/Visual Pinball");
+    if (vpxFile.exists()) {
+      return vpxFile;
+    }
+    // I give up, no more idea...
     return null;
   }
 
@@ -98,6 +124,30 @@ public class SystemInfo {
 
   public File resolveVpxTablesInstallationFolder(@NonNull File visualPinballInstallationFolder) {
     return new File(visualPinballInstallationFolder, "Tables/");
+  }
+
+  /** 
+   * cf https://github.com/vpinball/b2s-backglass/
+   * => b2sbackglassserverregisterapp/b2sbackglassserverregisterapp/formBackglassServerRegApp.vb
+   */
+  public File resolveBackglassServerFolder(@NonNull File visualPinballTableFolder) {
+    String b2sClsid = extractRegistryValue(readRegistry("HKEY_CLASSES_ROOT\\B2S.Server\\CLSID", null));
+    String regkey = "HKEY_CLASSES_ROOT\\WOW6432Node\\CLSID\\" + b2sClsid + "\\InprocServer32";
+    String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
+    File serverDllFile = null;
+    try {
+      serverDllFile = new File(new URL(serverDllPath).getFile());
+      if (serverDllFile.exists()) {
+        return serverDllFile.getParentFile();
+      }
+    } catch (MalformedURLException ue) {
+    }
+    // check in tables folder
+    serverDllFile = new File(visualPinballTableFolder, "B2SBackglassServer.dll");
+    if (serverDllFile.exists()) {
+      return serverDllFile.getParentFile();
+    }
+    return null;
   }
 
   public String readRegistry(String location, String key) {

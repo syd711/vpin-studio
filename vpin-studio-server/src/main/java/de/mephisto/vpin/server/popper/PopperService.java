@@ -6,11 +6,13 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.popper.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -46,6 +48,9 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
   @Autowired
   private PinUPConnector pinUPConnector;
+
+  @Autowired
+  private GameService gameService;
 
   @Autowired
   private VPXService vpxService;
@@ -169,15 +174,13 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
 
   /**
    * moved from VpsService to break circular dependency.
-   * The method here get TableDetail from popper and save it after automatching
    */
-  public TableDetails autoMatch(Game game, boolean overwrite) {
-    TableDetails tableDetails = getTableDetails(game.getId());
-    if (vpsService.autoMatch(game, tableDetails, overwrite)) {
-      saveTableDetails(tableDetails, game.getId(), false);
-      return tableDetails;
+  public GameVpsMatch autoMatch(Game game, boolean overwrite) {
+    GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
+    if (vpsMatch!=null) {
+      vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
     }
-    return null;
+    return vpsMatch;
   }
 
   @NonNull
@@ -293,6 +296,27 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     }
 
     return tableDetails;
+  }
+
+  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
+    // keep track of the match in the internal database
+    gameService.vpsLink(gameId, extTableId, extTableVersionId);
+
+    // update the table in the frontend
+    TableDetails tableDetails = getTableDetails(gameId);
+    if (tableDetails!=null) {
+      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
+      tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
+      saveTableDetails(tableDetails, gameId, false);
+    }
+  }
+
+  public void fixGameVersion(int gameId, String version) {
+    TableDetails tableDetails = getTableDetails(gameId);
+    if (tableDetails!=null) {
+      tableDetails.setGameVersion(version);
+      saveTableDetails(tableDetails, gameId, false);
+    }
   }
 
   /**
@@ -507,12 +531,6 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     return options;
   }
 
-  @NonNull
-  public List<GameEmulator> getGameEmulators() {
-    return pinUPConnector.getGameEmulators();
-  }
-
-
   public List<PinUPPlayerDisplay> getPupPlayerDisplays() {
     return pinUPConnector.getPupPlayerDisplays();
   }
@@ -530,6 +548,11 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   }
 
   @NonNull
+  public List<GameEmulator> getGameEmulators() {
+    return pinUPConnector.getGameEmulators();
+  }
+
+  @NonNull
   public List<GameEmulator> getBackglassGameEmulators() {
     return pinUPConnector.getBackglassGameEmulators();
   }
@@ -540,7 +563,7 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
   }
 
   public int getVersion() {
-    return pinUPConnector.getSqlVersion();
+    return pinUPConnector.getVersion();
   }
 
   @Override

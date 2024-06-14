@@ -40,8 +40,8 @@ public class TableDataUtil {
   }
 
   @Nullable
-  public static String getEffectiveRom(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails) {
-    String rom = tableDetails.getRomName();
+  public static String getEffectiveRom(TableDetails tableDetails, @NonNull GameDetails gameDetails) {
+    String rom = tableDetails!=null? tableDetails.getRomName(): null;
     if (StringUtils.isEmpty(rom)) {
       rom = gameDetails.getRomName();
     }
@@ -49,8 +49,8 @@ public class TableDataUtil {
   }
 
   @Nullable
-  public static String getEffectiveHighscoreFilename(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails, @NonNull ServerSettings serverSettings) {
-    String hs = tableDetails.getMappedValue(serverSettings.getMappingHsFileName());
+  public static String getEffectiveHighscoreFilename(TableDetails tableDetails, @NonNull GameDetails gameDetails, @NonNull ServerSettings serverSettings) {
+    String hs = tableDetails!=null? tableDetails.getMappedValue(serverSettings.getMappingHsFileName()): null;
     if (StringUtils.isEmpty(hs)) {
       hs = gameDetails.getHsFileName();
     }
@@ -58,8 +58,8 @@ public class TableDataUtil {
   }
 
   @Nullable
-  public static String getEffectiveTableName(@NonNull TableDetails tableDetails, @NonNull GameDetails gameDetails) {
-    String rom = tableDetails.getRomAlt();
+  public static String getEffectiveTableName(TableDetails tableDetails, @NonNull GameDetails gameDetails) {
+    String rom = tableDetails!=null? tableDetails.getRomAlt(): null;
     if (StringUtils.isEmpty(rom)) {
       rom = gameDetails.getTableName();
     }

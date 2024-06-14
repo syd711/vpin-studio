@@ -9,10 +9,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -20,7 +20,6 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -309,21 +308,15 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onAutoMatch() {
-    String rom = tableDetails.getRomName();
-    GameDetailsRepresentation gameDetails = tableDataTabScoreDataController.getGameDetails();
-    if (StringUtils.isEmpty(rom) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-      rom = gameDetails.getRomName();
-    }
-
     boolean autofill = this.autoFillCheckbox.isSelected();
-    TableDetails updatedTableDetails = client.getPinUPPopperService().autoMatch(game.getId(), autofill);
-    if (updatedTableDetails != null) {
+    GameVpsMatch vpsMatch = client.getPinUPPopperService().autoMatch(game.getId(), autofill);
+    if (vpsMatch != null) {
 
       String vpsTableMappingField = serverSettings.getMappingVpsTableId();
       String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
 
-      String mappedTableId = updatedTableDetails.getMappedValue(vpsTableMappingField);
-      String mappedVersion = updatedTableDetails.getMappedValue(vpsTableVersionMappingField);
+      String mappedTableId = vpsMatch.getExtTableId();
+      String mappedVersion = vpsMatch.getExtTableVersionId();
 
       setMappedFieldValue(vpsTableMappingField, mappedTableId);
       tableDetails.setMappedValue(vpsTableMappingField, mappedTableId);
@@ -345,7 +338,6 @@ public class TableDataController implements Initializable, DialogController, Aut
         refreshVersionsCombo(vpsTable);
         tableVersionsCombo.setValue(version);
       }
-
 
       openVpsTableVersionBtn.setDisable(false);
       copyTableVersionBtn.setDisable(false);
@@ -464,6 +456,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
     td.setGameVersion(gVersion);
     gameVersion.setText(gVersion);
+    //FIXME why no save ???
+    //TODO call fixVersion() service
     fixVersionBtn.setDisable(true);
   }
 

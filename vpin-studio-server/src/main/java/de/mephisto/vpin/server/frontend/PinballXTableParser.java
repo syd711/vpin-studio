@@ -25,7 +25,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import de.mephisto.vpin.restclient.popper.Emulator;
 import de.mephisto.vpin.restclient.popper.GameType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public class PinballXTableParser extends DefaultHandler {
@@ -34,7 +33,7 @@ public class PinballXTableParser extends DefaultHandler {
   private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
   @Nullable
-  public int addGames(File xmlFile, List<Game> games, Map<Integer, TableDetails> tabledetails, Emulator emu) {
+  public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, Emulator emu) {
     int gamecount = 0;
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -53,22 +52,13 @@ public class PinballXTableParser extends DefaultHandler {
           Element element = (Element) node;
           if (StringUtils.equalsIgnoreCase(element.getTagName(), "game")) {
             
-            int gameid = emu.getId() * 1000000 + (++gamecount);            
             String gameName = element.getAttribute("name");
-
-            Game game = new Game();
-            game.setId(gameid);
-            game.setGameName(gameName);
-            game.setGameFileName(gameName + "." + emu.getGamesExt());
-
-            File vpxFile = new File(emu.getDirGames(), game.getGameFileName());
-            game.setGameFile(vpxFile);
-
-            game.setEmulatorId(emu.getId());
+            String gameFileName =  gameName + "." + emu.getGamesExt();
 
             TableDetails detail = new TableDetails();
             detail.setGameName(gameName);
-            detail.setGameFileName(gameName);
+            detail.setGameFileName(gameFileName);
+            detail.setGameDisplayName(gameName);
             detail.setEmulatorId(emu.getId());
 
             NodeList childNodes = element.getChildNodes();
@@ -78,15 +68,15 @@ public class PinballXTableParser extends DefaultHandler {
                 String name = childNode.getNodeName();
                 String content = childNode.getTextContent().trim();
                 try {
-                  readNode(game, detail, name, content);
+                  readNode(detail, name, content);
                 } catch (Exception e) {
                   LOG.warn("Ignored exception while parsing " + name + " '" + content+ "'' of table '" + gameName + 
                     " for emulator "  + emu.getName() +  "': " + e.getMessage());
                 }
               }
             }
-            games.add(game);
-            tabledetails.put(gameid, detail);
+            games.add(gameFileName);
+            tabledetails.put(gameFileName, detail);
           }
         }
       }
@@ -121,15 +111,13 @@ public class PinballXTableParser extends DefaultHandler {
   </game>
    * @param detail 
    */
-  private void readNode(Game game, TableDetails detail, String qName, String content) throws ParseException {
+  private void readNode(TableDetails detail, String qName, String content) throws ParseException {
     switch (qName) {
       case "description": {
-        game.setGameDisplayName(content);
         detail.setGameDisplayName(content);
         break;
       }
       case "rom": {
-        game.setRom(content);
         detail.setRomName(content);
         break;
       }
@@ -145,11 +133,12 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "enabled": {
-        game.setDisabled(!BooleanUtils.toBoolean(content));
+        boolean enabled = BooleanUtils.toBoolean(content);
+        // cf statuses: STATUS_DISABLED=0, STATUS_NORMAL=1, STATUS_MATURE=2, STATUS_WIP=3
+        detail.setStatus(enabled? 1: 0);
         break;
       }
       case "version": {
-        game.setVersion(content);
         detail.setGameVersion(content);
         break;
       }
@@ -175,13 +164,12 @@ public class PinballXTableParser extends DefaultHandler {
       }
       case "dateadded": {
         Date dateAdded = sdf.parse(content);
-        game.setDateAdded(dateAdded);
         detail.setDateAdded(dateAdded);
         break;
       }
       case "datemodified": {
-        Date dateUpdated = sdf.parse(content);
-        game.setDateUpdated(dateUpdated);
+        //Date dateUpdated = sdf.parse(content);
+        //detail.setDateUpdated(dateUpdated);
         break;
       }
     }

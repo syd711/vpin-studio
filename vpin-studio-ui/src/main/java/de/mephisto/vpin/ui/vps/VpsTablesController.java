@@ -157,10 +157,11 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     VpsTable selection = tableView.getSelectionModel().getSelectedItem();
 
-    Platform.runLater(() -> {
-      if(forceReload) {
-        ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
-      }
+    if(forceReload) {
+      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+    }
+
+    new Thread(() -> {
 
       // get all tables
       vpsTables = client.getVpsService().getTables();
@@ -204,7 +205,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
         tableView.requestFocus();
       });
-    });
+    }, "VPS Tables Load").start();;
   }
 
   @Override

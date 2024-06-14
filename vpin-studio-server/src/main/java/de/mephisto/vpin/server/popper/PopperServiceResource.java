@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.popper;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
+import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.popper.*;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -31,9 +33,6 @@ public class PopperServiceResource {
 
   @Autowired
   private GameService gameService;
-
-  @Autowired
-  private PinUPConnector pinUPConnector;
 
   @GetMapping("/custompoptions")
   public PopperCustomOptions getCustomOptions() {
@@ -123,10 +122,22 @@ public class PopperServiceResource {
     return popperService.getPupPlayerDisplays();
   }
 
+  @PostMapping("/tabledetails/vpsLink/{gameId}")
+  public boolean vpsLink(@PathVariable("gameId") int gameId, @RequestBody GameVpsMatch vpsmatch) throws Exception {
+    popperService.vpsLink(gameId, vpsmatch.getExtTableId(), vpsmatch.getExtTableVersionId());
+    return true;
+  }
+
+  @PutMapping("/tabledetails/fixVersion/{gameId}")
+  public boolean fixVersion(@PathVariable("gameId") int gameId, @RequestBody Map<String, String> data) throws Exception {
+    popperService.fixGameVersion(gameId, data.get("version"));
+    return true;
+  }
+
   @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
                                @PathVariable("overwrite") boolean overwrite) {
-    TableDetails tableDetails = pinUPConnector.getTableDetails(gameId);
+    TableDetails tableDetails = popperService.getTableDetails(gameId);
     return popperService.autoFill(gameService.getGame(gameId), tableDetails, overwrite, false);
   }
 
@@ -142,7 +153,7 @@ public class PopperServiceResource {
   }
 
   @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
-  public TableDetails autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+  public GameVpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
     return popperService.autoMatch(gameService.getGame(gameId), overwrite);
   }
 

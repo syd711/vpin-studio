@@ -128,11 +128,12 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public TableDetails getTableDetails(int id) {
     FrontendConnector frontend = getFrontend();
     TableDetails manifest = frontend.getTableDetails(id);
-
-    List<String> altExeList = Collections.emptyList();//getAltExeList();
-    GameEmulator emu = emulators.get(manifest.getEmulatorId());
-    manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
-    manifest.getLauncherList().addAll(altExeList);
+    if (manifest!=null) {
+      List<String> altExeList = Collections.emptyList();//getAltExeList();
+      GameEmulator emu = emulators.get(manifest.getEmulatorId());
+      manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
+      manifest.getLauncherList().addAll(altExeList);
+    }
     return manifest;
 
   }
@@ -185,9 +186,9 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
   //--------------------------
 
-  // TODO rename as getVersion()
-  public int getSqlVersion() {
-    return getFrontend().getSqlVersion();
+  // no more used ?
+  public int getVersion() {
+    return getFrontend().getVersion();
   }
   public boolean isPopper15() {
     return getFrontend().isPopper15();
@@ -200,16 +201,16 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     getFrontend().updateCustomOptions(options);
   }
 
-  public void updateRom(@NonNull Game game, String rom) {
-    getFrontend().updateRom(game, rom);
+  public void setPupPackEnabled(Game game, boolean enable) {
+    if (game != null) {
+      getFrontend().setPupPackEnabled(game, enable);
+    }
   }
-
-  public void updateGamesField(@NonNull Game game, String field, String value) {
-    getFrontend().updateGamesField(game, field, value);
-  }
-
-  public String getGamesStringValue(@NonNull Game game, @NonNull String field) {
-    return getFrontend().getGamesStringValue(game, field);
+  public boolean isPupPackDisabled(Game game) {
+    if (game != null) {
+      return getFrontend().isPupPackDisabled(game);
+    }
+    return false;
   }
 
   public int importGame(@NonNull File file, int emuId) {
@@ -445,13 +446,22 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         if (!emulator.isVisible()) {
           continue;
         }
+        if (!emulator.isEnabled()) {
+          continue;
+        }
 
         if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
           continue;
         }
-
-        if (!emulator.isEnabled()) {
-          continue;
+        else  {
+          if (emulator.getDirB2S()==null) {
+            File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
+            if (b2sFolder==null) {
+              // not installed, use B2SServer folder inside vpx folder
+              b2sFolder = new File(emulator.getEmuLaunchDir(), "B2SServer");
+            }
+            emulator.setDirB2S(b2sFolder.getAbsolutePath());
+          }
         }
 
         GameEmulator gameEmulator = new GameEmulator(emulator, getFrontend().getMediaAccessStrategy());

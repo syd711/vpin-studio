@@ -89,7 +89,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     shutdownBtn.setDisable(client.getSystemService().isLocal());
 
     Date startupTime = client.getSystemService().getStartupTime();
-    int dbVersion = client.getPinUPPopperService().getVersion();
+    //int dbVersion = client.getPinUPPopperService().getVersion();
 
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());

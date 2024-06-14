@@ -721,25 +721,28 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void reload(int id) {
-    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-
     GameRepresentation refreshedGame = client.getGameService().getGame(id);
-    tableView.getSelectionModel().getSelectedItems().removeListener(this);
-    tableView.getSelectionModel().clearSelection();
+    if (refreshedGame!=null) {
+      tableView.getSelectionModel().getSelectedItems().removeListener(this);
+      tableView.getSelectionModel().clearSelection();
 
-    GameRepresentationModel model = null;
-    int index = games.indexOf(refreshedGame);
-    if (index != -1) {
-      games.remove(index);
-      games.add(index, refreshedGame);
-      // also change the model that triggers a screen refresh
-      model = new GameRepresentationModel(refreshedGame);
-      models.remove(index);
-      models.add(index, model);
+      GameRepresentationModel model = null;
+      int index = games.indexOf(refreshedGame);
+      if (index != -1) {
+        games.remove(index);
+        games.add(index, refreshedGame);
+        // also change the model that triggers a screen refresh
+        model = new GameRepresentationModel(refreshedGame);
+        models.remove(index);
+        models.add(index, model);
+      }
+
+      tableView.getSelectionModel().getSelectedItems().addListener(this);
+
+      // select the reloaded game
+      tableView.getSelectionModel().select(model);
+      tableView.refresh();
     }
-
-    tableView.getSelectionModel().getSelectedItems().addListener(this);
-    tableView.getSelectionModel().select(selectedItem);
   }
 
   public void showScriptEditor(GameRepresentation game) {

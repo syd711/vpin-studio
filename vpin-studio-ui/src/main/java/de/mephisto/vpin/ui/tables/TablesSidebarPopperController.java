@@ -181,14 +181,12 @@ public class TablesSidebarPopperController implements Initializable {
         + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
         gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        TableDetails td = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
-        td.setGameVersion(gameRepresentation.getExtVersion());
         try {
-          client.getPinUPPopperService().saveTableDetails(td, gameRepresentation.getId());
+          client.getPinUPPopperService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
         } catch (Exception ex) {
-          LOG.error("Error saving table manifest: " + ex.getMessage(), ex);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Error saving table manifest: " + ex.getMessage());
+          LOG.error("Error fixing version: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error fixing version: " + ex.getMessage());
         }
       }
     }
@@ -234,11 +232,12 @@ public class TablesSidebarPopperController implements Initializable {
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
     autoFillBtn.setDisable(g.isEmpty());
 
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
-      autoFillBtn.setVisible(game.isVpxGame());
+    GameRepresentation game = g.orElse(null);
+    tableDetails = game!=null? Studio.client.getPinUPPopperService().getTableDetails(game.getId()): null;
 
-      tableDetails = Studio.client.getPinUPPopperService().getTableDetails(game.getId());
+    if (game!=null && tableDetails!=null) {
+
+      autoFillBtn.setVisible(game.isVpxGame());
 
       extrasPanel.setVisible(tableDetails.isPopper15());
 
@@ -301,6 +300,9 @@ public class TablesSidebarPopperController implements Initializable {
       }
     }
     else {
+      autoFillBtn.setVisible(false);
+      extrasPanel.setVisible(false);
+
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 

@@ -26,13 +26,6 @@ public interface FrontendConnector {
   
   Game getGame(int id);
 
-  @NonNull
-  TableDetails getTableDetails(int id);
-
-  void updateTableFileUpdated(int id);
-
-  void saveTableDetails(int id, TableDetails tableDetails);
-
   @Nullable
   Game getGameByFilename(String filename);
 
@@ -45,8 +38,34 @@ public interface FrontendConnector {
   @Nullable
   Game getGameByName(String gameName);
 
+  int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull Date dateFileUpdated);
+
+  boolean deleteGame(int id);
+
+  void deleteGames();
+  
+  int getGameCount(int emuId);
+
+  List<Integer> getGameIds(int emuId);
+
   @NonNull
-  int getSqlVersion();
+  List<Game> getGames();
+
+  //----------------------------------
+  // Specific TableDetails managed in frontend database
+
+  @NonNull
+  TableDetails getTableDetails(int id);
+
+  void updateTableFileUpdated(int id);
+
+  void saveTableDetails(int id, TableDetails tableDetails);
+
+  //----------------------------------
+  // version and options 
+
+  @NonNull
+  int getVersion();
   
   boolean isPopper15();
 
@@ -54,17 +73,21 @@ public interface FrontendConnector {
 
   void updateCustomOptions(@NonNull PopperCustomOptions options);
 
-  void updateRom(@NonNull Game game, String rom);
+  //----------------------------------
+  // Media management
 
-  void updateGamesField(@NonNull Game game, String field, String value);
+  /**
+   * Returns the strategy to access files. 
+   * By returning a null value, it tells the frontend does not support media
+   */
+  MediaAccessStrategy getMediaAccessStrategy();
 
-  @Nullable
-  String getGamesStringValue(@NonNull Game game, @NonNull String field);
+  boolean isPupPackDisabled(@NonNull Game game);
 
-  int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull Date dateFileUpdated);
+  void setPupPackEnabled(@NonNull Game game, boolean enable);
 
-  boolean deleteGame(int id);
-
+  //----------------------------------
+  // Playlists management
 
   @NonNull
   Playlist getPlayList(int id);
@@ -84,11 +107,22 @@ public interface FrontendConnector {
 
   Playlist getPlayListForGame(int gameId);
 
+  @NonNull
+  List<Integer> getGameIdsFromPlaylists();
+
+  //----------------------------------
+  // Statistics management
+
+  @NonNull
+  java.util.Date getStartDate();
 
   List<TableAlxEntry> getAlxData();
 
   @NonNull
   List<TableAlxEntry> getAlxData(int gameId);
+
+  //----------------------------------
+  // Pinup control management
 
   PinUPControl getPinUPControlFor(PopperScreen screen);
 
@@ -97,27 +131,5 @@ public interface FrontendConnector {
 
   @NonNull
   PinUPControls getControls();
-
-
-  int getGameCount(int emuId);
-
-  List<Integer> getGameIds(int emuId);
-
-  @NonNull
-  List<Game> getGames();
-
-  @NonNull
-  java.util.Date getStartDate();
-
-  void deleteGames();
-
-  @NonNull
-  List<Integer> getGameIdsFromPlaylists();
-
-  /**
-   * Returns the strategy to access files. 
-   * By returning a null value, it tells the frontend does not support media
-   */
-  MediaAccessStrategy getMediaAccessStrategy();
 
 }

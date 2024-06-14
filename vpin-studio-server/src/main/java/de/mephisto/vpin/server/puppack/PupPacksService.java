@@ -120,29 +120,12 @@ public class PupPacksService implements InitializingBean {
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    if (enable) {
-      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "");
-    }
-    else {
-      pinUPConnector.updateRom(game, game.getRom());
-      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "HIDEPUP");
-    }
+    pinUPConnector.setPupPackEnabled(game, enable);
     return true;
   }
 
   public boolean isPupPackDisabled(@Nullable Game game) {
-    if (game == null) {
-      return false;
-    }
-
-    String effectiveRom = game.getRom();
-    if (StringUtils.isEmpty(effectiveRom)) {
-      return false;
-    }
-
-    String rom = pinUPConnector.getGamesStringValue(game, "ROM");
-    String custom = pinUPConnector.getGamesStringValue(game, "LaunchCustomVar");
-    return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
+    return pinUPConnector.isPupPackDisabled(game);
   }
 
   public void writePUPHideNext(Game game) {

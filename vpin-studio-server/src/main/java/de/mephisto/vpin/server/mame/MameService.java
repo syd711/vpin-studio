@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -55,7 +55,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
 
   @Autowired
-  private PopperService popperService;
+  private PinUPConnector pinupConnector;
 
   private ApplicationContext applicationContext;
 
@@ -145,17 +145,17 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 

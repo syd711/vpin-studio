@@ -629,7 +629,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
-    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    boolean played = tableDetails==null || tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
     ScoringDB scoringDB = systemService.getScoringDatabase();
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();

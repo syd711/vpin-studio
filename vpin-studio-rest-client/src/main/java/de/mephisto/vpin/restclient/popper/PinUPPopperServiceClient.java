@@ -143,8 +143,22 @@ public class PinUPPopperServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails autoMatch(int gameId, boolean overwrite) {
-    return getRestClient().get(API + "popper/tabledetails/automatch/" + gameId + "/" + overwrite, TableDetails.class);
+  public GameVpsMatch autoMatch(int gameId, boolean overwrite) {
+    return getRestClient().get(API + "popper/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
+  }
+
+  public void vpsLink(int gameId, String extTableId, String extTableVersionId) throws Exception {
+    GameVpsMatch vpsMatch = new GameVpsMatch();
+    vpsMatch.setGameId(gameId);
+    vpsMatch.setExtTableId(extTableId);
+    vpsMatch.setExtTableVersionId(extTableVersionId);
+    getRestClient().post(API + "popper/tabledetails/vpsLink/" + gameId, vpsMatch, Boolean.class);
+  }
+
+  public void fixVersion(int gameId, String version) throws Exception {
+    Map<String, Object> params = new HashMap<>();
+    params.put("version", version);
+    getRestClient().put(API + "popper/tabledetails/fixVersion/" + gameId, params, Boolean.class);
   }
 
   //-----------------------------

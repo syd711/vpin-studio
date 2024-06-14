@@ -104,12 +104,12 @@ public class GameFilterService {
         }
 
         TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-        boolean played = (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
+        boolean played = tableDetails==null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
         if (filterSettings.isNotPlayed() && played) {
           continue;
         }
 
-        if (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
+        if (tableDetails==null || (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus())) {
           continue;
         }
 
