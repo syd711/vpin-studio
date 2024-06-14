@@ -276,7 +276,7 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
 
   private void save() {
     try {
-      if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
+      if (Studio.client.getFrontendService().isFrontendRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
           Studio.client.getFrontendService().saveCustomOptions(customOptions);
         }

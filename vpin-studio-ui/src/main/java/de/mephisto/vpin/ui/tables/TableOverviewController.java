@@ -504,7 +504,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
+      if (Studio.client.getFrontendService().isFrontendRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
           TableDialogs.openTableDataDialog(this, selectedItems);
         }
@@ -549,7 +549,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onStop() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getFrontendService().terminatePopper();
+      client.getFrontendService().terminateFrontend();
     }
   }
 
@@ -567,7 +567,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
-    if (client.getFrontendService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
       }
@@ -610,7 +610,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onDelete() {
-    if (client.getFrontendService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         deleteSelection();
       }
@@ -668,7 +668,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onImport() {
-    if (client.getFrontendService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         TableDialogs.openTableImportDialog();
       }

@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -38,7 +39,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private Button updateBtn;
 
   @FXML
-  private Button popperMenuBtn;
+  private Button frontendMenuBtn;
 
   @FXML
   private MenuButton jobBtn;
@@ -47,7 +48,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuItem dofSyncEntry;
 
   @FXML
-  private MenuItem popperEntry;
+  private MenuItem frontendMenuItem;
 
   @FXML
   private ToggleButton maintenanceBtn;
@@ -108,12 +109,12 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
 
   @FXML
-  private void onPopper() {
-    client.getFrontendService().restartPopper();
+  private void onFrontend() {
+    client.getFrontendService().restartFrontend();
   }
 
   @FXML
-  private void onPopperMenu() {
+  private void onFrontendMenu() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
@@ -209,25 +210,31 @@ public class ToolbarController implements Initializable, StudioEventListener {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
-    popperMenuBtn.managedProperty().bindBidirectional(popperMenuBtn.visibleProperty());
+    frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
 
-    popperMenuBtn.setVisible(client.getSystemService().isLocal());
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    frontendMenuBtn.setVisible(client.getSystemService().isLocal() && !frontendType.equals(FrontendType.Standalone));
 
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 
-    Image image1 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    String image = "popper.png";
+    if (frontendType.equals(FrontendType.PinballX)) {
+      image = "pinballx.png";
+    }
+
+    Image image1 = new Image(Studio.class.getResourceAsStream(image));
     ImageView view1 = new ImageView(image1);
     view1.setPreserveRatio(true);
     view1.setFitHeight(18);
-    popperEntry.setGraphic(view1);
+    frontendMenuItem.setGraphic(view1);
 
-    Image image2 = new Image(Studio.class.getResourceAsStream("popper.png"));
+    Image image2 = new Image(Studio.class.getResourceAsStream(image));
     ImageView view2 = new ImageView(image2);
     view2.setPreserveRatio(true);
     view2.setFitHeight(18);
-    popperMenuBtn.setGraphic(view2);
+    frontendMenuBtn.setGraphic(view2);
 
     this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());

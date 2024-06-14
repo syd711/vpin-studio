@@ -99,7 +99,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      boolean locked = client.getFrontendService().isPinUPPopperRunning();
+      boolean locked = client.getFrontendService().isFrontendRunning();
       if (locked) {
         emptyDataBox.setVisible(false);
         dataRoot.setVisible(false);

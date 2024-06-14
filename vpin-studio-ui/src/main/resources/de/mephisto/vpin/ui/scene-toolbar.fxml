@@ -80,12 +80,12 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
-                        <Button fx:id="popperMenuBtn" mnemonicParsing="false" onAction="#onPopperMenu" textFill="WHITE">
+                        <Button fx:id="frontendMenuBtn" mnemonicParsing="false" onAction="#onFrontendMenu" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Open PinUP Popper Config" />
+                              <Tooltip text="Open Frontend Configuration" />
                            </tooltip>
                         </Button>
                         <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">
@@ -100,7 +100,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>
                               </MenuItem>
-                              <MenuItem fx:id="popperEntry" mnemonicParsing="false" onAction="#onPopper" text="Restart Popper">
+                              <MenuItem fx:id="frontendMenuItem" mnemonicParsing="false" onAction="#onFrontend" text="Restart Frontend">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />
                                  </graphic>

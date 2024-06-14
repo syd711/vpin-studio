@@ -82,9 +82,9 @@ public class Menu extends Application {
       GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
-        Menu.client.getFrontendService().terminatePopper();
+        Menu.client.getFrontendService().terminateFrontend();
         Thread shutdownHook = new Thread(() -> {
-          Menu.client.getFrontendService().restartPopper();
+          Menu.client.getFrontendService().restartFrontend();
         });
         Runtime.getRuntime().addShutdownHook(shutdownHook);
       }

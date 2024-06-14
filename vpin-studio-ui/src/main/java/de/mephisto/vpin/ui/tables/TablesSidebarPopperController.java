@@ -194,7 +194,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @FXML
   private void onTableEdit() {
-    if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
+    if (Studio.client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
