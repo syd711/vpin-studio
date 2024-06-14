@@ -143,7 +143,7 @@ public class AltSoundUploadController implements Initializable, DialogController
     this.selection = null;
     this.uploadBtn.setDisable(true);
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     emulatorRepresentation = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);

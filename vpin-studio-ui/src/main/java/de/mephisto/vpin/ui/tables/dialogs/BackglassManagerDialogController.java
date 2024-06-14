@@ -588,7 +588,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private void bindToolbarAndSearch() {
 
     // get first the emulators
-    this.selectedEmulators = FXCollections.observableList(client.getPinUPPopperService().getVpxGameEmulators());
+    this.selectedEmulators = FXCollections.observableList(client.getFrontendService().getVpxGameEmulators());
 
     try {
       FXMLLoader loader = new FXMLLoader(BackglassManagerFilterController.class.getResource("dialog-directb2s-admin-filter.fxml"));

@@ -15,7 +15,6 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -182,7 +181,7 @@ public class TablesSidebarMameController implements Initializable {
       Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
       if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
         try {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
           File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
           if (!file.exists()) {
             file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");

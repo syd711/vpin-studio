@@ -187,7 +187,7 @@ public class PauseMenu extends Application {
         togglePauseKey(0);
 
         //re-assign key, because they might have been changed
-        FrontendControls frontendControls = client.getPinUPPopperService().getPinUPControls();
+        FrontendControls frontendControls = client.getFrontendService().getPinUPControls();
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
@@ -204,7 +204,7 @@ public class PauseMenu extends Application {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
 
-        FrontendPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
@@ -225,7 +225,7 @@ public class PauseMenu extends Application {
               }
 
               if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getFrontendService().getScreenDisplays()));
 
                 List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
                 if (!videoTutorials.isEmpty()) {

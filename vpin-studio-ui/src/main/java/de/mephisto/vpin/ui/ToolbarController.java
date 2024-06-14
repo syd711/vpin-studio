@@ -109,7 +109,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onPopper() {
-    client.getPinUPPopperService().restartPopper();
+    client.getFrontendService().restartPopper();
   }
 
   @FXML

@@ -1,20 +1,17 @@
 package de.mephisto.vpin.server.frontend;
 
-import java.io.File;
-import java.io.FileReader;
-import java.sql.Date;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.WinRegistry;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -26,18 +23,11 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WinRegistry;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
+import java.io.File;
+import java.io.FileReader;
+import java.sql.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class FrontendService implements InitializingBean, PreferenceChangedListener {
@@ -105,10 +95,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   //-----------------------------------
 
-  private FrontendConnector getFrontend() {
-    return frontendsMap.get(FrontendType.POPPER);
-    //return frontendsMap.get("pinballXConnector");
+  public FrontendConnector getFrontend() {
+    FrontendType frontendType = getFrontendType();
+    return frontendsMap.get(frontendType.name());
+    //return frontendsMap.get(FrontendType.POPPER.name());
     //return frontendsMap.get("standaloneConnector");
+  }
+
+  public FrontendType getFrontendType() {
+    return FrontendType.PinballX;
   }
 
 

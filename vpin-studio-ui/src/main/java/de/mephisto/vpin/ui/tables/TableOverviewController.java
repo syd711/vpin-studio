@@ -504,7 +504,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
           TableDialogs.openTableDataDialog(this, selectedItems);
         }
@@ -549,7 +549,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onStop() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getPinUPPopperService().terminatePopper();
+      client.getFrontendService().terminatePopper();
     }
   }
 
@@ -567,7 +567,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
       }
@@ -610,7 +610,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onDelete() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         deleteSelection();
       }
@@ -668,7 +668,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onImport() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         TableDialogs.openTableImportDialog();
       }
@@ -850,7 +850,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onReloadPressed(ActionEvent e) {
-    client.getPinUPPopperService().clearCache();
+    client.getFrontendService().clearCache();
     client.getGameService().reload();
     this.onReload();
   }
@@ -994,7 +994,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
@@ -1672,7 +1672,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       refreshView(Optional.ofNullable(gameRepresentation));
 
       if (gameRepresentation.isGameFileAvailable()) {
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(gameRepresentation.getEmulatorId());
+        GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
         playBtn.getItems().clear();
 
         List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
@@ -1969,7 +1969,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public void load() {
       this.vpsTable = client.getVpsService().getTableById(game.getExtTableId());
-      this.gameEmulator = client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
+      this.gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
     }
 
     @Override

@@ -22,8 +22,9 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.system.SystemService;
 
-@Service(FrontendType.STANDALONE)
+@Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
+  public final static String STANDALONE = FrontendType.Standalone.name();
 
   private static final Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
 

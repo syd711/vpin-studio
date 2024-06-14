@@ -329,7 +329,7 @@ public class TablesSidebarMediaController implements Initializable {
 
     GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
     if (selection != null) {
-      GameEmulatorRepresentation emulator = client.getPinUPPopperService().getGameEmulator(selection.getEmulatorId());
+      GameEmulatorRepresentation emulator = client.getFrontendService().getGameEmulator(selection.getEmulatorId());
       File emulatorFolder = new File(emulator.getMediaDirectory());
       File file = new File(emulatorFolder, screen);
       SystemUtil.openFolder(file);
@@ -362,7 +362,7 @@ public class TablesSidebarMediaController implements Initializable {
     if (defaultMediaItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().deleteMedia(gameRepresentation.getId(), vPinScreen, defaultMediaItem.getName());
+        client.getGameMediaService().deleteMedia(gameRepresentation.getId(), vPinScreen, defaultMediaItem.getName());
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }
     }

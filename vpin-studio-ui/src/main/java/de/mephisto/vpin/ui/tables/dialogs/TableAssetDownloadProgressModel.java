@@ -59,7 +59,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, TableAsset tableAsset) {
     try {
-      client.getPinUPPopperService().downloadTableAsset(tableAsset, this.VPinScreen, this.game, append);
+      client.getGameMediaService().downloadTableAsset(tableAsset, this.VPinScreen, this.game, append);
     } catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Download Failed", "Popper table asset download failed: " + e.getMessage());

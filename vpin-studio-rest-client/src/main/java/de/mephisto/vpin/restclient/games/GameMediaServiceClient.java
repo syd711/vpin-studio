@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 public class GameMediaServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private static final int CACHE_SIZE = 300;
-  private static final String API_SEGMENT = "media";
+  private static final String API_SEGMENT_MEDIA = "media";
 
   private List<TableAssetSearch> cache = new ArrayList<>();
 
@@ -37,155 +37,8 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   }
 
 
-  public int getVersion() {
-    return getRestClient().get(API + "popper/version", Integer.class);
-  }
-
-  public GameList getImportableTables() {
-    return getRestClient().get(API + "popper/imports", GameList.class);
-  }
-
-  public JobExecutionResult importTable(GameListItem item) throws Exception {
-    try {
-      return getRestClient().post(API + "popper/import", item, JobExecutionResult.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed importing tables: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public FrontendControl getPinUPControlFor(VPinScreen screen) {
-    return getRestClient().get(API + "popper/pincontrol/" + screen.name(), FrontendControl.class);
-  }
-
-  public GameEmulatorRepresentation getGameEmulator(int id) {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
-  }
-
-  public GameEmulatorRepresentation getDefaultGameEmulator() {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.size()>0? gameEmulators.get(0): null;
-  }
-
-  public FrontendPlayerDisplay getScreenDisplay(VPinScreen screen) {
-    return getRestClient().get(API + "popper/screen/" + screen.name(), FrontendPlayerDisplay.class);
-  }
-
-  public List<FrontendPlayerDisplay> getScreenDisplays() {
-    return Arrays.asList(getRestClient().get(API + "popper/screens", FrontendPlayerDisplay[].class));
-  }
-
-  public List<GameEmulatorRepresentation> getGameEmulators() {
-    return Arrays.asList(getRestClient().getCached(API + "popper/emulators", GameEmulatorRepresentation[].class));
-  }
-
-  public List<GameEmulatorRepresentation> getVpxGameEmulators() {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
-  }
-
-  public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
-    return Arrays.asList(getRestClient().get(API + "popper/emulators", GameEmulatorRepresentation[].class));
-  }
-
-  public List<GameEmulatorRepresentation> getBackglassGameEmulators() {
-    return Arrays.asList(getRestClient().getCached(API + "popper/backglassemulators", GameEmulatorRepresentation[].class));
-  }
-
-  public FrontendControls getPinUPControls() {
-    return getRestClient().get(API + "popper/pincontrols", FrontendControls.class);
-  }
-
-  public boolean isPinUPPopperRunning() {
-    return getRestClient().get(API + "popper/running", Boolean.class);
-  }
-
-  public boolean terminatePopper() {
-    return getRestClient().get(API + "popper/terminate", Boolean.class);
-  }
-
-  public boolean restartPopper() {
-    return getRestClient().get(API + "popper/restart", Boolean.class);
-  }
-
-  public TableDetails getTableDetails(int gameId) {
-    return getRestClient().get(API + "popper/tabledetails/" + gameId, TableDetails.class);
-  }
-
-  public TableDetails saveTableDetails(TableDetails tableDetails, int gameId) throws Exception {
-    try {
-      return getRestClient().post(API + "popper/tabledetails/" + gameId, tableDetails, TableDetails.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed save table details: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public TableDetails autoFillTableDetails(int gameId, boolean overwrite) throws Exception {
-    try {
-      return getRestClient().put(API + "popper/tabledetails/autofill/" + gameId + "/" + overwrite, Collections.emptyMap(), TableDetails.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed autofilling table details: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails) throws Exception {
-    try {
-      return getRestClient().post(API + "popper/tabledetails/autofillsimulate/" + gameId, tableDetails, TableDetails.class);
-    }
-    catch (Exception e) {
-      LOG.error("Failed simulating autofilling table details: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public GameVpsMatch autoMatch(int gameId, boolean overwrite) {
-    return getRestClient().get(API + "popper/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
-  }
-
-  public void vpsLink(int gameId, String extTableId, String extTableVersionId) throws Exception {
-    GameVpsMatch vpsMatch = new GameVpsMatch();
-    vpsMatch.setGameId(gameId);
-    vpsMatch.setExtTableId(extTableId);
-    vpsMatch.setExtTableVersionId(extTableVersionId);
-    getRestClient().post(API + "popper/tabledetails/vpsLink/" + gameId, vpsMatch, Boolean.class);
-  }
-
-  public void fixVersion(int gameId, String version) throws Exception {
-    Map<String, Object> params = new HashMap<>();
-    params.put("version", version);
-    getRestClient().put(API + "popper/tabledetails/fixVersion/" + gameId, params, Boolean.class);
-  }
-
-  //-----------------------------
-
-  public FrontendCustomOptions saveCustomOptions(FrontendCustomOptions options) throws Exception {
-    try {
-      return getRestClient().post(API + "popper/custompoptions", options, FrontendCustomOptions.class);
-    }
-    catch (HttpClientErrorException e) {
-      if (e.getStatusCode().is4xxClientError()) {
-        throw new DatabaseLockException(e);
-      }
-      throw e;
-    }
-    catch (Exception e) {
-      LOG.error("Failed save custom options: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-  public FrontendCustomOptions getCustomOptions() {
-    return getRestClient().get(API + "popper/custompoptions", FrontendCustomOptions.class);
-  }
-
   public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
-    return getRestClient().delete(API + API_SEGMENT + "/media/" + gameId + "/" + screen.name() + "/" + name);
+    return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name() + "/" + name);
   }
 
 
@@ -193,14 +46,14 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     Map<String, Object> params = new HashMap<>();
     params.put("oldName", name);
     params.put("newName", newName);
-    return getRestClient().put(API + API_SEGMENT + "/media/" + gameId + "/" + screen.name(), params, Boolean.class);
+    return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), params, Boolean.class);
   }
 
   public boolean toFullScreen(int gameId, VPinScreen screen) throws Exception {
     try {
       Map<String, Object> values = new HashMap<>();
       values.put("fullscreen", "true");
-      return getRestClient().put(API + API_SEGMENT +"/media/" + gameId + "/" + screen.name(), values);
+      return getRestClient().put(API + API_SEGMENT_MEDIA +"/media/" + gameId + "/" + screen.name(), values);
     }
     catch (Exception e) {
       LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
@@ -212,7 +65,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     try {
       Map<String, Object> values = new HashMap<>();
       values.put("blank", "true");
-      return getRestClient().put(API + API_SEGMENT+ "/media/" + gameId + "/" + screen.name(), values);
+      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), values);
     }
     catch (Exception e) {
       LOG.error("Adding blank asset failed: " + e.getMessage(), e);
@@ -221,13 +74,13 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   }
 
   public GameMediaRepresentation getGameMedia(int gameId) {
-    return getRestClient().get(API + API_SEGMENT + "/" + gameId, GameMediaRepresentation.class);
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/" + gameId, GameMediaRepresentation.class);
   }
 
 
   public JobExecutionResult uploadMedia(File file, int gameId, VPinScreen screen, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + API_SEGMENT + "/upload/" + screen.name();
+      String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/upload/" + screen.name();
       HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
       ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class);
       finalizeUpload(upload);
@@ -242,7 +95,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   public UploadDescriptor uploadPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + API_SEGMENT + "/packupload";
+      String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/packupload";
       HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
       ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
@@ -288,7 +141,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     TableAssetSearch search = new TableAssetSearch();
     search.setTerm(term);
     search.setScreen(screen);
-    TableAssetSearch result = getRestClient().post(API + API_SEGMENT + "/assets/search", search, TableAssetSearch.class);
+    TableAssetSearch result = getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/search", search, TableAssetSearch.class);
     if (result != null) {
       if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
         String[] split = term.trim().split(" ");
@@ -306,7 +159,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT+ "/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
+      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);

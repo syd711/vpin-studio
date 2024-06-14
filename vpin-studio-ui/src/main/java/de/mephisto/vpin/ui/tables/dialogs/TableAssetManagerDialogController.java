@@ -194,7 +194,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onAudioBlank() {
     try {
-      client.getPinUPPopperService().addBlank(game.getId(), screen);
+      client.getGameMediaService().addBlank(game.getId(), screen);
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
     catch (Exception e) {
@@ -220,7 +220,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private void onFolderBtn() {
     if (this.gameMedia != null) {
       int emulatorId = this.game.getEmulatorId();
-      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(emulatorId);
+      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(emulatorId);
       String mediaDir = gameEmulator.getMediaDirectory();
       File screenDir = new File(mediaDir, screen.name());
       SystemUtil.openFolder(screenDir);
@@ -232,7 +232,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       try {
-        client.getPinUPPopperService().toFullScreen(game.getId(), screen);
+        client.getGameMediaService().toFullScreen(game.getId(), screen);
       }
       catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Fullscreen switch failed: " + e.getMessage());
@@ -296,7 +296,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().deleteMedia(game.getId(), screen, selectedItem.getName());
+        client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
 
         Platform.runLater(() -> {
           EventManager.getInstance().notifyJobFinished(POPPER_MEDIA_INSTALL, this.game.getId());
@@ -342,7 +342,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
 
         try {
-          client.getPinUPPopperService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
+          client.getGameMediaService().renameMedia(game.getId(), screen, selectedItem.getName(), s);
           EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
           onReload();
         }
@@ -378,7 +378,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private TableAssetSearch searchPopper(VPinScreen screen, String term) {
-    TableAssetSearch cached = client.getPinUPPopperService().getCached(screen, term);
+    TableAssetSearch cached = client.getGameMediaService().getCached(screen, term);
     if (cached != null) {
       return cached;
     }
@@ -871,7 +871,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
 
     if (game != null) {
-      gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());
+      gameMedia = client.getGameMediaService().getGameMedia(this.game.getId());
       List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
       ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
       assetList.getItems().removeAll(assetList.getItems());

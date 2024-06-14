@@ -14,7 +14,6 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
@@ -103,7 +102,7 @@ public class ClientSettingsPreferencesController implements Initializable, Chang
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    networkShareTestPath = client.getPinUPPopperService().getDefaultGameEmulator().getInstallationDirectory();
+    networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
@@ -232,8 +231,8 @@ public class ClientSettingsPreferencesController implements Initializable, Chang
     winNetworkShareTestBtn.setDisable(!SystemUtil.isWindows());
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getGameEmulators();
-    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getPinUPPopperService().getBackglassGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulators();
+    List<GameEmulatorRepresentation> backglassGameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);

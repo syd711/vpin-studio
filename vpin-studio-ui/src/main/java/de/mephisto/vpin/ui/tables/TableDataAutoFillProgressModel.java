@@ -54,7 +54,7 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      TableDetails tableDetails = client.getPinUPPopperService().autoFillTableDetails(next.getId(), overwrite);
+      TableDetails tableDetails = client.getFrontendService().autoFillTableDetails(next.getId(), overwrite);
       progressResultModel.addProcessed(tableDetails);
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);

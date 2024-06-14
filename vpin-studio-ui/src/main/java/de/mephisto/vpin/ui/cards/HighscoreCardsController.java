@@ -415,7 +415,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     filterButton.getStyleClass().remove("filter-button-selected");
-    if (emuIds.size() != client.getPinUPPopperService().getVpxGameEmulators().size()) {
+    if (emuIds.size() != client.getFrontendService().getVpxGameEmulators().size()) {
       filterButton.getStyleClass().add("filter-button-selected");
       filterButton.setGraphic(WidgetFactory.createIcon("mdi2f-filter-menu"));
     }
@@ -493,7 +493,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     String popperScreen = cardSettings.getPopperScreen();
     if (!StringUtils.isEmpty(popperScreen)) {
       VPinScreen screen = VPinScreen.valueOfScreen(popperScreen);
-      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getDefaultGameEmulator();
       String mediaDir = gameEmulator.getMediaDirectory();
       File screenDir = new File(mediaDir, screen.name());
       SystemUtil.openFolder(screenDir);
@@ -671,7 +671,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     client.getPreferenceService().addListener(this);
 
-    List<GameEmulatorRepresentation> gameEmulators = client.getPinUPPopperService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox(gameEmulator.getName());

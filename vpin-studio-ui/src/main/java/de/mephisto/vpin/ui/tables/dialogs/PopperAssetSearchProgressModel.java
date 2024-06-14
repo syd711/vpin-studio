@@ -55,7 +55,7 @@ public class PopperAssetSearchProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String term) {
     try {
-      TableAssetSearch result = client.getPinUPPopperService().searchTableAsset(screen, term);
+      TableAssetSearch result = client.getGameMediaService().searchTableAsset(screen, term);
       progressResultModel.getResults().add(result);
     } catch (Exception e) {
       LOG.error("Popper search failed: " + e.getMessage(), e);

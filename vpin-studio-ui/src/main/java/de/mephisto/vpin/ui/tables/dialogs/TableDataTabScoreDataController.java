@@ -105,7 +105,7 @@ public class TableDataTabScoreDataController implements Initializable {
 
   @FXML
   private void onEMHighscore() {
-    GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.getEmulatorId());
+    GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.getEmulatorId());
     File folder = new File(emulatorRepresentation.getUserDirectory());
     try {
       Desktop.getDesktop().open(folder);

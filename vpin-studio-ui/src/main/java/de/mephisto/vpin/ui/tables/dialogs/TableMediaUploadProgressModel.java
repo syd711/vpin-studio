@@ -64,7 +64,7 @@ public class TableMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      JobExecutionResult result = Studio.client.getPinUPPopperService().uploadMedia(next, gameId, screen, percent -> progressResultModel.setProgress(percent));
+      JobExecutionResult result = Studio.client.getGameMediaService().uploadMedia(next, gameId, screen, percent -> progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

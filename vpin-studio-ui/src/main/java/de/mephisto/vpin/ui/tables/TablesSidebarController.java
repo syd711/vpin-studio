@@ -193,13 +193,13 @@ public class TablesSidebarController implements Initializable {
         if (gameRepresentation.getHighscoreType() != null) {
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
-            GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+            GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
             SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
             return;
           }
         }
 
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
       }
     } catch (Exception e) {
@@ -211,7 +211,7 @@ public class TablesSidebarController implements Initializable {
   private void onTables() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
     } catch (Exception e) {
@@ -237,7 +237,7 @@ public class TablesSidebarController implements Initializable {
   private void onAltSound() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
@@ -252,7 +252,7 @@ public class TablesSidebarController implements Initializable {
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
@@ -265,7 +265,7 @@ public class TablesSidebarController implements Initializable {
   private void onDirectB2S() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
     } catch (Exception e) {
@@ -279,7 +279,7 @@ public class TablesSidebarController implements Initializable {
       if (this.game.isPresent()) {
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         if (dmdPackage != null) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
           File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
           File dmdFolder = new File(tablesFolder, dmdPackage.getName());
           SystemUtil.openFolder(dmdFolder);
@@ -287,7 +287,7 @@ public class TablesSidebarController implements Initializable {
         }
       }
 
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
       SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
     } catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
@@ -299,7 +299,7 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameRepresentation game = this.game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
 
         String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
         String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();

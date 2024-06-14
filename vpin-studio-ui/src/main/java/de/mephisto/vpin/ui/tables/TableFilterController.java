@@ -171,7 +171,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());
     configurationIssuesFilter.managedProperty().bindBidirectional(configurationIssuesFilter.visibleProperty());
 
-    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getPinUPPopperService().getGameEmulators());
+    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getFrontendService().getGameEmulators());
     gameEmulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
 

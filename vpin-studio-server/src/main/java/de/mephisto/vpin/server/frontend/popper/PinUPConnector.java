@@ -26,7 +26,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@Service(FrontendType.POPPER)
+@Service("Popper")
 public class PinUPConnector implements FrontendConnector {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 

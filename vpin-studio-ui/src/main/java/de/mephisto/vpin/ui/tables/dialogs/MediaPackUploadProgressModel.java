@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -54,7 +53,7 @@ public class MediaPackUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getPinUPPopperService().uploadPack(next, gameId, percent ->
+      UploadDescriptor result = Studio.client.getGameMediaService().uploadPack(next, gameId, percent ->
           Platform.runLater(() -> {
             progressResultModel.setProgress(percent);
           }));

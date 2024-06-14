@@ -24,7 +24,7 @@ import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
  *
  */
 @RestController
-@RequestMapping(API_SEGMENT + "popper")
+@RequestMapping(API_SEGMENT + "frontend")
 public class FrontendServiceResource {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendServiceResource.class);
 
@@ -32,7 +32,15 @@ public class FrontendServiceResource {
   private FrontendStatusService frontendStatusService;
 
   @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
   private GameService gameService;
+
+  @GetMapping("/type")
+  public FrontendType getFrontendType() {
+    return frontendService.getFrontendType();
+  }
 
   @GetMapping("/custompoptions")
   public FrontendCustomOptions getCustomOptions() {

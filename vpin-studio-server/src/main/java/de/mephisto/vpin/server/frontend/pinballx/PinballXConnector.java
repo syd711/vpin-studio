@@ -1,5 +1,18 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.server.frontend.BaseConnector;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.io.FileReader;
 import java.nio.charset.Charset;
@@ -8,23 +21,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.stereotype.Service;
-
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-
-@Service(FrontendType.PINBALL_X)
+@Service("PinballX")
 public class PinballXConnector extends BaseConnector {
+  public final static String POPPER = FrontendType.Popper.name();
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 

@@ -143,7 +143,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = this.game.get();
-        client.getPinUPPopperService().vpsLink(gameRepresentation.getId(), null, null);
+        client.getFrontendService().vpsLink(gameRepresentation.getId(), null, null);
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       } catch (Exception e) {
         LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
@@ -271,7 +271,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (selectedEntry.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
         VpsTable vpsTable = selectedEntry.get();
-        client.getPinUPPopperService().vpsLink(gameRepresentation.getId(), vpsTable.getId(), null);
+        client.getFrontendService().vpsLink(gameRepresentation.getId(), vpsTable.getId(), null);
       }
       this.tableVersionsCombo.valueProperty().addListener(this);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
@@ -576,7 +576,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (this.game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = this.game.get();
-        TableDetails tableDetails = client.getPinUPPopperService().getTableDetails(gameRepresentation.getId());
+        TableDetails tableDetails = client.getFrontendService().getTableDetails(gameRepresentation.getId());
         copyTableVersionBtn.setDisable(newValue == null);
 
         String updatedId = null;
@@ -589,7 +589,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         String oldVersionValue = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
         if (!String.valueOf(oldValue).equals(oldVersionValue)) {
           tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), updatedId);
-          client.getPinUPPopperService().saveTableDetails(tableDetails, gameRepresentation.getId());
+          client.getFrontendService().saveTableDetails(tableDetails, gameRepresentation.getId());
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         }
       } catch (Exception e) {

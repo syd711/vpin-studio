@@ -141,7 +141,7 @@ public class CardGenerationPreferencesController implements Initializable {
     highscoreCardDuration.setDisable(selectedItem == null);
 
     if (!StringUtils.isEmpty(selectedItem)) {
-      FrontendControl fn = client.getPinUPPopperService().getPinUPControlFor(VPinScreen.valueOf(selectedItem));
+      FrontendControl fn = client.getFrontendService().getPinUPControlFor(VPinScreen.valueOf(selectedItem));
 
       String msg = null;
       if (fn != null) {

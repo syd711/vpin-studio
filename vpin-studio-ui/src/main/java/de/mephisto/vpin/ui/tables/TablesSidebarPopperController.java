@@ -182,7 +182,7 @@ public class TablesSidebarPopperController implements Initializable {
         gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getPinUPPopperService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
+          client.getFrontendService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
         } catch (Exception ex) {
           LOG.error("Error fixing version: " + ex.getMessage(), ex);
@@ -194,7 +194,7 @@ public class TablesSidebarPopperController implements Initializable {
 
   @FXML
   private void onTableEdit() {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (Studio.client.getFrontendService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
@@ -233,7 +233,7 @@ public class TablesSidebarPopperController implements Initializable {
     autoFillBtn.setDisable(g.isEmpty());
 
     GameRepresentation game = g.orElse(null);
-    tableDetails = game!=null? Studio.client.getPinUPPopperService().getTableDetails(game.getId()): null;
+    tableDetails = game!=null? Studio.client.getFrontendService().getTableDetails(game.getId()): null;
 
     if (game!=null && tableDetails!=null) {
 
@@ -249,7 +249,7 @@ public class TablesSidebarPopperController implements Initializable {
         labelTimesPlayed.setText("0");
       }
 
-      emulatorLabel.setText(client.getPinUPPopperService().getGameEmulator(tableDetails.getEmulatorId()).getName());
+      emulatorLabel.setText(client.getFrontendService().getGameEmulator(tableDetails.getEmulatorId()).getName());
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : "-");
       gameName.setText(StringUtils.isEmpty(tableDetails.getGameName()) ? "-" : tableDetails.getGameName());
       gameFileName.setText(StringUtils.isEmpty(tableDetails.getGameFileName()) ? "-" : tableDetails.getGameFileName());
