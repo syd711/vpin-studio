@@ -63,17 +63,13 @@ public class RarUtil {
         }
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
-          String plainName =  entryName;
-          if (plainName.contains("/")) {
-            plainName = plainName.substring(plainName.lastIndexOf("/") + 1);
-          }
-          File newFile = new File(destinationDir, plainName);
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
-          }
-
           if (entryName.toLowerCase().endsWith(name.toLowerCase())) {
+            //folder creation
+            File parent = targetFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+
             RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
             RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
             ExtractOperationResult result = item.extractSlow(fos);
