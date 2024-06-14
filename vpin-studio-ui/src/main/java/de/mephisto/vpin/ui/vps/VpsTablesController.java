@@ -147,7 +147,8 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(VPS.getVpsTableUrl(getSelection().get().getId())));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open link: " + e.getMessage());
         }
       }
@@ -169,11 +170,11 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     VpsTable selection = tableView.getSelectionModel().getSelectedItem();
 
-    Platform.runLater(() -> {
-      if (forceReload) {
-        ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
-      }
+    if (forceReload) {
+      ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
+    }
 
+    new Thread(() -> {
       // get all tables
       vpsTables = client.getVpsService().getTables();
       Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
@@ -216,7 +217,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
         tableView.requestFocus();
       });
-    });
+    }).start();
   }
 
   @Override
@@ -229,7 +230,8 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       loadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 

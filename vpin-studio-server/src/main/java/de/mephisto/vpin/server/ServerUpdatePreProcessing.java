@@ -27,7 +27,7 @@ public class ServerUpdatePreProcessing {
       SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
       LOG.info("7z initalized.");
     }
-    catch (SevenZipNativeInitializationException e) {
+    catch (Exception e) {
       LOG.error("Failed to initialize sevenzip: " + e.getMessage());
     }
 
