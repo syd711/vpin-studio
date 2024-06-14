@@ -576,7 +576,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (this.game.isPresent()) {
       try {
         GameRepresentation gameRepresentation = this.game.get();
-        TableDetails tableDetails = client.getFrontendService().getTableDetails(gameRepresentation.getId());
         copyTableVersionBtn.setDisable(newValue == null);
 
         String updatedId = null;
@@ -584,12 +583,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           updatedId = newValue.getId();
         }
         // check value of 
-        String oldTableId = gameRepresentation.getExtTableId();
-        String _oldVersionValue = gameRepresentation.getExtTableVersionId();
-        String oldVersionValue = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
-        if (!String.valueOf(oldValue).equals(oldVersionValue)) {
-          tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), updatedId);
-          client.getFrontendService().saveTableDetails(tableDetails, gameRepresentation.getId());
+        String extTableId = gameRepresentation.getExtTableId();
+        String extVersionId = gameRepresentation.getExtTableVersionId();
+        if (!StringUtils.equals(updatedId, extVersionId)) {
+          client.getFrontendService().vpsLink(gameRepresentation.getId(), extTableId, updatedId);
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         }
       } catch (Exception e) {
