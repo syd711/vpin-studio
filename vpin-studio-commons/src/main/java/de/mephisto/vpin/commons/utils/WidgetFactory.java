@@ -257,7 +257,8 @@ public class WidgetFactory {
 
     try {
       root = fxmlLoader.load();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error loading: " + e.getMessage(), e);
     }
 
@@ -438,9 +439,9 @@ public class WidgetFactory {
       setText(null);
       if (item != null) {
         setText(item
-          .replaceAll("_", " ")
-          .replaceAll("ATIO", "atio")
-          .replaceAll("x", " x ")
+            .replaceAll("_", " ")
+            .replaceAll("ATIO", "atio")
+            .replaceAll("x", " x ")
         );
       }
     }
@@ -495,12 +496,12 @@ public class WidgetFactory {
     String url = client.getURL(mediaItem.getUri());
 
     double prefWidth = parent.getPrefWidth();
-    if(prefWidth <= 0) {
-      prefWidth = ((Pane)parent.getParent()).getWidth();
+    if (prefWidth <= 0) {
+      prefWidth = ((Pane) parent.getParent()).getWidth();
     }
     double prefHeight = parent.getPrefHeight();
-    if(prefHeight <= 0) {
-      prefHeight =  ((Pane)parent.getParent()).getHeight();
+    if (prefHeight <= 0) {
+      prefHeight = ((Pane) parent.getParent()).getHeight();
     }
 
     if (baseType.equals("image") && !audioOnly) {
@@ -509,16 +510,15 @@ public class WidgetFactory {
       imageView.setFitHeight(prefHeight - 60);
       imageView.setPreserveRatio(true);
 
-      Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+      Image image = null;
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
-      if(gameMediaItem != null) {
+      if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
+        imageView.setImage(image);
+        imageView.setUserData(mediaItem);
+
+        parent.setCenter(imageView);
       }
-
-      imageView.setImage(image);
-      imageView.setUserData(mediaItem);
-
-      parent.setCenter(imageView);
     }
     else if (baseType.equals("audio")) {
       new AudioMediaPlayer(parent, mediaItem, url);
