@@ -26,7 +26,7 @@ public class ServerUpdatePreProcessing {
       File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
       sevenZipTempFolder.mkdirs();
       SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
-      LOG.info("7z initalized.");
+      LOG.info("7z initialized.");
     }
     catch (Exception e) {
       LOG.error("Failed to initialize sevenzip: " + e.getMessage());
