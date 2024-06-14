@@ -41,6 +41,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/version", Integer.class);
   }
 
+  public FrontendType getFrontendType() {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/type", FrontendType.class);
+  }
+
   public GameList getImportableTables() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/imports", GameList.class);
   }
