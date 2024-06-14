@@ -50,6 +50,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
   }
+  
+  public FrontendConnector getFrontend() {
+    FrontendType frontendType = getFrontendType();
+    return frontendsMap.get(frontendType.name());
+    //return frontendsMap.get(FrontendType.POPPER.name());
+    //return frontendsMap.get("standaloneConnector");
+  }
+
+  public FrontendType getFrontendType() {
+    return FrontendType.Popper;
+  }
 
   //----------------------------------------
   // Access to cached emulators
@@ -94,18 +105,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   //-----------------------------------
-
-  public FrontendConnector getFrontend() {
-    FrontendType frontendType = getFrontendType();
-    return frontendsMap.get(frontendType.name());
-    //return frontendsMap.get(FrontendType.POPPER.name());
-    //return frontendsMap.get("standaloneConnector");
-  }
-
-  public FrontendType getFrontendType() {
-    return FrontendType.PinballX;
-  }
-
 
   public TableDetails getTableDetails(int id) {
     FrontendConnector frontend = getFrontend();

@@ -23,7 +23,7 @@ import java.util.Map;
 
 @Service("PinballX")
 public class PinballXConnector extends BaseConnector {
-  public final static String POPPER = FrontendType.Popper.name();
+  public final static String PINBALL_X = FrontendType.PinballX.name();
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
