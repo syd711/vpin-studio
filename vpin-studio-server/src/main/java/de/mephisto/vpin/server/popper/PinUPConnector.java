@@ -5,7 +5,6 @@ import java.io.FileReader;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -51,11 +50,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 //TODO rename as FrontendService
 
 @Service
-public class PinUPConnector implements InitializingBean, PreferenceChangedListener  {
-  
-  private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
+public class PinUPConnector implements InitializingBean, PreferenceChangedListener {
 
-  public static final String IS_FAV = "isFav";
+  private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   @Autowired
   private SystemService systemService;
@@ -123,20 +120,19 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     //return frontendsMap.get("pinballXConnector");
     //return frontendsMap.get("standaloneConnector");
   }
- 
+
 
   public TableDetails getTableDetails(int id) {
     FrontendConnector frontend = getFrontend();
     TableDetails manifest = frontend.getTableDetails(id);
-    if (manifest!=null) {
-      List<String> altExeList = Collections.emptyList();//getAltExeList();
+    if (manifest != null) {
       GameEmulator emu = emulators.get(manifest.getEmulatorId());
       manifest.setLauncherList(new ArrayList<>(emu.getAltExeNames()));
-      manifest.getLauncherList().addAll(altExeList);
     }
     return manifest;
 
   }
+
   public void saveTableDetails(int id, TableDetails tableDetails) {
     getFrontend().saveTableDetails(id, tableDetails);
   }
@@ -146,40 +142,43 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   //--------------------------
-  private Game SetGameEmulator(Game game) {
+  private Game setGameEmulator(Game game) {
     if (game != null) {
       GameEmulator emulator = emulators.get(game.getEmulatorId());
       game.setEmulator(emulator);
     }
     return game;
   }
-  private List<Game> SetGameEmulator(List<Game> games) {
-    for (Game game: games) {
-      SetGameEmulator(game);
+
+  private List<Game> setGameEmulator(List<Game> games) {
+    for (Game game : games) {
+      setGameEmulator(game);
     }
     return games;
   }
 
   public Game getGame(int id) {
-    return SetGameEmulator(getFrontend().getGame(id));
+    return setGameEmulator(getFrontend().getGame(id));
   }
 
   public Game getGameByFilename(String filename) {
-    return SetGameEmulator(getFrontend().getGameByFilename(filename));
+    return setGameEmulator(getFrontend().getGameByFilename(filename));
   }
+
   public List<Game> getGamesByEmulator(int emulatorId) {
-    return SetGameEmulator(getFrontend().getGamesByEmulator(emulatorId));
+    return setGameEmulator(getFrontend().getGamesByEmulator(emulatorId));
   }
+
   public List<Game> getGamesByFilename(String filename) {
-    return SetGameEmulator(getFrontend().getGamesByFilename(filename));
+    return setGameEmulator(getFrontend().getGamesByFilename(filename));
   }
 
   public Game getGameByName(String gameName) {
-    return SetGameEmulator(getFrontend().getGameByName(gameName));
+    return setGameEmulator(getFrontend().getGameByName(gameName));
   }
 
   public List<Game> getGames() {
-    List<Game>  results = SetGameEmulator(getFrontend().getGames());
+    List<Game> results = setGameEmulator(getFrontend().getGames());
     results.sort(Comparator.comparing(Game::getGameDisplayName));
     return results;
   }
@@ -190,13 +189,15 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public int getVersion() {
     return getFrontend().getVersion();
   }
+
   public boolean isPopper15() {
     return getFrontend().isPopper15();
   }
-  
+
   public PopperCustomOptions getCustomOptions() {
     return getFrontend().getCustomOptions();
   }
+
   public void updateCustomOptions(@NonNull PopperCustomOptions options) {
     getFrontend().updateCustomOptions(options);
   }
@@ -206,6 +207,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       getFrontend().setPupPackEnabled(game, enable);
     }
   }
+
   public boolean isPupPackDisabled(Game game) {
     if (game != null) {
       return getFrontend().isPupPackDisabled(game);
@@ -243,9 +245,11 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
     return false;
   }
+
   public boolean deleteGame(int id) {
     return getFrontend().deleteGame(id);
   }
+
   public void deleteGames() {
     getFrontend().deleteGames();
   }
@@ -272,25 +276,32 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public Playlist getPlayList(int id) {
     return getFrontend().getPlayList(id);
   }
+
   @NonNull
   public List<Playlist> getPlayLists(boolean excludeSqlLists) {
     return getFrontend().getPlayLists(excludeSqlLists);
   }
+
   public void setPlaylistColor(int playlistId, long color) {
     getFrontend().setPlaylistColor(playlistId, color);
   }
+
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     getFrontend().addToPlaylist(playlistId, gameId, favMode);
   }
+
   public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
     getFrontend().updatePlaylistGame(playlistId, gameId, favMode);
   }
+
   public void deleteFromPlaylists(int gameId) {
     getFrontend().deleteFromPlaylists(gameId);
   }
+
   public void deleteFromPlaylist(int playlistId, int gameId) {
     getFrontend().deleteFromPlaylist(playlistId, gameId);
   }
+
   public Playlist getPlayListForGame(int gameId) {
     return getFrontend().getPlayListForGame(gameId);
   }
@@ -305,6 +316,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public List<TableAlxEntry> getAlxData() {
     return getFrontend().getAlxData();
   }
+
   @NonNull
   public List<TableAlxEntry> getAlxData(int gameId) {
     return getFrontend().getAlxData(gameId);
@@ -430,7 +442,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       return false;
     }
 
-    if (getFrontend().getMediaAccessStrategy()!=null && StringUtils.isEmpty(emulator.getDirMedia())) {
+    if (getFrontend().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
       return false;
     }
@@ -441,7 +453,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public void loadEmulators() {
     List<Emulator> ems = getFrontend().getEmulators();
     this.emulators.clear();
-    for (Emulator emulator : ems) { 
+    for (Emulator emulator : ems) {
       try {
         if (!emulator.isVisible()) {
           continue;
@@ -453,10 +465,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
           continue;
         }
-        else  {
-          if (emulator.getDirB2S()==null) {
+        else {
+          if (emulator.getDirB2S() == null) {
             File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
-            if (b2sFolder==null) {
+            if (b2sFolder == null) {
               // not installed, use B2SServer folder inside vpx folder
               b2sFolder = new File(emulator.getEmuLaunchDir(), "B2SServer");
             }
@@ -482,7 +494,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   //--------------------------
-  
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
@@ -496,7 +508,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     FrontendConnector frontend = getFrontend();
-    if (frontend!=null) {
+    if (frontend != null) {
       frontend.initialize(this.serverSettings);
     }
 
@@ -527,7 +539,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
         File exeFile = new File(backglassServerDirectory, "B2SBackglassServerEXE.exe");
         File installDirectory = defaultEmulator.getInstallationFolder();
-        if (!exeFile.exists() && installDirectory!=null && installDirectory.exists()) {
+        if (!exeFile.exists() && installDirectory != null && installDirectory.exists()) {
           //search recursively for the server exe file
           Iterator<File> fileIterator = FileUtils.iterateFiles(installDirectory, new String[]{"exe"}, true);
           boolean found = false;

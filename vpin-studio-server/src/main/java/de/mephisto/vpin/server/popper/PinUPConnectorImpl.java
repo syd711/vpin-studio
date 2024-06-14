@@ -146,7 +146,7 @@ public class PinUPConnectorImpl implements FrontendConnector {
     return Collections.emptyList();
   }
 
-  @NonNull
+  @Nullable
   public TableDetails getTableDetails(int id) {
     Connection connect = connect();
     TableDetails manifest = null;

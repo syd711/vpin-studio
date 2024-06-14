@@ -532,7 +532,6 @@ public class GameService implements InitializingBean {
   }
 
   private synchronized boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
-
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     boolean newGame = (gameDetails == null);
 

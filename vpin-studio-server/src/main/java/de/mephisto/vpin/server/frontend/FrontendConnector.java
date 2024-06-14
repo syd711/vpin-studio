@@ -54,7 +54,7 @@ public interface FrontendConnector {
   //----------------------------------
   // Specific TableDetails managed in frontend database
 
-  @NonNull
+  @Nullable
   TableDetails getTableDetails(int id);
 
   void updateTableFileUpdated(int id);
@@ -64,7 +64,6 @@ public interface FrontendConnector {
   //----------------------------------
   // version and options 
 
-  @NonNull
   int getVersion();
   
   boolean isPopper15();

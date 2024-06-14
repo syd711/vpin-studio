@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,17 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private final static Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
 
-  /** the loaded and cached emulators */
+  /**
+   * the loaded and cached emulators
+   */
   protected Map<Integer, Emulator> emulators;
-  /** Map by emulator of ids */
+  /**
+   * Map by emulator of ids
+   */
   protected Map<Integer, List<String>> gamesByEmu;
-  /** Map id to filename */
+  /**
+   * Map id to filename
+   */
   protected Map<Integer, String> mapFilenames;
 
   /**
@@ -44,7 +51,7 @@ public abstract class BaseConnector implements FrontendConnector {
     this.mapFilenames = new HashMap<>();
 
     List<Emulator> loaded = loadEmulators();
-    for(Emulator emu : loaded) {
+    for (Emulator emu : loaded) {
       emulators.put(emu.getId(), emu);
 
       List<String> filenames = loadGames(emu);
@@ -65,13 +72,20 @@ public abstract class BaseConnector implements FrontendConnector {
   protected String getEmulatorExtension(String emuName) {
     String emu = emuName.replaceAll(" ", "").toLowerCase();
     switch (emu) {
-        case "futurepinball": return "";
-        case "visualpinball": return "vpx";
-        case "zaccaria": return "";
-        case "pinballfx2": return "fp2";
-        case "pinballfx3": return "fp3";
-        case "pinballarcade": return "";
-        default: return null;
+      case "futurepinball":
+        return "";
+      case "visualpinball":
+        return "vpx";
+      case "zaccaria":
+        return "";
+      case "pinballfx2":
+        return "fp2";
+      case "pinballfx3":
+        return "fp3";
+      case "pinballarcade":
+        return "";
+      default:
+        return null;
     }
   }
 
@@ -107,16 +121,13 @@ public abstract class BaseConnector implements FrontendConnector {
 
   //-------------------------------------------------
 
+  @NonNull
   @Override
   public List<Game> getGames() {
-    List<Game> games = null;
-    for (Integer emuId: emulators.keySet()) {
+    List<Game> games = new ArrayList<>();
+    for (Integer emuId : emulators.keySet()) {
       List<Game> gamesForEmu = getGamesByEmulator(emuId);
-      if (games==null) {
-        games = gamesForEmu;
-      } else {
-        games.addAll(gamesForEmu);
-      }
+      games.addAll(gamesForEmu);
     }
     return games;
   }
@@ -124,12 +135,12 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public Game getGame(int id) {
     String filename = mapFilenames.get(id);
-    return filename!=null? getGameByFilename(filename): null;
+    return filename != null ? getGameByFilename(filename) : null;
   }
 
   @Override
   public Game getGameByFilename(String filename) {
-    for (Integer emuId: emulators.keySet()) {
+    for (Integer emuId : emulators.keySet()) {
       if (gamesByEmu.get(emuId).contains(filename)) {
 
         Emulator emu = emulators.get(emuId);
@@ -159,7 +170,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public List<Game> getGamesByEmulator(int emulatorId) {
     List<String> filenames = gamesByEmu.get(emulatorId);
     List<Game> games = new ArrayList<>(filenames.size());
-    for (String filename: filenames) {
+    for (String filename : filenames) {
       games.add(getGameByFilename(filename));
     }
     return games;
@@ -215,7 +226,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
     manifest.setDateAdded(game.getDateAdded());
     // cf statuses: STATUS_DISABLED=0, STATUS_NORMAL=1, STATUS_MATURE=2, STATUS_WIP=3
-    manifest.setStatus(game.isDisabled()? 0: 1);
+    manifest.setStatus(game.isDisabled() ? 0 : 1);
     manifest.setWebGameId(game.getExtTableId());
 
     return manifest;
@@ -226,8 +237,8 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public boolean deleteGame(int gameId) {
     String filename = mapFilenames.remove(gameId);
-    if (filename!=null) {
-      for (Integer emuId: emulators.keySet()) {
+    if (filename != null) {
+      for (Integer emuId : emulators.keySet()) {
         List<String> games = gamesByEmu.get(emuId);
         games.remove(filename);
       }
@@ -236,11 +247,11 @@ public abstract class BaseConnector implements FrontendConnector {
       return true;
     }
     return false;
-  }  
-  
+  }
+
   public void deleteGames() {
     mapFilenames.clear();
-    for (Integer emuId: emulators.keySet()) {
+    for (Integer emuId : emulators.keySet()) {
       gamesByEmu.get(emuId).clear();
     }
     dropGameFromDb(null);
@@ -248,26 +259,27 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public int importGame(int emulatorId, String gameName, String gameFileName, String gameDisplayName,
-    String launchCustomVar, java.util.Date dateFileUpdated) {
-      LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
+  public int importGame(int emulatorId,
+                        @NonNull String gameName, @NonNull  String gameFileName, @NonNull  String gameDisplayName,
+                        @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
+    LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
 
-      TableDetails details = new TableDetails();
-      details.setEmulatorId(emulatorId);
-      details.setGameName(gameName);
-      details.setGameFileName(gameFileName);
-      details.setGameDisplayName(gameDisplayName);
-      details.setDateAdded(new java.util.Date());
-      details.setLaunchCustomVar(launchCustomVar);
+    TableDetails details = new TableDetails();
+    details.setEmulatorId(emulatorId);
+    details.setGameName(gameName);
+    details.setGameFileName(gameFileName);
+    details.setGameDisplayName(gameDisplayName);
+    details.setDateAdded(new java.util.Date());
+    details.setLaunchCustomVar(launchCustomVar);
 
-      updateGameInDb(gameFileName, details);
-      commitDb();
+    updateGameInDb(gameFileName, details);
+    commitDb();
 
-      // if everything is good, the game id should have been generated, so add to the cached model
-      int id = filenameToId(gameFileName);
-      mapFilenames.put(id, gameFileName);
-      gamesByEmu.get(emulatorId).add(gameFileName);
-      return id;  
+    // if everything is good, the game id should have been generated, so add to the cached model
+    int id = filenameToId(gameFileName);
+    mapFilenames.put(id, gameFileName);
+    gamesByEmu.get(emulatorId).add(gameFileName);
+    return id;
   }
 
   //------------------------------------------------------------
@@ -285,8 +297,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public PopperCustomOptions getCustomOptions() {
-    PopperCustomOptions options = new PopperCustomOptions();
-    return options;
+    return new PopperCustomOptions();
   }
 
   @Override
@@ -296,13 +307,14 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public void updateTableFileUpdated(int id) {
-      //String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
+    //String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
   }
 
   @Override
   public boolean isPupPackDisabled(@NonNull Game game) {
     return false;
   }
+
   @Override
   public void setPupPackEnabled(@NonNull Game game, boolean enable) {
   }
@@ -348,23 +360,24 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public Playlist getPlayListForGame(int gameId) {
-    Playlist result = null;
-    return result;
+    return null;
   }
 
+
+  @NonNull
   @Override
   public List<Integer> getGameIdsFromPlaylists() {
-    List<Integer> result = new ArrayList<>();
-    return result;
+    return new ArrayList<>();
   }
 
   //-------------------------
-  
+
   @Override
   public java.util.Date getStartDate() {
     return new java.util.Date();
   }
-  
+
+  @NonNull
   @Override
   public List<TableAlxEntry> getAlxData() {
     List<TableAlxEntry> result = new ArrayList<>();
@@ -405,6 +418,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return f;
   }
 
+  @NonNull
   @Override
   public PinUPControls getControls() {
     PinUPControls controls = new PinUPControls();
