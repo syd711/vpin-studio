@@ -34,7 +34,7 @@ public class TableDataTabStatisticsController implements Initializable {
     AlxSummary alxSummary = client.getAlxService().getAlxSummary(game.getId());
 
     int played = 0;
-    if (tableDetails.getNumberPlays() != null) {
+    if (tableDetails!=null && tableDetails.getNumberPlays() != null) {
       played = tableDetails.getNumberPlays();
     }
     timesPlayedTile.refresh(new AlxTileEntry("Total Times Played", "(The total number of table launches from Popper)", String.valueOf(played)));

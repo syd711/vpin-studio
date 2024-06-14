@@ -71,11 +71,11 @@ public class TableDataTabScreensController implements Initializable {
     this.tableDetails = tableDetails;
 
     //displays
-    String keepDisplays = tableDetails.getKeepDisplays();
+    String keepDisplays = tableDetails!=null? tableDetails.getKeepDisplays(): null;
     if (StringUtils.isEmpty(keepDisplays)) {
       useEmuDefaultsCheckbox.setSelected(true);
     }
-    else if (keepDisplays.equalsIgnoreCase("NONE")) {
+    else if (StringUtils.equalsIgnoreCase(keepDisplays, "NONE")) {
       hideAllCheckbox.setSelected(true);
     }
     else {

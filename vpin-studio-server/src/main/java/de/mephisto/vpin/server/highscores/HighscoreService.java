@@ -77,8 +77,10 @@ public class HighscoreService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
 
-    VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
-    highscoreFiles.setVpRegEntries(reg.getEntries());
+    if (game.getEmulator().getVPRegFile().exists()) {
+      VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
+      highscoreFiles.setVpRegEntries(reg.getEntries());
+    }
 
     File userFolder = game.getEmulator().getUserFolder();
     if (userFolder.exists()) {

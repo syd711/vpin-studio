@@ -132,21 +132,31 @@ public class TableDataTabScoreDataController implements Initializable {
     this.game = game;
     this.tableDetails = tableDetails;
 
-    List<String> availableRoms = new ArrayList<>(highscoreFiles.getNvRams());
-    availableRoms.addAll(highscoreFiles.getVpRegEntries());
+    List<String> availableRoms = new ArrayList<>();
+    if (highscoreFiles.getNvRams() != null) {
+      availableRoms.addAll(highscoreFiles.getNvRams());
+    }
+    if (highscoreFiles.getVpRegEntries() != null) {
+      availableRoms.addAll(highscoreFiles.getVpRegEntries());
+    }
     Collections.sort(availableRoms);
     availableRoms.add(0, null);
     romName.setItems(FXCollections.observableList(availableRoms));
 
-    List<String> availableHsFiles = new ArrayList<>(highscoreFiles.getTextFiles());
+    List<String> availableHsFiles = new ArrayList<>();
+    if (highscoreFiles.getTextFiles() != null) {
+      availableHsFiles.addAll(highscoreFiles.getTextFiles());
+    }
     Collections.sort(availableHsFiles);
     availableHsFiles.add(0, null);
     highscoreFileName.setItems(FXCollections.observableList(availableHsFiles));
 
     refreshScannedValues();
 
+
     applyRomBtn.setDisable(true);
-    romName.setValue(tableDetails.getRomName());
+    String tableRomName = tableDetails!=null? tableDetails.getRomName(): null;
+    romName.setValue(tableRomName);
     romName.valueProperty().addListener((observable, oldValue, newValue) -> {
       onRomNameUpdate(newValue);
     });
@@ -157,7 +167,7 @@ public class TableDataTabScoreDataController implements Initializable {
       }
     });
 
-    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getScannedRom())) {
+    if (StringUtils.isEmpty(tableRomName) && !StringUtils.isEmpty(game.getScannedRom())) {
       if (!StringUtils.isEmpty(game.getRomAlias())) {
         romName.setPromptText(game.getRom() + " (aliased ROM)");
       }
@@ -175,13 +185,14 @@ public class TableDataTabScoreDataController implements Initializable {
 
 
     applyAltRomBtn.setDisable(true);
-    altRomName.setText(tableDetails.getRomAlt());
+    String tableRomAlt = tableDetails!=null? tableDetails.getRomAlt(): null;
+    altRomName.setText(tableRomAlt);
     altRomName.textProperty().addListener((observable, oldValue, newValue) -> {
       onAltRomNameUpdate(newValue);
     });
     altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
 
-    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+    if (StringUtils.isEmpty(tableRomAlt) && !StringUtils.isEmpty(game.getScannedAltRom())) {
       altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       applyAltRomBtn.setDisable(false);
     }
@@ -200,7 +211,7 @@ public class TableDataTabScoreDataController implements Initializable {
     hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
 
     //highscore mapping
-    String hsFileName = tableDetails.getMappedValue(mappingHsField);
+    String hsFileName = tableDetails!=null? tableDetails.getMappedValue(mappingHsField): null;
     highscoreFileName.setValue(hsFileName);
 
     tableDataController.setMappedFieldValue(mappingHsField, highscoreFileName.getValue());
@@ -261,7 +272,7 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onAltRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       altRomName.setPromptText("");
-      if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomAlt())) && !StringUtils.isEmpty(game.getScannedAltRom())) {
         altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       }
     }
@@ -276,7 +287,7 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       romName.setPromptText("");
-      if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getScannedRom())) {
+      if ((tableDetails == null || StringUtils.isEmpty(tableDetails.getRomName())) && !StringUtils.isEmpty(game.getScannedRom())) {
         if (!StringUtils.isEmpty(game.getRomAlias())) {
           romName.setPromptText(game.getRom() + " (aliased ROM)");
         }

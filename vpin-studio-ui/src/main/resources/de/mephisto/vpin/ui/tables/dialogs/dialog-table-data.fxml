@@ -387,7 +387,7 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
                         </Tab>
-                        <Tab closable="false" text="Meta Data">
+                        <Tab fx:id="metaDataTab" closable="false" text="Meta Data">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -615,7 +615,7 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="extrasTab" closable="false" text=" Customization ">
+                        <Tab fx:id="customTab" closable="false" text=" Customization ">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -894,7 +894,7 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Extras">
+                        <Tab fx:id="extrasTab" closable="false" text="Extras">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
