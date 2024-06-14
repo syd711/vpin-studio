@@ -28,6 +28,9 @@ public class Game {
 
   private String rom;
   private String romAlias;
+  private String scannedRom;
+  private String scannedAltRom;
+
   private String gameDisplayName;
   private String gameFileName;
   private String gameName;
@@ -40,6 +43,8 @@ public class Game {
   private int id;
   private int nvOffset;
   private String hsFileName;
+  private String scannedHsFileName;
+
   private GameEmulator emulator;
   private int emulatorId;
 
@@ -431,6 +436,14 @@ public class Game {
     this.hsFileName = hsFileName;
   }
 
+  public String getScannedHsFileName() {
+    return scannedHsFileName;
+  }
+
+  public void setScannedHsFileName(String scannedHsFileName) {
+    this.scannedHsFileName = scannedHsFileName;
+  }
+
   public String getGameDisplayName() {
     return gameDisplayName;
   }
@@ -461,6 +474,22 @@ public class Game {
 
   public void setRomAlias(String romAlias) {
     this.romAlias = romAlias;
+  }
+
+  public String getScannedRom() {
+    return scannedRom;
+  }
+
+  public void setScannedRom(String scannedRom) {
+    this.scannedRom = scannedRom;
+  }
+
+  public String getScannedAltRom() {
+    return scannedAltRom;
+  }
+
+  public void setScannedAltRom(String scannedAltRom) {
+    this.scannedAltRom = scannedAltRom;
   }
 
   public int getNvOffset() {

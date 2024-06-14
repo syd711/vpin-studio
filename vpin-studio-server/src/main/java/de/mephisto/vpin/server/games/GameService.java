@@ -5,7 +5,6 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -496,16 +495,6 @@ public class GameService implements InitializingBean {
     return null;
   }
 
-  @Nullable
-  public GameDetailsRepresentation getGameDetails(int gameId) {
-    GameDetailsRepresentation details = new GameDetailsRepresentation();
-    GameDetails ref = gameDetailsRepository.findByPupId(gameId);
-    details.setRomName(ref.getRomName());
-    details.setHsFileName(ref.getHsFileName());
-    details.setTableName(ref.getTableName());
-    return details;
-  }
-
   @SuppressWarnings("unused")
   public List<Game> getActiveGameInfos() {
     List<Integer> gameIdsFromPlaylists = this.pinUPConnector.getGameIdsFromPlaylists();
@@ -606,6 +595,11 @@ public class GameService implements InitializingBean {
       game.setRom(originalRom);
       game.setRomAlias(aliasName);
     }
+
+    // fill scanned values
+    game.setScannedRom(gameDetails.getRomName());
+    game.setScannedHsFileName(gameDetails.getHsFileName());
+    game.setScannedAltRom(gameDetails.getTableName());
 
     game.setNvOffset(gameDetails.getNvOffset());
 

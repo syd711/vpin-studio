@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -79,11 +78,6 @@ public class GamesResource {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return game;
-  }
-
-  @GetMapping("/details/{id}")
-  public GameDetailsRepresentation getGameDetails(@PathVariable("id") int id) {
-    return gameService.getGameDetails(id);
   }
 
   @GetMapping("/validations/{id}")

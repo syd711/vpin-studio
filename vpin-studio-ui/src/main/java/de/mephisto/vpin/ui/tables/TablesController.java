@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.NavigationController;
@@ -262,14 +261,16 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tableChanged(int id, String rom, String gameName) {
     if (id > 0) {
-      this.tableOverviewController.reload(id);
+      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      this.tableOverviewController.reload(refreshedGame);
+      //this.tablesSideBarController.setGame(Optional.of(refreshedGame));
     }
 
     if (!StringUtils.isEmpty(rom)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
         if (id!=g.getId()) { 
-          this.tableOverviewController.reload(g.getId());
+          this.tableOverviewController.reload(g);
         }
       }
     }  
@@ -277,7 +278,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
         if (id!=g.getId()) { 
-          this.tableOverviewController.reload(g.getId());
+          this.tableOverviewController.reload(g);
         }
       }
     }

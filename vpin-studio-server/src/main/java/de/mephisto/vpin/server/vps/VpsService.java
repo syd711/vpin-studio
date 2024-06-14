@@ -48,13 +48,6 @@ public class VpsService implements ApplicationContextAware, InitializingBean, Vp
    * @return non null array of ids if matching was done
    */
   public GameVpsMatch autoMatch(Game game, boolean overwrite) {
-
-    /* String rom = tableDetails.getRomName();
-    GameDetailsRepresentation gameDetails = getGameDetails();
-    if (StringUtils.isEmpty(rom) && !StringUtils.isEmpty(gameDetails.getRomName())) {
-      rom = gameDetails.getRomName();
-    }*/
-
     try {
       GameVpsMatch vpsMatch = new GameVpsMatch();
       vpsMatch.setGameId(game.getId());

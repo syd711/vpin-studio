@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -90,7 +89,6 @@ public class TableDataTabScoreDataController implements Initializable {
 
   private TableDataController tableDataController;
 
-  private GameDetailsRepresentation gameDetails;
   private GameRepresentation game;
   private TableDetails tableDetails;
 
@@ -98,7 +96,6 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onTableScan() {
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning \"" + game.getGameDisplayName() + "\"", Arrays.asList(game)));
     this.game = client.getGame(this.game.getId());
-    this.gameDetails = client.getGameService().getGameDetails(this.game.getId());
     refreshScannedValues();
   }
 
@@ -110,6 +107,7 @@ public class TableDataTabScoreDataController implements Initializable {
     try {
       Desktop.getDesktop().open(folder);
     } catch (IOException e) {
+      LOG.error("Failed to open EM highscore file for table " + game.getGameFileName(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open EM highscore file: " + e.getMessage());
     }
   }
@@ -131,7 +129,6 @@ public class TableDataTabScoreDataController implements Initializable {
 
   public void setGame(TableDataController tableDataController, GameRepresentation game, TableDetails tableDetails, HighscoreFiles highscoreFiles, ServerSettings serverSettings) {
     this.tableDataController = tableDataController;
-    this.gameDetails = client.getGameService().getGameDetails(game.getId());
     this.game = game;
     this.tableDetails = tableDetails;
 
@@ -160,12 +157,12 @@ public class TableDataTabScoreDataController implements Initializable {
       }
     });
 
-    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
+    if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getScannedRom())) {
       if (!StringUtils.isEmpty(game.getRomAlias())) {
         romName.setPromptText(game.getRom() + " (aliased ROM)");
       }
       else {
-        romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+        romName.setPromptText(game.getScannedRom() + " (scanned value)");
       }
 
       applyRomBtn.setDisable(false);
@@ -184,21 +181,21 @@ public class TableDataTabScoreDataController implements Initializable {
     });
     altRomName.focusedProperty().addListener((observable, oldValue, newValue) -> onAltRomNameFocusChange(newValue));
 
-    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-      altRomName.setPromptText(gameDetails.getTableName() + " (scanned value)");
+    if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       applyAltRomBtn.setDisable(false);
     }
 
 
-    scannedRomName.setText(gameDetails.getRomName());
+    scannedRomName.setText(game.getScannedRom());
     applyRomBtn.setDisable(StringUtils.isEmpty(scannedRomName.getText()));
 
-    scannedAltRomName.setText(gameDetails.getTableName());
+    scannedAltRomName.setText(game.getScannedAltRom());
     applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
 
 
     String mappingHsField = serverSettings.getMappingHsFileName();
-    scannedHighscoreFileName.setText(gameDetails.getHsFileName());
+    scannedHighscoreFileName.setText(game.getScannedHsFileName());
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
     hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
 
@@ -207,8 +204,8 @@ public class TableDataTabScoreDataController implements Initializable {
     highscoreFileName.setValue(hsFileName);
 
     tableDataController.setMappedFieldValue(mappingHsField, highscoreFileName.getValue());
-    if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(gameDetails.getHsFileName())) {
-      highscoreFileName.setPromptText(gameDetails.getHsFileName() + " (scanned value)");
+    if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
+      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
     }
     highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
       onHighscoreFilenameUpdate(newValue, mappingHsField);
@@ -230,23 +227,23 @@ public class TableDataTabScoreDataController implements Initializable {
       return;
     }
 
-    scannedRomName.setText(gameDetails.getRomName());
-    applyRomBtn.setDisable(StringUtils.isEmpty(gameDetails.getRomName()));
+    scannedRomName.setText(game.getScannedRom());
+    applyRomBtn.setDisable(StringUtils.isEmpty(game.getScannedRom()));
 
-    scannedAltRomName.setText(gameDetails.getTableName());
-    applyAltRomBtn.setDisable(StringUtils.isEmpty(gameDetails.getTableName()));
+    scannedAltRomName.setText(game.getScannedAltRom());
+    applyAltRomBtn.setDisable(StringUtils.isEmpty(game.getScannedAltRom()));
 
-    scannedHighscoreFileName.setText(gameDetails.getHsFileName());
+    scannedHighscoreFileName.setText(game.getScannedHsFileName());
     scannedHighscoreFileName.setPromptText("");
 
-    if (!StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(highscoreFileName.getValue())) {
-      highscoreFileName.setPromptText(gameDetails.getHsFileName() + " (scanned value)");
+    if (!StringUtils.isEmpty(game.getScannedHsFileName()) && !StringUtils.isEmpty(highscoreFileName.getValue())) {
+      highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
     }
-    else if (StringUtils.isEmpty(gameDetails.getHsFileName()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-      //apply tablename fallback for scanned highscore field
-      scannedHighscoreFileName.setPromptText(gameDetails.getTableName() + ".txt (scanned value)");
+    else if (StringUtils.isEmpty(game.getScannedHsFileName()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+      //apply scannedAltRom (aka tablename) fallback for scanned highscore field
+      scannedHighscoreFileName.setPromptText(game.getScannedAltRom() + ".txt (scanned value)");
     }
-    applyHsBtn.setDisable(StringUtils.isEmpty(gameDetails.getHsFileName()));
+    applyHsBtn.setDisable(StringUtils.isEmpty(game.getScannedHsFileName()));
     refreshStatusIcons();
   }
 
@@ -264,8 +261,8 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onAltRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       altRomName.setPromptText("");
-      if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(gameDetails.getTableName())) {
-        altRomName.setPromptText(gameDetails.getTableName() + " (scanned value)");
+      if (StringUtils.isEmpty(tableDetails.getRomAlt()) && !StringUtils.isEmpty(game.getScannedAltRom())) {
+        altRomName.setPromptText(game.getScannedAltRom() + " (scanned value)");
       }
     }
   }
@@ -279,12 +276,12 @@ public class TableDataTabScoreDataController implements Initializable {
   private void onRomNameFocusChange(Boolean newValue) {
     if (!newValue) {
       romName.setPromptText("");
-      if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(gameDetails.getRomName())) {
+      if (StringUtils.isEmpty(tableDetails.getRomName()) && !StringUtils.isEmpty(game.getScannedRom())) {
         if (!StringUtils.isEmpty(game.getRomAlias())) {
           romName.setPromptText(game.getRom() + " (aliased ROM)");
         }
         else {
-          romName.setPromptText(gameDetails.getRomName() + " (scanned value)");
+          romName.setPromptText(game.getScannedRom() + " (scanned value)");
         }
       }
     }
