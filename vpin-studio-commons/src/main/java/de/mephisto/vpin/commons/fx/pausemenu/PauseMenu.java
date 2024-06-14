@@ -13,9 +13,9 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -187,24 +187,24 @@ public class PauseMenu extends Application {
         togglePauseKey(0);
 
         //re-assign key, because they might have been changed
-        PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
+        FrontendControls frontendControls = client.getPinUPPopperService().getPinUPControls();
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-        StateMananger.getInstance().setControls(pinUPControls, pauseMenuSettings);
+        StateMananger.getInstance().setControls(frontendControls, pauseMenuSettings);
 
-        PopperScreen cardScreen = null;
+        VPinScreen cardScreen = null;
         if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-          cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+          cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
         }
 
-        PopperScreen tutorialScreen = PopperScreen.BackGlass;
+        VPinScreen tutorialScreen = VPinScreen.BackGlass;
         if (pauseMenuSettings.getVideoScreen() != null) {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
 
-        PinUPPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());

@@ -14,9 +14,9 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
-import de.mephisto.vpin.restclient.popper.GameType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.GameType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -286,7 +286,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAssetManager(ActionEvent e) {
     this.onCancelClick(e);
     Platform.runLater(() -> {
-      TableDialogs.openTableAssetsDialog(overviewController, this.game, PopperScreen.BackGlass);
+      TableDialogs.openTableAssetsDialog(overviewController, this.game, VPinScreen.BackGlass);
     });
   }
 

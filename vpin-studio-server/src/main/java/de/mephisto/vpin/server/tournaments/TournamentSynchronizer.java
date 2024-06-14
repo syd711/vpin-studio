@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.tournaments;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -189,7 +189,7 @@ public class TournamentSynchronizer {
   private void finishTable(TournamentTableInfo tournamentTableInfo) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (gameMediaItem != null) {
         WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
         augmenter.deAugment();
@@ -203,7 +203,7 @@ public class TournamentSynchronizer {
   private void startTable(Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (gameMediaItem != null) {
         if (!StringUtils.isEmpty(metaData.getBadge())) {
           File badgeFile = systemService.getBadgeFile(metaData.getBadge());

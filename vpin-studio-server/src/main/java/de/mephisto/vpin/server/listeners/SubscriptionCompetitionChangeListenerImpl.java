@@ -15,7 +15,7 @@ import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -45,7 +45,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private AssetService assetService;
@@ -132,7 +132,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
     if (competition.getType().equals(CompetitionType.SUBSCRIPTION.name())) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        runCheckedDeAugmentation(competitionService, gameService, popperService);
+        runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
 
         long serverId = competition.getDiscordServerId();
         boolean isOwner = competition.getOwner().equals(String.valueOf(discordService.getBotId()));

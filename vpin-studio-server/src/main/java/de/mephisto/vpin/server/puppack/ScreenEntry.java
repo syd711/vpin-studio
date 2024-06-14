@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.popper.ScreenMode;
+import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.csv.CSVRecord;

@@ -5,9 +5,9 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
-import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -32,11 +32,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @Service
-public class KeyEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener, PreferenceChangedListener {
+public class KeyEventService implements InitializingBean, NativeKeyListener, FrontendStatusChangeListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(KeyEventService.class);
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private OverlayClientImpl overlayClient;
@@ -128,7 +128,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       if (keyChecker.matches(nativeKeyEvent)) {
         new Thread(() -> {
           systemService.restartPopper();
-          popperService.notifyPopperRestart();
+          frontendStatusService.notifyPopperRestart();
         }).start();
       }
     }
@@ -172,7 +172,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   }
 
   @Override
-  public void popperLaunched() {
+  public void frontendLaunched() {
     Platform.runLater(() -> {
       if (this.launchOverlayOnStartup) {
         try {
@@ -197,12 +197,12 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   }
 
   @Override
-  public void popperExited() {
+  public void frontendExited() {
 
   }
 
   @Override
-  public void popperRestarted() {
+  public void frontendRestarted() {
 
   }
 
@@ -241,13 +241,13 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
     preferencesService.addChangeListener(this);
 
-    boolean pinUPRunning = popperService.isPinUPRunning();
+    boolean pinUPRunning = frontendStatusService.isPinUPRunning();
     if (pinUPRunning) {
-      popperLaunched();
+      frontendLaunched();
     }
     else {
       LOG.info("Added VPin service popper status listener.");
-      popperService.addPopperStatusChangeListener(this);
+      frontendStatusService.addPopperStatusChangeListener(this);
     }
 
     GlobalScreen.registerNativeHook();

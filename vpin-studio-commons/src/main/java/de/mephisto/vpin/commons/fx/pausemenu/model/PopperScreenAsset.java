@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import javafx.scene.media.MediaPlayer;
 import javafx.stage.Stage;
 
@@ -9,7 +9,7 @@ import java.io.InputStream;
 public class PopperScreenAsset {
   private Stage screenStage;
   private int rotation;
-  private PinUPPlayerDisplay display;
+  private FrontendPlayerDisplay display;
   private String mimeType;
   private InputStream inputStream;
   private String url;
@@ -66,11 +66,11 @@ public class PopperScreenAsset {
     this.screenStage = screenStage;
   }
 
-  public PinUPPlayerDisplay getDisplay() {
+  public FrontendPlayerDisplay getDisplay() {
     return display;
   }
 
-  public void setDisplay(PinUPPlayerDisplay display) {
+  public void setDisplay(FrontendPlayerDisplay display) {
     this.display = display;
   }
 

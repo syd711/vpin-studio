@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -57,9 +57,9 @@ public class DnDOverlayController implements Initializable {
       tableWheelImage.setVisible(true);
 
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         tableWheelImage.setImage(new Image(gameMediaItem));
       }
       else {

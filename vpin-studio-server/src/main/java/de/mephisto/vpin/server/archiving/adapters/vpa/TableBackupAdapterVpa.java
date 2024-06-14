@@ -8,15 +8,15 @@ import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.commons.utils.ZipUtil;
@@ -294,8 +294,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
     }
 
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
+    VPinScreen[] values = VPinScreen.values();
+    for (VPinScreen value : values) {
       List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
       for (GameMediaItem mediaItem : items) {
         totalSizeExpected += mediaItem.getFile().length();
@@ -316,8 +316,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   private void zipPopperMedia(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     //export popper menu data
     packageInfo.setPopperMedia(true);
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
+    VPinScreen[] values = VPinScreen.values();
+    for (VPinScreen value : values) {
       List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
       for (GameMediaItem item : items) {
         if (item.getFile().exists()) {
@@ -325,7 +325,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
           File mediaFile = item.getFile();
 
           //do not archive augmented icons
-          if (value.equals(PopperScreen.Wheel)) {
+          if (value.equals(VPinScreen.Wheel)) {
             WheelAugmenter augmenter = new WheelAugmenter(item.getFile());
             if (augmenter.getBackupWheelIcon().exists()) {
               mediaFile = augmenter.getBackupWheelIcon();
@@ -350,7 +350,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
   private void zipPackageInfo(ZipOutputStream zipOut, ArchivePackageInfo packageInfo) throws IOException {
     //store wheel icon as archive preview
-    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     if (mediaItem != null) {
       File mediaFile = mediaItem.getFile();
       //do not archive augmented icons

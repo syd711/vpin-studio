@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.TableStatusChangedOrigin;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -36,7 +36,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -68,7 +68,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       int gameId = gameStatusService.getStatus().getGameId();
       Game game = gameService.getGame(gameId);
       LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
-      popperService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_VPS);
+      frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_VPS);
     }
   }
 
@@ -78,7 +78,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       Game game = gameService.getGameByFilename(tableName + ".vpx");
       if (game != null) {
         LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
-        popperService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_VPS);
+        frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_VPS);
       }
       else {
         LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");

@@ -16,8 +16,8 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -320,7 +320,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
 
     if (assetManagerMode) {
-      tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), PopperScreen.Wheel);
+      tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
       assetManagerViewBtn.getStyleClass().add("toggle-selected");
       if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
         assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
@@ -358,18 +358,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {
-    columnPlayfield.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.PlayField.getValidationCode())));
-    columnBackglass.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.BackGlass.getValidationCode())));
-    columnLoading.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Loading.getValidationCode())));
-    columnWheel.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Wheel.getValidationCode())));
-    columnDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.DMD.getValidationCode())));
-    columnTopper.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Topper.getValidationCode())));
-    columnFullDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Menu.getValidationCode())));
-    columnAudio.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Audio.getValidationCode())));
-    columnAudioLaunch.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.AudioLaunch.getValidationCode())));
-    columnInfo.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameInfo.getValidationCode())));
-    columnHelp.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameHelp.getValidationCode())));
-    columnOther2.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Other2.getValidationCode())));
+    columnPlayfield.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.PlayField.getValidationCode())));
+    columnBackglass.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
+    columnLoading.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Loading.getValidationCode())));
+    columnWheel.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Wheel.getValidationCode())));
+    columnDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.DMD.getValidationCode())));
+    columnTopper.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Topper.getValidationCode())));
+    columnFullDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Menu.getValidationCode())));
+    columnAudio.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Audio.getValidationCode())));
+    columnAudioLaunch.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.AudioLaunch.getValidationCode())));
+    columnInfo.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameInfo.getValidationCode())));
+    columnHelp.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameHelp.getValidationCode())));
+    columnOther2.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Other2.getValidationCode())));
   }
 
   @FXML
@@ -470,7 +470,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onMediaEdit() {
     GameRepresentation selectedItems = getSelection();
-    TableDialogs.openTableAssetsDialog(this, selectedItems, PopperScreen.BackGlass);
+    TableDialogs.openTableAssetsDialog(this, selectedItems, VPinScreen.BackGlass);
   }
 
   @FXML
@@ -1324,18 +1324,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return box;
     });
 
-    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, PopperScreen.PlayField));
-    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, PopperScreen.BackGlass));
-    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, PopperScreen.Loading));
-    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, PopperScreen.Wheel));
-    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, PopperScreen.DMD));
-    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, PopperScreen.Topper));
-    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, PopperScreen.Menu));
-    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, PopperScreen.Audio));
-    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, PopperScreen.AudioLaunch));
-    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, PopperScreen.GameInfo));
-    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, PopperScreen.GameHelp));
-    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, PopperScreen.Other2));
+    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField));
+    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass));
+    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading));
+    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel));
+    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD));
+    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper));
+    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu));
+    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio));
+    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch));
+    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo));
+    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp));
+    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2));
 
     setItems(new ArrayList<>());
 
@@ -1439,11 +1439,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
   }
 
-  private Node createAssetStatus(GameRepresentation value, PopperScreen popperScreen) {
-    GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
+  private Node createAssetStatus(GameRepresentation value, VPinScreen VPinScreen) {
+    GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
-    boolean ignored = value.getIgnoredValidations().contains(popperScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
+    boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());
 
     StringBuilder tt = new StringBuilder();
     Button btn = new Button();
@@ -1528,17 +1528,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tooltip.setWrapText(true);
     btn.setTooltip(tooltip);
     btn.setOnAction(event -> {
-      showAssetDetails(value, popperScreen);
+      showAssetDetails(value, VPinScreen);
     });
 
     return btn;
   }
 
-  private void showAssetDetails(GameRepresentation game, PopperScreen popperScreen) {
+  private void showAssetDetails(GameRepresentation game, VPinScreen VPinScreen) {
     tableView.getSelectionModel().clearSelection();
     selectGameInModel(game);
     Platform.runLater(() -> {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, popperScreen);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, VPinScreen);
     });
   }
 

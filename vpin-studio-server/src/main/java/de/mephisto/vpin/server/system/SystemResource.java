@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.commons.utils.ZipUtil;
@@ -55,7 +55,7 @@ public class SystemResource {
   private PreferencesService preferencesService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @GetMapping("/startupTime")
   public Date startupTime() {
@@ -141,7 +141,7 @@ public class SystemResource {
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
     info.setSystemId(SystemUtil.getBoardSerialNumber());
-    info.setPopper15(pinUPConnector.isPopper15());
+    info.setPopper15(frontendService.isPopper15());
     return info;
   }
 

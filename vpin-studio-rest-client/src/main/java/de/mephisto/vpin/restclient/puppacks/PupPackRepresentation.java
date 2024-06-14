@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.puppacks;
 
-import de.mephisto.vpin.restclient.popper.ScreenMode;
+import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.ArrayList;

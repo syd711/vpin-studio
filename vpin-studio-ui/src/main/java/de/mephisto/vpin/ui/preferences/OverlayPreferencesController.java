@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -41,7 +41,7 @@ public class OverlayPreferencesController implements Initializable {
   private ComboBox<String> pauseMenuKeyCombo;
 
   @FXML
-  private ComboBox<PopperScreen> tutorialScreenCombo;
+  private ComboBox<VPinScreen> tutorialScreenCombo;
 
   @FXML
   private ComboBox<PauseMenuStyle> pauseMenuStyleCombo;
@@ -195,7 +195,7 @@ public class OverlayPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
-    tutorialScreenCombo.setItems(FXCollections.observableList(Arrays.asList(PopperScreen.Audio, PopperScreen.DMD, PopperScreen.GameHelp, PopperScreen.GameInfo, PopperScreen.Menu, PopperScreen.Other2, PopperScreen.Topper)));
+    tutorialScreenCombo.setItems(FXCollections.observableList(Arrays.asList(VPinScreen.Audio, VPinScreen.DMD, VPinScreen.GameHelp, VPinScreen.GameInfo, VPinScreen.Menu, VPinScreen.Other2, VPinScreen.Topper)));
     tutorialScreenCombo.setValue(pauseMenuSettings.getVideoScreen());
     tutorialScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setVideoScreen(newValue);

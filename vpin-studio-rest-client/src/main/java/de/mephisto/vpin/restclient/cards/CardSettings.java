@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.cards;
 
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 
 /**
  *

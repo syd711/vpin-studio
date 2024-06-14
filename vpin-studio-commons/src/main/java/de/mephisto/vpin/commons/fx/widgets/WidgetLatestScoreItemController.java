@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -55,14 +55,14 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
     if(gameMediaItem == null) {
       gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(gameMediaItem);
 
     GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+    GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (wheelMedia == null) {
       image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
     }

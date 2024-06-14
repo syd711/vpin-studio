@@ -3,14 +3,14 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -29,7 +29,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
 
   private final SystemService systemService;
   private final GameService gameService;
-  private final PinUPConnector pinUPConnector;
+  private final FrontendService frontendService;
   private final ArchiveDescriptor archiveDescriptor;
   private final GameEmulator emulator;
 
@@ -39,12 +39,12 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
 
   public TableInstallerAdapterVpa(@NonNull SystemService systemService,
                                   @NonNull GameService gameService,
-                                  @NonNull PinUPConnector pinUPConnector,
+                                  @NonNull FrontendService frontendService,
                                   @NonNull ArchiveDescriptor archiveDescriptor,
                                   @NonNull GameEmulator emulator) {
     this.systemService = systemService;
     this.gameService = gameService;
-    this.pinUPConnector = pinUPConnector;
+    this.frontendService = frontendService;
     this.archiveDescriptor = archiveDescriptor;
     this.emulator = emulator;
   }
@@ -94,12 +94,12 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
+        int newGameId = frontendService.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
         game = gameService.getGame(newGameId);
       }
 
       status = "Importing Game to Popper";
-      pinUPConnector.saveTableDetails(game.getId(), manifest);
+      frontendService.saveTableDetails(game.getId(), manifest);
 
       status = "Importing Highscores";
       importHighscore(game, archiveFile);

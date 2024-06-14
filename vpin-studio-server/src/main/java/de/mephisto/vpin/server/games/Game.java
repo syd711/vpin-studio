@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.popper.GameMedia;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.server.frontend.GameMedia;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -183,7 +183,7 @@ public class Game {
 
   @JsonIgnore
   public Image getWheelImage() {
-    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     Image image = null;
     if (gameMediaItem != null) {
       try {
@@ -296,12 +296,12 @@ public class Game {
 
   @JsonIgnore
   @NonNull
-  public File getMediaFolder(@NonNull PopperScreen screen) {
+  public File getMediaFolder(@NonNull VPinScreen screen) {
     return this.emulator.getGameMediaFolder(FilenameUtils.getBaseName(gameFileName), screen);
   }
 
   @NonNull
-  public List<File> getMediaFiles(@NonNull PopperScreen screen) {
+  public List<File> getMediaFiles(@NonNull VPinScreen screen) {
     String baseFilename = getGameName();
     File mediaFolder = getMediaFolder(screen);
     if (mediaFolder!=null) {
@@ -318,8 +318,8 @@ public class Game {
   @NonNull
   public GameMedia getGameMedia() {
     GameMedia gameMedia = new GameMedia();
-    PopperScreen[] screens = PopperScreen.values();
-    for (PopperScreen screen : screens) {
+    VPinScreen[] screens = VPinScreen.values();
+    for (VPinScreen screen : screens) {
       List<GameMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getMediaFiles(screen);
       for (File file : mediaFiles) {

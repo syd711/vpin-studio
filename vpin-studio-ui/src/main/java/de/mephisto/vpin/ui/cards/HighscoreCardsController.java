@@ -2,7 +2,6 @@
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -11,7 +10,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -33,7 +32,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -368,7 +366,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     GameRepresentation selectedItem = getSelectedTable();
     CardTemplate cardTemplate = this.templateCombo.getSelectionModel().getSelectedItem();
     if (selectedItem != null && cardTemplate.getOverlayScreen() != null) {
-      PopperScreen overlayScreen = PopperScreen.valueOf(cardTemplate.getOverlayScreen());
+      VPinScreen overlayScreen = VPinScreen.valueOf(cardTemplate.getOverlayScreen());
       GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
@@ -494,7 +492,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
     String popperScreen = cardSettings.getPopperScreen();
     if (!StringUtils.isEmpty(popperScreen)) {
-      PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
+      VPinScreen screen = VPinScreen.valueOfScreen(popperScreen);
       GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
       String mediaDir = gameEmulator.getMediaDirectory();
       File screenDir = new File(mediaDir, screen.name());

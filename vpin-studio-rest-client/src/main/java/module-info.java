@@ -21,7 +21,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.games.descriptors;
   exports de.mephisto.vpin.restclient.client;
   exports de.mephisto.vpin.restclient.jobs;
-  exports de.mephisto.vpin.restclient.popper;
+  exports de.mephisto.vpin.restclient.frontend;
   exports de.mephisto.vpin.restclient.mame;
   exports de.mephisto.vpin.restclient.altsound;
   exports de.mephisto.vpin.restclient.vpx;

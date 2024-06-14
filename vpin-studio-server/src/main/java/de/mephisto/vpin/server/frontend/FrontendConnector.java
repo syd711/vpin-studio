@@ -4,13 +4,13 @@ import java.util.Date;
 import java.util.List;
 
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -20,7 +20,7 @@ public interface FrontendConnector {
   /** 
    * Let the Frontend initialize itself, called 
    */
-  void initialize(ServerSettings settings);
+  void initializeConnector(ServerSettings settings);
 
   List<Emulator> getEmulators();
   
@@ -68,9 +68,9 @@ public interface FrontendConnector {
   
   boolean isPopper15();
 
-  PopperCustomOptions getCustomOptions();
+  FrontendCustomOptions getCustomOptions();
 
-  void updateCustomOptions(@NonNull PopperCustomOptions options);
+  void updateCustomOptions(@NonNull FrontendCustomOptions options);
 
   //----------------------------------
   // Media management
@@ -123,12 +123,12 @@ public interface FrontendConnector {
   //----------------------------------
   // Pinup control management
 
-  PinUPControl getPinUPControlFor(PopperScreen screen);
+  FrontendControl getPinUPControlFor(VPinScreen screen);
 
   //TODO rename getControl
-  PinUPControl getFunction(String function);
+  FrontendControl getFunction(String function);
 
   @NonNull
-  PinUPControls getControls();
+  FrontendControls getControls();
 
 }

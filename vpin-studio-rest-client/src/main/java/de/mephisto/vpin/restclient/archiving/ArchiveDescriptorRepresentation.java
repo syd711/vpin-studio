@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.archiving;
 
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 
 import java.util.Date;
 import java.util.Objects;

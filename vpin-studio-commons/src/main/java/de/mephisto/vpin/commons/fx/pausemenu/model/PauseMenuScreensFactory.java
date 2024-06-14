@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -22,17 +22,17 @@ import java.util.List;
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuScreensFactory.class);
 
-  public static List<PopperScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<PinUPPlayerDisplay> displays) {
+  public static List<PopperScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<FrontendPlayerDisplay> displays) {
     List<PopperScreenAsset> screens = new ArrayList<>();
-    PopperScreenAsset screenStage = createScreenStage(client, game, displays, PopperScreen.GameHelp);
+    PopperScreenAsset screenStage = createScreenStage(client, game, displays, VPinScreen.GameHelp);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    screenStage = createScreenStage(client, game, displays, PopperScreen.GameInfo);
+    screenStage = createScreenStage(client, game, displays, VPinScreen.GameInfo);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    screenStage = createScreenStage(client, game, displays, PopperScreen.Other2);
+    screenStage = createScreenStage(client, game, displays, VPinScreen.Other2);
     if (screenStage != null) {
       screens.add(screenStage);
     }
@@ -40,12 +40,12 @@ public class PauseMenuScreensFactory {
   }
 
   @Nullable
-  private static PopperScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<PinUPPlayerDisplay> displays, PopperScreen screen) {
+  private static PopperScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<FrontendPlayerDisplay> displays, VPinScreen screen) {
     GameMediaItemRepresentation defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
       InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
       if (imageStream != null) {
-        PinUPPlayerDisplay display = PopperScreen.valueOfScreen(displays, screen);
+        FrontendPlayerDisplay display = VPinScreen.valueOfScreen(displays, screen);
 
         PopperScreenAsset asset = new PopperScreenAsset();
         asset.setDisplay(display);

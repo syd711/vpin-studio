@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
@@ -36,7 +36,7 @@ public class BackglassService {
   private GameService gameService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   /** Cache between filename and data */
   private Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
@@ -66,7 +66,7 @@ public class BackglassService {
   } 
 
   private File getB2sFile(int emuId, String filename) {
-    GameEmulator emulator = pinUPConnector.getGameEmulator(emuId);
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
     File b2sFile = new File(emulator.getTablesDirectory(), filename);
     return b2sFile;
   }
@@ -103,7 +103,7 @@ public class BackglassService {
 
   public DirectB2SData getDirectB2SData(@NonNull DirectB2S directB2S) {
     String vpxName = directB2S.getName() + ".vpx";
-    List<Game> gamesByFilename = pinUPConnector.getGamesByFilename(vpxName);
+    List<Game> gamesByFilename = frontendService.getGamesByFilename(vpxName);
     for (Game game : gamesByFilename) {
       if (game.getEmulator().getId() == directB2S.getEmulatorId()) {
         return getDirectB2SData(game.getId());
@@ -162,10 +162,10 @@ public class BackglassService {
   }
 
   public DirectB2ServerSettings getServerSettings(int emuId) {
-    GameEmulator emulator = pinUPConnector.getGameEmulator(emuId);
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
     File settingsXml = emulator.getB2STableSettingsXml();
     if (!settingsXml.exists()) {
-      emulator = pinUPConnector.getDefaultGameEmulator();
+      emulator = frontendService.getDefaultGameEmulator();
       settingsXml = emulator.getB2STableSettingsXml();
     }
 
@@ -178,7 +178,7 @@ public class BackglassService {
     GameEmulator emulator = game.getEmulator();
     File settingsXml = emulator.getB2STableSettingsXml();
     if (!settingsXml.exists()) {
-      emulator = pinUPConnector.getDefaultGameEmulator();
+      emulator = frontendService.getDefaultGameEmulator();
       settingsXml = emulator.getB2STableSettingsXml();
     }
 
@@ -189,7 +189,7 @@ public class BackglassService {
 
   public List<DirectB2S> getBackglasses() {
     List<DirectB2S> result = new ArrayList<>();
-    List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       File tablesFolder = gameEmulator.getTablesFolder();
       Path tablesPath = tablesFolder.toPath();

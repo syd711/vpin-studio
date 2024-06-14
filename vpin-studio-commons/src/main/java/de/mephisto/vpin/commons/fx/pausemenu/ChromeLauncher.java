@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +19,7 @@ public class ChromeLauncher {
   private static boolean kioskMode = false;
   private static boolean useToTop = true;
 
-  public static void showYouTubeVideo(PinUPPlayerDisplay screenDisplay, String url, String title) {
+  public static void showYouTubeVideo(FrontendPlayerDisplay screenDisplay, String url, String title) {
     launched = true;
     try {
       int x = screenDisplay.getX();

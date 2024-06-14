@@ -6,8 +6,8 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -509,8 +509,12 @@ public class WidgetFactory {
       imageView.setFitHeight(prefHeight - 60);
       imageView.setPreserveRatio(true);
 
-      ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), PopperScreen.valueOf(mediaItem.getScreen()));
-      Image image = new Image(gameMediaItem);
+      Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+      ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
+      if(gameMediaItem != null) {
+        image = new Image(gameMediaItem);
+      }
+
       imageView.setImage(image);
       imageView.setUserData(mediaItem);
 

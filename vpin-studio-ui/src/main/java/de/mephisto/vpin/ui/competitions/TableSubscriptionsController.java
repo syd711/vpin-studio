@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -335,7 +335,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
       if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }

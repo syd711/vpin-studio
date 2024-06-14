@@ -7,19 +7,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.mephisto.vpin.server.frontend.standalone.StandaloneConnector;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PopperCustomOptions;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -166,6 +167,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return null;
   }
 
+  @NonNull
   @Override
   public List<Game> getGamesByEmulator(int emulatorId) {
     List<String> filenames = gamesByEmu.get(emulatorId);
@@ -176,6 +178,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return games;
   }
 
+  @NonNull
   @Override
   public List<Game> getGamesByFilename(String filename) {
     String gameName = filename.replaceAll("'", "''");
@@ -296,12 +299,12 @@ public abstract class BaseConnector implements FrontendConnector {
   //---------------------------
 
   @Override
-  public PopperCustomOptions getCustomOptions() {
-    return new PopperCustomOptions();
+  public FrontendCustomOptions getCustomOptions() {
+    return new FrontendCustomOptions();
   }
 
   @Override
-  public void updateCustomOptions(@NonNull PopperCustomOptions options) {
+  public void updateCustomOptions(@NonNull FrontendCustomOptions options) {
   }
 
 
@@ -321,6 +324,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   //----------------------------
 
+  @NonNull
   @Override
   public Playlist getPlayList(int id) {
     Playlist playlist = new Playlist();
@@ -413,20 +417,20 @@ public abstract class BaseConnector implements FrontendConnector {
   //-------------------------
 
   @Override
-  public PinUPControl getFunction(@NonNull String description) {
-    PinUPControl f = null;
+  public FrontendControl getFunction(@NonNull String description) {
+    FrontendControl f = null;
     return f;
   }
 
   @NonNull
   @Override
-  public PinUPControls getControls() {
-    PinUPControls controls = new PinUPControls();
+  public FrontendControls getControls() {
+    FrontendControls controls = new FrontendControls();
     return controls;
   }
 
   @Override
-  public PinUPControl getPinUPControlFor(PopperScreen screen) {
+  public FrontendControl getPinUPControlFor(VPinScreen screen) {
     return null;
   }
 

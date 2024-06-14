@@ -31,8 +31,8 @@ import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PinUPPopperServiceClient;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.games.GameMediaServiceClient;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -83,7 +83,7 @@ public class VPinStudioClient implements OverlayClient {
   private final MameServiceClient mameServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
-  private final PinUPPopperServiceClient pinUPPopperServiceClient;
+  private final GameMediaServiceClient gameMediaServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
@@ -121,7 +121,7 @@ public class VPinStudioClient implements OverlayClient {
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
-    this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
+    this.gameMediaServiceClient = new GameMediaServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
@@ -260,8 +260,8 @@ public class VPinStudioClient implements OverlayClient {
     return playersServiceClient;
   }
 
-  public PinUPPopperServiceClient getPinUPPopperService() {
-    return pinUPPopperServiceClient;
+  public GameMediaServiceClient getPinUPPopperService() {
+    return gameMediaServiceClient;
   }
 
   public PreferencesServiceClient getPreferenceService() {
@@ -336,7 +336,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
   }
 

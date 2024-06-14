@@ -5,7 +5,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,7 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private HighscoreService highscoreService;
@@ -38,13 +38,13 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
     }
 
     if (competition.getBadge() != null && competition.isActive()) {
-      popperService.augmentWheel(game, competition.getBadge());
+      frontendStatusService.augmentWheel(game, competition.getBadge());
     }
   }
 
   @Override
   public void competitionDeleted(@NotNull Competition competition) {
-    super.runCheckedDeAugmentation(competitionService, gameService, popperService);
+    super.runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
   }
 
   @Override

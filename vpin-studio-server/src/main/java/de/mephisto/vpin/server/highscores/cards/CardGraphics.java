@@ -1,15 +1,14 @@
 package de.mephisto.vpin.server.highscores.cards;
 
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
@@ -190,7 +189,7 @@ public class CardGraphics {
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
-      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         File wheelIconFile = defaultMediaItem.getFile();
         WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
@@ -284,7 +283,7 @@ public class CardGraphics {
 
     int x = 0;
     //file exists && there is place to render it
-    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && template.isRenderWheelIcon()) {
       File wheelIconFile = defaultMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);

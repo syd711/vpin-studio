@@ -15,8 +15,8 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableAssetSearch;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -166,7 +166,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private TableOverviewController overviewController;
   private GameRepresentation game;
-  private PopperScreen screen = PopperScreen.Wheel;
+  private VPinScreen screen = VPinScreen.Wheel;
   private TableAssetsService tableAssetsService;
   private EncryptDecrypt encryptDecrypt;
   private Node lastSelected;
@@ -377,7 +377,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private TableAssetSearch searchPopper(PopperScreen screen, String term) {
+  private TableAssetSearch searchPopper(VPinScreen screen, String term) {
     TableAssetSearch cached = client.getPinUPPopperService().getCached(screen, term);
     if (cached != null) {
       return cached;
@@ -525,32 +525,32 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       throw new RuntimeException(e);
     }
 
-    screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Audio, screenAudio, t1, false));
-    screenAudio.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Audio, screenAudio, true, true));
-    screenAudioLaunch.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.AudioLaunch, screenAudioLaunch, t1, false));
-    screenAudioLaunch.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.AudioLaunch, screenAudioLaunch, true, true));
-    screenDMD.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.DMD, screenDMD, t1, false));
-    screenDMD.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.DMD, screenDMD, true, true));
-    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.BackGlass, screenBackGlass, t1, false));
-    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.BackGlass, screenBackGlass, true, true));
-    screenMenu.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Menu, screenMenu, t1, false));
-    screenMenu.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Menu, screenMenu, true, true));
-    screenGameInfo.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.GameInfo, screenGameInfo, t1, false));
-    screenGameInfo.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.GameInfo, screenGameInfo, true, true));
-    screenGameHelp.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.GameHelp, screenGameHelp, t1, false));
-    screenGameHelp.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.GameHelp, screenGameHelp, true, true));
-    screenLoading.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Loading, screenLoading, t1, false));
-    screenLoading.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Loading, screenLoading, true, true));
-    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.BackGlass, screenBackGlass, t1, false));
-    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.BackGlass, screenBackGlass, true, true));
-    screenPlayField.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.PlayField, screenPlayField, t1, false));
-    screenPlayField.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.PlayField, screenPlayField, true, true));
-    screenTopper.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Topper, screenTopper, t1, false));
-    screenTopper.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Topper, screenTopper, true, true));
-    screenOther2.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Other2, screenOther2, t1, false));
-    screenOther2.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Other2, screenOther2, true, true));
-    screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(PopperScreen.Wheel, screenWheel, t1, false));
-    screenWheel.setOnMouseClicked(mouseEvent -> updateState(PopperScreen.Wheel, screenWheel, true, true));
+    screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Audio, screenAudio, t1, false));
+    screenAudio.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Audio, screenAudio, true, true));
+    screenAudioLaunch.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.AudioLaunch, screenAudioLaunch, t1, false));
+    screenAudioLaunch.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.AudioLaunch, screenAudioLaunch, true, true));
+    screenDMD.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.DMD, screenDMD, t1, false));
+    screenDMD.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.DMD, screenDMD, true, true));
+    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.BackGlass, screenBackGlass, t1, false));
+    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.BackGlass, screenBackGlass, true, true));
+    screenMenu.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Menu, screenMenu, t1, false));
+    screenMenu.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Menu, screenMenu, true, true));
+    screenGameInfo.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.GameInfo, screenGameInfo, t1, false));
+    screenGameInfo.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.GameInfo, screenGameInfo, true, true));
+    screenGameHelp.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.GameHelp, screenGameHelp, t1, false));
+    screenGameHelp.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.GameHelp, screenGameHelp, true, true));
+    screenLoading.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Loading, screenLoading, t1, false));
+    screenLoading.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Loading, screenLoading, true, true));
+    screenBackGlass.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.BackGlass, screenBackGlass, t1, false));
+    screenBackGlass.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.BackGlass, screenBackGlass, true, true));
+    screenPlayField.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.PlayField, screenPlayField, t1, false));
+    screenPlayField.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.PlayField, screenPlayField, true, true));
+    screenTopper.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Topper, screenTopper, t1, false));
+    screenTopper.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Topper, screenTopper, true, true));
+    screenOther2.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Other2, screenOther2, t1, false));
+    screenOther2.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Other2, screenOther2, true, true));
+    screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Wheel, screenWheel, t1, false));
+    screenWheel.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Wheel, screenWheel, true, true));
 
     downloadBtn.setVisible(false);
 
@@ -609,7 +609,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       @Override
       public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-        if (screen.equals(PopperScreen.Wheel)) {
+        if (screen.equals(VPinScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
 
@@ -662,7 +662,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     return this.tablesCombo == null;
   }
 
-  private void updateState(PopperScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
+  private void updateState(VPinScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
     List<GameMediaItemRepresentation> mediaItems = new ArrayList<>();
     if (gameMedia != null) {
       mediaItems = gameMedia.getMediaItems(s);
@@ -728,7 +728,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
 
-  public void setGame(TableOverviewController overviewController, GameRepresentation game, PopperScreen screen) {
+  public void setGame(TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");
@@ -738,12 +738,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
-      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+      this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
       List<GameRepresentation> games = client.getGameService().getGamesCached(this.game.getEmulatorId());
       ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
       tablesCombo.getItems().addAll(gameRepresentations);
       tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : PopperScreen.Wheel);
+        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
       });
     }
 
@@ -805,70 +805,70 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
 
     screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio, false, "mp3"));
-    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Audio, "mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Audio, "mp3"));
 
     screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch, false, "mp3"));
-    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.AudioLaunch, "mp3"));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.AudioLaunch, "mp3"));
 
     screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper, false, "mp4", "png", "jpg"));
-    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Topper, "mp4", "png", "jpg"));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Topper, "mp4", "png", "jpg"));
 
     screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading, false, "mp4"));
-    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Loading, "mp4"));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Loading, "mp4"));
 
     screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField, false, "mp4"));
-    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.PlayField, "mp4"));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.PlayField, "mp4"));
 
     screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
-    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.BackGlass, "mp4", "png", "jpg"));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.BackGlass, "mp4", "png", "jpg"));
 
     screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "mp4", "png", "jpg"));
-    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameInfo, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameInfo, "mp4", "png", "jpg"));
 
     screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "mp4", "png", "jpg"));
-    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.GameHelp, "mp4", "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameHelp, "mp4", "png", "jpg"));
 
     screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
-    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Menu, "mp4", "png", "jpg"));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Menu, "mp4", "png", "jpg"));
 
     screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD, false, "mp4", "png", "jpg"));
-    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.DMD, "mp4", "png", "jpg"));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.DMD, "mp4", "png", "jpg"));
 
     screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
-    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Other2, "mp4", "png", "jpg"));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Other2, "mp4", "png", "jpg"));
 
     screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "apng", "png", "jpg"));
-    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, PopperScreen.Wheel, "apng", "png", "apng"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"));
 
   }
 
   private void refreshTableView() {
-    updateState(PopperScreen.Audio, screenAudio, false, this.screen.equals(PopperScreen.Audio));
-    updateState(PopperScreen.AudioLaunch, screenAudioLaunch, false, this.screen.equals(PopperScreen.AudioLaunch));
-    updateState(PopperScreen.DMD, screenDMD, false, this.screen.equals(PopperScreen.DMD));
-    updateState(PopperScreen.BackGlass, screenBackGlass, false, this.screen.equals(PopperScreen.BackGlass));
-    updateState(PopperScreen.Menu, screenMenu, false, this.screen.equals(PopperScreen.Menu));
-    updateState(PopperScreen.GameInfo, screenGameInfo, false, this.screen.equals(PopperScreen.GameInfo));
-    updateState(PopperScreen.GameHelp, screenGameHelp, false, this.screen.equals(PopperScreen.GameHelp));
-    updateState(PopperScreen.Loading, screenLoading, false, this.screen.equals(PopperScreen.Loading));
-    updateState(PopperScreen.BackGlass, screenBackGlass, false, this.screen.equals(PopperScreen.BackGlass));
-    updateState(PopperScreen.PlayField, screenPlayField, false, this.screen.equals(PopperScreen.PlayField));
-    updateState(PopperScreen.Topper, screenTopper, false, this.screen.equals(PopperScreen.Topper));
-    updateState(PopperScreen.Other2, screenOther2, false, this.screen.equals(PopperScreen.Other2));
-    updateState(PopperScreen.Wheel, screenWheel, false, this.screen.equals(PopperScreen.Wheel));
+    updateState(VPinScreen.Audio, screenAudio, false, this.screen.equals(VPinScreen.Audio));
+    updateState(VPinScreen.AudioLaunch, screenAudioLaunch, false, this.screen.equals(VPinScreen.AudioLaunch));
+    updateState(VPinScreen.DMD, screenDMD, false, this.screen.equals(VPinScreen.DMD));
+    updateState(VPinScreen.BackGlass, screenBackGlass, false, this.screen.equals(VPinScreen.BackGlass));
+    updateState(VPinScreen.Menu, screenMenu, false, this.screen.equals(VPinScreen.Menu));
+    updateState(VPinScreen.GameInfo, screenGameInfo, false, this.screen.equals(VPinScreen.GameInfo));
+    updateState(VPinScreen.GameHelp, screenGameHelp, false, this.screen.equals(VPinScreen.GameHelp));
+    updateState(VPinScreen.Loading, screenLoading, false, this.screen.equals(VPinScreen.Loading));
+    updateState(VPinScreen.BackGlass, screenBackGlass, false, this.screen.equals(VPinScreen.BackGlass));
+    updateState(VPinScreen.PlayField, screenPlayField, false, this.screen.equals(VPinScreen.PlayField));
+    updateState(VPinScreen.Topper, screenTopper, false, this.screen.equals(VPinScreen.Topper));
+    updateState(VPinScreen.Other2, screenOther2, false, this.screen.equals(VPinScreen.Other2));
+    updateState(VPinScreen.Wheel, screenWheel, false, this.screen.equals(VPinScreen.Wheel));
   }
 
 
   public void refreshTableMediaView() {
     if (!isEmbeddedMode()) {
-      this.helpBtn.setDisable(!PopperScreen.Loading.equals(screen));
+      this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
     }
-    if (screen.equals(PopperScreen.Wheel)) {
+    if (screen.equals(VPinScreen.Wheel)) {
       client.getImageCache().clearWheelCache();
     }
 
-    this.addToPlaylistBtn.setVisible(screen.equals(PopperScreen.Loading));
-    this.addAudioBlank.setVisible(screen.equals(PopperScreen.AudioLaunch));
+    this.addToPlaylistBtn.setVisible(screen.equals(VPinScreen.Loading));
+    this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
 
     if (game != null) {
       gameMedia = client.getPinUPPopperService().getGameMedia(this.game.getId());

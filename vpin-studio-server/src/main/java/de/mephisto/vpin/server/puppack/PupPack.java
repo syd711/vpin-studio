@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.ScreenMode;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -112,11 +112,11 @@ public class PupPack {
     return this.packFolder;
   }
 
-  public ScreenMode getScreenMode(PopperScreen screen) {
+  public ScreenMode getScreenMode(VPinScreen screen) {
     return this.screensPup.getScreenMode(screen);
   }
 
-  public boolean isTransparent(PopperScreen screen) {
+  public boolean isTransparent(VPinScreen screen) {
     return this.screensPup.isTransparent(screen);
   }
 

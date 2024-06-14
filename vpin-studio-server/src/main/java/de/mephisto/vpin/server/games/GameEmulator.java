@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -308,7 +308,7 @@ public class GameEmulator {
 
   @NonNull
   @JsonIgnore
-  public File getGameMediaFolder(@NonNull String gameFileName, @NonNull PopperScreen screen) {
+  public File getGameMediaFolder(@NonNull String gameFileName, @NonNull VPinScreen screen) {
     return mediaStrategy!=null? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen): null;
   }
 

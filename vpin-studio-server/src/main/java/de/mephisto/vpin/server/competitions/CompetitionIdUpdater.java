@@ -1,10 +1,9 @@
 package de.mephisto.vpin.server.competitions;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +21,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionIdUpdater.class);
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private CompetitionService competitionService;
@@ -63,7 +62,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   private void setGamesTournamentId(@NotNull Competition competition) {
-    TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
+    TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
     String competitionId = CompetitionIdFactory.createId(competition);
     List<String> updated = new ArrayList<>();
     String tournamentId = tableDetails.getTourneyId();
@@ -82,12 +81,12 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       tableDetails.setTourneyId(String.join(",", updated));
     }
 
-    popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
+    frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
     LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
   }
 
   private void unsetGamesTournamentId(@NotNull Competition competition) {
-    TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
+    TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
     String competitionId = CompetitionIdFactory.createId(competition);
     String tournamentId = tableDetails.getTourneyId();
     if (tournamentId != null) {
@@ -103,7 +102,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         updated.add(s);
       }
       tableDetails.setTourneyId(String.join(",", updated));
-      popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
+      frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
       LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }

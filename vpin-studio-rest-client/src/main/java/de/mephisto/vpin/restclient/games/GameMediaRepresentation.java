@@ -1,6 +1,6 @@
 package de.mephisto.vpin.restclient.games;
 
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
@@ -17,14 +17,14 @@ public class GameMediaRepresentation {
     this.media = media;
   }
 
-  public List<GameMediaItemRepresentation> getMediaItems(PopperScreen screen) {
+  public List<GameMediaItemRepresentation> getMediaItems(VPinScreen screen) {
     List<GameMediaItemRepresentation> gameMediaItemRepresentations = this.media.get(screen.name());
     Collections.sort(gameMediaItemRepresentations, Comparator.comparing(GameMediaItemRepresentation::getName));
     return gameMediaItemRepresentations;
   }
 
   @Nullable
-  public GameMediaItemRepresentation getDefaultMediaItem(@NonNull PopperScreen screen) {
+  public GameMediaItemRepresentation getDefaultMediaItem(@NonNull VPinScreen screen) {
     if (!media.containsKey(screen.name())) {
       return null;
     }

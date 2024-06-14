@@ -2,9 +2,9 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class GameFilterService {
   private final static Logger LOG = LoggerFactory.getLogger(GameFilterService.class);
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private GameValidationService gameValidator;
@@ -103,7 +103,7 @@ public class GameFilterService {
           continue;
         }
 
-        TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
+        TableDetails tableDetails = frontendService.getTableDetails(game.getId());
         boolean played = tableDetails==null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
         if (filterSettings.isNotPlayed() && played) {
           continue;

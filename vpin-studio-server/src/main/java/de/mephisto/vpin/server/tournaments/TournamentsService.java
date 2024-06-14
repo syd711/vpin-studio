@@ -10,9 +10,9 @@ import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
-import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.slf4j.Logger;
@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class TournamentsService implements InitializingBean, PreferenceChangedListener, PopperStatusChangeListener {
+public class TournamentsService implements InitializingBean, PreferenceChangedListener, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
   @Value("${vpinmania.server.host}")
@@ -42,7 +42,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   private TournamentSynchronizer tournamentSynchronizer;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private TournamentsHighscoreChangeListener tournamentsHighscoreChangeListener;
@@ -104,7 +104,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
         tournamentSynchronizer.setClient(maniaClient);
         tournamentSynchronizer.synchronize();
 
-        popperService.addPopperStatusChangeListener(this);
+        frontendStatusService.addPopperStatusChangeListener(this);
       } catch (Exception e) {
         Features.TOURNAMENTS_ENABLED = false;
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);

@@ -5,8 +5,8 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -406,12 +406,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     addSection(dataRoot, "Sound", game.get(), VpsDiffTypes.sound, vpsTable.getSoundFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsSound());
 
     GameMediaRepresentation gameMedia = game.get().getGameMedia();
-    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(PopperScreen.Topper);
+    List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(VPinScreen.Topper);
     if (!doFilter || items.isEmpty()) {
       addSection(dataRoot, "Topper", game.get(), VpsDiffTypes.topper, vpsTable.getTopperFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsToppper());
     }
 
-    items = gameMedia.getMediaItems(PopperScreen.Wheel);
+    items = gameMedia.getMediaItems(VPinScreen.Wheel);
     if (!doFilter || items.isEmpty()) {
       addSection(dataRoot, "Wheel Art", game.get(), VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsWheel());
     }

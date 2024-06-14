@@ -2,7 +2,7 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
@@ -19,9 +19,9 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
-import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperResource;
-import de.mephisto.vpin.server.popper.PopperServiceResource;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
+import de.mephisto.vpin.server.frontend.FrontendServiceResource;
 
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.TestInstance;
@@ -57,7 +57,7 @@ abstract public class AbstractVPinServerTest {
   }
 
   @Autowired
-  protected PinUPConnector pinUPConnector;
+  protected FrontendService frontendService;
 
   @Autowired
   protected GameService gameService;
@@ -87,13 +87,13 @@ abstract public class AbstractVPinServerTest {
   protected HighscoreService highscoreService;
 
   @Autowired
-  protected PopperResource popperResource;
+  protected FrontendStatusEventsResource frontendStatusEventsResource;
 
   @Autowired
   protected HighscoreParsingService highscoreParsingService;
 
   @Autowired
-  protected PopperServiceResource popperServiceResource;
+  protected FrontendServiceResource frontendServiceResource;
 
   @Autowired
   protected TableBackupAdapterFactory tableBackupAdapterFactory;
@@ -121,16 +121,16 @@ abstract public class AbstractVPinServerTest {
 
     gameEmulator = new GameEmulator(emulator, null);
 
-    pinUPConnector.deleteGames();
+    frontendService.deleteGames();
 
     clearVPinStudioDatabase();
 
     systemService.setArchiveType(ArchiveType.VPA);
 
 
-    pinUPConnector.importGame(EM_TABLE, 1);
-    pinUPConnector.importGame(VPREG_TABLE, 1);
-    pinUPConnector.importGame(NVRAM_TABLE, 1);
+    frontendService.importGame(EM_TABLE, 1);
+    frontendService.importGame(VPREG_TABLE, 1);
+    frontendService.importGame(NVRAM_TABLE, 1);
   }
 
   protected void clearVPinStudioDatabase() {

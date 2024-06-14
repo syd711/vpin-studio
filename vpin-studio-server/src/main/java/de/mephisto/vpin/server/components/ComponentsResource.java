@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public class ComponentsResource {
   private ComponentService componentService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @GetMapping
   public List<ComponentRepresentation> getComponents() {
@@ -62,7 +62,7 @@ public class ComponentsResource {
                                                 @PathVariable("tag") String tag,
                                                 @PathVariable("artifact") String artifact,
                                                 @PathVariable("forceDownload") boolean forceDownload) {
-    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.check(defaultGameEmulator, type, tag, artifact, forceDownload);
     return toActionLog(log);
   }
@@ -71,7 +71,7 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation install(@PathVariable("type") ComponentType type,
                                                   @PathVariable("tag") String tag,
                                                   @PathVariable("artifact") String artifact) {
-    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, false);
     return toActionLog(log);
   }
@@ -80,7 +80,7 @@ public class ComponentsResource {
   public ComponentActionLogRepresentation simulate(@PathVariable("type") ComponentType type,
                                                    @PathVariable("tag") String tag,
                                                    @PathVariable("artifact") String artifact) {
-    GameEmulator defaultGameEmulator = pinUPConnector.getDefaultGameEmulator();
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     ReleaseArtifactActionLog log = componentService.install(defaultGameEmulator, type, tag, artifact, true);
     return toActionLog(log);
   }
@@ -116,8 +116,8 @@ public class ComponentsResource {
     representation.setExclusions(componentFacade.getExclusionList());
 
     try {
-      representation.setLastModified(componentFacade.getModificationDate(pinUPConnector.getDefaultGameEmulator()));
-      representation.setTargetFolder(componentFacade.getTargetFolder(pinUPConnector.getDefaultGameEmulator()).getAbsolutePath());
+      representation.setLastModified(componentFacade.getModificationDate(frontendService.getDefaultGameEmulator()));
+      representation.setTargetFolder(componentFacade.getTargetFolder(frontendService.getDefaultGameEmulator()).getAbsolutePath());
     } catch (Exception e) {
       LOG.error("Error returning component data: " + e.getMessage(), e);
     }

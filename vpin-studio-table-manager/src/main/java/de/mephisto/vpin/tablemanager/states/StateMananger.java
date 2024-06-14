@@ -2,8 +2,8 @@ package de.mephisto.vpin.tablemanager.states;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.popper.PinUPControl;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.tablemanager.JobListener;
 import de.mephisto.vpin.tablemanager.Menu;
 import de.mephisto.vpin.tablemanager.MenuController;
@@ -163,10 +163,10 @@ public class StateMananger implements JobListener, NativeKeyListener {
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
   }
 
-  public void setControls(PinUPControls pinUPControls) {
-    LEFT = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_PRIOR);
-    RIGHT = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_NEXT);
-    ENTER = pinUPControls.getKeyCode(PinUPControl.FUNCTION_GAME_START);
-    BACK = pinUPControls.getKeyCode(PinUPControl.FUNCTION_EXIT);
+  public void setControls(FrontendControls frontendControls) {
+    LEFT = frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_PRIOR);
+    RIGHT = frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_NEXT);
+    ENTER = frontendControls.getKeyCode(FrontendControl.FUNCTION_GAME_START);
+    BACK = frontendControls.getKeyCode(FrontendControl.FUNCTION_EXIT);
   }
 }

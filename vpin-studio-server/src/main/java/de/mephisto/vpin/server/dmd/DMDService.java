@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -28,7 +28,7 @@ public class DMDService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(DMDService.class);
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   private Map<Integer, ComponentSummary> cache = new HashMap<>();
 
@@ -106,7 +106,7 @@ public class DMDService implements InitializingBean {
   }
 
   public void installDMDPackage(File archive, String dmdPath, int emulatorId) {
-    File tablesFolder = pinUPConnector.getGameEmulator(emulatorId).getTablesFolder();
+    File tablesFolder = frontendService.getGameEmulator(emulatorId).getTablesFolder();
     if (archive.getName().toLowerCase().endsWith(".zip")) {
       DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
     }
@@ -120,7 +120,7 @@ public class DMDService implements InitializingBean {
 
   public ComponentSummary getFreezySummary(int emulatorId) {
     if (!cache.containsKey(emulatorId)) {
-      GameEmulator defaultGameEmulator = pinUPConnector.getGameEmulator(emulatorId);
+      GameEmulator defaultGameEmulator = frontendService.getGameEmulator(emulatorId);
       cache.put(emulatorId, FreezySummarizer.summarizeFreezy(defaultGameEmulator));
     }
     return cache.get(emulatorId);

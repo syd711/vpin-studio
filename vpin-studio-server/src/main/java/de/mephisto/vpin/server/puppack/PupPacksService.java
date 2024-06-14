@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -36,7 +36,7 @@ public class PupPacksService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private JobQueue jobQueue;
@@ -120,12 +120,12 @@ public class PupPacksService implements InitializingBean {
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    pinUPConnector.setPupPackEnabled(game, enable);
+    frontendService.setPupPackEnabled(game, enable);
     return true;
   }
 
   public boolean isPupPackDisabled(@Nullable Game game) {
-    return pinUPConnector.isPupPackDisabled(game);
+    return frontendService.isPupPackDisabled(game);
   }
 
   public void writePUPHideNext(Game game) {
