@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -12,6 +13,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.text.DateFormat;
@@ -56,6 +58,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private ComboBox<String> mappingVpsVersionIdCombo;
 
   @FXML
+  private VBox popperDataMappingFields;
+
+  @FXML
   private void onShutdown() {
     Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Cancel", "Shutdown System", "Are you sure you want to shutdown the remote system?", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -86,11 +91,14 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    popperDataMappingFields.setVisible(frontendType.equals(FrontendType.Popper));
+
     shutdownBtn.setDisable(client.getSystemService().isLocal());
 
     Date startupTime = client.getSystemService().getStartupTime();
-    //int dbVersion = client.getPinUPPopperService().getVersion();
-
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 

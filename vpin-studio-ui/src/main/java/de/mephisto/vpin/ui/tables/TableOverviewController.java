@@ -1786,12 +1786,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     iconPopperMedia.setFitHeight(18);
     assetManagerBtn.setGraphic(iconPopperMedia);
 
-    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView iconPopperEdit = new ImageView(image4);
-    iconPopperEdit.setFitWidth(18);
-    iconPopperEdit.setFitHeight(18);
-    tableEditBtn.setGraphic(iconPopperEdit);
-
     Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
     ImageView view6 = new ImageView(image6);
     view6.setFitWidth(18);

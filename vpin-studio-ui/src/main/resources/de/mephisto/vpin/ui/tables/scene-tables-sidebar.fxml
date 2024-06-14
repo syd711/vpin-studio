@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
    <center>
         <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
@@ -21,7 +20,7 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="PinUP Popper Media" BorderPane.alignment="CENTER" />
+                                <Label text="Table Media" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
                         <HBox fx:id="popperTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
@@ -85,7 +84,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PinUP Popper Table Data" BorderPane.alignment="CENTER" />
+                                <Label text="Table Data" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>

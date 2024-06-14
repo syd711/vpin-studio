@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
@@ -17,6 +18,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TableOverviewContextMenu {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewContextMenu.class);
 
@@ -28,16 +31,12 @@ public class TableOverviewContextMenu {
 
   public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, GameRepresentation game) {
     ctxMenu.getItems().clear();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
     ImageView iconPopperMedia = new ImageView(image3);
     iconPopperMedia.setFitWidth(18);
     iconPopperMedia.setFitHeight(18);
-
-    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView iconPopperEdit = new ImageView(image4);
-    iconPopperEdit.setFitWidth(18);
-    iconPopperEdit.setFitHeight(18);
 
     Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
     ImageView iconPopperAssetView = new ImageView(image6);
@@ -68,7 +67,6 @@ public class TableOverviewContextMenu {
 
 
     MenuItem dataItem = new MenuItem("Edit Table Data");
-    dataItem.setGraphic(iconPopperEdit);
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
@@ -195,10 +193,12 @@ public class TableOverviewContextMenu {
       povItem.setOnAction(actionEvent -> tableOverviewController.onPOVUpload());
       uploadMenu.getItems().add(povItem);
 
-      MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
-      pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      pupPackItem.setOnAction(actionEvent -> tableOverviewController.onPupPackUpload());
-      uploadMenu.getItems().add(pupPackItem);
+      if (frontendType.equals(FrontendType.Popper)) {
+        MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
+        pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+        pupPackItem.setOnAction(actionEvent -> tableOverviewController.onPupPackUpload());
+        uploadMenu.getItems().add(pupPackItem);
+      }
 
       MenuItem romsItem = new MenuItem("Upload ROMs");
       romsItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
@@ -230,28 +230,30 @@ public class TableOverviewContextMenu {
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
 
-      ctxMenu.getItems().add(new SeparatorMenuItem());
+      if (frontendType.equals(FrontendType.Popper)) {
+        ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem exportItem = new MenuItem("Export");
-      exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
-      exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
-      ctxMenu.getItems().add(exportItem);
+        MenuItem exportItem = new MenuItem("Export");
+        exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
+        exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
+        ctxMenu.getItems().add(exportItem);
 
-      ctxMenu.getItems().add(new SeparatorMenuItem());
+        ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
-      vpbmItem.setGraphic(iconVpbm);
-      vpbmItem.setOnAction(actionEvent -> {
-        new Thread(() -> {
-          List<String> commands = Arrays.asList("vPinBackupManager.exe");
-          LOG.info("Executing vpbm: " + String.join(" ", commands));
-          File dir = new File("./resources/", "vpbm");
-          SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-          executor.setDir(dir);
-          executor.executeCommandAsync();
-        }).start();
-      });
-      ctxMenu.getItems().add(vpbmItem);
+        MenuItem vpbmItem = new MenuItem("Open Visual Pinball Backup Manager");
+        vpbmItem.setGraphic(iconVpbm);
+        vpbmItem.setOnAction(actionEvent -> {
+          new Thread(() -> {
+            List<String> commands = Arrays.asList("vPinBackupManager.exe");
+            LOG.info("Executing vpbm: " + String.join(" ", commands));
+            File dir = new File("./resources/", "vpbm");
+            SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+            executor.setDir(dir);
+            executor.executeCommandAsync();
+          }).start();
+        });
+        ctxMenu.getItems().add(vpbmItem);
+      }
 
       ctxMenu.getItems().add(new SeparatorMenuItem());
 

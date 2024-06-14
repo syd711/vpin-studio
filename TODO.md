@@ -3,12 +3,16 @@
 - Check WheelAugmenter for different frontends
 - Separate FrontendStatusChangeListener into FrontendStatusChangeListener and TableStatusChangeListener
 - FrontendStatusService must be splitted, still contains status change events and general table stuff.
-- GameMediaServiceClient: extract FrontendServiceClient
+- Repair Backglass Server Settings
 
 ## PinballX
+
+- add server support for killing and restart of relevant processes
 
 ## Standalone
 
 ## Popper
 
 ## UI
+
+- check custom properties can be set for Pinball X and put them under "Frontend Preferences"

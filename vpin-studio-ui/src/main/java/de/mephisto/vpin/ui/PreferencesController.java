@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
@@ -58,6 +59,15 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private Button mameBtn;
+
+  @FXML
+  private Button repositoriesBtn;
+
+  @FXML
+  private Button frontendSettingsBtn;
+
+  @FXML
+  private Button vpbmBtn;
 
   @FXML
   private BorderPane preferencesMain;
@@ -207,12 +217,12 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onReset(ActionEvent event) throws IOException {
-    load("preference-reset.fxml", event);
+    load("preference-frontend-reset.fxml", event);
   }
 
   @FXML
   private void onCustomOptions(ActionEvent event) throws IOException {
-    load("preference-popper_custom_options.fxml", event);
+    load("preference-frontend-custom-options.fxml", event);
   }
 
   @FXML
@@ -334,6 +344,15 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    frontendSettingsBtn.managedProperty().bindBidirectional(frontendSettingsBtn.visibleProperty());
+    repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
+    vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    vpbmBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    repositoriesBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    frontendSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
+
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;
     navBox = navigationBox;

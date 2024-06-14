@@ -168,67 +168,68 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="34.0" layoutY="360.0" styleClass="preference-subtitle" text="Table Data Mapping">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label layoutX="34.0" layoutY="498.0" styleClass="preference-description" text="This section lets you select the PinUP Popper database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
-                  <GridPane hgap="3.0" vgap="3.0">
-                    <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="121.60007324218753" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
-                    </rowConstraints>
+                  <VBox fx:id="popperDataMappingFields">
                      <children>
-                        <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <Label styleClass="preference-subtitle" text="Table Data Mapping">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
                         </Label>
-                        <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
-                        <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </ComboBox>
-                        <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="2">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="VP-Spreadsheet Table Version Id:" textFill="WHITE" GridPane.rowIndex="4">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="(Used by some tables to write scores into)" textFill="WHITE" GridPane.rowIndex="1" />
-                        <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="(The id for the overall table type on VPS)" textFill="WHITE" GridPane.rowIndex="3" />
-                        <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="(The id of the version/mod of the table type)" textFill="WHITE" GridPane.rowIndex="5" />
+                        <Label styleClass="preference-description" text="This section lets you select the PinUP Popper database fields where some VPin Studio specific fields are stored." textFill="WHITE" />
+                        <GridPane hgap="3.0" vgap="3.0">
+                          <columnConstraints>
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="376.2000732421875" minWidth="10.0" prefWidth="300.7999267578125" />
+                            <ColumnConstraints hgrow="SOMETIMES" maxWidth="608.199951171875" minWidth="10.0" prefWidth="121.60007324218753" />
+                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="863.1999755859376" minWidth="10.0" prefWidth="337.60004882812507" />
+                          </columnConstraints>
+                          <rowConstraints>
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                            <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="BASELINE" vgrow="SOMETIMES" />
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
+                          </rowConstraints>
+                           <children>
+                              <Label prefHeight="20.0" styleClass="preference-label" text="Highscore .txt File Name" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="mappingHsFileNameCombo" prefWidth="150.0" GridPane.columnIndex="2">
+                                 <GridPane.margin>
+                                    <Insets />
+                                 </GridPane.margin>
+                              </ComboBox>
+                              <Label layoutX="10.0" layoutY="12.0" prefHeight="20.0" styleClass="preference-label" text="VP-Spreadsheet Table Id:" textFill="WHITE" GridPane.rowIndex="2">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="196.0" layoutY="14.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                              <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="VP-Spreadsheet Table Version Id:" textFill="WHITE" GridPane.rowIndex="4">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Label>
+                              <Label layoutX="256.0" layoutY="48.0" styleClass="preference-description" text="is stored into field" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <ComboBox fx:id="mappingVpsTableIdCombo" layoutX="396.0" layoutY="10.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                              <ComboBox fx:id="mappingVpsVersionIdCombo" layoutX="396.0" layoutY="44.0" prefWidth="150.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                              <Label layoutX="256.0" layoutY="14.0" styleClass="preference-description" text="(Used by some tables to write scores into)" textFill="WHITE" GridPane.rowIndex="1" />
+                              <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="(The id for the overall table type on VPS)" textFill="WHITE" GridPane.rowIndex="3" />
+                              <Label layoutX="10.0" layoutY="111.0" styleClass="preference-description" text="(The id of the version/mod of the table type)" textFill="WHITE" GridPane.rowIndex="5" />
+                           </children>
+                        </GridPane>
                      </children>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </GridPane>
+                  </VBox>
                   <Label styleClass="preference-subtitle" text="Options">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
-                  <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch PinUP Popper on maintenance exit." textFill="WHITE">
+                  <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -236,7 +237,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </CheckBox>
-                  <Label layoutX="34.0" layoutY="624.0" styleClass="checkbox-description" text="When working remote, PinUP Popper can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="624.0" styleClass="checkbox-description" text="When working remote, the frontend can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
                   <CheckBox fx:id="useOriginalVbsFilesCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="Keep .vbs files when editing table scripts." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -257,7 +258,6 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1110.0" styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="1132.0" styleClass="checkbox-description" text="This way, tables must not be launched through PinUP Popper to use VPin-Studio services." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

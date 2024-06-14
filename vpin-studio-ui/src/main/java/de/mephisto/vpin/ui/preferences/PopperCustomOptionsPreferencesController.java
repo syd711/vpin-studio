@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.collections.FXCollections;
@@ -13,6 +14,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,6 +23,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class PopperCustomOptionsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PopperCustomOptionsPreferencesController.class);
   public static final int DEBOUNCE_MS = 500;
@@ -28,8 +32,8 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
 
   private final static List<FadeoutLoading> FADEOUT_LOADINGS = Arrays.asList(new FadeoutLoading(0, "Normal"),
-    new FadeoutLoading(1, "Fade out video and audio"),
-    new FadeoutLoading(2, "Continue playing until loading video ends or a key is pressed."));
+      new FadeoutLoading(1, "Fade out video and audio"),
+      new FadeoutLoading(2, "Continue playing until loading video ends or a key is pressed."));
 
 
   @FXML
@@ -98,12 +102,19 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
   @FXML
   private CheckBox volumeChange;
 
+  @FXML
+  private VBox popperPreferencesFields;
+
   private FrontendCustomOptions customOptions;
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    customOptions = Studio.client.getFrontendService().getCustomOptions();
+    popperPreferencesFields.managedProperty().bindBidirectional(popperPreferencesFields.visibleProperty());
+
+    customOptions = client.getFrontendService().getCustomOptions();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    popperPreferencesFields.setVisible(frontendType.equals(FrontendType.Popper));
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10000, 0);
     delayReturn.setValueFactory(factory);
@@ -276,20 +287,22 @@ public class PopperCustomOptionsPreferencesController implements Initializable {
 
   private void save() {
     try {
-      if (Studio.client.getFrontendService().isFrontendRunning()) {
+      if (client.getFrontendService().isFrontendRunning()) {
         if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          Studio.client.getFrontendService().saveCustomOptions(customOptions);
+          client.getFrontendService().saveCustomOptions(customOptions);
         }
         return;
       }
-      Studio.client.getFrontendService().saveCustomOptions(customOptions);
+      client.getFrontendService().saveCustomOptions(customOptions);
 
-    } catch (DatabaseLockException e) {
+    }
+    catch (DatabaseLockException e) {
       LOG.error("Failed to save custom options: " + e.getMessage(), e);
       if (!Dialogs.openPopperRunningWarning(Studio.stage)) {
         this.setDisabled(true);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save PinUP Popper custom options: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PinUP Popper custom options: " + e.getMessage());
     }

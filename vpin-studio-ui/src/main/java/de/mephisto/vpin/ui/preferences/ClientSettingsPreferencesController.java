@@ -29,7 +29,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class ClientSettingsPreferencesController implements Initializable, ChangeListener<Boolean> {
+public class ClientSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ClientSettingsPreferencesController.class);
 
   @FXML
@@ -279,20 +279,5 @@ public class ClientSettingsPreferencesController implements Initializable, Chang
         winNetworkShareTestBtn.setDisable(false);
       }
     });
-  }
-
-  @Override
-  public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-//    Node checkBox = (Node) observable;
-//    GameEmulatorRepresentation emulatorRepresentation = (GameEmulatorRepresentation) checkBox.getUserData();
-
-//    if (newValue) {
-//      uiSettings.getIgnoredEmulatorIds().remove(emulatorRepresentation.getId());
-//    }
-//    else {
-//      uiSettings.getIgnoredEmulatorIds().add(emulatorRepresentation.getId());
-//    }
-//    PreferencesController.markDirty(PreferenceType.serverSettings);
-//    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
   }
 }

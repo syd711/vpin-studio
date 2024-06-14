@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.ui.Studio;
@@ -25,8 +26,8 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarPopperController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPopperController.class);
+public class TablesSidebarTableDetailsController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarTableDetailsController.class);
 
   @FXML
   private Button tableEditBtn;
@@ -164,13 +165,19 @@ public class TablesSidebarPopperController implements Initializable {
   @FXML
   private TextArea gPlayLog;
 
+  @FXML
+  private VBox popperRuntimeFields;
+
+  @FXML
+  private VBox gameMetaDataFields;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
   private TableDetails tableDetails;
 
   // Add a public no-args constructor
-  public TablesSidebarPopperController() {
+  public TablesSidebarTableDetailsController() {
   }
 
   @FXML
@@ -178,13 +185,14 @@ public class TablesSidebarPopperController implements Initializable {
     if (game.isPresent()) {
       GameRepresentation gameRepresentation = game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
-        + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
-        gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+          + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
+          gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getFrontendService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
           EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-        } catch (Exception ex) {
+        }
+        catch (Exception ex) {
           LOG.error("Error fixing version: " + ex.getMessage(), ex);
           WidgetFactory.showAlert(Studio.stage, "Error", "Error fixing version: " + ex.getMessage());
         }
@@ -233,9 +241,9 @@ public class TablesSidebarPopperController implements Initializable {
     autoFillBtn.setDisable(g.isEmpty());
 
     GameRepresentation game = g.orElse(null);
-    tableDetails = game!=null? Studio.client.getFrontendService().getTableDetails(game.getId()): null;
+    tableDetails = game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
 
-    if (game!=null && tableDetails!=null) {
+    if (game != null && tableDetails != null) {
 
       autoFillBtn.setVisible(game.isVpxGame());
 
@@ -352,11 +360,13 @@ public class TablesSidebarPopperController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     autoFillBtn.managedProperty().bindBidirectional(autoFillBtn.visibleProperty());
     extrasPanel.managedProperty().bindBidirectional(extrasPanel.visibleProperty());
+    popperRuntimeFields.managedProperty().bindBidirectional(popperRuntimeFields.visibleProperty());
+    gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
 
-    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView view4 = new ImageView(image4);
-    view4.setFitWidth(18);
-    view4.setFitHeight(18);
-    tableEditBtn.setGraphic(view4);
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.equals(FrontendType.Popper)) {
+      popperRuntimeFields.setVisible(false);
+      gameMetaDataFields.setVisible(false);
+    }
   }
 }
