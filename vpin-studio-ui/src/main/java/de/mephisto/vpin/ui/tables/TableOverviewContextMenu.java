@@ -34,14 +34,14 @@ public class TableOverviewContextMenu {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView iconPopperMedia = new ImageView(image3);
-    iconPopperMedia.setFitWidth(18);
-    iconPopperMedia.setFitHeight(18);
+    ImageView iconMedia = new ImageView(image3);
+    iconMedia.setFitWidth(18);
+    iconMedia.setFitHeight(18);
 
     Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
-    ImageView iconPopperAssetView = new ImageView(image6);
-    iconPopperAssetView.setFitWidth(18);
-    iconPopperAssetView.setFitHeight(18);
+    ImageView iconAssetView = new ImageView(image6);
+    iconAssetView.setFitWidth(18);
+    iconAssetView.setFitHeight(18);
 
 
     Image image5 = new Image(Studio.class.getResourceAsStream("b2s.png"));
@@ -71,12 +71,12 @@ public class TableOverviewContextMenu {
     ctxMenu.getItems().add(dataItem);
 
     MenuItem assetsItem = new MenuItem("Edit Table Assets");
-    assetsItem.setGraphic(iconPopperMedia);
+    assetsItem.setGraphic(iconMedia);
     assetsItem.setOnAction(actionEvent -> tableOverviewController.onMediaEdit());
     ctxMenu.getItems().add(assetsItem);
 
     MenuItem assetsViewItem = new MenuItem("Toggle Asset Management View");
-    assetsViewItem.setGraphic(iconPopperAssetView);
+    assetsViewItem.setGraphic(iconAssetView);
     assetsViewItem.setOnAction(actionEvent -> tableOverviewController.onAssetView());
     ctxMenu.getItems().add(assetsViewItem);
 

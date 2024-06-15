@@ -23,7 +23,7 @@ public class GameMediaItem {
     this.file = file;
     this.gameId = game.getId();
     this.screen = screen;
-    this.uri = "poppermedia/" + game.getId() + "/" + screen.name();
+    this.uri = "media/" + game.getId() + "/" + screen.name();
     this.mimeType = MimeTypeUtil.determineMimeType(file);
   }
 

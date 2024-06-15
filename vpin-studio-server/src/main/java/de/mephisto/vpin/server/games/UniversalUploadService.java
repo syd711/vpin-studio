@@ -45,7 +45,7 @@ public class UniversalUploadService {
   private AltSoundService altSoundService;
 
   @Autowired
-  private GameMediaService popperMediaService;
+  private GameMediaService gameMediaService;
 
   @Autowired
   private PupPacksService pupPacksService;
@@ -145,7 +145,7 @@ public class UniversalUploadService {
         break;
       }
       case POPPER_MEDIA: {
-        popperMediaService.installMediaPack(uploadDescriptor, analysis);
+        gameMediaService.installMediaPack(uploadDescriptor, analysis);
         break;
       }
       case MUSIC: {

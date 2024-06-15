@@ -1784,10 +1784,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     bindSearchField();
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView iconPopperMedia = new ImageView(image3);
-    iconPopperMedia.setFitWidth(18);
-    iconPopperMedia.setFitHeight(18);
-    assetManagerBtn.setGraphic(iconPopperMedia);
+    ImageView iconMedia = new ImageView(image3);
+    iconMedia.setFitWidth(18);
+    iconMedia.setFitHeight(18);
+    assetManagerBtn.setGraphic(iconMedia);
 
     Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
     ImageView view6 = new ImageView(image6);

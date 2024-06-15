@@ -59,7 +59,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public FrontendType getFrontendType() {
-    return FrontendType.Popper;
+    return FrontendType.PinballX;
   }
 
   //----------------------------------------
@@ -449,15 +449,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
           continue;
         }
-        else {
-          if (emulator.getDirB2S() == null) {
-            File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
-            if (b2sFolder == null) {
-              // not installed, use B2SServer folder inside vpx folder
-              b2sFolder = new File(emulator.getEmuLaunchDir(), "B2SServer");
-            }
-            emulator.setDirB2S(b2sFolder.getAbsolutePath());
+        
+        if (emulator.isVisualPinball() && emulator.getDirB2S() == null) {
+          File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
+          if (b2sFolder == null) {
+            // not installed, use B2SServer folder inside vpx folder
+            b2sFolder = new File(emulator.getEmuLaunchDir(), "B2SServer");
           }
+          emulator.setDirB2S(b2sFolder.getAbsolutePath());
         }
 
         GameEmulator gameEmulator = new GameEmulator(emulator, getFrontend().getMediaAccessStrategy());

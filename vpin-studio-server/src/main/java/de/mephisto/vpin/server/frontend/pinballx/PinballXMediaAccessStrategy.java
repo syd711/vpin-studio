@@ -13,13 +13,13 @@ public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
     switch (screen) {
     case Audio: return new File(mediaDirectory, "Table Audio");
     case AudioLaunch: return new File(mediaDirectory, "Launch Audio");
-    case Other2: return new File(mediaDirectory, "FullDMD Videos");
     case GameInfo: return selectFolder(mediaDirectory, gameFileName, "../Flyer Images/Front", "../Flyer Images/Back",
       "../Flyer Images/Inside1",  "../Flyer Images/Inside2", "../Flyer Images/Inside3", "../Flyer Images/Inside4", "../Flyer Images/Inside5", "../Flyer Images/Inside6"); 
     case GameHelp: return new File(mediaDirectory, "../Instruction Cards");
     case Topper: return selectFolder(mediaDirectory, gameFileName, "Topper Videos", "Topper Images");
     case BackGlass: return selectFolder(mediaDirectory, gameFileName, "Backglass Videos", "Backglass Images");
-    case Menu: return new File(mediaDirectory, "...");
+    case Other2: return null;
+    case Menu: return new File(mediaDirectory, "FullDMD Videos");
     case DMD: return selectFolder(mediaDirectory, gameFileName, "DMD Videos", "DMD Images");
     case Loading: return new File(mediaDirectory, "../Loading Videos");
     case Wheel: return new File(mediaDirectory, "Wheel Images");

@@ -61,7 +61,7 @@ public class GameMediaResource implements InitializingBean {
   private UniversalUploadService universalUploadService;
 
   @Autowired
-  private GameMediaService popperMediaService;
+  private GameMediaService gameMediaService;
 
   private TableAssetsService tableAssetsService;
 
@@ -159,7 +159,7 @@ public class GameMediaResource implements InitializingBean {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = popperMediaService.uniquePopperAsset(game, VPinScreen, suffix);
+      File out = gameMediaService.uniquePopperAsset(game, VPinScreen, suffix);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
@@ -266,7 +266,7 @@ public class GameMediaResource implements InitializingBean {
 
   private boolean addBlank(int gameId, VPinScreen screen) throws IOException {
     Game game = gameService.getGame(gameId);
-    File target = popperMediaService.uniquePopperAsset(game, screen);
+    File target = gameMediaService.uniquePopperAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
     //copy base64 asset
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {

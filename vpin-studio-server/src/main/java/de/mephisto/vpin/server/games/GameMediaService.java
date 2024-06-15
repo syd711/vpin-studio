@@ -36,16 +36,16 @@ public class GameMediaService {
 
       boolean limit = false;
       int maxAssets = 3;
-      for (String popperMediaFile : filesForScreen) {
-        if (popperMediaFile.toLowerCase().contains("macosx")) {
+      for (String mediaFile : filesForScreen) {
+        if (mediaFile.toLowerCase().contains("macosx")) {
           continue;
         }
 
-        String suffix = FilenameUtils.getExtension(popperMediaFile);
+        String suffix = FilenameUtils.getExtension(mediaFile);
         File out = uniquePopperAsset(game, value, suffix);
 
-        if (PackageUtil.unpackTargetFile(tempFile, out, popperMediaFile)) {
-          LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + popperMediaFile + "\"");
+        if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
+          LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + mediaFile + "\"");
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());

@@ -55,7 +55,7 @@ public class AssetServiceClient extends VPinStudioClientService {
         return null;
       }
 
-      String url = API + "poppermedia/" + id + "/" + screen.name();
+      String url = API + "media/" + id + "/" + screen.name();
       if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
         byte[] bytes = getRestClient().readBinary(url);
         if (bytes == null) {
