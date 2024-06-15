@@ -349,8 +349,9 @@ public class PreferencesController implements Initializable, StudioEventListener
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    vpbmBtn.setVisible(frontendType.equals(FrontendType.Popper));
-    repositoriesBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    vpbmBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(frontendType.supportArchive());
+    // activation of custom Popper options only for Popper fronted
     frontendSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
 
     initialBtn = avatarBtn;

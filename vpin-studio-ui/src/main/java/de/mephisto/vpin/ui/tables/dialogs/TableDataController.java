@@ -606,11 +606,12 @@ public class TableDataController implements Initializable, DialogController, Aut
   public void initialize(URL url, ResourceBundle resourceBundle) {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    if (!frontendType.equals(FrontendType.Popper)) {
+    if (!frontendType.supportStandardFields()) {
       tabPane.getTabs().remove(metaDataTab);
+    }
+    if (!frontendType.supportExtendedFields()) {
       tabPane.getTabs().remove(customizationTab);
       tabPane.getTabs().remove(extrasTab);
-      tabPane.getTabs().remove(statisticsTab);
     }
 
     hintCustom2.setVisible(false);
@@ -622,7 +623,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
 
-    if (frontendType.equals(FrontendType.Popper)) {
+    if (frontendType.supportStatistics()) {
       try {
         FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
         Parent builtInRoot = loader.load();
@@ -634,7 +635,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
     else {
-
+      tabPane.getTabs().remove(statisticsTab);
     }
 
 
@@ -680,6 +681,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.uiSettings = overviewController.getUISettings();
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
@@ -979,7 +981,9 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     initVpsStatus();
-    tableStatisticsController.setGame(game, tableDetails);
+    if (frontendType.supportStatistics()) {
+      tableStatisticsController.setGame(game, tableDetails);
+    }
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);
   }

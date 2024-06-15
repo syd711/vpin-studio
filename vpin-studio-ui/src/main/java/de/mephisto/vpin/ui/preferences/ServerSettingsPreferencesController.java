@@ -94,7 +94,7 @@ public class ServerSettingsPreferencesController implements Initializable {
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    popperDataMappingFields.setVisible(frontendType.equals(FrontendType.Popper));
+    popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
 
     shutdownBtn.setDisable(client.getSystemService().isLocal());
 

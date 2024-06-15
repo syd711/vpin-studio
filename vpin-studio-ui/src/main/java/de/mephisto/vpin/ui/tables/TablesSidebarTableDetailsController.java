@@ -364,9 +364,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     gameMetaDataFields.managedProperty().bindBidirectional(gameMetaDataFields.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.equals(FrontendType.Popper)) {
-      popperRuntimeFields.setVisible(false);
-      gameMetaDataFields.setVisible(false);
-    }
+    popperRuntimeFields.setVisible(frontendType.supportExtendedFields());
+    gameMetaDataFields.setVisible(frontendType.supportStandardFields());
   }
 }

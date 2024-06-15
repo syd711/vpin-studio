@@ -96,7 +96,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     EventManager.getInstance().addListener(this);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.equals(FrontendType.Popper)) {
+    if (!frontendType.supportStatistics()) {
+      tabPane.getTabs().remove(tablesStatisticsTab);
+    }
+    if (!frontendType.supportArchive()) {
       tabPane.getTabs().remove(tableRepositoryTab);
     }
 

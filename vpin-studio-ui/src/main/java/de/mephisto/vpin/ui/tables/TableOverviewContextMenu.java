@@ -230,7 +230,7 @@ public class TableOverviewContextMenu {
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
 
-      if (frontendType.equals(FrontendType.Popper)) {
+      if (frontendType.supportArchive()) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
         MenuItem exportItem = new MenuItem("Export");
