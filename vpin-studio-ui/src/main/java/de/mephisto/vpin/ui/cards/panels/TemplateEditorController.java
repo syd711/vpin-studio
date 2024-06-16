@@ -718,8 +718,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         if(assetMediaPlayer != null) {
           assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
           mediaPlayerControl.setVisible(true);
+          previewOverlayPanel.setVisible(true);
         }
-        previewOverlayPanel.setVisible(true);
       }
     }
   }
