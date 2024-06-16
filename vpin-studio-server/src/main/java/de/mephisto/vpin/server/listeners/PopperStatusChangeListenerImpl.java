@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -11,7 +13,9 @@ import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.popper.*;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import javafx.application.Platform;
@@ -22,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PopperStatusChangeListenerImpl implements InitializingBean, PopperStatusChangeListener {
+public class PopperStatusChangeListenerImpl implements InitializingBean, PopperStatusChangeListener, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PopperStatusChangeListenerImpl.class);
   public static final int EXIT_DELAY = 6000;
 
@@ -43,6 +47,10 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
 
   @Autowired
   private PupPacksService pupPacksService;
+
+  @Autowired
+  private NotificationService notificationService;
+  private NotificationSettings notificationSettings;
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
@@ -118,6 +126,14 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
       }
       LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
       highscoreService.scanScore(game);
+
+      if (notificationSettings.isHighscoreCheckedNotification()) {
+        Notification notification = new Notification();
+        notification.setImage(game.getWheelImage());
+        notification.setTitle1(game.getGameDisplayName());
+        notification.setTitle2("Highscore scan finished!");
+        notificationService.showNotification(notification);
+      }
     }).start();
   }
 
@@ -148,5 +164,14 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, PopperS
   @Override
   public void afterPropertiesSet() throws Exception {
     popperService.addPopperStatusChangeListener(this);
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
+      notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    }
   }
 }
