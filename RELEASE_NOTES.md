@@ -7,6 +7,8 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/cards/cards.png" width="800" />
 
+- **VPBM**: Updated to VPBM version 3.2 (for new installations).
+
 ### Bugfixes
 
 - **Universal Uploader:** Fixed superflous folder creation when extracting Popper assets from zip and rar files.
