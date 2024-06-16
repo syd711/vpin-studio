@@ -714,8 +714,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
-        assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
-        mediaPlayerControl.setVisible(true);
+        //images do not have a media player
+        if(assetMediaPlayer != null) {
+          assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
+          mediaPlayerControl.setVisible(true);
+        }
         previewOverlayPanel.setVisible(true);
       }
     }
