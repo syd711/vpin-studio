@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -118,17 +119,17 @@ public class ToolbarController implements Initializable, StudioEventListener {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        String pinupSystemDirectory = client.getSystemService().getSystemSummary().getPinupSystemDirectory();
-        File file = new File(pinupSystemDirectory, "PinUpMenuSetup.exe");
+        Frontend frontend = client.getFrontendService().getFrontend();
+        File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
         if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+          WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }
         else {
           desktop.open(file);
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to open PinUpMenuSetup.exe: " + e.getMessage(), e);
+        LOG.error("Failed to open admin frontend: " + e.getMessage(), e);
       }
     }
   }
@@ -212,29 +213,31 @@ public class ToolbarController implements Initializable, StudioEventListener {
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    frontendMenuBtn.setVisible(client.getSystemService().isLocal() && !frontendType.equals(FrontendType.Standalone));
-
+    Frontend frontend = client.getFrontendService().getFrontend();
+    frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
+    frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 
-    String image = "popper.png";
-    if (frontendType.equals(FrontendType.PinballX)) {
-      image = "pinballx.png";
+    if (frontend.getIconName() != null) {
+      Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      ImageView view1 = new ImageView(image1);
+      view1.setPreserveRatio(true);
+      view1.setFitHeight(18);
+      frontendMenuItem.setGraphic(view1);
+
+      Image image2 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      ImageView view2 = new ImageView(image2);
+      view2.setPreserveRatio(true);
+      view2.setFitHeight(18);
+      frontendMenuBtn.setGraphic(view2);
     }
 
-    Image image1 = new Image(Studio.class.getResourceAsStream(image));
-    ImageView view1 = new ImageView(image1);
-    view1.setPreserveRatio(true);
-    view1.setFitHeight(18);
-    frontendMenuItem.setGraphic(view1);
+    if (frontend.getFrontendExe() == null) {
+      preferencesBtn.getItems().remove(frontendMenuItem);
+    }
 
-    Image image2 = new Image(Studio.class.getResourceAsStream(image));
-    ImageView view2 = new ImageView(image2);
-    view2.setPreserveRatio(true);
-    view2.setFitHeight(18);
-    frontendMenuBtn.setGraphic(view2);
 
     this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());

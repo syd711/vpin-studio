@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.assets.AssetService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
+import de.mephisto.vpin.server.frontend.FrontendResource;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -21,7 +22,6 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.PlayerRepository;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
-import de.mephisto.vpin.server.frontend.FrontendServiceResource;
 
 import de.mephisto.vpin.server.system.SystemService;
 import org.junit.jupiter.api.TestInstance;
@@ -93,7 +93,7 @@ abstract public class AbstractVPinServerTest {
   protected HighscoreParsingService highscoreParsingService;
 
   @Autowired
-  protected FrontendServiceResource frontendServiceResource;
+  protected FrontendResource frontendResource;
 
   @Autowired
   protected TableBackupAdapterFactory tableBackupAdapterFactory;

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -21,6 +22,9 @@ public interface FrontendConnector {
    * Let the Frontend initialize itself, called 
    */
   void initializeConnector(ServerSettings settings);
+
+  @NonNull
+  File getInstallationFolder();
 
   List<Emulator> getEmulators();
   

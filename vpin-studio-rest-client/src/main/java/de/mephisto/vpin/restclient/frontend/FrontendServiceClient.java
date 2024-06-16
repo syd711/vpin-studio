@@ -24,7 +24,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   private List<TableAssetSearch> cache = new ArrayList<>();
 
-  private FrontendType frontendType;
+  private Frontend frontend;
 
   public FrontendServiceClient(VPinStudioClient client) {
     super(client);
@@ -35,11 +35,18 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/version", Integer.class);
   }
 
-  public FrontendType getFrontendType() {
-    if (frontendType == null) {
-      frontendType = getRestClient().get(API + API_SEGMENT_FRONTEND + "/type", FrontendType.class);
+  public Frontend getFrontend() {
+    if (frontend == null) {
+      frontend = getRestClient().get(API + API_SEGMENT_FRONTEND, Frontend.class);
     }
-    return frontendType;
+    return frontend;
+  }
+
+  public FrontendType getFrontendType() {
+    if (frontend == null) {
+      getFrontend();
+    }
+    return frontend.getFrontendType();
   }
 
   public GameList getImportableTables() {

@@ -137,11 +137,9 @@ public class SystemResource {
   @GetMapping("/info")
   public SystemSummary info() {
     SystemSummary info = new SystemSummary();
-    info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
     info.setSystemId(SystemUtil.getBoardSerialNumber());
-    info.setPopper15(frontendService.isPopper15());
     return info;
   }
 

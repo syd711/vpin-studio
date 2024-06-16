@@ -12,6 +12,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,13 @@ public class PinUPConnector implements FrontendConnector {
   private int sqlVersion = DB_VERSION;
 
   private ServerSettings serverSettings;
+
+  @NotNull
+  @Override
+  public File getInstallationFolder() {
+    //TODO move into this class!!
+    return systemService.getPinUPSystemFolder();
+  }
 
   private void initVisualPinballXScripts(Emulator emulator) {
     String emulatorName = emulator.getName();

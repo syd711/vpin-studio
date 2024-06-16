@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -32,16 +33,17 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public void initializeConnector(ServerSettings settings) {
   }
-  
-  protected File resolvePinballXFolder() {
-    return new File("C:/PinballX");
-  }
 
+  @NotNull
+  @Override
+  public File getInstallationFolder() {
+    return new File("C:/PinballX"); //TODO
+  }
 
   @Override
   protected List<Emulator> loadEmulators() {
     List<Emulator> emulators = new ArrayList<>();
-    File pinballXFolder = resolvePinballXFolder();
+    File pinballXFolder = getInstallationFolder();
     File pinballXIni = new File(pinballXFolder, "/Config/PinballX.ini");
     
     if (!pinballXIni.exists()) {
@@ -146,7 +148,7 @@ public class PinballXConnector extends BaseConnector {
  
   @Override
   protected List<String> loadGames(Emulator emu) {
-    File pinballXFolder = resolvePinballXFolder();
+    File pinballXFolder = getInstallationFolder();
     List<String> games = new ArrayList<>();
 
     File pinballXDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");

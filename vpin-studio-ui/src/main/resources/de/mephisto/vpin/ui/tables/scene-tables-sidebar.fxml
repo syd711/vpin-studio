@@ -25,7 +25,7 @@
                             <right>
                         <HBox fx:id="popperTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="popperConfigBtn" mnemonicParsing="false" onAction="#onPopperBtn" styleClass="external-component">
+                              <Button fx:id="popperConfigBtn" mnemonicParsing="false" onAction="#onFrontendAdminOpen" styleClass="external-component">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -63,7 +63,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePopper" expanded="false">
+                <TitledPane fx:id="titledPaneTableDetails" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>

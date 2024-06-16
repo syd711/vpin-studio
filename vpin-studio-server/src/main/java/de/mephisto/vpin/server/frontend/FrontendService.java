@@ -50,8 +50,38 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
   }
-  
-  public FrontendConnector getFrontend() {
+
+  public Frontend getFrontend() {
+    FrontendType frontendType = getFrontendType();
+
+    Frontend frontend = new Frontend();
+    frontend.setInstallationDirectory(getFrontendConnector().getInstallationFolder().getAbsolutePath());
+    frontend.setFrontendType(frontendType);
+
+    switch (frontendType) {
+      case Standalone: {
+        break;
+      }
+      case Popper: {
+        frontend.setFrontendExe("PinUpMenu.exe");
+        frontend.setIconName("PinUpMenuSetup.exe");
+        frontend.setIconName("popper.png");
+        break;
+      }
+      case PinballX: {
+        frontend.setFrontendExe("PinballX.exe");
+        frontend.setAdminExe("Game Manager.exe");
+        frontend.setIconName("pinballx.png");
+        break;
+      }
+      default: {
+        throw new UnsupportedOperationException("Unsupported connector type " + frontendType);
+      }
+    }
+    return frontend;
+  }
+
+  public FrontendConnector getFrontendConnector() {
     FrontendType frontendType = getFrontendType();
     return frontendsMap.get(frontendType.name());
     //return frontendsMap.get(FrontendType.POPPER.name());
@@ -107,7 +137,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //-----------------------------------
 
   public TableDetails getTableDetails(int id) {
-    FrontendConnector frontend = getFrontend();
+    FrontendConnector frontend = getFrontendConnector();
     TableDetails manifest = frontend.getTableDetails(id);
     if (manifest != null) {
       GameEmulator emu = emulators.get(manifest.getEmulatorId());
@@ -118,11 +148,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public void saveTableDetails(int id, TableDetails tableDetails) {
-    getFrontend().saveTableDetails(id, tableDetails);
+    getFrontendConnector().saveTableDetails(id, tableDetails);
   }
 
   public void updateTableFileUpdated(int id) {
-    getFrontend().updateTableFileUpdated(id);
+    getFrontendConnector().updateTableFileUpdated(id);
   }
 
   //--------------------------
@@ -142,27 +172,27 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public Game getGame(int id) {
-    return setGameEmulator(getFrontend().getGame(id));
+    return setGameEmulator(getFrontendConnector().getGame(id));
   }
 
   public Game getGameByFilename(String filename) {
-    return setGameEmulator(getFrontend().getGameByFilename(filename));
+    return setGameEmulator(getFrontendConnector().getGameByFilename(filename));
   }
 
   public List<Game> getGamesByEmulator(int emulatorId) {
-    return setGameEmulator(getFrontend().getGamesByEmulator(emulatorId));
+    return setGameEmulator(getFrontendConnector().getGamesByEmulator(emulatorId));
   }
 
   public List<Game> getGamesByFilename(String filename) {
-    return setGameEmulator(getFrontend().getGamesByFilename(filename));
+    return setGameEmulator(getFrontendConnector().getGamesByFilename(filename));
   }
 
   public Game getGameByName(String gameName) {
-    return setGameEmulator(getFrontend().getGameByName(gameName));
+    return setGameEmulator(getFrontendConnector().getGameByName(gameName));
   }
 
   public List<Game> getGames() {
-    List<Game> results = setGameEmulator(getFrontend().getGames());
+    List<Game> results = setGameEmulator(getFrontendConnector().getGames());
     results.sort(Comparator.comparing(Game::getGameDisplayName));
     return results;
   }
@@ -171,30 +201,30 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   // no more used ?
   public int getVersion() {
-    return getFrontend().getVersion();
+    return getFrontendConnector().getVersion();
   }
 
   public boolean isPopper15() {
-    return getFrontend().isPopper15();
+    return getFrontendConnector().isPopper15();
   }
 
   public FrontendCustomOptions getCustomOptions() {
-    return getFrontend().getCustomOptions();
+    return getFrontendConnector().getCustomOptions();
   }
 
   public void updateCustomOptions(@NonNull FrontendCustomOptions options) {
-    getFrontend().updateCustomOptions(options);
+    getFrontendConnector().updateCustomOptions(options);
   }
 
   public void setPupPackEnabled(Game game, boolean enable) {
     if (game != null) {
-      getFrontend().setPupPackEnabled(game, enable);
+      getFrontendConnector().setPupPackEnabled(game, enable);
     }
   }
 
   public boolean isPupPackDisabled(Game game) {
     if (game != null) {
-      return getFrontend().isPupPackDisabled(game);
+      return getFrontendConnector().isPupPackDisabled(game);
     }
     return false;
   }
@@ -214,11 +244,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     GameEmulator gameEmulator = emulators.get(emuId);
     String gameFileName = gameEmulator.getGameFileName(file);
     String gameDisplayName = baseName.replaceAll("-", " ").replaceAll("_", " ");
-    return getFrontend().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
+    return getFrontendConnector().importGame(emuId, formattedBaseName, gameFileName, gameDisplayName, null, new Date(file.lastModified()));
   }
 
   public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
-    return getFrontend().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+    return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
 
   public boolean deleteGame(String name) {
@@ -231,17 +261,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean deleteGame(int id) {
-    return getFrontend().deleteGame(id);
+    return getFrontendConnector().deleteGame(id);
   }
 
   public void deleteGames() {
-    getFrontend().deleteGames();
+    getFrontendConnector().deleteGames();
   }
 
   public int getGameCount() {
     int count = 0;
     for (GameEmulator value : this.emulators.values()) {
-      count += getFrontend().getGameCount(value.getId());
+      count += getFrontendConnector().getGameCount(value.getId());
     }
     return count;
   }
@@ -249,7 +279,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public List<Integer> getGameIds() {
     List<Integer> result = new ArrayList<>();
     for (GameEmulator value : this.emulators.values()) {
-      result.addAll(getFrontend().getGameIds(value.getId()));
+      result.addAll(getFrontendConnector().getGameIds(value.getId()));
     }
     return result;
   }
@@ -258,52 +288,52 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @NonNull
   public Playlist getPlayList(int id) {
-    return getFrontend().getPlayList(id);
+    return getFrontendConnector().getPlayList(id);
   }
 
   @NonNull
   public List<Playlist> getPlayLists(boolean excludeSqlLists) {
-    return getFrontend().getPlayLists(excludeSqlLists);
+    return getFrontendConnector().getPlayLists(excludeSqlLists);
   }
 
   public void setPlaylistColor(int playlistId, long color) {
-    getFrontend().setPlaylistColor(playlistId, color);
+    getFrontendConnector().setPlaylistColor(playlistId, color);
   }
 
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
-    getFrontend().addToPlaylist(playlistId, gameId, favMode);
+    getFrontendConnector().addToPlaylist(playlistId, gameId, favMode);
   }
 
   public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
-    getFrontend().updatePlaylistGame(playlistId, gameId, favMode);
+    getFrontendConnector().updatePlaylistGame(playlistId, gameId, favMode);
   }
 
   public void deleteFromPlaylists(int gameId) {
-    getFrontend().deleteFromPlaylists(gameId);
+    getFrontendConnector().deleteFromPlaylists(gameId);
   }
 
   public void deleteFromPlaylist(int playlistId, int gameId) {
-    getFrontend().deleteFromPlaylist(playlistId, gameId);
+    getFrontendConnector().deleteFromPlaylist(playlistId, gameId);
   }
 
   public Playlist getPlayListForGame(int gameId) {
-    return getFrontend().getPlayListForGame(gameId);
+    return getFrontendConnector().getPlayListForGame(gameId);
   }
 
   //--------------------------
 
   public java.util.Date getStartDate() {
-    return getFrontend().getStartDate();
+    return getFrontendConnector().getStartDate();
   }
 
   @NonNull
   public List<TableAlxEntry> getAlxData() {
-    return getFrontend().getAlxData();
+    return getFrontendConnector().getAlxData();
   }
 
   @NonNull
   public List<TableAlxEntry> getAlxData(int gameId) {
-    return getFrontend().getAlxData(gameId);
+    return getFrontendConnector().getAlxData(gameId);
   }
 
   //--------------------------
@@ -311,13 +341,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
     switch (screen) {
       case Other2: {
-        return getFrontend().getFunction(FrontendControl.FUNCTION_SHOW_OTHER);
+        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_OTHER);
       }
       case GameHelp: {
-        return getFrontend().getFunction(FrontendControl.FUNCTION_SHOW_HELP);
+        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_HELP);
       }
       case GameInfo: {
-        return getFrontend().getFunction(FrontendControl.FUNCTION_SHOW_FLYER);
+        return getFrontendConnector().getFunction(FrontendControl.FUNCTION_SHOW_FLYER);
       }
       default: {
       }
@@ -327,13 +357,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public FrontendControls getControls() {
-    return getFrontend().getControls();
+    return getFrontendConnector().getControls();
   }
 
 
   @NonNull
   public List<Integer> getGameIdsFromPlaylists() {
-    return getFrontend().getGameIdsFromPlaylists();
+    return getFrontendConnector().getGameIdsFromPlaylists();
   }
 
   //--------------------------
@@ -426,7 +456,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       return false;
     }
 
-    if (getFrontend().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
+    if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
       return false;
     }
@@ -435,7 +465,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public void loadEmulators() {
-    List<Emulator> ems = getFrontend().getEmulators();
+    List<Emulator> ems = getFrontendConnector().getEmulators();
     this.emulators.clear();
     for (Emulator emulator : ems) {
       try {
@@ -449,7 +479,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
           continue;
         }
-        
+
         if (emulator.isVisualPinball() && emulator.getDirB2S() == null) {
           File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
           if (b2sFolder == null) {
@@ -459,7 +489,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           emulator.setDirB2S(b2sFolder.getAbsolutePath());
         }
 
-        GameEmulator gameEmulator = new GameEmulator(emulator, getFrontend().getMediaAccessStrategy());
+        GameEmulator gameEmulator = new GameEmulator(emulator, getFrontendConnector().getMediaAccessStrategy());
         emulators.put(emulator.getId(), gameEmulator);
 
         LOG.info("Loaded Emulator: " + gameEmulator);
@@ -490,7 +520,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
     this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
-    FrontendConnector frontend = getFrontend();
+    FrontendConnector frontend = getFrontendConnector();
     if (frontend != null) {
       frontend.initializeConnector(this.serverSettings);
     }

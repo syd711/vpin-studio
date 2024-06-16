@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
@@ -214,8 +215,8 @@ public class TablesSidebarPUPPackController implements Initializable {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpPackEditor.exe");
+        Frontend frontend = Studio.client.getFrontendService().getFrontend();
+        File file = new File(frontend.getInstallationDirectory(), "PinUpPackEditor.exe");
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }

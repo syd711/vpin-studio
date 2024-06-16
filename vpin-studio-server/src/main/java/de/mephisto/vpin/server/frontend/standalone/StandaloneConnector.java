@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,14 @@ public class StandaloneConnector extends BaseConnector {
   @Override
   public void initializeConnector(ServerSettings settings) {
   }
-  
+
+  @NotNull
+  @Override
+  public File getInstallationFolder() {
+    return systemService.resolveVisualPinballInstallationFolder(); //TOOD is it?
+  }
+
+
   //------------------------------------------------------
   @Override
   protected List<Emulator> loadEmulators() {

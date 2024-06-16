@@ -136,12 +136,6 @@ public class Studio extends Application {
       }
 
       // checks on popper should be done on frontend selection and/or activation
-      SystemSummary systemSummary = client.getSystemService().getSystemSummary();
-      if (!systemSummary.isPopper15()) {
-        //WidgetFactory.showAlert(new Stage(), "Invalid PinUP Popper version.", "Please install version 1.5 or higher to use VPin Studio.");
-        //System.exit(0);
-      }
-
       Stage splash = createSplash();
 
       Studio.stage = stage;

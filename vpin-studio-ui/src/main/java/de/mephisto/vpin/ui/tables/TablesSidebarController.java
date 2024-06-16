@@ -4,13 +4,13 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.SystemUtil;
@@ -75,7 +75,7 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPaneDMD;
 
   @FXML
-  private TitledPane titledPanePopper;
+  private TitledPane titledPaneTableDetails;
 
   @FXML
   private TitledPane titledPaneMame;
@@ -227,10 +227,10 @@ public class TablesSidebarController implements Initializable {
   private void onPupPack() {
     try {
       if (this.game.isPresent()) {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File pupFolder = new File(systemSummary.getPinupSystemDirectory(), "PUPVideos");
+        Frontend frontend = client.getFrontendService().getFrontend();
+        File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
-        SystemUtil.openFolder(gamePupFolder, new File(systemSummary.getPinupSystemDirectory(), "PUPVideos"));
+        SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
     }
     catch (Exception e) {
@@ -325,21 +325,24 @@ public class TablesSidebarController implements Initializable {
 
 
   @FXML
-  private void onPopperBtn() {
+  private void onFrontendAdminOpen() {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpMenuSetup.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+        Frontend frontend = client.getFrontendService().getFrontend();
+        if(frontend.getAdminExe() != null) {
+          File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
+          if (!file.exists()) {
+            WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+          }
+          else {
+            desktop.open(file);
+          }
         }
-        else {
-          desktop.open(file);
-        }
+
       }
       catch (Exception e) {
-        LOG.error("Failed to open PinUpMenuSetup: " + e.getMessage(), e);
+        LOG.error("Failed to open frontend administration: " + e.getMessage(), e);
       }
     }
   }
@@ -536,7 +539,7 @@ public class TablesSidebarController implements Initializable {
       Parent tablesRoot = loader.load();
       tablesSidebarTableDetailsController = loader.getController();
       tablesSidebarTableDetailsController.setSidebarController(this);
-      titledPanePopper.setContent(tablesRoot);
+      titledPaneTableDetails.setContent(tablesRoot);
     }
     catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
@@ -614,7 +617,7 @@ public class TablesSidebarController implements Initializable {
         refreshView(game);
       }
     });
-    titledPanePopper.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+    titledPaneTableDetails.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -690,7 +693,7 @@ public class TablesSidebarController implements Initializable {
       if (titledPanePov.isExpanded()) {
         this.tablesSidebarPovController.setGame(g);
       }
-      if (titledPanePopper.isExpanded()) {
+      if (titledPaneTableDetails.isExpanded()) {
         this.tablesSidebarTableDetailsController.setGame(g);
       }
       if (titledPaneVps.isExpanded()) {
