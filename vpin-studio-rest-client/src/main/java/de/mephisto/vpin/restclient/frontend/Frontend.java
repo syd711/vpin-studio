@@ -10,6 +10,15 @@ public class Frontend {
   private String frontendExe;
   private String iconName;
   private List<VPinScreen> supportedScreens = new ArrayList<>();
+  private List<Integer> ignoredValidations = new ArrayList<>();
+
+  public List<Integer> getIgnoredValidations() {
+    return ignoredValidations;
+  }
+
+  public void setIgnoredValidations(List<Integer> ignoredValidations) {
+    this.ignoredValidations = ignoredValidations;
+  }
 
   public List<VPinScreen> getSupportedScreens() {
     return supportedScreens;

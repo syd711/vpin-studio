@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import javafx.fxml.FXML;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDataTabScreensController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableDataTabScreensController.class);
@@ -165,9 +169,29 @@ public class TableDataTabScreensController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    topperCheckbox.managedProperty().bindBidirectional(topperCheckbox.visibleProperty());
+    dmdCheckbox.managedProperty().bindBidirectional(dmdCheckbox.visibleProperty());
+    backglassCheckbox.managedProperty().bindBidirectional(backglassCheckbox.visibleProperty());
+    playfieldCheckbox.managedProperty().bindBidirectional(playfieldCheckbox.visibleProperty());
+    musicCheckbox.managedProperty().bindBidirectional(musicCheckbox.visibleProperty());
+    apronCheckbox.managedProperty().bindBidirectional(apronCheckbox.visibleProperty());
+    wheelbarCheckbox.managedProperty().bindBidirectional(wheelbarCheckbox.visibleProperty());
+    loadingCheckbox.managedProperty().bindBidirectional(loadingCheckbox.visibleProperty());
+    otherCheckbox.managedProperty().bindBidirectional(otherCheckbox.visibleProperty());
+    flyerCheckbox.managedProperty().bindBidirectional(flyerCheckbox.visibleProperty());
+    helpCheckbox.managedProperty().bindBidirectional(helpCheckbox.visibleProperty());
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
+
     //screens
     screenCheckboxes = Arrays.asList(topperCheckbox, dmdCheckbox, backglassCheckbox, playfieldCheckbox, musicCheckbox,
       apronCheckbox, wheelbarCheckbox, loadingCheckbox, otherCheckbox, flyerCheckbox, helpCheckbox);
+
+    //TODO too lazy to check all screens here
+    if(!supportedScreens.contains(VPinScreen.Other2)) {
+      otherCheckbox.setVisible(false);
+    }
 
     useEmuDefaultsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue) {

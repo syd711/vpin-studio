@@ -8,6 +8,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -230,6 +232,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private ComboBox<Playlist> playlistCombo;
+
+  @FXML
+  private Separator playlistSplitter;
 
   @FXML
   private StackPane tableStack;
@@ -721,7 +726,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void reload(GameRepresentation refreshedGame, boolean select) {
-    if (refreshedGame!=null) {
+    if (refreshedGame != null) {
       if (select) {
         tableView.getSelectionModel().getSelectedItems().removeListener(this);
         tableView.getSelectionModel().clearSelection();
@@ -735,8 +740,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
-      tableView.refresh();
-    }
+        tableView.refresh();
+      }
 
       // select the reloaded game
       if (select) {
@@ -927,7 +932,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.uploadTableBtn.setDisable(false);
 
         tableView.requestFocus();
-        tableView.getSelectionModel().select(selectedItem);
+        if (selectedItem != null) {
+          tableView.getSelectionModel().select(selectedItem);
+        }
 
         for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
           reloadConsumer.accept(selection);
@@ -1666,17 +1673,36 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
+
     contextMenuController = new TableOverviewContextMenu(this);
     tableOverviewColumnSorter = new TableOverviewColumnSorter(this);
 
     deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
 
+    this.playlistSplitter.managedProperty().bindBidirectional(playlistSplitter.visibleProperty());
+    this.playlistCombo.managedProperty().bindBidirectional(this.playlistCombo.visibleProperty());
     this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
     this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
+
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendType frontendType = frontend.getFrontendType();
+
+    if (!frontendType.equals(FrontendType.Popper)) {
+      uploadTableBtn.getItems().remove(pupPackUploadItem);
+    }
+    if (!frontendType.supportMedias()) {
+      uploadTableBtn.getItems().remove(mediaUploadItem);
+    }
+    if (!frontendType.supportPlaylists()) {
+      playlistCombo.setVisible(false);
+      playlistSplitter.setVisible(false);
+    }
+
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -1712,17 +1738,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     bindTable();
     bindSearchField();
 
-    Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView iconMedia = new ImageView(image3);
-    iconMedia.setFitWidth(18);
-    iconMedia.setFitHeight(18);
-    assetManagerBtn.setGraphic(iconMedia);
+    if (frontendType.equals(FrontendType.Popper)) {
+      Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
+      ImageView iconMedia = new ImageView(image3);
+      iconMedia.setFitWidth(18);
+      iconMedia.setFitHeight(18);
+      assetManagerBtn.setGraphic(iconMedia);
 
-    Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
-    ImageView view6 = new ImageView(image6);
-    view6.setFitWidth(18);
-    view6.setFitHeight(18);
-    assetManagerViewBtn.setGraphic(view6);
+      Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
+      ImageView view6 = new ImageView(image6);
+      view6.setFitWidth(18);
+      view6.setFitHeight(18);
+      assetManagerViewBtn.setGraphic(view6);
+    }
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);

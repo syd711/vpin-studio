@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -78,6 +79,8 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Frontend frontend = client.getFrontendService().getFrontend();
+
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     optionsCombos = new HashMap<>();
@@ -95,15 +98,27 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
       int validationCode = getValidationCode(id);
-      checkBox.setSelected(!ignoreList.contains(String.valueOf(validationCode)));
 
       ComboBox optionCombo = optionsCombos.get(id + OPTIONS);
+      ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
+
+      boolean ignored = frontend.getIgnoredValidations().contains(validationCode);
+      if (ignored) {
+        checkBox.setVisible(false);
+        optionCombo.setVisible(false);
+        mediaCombo.setVisible(false);
+        continue;
+      }
+
+      checkBox.setSelected(!ignoreList.contains(String.valueOf(validationCode)));
+
+
       optionCombo.setItems(FXCollections.observableList(new ArrayList<>(Arrays.asList(ValidatorOption.values()))));
       initOption(defaultProfile, optionCombo, validationCode);
 
       optionCombo.setDisable(!checkBox.isSelected());
-      ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
       mediaCombo.setDisable(!checkBox.isSelected());
+
       mediaCombo.setItems(FXCollections.observableList(new ArrayList<>(Arrays.asList(ValidatorMedia.values()))));
       initMedia(defaultProfile, mediaCombo, validationCode);
     }

@@ -471,15 +471,20 @@ public class TablesSidebarController implements Initializable {
     }
 
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarPlaylistsController = loader.getController();
-      tablesSidebarPlaylistsController.setSidebarController(this);
-      titledPanePlaylists.setContent(tablesRoot);
+    if (frontendType.supportPlaylists()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarPlaylistsController = loader.getController();
+        tablesSidebarPlaylistsController.setSidebarController(this);
+        titledPanePlaylists.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPanePlaylists);
     }
 
     try {

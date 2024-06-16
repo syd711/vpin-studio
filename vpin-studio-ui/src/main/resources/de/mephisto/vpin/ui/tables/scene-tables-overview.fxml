@@ -231,10 +231,10 @@
                                 </Button>
                                 <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
-                        <Separator layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Separator fx:id="playlistSplitter" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
                            <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-type" iconSize="18" />
                            </graphic>
                            <font>
                               <Font size="14.0" />

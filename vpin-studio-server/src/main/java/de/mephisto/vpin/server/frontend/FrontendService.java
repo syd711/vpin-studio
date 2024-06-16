@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -60,6 +61,21 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
     switch (frontendType) {
       case Standalone: {
+        frontend.setIgnoredValidations(Arrays.asList(
+            GameValidationCode.CODE_NO_AUDIO,
+            GameValidationCode.CODE_NO_AUDIO_LAUNCH,
+            GameValidationCode.CODE_NO_APRON,
+            GameValidationCode.CODE_NO_INFO,
+            GameValidationCode.CODE_NO_HELP,
+            GameValidationCode.CODE_NO_TOPPER,
+            GameValidationCode.CODE_NO_BACKGLASS,
+            GameValidationCode.CODE_NO_DMD,
+            GameValidationCode.CODE_NO_PLAYFIELD,
+            GameValidationCode.CODE_NO_LOADING,
+            GameValidationCode.CODE_NO_OTHER2,
+            GameValidationCode.CODE_NO_WHEEL_IMAGE,
+            GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
+            GameValidationCode.CODE_OUTDATED_RECORDING));
         break;
       }
       case Popper: {
@@ -76,6 +92,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
         screens.remove(VPinScreen.Other2);
         frontend.setSupportedScreens(screens);
+        frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
+            GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
+            GameValidationCode.CODE_OUTDATED_RECORDING));
         break;
       }
       default: {

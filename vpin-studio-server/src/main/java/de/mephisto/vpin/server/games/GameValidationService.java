@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
@@ -53,6 +54,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private static long start = 0;
   private static long end = 0;
   private static long total = 0;
+
+  private Frontend frontend;
 
   public static void metricsStart() {
     start = System.currentTimeMillis();
@@ -557,6 +560,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
+    if (frontend.getIgnoredValidations().contains(code)) {
+      return false;
+    }
+
     List<Integer> ignoredValidations = game.getIgnoredValidations();
     if (ignoredValidations == null) {
       return false;
@@ -628,7 +635,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
-    boolean played = tableDetails==null || tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    boolean played = tableDetails == null || tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
     ScoringDB scoringDB = systemService.getScoringDatabase();
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
@@ -744,6 +751,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public void afterPropertiesSet() {
     preferences = preferencesService.getPreferences();
     preferencesService.addChangeListener(this);
+    frontend = frontendService.getFrontend();
     this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
   }

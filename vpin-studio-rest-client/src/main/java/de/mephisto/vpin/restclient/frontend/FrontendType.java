@@ -7,7 +7,7 @@ package de.mephisto.vpin.restclient.frontend;
 public enum FrontendType {
 
   Standalone(false, false, false, false, false, false), 
-  Popper(true, true, true, true, true, true), 
+  Popper(true, true, false, true, true, true),
   // playlist and statistics not activated yet but will be supported
   PinballX(true, false, false, true, false, false);
 

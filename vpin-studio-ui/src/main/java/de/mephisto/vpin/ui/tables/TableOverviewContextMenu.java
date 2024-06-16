@@ -171,10 +171,13 @@ public class TableOverviewContextMenu {
       iniItem.setOnAction(actionEvent -> tableOverviewController.onIniUpload());
       uploadMenu.getItems().add(iniItem);
 
-      MenuItem mediaItem = new MenuItem("Upload Media Pack");
-      mediaItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
-      mediaItem.setOnAction(actionEvent -> tableOverviewController.onMediaUpload());
-      uploadMenu.getItems().add(mediaItem);
+      if (frontendType.supportMedias()) {
+        MenuItem mediaItem = new MenuItem("Upload Media Pack");
+        mediaItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+        mediaItem.setOnAction(actionEvent -> tableOverviewController.onMediaUpload());
+        uploadMenu.getItems().add(mediaItem);
+      }
+
 
       MenuItem musicItem = new MenuItem("Upload Music Pack");
       musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
