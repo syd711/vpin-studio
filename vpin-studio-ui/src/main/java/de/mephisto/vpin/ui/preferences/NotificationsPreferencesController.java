@@ -25,6 +25,9 @@ public class NotificationsPreferencesController implements Initializable {
   private CheckBox highscoresCheckbox;
 
   @FXML
+  private CheckBox highscoresCheckedCheckbox;
+
+  @FXML
   private CheckBox startUpCheckbox;
 
   @FXML
@@ -48,8 +51,14 @@ public class NotificationsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     }, 300));
 
-    highscoresCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
+    highscoresCheckbox.setSelected(notificationSettings.isHighscoreCheckedNotification());
     highscoresCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setHighscoreCheckedNotification(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
+
+    highscoresCheckedCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
+    highscoresCheckedCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setHighscoreUpdatedNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });

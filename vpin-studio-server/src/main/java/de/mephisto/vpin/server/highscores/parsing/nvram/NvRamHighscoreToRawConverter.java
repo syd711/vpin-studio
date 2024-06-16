@@ -59,7 +59,7 @@ public class NvRamHighscoreToRawConverter {
         nvOffset = true;
       }
 
-      List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName());
+      List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName().toLowerCase());
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(commandFile.getParentFile());
       executor.executeCommand();

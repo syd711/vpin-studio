@@ -42,14 +42,11 @@ public class RarUtil {
       randomAccessFileStream.close();
       randomAccessFile.close();
       return fileFound;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to check rar file \"" + archiveFile.getAbsolutePath() + "\": " + e.getMessage(), e);
     }
     return null;
-  }
-
-  public static void main(String[]args) throws SevenZipNativeInitializationException {
-    RarUtil.contains(new File("E:\\downloads\\AC'DC (Stern 2012).zip"), "vpx");
   }
 
   public static boolean unrarTargetFile(File archiveFile, File targetFile, String name) {
@@ -66,13 +63,13 @@ public class RarUtil {
         }
         else {
           String entryName = item.getPath().replaceAll("\\\\", "/");
-          File newFile = new File(destinationDir, entryName);
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
-          }
-
           if (entryName.toLowerCase().endsWith(name.toLowerCase())) {
+            //folder creation
+            File parent = targetFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+
             RandomAccessFile rafOut = new RandomAccessFile(targetFile, "rw");
             RandomAccessFileOutStream fos = new RandomAccessFileOutStream(rafOut);
             ExtractOperationResult result = item.extractSlow(fos);
@@ -94,7 +91,8 @@ public class RarUtil {
       inArchive.close();
       randomAccessFileStream.close();
       randomAccessFile.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Unrar of " + targetFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
     return written;

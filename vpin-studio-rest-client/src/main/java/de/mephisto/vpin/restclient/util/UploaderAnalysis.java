@@ -40,7 +40,6 @@ public class UploaderAnalysis<T> {
   private final List<String> fileNamesWithPath = new ArrayList<>();
   private final List<String> directories = new ArrayList<>();
 
-  private String error;
   private String readme;
 
   public UploaderAnalysis(File file) {
@@ -56,10 +55,6 @@ public class UploaderAnalysis<T> {
 
   public File getFile() {
     return file;
-  }
-
-  public String getError() {
-    return error;
   }
 
   public String getRomFromPupPack() {
@@ -132,8 +127,12 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public String getVpxFileName() {
-    return getFileNameForAssetType(AssetType.VPX);
+  public String getVpxFileName(String fallback) {
+    String fileNameForAssetType = getFileNameForAssetType(AssetType.VPX);
+    if (fileNameForAssetType == null) {
+      return fallback;
+    }
+    return fileNameForAssetType;
   }
 
   public List<String> getPopperMediaFiles(VPinScreen screen) {

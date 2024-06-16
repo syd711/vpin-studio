@@ -15,6 +15,8 @@ public class PauseMenuSettings extends JsonSettings {
   private int customLeftKey;
   private int customRightKey;
 
+  private PauseMenuStyle style = PauseMenuStyle.embedded;
+
   public int getCustomLaunchKey() {
     return customLaunchKey;
   }
@@ -35,7 +37,7 @@ public class PauseMenuSettings extends JsonSettings {
     return customLeftKey;
   }
 
-  public void setCustomLeftKey(int customLeftKey) {
+  public void setCustomLeftKey(int customLeftKepy) {
     this.customLeftKey = customLeftKey;
   }
 
@@ -46,8 +48,6 @@ public class PauseMenuSettings extends JsonSettings {
   public void setCustomRightKey(int customRightKey) {
     this.customRightKey = customRightKey;
   }
-
-  private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   public PauseMenuStyle getStyle() {
     if(style == null) {

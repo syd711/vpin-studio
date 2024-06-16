@@ -58,7 +58,10 @@ public class WidgetLatestScoresController extends WidgetController implements In
   }
 
   public void refresh() {
-    viewStack.getChildren().add(loadingOverlay);
+    if(!viewStack.getChildren().contains(loadingOverlay)) {
+      viewStack.getChildren().add(loadingOverlay);
+    }
+
     new Thread(() -> {
       int limit = 12;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();

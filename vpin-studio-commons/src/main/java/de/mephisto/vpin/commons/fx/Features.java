@@ -6,5 +6,4 @@ public class Features {
   public static boolean NOTIFICATIONS_ENABLED = false;
   public static boolean ASSET_MODE = true;
   public static boolean VPX_MONITORING = true;
-  public static boolean RAR_ENABLED = false;
 }

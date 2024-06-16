@@ -220,162 +220,169 @@ public class GameService implements InitializingBean {
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
-    List<Integer> gameIds = descriptor.getGameIds();
-    boolean success = true;
+    boolean success = false;
+    try {
+      List<Integer> gameIds = descriptor.getGameIds();
+      success = true;
 
-    for (Integer gameId : gameIds) {
-      Game game = this.getGame(gameId);
-      if (game == null) {
-        return false;
-      }
-
-      if (descriptor.isDeleteHighscores()) {
-        highscoreService.deleteScores(game.getId(), true);
-      }
-
-      if (descriptor.isDeleteTable()) {
-        if (!FileUtils.delete(game.getGameFile())) {
-          success = false;
+      for (Integer gameId : gameIds) {
+        Game game = this.getGame(gameId);
+        if (game == null) {
+          return false;
         }
-      }
 
-      if (descriptor.isDeleteDirectB2s()) {
-        if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
-          success = false;
+        if (descriptor.isDeleteHighscores()) {
+          highscoreService.deleteScores(game.getId(), true);
         }
-        if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
-          success = false;
-        }
-        if (!FileUtils.delete(game.getDirectB2SFile())) {
-          success = false;
-        }
-      }
 
-      if(descriptor.isDeleteIni()) {
-        if (!FileUtils.delete(game.getIniFile())) {
-          success = false;
-        }
-      }
-
-      if(descriptor.isDeleteRes()) {
-        if (!FileUtils.delete(game.getResFile())) {
-          success = false;
-        }
-      }
-
-      if(descriptor.isDeleteVbs()) {
-        if (!FileUtils.delete(game.getVBSFile())) {
-          success = false;
-        }
-      }
-
-      if(descriptor.isDeletePov()) {
-        if (!FileUtils.delete(game.getPOVFile())) {
-          success = false;
-        }
-      }
-
-      if (descriptor.isDeletePupPack()) {
-        PupPack pupPack = game.getPupPack();
-        if (pupPack != null && !pupPack.delete()) {
-          success = false;
-        }
-      }
-
-      if (descriptor.isDeleteDMDs()) {
-        DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-        if (dmdPackage != null) {
-          if (!dmdService.delete(game)) {
+        if (descriptor.isDeleteTable()) {
+          if (!FileUtils.delete(game.getGameFile())) {
             success = false;
           }
         }
-      }
 
-      if (descriptor.isDeleteAltSound()) {
-        if (altSoundService.delete(game)) {
-          success = false;
-        }
-      }
-
-      if (descriptor.isDeleteAltColor()) {
-        if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
-          success = false;
-        }
-      }
-
-      if (descriptor.isDeleteCfg()) {
-        if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
-          success = false;
-        }
-
-        List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getRom()));
-        if (gamesByRom.size() == 1) {
-          if (!mameService.deleteOptions(game.getRom())) {
+        if (descriptor.isDeleteDirectB2s()) {
+          if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
+            success = false;
+          }
+          if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
+            success = false;
+          }
+          if (!FileUtils.delete(game.getDirectB2SFile())) {
             success = false;
           }
         }
-      }
 
-
-      if (descriptor.isDeleteMusic()) {
-        if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
-          success = false;
-        }
-      }
-
-      if (descriptor.isDeleteFromPopper()) {
-        GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
-        if (byPupId != null) {
-          gameDetailsRepository.delete(byPupId);
+        if (descriptor.isDeleteIni()) {
+          if (!FileUtils.delete(game.getIniFile())) {
+            success = false;
+          }
         }
 
-        Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
-        byId.ifPresent(asset -> assetRepository.delete(asset));
-
-        if (!frontendService.deleteGame(gameId)) {
-          success = false;
+        if (descriptor.isDeleteRes()) {
+          if (!FileUtils.delete(game.getResFile())) {
+            success = false;
+          }
         }
 
-        //only delete the popper assets, if there is no other game with the same "Game Name".
-        List<Game> allOtherTables = this.frontendService.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
-        List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
+        if (descriptor.isDeleteVbs()) {
+          if (!FileUtils.delete(game.getVBSFile())) {
+            success = false;
+          }
+        }
 
-        if (duplicateGameNameTables.isEmpty()) {
-          VPinScreen[] values = VPinScreen.values();
-          for (VPinScreen originalScreenValue : values) {
-            List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
-            for (GameMediaItem mediaItem : gameMediaItem) {
-              File mediaFile = mediaItem.getFile();
+        if (descriptor.isDeletePov()) {
+          if (!FileUtils.delete(game.getPOVFile())) {
+            success = false;
+          }
+        }
 
-              if (originalScreenValue.equals(VPinScreen.Wheel)) {
-                WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-                augmenter.deAugment();
-              }
+        if (descriptor.isDeletePupPack()) {
+          PupPack pupPack = game.getPupPack();
+          if (pupPack != null && !pupPack.delete()) {
+            success = false;
+          }
+        }
 
-              if (mediaFile.exists() && !mediaFile.delete()) {
+        if (descriptor.isDeleteDMDs()) {
+          DMDPackage dmdPackage = dmdService.getDMDPackage(game);
+          if (dmdPackage != null) {
+            if (!dmdService.delete(game)) {
+              success = false;
+            }
+          }
+        }
+
+        if (descriptor.isDeleteAltSound()) {
+          if (altSoundService.delete(game)) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteAltColor()) {
+          if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
+            success = false;
+          }
+        }
+
+        if (descriptor.isDeleteCfg()) {
+          if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
+            success = false;
+          }
+
+          if (!StringUtils.isEmpty(game.getRom())) {
+            List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getRom()));
+            if (gamesByRom.size() == 1) {
+              if (!mameService.deleteOptions(game.getRom())) {
                 success = false;
-                LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
               }
             }
           }
         }
-        else {
-          LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+
+        if (descriptor.isDeleteMusic()) {
+          if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
+            success = false;
+          }
         }
 
-        LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from PinUP Popper.");
-      }
+        if (descriptor.isDeleteFromPopper()) {
+          GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
+          if (byPupId != null) {
+            gameDetailsRepository.delete(byPupId);
+          }
 
-      //delete the game folder if it is empty
-      File gameFolder = game.getGameFile().getParentFile();
-      if (gameFolder.exists()) {
-        String[] list = gameFolder.list();
-        if (list == null || list.length == 0) {
-          if (gameFolder.delete()) {
-            LOG.info("Deleted table folder " + gameFolder.getAbsolutePath());
+          Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
+          byId.ifPresent(asset -> assetRepository.delete(asset));
+
+          if (!frontendService.deleteGame(gameId)) {
+            success = false;
+          }
+
+          //only delete the popper assets, if there is no other game with the same "Game Name".
+          List<Game> allOtherTables = this.frontendService.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
+          List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
+
+          if (duplicateGameNameTables.isEmpty()) {
+            VPinScreen[] values = VPinScreen.values();
+            for (VPinScreen originalScreenValue : values) {
+              List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+              for (GameMediaItem mediaItem : gameMediaItem) {
+                File mediaFile = mediaItem.getFile();
+
+                if (originalScreenValue.equals(VPinScreen.Wheel)) {
+                  WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
+                  augmenter.deAugment();
+                }
+
+                if (mediaFile.exists() && !mediaFile.delete()) {
+                  success = false;
+                  LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                }
+              }
+            }
+          }
+          else {
+            LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+          }
+
+          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from PinUP Popper.");
+        }
+
+        //delete the game folder if it is empty
+        File gameFolder = game.getGameFile().getParentFile();
+        if (gameFolder.exists()) {
+          String[] list = gameFolder.list();
+          if (list == null || list.length == 0) {
+            if (gameFolder.delete()) {
+              LOG.info("Deleted table folder " + gameFolder.getAbsolutePath());
+            }
           }
         }
       }
+    }
+    catch (Exception e) {
+      LOG.error("Game deletion failed: " + e.getMessage(), e);
     }
     return success;
   }
@@ -475,7 +482,8 @@ public class GameService implements InitializingBean {
       else {
         LOG.error("No game found to be scanned with ID '" + gameId + "'");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       if (game != null) {
         LOG.error("Game scan for \"" + game.getGameDisplayName() + "\" (" + gameId + ") failed: " + e.getMessage(), e);
       }
@@ -686,7 +694,8 @@ public class GameService implements InitializingBean {
         gameDetailsRepository.saveAndFlush(gameDetails);
         LOG.info("Resetted updates for " + gameId + " and removed \"" + diffType + "\", new update list: \"" + updates.trim() + "\"");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset update flag for " + gameId + ": " + e.getMessage(), e);
     }
   }
@@ -707,7 +716,8 @@ public class GameService implements InitializingBean {
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to reset update flag for rom '" + rom + "': " + e.getMessage(), e);
     }
   }

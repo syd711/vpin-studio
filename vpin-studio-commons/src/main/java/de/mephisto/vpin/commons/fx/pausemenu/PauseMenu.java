@@ -53,7 +53,7 @@ public class PauseMenu extends Application {
   private static boolean PRODUCTION_USE = true;
 
   public static Stage stage;
-  private static boolean visible = false;
+  public static boolean visible = false;
 
   private static Robot robot;
 
@@ -171,6 +171,8 @@ public class PauseMenu extends Application {
   }
 
   public static void togglePauseMenu(@Nullable GameStatus status) {
+    client.getPreferenceService().clearCache();
+
     if (!visible) {
       try {
         if (status == null) {
@@ -231,7 +233,9 @@ public class PauseMenu extends Application {
                 if (!videoTutorials.isEmpty()) {
                   VpsTutorialUrls vpsTutorialUrls = videoTutorials.get(0);
                   String youTubeUrl = PauseMenuItemsFactory.createYouTubeUrl(vpsTutorialUrls);
-                  ChromeLauncher.showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
+                  if(visible) {
+                    ChromeLauncher.showYouTubeVideo(tutorialDisplay, youTubeUrl, vpsTutorialUrls.getTitle());
+                  }
                 }
               }
               LOG.info("Pause menu screens preparation finished, using " + screenAssets.size() + " screen assets.");

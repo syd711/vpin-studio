@@ -2,10 +2,13 @@ package de.mephisto.vpin.commons.fx.notifications;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +60,12 @@ public class NotificationController implements Initializable {
           rowIconImageView.setImage(image);
         }
       }
+
+      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      if (screenBounds.getHeight() > 2000) {
+        labelContainer.setPadding(new Insets(0, 0, 0, 650));
+      }
+
     } catch (Exception e) {
       LOG.error("Failed to theme notifications: " + e.getMessage(), e);
     }

@@ -108,4 +108,8 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
+  public void clearCache() {
+    this.jsonSettingsCache.clear();
+  }
 }
