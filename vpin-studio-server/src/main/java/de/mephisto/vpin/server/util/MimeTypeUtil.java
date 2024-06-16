@@ -34,6 +34,9 @@ public class MimeTypeUtil {
         else if (suffix.endsWith("mp4")) {
           mimeType = "video/mp4";
         }
+        else if (suffix.endsWith("f4v")) {
+          mimeType = "video/mp4";
+        }
         else if (suffix.endsWith("avi")) {
           mimeType = "video/avi";
         }

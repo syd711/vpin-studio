@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -14,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +26,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDeleteController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableDeleteController.class);
@@ -90,6 +95,9 @@ public class TableDeleteController implements Initializable, DialogController {
   @FXML
   private Label validationDescription;
 
+  @FXML
+  private VBox frontendSelectionField;
+
   private List<GameRepresentation> games;
 
   @FXML
@@ -128,6 +136,11 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendType frontendType = frontend.getFrontendType();
+
+    this.frontendSelectionField.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
+
     this.deleteBtn.setDisable(true);
     vpxFileCheckbox.setSelected(true);
     iniCheckbox.setSelected(true);
@@ -178,12 +191,15 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    for (GameRepresentation selectedGame : selectedGames) {
-      boolean hasNoArchives = Studio.client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
-      if (hasNoArchives) {
-        this.validationContainer.setVisible(true);
-        this.validationDescription.setVisible(true);
-        return;
+    Frontend frontend = client.getFrontendService().getFrontend();
+    if (frontend.getFrontendType().supportArchive()) {
+      for (GameRepresentation selectedGame : selectedGames) {
+        boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
+        if (hasNoArchives) {
+          this.validationContainer.setVisible(true);
+          this.validationDescription.setVisible(true);
+          return;
+        }
       }
     }
   }

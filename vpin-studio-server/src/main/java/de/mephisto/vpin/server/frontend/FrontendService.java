@@ -66,12 +66,16 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         frontend.setFrontendExe("PinUpMenu.exe");
         frontend.setIconName("PinUpMenuSetup.exe");
         frontend.setIconName("popper.png");
+        frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
         break;
       }
       case PinballX: {
         frontend.setFrontendExe("PinballX.exe");
         frontend.setAdminExe("Game Manager.exe");
         frontend.setIconName("pinballx.png");
+        List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
+        screens.remove(VPinScreen.Other2);
+        frontend.setSupportedScreens(screens);
         break;
       }
       default: {

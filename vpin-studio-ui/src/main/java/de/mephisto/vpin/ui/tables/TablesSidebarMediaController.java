@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
@@ -535,6 +536,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Frontend frontend = client.getFrontendService().getFrontend();
+    List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
+
     top_Audio.setVisible(false);
     top_AudioLaunch.setVisible(false);
     top_Topper.setVisible(false);
@@ -580,6 +584,20 @@ public class TablesSidebarMediaController implements Initializable {
     screenTopper.hoverProperty().addListener(new VisibilityHoverListener(top_Topper, showPredicate));
     screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
     screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
+
+    screenAudio.setVisible(supportedScreens.contains(VPinScreen.Audio));
+    screenAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch));
+    screenDMD.setVisible(supportedScreens.contains(VPinScreen.DMD));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenMenu.setVisible(supportedScreens.contains(VPinScreen.Menu));
+    screenGameInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo));
+    screenGameHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp));
+    screenLoading.setVisible(supportedScreens.contains(VPinScreen.Loading));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenPlayField.setVisible(supportedScreens.contains(VPinScreen.PlayField));
+    screenTopper.setVisible(supportedScreens.contains(VPinScreen.Topper));
+    screenOther2.setVisible(supportedScreens.contains(VPinScreen.Other2));
+    screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
 
     Studio.stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
       try {

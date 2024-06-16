@@ -1,11 +1,23 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Frontend {
   private FrontendType frontendType;
   private String installationDirectory;
   private String adminExe;
   private String frontendExe;
   private String iconName;
+  private List<VPinScreen> supportedScreens = new ArrayList<>();
+
+  public List<VPinScreen> getSupportedScreens() {
+    return supportedScreens;
+  }
+
+  public void setSupportedScreens(List<VPinScreen> supportedScreens) {
+    this.supportedScreens = supportedScreens;
+  }
 
   public FrontendType getFrontendType() {
     return frontendType;

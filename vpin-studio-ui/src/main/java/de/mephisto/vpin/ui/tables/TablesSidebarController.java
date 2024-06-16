@@ -330,7 +330,7 @@ public class TablesSidebarController implements Initializable {
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
         Frontend frontend = client.getFrontendService().getFrontend();
-        if(frontend.getAdminExe() != null) {
+        if (frontend.getAdminExe() != null) {
           File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
           if (!file.exists()) {
             WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -396,7 +396,9 @@ public class TablesSidebarController implements Initializable {
   }
 
   private void loadSidePanels() {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendType frontendType = frontend.getFrontendType();
+
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
@@ -452,16 +454,22 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarMediaController.class.getResource("scene-tables-sidebar-media.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarMediaController = loader.getController();
-      tablesSidebarMediaController.setSidebarController(this);
-      titledPaneMedia.setContent(tablesRoot);
+    if (!frontend.getSupportedScreens().isEmpty()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarMediaController.class.getResource("scene-tables-sidebar-media.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarMediaController = loader.getController();
+        tablesSidebarMediaController.setSidebarController(this);
+        titledPaneMedia.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPaneMedia);
     }
+
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
@@ -748,7 +756,7 @@ public class TablesSidebarController implements Initializable {
         tableAccordion.getPanes().add(titledPaneMetadata);
         tableAccordion.getPanes().add(titledPaneDefaultBackground);
 
-        if(tablesSidebarPUPPackController != null) {
+        if (tablesSidebarPUPPackController != null) {
           tableAccordion.getPanes().add(titledPanePUPPack);
         }
       }

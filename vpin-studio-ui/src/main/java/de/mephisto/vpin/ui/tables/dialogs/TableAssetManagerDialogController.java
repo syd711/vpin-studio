@@ -10,6 +10,7 @@ import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
@@ -504,6 +505,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Frontend frontend = client.getFrontendService().getFrontend();
+    List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
+
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
@@ -551,6 +555,20 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     screenOther2.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Other2, screenOther2, true, true));
     screenWheel.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Wheel, screenWheel, t1, false));
     screenWheel.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Wheel, screenWheel, true, true));
+
+    screenAudio.setVisible(supportedScreens.contains(VPinScreen.Audio));
+    screenAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch));
+    screenDMD.setVisible(supportedScreens.contains(VPinScreen.DMD));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenMenu.setVisible(supportedScreens.contains(VPinScreen.Menu));
+    screenGameInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo));
+    screenGameHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp));
+    screenLoading.setVisible(supportedScreens.contains(VPinScreen.Loading));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenPlayField.setVisible(supportedScreens.contains(VPinScreen.PlayField));
+    screenTopper.setVisible(supportedScreens.contains(VPinScreen.Topper));
+    screenOther2.setVisible(supportedScreens.contains(VPinScreen.Other2));
+    screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
 
     downloadBtn.setVisible(false);
 
@@ -728,7 +746,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
 
-  public void setGame(TableOverviewController overviewController, GameRepresentation game, VPinScreen screen) {
+  public void setGame(@NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @NonNull VPinScreen screen) {
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");

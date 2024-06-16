@@ -4,10 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -359,18 +357,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {
-    columnPlayfield.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.PlayField.getValidationCode())));
-    columnBackglass.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
-    columnLoading.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Loading.getValidationCode())));
-    columnWheel.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Wheel.getValidationCode())));
-    columnDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.DMD.getValidationCode())));
-    columnTopper.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Topper.getValidationCode())));
-    columnFullDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Menu.getValidationCode())));
-    columnAudio.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Audio.getValidationCode())));
-    columnAudioLaunch.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.AudioLaunch.getValidationCode())));
-    columnInfo.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameInfo.getValidationCode())));
-    columnHelp.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameHelp.getValidationCode())));
-    columnOther2.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Other2.getValidationCode())));
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontend().getSupportedScreens();
+    columnPlayfield.setVisible(supportedScreens.contains(VPinScreen.PlayField) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.PlayField.getValidationCode())));
+    columnBackglass.setVisible(supportedScreens.contains(VPinScreen.BackGlass) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
+    columnLoading.setVisible(supportedScreens.contains(VPinScreen.Loading) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Loading.getValidationCode())));
+    columnWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Wheel.getValidationCode())));
+    columnDMD.setVisible(supportedScreens.contains(VPinScreen.DMD) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.DMD.getValidationCode())));
+    columnTopper.setVisible(supportedScreens.contains(VPinScreen.Topper) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Topper.getValidationCode())));
+    columnFullDMD.setVisible(supportedScreens.contains(VPinScreen.Menu) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Menu.getValidationCode())));
+    columnAudio.setVisible(supportedScreens.contains(VPinScreen.Audio) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Audio.getValidationCode())));
+    columnAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.AudioLaunch.getValidationCode())));
+    columnInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameInfo.getValidationCode())));
+    columnHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.GameHelp.getValidationCode())));
+    columnOther2.setVisible(supportedScreens.contains(VPinScreen.Other2) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Other2.getValidationCode())));
   }
 
   @FXML
@@ -1029,7 +1028,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
-    });
+    }, true);
 
     configureLoadingColumn(columnEmulator, "", (value, model) -> {
       GameEmulatorRepresentation gameEmulator = model.getGameEmulator();
@@ -1053,7 +1052,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         label.setGraphic(updateIcon);
       }
       return label;
-    });
+    }, true);
 
     configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
@@ -1071,7 +1070,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         label.setStyle(getLabelCss(value));
       }
       return label;
-    });
+    }, true);
 
     configureColumn(columnHSType, (value, model) -> {
       String hsType = value.getHighscoreType();
@@ -1082,7 +1081,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
-    });
+    }, true);
 
     configureColumn(columnB2S, (value, model) -> {
       if (value.isDirectB2SAvailable()) {
@@ -1094,7 +1093,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
       return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates());
@@ -1112,7 +1111,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnINI, (value, model) -> {
       if (value.isIniAvailable()) {
@@ -1121,7 +1120,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return checkboxIcon;
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnAltSound, (value, model) -> {
       if (value.isAltSoundAvailable()) {
@@ -1133,7 +1132,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnAltColor, (value, model) -> {
       if (value.getAltColorType() != null) {
@@ -1145,7 +1144,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnPUPPack, (value, model) -> {
       if (value.isPupPackAvailable()) {
@@ -1157,7 +1156,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnStatus, (value, model) -> {
       ValidationState validationState = value.getValidationState();
@@ -1203,7 +1202,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       });
 
       return btn;
-    });
+    }, true);
 
     configureColumn(columnDateAdded, (value, model) -> {
       if (value.getDateAdded() != null) {
@@ -1212,7 +1211,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       else {
         return new Label("-");
       }
-    });
+    }, true);
 
     columnPlaylists.setSortable(false);
     configureColumn(columnPlaylists, (value, model) -> {
@@ -1253,20 +1252,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;
-    });
+    }, true);
 
-    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField));
-    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass));
-    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading));
-    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel));
-    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD));
-    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper));
-    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu));
-    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio));
-    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch));
-    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo));
-    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp));
-    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2));
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontend().getSupportedScreens();
+    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
+    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
+    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
+    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
+    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
+    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
+    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
+    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
+    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
+    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
+    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
+    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
     setItems(new ArrayList<>());
 
@@ -1332,7 +1332,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     public Node render(GameRepresentation game, GameRepresentationModel model);
   }
 
-  private void configureColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, ColumnRenderer renderer) {
+  private void configureColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, ColumnRenderer renderer, boolean visible) {
+    column.setVisible(visible);
     column.setCellValueFactory(cellData -> {
       GameRepresentationModel model = cellData.getValue();
       return model;
