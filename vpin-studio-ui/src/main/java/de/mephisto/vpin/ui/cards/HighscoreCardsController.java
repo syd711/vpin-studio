@@ -216,7 +216,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @Override
   public void onViewActivated() {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
-    templateEditorController.selectTable(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
+    Optional<GameRepresentation> selectedItem = Optional.ofNullable(tableView.getSelectionModel().getSelectedItem());
+    templateEditorController.selectTable(selectedItem, false);
+    refreshRawPreview(selectedItem);
   }
 
   @Override
