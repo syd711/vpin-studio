@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
@@ -41,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -64,9 +66,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private Button deleteBtn;
-
-  @FXML
-  private Button applyBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -219,17 +218,16 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private Parent waitOverlay;
   private HighscoreCardsController highscoreCardsController;
   private AssetMediaPlayer assetMediaPlayer;
-  private List<CardTemplate> cardTemplates;
   private Optional<GameRepresentation> gameRepresentation;
+  private List<CardTemplate> templates;
 
 
   @FXML
   private void onOpenImage() {
-//    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-//    if (game != null) {
-//      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(game);
-//      MediaUtil.openMedia(s);
-//    }
+    if (gameRepresentation.isPresent()) {
+      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(gameRepresentation.get());
+      MediaUtil.openMedia(s);
+    }
   }
 
   @FXML
@@ -241,33 +239,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
     else {
       ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
-    }
-  }
-
-  @FXML
-  private void onCreate(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
-    if (!StringUtils.isEmpty(s)) {
-      ObservableList<CardTemplate> items = this.templateCombo.getItems();
-      Optional<CardTemplate> first = items.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
-      if (first.isPresent()) {
-        Platform.runLater(() -> {
-          CardTemplate template = first.get();
-          template.setName(s);
-          template.setId(null);
-          try {
-            CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(template);
-            List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-            this.templateCombo.setItems(FXCollections.observableList(templates));
-            this.templateCombo.setValue(newTemplate);
-          }
-          catch (Exception ex) {
-            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-          }
-        });
-      }
     }
   }
 
@@ -285,14 +256,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
-//  @FXML //TODO
-//  private void onApply(ActionEvent e) {
-//    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-//    List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
-//    ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, this.templateCombo.getSelectionModel().getSelectedItem().getId()));
-//    stage.close();
-//  }
-
   @FXML
   private void onStart() {
     if (assetMediaPlayer != null) {
@@ -308,6 +271,39 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   @FXML
+  private void onCreate(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template will be used as default.", null);
+    if (!StringUtils.isEmpty(s)) {
+      ObservableList<CardTemplate> items = this.templateCombo.getItems();
+
+      Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
+      if (duplicate.isPresent()) {
+        WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
+        return;
+      }
+
+      CardTemplate selection = this.templateCombo.getValue();
+      Platform.runLater(() -> {
+        selection.setName(s);
+        selection.setId(null);
+        try {
+          CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(selection);
+          templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templateCombo.setItems(FXCollections.observableList(templates));
+          this.templateCombo.setValue(newTemplate);
+
+          highscoreCardsController.refresh(gameRepresentation, templates, false);
+        }
+        catch (Exception ex) {
+          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+        }
+      });
+    }
+  }
+
+  @FXML
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
@@ -316,11 +312,14 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       cardTemplate.setName(s);
 
       try {
-        CardTemplate card = client.getHighscoreCardTemplatesClient().save(cardTemplate);
+        CardTemplate updatedTemplate = client.getHighscoreCardTemplatesClient().save(cardTemplate);
         Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
           this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(card);
+          this.templateCombo.setValue(updatedTemplate);
+
+          assignTemplate(updatedTemplate);
+          highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -331,42 +330,22 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   @FXML
-  private void onDuplicate(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "Duplicate Template \"" + getCardTemplate().getName() + "\"", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
-    if (!StringUtils.isEmpty(s)) {
-      ObservableList<CardTemplate> items = this.templateCombo.getItems();
-      CardTemplate template = getCardTemplate();
-      template.setName(s);
-      template.setId(null);
-      try {
-        CardTemplate card = client.getHighscoreCardTemplatesClient().save(template);
-
-        Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(card);
-        });
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Template Duplication Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-      }
-    }
-  }
-
-  @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", null, "Delete");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", "Assigned tables will use the default template again.", "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+
+          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
           this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get());
+          this.templateCombo.setValue(defaultTemplate);
+
+          assignTemplate(defaultTemplate);
+          highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -443,6 +422,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
     transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
+    overlayModeCheckbox.setSelected(cardTemplate.isOverlayMode());
     renderTableNameCheckbox.setSelected(cardTemplate.isRenderTableName());
     renderWheelIconCheckbox.setSelected(cardTemplate.isRenderWheelIcon());
     renderTitleCheckbox.setSelected(cardTemplate.isRenderTitle());
@@ -489,7 +469,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     templateBeanBinder.setPaused(false);
 
-    refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), true);
+    refreshPreview(this.gameRepresentation, true);
   }
 
 
@@ -576,10 +556,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
 
-      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 720);
+      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
       templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
 
       renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -669,10 +649,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @FXML
   private void onGenerateClick() {
     Platform.runLater(() -> {
-      GameRepresentation value = highscoreCardsController.getSelectedTable();
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
-        refreshPreview(Optional.ofNullable(value), true);
+        refreshPreview(this.gameRepresentation, true);
       }
       catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
@@ -730,10 +709,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     mediaPlayerControl.setVisible(false);
     previewOverlayPanel.setVisible(false);
 
-    GameRepresentation selectedItem = highscoreCardsController.getSelectedTable();
-    if (selectedItem != null && getCardTemplate().getOverlayScreen() != null) {
+    if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
       PopperScreen overlayScreen = PopperScreen.valueOf(getCardTemplate().getOverlayScreen());
-      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
+      GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
         assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
@@ -762,8 +740,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      cardTemplates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(cardTemplates));
+      templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+      templateCombo.setItems(FXCollections.observableList(templates));
 
       templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
         @Override
@@ -771,13 +749,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           if (newValue != null) {
             setTemplate(newValue);
             if (gameRepresentation.isPresent()) {
-              GameRepresentation game = gameRepresentation.get();
-              if (!newValue.getId().equals(game.getTemplateId())) {
-                ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(Arrays.asList(game), newValue.getId()));
-                Platform.runLater(() -> {
-                  highscoreCardsController.refresh(gameRepresentation);
-                });
-              }
+              assignTemplate(newValue);
+              highscoreCardsController.refresh(gameRepresentation, templates, false);
             }
           }
         }
@@ -797,6 +770,13 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
+  private void assignTemplate(CardTemplate newValue) {
+    GameRepresentation game = gameRepresentation.get();
+    if (!newValue.getId().equals(gameRepresentation.get().getTemplateId())) {
+      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(Arrays.asList(game), newValue.getId()));
+    }
+  }
+
   public void setCardsController(HighscoreCardsController highscoreCardsController) {
     this.highscoreCardsController = highscoreCardsController;
   }
@@ -805,9 +785,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     this.gameRepresentation = gameRepresentation;
     if (this.gameRepresentation.isPresent()) {
       GameRepresentation game = gameRepresentation.get();
-      CardTemplate template = cardTemplates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+      CardTemplate template = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
       if (game.getTemplateId() != null) {
-        Optional<CardTemplate> first = cardTemplates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
+        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
         if (first.isPresent()) {
           template = first.get();
         }

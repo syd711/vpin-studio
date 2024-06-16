@@ -18,7 +18,6 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.MediaUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -87,6 +86,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private StackPane loaderStack;
 
   @FXML
+  private TitledPane defaultBackgroundTitlePane;
+
+  @FXML
   private BorderPane templateEditorPane;
 
   private ObservableList<GameRepresentation> data;
@@ -113,9 +115,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     new Thread(() -> {
       games = client.getGameService().getVpxGamesCached();
-      filterGames(games);
 
       Platform.runLater(() -> {
+        filterGames(games);
         tableView.setItems(data);
 
         tableView.refresh();
@@ -170,6 +172,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private void refreshRawPreview(Optional<GameRepresentation> game) {
+    if (!defaultBackgroundTitlePane.isExpanded()) {
+      return;
+    }
+
     try {
       resolutionLabel.setText("");
       openDefaultPictureBtn.setVisible(false);
@@ -194,6 +200,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
+    List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
+    templateEditorPane.setVisible(game.isPresent());
+    if (game.isPresent()) {
+      breadcrumb.add(game.get().getGameDisplayName());
+    }
+    else {
+      templateEditorPane.setVisible(false);
+    }
+    NavigationController.setBreadCrumb(breadcrumb);
     templateEditorController.selectTable(game, regenerate);
     refreshRawPreview(game);
   }
@@ -252,7 +267,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     data = FXCollections.observableList(filtered);
   }
 
-  public GameRepresentation getSelectedTable() {
+  private GameRepresentation getSelectedTable() {
     return this.tableView.getSelectionModel().getSelectedItem();
   }
 
@@ -332,6 +347,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     columnDisplayName.setCellValueFactory(cellData -> {
       GameRepresentation value = cellData.getValue();
       Label label = new Label(value.getGameDisplayName());
+      label.setTooltip(new Tooltip(value.getGameDisplayName()));
       label.getStyleClass().add("default-text");
       return new SimpleObjectProperty(label);
     });
@@ -348,7 +364,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       }
 
       String templateName = template.getName();
-      return new SimpleObjectProperty(templateName);
+      Label label = new Label(templateName);
+      label.getStyleClass().add("default-text");
+      label.setTooltip(new Tooltip(templateName));
+      return new SimpleObjectProperty(label);
     });
 
 
@@ -440,12 +459,25 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       filterButton.getItems().add(item);
     }
 
+    defaultBackgroundTitlePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        refreshRawPreview(Optional.of(getSelectedTable()));
+      }
+    });
+
     EventManager.getInstance().addListener(this);
     onReload();
     templateEditorController.refreshPreviewSize();
   }
 
-  public void refresh(Optional<GameRepresentation> gameRepresentation) {
+  public void refresh(Optional<GameRepresentation> gameRepresentation, List<CardTemplate> templates, boolean refreshAll) {
+    this.cardTemplates = templates;
+    if (refreshAll) {
+      onReload();
+      return;
+    }
+
     if (gameRepresentation.isPresent()) {
       GameRepresentation refreshedGame = client.getGameService().getGameCached(gameRepresentation.get().getId());
       Platform.runLater(() -> {
@@ -468,43 +500,4 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       });
     }
   }
-
-//  @Override
-//  public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
-//    if (id > 0) {
-//      GameRepresentation refreshedGame = client.getGameService().getGameCached(id);
-//      Platform.runLater(() -> {
-//        tableView.getSelectionModel().getSelectedItems().removeListener(this);
-//        GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-//        tableView.getSelectionModel().clearSelection();
-//
-//        int index = data.indexOf(refreshedGame);
-//        if (index != -1) {
-//          data.remove(index);
-//          data.add(index, refreshedGame);
-//        }
-//        tableView.getSelectionModel().getSelectedItems().addListener(this);
-//
-//        if (selection != null && data.contains(refreshedGame)) {
-//          tableView.getSelectionModel().select(refreshedGame);
-//        }
-//
-//        tableView.refresh();
-//      });
-//    }
-//  }
-
-//  class TemplateComboChangeListener implements ChangeListener<CardTemplate> {
-//    @Override
-//    public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
-//      List<GameRepresentation> selectedItems = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
-//
-//      if (!selectedItems.isEmpty()) {
-//        ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, newValue.getId()));
-//        Platform.runLater(() -> {
-//          refreshPreview(Optional.of(selectedItems.get(0)), true);
-//        });
-//      }
-//    }
-//  }
 }

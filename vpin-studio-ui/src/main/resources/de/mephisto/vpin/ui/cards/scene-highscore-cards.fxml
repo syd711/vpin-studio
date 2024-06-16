@@ -68,7 +68,7 @@
                               </ToolBar>
                            </top>
                            <bottom>
-                              <TitledPane BorderPane.alignment="CENTER">
+                              <TitledPane fx:id="defaultBackgroundTitlePane" expanded="false" BorderPane.alignment="CENTER">
                                  <content>
                                     <VBox styleClass="accordion-container">
                                        <children>
@@ -119,8 +119,26 @@
                                              </right>
                                           </BorderPane>
                                        </children>
+                                       <padding>
+                                          <Insets bottom="1.0" />
+                                       </padding>
                                     </VBox>
                                  </content>
+                                 <graphic>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <Label text="Default Background" />
+                                          <Label>
+                                             <graphic>
+                                                <FontIcon fx:id="rawHighscoreHelp11" iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" wrappingWidth="22.400146961212158" />
+                                             </graphic>
+                                             <tooltip>
+                                                <Tooltip text="Collapse this panel when not used to reduce loading time." />
+                                             </tooltip>
+                                          </Label>
+                                       </children>
+                                    </HBox>
+                                 </graphic>
                               </TitledPane>
                            </bottom>
                         </BorderPane>
