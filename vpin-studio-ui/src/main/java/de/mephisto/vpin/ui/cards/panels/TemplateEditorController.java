@@ -1,18 +1,23 @@
-package de.mephisto.vpin.ui.cards.dialogs;
+package de.mephisto.vpin.ui.cards.panels;
 
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
+import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.SystemUtil;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
@@ -37,6 +42,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
@@ -46,8 +52,8 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TemplateManagerDialogController implements Initializable, DialogController, BindingChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TemplateManagerDialogController.class);
+public class TemplateEditorController implements Initializable, BindingChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(TemplateEditorController.class);
 
   @FXML
   private ComboBox<CardTemplate> templateCombo;
@@ -60,9 +66,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
   @FXML
   private Button deleteBtn;
-
-  @FXML
-  private Button applyBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -196,50 +199,61 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   @FXML
   private Pane mediaPlayerControl;
 
+  @FXML
+  private Button generateAllBtn;
+
+  @FXML
+  private Button generateBtn;
+
+  @FXML
+  private Button openImageBtn;
+
+  @FXML
+  private Button folderBtn;
+
+
   private BeanBinder templateBeanBinder;
   private ObservableList<String> imageList;
 
   private Parent waitOverlay;
   private HighscoreCardsController highscoreCardsController;
   private AssetMediaPlayer assetMediaPlayer;
+  private Optional<GameRepresentation> gameRepresentation;
+  private List<CardTemplate> templates;
 
 
   @FXML
-  private void onCreate(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
-    if (!StringUtils.isEmpty(s)) {
-      ObservableList<CardTemplate> items = this.templateCombo.getItems();
-      Optional<CardTemplate> first = items.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
-      if (first.isPresent()) {
-        Platform.runLater(() -> {
-          CardTemplate template = first.get();
-          template.setName(s);
-          template.setId(null);
-          try {
-            CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(template);
-            List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-            this.templateCombo.setItems(FXCollections.observableList(templates));
-            this.templateCombo.setValue(newTemplate);
-          }
-          catch (Exception ex) {
-            LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-            WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-          }
-        });
-      }
+  private void onOpenImage() {
+    if (gameRepresentation.isPresent()) {
+      ByteArrayInputStream s = client.getHighscoreCardsService().getHighscoreCard(gameRepresentation.get());
+      MediaUtil.openMedia(s);
     }
   }
 
   @FXML
-  private void onApply(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    List<GameRepresentation> selectedItems = Arrays.asList(highscoreCardsController.getSelectedTable());
-    Long id = this.templateCombo.getSelectionModel().getSelectedItem().getId();
-    Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(selectedItems, id));
-    });
-    stage.close();
+  private void onGenerateAll() {
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    String targetScreen = cardSettings.getPopperScreen();
+    if (StringUtils.isEmpty(targetScreen)) {
+      WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+    }
+    else {
+      ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
+    }
+  }
+
+
+  @FXML
+  private void onFolderBtn() {
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    String popperScreen = cardSettings.getPopperScreen();
+    if (!StringUtils.isEmpty(popperScreen)) {
+      PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
+      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      String mediaDir = gameEmulator.getMediaDirectory();
+      File screenDir = new File(mediaDir, screen.name());
+      SystemUtil.openFolder(screenDir);
+    }
   }
 
   @FXML
@@ -257,6 +271,39 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   @FXML
+  private void onCreate(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template will be used as default.", null);
+    if (!StringUtils.isEmpty(s)) {
+      ObservableList<CardTemplate> items = this.templateCombo.getItems();
+
+      Optional<CardTemplate> duplicate = items.stream().filter(t -> t.getName().equals(s)).findFirst();
+      if (duplicate.isPresent()) {
+        WidgetFactory.showAlert(stage, "Error", "A template with the name \"" + s + "\" already exist.");
+        return;
+      }
+
+      CardTemplate selection = this.templateCombo.getValue();
+      Platform.runLater(() -> {
+        selection.setName(s);
+        selection.setId(null);
+        try {
+          CardTemplate newTemplate = client.getHighscoreCardTemplatesClient().save(selection);
+          templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templateCombo.setItems(FXCollections.observableList(templates));
+          this.templateCombo.setValue(newTemplate);
+
+          highscoreCardsController.refresh(gameRepresentation, templates, false);
+        }
+        catch (Exception ex) {
+          LOG.error("Failed to create new template: " + ex.getMessage(), ex);
+          WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
+        }
+      });
+    }
+  }
+
+  @FXML
   private void onRename(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
@@ -265,11 +312,14 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       cardTemplate.setName(s);
 
       try {
-        CardTemplate card = client.getHighscoreCardTemplatesClient().save(cardTemplate);
+        CardTemplate updatedTemplate = client.getHighscoreCardTemplatesClient().save(cardTemplate);
         Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
           this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(card);
+          this.templateCombo.setValue(updatedTemplate);
+
+          assignTemplate(updatedTemplate);
+          highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -280,42 +330,22 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   @FXML
-  private void onDuplicate(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "Duplicate Template \"" + getCardTemplate().getName() + "\"", "Enter Template Name", "Enter a meaningful name that identifies the card design.", null, null);
-    if (!StringUtils.isEmpty(s)) {
-      ObservableList<CardTemplate> items = this.templateCombo.getItems();
-      CardTemplate template = getCardTemplate();
-      template.setName(s);
-      template.setId(null);
-      try {
-        CardTemplate card = client.getHighscoreCardTemplatesClient().save(template);
-
-        Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
-          this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(card);
-        });
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to create new template: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(Studio.stage, "Template Duplication Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
-      }
-    }
-  }
-
-  @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     CardTemplate cardTemplate = getCardTemplate();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", null, "Delete");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Template", "Delete Template \"" + cardTemplate.getName() + "\"?", "Assigned tables will use the default template again.", "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       try {
         client.getHighscoreCardTemplatesClient().deleteTemplate(cardTemplate.getId());
         Platform.runLater(() -> {
-          List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+          CardTemplate defaultTemplate = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+
+          this.templates = client.getHighscoreCardTemplatesClient().getTemplates();
           this.templateCombo.setItems(FXCollections.observableList(templates));
-          this.templateCombo.setValue(templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get());
+          this.templateCombo.setValue(defaultTemplate);
+
+          assignTemplate(defaultTemplate);
+          highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
       }
       catch (Exception ex) {
@@ -351,12 +381,6 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   @FXML
-  private void onCancel(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
-  }
-
-  @FXML
   private void onFontTitleSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "title", titleFontLabel);
   }
@@ -376,6 +400,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   private void setTemplate(CardTemplate cardTemplate) {
+    if (templateBeanBinder == null) {
+      initBindings();
+    }
+
     deleteBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
     renameBtn.setDisable(cardTemplate.getName().equals(CardTemplate.DEFAULT));
 
@@ -394,6 +422,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
     grayScaleCheckbox.setSelected(cardTemplate.isGrayScale());
     transparentBackgroundCheckbox.setSelected(cardTemplate.isTransparentBackground());
+    overlayModeCheckbox.setSelected(cardTemplate.isOverlayMode());
     renderTableNameCheckbox.setSelected(cardTemplate.isRenderTableName());
     renderWheelIconCheckbox.setSelected(cardTemplate.isRenderWheelIcon());
     renderTitleCheckbox.setSelected(cardTemplate.isRenderTitle());
@@ -440,7 +469,7 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
     templateBeanBinder.setPaused(false);
 
-    refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), true);
+    refreshPreview(this.gameRepresentation, true);
   }
 
 
@@ -527,10 +556,10 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
       templateBeanBinder.bindSpinner(maxScoresSpinner, getCardTemplate(), "maxScores", 0, 100);
       templateBeanBinder.bindSpinner(rowSeparatorSpinner, getCardTemplate(), "rowMargin", 0, 300);
 
-      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1280);
-      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 720);
+      templateBeanBinder.bindSpinner(canvasXSpinner, getCardTemplate(), "canvasX", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasYSpinner, getCardTemplate(), "canvasY", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasWidthSpinner, getCardTemplate(), "canvasWidth", 0, 1920);
+      templateBeanBinder.bindSpinner(canvasHeightSpinner, getCardTemplate(), "canvasHeight", 0, 1080);
       templateBeanBinder.bindSpinner(canvasBorderRadiusSpinner, getCardTemplate(), "canvasBorderRadius", 0, 100);
 
       renderWheelIconCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -620,10 +649,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   @FXML
   private void onGenerateClick() {
     Platform.runLater(() -> {
-      GameRepresentation value = highscoreCardsController.getSelectedTable();
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
-        refreshPreview(Optional.ofNullable(value), true);
+        refreshPreview(this.gameRepresentation, true);
       }
       catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
@@ -633,6 +661,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
+    this.openImageBtn.setDisable(true);
+    this.generateBtn.setDisable(true);
+    this.generateAllBtn.setDisable(true);
     mediaPlayerControl.setVisible(false);
 
     if (!game.isPresent()) {
@@ -656,6 +687,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
 
           Platform.runLater(() -> {
             previewStack.getChildren().remove(waitOverlay);
+            this.openImageBtn.setDisable(false);
+            this.generateBtn.setDisable(false);
+            this.generateAllBtn.setDisable(false);
           });
 
         }).start();
@@ -675,10 +709,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     mediaPlayerControl.setVisible(false);
     previewOverlayPanel.setVisible(false);
 
-    GameRepresentation selectedItem = highscoreCardsController.getSelectedTable();
-    if (selectedItem != null && getCardTemplate().getOverlayScreen() != null) {
+    if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
       PopperScreen overlayScreen = PopperScreen.valueOf(getCardTemplate().getOverlayScreen());
-      GameMediaItemRepresentation defaultMediaItem = selectedItem.getGameMedia().getDefaultMediaItem(overlayScreen);
+      GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
         assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
@@ -688,28 +721,9 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     }
   }
 
-  @Override
-  public void onDialogCancel() {
-  }
-
-  public void setData(Stage stage, HighscoreCardsController highscoreCardsController) {
-    cardPreview.setFitWidth(stage.getWidth() - 450);
+  public void refreshPreviewSize() {
+    cardPreview.setFitWidth(stage.getWidth() - 900);
     cardPreview.setFitHeight(stage.getHeight() - 200);
-
-    this.highscoreCardsController = highscoreCardsController;
-    templateCombo.setValue(highscoreCardsController.getSelectedTemplate());
-    this.applyBtn.setText("Close and apply to \"" + highscoreCardsController.getSelectedTable().getGameDisplayName() + "\"");
-    initBindings();
-
-    templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
-      @Override
-      public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
-        if (newValue != null) {
-          setTemplate(newValue);
-        }
-      }
-    });
-    setTemplate(templateCombo.getValue());
   }
 
   @Override
@@ -720,20 +734,27 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
   }
 
   @Override
-  public void onResized(int x, int y, int width, int height) {
-    cardPreview.setFitWidth(width - 500);
-    cardPreview.setFitHeight(height - 200);
-    refreshPreview(Optional.ofNullable(highscoreCardsController.getSelectedTable()), false);
-  }
-
-  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     try {
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);
 
-      List<CardTemplate> items = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
-      templateCombo.setItems(FXCollections.observableList(items));
+      templates = new ArrayList<>(client.getHighscoreCardTemplatesClient().getTemplates());
+      templateCombo.setItems(FXCollections.observableList(templates));
+
+      templateCombo.valueProperty().addListener(new ChangeListener<CardTemplate>() {
+        @Override
+        public void changed(ObservableValue<? extends CardTemplate> observable, CardTemplate oldValue, CardTemplate newValue) {
+          if (newValue != null) {
+            setTemplate(newValue);
+            if (gameRepresentation.isPresent()) {
+              assignTemplate(newValue);
+              highscoreCardsController.refresh(gameRepresentation, templates, false);
+            }
+          }
+        }
+      });
 
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
       waitOverlay = loader.load();
@@ -746,6 +767,37 @@ public class TemplateManagerDialogController implements Initializable, DialogCon
     }
     catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
+    }
+  }
+
+  private void assignTemplate(CardTemplate newValue) {
+    GameRepresentation game = gameRepresentation.get();
+    if (!newValue.getId().equals(gameRepresentation.get().getTemplateId())) {
+      ProgressDialog.createProgressDialog(new TemplateAssigmentProgressModel(Arrays.asList(game), newValue.getId()));
+    }
+  }
+
+  public void setCardsController(HighscoreCardsController highscoreCardsController) {
+    this.highscoreCardsController = highscoreCardsController;
+  }
+
+  public void selectTable(Optional<GameRepresentation> gameRepresentation, boolean refresh) {
+    this.gameRepresentation = gameRepresentation;
+    if (this.gameRepresentation.isPresent()) {
+      GameRepresentation game = gameRepresentation.get();
+      CardTemplate template = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst().get();
+      if (game.getTemplateId() != null) {
+        Optional<CardTemplate> first = templates.stream().filter(g -> g.getId().equals(game.getTemplateId())).findFirst();
+        if (first.isPresent()) {
+          template = first.get();
+        }
+      }
+      if (template.equals(templateCombo.getValue())) {
+        setTemplate(template);
+      }
+      else {
+        templateCombo.setValue(template);
+      }
     }
   }
 }

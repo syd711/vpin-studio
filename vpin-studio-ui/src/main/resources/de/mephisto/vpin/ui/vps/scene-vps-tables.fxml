@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
@@ -15,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<StackPane fx:id="tableStack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesController">
+<StackPane fx:id="tableStack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesController">
     <children>
         <BorderPane styleClass="base-component">
             <center>
@@ -23,6 +24,8 @@
                     <columns>
                   <TableColumn fx:id="installedColumn" style="-fx-alignment: BASELINE_CENTER;" text="Installed" />
                         <TableColumn fx:id="nameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="statusColumn" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Status" />
+                  <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Updated" />
                   <TableColumn fx:id="versionsColumn" style="-fx-alignment: BASELINE_CENTER;" text="Versions" />
                   <TableColumn fx:id="directB2SColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="DirectB2S" />
                   <TableColumn fx:id="pupPackColumn" style="-fx-alignment: CENTER;" text="PUP Pack" />
@@ -32,7 +35,6 @@
                   <TableColumn fx:id="altSoundColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Sound" />
                   <TableColumn fx:id="altColorColumn" prefWidth="90.0" style="-fx-alignment: CENTER;" text="ALT Color" />
                   <TableColumn fx:id="tutorialColumn" minWidth="2.39996337890625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Tutorial" />
-                  <TableColumn fx:id="updatedColumn" minWidth="2.39996337890625" prefWidth="120.0" style="-fx-alignment: CENTER;" text="Updated" />
                     </columns>
                 </TableView>
             </center>
@@ -74,6 +76,12 @@
                         <Tooltip text="Open table information on VPS." />
                      </tooltip>
                   </Button>
+                  <Separator layoutX="456.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" text="Show Only Installed Tables" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </CheckBox>
               </items>
             </ToolBar>
          </top>

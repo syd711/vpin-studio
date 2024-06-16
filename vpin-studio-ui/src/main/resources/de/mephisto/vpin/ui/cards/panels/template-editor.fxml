@@ -23,21 +23,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.dialogs.TemplateManagerDialogController">
-   <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
-   </top>
-   <bottom>
-      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button fx:id="cancelBtn1" layoutX="1175.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancel" styleClass="default-button" text="Close" />
-            <Button fx:id="applyBtn" layoutX="1332.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApply" styleClass="submit-button" text="Close And Apply" />
-         </children>
-         <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="6.0" />
-         </BorderPane.margin>
-      </HBox>
-   </bottom>
+<BorderPane prefHeight="900.0" prefWidth="1400.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.panels.TemplateEditorController">
    <right>
       <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
@@ -47,7 +33,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox maxWidth="340.0" styleClass="accordion-container">
+                              <VBox styleClass="accordion-container">
                                  <children>
                                     <CheckBox fx:id="transparentBackgroundCheckbox" layoutX="22.0" layoutY="54.0" mnemonicParsing="false" text="Transparent Background" textFill="WHITE">
                                        <font>
@@ -62,7 +48,7 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Slider fx:id="alphaPercentageSpinner" maxWidth="330.0">
+                                    <Slider fx:id="alphaPercentageSpinner">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -117,7 +103,7 @@
                                           <Insets top="6.0" />
                                        </VBox.margin>
                                     </HBox>
-                                    <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background over Fallback" textFill="WHITE">
+                                    <CheckBox fx:id="useDirectB2SCheckbox" mnemonicParsing="false" text="Prefer Default Background" textFill="WHITE">
                                        <VBox.margin>
                                           <Insets top="24.0" />
                                        </VBox.margin>
@@ -135,7 +121,7 @@
                                     </Label>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <ComboBox fx:id="backgroundImageCombo" prefHeight="30.0" prefWidth="300.0">
+                                          <ComboBox fx:id="backgroundImageCombo" prefWidth="200.0">
                                              <HBox.margin>
                                                 <Insets top="3.0" />
                                              </HBox.margin>
@@ -232,14 +218,14 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="260.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTitleSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                          <Button mnemonicParsing="false" onAction="#onFontTitleSelect" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -259,14 +245,14 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="271.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTableSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                          <Button mnemonicParsing="false" onAction="#onFontTableSelect" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -286,14 +272,14 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="scoreFontLabel" prefHeight="20.0" prefWidth="266.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="scoreFontLabel" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontScoreSelect" prefHeight="30.0" prefWidth="30.0" BorderPane.alignment="CENTER">
+                                          <Button mnemonicParsing="false" onAction="#onFontScoreSelect" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -329,7 +315,7 @@
                      <content>
                         <ScrollPane hbarPolicy="NEVER">
                            <content>
-                              <VBox prefWidth="350.0" spacing="3.0" styleClass="accordion-container">
+                              <VBox spacing="3.0" styleClass="accordion-container">
                                  <children>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
@@ -353,7 +339,7 @@
                                     </HBox>
                                     <HBox alignment="BASELINE_LEFT" spacing="6.0">
                                        <children>
-                                          <Spinner fx:id="paddingSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
+                                          <Spinner fx:id="paddingSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
                                        </children>
                                        <VBox.margin>
                                           <Insets top="6.0" />
@@ -361,7 +347,7 @@
                                     </HBox>
                                     <HBox alignment="CENTER_LEFT" spacing="6.0">
                                        <children>
-                                          <Label text="Margins (top/right/bottom/left):" textFill="WHITE">
+                                          <Label text="Margins (top/bottom):" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -381,14 +367,23 @@
                                     </HBox>
                                     <HBox alignment="BASELINE_LEFT" spacing="6.0">
                                        <children>
-                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="70.0" styleClass="widget-default" />
-                                          <Spinner fx:id="marginRightSpinner" editable="true" layoutX="10.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
-                                          <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
-                                          <Spinner fx:id="marginLeftSpinner" editable="true" layoutX="164.0" layoutY="10.0" prefWidth="70.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginTopSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginBottomSpinner" editable="true" layoutX="87.0" layoutY="10.0" prefWidth="110.0" styleClass="widget-default" />
                                        </children>
                                        <VBox.margin>
                                           <Insets top="6.0" />
                                        </VBox.margin>
+                                    </HBox>
+                                    <Label text="Margins (left/right):" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </Label>
+                                    <HBox spacing="6.0">
+                                       <children>
+                                          <Spinner fx:id="marginLeftSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                          <Spinner fx:id="marginRightSpinner" editable="true" prefWidth="110.0" styleClass="widget-default" />
+                                       </children>
                                     </HBox>
                                     <CheckBox fx:id="renderTableNameCheckbox" mnemonicParsing="false" text="Render Table Name">
                                        <font>
@@ -591,7 +586,7 @@
                                           <Insets top="12.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <Slider fx:id="canvasAlphaPercentageSlider" maxWidth="330.0" prefWidth="330.0">
+                                    <Slider fx:id="canvasAlphaPercentageSlider">
                                        <padding>
                                           <Insets bottom="12.0" top="6.0" />
                                        </padding>
@@ -684,7 +679,7 @@
             </Accordion>
          </children>
          <BorderPane.margin>
-            <Insets bottom="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
       </VBox>
    </right>
@@ -693,13 +688,17 @@
          <top>
             <ToolBar BorderPane.alignment="CENTER">
                <items>
-                  <Label text="Template: " textFill="WHITE">
+                  <Label text="Template:" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
+                     <padding>
+                        <Insets right="6.0" />
+                     </padding>
                   </Label>
                   <ComboBox fx:id="templateCombo" prefHeight="30.0" prefWidth="222.0" />
-                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" text="New" textFill="WHITE">
+                  <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="createBtn" mnemonicParsing="false" onAction="#onCreate" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -710,18 +709,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2p-plus-circle-outline" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                     </graphic>
-                     <tooltip>
-                        <Tooltip text="Edit Popper Table Data" />
-                     </tooltip>
-                  </Button>
-                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                  <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -729,10 +717,10 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Edit Popper Table Data" />
+                        <Tooltip text="Rename the selected template" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                  <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -740,8 +728,8 @@
                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                      </graphic>
                   </Button>
-                  <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button mnemonicParsing="false" onAction="#onGenerateClick" text="Refresh" textFill="WHITE">
+                  <Separator layoutX="485.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="generateBtn" mnemonicParsing="false" onAction="#onGenerateClick" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -749,9 +737,38 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Separator layoutX="665.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="openImageBtn" mnemonicParsing="false" onAction="#onOpenImage" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator layoutX="307.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="generateAllBtn" mnemonicParsing="false" onAction="#onGenerateAll" text=" Generate All" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-images" iconSize="18" />
+                     </graphic>
+                  </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Open PinUP Popper system folder for the target folder." />
+                     </tooltip>
+                  </Button>
                   <HBox fx:id="mediaPlayerControl" spacing="6.0">
                      <children>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button mnemonicParsing="false" onAction="#onStart" styleClass="external-component" textFill="#ff3333">
                            <font>
                               <Font size="14.0" />
@@ -789,7 +806,7 @@
             </StackPane>
          </center>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
       </BorderPane>
    </center>

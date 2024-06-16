@@ -83,3 +83,9 @@
     -fx-border-radius: 6 6 6 6;
     -fx-background-color: #2a2a2a;
 }
+
+.debug {
+    -fx-border-style: solid;
+    -fx-border-color: green;
+    -fx-border-width: 2;
+}
