@@ -17,4 +17,3 @@
 ## UI
 
 - check custom properties can be set for Pinball X and put them under "Frontend Preferences"
-- remove Other2 from assets and prefs, provide a getSupportedScreens for Frontend.java
