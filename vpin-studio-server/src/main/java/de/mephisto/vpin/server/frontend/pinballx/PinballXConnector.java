@@ -108,7 +108,7 @@ public class PinballXConnector extends BaseConnector {
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
-    String parameters = s.getString("Parameters");
+    //String parameters = s.getString("Parameters");
 
     String gameext = null;
     if (s.containsKey("SystemType")) {
@@ -122,8 +122,6 @@ public class PinballXConnector extends BaseConnector {
       gameext = getEmulatorExtension(emuname);
     }
     
-    String launchScript = executable + " " + StringUtils.defaultString(parameters);
-
     Emulator e = new Emulator();
     e.setId(emuId);
     e.setName(emuname);
@@ -134,12 +132,9 @@ public class PinballXConnector extends BaseConnector {
       e.setDirMedia(mediaDir.getAbsolutePath());
     }
     e.setDirGames(tablePath);
-    if (StringUtils.equals(emuname, "Visual Pinball")) {
-      e.setDirRoms(workingPath + "/VPinMAME/roms");
-    }
-    //e.setDescription(rs.getString("Description"));
     e.setEmuLaunchDir(workingPath);
-    e.setLaunchScript(launchScript);
+    e.setExeName(executable);
+
     e.setGamesExt(gameext);
     e.setVisible(enabled);
 

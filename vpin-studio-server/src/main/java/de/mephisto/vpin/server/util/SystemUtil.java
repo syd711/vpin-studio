@@ -3,7 +3,11 @@ package de.mephisto.vpin.server.util;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import com.sun.jna.win32.StdCallLibrary;
+
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,6 +31,16 @@ public class SystemUtil {
       LOG.error("Failed to read version number: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  /**
+   * Extract from Preferences the installation mode
+   * @param preferencesService The PreferencesService to extract SYSTEM_PRESET
+   * @return true for 64bit, false otherwise
+   */
+  public static final boolean is64Bit(PreferencesService preferencesService) {
+    String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
+    return (systemPreset == null || systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT));
   }
 
   interface User32 extends StdCallLibrary {

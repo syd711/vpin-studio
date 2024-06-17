@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -24,6 +26,8 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service("Popper")
 public class PinUPConnector implements FrontendConnector {
@@ -43,9 +47,13 @@ public class PinUPConnector implements FrontendConnector {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private int sqlVersion = DB_VERSION;
 
   private ServerSettings serverSettings;
+
 
   @NotNull
   @Override
@@ -983,9 +991,30 @@ public class PinUPConnector implements FrontendConnector {
         e.setDirRoms(rs.getString("DirRoms"));
         e.setDescription(rs.getString("Description"));
         e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-        e.setLaunchScript(rs.getString("LaunchScript"));
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
+
+        // specific initialization
+        if (e.isVisualPinball()) {
+          initVisualPinballXScripts(e);
+  
+          String exeName = SystemUtil.is64Bit(preferencesService)? "VPinballX64.exe": "VPinballX.exe";
+          
+          //parsing of the specific popper script
+          String launchScript = rs.getString("LaunchScript");
+          if(StringUtils.isNotEmpty(launchScript)) {
+            Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
+            Matcher m = pattern.matcher(launchScript);
+            while( m.find() ) {
+              String key = m.group(1);
+              String value = m.group(2);
+              if(key != null && key.equals("VPXEXE") && value != null) {
+                exeName = value.trim() + ".exe";
+              }
+            }
+          }
+          e.setExeName(exeName); 
+        }
 
         result.add(e);
       }
@@ -998,13 +1027,6 @@ public class PinUPConnector implements FrontendConnector {
     }
     finally {
       this.disconnect(connect);
-    }
-
-    // init scripts
-    for (Emulator emu : result) {
-      if (emu.isVisualPinball()) {
-        initVisualPinballXScripts(emu);
-      }
     }
 
     return result;

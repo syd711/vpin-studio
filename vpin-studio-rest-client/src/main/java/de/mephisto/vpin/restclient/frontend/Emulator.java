@@ -1,8 +1,5 @@
 package de.mephisto.vpin.restclient.frontend;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 public class Emulator {
   private String name;
   private String description;
@@ -14,26 +11,11 @@ public class Emulator {
   /** opportunity for emulator to set a specific b2s folder, if null use dirGames */
   private String dirB2S;
   private String emuLaunchDir;
-  private String launchScript;
+  /** the executable to run the table */
+  private String exeName;
   private String gamesExt;
   private boolean visible;
   private boolean enabled = true;
-  
-  public String getVpxExeName() {
-    if(launchScript != null) {
-      Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
-      Matcher m = pattern.matcher(launchScript);
-      while( m.find() ) {
-        String key = m.group(1);
-        String value = m.group(2);
-        if(key != null && key.equals("VPXEXE") && value != null) {
-          return value.trim() + ".exe";
-        }
-      }
-    }
-    return "VisualPinbalX.exe";
-  }
-
 
   public boolean isEnabled() {
     return enabled;
@@ -41,14 +23,6 @@ public class Emulator {
 
   public void setEnabled(boolean enabled) {
     this.enabled = enabled;
-  }
-
-  public String getLaunchScript() {
-    return launchScript;
-  }
-
-  public void setLaunchScript(String launchScript) {
-    this.launchScript = launchScript;
   }
 
   public String getDisplayName() {
@@ -82,6 +56,15 @@ public class Emulator {
   public void setEmuLaunchDir(String emuLaunchDir) {
     this.emuLaunchDir = emuLaunchDir;
   }
+  
+  public String getExeName() {
+    return exeName;
+  }
+
+  public void setExeName(String exeName) {
+    this.exeName = exeName;
+  }
+
 
   public boolean isVisible() {
     return visible;

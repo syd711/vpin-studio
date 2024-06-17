@@ -9,8 +9,9 @@ import java.util.List;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +22,7 @@ import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 
 @Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
@@ -33,6 +35,9 @@ public class StandaloneConnector extends BaseConnector {
 
   @Autowired
   private SystemService systemService;
+  
+  @Autowired
+  private PreferencesService preferencesService;
   
   @Override
   public void initializeConnector(ServerSettings settings) {
@@ -71,16 +76,13 @@ public class StandaloneConnector extends BaseConnector {
     e.setDisplayName(emuname);
 
     e.setDirGames(tablesDir.getAbsolutePath());
-
-    if (StringUtils.equals(emuname, "Visual Pinball")) {
-      e.setDirRoms(new File(installDir, "/VPinMAME/roms").getAbsolutePath());
-    }
-    
-    //e.setDescription(rs.getString("Description"));
     e.setEmuLaunchDir(installDir.getAbsolutePath());
 
-    String launchScript = null;
-    e.setLaunchScript(launchScript);
+    String exeName = "VPinballX.exe";
+    if (SystemUtil.is64Bit(preferencesService) && new File(installDir, "VPinballX64.exe").exists()) {
+      exeName = "VPinballX64.exe";
+    }
+    e.setExeName(exeName);
 
     String gameext = getEmulatorExtension(emuname);
     e.setGamesExt(gameext);

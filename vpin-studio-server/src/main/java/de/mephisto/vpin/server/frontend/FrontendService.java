@@ -474,10 +474,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       return false;
     }
 
-    if (StringUtils.isEmpty(emulator.getDirRoms())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
-      return false;
-    }
+    // should not ignore as GameEmulator will set a folder by default
+    //if (StringUtils.isEmpty(emulator.getDirRoms())) {
+    //  LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
+    //  return false;
+    //}
 
     if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
