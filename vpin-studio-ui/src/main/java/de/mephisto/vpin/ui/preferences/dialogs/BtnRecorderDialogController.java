@@ -47,6 +47,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   private Button bindLeftBtn;
 
   @FXML
+  private Button bindOverlayBtn;
+
+  @FXML
   private Button bindRightBtn;
 
   @FXML
@@ -57,6 +60,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
 
   @FXML
   private Label keyCodeLeft;
+
+  @FXML
+  private Label keyCodeOverlay;
 
   @FXML
   private Label keyCodeRight;
@@ -87,6 +93,11 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
       keyCodeRight.setText(PRESS_KEY);
       keyCodeRight.requestFocus();
     }
+    else if (source.equals(bindOverlayBtn)) {
+      bindOverlayBtn.setDisable(true);
+      keyCodeOverlay.setText(PRESS_KEY);
+      keyCodeOverlay.requestFocus();
+    }
   }
 
   private void refreshView() {
@@ -94,12 +105,14 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     bindStartBtn.setDisable(false);
     bindLeftBtn.setDisable(false);
     bindRightBtn.setDisable(false);
+    bindOverlayBtn.setDisable(false);
 
 
     keyCodeLaunch.setText(getInputValue(pauseMenuSettings.getCustomLaunchKey(), pauseMenuSettings.getCustomLaunchButton()));
     keyCodeStart.setText(getInputValue(pauseMenuSettings.getCustomStartKey(), pauseMenuSettings.getCustomStartButton()));
     keyCodeLeft.setText(getInputValue(pauseMenuSettings.getCustomLeftKey(), pauseMenuSettings.getCustomLeftButton()));
     keyCodeRight.setText(getInputValue(pauseMenuSettings.getCustomRightKey(), pauseMenuSettings.getCustomRightButton()));
+    keyCodeOverlay.setText(getInputValue(pauseMenuSettings.getCustomOverlayKey(), pauseMenuSettings.getCustomOverlayButton()));
   }
 
   private String getInputValue(int customKey, String customButton) {
@@ -133,6 +146,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     pauseMenuSettings.setCustomStartKey(0);
     pauseMenuSettings.setCustomLeftKey(0);
     pauseMenuSettings.setCustomRightKey(0);
+    pauseMenuSettings.setCustomOverlayKey(0);
     client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     refreshView();
   }
@@ -198,6 +212,12 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         pauseMenuSettings.setCustomRightKey(code);
         LOG.info("Registered " + value + " for right.");
       }
+      else if (bindOverlayBtn.isDisabled()) {
+        bindOverlayBtn.setDisable(false);
+        keyCodeOverlay.setText(value);
+        pauseMenuSettings.setCustomOverlayKey(code);
+        LOG.info("Registered " + value + " for overlay.");
+      }
     });
   }
 
@@ -232,6 +252,12 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         keyCodeRight.setText(value);
         pauseMenuSettings.setCustomRightButton(value);
         LOG.info("Registered " + value + " for right.");
+      }
+      else if (bindOverlayBtn.isDisabled()) {
+        bindOverlayBtn.setDisable(false);
+        keyCodeOverlay.setText(value);
+        pauseMenuSettings.setCustomOverlayButton(value);
+        LOG.info("Registered " + value + " for overlay.");
       }
     });
   }

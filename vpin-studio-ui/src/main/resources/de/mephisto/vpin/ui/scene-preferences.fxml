@@ -17,7 +17,7 @@
          <children>
             <BorderPane>
                <center>
-                  <ScrollPane hbarPolicy="NEVER" maxWidth="290.0" minWidth="290.0" prefWidth="290.0" styleClass="base-component">
+                  <ScrollPane hbarPolicy="NEVER" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" styleClass="base-component">
                      <content>
                         <VBox fx:id="navigationBox" fillWidth="false">
                            <children>
@@ -33,13 +33,23 @@
                                  </VBox.margin>
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay &amp; Pause Menu">
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
+                              <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="VPIN STUDIO FRONTEND PREFERENCES">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="Controller Setup" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
                               </Button>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="Pause Menu" />
                               <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="Notifications" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
                               <VBox fx:id="tournamentGroup">
                                  <VBox.margin>
                                     <Insets top="24.0" />
@@ -134,7 +144,7 @@
                               <Insets />
                            </opaqueInsets>
                            <padding>
-                              <Insets left="24.0" right="6.0" />
+                              <Insets left="18.0" />
                            </padding>
                         </VBox>
                      </content>

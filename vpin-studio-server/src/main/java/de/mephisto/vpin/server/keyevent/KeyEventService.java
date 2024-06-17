@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.keyevent;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
@@ -255,6 +256,8 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     logger.setLevel(Level.OFF);
     logger.setUseParentHandlers(false);
     GlobalScreen.addNativeKeyListener(this);
+
+    GameController.getInstance();
 
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
   }

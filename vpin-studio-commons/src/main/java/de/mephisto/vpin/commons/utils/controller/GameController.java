@@ -32,10 +32,11 @@ public class GameController {
           .collect(Collectors.toList());
 
       if (filteredControllers.isEmpty()) {
-        LOG.info("ControllerService did not resolve any game controllers, skipping initalization.");
+        LOG.info("GameController did not resolve any game controllers, skipping initialization.");
         return;
       }
 
+      LOG.info("Starting GameController");
       while (true) {
         for (Controller controller : filteredControllers) {
           if (controller.getType().equals(Controller.Type.MOUSE)) {
@@ -56,6 +57,7 @@ public class GameController {
 
             float value = event.getValue();
             if (value == 1) {
+//              LOG.info("GameControllerEvent: " + comp.getName());
               new Thread(() -> {
                 for (GameControllerInputListener listener : new ArrayList<>(listeners)) {
                   listener.controllerEvent(comp.getName());

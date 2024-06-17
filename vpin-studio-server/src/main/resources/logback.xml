@@ -33,6 +33,7 @@
     <logger name="javafx" level="error" />
     <logger name="net.dv8tion.jda.api" level="error" />
     <logger name="com.zaxxer" level="error" />
+    <logger name="net.java.games.input" level="error" />
 
     <logger name="de.mephisto.vpin.server.vps.VpsService">
         <appender-ref ref="rollingFileVps" />

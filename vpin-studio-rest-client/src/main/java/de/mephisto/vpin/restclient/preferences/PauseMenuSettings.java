@@ -15,11 +15,30 @@ public class PauseMenuSettings extends JsonSettings {
   private int customStartKey;
   private int customLeftKey;
   private int customRightKey;
+  private int customOverlayKey;
+
 
   private String customLaunchButton;
   private String customStartButton;
   private String customLeftButton;
   private String customRightButton;
+  private String customOverlayButton;
+
+  public String getCustomOverlayButton() {
+    return customOverlayButton;
+  }
+
+  public void setCustomOverlayButton(String customOverlayButton) {
+    this.customOverlayButton = customOverlayButton;
+  }
+
+  public int getCustomOverlayKey() {
+    return customOverlayKey;
+  }
+
+  public void setCustomOverlayKey(int customOverlayKey) {
+    this.customOverlayKey = customOverlayKey;
+  }
 
   public String getCustomLaunchButton() {
     return customLaunchButton;

@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import org.apache.commons.lang3.StringUtils;
@@ -41,7 +41,9 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         break;
       }
       case ISCORED: {
-        setGamesTournamentId(competition);
+        if (Features.ISCORED_ENABLED) {
+          setGamesTournamentId(competition);
+        }
         break;
       }
     }

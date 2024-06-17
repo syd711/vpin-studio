@@ -226,6 +226,16 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onControllerSetup(ActionEvent event) throws IOException {
+    load("preference-inputs.fxml", event);
+  }
+
+  @FXML
+  private void onPauseMenu(ActionEvent event) throws IOException {
+    load("preference-pause-menu.fxml", event);
+  }
+
+  @FXML
   private void onHighscoreCards(ActionEvent event) throws IOException {
     load("preference-highscore_cards.fxml", event);
   }
