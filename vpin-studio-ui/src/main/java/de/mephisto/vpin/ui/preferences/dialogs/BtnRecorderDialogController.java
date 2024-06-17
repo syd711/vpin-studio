@@ -2,34 +2,33 @@ package de.mephisto.vpin.ui.preferences.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.controller.GameController;
+import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablePauseBtnRecorderDialogController implements Initializable, DialogController, NativeKeyListener {
-  private final static Logger LOG = LoggerFactory.getLogger(TablePauseBtnRecorderDialogController.class);
+public class BtnRecorderDialogController implements Initializable, DialogController, NativeKeyListener, GameControllerInputListener {
+  private final static Logger LOG = LoggerFactory.getLogger(BtnRecorderDialogController.class);
   public static final String PRESS_KEY = "-- Press Key --";
 
   @FXML
@@ -95,20 +94,34 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
     bindStartBtn.setDisable(false);
     bindLeftBtn.setDisable(false);
     bindRightBtn.setDisable(false);
-    keyCodeLaunch.setText(pauseMenuSettings.getCustomLaunchKey() > 0 ? String.valueOf(pauseMenuSettings.getCustomLaunchKey()) : "-");
-    keyCodeStart.setText(pauseMenuSettings.getCustomStartKey() > 0 ? String.valueOf(pauseMenuSettings.getCustomStartKey()) : "-");
-    keyCodeLeft.setText(pauseMenuSettings.getCustomLeftKey() > 0 ? String.valueOf(pauseMenuSettings.getCustomLeftKey()) : "-");
-    keyCodeRight.setText(pauseMenuSettings.getCustomRightKey() > 0 ? String.valueOf(pauseMenuSettings.getCustomRightKey()) : "-");
+
+
+    keyCodeLaunch.setText(getInputValue(pauseMenuSettings.getCustomLaunchKey(), pauseMenuSettings.getCustomLaunchButton()));
+    keyCodeStart.setText(getInputValue(pauseMenuSettings.getCustomStartKey(), pauseMenuSettings.getCustomStartButton()));
+    keyCodeLeft.setText(getInputValue(pauseMenuSettings.getCustomLeftKey(), pauseMenuSettings.getCustomLeftButton()));
+    keyCodeRight.setText(getInputValue(pauseMenuSettings.getCustomRightKey(), pauseMenuSettings.getCustomRightButton()));
+  }
+
+  private String getInputValue(int customKey, String customButton) {
+    if (customKey > 0) {
+      return String.valueOf(customKey);
+    }
+    if (!StringUtils.isEmpty(customButton)) {
+      return customButton;
+    }
+    return "-";
   }
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    doDestroy();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }
 
   @FXML
   private void onSave(ActionEvent e) {
+    doDestroy();
     client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
@@ -128,13 +141,16 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
+    GameController.getInstance().addListener(this);
+
     try {
       GlobalScreen.registerNativeHook();
       java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
       logger.setLevel(Level.OFF);
       logger.setUseParentHandlers(false);
       GlobalScreen.addNativeKeyListener(this);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to bind key listener: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to bind key listener: " + e.getMessage());
     }
@@ -144,6 +160,7 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
 
   @Override
   public void onDialogCancel() {
+    doDestroy();
   }
 
   @Override
@@ -156,7 +173,7 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
     Platform.runLater(() -> {
       int code = nativeKeyEvent.getRawCode();
       String value = String.valueOf(code);
-      LOG.info("Recorded " + code + "/" + nativeKeyEvent.getKeyCode());
+//      LOG.info("Recorded " + code + "/" + nativeKeyEvent.getKeyCode());
       if (bindLaunchBtn.isDisabled()) {
         bindLaunchBtn.setDisable(false);
         keyCodeLaunch.setText(value);
@@ -181,12 +198,46 @@ public class TablePauseBtnRecorderDialogController implements Initializable, Dia
         pauseMenuSettings.setCustomRightKey(code);
         LOG.info("Registered " + value + " for right.");
       }
-
     });
   }
 
   @Override
   public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
 
+  }
+
+  @Override
+  public void controllerEvent(String value) {
+    Platform.runLater(() -> {
+      if (bindLaunchBtn.isDisabled()) {
+        bindLaunchBtn.setDisable(false);
+        keyCodeLaunch.setText(value);
+        pauseMenuSettings.setCustomLaunchButton(value);
+        LOG.info("Registered " + value + " for launch.");
+      }
+      else if (bindStartBtn.isDisabled()) {
+        bindStartBtn.setDisable(false);
+        keyCodeStart.setText(value);
+        pauseMenuSettings.setCustomStartButton(value);
+        LOG.info("Registered " + value + " for start.");
+      }
+      else if (bindLeftBtn.isDisabled()) {
+        bindLeftBtn.setDisable(false);
+        keyCodeLeft.setText(value);
+        pauseMenuSettings.setCustomLeftButton(value);
+        LOG.info("Registered " + value + " for left.");
+      }
+      else if (bindRightBtn.isDisabled()) {
+        bindRightBtn.setDisable(false);
+        keyCodeRight.setText(value);
+        pauseMenuSettings.setCustomRightButton(value);
+        LOG.info("Registered " + value + " for right.");
+      }
+    });
+  }
+
+  private void doDestroy() {
+    GlobalScreen.removeNativeKeyListener(this);
+    GameController.getInstance().removeListener(this);
   }
 }

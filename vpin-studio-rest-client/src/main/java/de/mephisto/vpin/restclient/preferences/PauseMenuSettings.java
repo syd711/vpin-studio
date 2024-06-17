@@ -9,13 +9,49 @@ public class PauseMenuSettings extends JsonSettings {
   private String authorAllowList;
   private int inputDebounceMs = 0;
   private PopperScreen videoScreen = PopperScreen.Topper;
+  private PauseMenuStyle style = PauseMenuStyle.embedded;
 
   private int customLaunchKey;
   private int customStartKey;
   private int customLeftKey;
   private int customRightKey;
 
-  private PauseMenuStyle style = PauseMenuStyle.embedded;
+  private String customLaunchButton;
+  private String customStartButton;
+  private String customLeftButton;
+  private String customRightButton;
+
+  public String getCustomLaunchButton() {
+    return customLaunchButton;
+  }
+
+  public void setCustomLaunchButton(String customLaunchButton) {
+    this.customLaunchButton = customLaunchButton;
+  }
+
+  public String getCustomStartButton() {
+    return customStartButton;
+  }
+
+  public void setCustomStartButton(String customStartButton) {
+    this.customStartButton = customStartButton;
+  }
+
+  public String getCustomLeftButton() {
+    return customLeftButton;
+  }
+
+  public void setCustomLeftButton(String customLeftButton) {
+    this.customLeftButton = customLeftButton;
+  }
+
+  public String getCustomRightButton() {
+    return customRightButton;
+  }
+
+  public void setCustomRightButton(String customRightButton) {
+    this.customRightButton = customRightButton;
+  }
 
   public int getCustomLaunchKey() {
     return customLaunchKey;
