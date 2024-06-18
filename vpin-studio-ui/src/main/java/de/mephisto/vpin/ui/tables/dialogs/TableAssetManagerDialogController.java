@@ -6,7 +6,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
-import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
@@ -169,7 +168,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private GameRepresentation game;
   private VPinScreen screen = VPinScreen.Wheel;
   private TableAssetsService tableAssetsService;
-  private EncryptDecrypt encryptDecrypt;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -364,7 +362,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Platform.runLater(() -> {
       String term = searchField.getText().trim();
       if (!StringUtils.isEmpty(term)) {
-        TableAssetSearch assetSearch = searchPopper(screen, term);
+        TableAssetSearch assetSearch = searchMedia(screen, term);
         ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
@@ -378,13 +376,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private TableAssetSearch searchPopper(VPinScreen screen, String term) {
+  private TableAssetSearch searchMedia(VPinScreen screen, String term) {
     TableAssetSearch cached = client.getGameMediaService().getCached(screen, term);
     if (cached != null) {
       return cached;
     }
 
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, 
+        new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -414,14 +413,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-
-      String assetUrl = null;
-      try {
-        assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
-      }
-      catch (Exception e) {
-        throw new RuntimeException(e);
-      }
+      String assetUrl = tableAsset.getUrl();
 
       try {
         if (baseType.equals("image")) {
@@ -515,19 +507,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
-
-    try {
-      encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
-    catch (NoSuchPaddingException e) {
-      throw new RuntimeException(e);
-    }
-    catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
 
     screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Audio, screenAudio, t1, false));
     screenAudio.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Audio, screenAudio, true, true));

@@ -43,23 +43,6 @@
             <artifactId>github-downloader</artifactId>
             <version>1.0.0</version>
         </dependency>
-
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-popper-client</artifactId>
-            <version>1.0.0</version>
-            <scope>runtime</scope>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-mania-rest-client</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-assets</artifactId>
-            <version>1.0.0</version>
-        </dependency>
         <dependency>
             <groupId>net.java.dev.jna</groupId>
             <artifactId>jna</artifactId>
@@ -73,22 +56,13 @@
 
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-rest-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-vps</artifactId>
-            <version>${project.version}</version>
+            <artifactId>vpin-studio-popper-client</artifactId>
+            <version>1.1.0</version>
+            <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-iscored</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -106,6 +80,11 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-configuration2</artifactId>
             <version>2.8.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-net</groupId>
+            <artifactId>commons-net</artifactId>
+            <version>3.11.1</version>
         </dependency>
         <dependency>
             <groupId>net.sf.sevenzipjbinding</groupId>

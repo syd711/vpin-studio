@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.connectors.assets.TableAssetsService;
@@ -77,7 +76,8 @@ public class GameMediaResource implements InitializingBean {
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) {
     try {
-      List<TableAsset> results = tableAssetsService.search(EncryptDecrypt.KEY, search.getScreen().getSegment(), search.getTerm());
+      Game game = gameService.getGame(search.getGameId());
+      List<TableAsset> results = tableAssetsService.search(game.getEmulator().getName(), search.getScreen().getSegment(), search.getTerm());
       search.setResult(results);
     }
     catch (Exception e) {
@@ -90,7 +90,7 @@ public class GameMediaResource implements InitializingBean {
   public boolean downloadTableAsset(@PathVariable("gameId") int gameId,
                                     @PathVariable("screen") String screen,
                                     @PathVariable("append") boolean append,
-                                    @RequestBody TableAsset asset) {
+                                    @RequestBody TableAsset asset) throws Exception {
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = gameService.getGame(gameId);
     VPinScreen s = VPinScreen.valueOf(screen);

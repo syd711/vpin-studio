@@ -6,11 +6,21 @@ import java.util.List;
 
 public class TableAssetSearch {
 
+  private int gameId;
   private VPinScreen screen;
   private String term;
 
   private List<TableAsset> result;
 
+
+  public int getGameId() {
+    return gameId;
+  }
+
+  public void setGameId(int emulatorId) {
+    this.gameId = emulatorId;
+  }
+  
   public VPinScreen getScreen() {
     return screen;
   }
@@ -54,4 +64,5 @@ public class TableAssetSearch {
     result = 31 * result + (term != null ? term.hashCode() : 0);
     return result;
   }
+
 }

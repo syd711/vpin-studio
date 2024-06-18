@@ -184,8 +184,8 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
-    String vpsTableId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableId());
-    String vpsTableVersionId = tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId());
+    String vpsTableId = game.getExtTableId();
+    String vpsTableVersionId = game.getExtTableVersionId();
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
     if (!StringUtils.isEmpty(vpsTableId)) {
