@@ -47,4 +47,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.preferences;
   exports de.mephisto.vpin.restclient.vps;
   exports de.mephisto.vpin.restclient.textedit;
+  exports de.mephisto.vpin.restclient.frontend.popper;
 }

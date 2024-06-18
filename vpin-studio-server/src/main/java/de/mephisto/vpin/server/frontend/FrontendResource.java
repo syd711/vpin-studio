@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
@@ -42,19 +43,19 @@ public class FrontendResource {
     return frontendService.getFrontend();
   }
 
-  @GetMapping("/custompoptions")
-  public FrontendCustomOptions getCustomOptions() {
-    return frontendStatusService.getCustomOptions();
+  @GetMapping("/settings")
+  public JsonSettings getSettings() {
+    return frontendStatusService.getSettings();
+  }
+
+  @PostMapping("/settings")
+  public boolean saveSettings(@RequestBody Map<String, Object> settings) {
+    return frontendStatusService.saveSettings(settings);
   }
 
   @GetMapping("/version")
   public int getVersion() {
     return frontendStatusService.getVersion();
-  }
-
-  @PostMapping("/custompoptions")
-  public FrontendCustomOptions getCustomOptions(@RequestBody FrontendCustomOptions customOptions) {
-    return frontendStatusService.saveCustomOptions(customOptions);
   }
 
   @GetMapping("/imports")

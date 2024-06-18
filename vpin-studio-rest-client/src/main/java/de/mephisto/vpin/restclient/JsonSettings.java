@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class JsonSettings {
   private final static Logger LOG = LoggerFactory.getLogger(JsonSettings.class);
-  private final static ObjectMapper objectMapper = new ObjectMapper();
+  public final static ObjectMapper objectMapper = new ObjectMapper();
 
   static {
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);

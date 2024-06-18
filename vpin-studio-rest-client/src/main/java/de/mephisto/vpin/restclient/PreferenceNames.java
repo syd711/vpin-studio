@@ -31,6 +31,8 @@ public interface PreferenceNames {
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
 
+  String PINBALLX_SETTINGS = "pinballXSettings";
+
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";

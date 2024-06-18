@@ -75,7 +75,8 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="frontendSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onCustomOptions" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Custom Options" />
+                              <Button fx:id="popperSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onPopperSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Popper Settings" />
+                              <Button fx:id="pinballXSettingsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="608.0" mnemonicParsing="false" onAction="#onPinballXSettings" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="PinballX Settings" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="159.0" mnemonicParsing="false" onAction="#onReset" prefHeight="35.0" prefWidth="212.0" styleClass="preference-button" text="Reset Options" />
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="256.0" styleClass="preference-section" text="VALIDATORS">
                                  <font>

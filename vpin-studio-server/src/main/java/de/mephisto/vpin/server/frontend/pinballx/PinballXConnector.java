@@ -1,8 +1,10 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -38,6 +40,16 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public File getInstallationFolder() {
     return new File("C:/PinballX"); //TODO
+  }
+
+  @Override
+  public JsonSettings getSettings() {
+    return new PinballXSettings();//TODO
+  }
+
+  @Override
+  public void saveSettings(@NotNull Map<String, Object> data) {
+    super.saveSettings(data);//TODO
   }
 
   @Override

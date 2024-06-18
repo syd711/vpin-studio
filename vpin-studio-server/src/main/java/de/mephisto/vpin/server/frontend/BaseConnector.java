@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.server.frontend.standalone.StandaloneConnector;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -18,7 +19,6 @@ import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.games.Game;
@@ -291,20 +291,15 @@ public abstract class BaseConnector implements FrontendConnector {
     return -1;
   }
 
-  @Override
-  public boolean isPopper15() {
-    return true;
-  }
-
   //---------------------------
 
   @Override
-  public FrontendCustomOptions getCustomOptions() {
-    return new FrontendCustomOptions();
+  public JsonSettings getSettings() {
+    return null;
   }
 
   @Override
-  public void updateCustomOptions(@NonNull FrontendCustomOptions options) {
+  public void saveSettings(@NonNull Map<String, Object> data) {
   }
 
 
