@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.frontend;
 
 import de.mephisto.vpin.restclient.DatabaseLockException;
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -172,9 +173,9 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   //-----------------------------
 
-  public FrontendCustomOptions saveCustomOptions(FrontendCustomOptions options) throws Exception {
+  public void saveSettings(JsonSettings settings) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_FRONTEND + "/custompoptions", options, FrontendCustomOptions.class);
+      getRestClient().post(API + API_SEGMENT_FRONTEND + "/settings", settings, Boolean.class);
     }
     catch (HttpClientErrorException e) {
       if (e.getStatusCode().is4xxClientError()) {
@@ -188,8 +189,8 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public FrontendCustomOptions getCustomOptions() {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/custompoptions", FrontendCustomOptions.class);
+  public <T> T getSettings(Class<T> clazz) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/settings", clazz);
   }
 
   public void clearCache() {

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -107,8 +108,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendConnector getFrontendConnector() {
     FrontendType frontendType = getFrontendType();
     return frontendsMap.get(frontendType.name());
-    //return frontendsMap.get(FrontendType.POPPER.name());
-    //return frontendsMap.get("standaloneConnector");
   }
 
   public FrontendType getFrontendType() {
@@ -227,16 +226,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().getVersion();
   }
 
-  public boolean isPopper15() {
-    return getFrontendConnector().isPopper15();
+  public JsonSettings getSettings() {
+    return getFrontendConnector().getSettings();
   }
 
-  public FrontendCustomOptions getCustomOptions() {
-    return getFrontendConnector().getCustomOptions();
-  }
-
-  public void updateCustomOptions(@NonNull FrontendCustomOptions options) {
-    getFrontendConnector().updateCustomOptions(options);
+  public void saveSettings(@NonNull Map<String, Object> data) {
+    getFrontendConnector().saveSettings(data);
   }
 
   public void setPupPackEnabled(Game game, boolean enable) {

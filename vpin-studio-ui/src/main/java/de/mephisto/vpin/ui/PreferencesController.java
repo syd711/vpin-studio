@@ -64,7 +64,10 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button repositoriesBtn;
 
   @FXML
-  private Button frontendSettingsBtn;
+  private Button popperSettingsBtn;
+
+  @FXML
+  private Button pinballXSettingsBtn;
 
   @FXML
   private Button vpbmBtn;
@@ -221,8 +224,13 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private void onCustomOptions(ActionEvent event) throws IOException {
-    load("preference-frontend-custom-options.fxml", event);
+  private void onPopperSettings(ActionEvent event) throws IOException {
+    load("preference-popper-settings.fxml", event);
+  }
+
+  @FXML
+  private void onPinballXSettings(ActionEvent event) throws IOException {
+    load("preference-pinballx-settings.fxml", event);
   }
 
   @FXML
@@ -344,15 +352,18 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    frontendSettingsBtn.managedProperty().bindBidirectional(frontendSettingsBtn.visibleProperty());
+    popperSettingsBtn.managedProperty().bindBidirectional(popperSettingsBtn.visibleProperty());
+    pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
     repositoriesBtn.setVisible(frontendType.supportArchive());
+
     // activation of custom Popper options only for Popper fronted
-    frontendSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
 
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;

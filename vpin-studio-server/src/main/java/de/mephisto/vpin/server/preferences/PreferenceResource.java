@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -68,6 +69,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.NOTIFICATION_SETTINGS: {
           return preferencesService.getJsonPreference(key, NotificationSettings.class);
+        }
+        case PreferenceNames.PINBALLX_SETTINGS: {
+          return preferencesService.getJsonPreference(key, PinballXSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

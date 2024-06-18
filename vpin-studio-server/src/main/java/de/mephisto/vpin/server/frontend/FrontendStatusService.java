@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -176,7 +177,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
    */
   public GameVpsMatch autoMatch(Game game, boolean overwrite) {
     GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
-    if (vpsMatch!=null) {
+    if (vpsMatch != null) {
       vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
     }
     return vpsMatch;
@@ -303,7 +304,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
     // update the table in the frontend
     TableDetails tableDetails = getTableDetails(gameId);
-    if (tableDetails!=null) {
+    if (tableDetails != null) {
       tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
       tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
       saveTableDetails(tableDetails, gameId, false);
@@ -312,7 +313,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
   public void fixGameVersion(int gameId, String version) {
     TableDetails tableDetails = getTableDetails(gameId);
-    if (tableDetails!=null) {
+    if (tableDetails != null) {
       tableDetails.setGameVersion(version);
       saveTableDetails(tableDetails, gameId, false);
     }
@@ -521,13 +522,13 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
   }
 
-  public FrontendCustomOptions getCustomOptions() {
-    return frontendService.getCustomOptions();
+  public JsonSettings getSettings() {
+    return frontendService.getSettings();
   }
 
-  public FrontendCustomOptions saveCustomOptions(FrontendCustomOptions options) {
-    frontendService.updateCustomOptions(options);
-    return options;
+  public boolean saveSettings(Map<String, Object> options) {
+    frontendService.saveSettings(options);
+    return true;
   }
 
   public List<FrontendPlayerDisplay> getPupPlayerDisplays() {

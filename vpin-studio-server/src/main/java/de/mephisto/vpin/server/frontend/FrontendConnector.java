@@ -3,13 +3,14 @@ package de.mephisto.vpin.server.frontend;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.FrontendCustomOptions;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -69,12 +70,10 @@ public interface FrontendConnector {
   // version and options 
 
   int getVersion();
-  
-  boolean isPopper15();
 
-  FrontendCustomOptions getCustomOptions();
+  JsonSettings getSettings();
 
-  void updateCustomOptions(@NonNull FrontendCustomOptions options);
+  void saveSettings(@NonNull Map<String, Object> data);
 
   //----------------------------------
   // Media management
