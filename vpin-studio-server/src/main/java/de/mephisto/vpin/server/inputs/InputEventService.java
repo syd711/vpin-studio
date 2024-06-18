@@ -167,7 +167,7 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
     });
   }
 
-  private static void onTogglePauseMenu() {
+  private void onTogglePauseMenu() {
     LOG.info("Toggle pause menu show");
     ServerFX.getInstance().togglePauseMenu();
   }
