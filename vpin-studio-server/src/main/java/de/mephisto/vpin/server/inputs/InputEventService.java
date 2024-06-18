@@ -1,7 +1,8 @@
-package de.mephisto.vpin.server.keyevent;
+package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.controller.GameController;
+import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
@@ -16,7 +17,6 @@ import de.mephisto.vpin.server.util.KeyChecker;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.jnativehook.GlobalScreen;
-import org.jnativehook.NativeHookException;
 import org.jnativehook.keyboard.NativeKeyEvent;
 import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
@@ -33,8 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 @Service
-public class KeyEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener, PreferenceChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(KeyEventService.class);
+public class InputEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+  private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
   private PopperService popperService;
@@ -54,17 +54,14 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
   private boolean overlayVisible;
   private ShutdownThread shutdownThread;
   private boolean launchOverlayOnStartup = false;
-  private String overlayKey;
-  private String resetKey;
 
-  private Map<String, Long> timingMap = new ConcurrentHashMap<>();
+  private boolean frontendIsRunning = false;
+  private boolean vpxIsRunning = false;
+
+  private Map<Integer, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
 
-  @Override
-  public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
-  }
-
+  //-------------- Event Listening -------------------------------------------------------------------------------------
   @Override
   public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
     shutdownThread.notifyKeyEvent();
@@ -78,69 +75,135 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
     //always hide the overlay on any key press
     if (overlayVisible) {
-      LOG.info("Hiding overlay since key '" + nativeKeyEvent.getKeyChar() + "' was pressed.");
-      this.overlayVisible = false;
-      Platform.runLater(() -> {
-        ServerFX.getInstance().showOverlay(false);
-      });
+      onOverlayHideEvent();
       return;
     }
 
     boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
-    if (!StringUtils.isEmpty(overlayKey)) {
+    int pauseKey = pauseMenuSettings.getCustomPauseKey();
+    int overlayKey = pauseMenuSettings.getCustomOverlayKey();
+
+    if (overlayKey > 0) {
       KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) || (showPauseInsteadOfOverlay && nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey())) {
-        List<ProcessHandle> processes = systemService.getProcesses();
-        boolean vpxRunning = systemService.isVPXRunning(processes);
-        if (showPauseInsteadOfOverlay && vpxRunning) {
-          LOG.info("Toggle pause menu show (Key " + overlayKey + ")");
-          ServerFX.getInstance().togglePauseMenu();
+      if (keyChecker.matches(nativeKeyEvent) || (showPauseInsteadOfOverlay && nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomPauseKey())) {
+        if (showPauseInsteadOfOverlay && vpxIsRunning) {
+          onTogglePauseMenu();
           return;
         }
 
-        if (systemService.isPopperMenuRunning(processes)) {
-          this.overlayVisible = !overlayVisible;
-          Platform.runLater(() -> {
-            LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
-            ServerFX.getInstance().showOverlay(overlayVisible);
-          });
-          return;
-        }
-      }
-    }
-
-    String pauseKey = pauseMenuSettings.getKey();
-    if ((!StringUtils.isEmpty(pauseKey) || pauseMenuSettings.getCustomLaunchKey() > 0) && !showPauseInsteadOfOverlay) {
-      KeyChecker keyChecker = new KeyChecker(pauseKey);
-      if (keyChecker.matches(nativeKeyEvent) || nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomLaunchKey()) {
-        boolean vpxRunning = systemService.isVPXRunning();
-        if (vpxRunning) {
-          ServerFX.getInstance().togglePauseMenu();
-        }
-        else {
-          ServerFX.getInstance().exitPauseMenu();
-        }
+        onToggleOverlayEvent();
         return;
       }
     }
 
-    if (!StringUtils.isEmpty(resetKey)) {
+    //handle pause menu toggling
+    if (pauseKey > 0) {
+      KeyChecker keyChecker = new KeyChecker(pauseKey);
+      if (keyChecker.matches(nativeKeyEvent)) {
+        onPauseMenuEvent();
+        return;
+      }
+    }
+
+    //handle key based reset
+    int resetKey = pauseMenuSettings.getCustomResetKey();
+    if (resetKey > 0) {
       KeyChecker keyChecker = new KeyChecker(resetKey);
       if (keyChecker.matches(nativeKeyEvent)) {
-        new Thread(() -> {
-          systemService.restartPopper();
-          popperService.notifyPopperRestart();
-        }).start();
+        onResetEvent();
       }
     }
   }
 
+  @Override
+  public void controllerEvent(String name) {
+    //always hide the overlay on any key press
+    if (overlayVisible) {
+      onOverlayHideEvent();
+      return;
+    }
+
+    boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
+    String pauseBtn = pauseMenuSettings.getCustomPauseButton();
+    String overlayBtn = pauseMenuSettings.getCustomOverlayButton();
+
+    if (overlayBtn != null) {
+      if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
+        if (showPauseInsteadOfOverlay && vpxIsRunning) {
+          onTogglePauseMenu();
+          return;
+        }
+
+        onToggleOverlayEvent();
+        return;
+      }
+    }
+
+    //handle pause menu toggling
+    if (name.equals(pauseBtn)) {
+      onPauseMenuEvent();
+      return;
+    }
+
+    //handle key based reset
+    String resetBtn = pauseMenuSettings.getCustomResetButton();
+    if (name.equals(resetBtn)) {
+      onResetEvent();
+    }
+  }
+
+  //-------------- Event Execution -------------------------------------------------------------------------------------
+
+  @Override
+  public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
+
+  }
+
+  private void onToggleOverlayEvent() {
+    this.overlayVisible = !overlayVisible;
+    Platform.runLater(() -> {
+      LOG.info("Toggle pause menu show, was visible: " + !overlayVisible);
+      ServerFX.getInstance().showOverlay(overlayVisible);
+    });
+  }
+
+  private static void onTogglePauseMenu() {
+    LOG.info("Toggle pause menu show");
+    ServerFX.getInstance().togglePauseMenu();
+  }
+
+  private void onOverlayHideEvent() {
+    LOG.info("Hiding overlay since key was pressed.");
+    this.overlayVisible = false;
+    Platform.runLater(() -> {
+      ServerFX.getInstance().showOverlay(false);
+    });
+  }
+
+  private void onPauseMenuEvent() {
+    boolean vpxRunning = systemService.isVPXRunning();
+    if (vpxRunning) {
+      ServerFX.getInstance().togglePauseMenu();
+    }
+    else {
+      ServerFX.getInstance().exitPauseMenu();
+    }
+  }
+
+  private void onResetEvent() {
+    new Thread(() -> {
+      systemService.restartPopper();
+      popperService.notifyPopperRestart();
+    }).start();
+  }
+
   private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
     long inputDeboundeMs = pauseMenuSettings.getInputDebounceMs();
-    String pauseKey = pauseMenuSettings.getKey();
+    int pauseKey = pauseMenuSettings.getCustomPauseKey();
+    int overlayKey = pauseMenuSettings.getCustomOverlayKey();
 
     if (inputDeboundeMs > 0) {
-      if (!StringUtils.isEmpty(overlayKey)) {
+      if (overlayKey > 0) {
         KeyChecker keyChecker = new KeyChecker(overlayKey);
         if (keyChecker.matches(nativeKeyEvent)) {
           if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDeboundeMs) {
@@ -152,7 +215,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
         }
       }
 
-      if (!StringUtils.isEmpty(pauseKey)) {
+      if (pauseKey > 0) {
         KeyChecker keyChecker = new KeyChecker(pauseKey);
         if (keyChecker.matches(nativeKeyEvent)) {
           if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDeboundeMs) {
@@ -174,11 +237,14 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void popperLaunched() {
+    refreshProcesses();
+
     Platform.runLater(() -> {
       if (this.launchOverlayOnStartup) {
         try {
           Thread.sleep(1000);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           //ignore
         }
         this.overlayVisible = true;
@@ -189,30 +255,36 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-
+    refreshProcesses();
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-
+    refreshProcesses();
   }
 
   @Override
   public void popperExited() {
-
+    refreshProcesses();
   }
 
   @Override
   public void popperRestarted() {
-
+    refreshProcesses();
   }
 
   public void resetShutdownTimer() {
     shutdownThread.reset();
   }
 
+  private void refreshProcesses() {
+    List<ProcessHandle> processes = systemService.getProcesses();
+    frontendIsRunning = systemService.isPopperMenuRunning(processes);
+    vpxIsRunning = systemService.isVPXRunning(processes);
+  }
+
   @Override
-  public void afterPropertiesSet() throws NativeHookException {
+  public void afterPropertiesSet() {
     new Thread(() -> {
       ServerFX.main(new String[]{});
       LOG.info("Overlay listener started.");
@@ -231,13 +303,12 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
     try {
       InetAddress localHost = InetAddress.getLocalHost();
       LOG.info("Server Address: " + localHost.getHostName() + "/" + localHost.getHostAddress());
-    } catch (UnknownHostException e) {
+    }
+    catch (UnknownHostException e) {
       //
     }
 
     preferenceChanged(PreferenceNames.SHOW_OVERLAY_ON_STARTUP, null, null);
-    preferenceChanged(PreferenceNames.OVERLAY_KEY, null, null);
-    preferenceChanged(PreferenceNames.RESET_KEY, null, null);
     preferenceChanged(PreferenceNames.PAUSE_MENU_SETTINGS, null, null);
 
     preferencesService.addChangeListener(this);
@@ -251,14 +322,19 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
       popperService.addPopperStatusChangeListener(this);
     }
 
-    GlobalScreen.registerNativeHook();
-    java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-    logger.setLevel(Level.OFF);
-    logger.setUseParentHandlers(false);
-    GlobalScreen.addNativeKeyListener(this);
+    try {
+      GlobalScreen.registerNativeHook();
+      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
+      logger.setLevel(Level.OFF);
+      logger.setUseParentHandlers(false);
+      GlobalScreen.addNativeKeyListener(this);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to register native key event hook: " + e.getMessage(), e);
+    }
 
     GameController.getInstance();
-
+    refreshProcesses();
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
   }
 
@@ -272,24 +348,15 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Pop
           LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
           break;
         }
-        case PreferenceNames.OVERLAY_KEY: {
-          overlayKey = (String) preferencesService.getPreferenceValue(PreferenceNames.OVERLAY_KEY);
-          LOG.info("Overlay key has been updated to: " + overlayKey);
-          break;
-        }
-        case PreferenceNames.RESET_KEY: {
-          resetKey = (String) preferencesService.getPreferenceValue(PreferenceNames.RESET_KEY);
-          LOG.info("Reset key has been updated to: " + resetKey);
-          break;
-        }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
           LOG.info("Pause key has been updated.");
           break;
         }
       }
-    } catch (Exception e) {
-      LOG.error("Error updating KeyEventService settings: " + e.getMessage(), e);
+    }
+    catch (Exception e) {
+      LOG.error("Error updating " + this.getClass().getSimpleName() + " settings: " + e.getMessage(), e);
     }
   }
 }

@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.keyevent.ShutdownThread;
+import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;

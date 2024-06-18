@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.server.keyevent.KeyEventService;
+import de.mephisto.vpin.server.inputs.InputEventService;
 import org.apache.catalina.connector.RequestFacade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
@@ -14,7 +14,7 @@ import java.io.IOException;
 public class ShutdownResetFilter implements Filter {
 
   @Autowired
-  private KeyEventService keyEventService;
+  private InputEventService keyEventService;
 
   @Override
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {

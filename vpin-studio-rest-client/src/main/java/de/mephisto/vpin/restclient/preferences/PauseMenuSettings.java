@@ -4,25 +4,57 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 
 public class PauseMenuSettings extends JsonSettings {
-  private String key;
   private boolean useOverlayKey;
   private String authorAllowList;
   private int inputDebounceMs = 0;
   private PopperScreen videoScreen = PopperScreen.Topper;
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
-  private int customLaunchKey;
+  private int customPauseKey;
   private int customStartKey;
   private int customLeftKey;
   private int customRightKey;
   private int customOverlayKey;
+  private int customResetKey;
 
-
-  private String customLaunchButton;
+  private String customPauseButton;
   private String customStartButton;
   private String customLeftButton;
   private String customRightButton;
   private String customOverlayButton;
+  private String customResetButton;
+
+  public int getCustomPauseKey() {
+    return customPauseKey;
+  }
+
+  public void setCustomPauseKey(int customPauseKey) {
+    this.customPauseKey = customPauseKey;
+  }
+
+  public String getCustomPauseButton() {
+    return customPauseButton;
+  }
+
+  public void setCustomPauseButton(String customPauseButton) {
+    this.customPauseButton = customPauseButton;
+  }
+
+  public int getCustomResetKey() {
+    return customResetKey;
+  }
+
+  public void setCustomResetKey(int customResetKey) {
+    this.customResetKey = customResetKey;
+  }
+
+  public String getCustomResetButton() {
+    return customResetButton;
+  }
+
+  public void setCustomResetButton(String customResetButton) {
+    this.customResetButton = customResetButton;
+  }
 
   public String getCustomOverlayButton() {
     return customOverlayButton;
@@ -38,14 +70,6 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setCustomOverlayKey(int customOverlayKey) {
     this.customOverlayKey = customOverlayKey;
-  }
-
-  public String getCustomLaunchButton() {
-    return customLaunchButton;
-  }
-
-  public void setCustomLaunchButton(String customLaunchButton) {
-    this.customLaunchButton = customLaunchButton;
   }
 
   public String getCustomStartButton() {
@@ -72,14 +96,6 @@ public class PauseMenuSettings extends JsonSettings {
     this.customRightButton = customRightButton;
   }
 
-  public int getCustomLaunchKey() {
-    return customLaunchKey;
-  }
-
-  public void setCustomLaunchKey(int customLaunchKey) {
-    this.customLaunchKey = customLaunchKey;
-  }
-
   public int getCustomStartKey() {
     return customStartKey;
   }
@@ -92,7 +108,7 @@ public class PauseMenuSettings extends JsonSettings {
     return customLeftKey;
   }
 
-  public void setCustomLeftKey(int customLeftKepy) {
+  public void setCustomLeftKey(int customLeftKey) {
     this.customLeftKey = customLeftKey;
   }
 
@@ -137,14 +153,6 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setAuthorAllowList(String authorAllowList) {
     this.authorAllowList = authorAllowList;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
   }
 
   public boolean isUseOverlayKey() {

@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.keyevent;
+package de.mephisto.vpin.server.inputs;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;

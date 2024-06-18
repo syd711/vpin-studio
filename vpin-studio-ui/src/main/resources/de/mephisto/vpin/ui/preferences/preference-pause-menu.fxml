@@ -58,7 +58,6 @@
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
@@ -77,18 +76,12 @@
                               <Label styleClass="checkbox-description" text="the pause menu will be shown instead. This saves one key binding." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label styleClass="preference-label" text="Pause Menu Key:" textFill="WHITE" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <ComboBox fx:id="pauseMenuKeyCombo" prefHeight="30.0" prefWidth="158.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="46.0" styleClass="preference-label" text="Pause Menu Visibility:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="4">
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="preference-label" text="Video Authors Allow List:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -96,7 +89,7 @@
                               <Insets top="4.0" />
                            </GridPane.margin>
                         </Label>
-                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <TextField fx:id="videoAuthorsAllowList" promptText="e.g. &quot;Kongedam&quot;">
                                  <VBox.margin>
@@ -109,12 +102,12 @@
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
                            </children>
                         </VBox>
-                        <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <ComboBox fx:id="pauseMenuStyleCombo" prefHeight="30.0" />
                               <Label>
@@ -130,12 +123,12 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Label layoutX="10.0" layoutY="193.0" styleClass="preference-label" text="Tutorial Video Screen:" textFill="WHITE" GridPane.rowIndex="3">
+                        <Label layoutX="10.0" layoutY="193.0" styleClass="preference-label" text="Tutorial Video Screen:" textFill="WHITE" GridPane.rowIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <ComboBox fx:id="tutorialScreenCombo" prefHeight="30.0" />
                               <Label>
@@ -151,7 +144,7 @@
                               </Label>
                            </children>
                         </HBox>
-                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                        <Button mnemonicParsing="false" onAction="#onPauseTest" text="Test Pause Menu" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>

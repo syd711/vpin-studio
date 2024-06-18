@@ -206,11 +206,6 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
-  private void onReset(ActionEvent event) throws IOException {
-    load("preference-reset.fxml", event);
-  }
-
-  @FXML
   private void onCustomOptions(ActionEvent event) throws IOException {
     load("preference-popper_custom_options.fxml", event);
   }

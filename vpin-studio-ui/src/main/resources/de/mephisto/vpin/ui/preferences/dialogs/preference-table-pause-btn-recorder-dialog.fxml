@@ -40,7 +40,8 @@
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="137.7999755859375" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="125.80002441406253" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="314.400048828125" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="125.80002441406253" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="200.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -50,69 +51,70 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Pause Button Key:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label text="Pause Button Key:" textFill="WHITE" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel" text="Start Key:" textFill="WHITE" GridPane.rowIndex="3">
+                  <Label fx:id="usersLabel" text="Start Key:" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="Navigate Left Key:" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="Navigate Left Key:" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="Navigate Right Key:" textFill="WHITE" GridPane.rowIndex="5">
+                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="Navigate Right Key:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeLaunch" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label fx:id="keyCodePause" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeStart" layoutX="213.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Label fx:id="keyCodeStart" layoutX="213.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeLeft" layoutX="213.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Label fx:id="keyCodeLeft" layoutX="213.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeRight" layoutX="213.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
+                  <Label fx:id="keyCodeRight" layoutX="213.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="bindLaunchBtn" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <Button fx:id="bindPauseBtn" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindStartBtn" layoutX="274.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                  <Button fx:id="bindStartBtn" layoutX="274.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindLeftBtn" layoutX="274.0" layoutY="44.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                  <Button fx:id="bindLeftBtn" layoutX="274.0" layoutY="44.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindRightBtn" layoutX="274.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                  <Button fx:id="bindRightBtn" layoutX="274.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="Button" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="Input" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -122,21 +124,71 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel111" layoutX="10.0" layoutY="150.0" text="Overlay Key:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label fx:id="usersLabel111" layoutX="10.0" layoutY="150.0" text="Overlay Key:" textFill="WHITE" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeOverlay" layoutX="206.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="keyCodeOverlay" layoutX="206.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="bindOverlayBtn" layoutX="272.0" layoutY="145.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="bindOverlayBtn" layoutX="272.0" layoutY="145.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
+                  <Label fx:id="usersLabel1111" layoutX="10.0" layoutY="83.0" text="Reset Key:" textFill="WHITE" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyCodeReset" layoutX="206.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="bindResetBtn" layoutX="272.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Label layoutX="175.0" layoutY="15.0" styleClass="default-headline" text="Value" textFill="WHITE" GridPane.columnIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValueReset" layoutX="203.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValueOverlay" layoutX="203.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValuePause" layoutX="203.0" layoutY="116.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValueStart" layoutX="203.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValueLeft" layoutX="203.0" layoutY="184.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="keyValueRight" layoutX="203.0" layoutY="217.0" text="-" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

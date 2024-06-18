@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.keyevent;
+package de.mephisto.vpin.server.inputs;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;

@@ -1,7 +1,6 @@
-package de.mephisto.vpin.server.keyevent.controllers;
+package de.mephisto.vpin.server.inputs.controllers;
 
 import net.java.games.input.*;
-import org.junit.jupiter.api.Test;
 
 public class ControllerTest {
 

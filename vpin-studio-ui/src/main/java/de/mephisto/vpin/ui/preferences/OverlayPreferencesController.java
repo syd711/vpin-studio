@@ -28,9 +28,6 @@ public class OverlayPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(OverlayPreferencesController.class);
 
   @FXML
-  private ComboBox<String> overlayKeyCombo;
-
-  @FXML
   private CheckBox showOverlayOnStartupCheckbox;
 
   @FXML
@@ -72,10 +69,8 @@ public class OverlayPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     List<String> keyNames = Keys.getKeyNames();
     keyNames.add(0, "");
-    overlayKeyCombo.setItems(FXCollections.observableList(keyNames));
 
     PreferenceBindingUtil.bindCheckbox(showOverlayOnStartupCheckbox, PreferenceNames.SHOW_OVERLAY_ON_STARTUP, false);
-    PreferenceBindingUtil.bindComboBox(overlayKeyCombo, PreferenceNames.OVERLAY_KEY);
 
     radioA.setUserData("");
     radioB.setUserData("-hs-plrs-offline");

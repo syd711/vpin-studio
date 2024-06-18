@@ -33,9 +33,6 @@ public class PauseMenuPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuPreferencesController.class);
 
   @FXML
-  private ComboBox<String> pauseMenuKeyCombo;
-
-  @FXML
   private ComboBox<PopperScreen> tutorialScreenCombo;
 
   @FXML
@@ -58,7 +55,6 @@ public class PauseMenuPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     List<String> keyNames = Keys.getKeyNames();
     keyNames.add(0, "");
-    pauseMenuKeyCombo.setItems(FXCollections.observableList(keyNames));
     pauseMenuStyleCombo.setItems(FXCollections.observableList(Arrays.asList(PauseMenuStyle.values())));
 
     PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
@@ -66,14 +62,6 @@ public class PauseMenuPreferencesController implements Initializable {
     pauseMenuCheckbox.setSelected(pauseMenuSettings.isUseOverlayKey());
     pauseMenuCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       pauseMenuSettings.setUseOverlayKey(newValue);
-      pauseMenuKeyCombo.setDisable(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
-    });
-
-    pauseMenuKeyCombo.setValue(pauseMenuSettings.getKey());
-    pauseMenuKeyCombo.setDisable(pauseMenuCheckbox.isSelected());
-    pauseMenuKeyCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      pauseMenuSettings.setKey(newValue);
       client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     });
 
