@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -16,7 +17,8 @@ public class PinballXAssetsAdapterTest {
 
   PinballXAssetsAdapter createAdapter() {
     PinballXAssetsAdapter adapter = new PinballXAssetsAdapter();
-    adapter.configure("ftp.gameex.com", 21, "leprinco@yahoo.fr", "Oliver01", "/-PinballX-");
+    adapter.configure("ftp.gameex.com", 21, "/-PinballX-/Media");
+    adapter.configureCredentials("xxx", "xxx");
     return adapter;
   }
 
@@ -26,40 +28,40 @@ public class PinballXAssetsAdapterTest {
     List<TableAsset> assets;
     
     assets = adapter.search("Visual Pinball", "PlayField", "250Cc");
-    assertEquals(3, assets.size());
+    assertEquals(1, assets.size());
     assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(0).getName());
-    
-    for (TableAsset res: assets) {
-      System.out.println(res.getUrl() + "/" + res.getName());
-    }
-  
-    //assets = adapter.search("Visual Pinball", "Wheel", "Attack from Mars");
-    //assertEquals(37, assets.size());
+
+    assets = adapter.search("Visual Pinball", "Wheel", "Attack from Mars");
+    //doPrintAssets(assets);
+    assertEquals(15, assets.size());
 
     assets = adapter.search("Visual Pinball", "Other2", "250Cc");
     assertEquals(0, assets.size());
+    // useless but suppress warning...
+    doPrintAssets(assets);
+  }
+
+  private void doPrintAssets(List<TableAsset> assets) {
+    for (TableAsset res: assets) {
+      System.out.println(res.getUrl() + "/" + res.getName());
+    }
   }
 
   @Test
   public void testDownload() throws Exception {
     PinballXAssetsAdapter adapter = createAdapter();
 
-    TableAsset asset = new TableAsset();
-    asset.setUrl("/-PinballX-/Media/Visual Pinball/Table Videos");
-    asset.setName("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v");
-    asset.setScreen("Playfield");
+    String url = "/-PinballX-/Media/Visual Pinball/Table Videos/250cc (Inder) (1992) (JPSalas) (1.1.0).f4v";
     
     Path tempPath = Files.createTempFile("test", "temp"); 
-    try {
-      File temp = tempPath.toFile();
-      adapter.download(asset, temp);
+    File temp = tempPath.toFile();
+    try (FileOutputStream fout = new FileOutputStream(temp)) {
+      adapter.writeAsset(fout, url);
 
       assertTrue(temp.exists());
       assertEquals(11634196, Files.size(tempPath));
     } 
-    finally {
-      Files.deleteIfExists(tempPath);
-    };
+    Files.deleteIfExists(tempPath);
   }
 
 

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
+import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -38,6 +39,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private TableAssetsService tableAssetsService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -76,7 +80,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
             GameValidationCode.CODE_NO_OTHER2,
             GameValidationCode.CODE_NO_WHEEL_IMAGE,
             GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-            GameValidationCode.CODE_OUTDATED_RECORDING));
+            GameValidationCode.CODE_OUTDATED_RECORDING
+        ));
         break;
       }
       case Popper: {
@@ -95,7 +100,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         frontend.setSupportedScreens(screens);
         frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
             GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-            GameValidationCode.CODE_OUTDATED_RECORDING));
+            GameValidationCode.CODE_OUTDATED_RECORDING
+        ));
         break;
       }
       default: {
@@ -542,6 +548,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     FrontendConnector frontend = getFrontendConnector();
     if (frontend != null) {
       frontend.initializeConnector(this.serverSettings);
+      tableAssetsService.registerAdapter(frontend.getTableAssetAdapter(preferencesService.getPreferences()));
     }
 
     this.loadEmulators();

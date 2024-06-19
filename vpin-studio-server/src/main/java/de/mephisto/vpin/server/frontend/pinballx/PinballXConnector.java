@@ -8,12 +8,14 @@ import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.server.preferences.Preferences;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -29,6 +31,9 @@ public class PinballXConnector extends BaseConnector {
   public final static String PINBALL_X = FrontendType.PinballX.name();
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
+
+  @Autowired
+  private PinballXAssetsAdapter assetsAdapter;
 
   private Map<String, TableDetails> mapTableDetails;
 
@@ -194,6 +199,12 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     return new PinballXMediaAccessStrategy();
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter(Preferences prefs) {
+    assetsAdapter.configureCredentials("xxx", "xxx");
+    return assetsAdapter;
   }
 
 }

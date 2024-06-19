@@ -475,7 +475,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onMediaEdit() {
     GameRepresentation selectedItems = getSelection();
-    TableDialogs.openTableAssetsDialog(this, selectedItems, VPinScreen.BackGlass);
+    if (selectedItems != null) {
+      TableDialogs.openTableAssetsDialog(this, selectedItems, VPinScreen.BackGlass);
+    }
   }
 
   @FXML

@@ -9,6 +9,7 @@ import java.util.List;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 
 import org.apache.commons.io.FileUtils;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -140,6 +142,11 @@ public class StandaloneConnector extends BaseConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     // no associated medias
+    return null;
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter(Preferences prefs) {
     return null;
   }
 

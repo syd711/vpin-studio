@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLConnection;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -15,25 +15,30 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
 import org.apache.commons.net.ftp.FTPReply;
+import org.apache.commons.net.io.CopyStreamException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+@Service
 public class PinballXAssetsAdapter implements TableAssetsAdapter {
+  private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsAdapter.class);
 
   @Value("${pinballX.mediaserver.host}")
   private String host;
   @Value("${pinballX.mediaserver.port}")
   private int port;
-  @Value("${pinballX.mediaserver.user}")
-  private String user;
-  @Value("${pinballX.mediaserver.pwd}")
-  private String pwd;
   @Value("${pinballX.mediaserver.rootfolder}")
   private String rootfolder;
+
+  private String user;
+  private String pwd;
 
   // for exclusive search : if searching for an emulators, will exclude all folders below except the one searched
   private static final String[] emulators = clean(
@@ -49,11 +54,15 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     "Table Image", "Table Video", "Topper Image", "Topper Video", "Wheel"
   );
 
-  public void configure(String host, int port, String user, String pwd, String rootfolder) {
+
+  public void configureCredentials(String user, String pwd) {
+    this.user = user;
+    this.pwd = pwd;
+  }
+
+  public void configure(String host, int port, String rootfolder) {
     this.host = host;
     this.port = port;
-    this.user = user;
-    this.pwd =  pwd;
     this.rootfolder = rootfolder;
   }
 
@@ -61,6 +70,8 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     if (term.length() < 3) {
         return Collections.emptyList();
     }
+
+    LOG.info("Searching term '" + term + "'' for screen  " + screenSegment);
 
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     String screenToFolder = screen!=null? fromScreenToFolder(screen): null;
@@ -93,10 +104,10 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
         }
       };
   
-      searchRecursive(results, ftp, rootfolder, filter, false, emulator, false, folder);
+      searchRecursive(results, ftp, "", filter, false, emulator, false, folder);
       for (TableAsset asset: results) {
         asset.setSourceId("PinballX");
-        //asset.setAuthor(author);
+        asset.setAuthor("gameex");
         asset.setEmulator(emulatorName);
         asset.setScreen(screen.name());
       }  
@@ -105,7 +116,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     finally {
       close(ftp);
     }
-
+    LOG.info("Search for '" + term + "'' returns " + results.size() + " results");
     return results;
   }
 
@@ -123,7 +134,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
    */
   private void searchRecursive(List<TableAsset> results, FTPClient ftp, String folder, FTPFileFilter filter,
         boolean isForEmulator, String emulator, boolean isForScreen, String screen) throws IOException {
-    FTPFile[] files = ftp.listFiles(folder, filter);
+    FTPFile[] files = ftp.listFiles(rootfolder + "/" + folder, filter);
     for (FTPFile file : files) {
       if (file.isDirectory()) {
         String name = clean(file.getName());
@@ -165,7 +176,6 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     int high = names.length - 1;
     while (low <= high) {
       int mid = (low + high) >>> 1;
-      String n = names[mid];
       if (StringUtils.contains(names[mid], name) || StringUtils.contains(name, names[mid])) {
         return true;
       }
@@ -182,27 +192,40 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
   }
 
   private TableAsset toTableAsset(String folder, FTPFile file) {
+    String filename = file.getName();
     TableAsset asset = new TableAsset();
-    //asset.setMimeType()
-    asset.setUrl(folder);
-    asset.setName(file.getName());
+    String mimeType = URLConnection.guessContentTypeFromName(filename);
+    if (StringUtils.endsWithIgnoreCase(filename, ".apng")) {
+      mimeType = "image/png";
+    } else if (StringUtils.endsWithIgnoreCase(filename, ".f4v")) {
+      mimeType = "video/x-f4v";
+    } 
+    asset.setMimeType(mimeType);
+    // double encoding needed
+    String url = URLEncoder.encode(URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
+    asset.setUrl("/assets/d/" + url);
+    asset.setName(filename);
     //asset.setSize(file.getSize());
     return asset;
   }
 
   //-------------------------------------
 
-  public void download(@NonNull TableAsset asset, @NonNull File target) throws Exception {
+  public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
+    LOG.info("downlaoding " + url);
     
     FTPClient ftp = null;
     try {
       ftp = open();
 
-      ftp.changeWorkingDirectory(asset.getUrl());
+      String folder = StringUtils.substringBeforeLast(url, "/");
+      String name = StringUtils.substringAfterLast(url, "/");
 
-      try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(target))) { 
-        ftp.retrieveFile(asset.getName(), outputStream); 
-      } 
+      ftp.changeWorkingDirectory(rootfolder + folder);
+      ftp.retrieveFile(name, outputStream); 
+    }
+    catch (CopyStreamException cse) {
+      LOG.error("Error while downloading asset " + url + ": " + cse.getMessage());
     }
     finally {
       close(ftp);

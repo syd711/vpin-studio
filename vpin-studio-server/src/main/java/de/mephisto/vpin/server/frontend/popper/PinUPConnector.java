@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import com.formdev.flatlaf.json.Json;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -1645,6 +1646,18 @@ public class PinUPConnector implements FrontendConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     return ((mediaDirectory, tableName, screen) -> new File(mediaDirectory, screen.name()));
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter(Preferences  prefs) {
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      return (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+    }
+    catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+      return null;
+    }
   }
 
   public void initializeConnector(ServerSettings settings) {

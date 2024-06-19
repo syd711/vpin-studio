@@ -7,8 +7,6 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -52,15 +50,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.*;
 
@@ -167,7 +162,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private VPinScreen screen = VPinScreen.Wheel;
-  private TableAssetsService tableAssetsService;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -413,7 +407,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-      String assetUrl = tableAsset.getUrl();
+      String assetUrl = client.getGameMediaService().getUrl(tableAsset);
 
       try {
         if (baseType.equals("image")) {
@@ -563,7 +557,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No Popper assets found for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
 
     if (!isEmbeddedMode()) {
@@ -573,17 +567,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Label label = new Label("No asset preview activated.");
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
     serverAssetMediaPane.setCenter(label);
-
-    tableAssetsService = new TableAssetsService();
-
-    try {
-      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      TableAssetsAdapter adapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
-      tableAssetsService.registerAdapter(adapter);
-    }
-    catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
-    }
 
     this.serverAssetsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableAsset>() {
       @Override
@@ -721,7 +704,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @Override
   public void onDialogCancel() {
     EventManager.getInstance().removeListener(this);
-    EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
+    if ((this.game!=null)) {
+      EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
+    }
   }
 
 
@@ -736,12 +721,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
-      List<GameRepresentation> games = client.getGameService().getGamesCached(this.game.getEmulatorId());
-      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-      tablesCombo.getItems().addAll(gameRepresentations);
-      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
-      });
+      int emulatorId = this.game.getEmulatorId();
+      new Thread(() -> {
+        // as get of games may takes some time, run in a dedicated Thread
+        List<GameRepresentation> games = client.getGameService().getGamesCached(emulatorId);
+        ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+        tablesCombo.getItems().addAll(gameRepresentations);
+        tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+          this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
+        });
+      }).start();
     }
 
     if (game == null) {

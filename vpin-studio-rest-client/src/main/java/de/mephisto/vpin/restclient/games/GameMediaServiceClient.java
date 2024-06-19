@@ -165,6 +165,18 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     }
   }
 
+  /**
+   * @param tableAsset The TableAsset from which we need the URL
+   * @return the URL of the asset, prepended by API segments when it starts with "/"
+   */
+  public String getUrl(TableAsset tableAsset) {
+    String url = tableAsset.getUrl();
+    if (url.startsWith("/")) {
+      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + url;
+    }
+    return url;
+  }
+
   public void clearCache() {
     getRestClient().clearCache("popper/emulators");
     this.cache.clear();
