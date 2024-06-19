@@ -10,114 +10,59 @@ public class PauseMenuSettings extends JsonSettings {
   private PopperScreen videoScreen = PopperScreen.Topper;
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
-  private int customPauseKey;
-  private int customStartKey;
-  private int customLeftKey;
-  private int customRightKey;
-  private int customOverlayKey;
-  private int customResetKey;
+  private String pauseButton;
+  private String startButton;
+  private String leftButton;
+  private String rightButton;
+  private String overlayButton;
+  private String resetButton;
 
-  private String customPauseButton;
-  private String customStartButton;
-  private String customLeftButton;
-  private String customRightButton;
-  private String customOverlayButton;
-  private String customResetButton;
-
-  public int getCustomPauseKey() {
-    return customPauseKey;
+  public String getPauseButton() {
+    return pauseButton;
   }
 
-  public void setCustomPauseKey(int customPauseKey) {
-    this.customPauseKey = customPauseKey;
+  public void setPauseButton(String pauseButton) {
+    this.pauseButton = pauseButton;
   }
 
-  public String getCustomPauseButton() {
-    return customPauseButton;
+  public String getStartButton() {
+    return startButton;
   }
 
-  public void setCustomPauseButton(String customPauseButton) {
-    this.customPauseButton = customPauseButton;
+  public void setStartButton(String startButton) {
+    this.startButton = startButton;
   }
 
-  public int getCustomResetKey() {
-    return customResetKey;
+  public String getLeftButton() {
+    return leftButton;
   }
 
-  public void setCustomResetKey(int customResetKey) {
-    this.customResetKey = customResetKey;
+  public void setLeftButton(String leftButton) {
+    this.leftButton = leftButton;
   }
 
-  public String getCustomResetButton() {
-    return customResetButton;
+  public String getRightButton() {
+    return rightButton;
   }
 
-  public void setCustomResetButton(String customResetButton) {
-    this.customResetButton = customResetButton;
+  public void setRightButton(String rightButton) {
+    this.rightButton = rightButton;
   }
 
-  public String getCustomOverlayButton() {
-    return customOverlayButton;
+  public String getOverlayButton() {
+    return overlayButton;
   }
 
-  public void setCustomOverlayButton(String customOverlayButton) {
-    this.customOverlayButton = customOverlayButton;
+  public void setOverlayButton(String overlayButton) {
+    this.overlayButton = overlayButton;
   }
 
-  public int getCustomOverlayKey() {
-    return customOverlayKey;
+  public String getResetButton() {
+    return resetButton;
   }
 
-  public void setCustomOverlayKey(int customOverlayKey) {
-    this.customOverlayKey = customOverlayKey;
-  }
-
-  public String getCustomStartButton() {
-    return customStartButton;
-  }
-
-  public void setCustomStartButton(String customStartButton) {
-    this.customStartButton = customStartButton;
-  }
-
-  public String getCustomLeftButton() {
-    return customLeftButton;
-  }
-
-  public void setCustomLeftButton(String customLeftButton) {
-    this.customLeftButton = customLeftButton;
-  }
-
-  public String getCustomRightButton() {
-    return customRightButton;
-  }
-
-  public void setCustomRightButton(String customRightButton) {
-    this.customRightButton = customRightButton;
-  }
-
-  public int getCustomStartKey() {
-    return customStartKey;
-  }
-
-  public void setCustomStartKey(int customStartKey) {
-    this.customStartKey = customStartKey;
-  }
-
-  public int getCustomLeftKey() {
-    return customLeftKey;
-  }
-
-  public void setCustomLeftKey(int customLeftKey) {
-    this.customLeftKey = customLeftKey;
-  }
-
-  public int getCustomRightKey() {
-    return customRightKey;
-  }
-
-  public void setCustomRightKey(int customRightKey) {
-    this.customRightKey = customRightKey;
+  public void setResetButton(String resetButton) {
+    this.resetButton = resetButton;
   }
 
   public PauseMenuStyle getStyle() {

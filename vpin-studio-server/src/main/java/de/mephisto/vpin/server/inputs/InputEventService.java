@@ -13,12 +13,8 @@ import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.KeyChecker;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
-import org.jnativehook.GlobalScreen;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,10 +26,9 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.logging.Level;
 
 @Service
-public class InputEventService implements InitializingBean, NativeKeyListener, PopperStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements InitializingBean, PopperStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -58,65 +53,17 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
   private boolean frontendIsRunning = false;
   private boolean vpxIsRunning = false;
 
-  private final Map<Integer, Long> timingMap = new ConcurrentHashMap<>();
+  private final Map<String, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
 
   //-------------- Event Listening -------------------------------------------------------------------------------------
-  @Override
-  public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    shutdownThread.notifyKeyEvent();
-    handleKeyEvent(nativeKeyEvent);
-  }
-
-  private void handleKeyEvent(NativeKeyEvent nativeKeyEvent) {
-    if (isEventDebounced(nativeKeyEvent)) {
-      return;
-    }
-
-    //always hide the overlay on any key press
-    if (overlayVisible) {
-      onToggleOverlayEvent();
-      return;
-    }
-
-    boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
-    int pauseKey = pauseMenuSettings.getCustomPauseKey();
-    int overlayKey = pauseMenuSettings.getCustomOverlayKey();
-
-    if (overlayKey > 0) {
-      KeyChecker keyChecker = new KeyChecker(overlayKey);
-      if (keyChecker.matches(nativeKeyEvent) || (showPauseInsteadOfOverlay && nativeKeyEvent.getRawCode() == pauseMenuSettings.getCustomPauseKey())) {
-        if (showPauseInsteadOfOverlay && vpxIsRunning) {
-          onTogglePauseMenu();
-          return;
-        }
-
-        onToggleOverlayEvent();
-        return;
-      }
-    }
-
-    //handle pause menu toggling
-    if (pauseKey > 0) {
-      KeyChecker keyChecker = new KeyChecker(pauseKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
-        onPauseMenuEvent();
-        return;
-      }
-    }
-
-    //handle key based reset
-    int resetKey = pauseMenuSettings.getCustomResetKey();
-    if (resetKey > 0) {
-      KeyChecker keyChecker = new KeyChecker(resetKey);
-      if (keyChecker.matches(nativeKeyEvent)) {
-        onResetEvent();
-      }
-    }
-  }
 
   @Override
   public void controllerEvent(String name) {
+    if (isEventDebounced(name)) {
+      return;
+    }
+
     //always hide the overlay on any key press
     if (overlayVisible) {
       onToggleOverlayEvent();
@@ -124,8 +71,8 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
     }
 
     boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
-    String pauseBtn = pauseMenuSettings.getCustomPauseButton();
-    String overlayBtn = pauseMenuSettings.getCustomOverlayButton();
+    String pauseBtn = pauseMenuSettings.getPauseButton();
+    String overlayBtn = pauseMenuSettings.getOverlayButton();
 
     if (overlayBtn != null) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
@@ -148,18 +95,13 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
     }
 
     //handle key based reset
-    String resetBtn = pauseMenuSettings.getCustomResetButton();
+    String resetBtn = pauseMenuSettings.getResetButton();
     if (name.equals(resetBtn)) {
       onResetEvent();
     }
   }
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
-
-  @Override
-  public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-
-  }
 
   private void onToggleOverlayEvent() {
     this.overlayVisible = !overlayVisible;
@@ -191,16 +133,15 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
     }).start();
   }
 
-  private synchronized boolean isEventDebounced(NativeKeyEvent nativeKeyEvent) {
-    long inputDeboundeMs = pauseMenuSettings.getInputDebounceMs();
-    int pauseKey = pauseMenuSettings.getCustomPauseKey();
-    int overlayKey = pauseMenuSettings.getCustomOverlayKey();
+  private synchronized boolean isEventDebounced(String eventName) {
+    long inputDebounceMs = pauseMenuSettings.getInputDebounceMs();
+    String pauseKey = pauseMenuSettings.getPauseButton();
+    String overlayKey = pauseMenuSettings.getOverlayButton();
 
-    if (inputDeboundeMs > 0) {
-      if (overlayKey > 0) {
-        KeyChecker keyChecker = new KeyChecker(overlayKey);
-        if (keyChecker.matches(nativeKeyEvent)) {
-          if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDeboundeMs) {
+    if (inputDebounceMs > 0) {
+      if (overlayKey != null) {
+        if (overlayKey.matches(eventName)) {
+          if (timingMap.containsKey(overlayKey) && (System.currentTimeMillis() - timingMap.get(overlayKey)) < inputDebounceMs) {
             LOG.info("Debouncer: Skipped overlay key event, because it event within debounce range.");
             return true;
           }
@@ -209,10 +150,9 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
         }
       }
 
-      if (pauseKey > 0) {
-        KeyChecker keyChecker = new KeyChecker(pauseKey);
-        if (keyChecker.matches(nativeKeyEvent)) {
-          if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDeboundeMs) {
+      if (pauseKey != null) {
+        if (pauseKey.matches(eventName)) {
+          if (timingMap.containsKey(pauseKey) && (System.currentTimeMillis() - timingMap.get(pauseKey)) < inputDebounceMs) {
             LOG.info("Debouncer: Skipped pause key event, because it event within debounce range.");
             return true;
           }
@@ -222,11 +162,6 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
       }
     }
     return false;
-  }
-
-  @Override
-  public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
-
   }
 
   @Override
@@ -339,17 +274,6 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
     else {
       LOG.info("Added VPin service popper status listener.");
       popperService.addPopperStatusChangeListener(this);
-    }
-
-    try {
-      GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-      logger.setLevel(Level.OFF);
-      logger.setUseParentHandlers(false);
-      GlobalScreen.addNativeKeyListener(this);
-    }
-    catch (Exception e) {
-      LOG.error("Failed to register native key event hook: " + e.getMessage(), e);
     }
 
     GameController.getInstance().addListener(this);
