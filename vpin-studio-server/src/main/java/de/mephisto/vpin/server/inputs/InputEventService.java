@@ -58,7 +58,7 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
   private boolean frontendIsRunning = false;
   private boolean vpxIsRunning = false;
 
-  private Map<Integer, Long> timingMap = new ConcurrentHashMap<>();
+  private final Map<Integer, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
 
   //-------------- Event Listening -------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
 
     //always hide the overlay on any key press
     if (overlayVisible) {
-      onOverlayHideEvent();
+      onToggleOverlayEvent();
       return;
     }
 
@@ -119,7 +119,7 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
   public void controllerEvent(String name) {
     //always hide the overlay on any key press
     if (overlayVisible) {
-      onOverlayHideEvent();
+      onToggleOverlayEvent();
       return;
     }
 
@@ -134,8 +134,10 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
           return;
         }
 
-        onToggleOverlayEvent();
-        return;
+        if (frontendIsRunning) {
+          onToggleOverlayEvent();
+          return;
+        }
       }
     }
 
@@ -170,14 +172,6 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
   private void onTogglePauseMenu() {
     LOG.info("Toggle pause menu show");
     ServerFX.getInstance().togglePauseMenu();
-  }
-
-  private void onOverlayHideEvent() {
-    LOG.info("Hiding overlay since key was pressed.");
-    this.overlayVisible = false;
-    Platform.runLater(() -> {
-      ServerFX.getInstance().showOverlay(false);
-    });
   }
 
   private void onPauseMenuEvent() {
@@ -284,6 +278,31 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
   }
 
   @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    timingMap.clear();
+    refreshProcesses();
+
+    try {
+      switch (propertyName) {
+        case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
+          String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
+          this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
+          LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
+          break;
+        }
+        case PreferenceNames.PAUSE_MENU_SETTINGS: {
+          pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
+          LOG.info("Input settings have been reloaded.");
+          break;
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Error updating " + this.getClass().getSimpleName() + " settings: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
       ServerFX.main(new String[]{});
@@ -333,30 +352,8 @@ public class InputEventService implements InitializingBean, NativeKeyListener, P
       LOG.error("Failed to register native key event hook: " + e.getMessage(), e);
     }
 
-    GameController.getInstance();
+    GameController.getInstance().addListener(this);
     refreshProcesses();
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    try {
-      switch (propertyName) {
-        case PreferenceNames.SHOW_OVERLAY_ON_STARTUP: {
-          String startupLaunch = (String) preferencesService.getPreferenceValue(PreferenceNames.SHOW_OVERLAY_ON_STARTUP);
-          this.launchOverlayOnStartup = !StringUtils.isEmpty(startupLaunch) && Boolean.parseBoolean(startupLaunch);
-          LOG.info("Show overlay on startup: " + this.launchOverlayOnStartup);
-          break;
-        }
-        case PreferenceNames.PAUSE_MENU_SETTINGS: {
-          pauseMenuSettings = preferencesService.getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
-          LOG.info("Pause key has been updated.");
-          break;
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Error updating " + this.getClass().getSimpleName() + " settings: " + e.getMessage(), e);
-    }
   }
 }

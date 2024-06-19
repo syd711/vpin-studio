@@ -37,6 +37,26 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   @FXML
   private Button okBtn;
 
+
+  @FXML
+  private Button deleteStartBtn;
+
+  @FXML
+  private Button deletePauseBtn;
+
+  @FXML
+  private Button deleteLeftBtn;
+
+  @FXML
+  private Button deleteOverlayBtn;
+
+  @FXML
+  private Button deleteRightBtn;
+
+  @FXML
+  private Button deleteResetBtn;
+
+
   @FXML
   private Button bindStartBtn;
 
@@ -97,9 +117,38 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   private PauseMenuSettings pauseMenuSettings;
 
   @FXML
+  private void onDeleteBinding(ActionEvent e) {
+    Button source = (Button) e.getSource();
+    if (source.equals(deletePauseBtn)) {
+      pauseMenuSettings.setCustomPauseButton(null);
+      pauseMenuSettings.setCustomPauseKey(0);
+    }
+    else if (source.equals(deleteStartBtn)) {
+      pauseMenuSettings.setCustomStartButton(null);
+      pauseMenuSettings.setCustomStartKey(0);
+    }
+    else if (source.equals(deleteLeftBtn)) {
+      pauseMenuSettings.setCustomLeftButton(null);
+      pauseMenuSettings.setCustomLeftKey(0);
+    }
+    else if (source.equals(deleteRightBtn)) {
+      pauseMenuSettings.setCustomRightButton(null);
+      pauseMenuSettings.setCustomRightKey(0);
+    }
+    else if (source.equals(deleteOverlayBtn)) {
+      pauseMenuSettings.setCustomOverlayButton(null);
+      pauseMenuSettings.setCustomOverlayKey(0);
+    }
+    else if (source.equals(deleteResetBtn)) {
+      pauseMenuSettings.setCustomResetButton(null);
+      pauseMenuSettings.setCustomResetKey(0);
+    }
+    refreshView();
+  }
+
+  @FXML
   private void onBindClick(ActionEvent e) {
     refreshView();
-
     Button source = (Button) e.getSource();
     if (source.equals(bindPauseBtn)) {
       bindPauseBtn.setDisable(true);

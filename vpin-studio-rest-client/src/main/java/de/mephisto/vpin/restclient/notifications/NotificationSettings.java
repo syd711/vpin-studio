@@ -3,7 +3,7 @@ package de.mephisto.vpin.restclient.notifications;
 import de.mephisto.vpin.restclient.JsonSettings;
 
 public class NotificationSettings extends JsonSettings {
-  private boolean startupNotification = true;
+  private boolean startupNotification = false;
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
   private boolean iScoredNotification = true;

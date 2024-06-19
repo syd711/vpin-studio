@@ -1746,7 +1746,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnOther2.setVisible(false);
 
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
-    assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
   private void refreshViewForEmulator() {

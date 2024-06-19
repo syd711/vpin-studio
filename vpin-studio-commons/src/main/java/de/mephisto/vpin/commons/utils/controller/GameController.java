@@ -27,8 +27,7 @@ public class GameController {
         LOG.info("Loaded game controllers: " + e.getMessage());
       }
       List<Controller> filteredControllers = Arrays.stream(controllers).filter(c ->
-              !(c.getType().equals(Controller.Type.MOUSE) &&
-                  !(c.getType().equals(Controller.Type.KEYBOARD))))
+              !(c.getType().equals(Controller.Type.MOUSE)))
           .collect(Collectors.toList());
 
       if (filteredControllers.isEmpty()) {
@@ -40,9 +39,6 @@ public class GameController {
       while (true) {
         for (Controller controller : filteredControllers) {
           if (controller.getType().equals(Controller.Type.MOUSE)) {
-            continue;
-          }
-          if (controller.getType().equals(Controller.Type.KEYBOARD)) {
             continue;
           }
 
@@ -57,7 +53,8 @@ public class GameController {
 
             float value = event.getValue();
             if (value == 1) {
-//              LOG.info("GameControllerEvent: " + comp.getName());
+              LOG.info("GameControllerEvent: " + comp.getName());
+              LOG.info("GameControllerEvent2: " + comp.getPollData());
               new Thread(() -> {
                 for (GameControllerInputListener listener : new ArrayList<>(listeners)) {
                   listener.controllerEvent(comp.getName());
