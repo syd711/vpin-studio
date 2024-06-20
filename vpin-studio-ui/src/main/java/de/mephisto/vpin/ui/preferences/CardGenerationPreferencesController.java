@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.popper.PinUPControl;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -173,6 +174,8 @@ public class CardGenerationPreferencesController implements Initializable {
         );
       }
     }
+
+    EventManager.getInstance().notifyTableChange(-1, null);
   }
 
   class ResolutionChangeListener implements ChangeListener<String> {
