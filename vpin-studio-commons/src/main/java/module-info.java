@@ -20,7 +20,6 @@ open module de.mephisto.vpin.commons {
   requires javafx.media;
 
   requires de.mephisto.vpin.restclient;
-  requires jnativehook;
   requires java.logging;
   requires de.mephisto.vpin.connectors.vps;
   requires de.mephisto.vpin.connectors.iscored;

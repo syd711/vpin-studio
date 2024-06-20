@@ -53,8 +53,8 @@ public class GameController {
 
             float value = event.getValue();
             if (value == 1) {
-              LOG.info("GameControllerEvent: " + comp.getName());
-              LOG.info("GameControllerEvent2: " + comp.getPollData());
+//              LOG.info("GameControllerEvent: " + comp.getName());
+//              LOG.info("GameControllerEvent2: " + comp.getPollData());
               new Thread(() -> {
                 for (GameControllerInputListener listener : new ArrayList<>(listeners)) {
                   listener.controllerEvent(comp.getName());

@@ -127,6 +127,8 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
   }
 
   private void onResetEvent() {
+    frontendIsRunning = false;
+    vpxIsRunning = false;
     new Thread(() -> {
       systemService.restartPopper();
       popperService.notifyPopperRestart();
@@ -166,7 +168,7 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
 
   @Override
   public void popperLaunched() {
-    refreshProcesses();
+    frontendIsRunning = true;
 
     Platform.runLater(() -> {
       if (this.launchOverlayOnStartup) {
@@ -184,38 +186,35 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    refreshProcesses();
+    vpxIsRunning = false;
+    frontendIsRunning = true;
   }
 
   @Override
   public void tableExited(TableStatusChangedEvent event) {
-    refreshProcesses();
+    vpxIsRunning = false;
+    frontendIsRunning = true;
   }
 
   @Override
   public void popperExited() {
-    refreshProcesses();
+    vpxIsRunning = false;
+    frontendIsRunning = false;
   }
 
   @Override
   public void popperRestarted() {
-    refreshProcesses();
+    frontendIsRunning = true;
+    vpxIsRunning = false;
   }
 
   public void resetShutdownTimer() {
     shutdownThread.reset();
   }
 
-  private void refreshProcesses() {
-    List<ProcessHandle> processes = systemService.getProcesses();
-    frontendIsRunning = systemService.isPopperMenuRunning(processes);
-    vpxIsRunning = systemService.isVPXRunning(processes);
-  }
-
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     timingMap.clear();
-    refreshProcesses();
 
     try {
       switch (propertyName) {
@@ -267,17 +266,15 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
 
     preferencesService.addChangeListener(this);
 
-    boolean pinUPRunning = popperService.isPinUPRunning();
-    if (pinUPRunning) {
+    frontendIsRunning = popperService.isPinUPRunning();
+    if (frontendIsRunning) {
       popperLaunched();
     }
-    else {
-      LOG.info("Added VPin service popper status listener.");
-      popperService.addPopperStatusChangeListener(this);
-    }
+
+    LOG.info("Added VPin service popper status listener.");
+    popperService.addPopperStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);
-    refreshProcesses();
     LOG.info("Server startup finished, running version is " + systemService.getVersion());
   }
 }
