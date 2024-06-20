@@ -94,7 +94,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private ObservableList<GameRepresentation> data;
   private List<GameRepresentation> games;
 
-  private List<String> ignoreList = new ArrayList<>();
+  private final List<String> ignoreList = new ArrayList<>();
 
   private CardSettings cardSettings;
 
@@ -109,11 +109,19 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   @FXML
-  private void onReload() {
+  private void onReloadPressed() {
+    onReload(true);
+  }
+
+  @FXML
+  private void onReload(boolean force) {
     setBusy(true);
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
 
     new Thread(() -> {
+      if (force) {
+        client.getGameService().clearCache(-1);
+      }
       games = client.getGameService().getVpxGamesCached();
 
       Platform.runLater(() -> {
@@ -193,8 +201,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
       }
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
     }
   }
@@ -304,8 +311,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       templateEditorController = loader.getController();
       templateEditorController.setCardsController(this);
       templateEditorPane.setCenter(editorRoot);
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);
     }
 
@@ -315,8 +321,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     try {
       cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
 
@@ -326,8 +331,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -469,14 +473,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     });
 
     EventManager.getInstance().addListener(this);
-    onReload();
+    onReload(false);
     templateEditorController.refreshPreviewSize();
   }
 
   public void refresh(Optional<GameRepresentation> gameRepresentation, List<CardTemplate> templates, boolean refreshAll) {
     this.cardTemplates = templates;
     if (refreshAll) {
-      onReload();
+      onReload(false);
       return;
     }
 
