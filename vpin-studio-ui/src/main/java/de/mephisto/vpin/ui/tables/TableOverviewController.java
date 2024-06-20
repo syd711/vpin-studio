@@ -10,14 +10,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -507,15 +507,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTableEdit() {
-    GameRepresentation selectedItems = getSelection();
-    if (selectedItems != null) {
-      if (Studio.client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-          TableDialogs.openTableDataDialog(this, selectedItems);
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendType frontendType = frontend.getFrontendType();
+
+    if (frontendType.supportStandardFields()) {
+      GameRepresentation selectedItems = getSelection();
+      if (selectedItems != null) {
+        if (Studio.client.getFrontendService().isFrontendRunning()) {
+          if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+            TableDialogs.openTableDataDialog(this, selectedItems);
+          }
+          return;
         }
-        return;
+        TableDialogs.openTableDataDialog(this, selectedItems);
       }
-      TableDialogs.openTableDataDialog(this, selectedItems);
     }
   }
 
@@ -1687,6 +1692,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
+    this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
+    this.assetManagerViewBtn.managedProperty().bindBidirectional(this.assetManagerViewBtn.visibleProperty());
+    this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
+
 
 
     Frontend frontend = client.getFrontendService().getFrontend();
@@ -1697,10 +1706,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     if (!frontendType.supportMedias()) {
       uploadTableBtn.getItems().remove(mediaUploadItem);
+      this.assetManagerBtn.setVisible(false);
+      this.assetManagerViewBtn.setVisible(false);
     }
     if (!frontendType.supportPlaylists()) {
       playlistCombo.setVisible(false);
       playlistSplitter.setVisible(false);
+    }
+    if (!frontendType.supportStandardFields()) {
+      playlistCombo.setVisible(false);
+      playlistSplitter.setVisible(false);
+      this.tableEditBtn.setVisible(false);
     }
 
 
@@ -1774,9 +1790,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnInfo.setVisible(false);
     columnHelp.setVisible(false);
     columnOther2.setVisible(false);
-
-    assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
-    assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
   private void refreshViewForEmulator() {

@@ -399,7 +399,6 @@ public class TablesSidebarController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
 
-
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
       Parent tablesRoot = loader.load();
@@ -547,16 +546,22 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledetails.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarTableDetailsController = loader.getController();
-      tablesSidebarTableDetailsController.setSidebarController(this);
-      titledPaneTableDetails.setContent(tablesRoot);
+    if (frontendType.supportStandardFields()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledetails.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarTableDetailsController = loader.getController();
+        tablesSidebarTableDetailsController.setSidebarController(this);
+        titledPaneTableDetails.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPaneTableDetails);
     }
+
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarMameController.class.getResource("scene-tables-sidebar-mame.fxml"));

@@ -111,7 +111,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public FrontendType getFrontendType() {
-    return FrontendType.PinballX;
+    return FrontendType.Standalone;
   }
 
   //----------------------------------------

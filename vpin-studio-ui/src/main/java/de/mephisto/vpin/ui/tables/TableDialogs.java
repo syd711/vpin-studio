@@ -12,12 +12,13 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -366,6 +367,12 @@ public class TableDialogs {
   }
 
   public static Optional<UploadDescriptor> openTableUploadDialog(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
+    if (gameEmulators.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
+      return Optional.empty();
+    }
+
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
     controller.setGame(stage, tableOverviewController, game, descriptor, analysis);
@@ -608,7 +615,8 @@ public class TableDialogs {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       e.printStackTrace();
     }
 

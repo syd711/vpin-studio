@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -56,7 +57,8 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
         uploadTypeGeneratorSelectedLast = false;
         DefaultBackgroundUploadProgressModel model = new DefaultBackgroundUploadProgressModel(this.game.getId(), "Default Background Upload", selection);
         ProgressDialog.createProgressDialog(model);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Uploading default background failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       } finally {
@@ -101,8 +103,8 @@ public class DefaultBackgroundUploadController implements Initializable, DialogC
     return result;
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(@NonNull GameRepresentation game) {
     this.game = game;
-    this.titleLabel.setText("Select default background for \"" + game.getGameDisplayName() + "\":");
+      this.titleLabel.setText("Select default background for \"" + game.getGameDisplayName() + "\":");
   }
 }
