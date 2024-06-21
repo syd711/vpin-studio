@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.frontend.standalone;
 import java.io.File;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 
 import org.apache.commons.io.FileUtils;
@@ -21,8 +21,9 @@ import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
 
@@ -42,7 +43,7 @@ public class StandaloneConnector extends BaseConnector {
   private PreferencesService preferencesService;
   
   @Override
-  public void initializeConnector(ServerSettings settings) {
+  public void initializeConnector() {
   }
 
   @NotNull
@@ -51,6 +52,30 @@ public class StandaloneConnector extends BaseConnector {
     return systemService.resolveVisualPinballInstallationFolder(); //TOOD is it?
   }
 
+  public Frontend getFrontend() {
+    Frontend frontend = new Frontend();
+    //frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
+    frontend.setFrontendType(FrontendType.Standalone);
+
+    frontend.setIgnoredValidations(Arrays.asList(
+        GameValidationCode.CODE_NO_AUDIO,
+        GameValidationCode.CODE_NO_AUDIO_LAUNCH,
+        GameValidationCode.CODE_NO_APRON,
+        GameValidationCode.CODE_NO_INFO,
+        GameValidationCode.CODE_NO_HELP,
+        GameValidationCode.CODE_NO_TOPPER,
+        GameValidationCode.CODE_NO_BACKGLASS,
+        GameValidationCode.CODE_NO_DMD,
+        GameValidationCode.CODE_NO_PLAYFIELD,
+        GameValidationCode.CODE_NO_LOADING,
+        GameValidationCode.CODE_NO_OTHER2,
+        GameValidationCode.CODE_NO_WHEEL_IMAGE,
+        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
+        GameValidationCode.CODE_OUTDATED_RECORDING
+    ));
+    frontend.setAssetSearchEnabled(false);
+    return frontend;
+  }
 
   //------------------------------------------------------
   @Override
@@ -146,7 +171,7 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   @Override
-  public TableAssetsAdapter getTableAssetAdapter(Preferences prefs) {
+  public TableAssetsAdapter getTableAssetAdapter() {
     return null;
   }
 

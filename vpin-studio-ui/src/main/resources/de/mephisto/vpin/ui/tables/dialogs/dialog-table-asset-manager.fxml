@@ -214,9 +214,9 @@
 
                </left>
                <center>
-                  <VBox BorderPane.alignment="CENTER">
+                  <VBox fx:id="assetsBox" BorderPane.alignment="CENTER">
                      <children>
-                        <Label fx:id="tableLabel1" text="PinUP Popper Assets Search" textFill="WHITE">
+                        <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -224,7 +224,7 @@
                               <Insets top="24.0" />
                            </VBox.margin>
                         </Label>
-                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+                        <BorderPane fx:id="assetSearchList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                            <top>
                               <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                                  <BorderPane.margin>

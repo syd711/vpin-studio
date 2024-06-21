@@ -51,7 +51,7 @@ public class TableAssetSearchProgressModel extends ProgressModel<String> {
 
   @Override
   public String nextToString(String term) {
-    return "Search Popper for '" + term + "'";
+    return "Search assets for '" + term + "'";
   }
 
   @Override
@@ -60,7 +60,7 @@ public class TableAssetSearchProgressModel extends ProgressModel<String> {
       TableAssetSearch result = client.getGameMediaService().searchTableAsset(gameId, screen, term);
       progressResultModel.getResults().add(result);
     } catch (Exception e) {
-      LOG.error("Popper search failed: " + e.getMessage(), e);
+      LOG.error("Assets search failed: " + e.getMessage(), e);
     }
   }
 

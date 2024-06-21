@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 
 /**
  *

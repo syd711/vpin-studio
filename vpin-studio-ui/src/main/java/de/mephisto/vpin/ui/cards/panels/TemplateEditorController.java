@@ -249,9 +249,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     String popperScreen = cardSettings.getPopperScreen();
     if (!StringUtils.isEmpty(popperScreen)) {
       VPinScreen screen = VPinScreen.valueOfScreen(popperScreen);
-      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getDefaultGameEmulator();
-      String mediaDir = gameEmulator.getMediaDirectory();
-      File screenDir = new File(mediaDir, screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen.name());
       SystemUtil.openFolder(screenDir);
     }
   }

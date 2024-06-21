@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +64,9 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
       client.getGameMediaService().downloadTableAsset(tableAsset, this.VPinScreen, this.game, append);
     } catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Download Failed", "Popper table asset download failed: " + e.getMessage());
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Download Failed", "Popper table asset download failed: " + e.getMessage());
+      });
     }
   }
 

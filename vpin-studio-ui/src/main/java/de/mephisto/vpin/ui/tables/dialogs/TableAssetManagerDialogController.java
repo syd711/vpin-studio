@@ -43,6 +43,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -157,6 +158,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button addAudioBlank;
 
   @FXML
+  private VBox assetsBox;
+  @FXML
+  private Label assetSearchLabel;
+  @FXML
+  private BorderPane assetSearchList;
+  
+  @FXML
   private Label previewTitleLabel;
 
   private TableOverviewController overviewController;
@@ -212,10 +220,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onFolderBtn() {
     if (this.gameMedia != null) {
-      int emulatorId = this.game.getEmulatorId();
-      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(emulatorId);
-      String mediaDir = gameEmulator.getMediaDirectory();
-      File screenDir = new File(mediaDir, screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
       SystemUtil.openFolder(screenDir);
     }
   }
@@ -371,6 +376,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
+    // needed despite also implemented in searchService to avoid loop
     TableAssetSearch cached = client.getGameMediaService().getCached(screen, term);
     if (cached != null) {
       return cached;
@@ -385,6 +391,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     TableAssetSearch empty = new TableAssetSearch();
     empty.setResult(Collections.emptyList());
+    empty.setGameId(game.getId());
+    empty.setTerm(term);
     empty.setScreen(screen);
     return empty;
   }
@@ -426,7 +434,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType);
+          Frontend frontend = client.getFrontendService().getFrontend();
+          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
         }
       }
       catch (Exception e) {
@@ -493,6 +502,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   public void initialize(URL url, ResourceBundle resourceBundle) {
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
+
+    // needed as the controller is also used by dialog-table-asset-manager-embedded.fxml that does not contain asset search capabilities
+    if (assetsBox!=null) {
+      if (frontend.isAssetSearchEnabled()) {
+        this.assetSearchLabel.setText(frontend.getAssetSearchLabel());
+
+      //Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      //ImageView view1 = new ImageView(image1);
+      //view1.setPreserveRatio(true);
+      //view1.setFitHeight(18);
+
+      } 
+      else {
+        assetsBox.getChildren().remove(assetSearchLabel);
+        assetsBox.getChildren().remove(assetSearchList);
+      }
+    }
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
@@ -628,7 +654,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(mediaPane, mediaItem, url);
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, true);
+          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
         }
       }
     });
