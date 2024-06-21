@@ -15,8 +15,6 @@ public class GameEmulatorRepresentation {
   private String altSoundDirectory;
   private String altColorDirectory;
 
-  private String mediaDirectory;
-
   private String mameDirectory;
   private String nvramDirectory;
 
@@ -55,14 +53,6 @@ public class GameEmulatorRepresentation {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public void setMediaDirectory(String mediaDirectory) {
-    this.mediaDirectory = mediaDirectory;
-  }
-
-  public String getMediaDirectory() {
-    return mediaDirectory;
   }
 
   public String getMameDirectory() {

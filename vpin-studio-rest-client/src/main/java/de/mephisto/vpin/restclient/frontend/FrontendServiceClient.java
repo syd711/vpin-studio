@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.io.File;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -25,7 +26,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   private List<TableAssetSearch> cache = new ArrayList<>();
 
-  private Frontend frontend;
+  private FrontendType frontendType;
 
   public FrontendServiceClient(VPinStudioClient client) {
     super(client);
@@ -37,17 +38,14 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public Frontend getFrontend() {
-    if (frontend == null) {
-      frontend = getRestClient().get(API + API_SEGMENT_FRONTEND, Frontend.class);
-    }
-    return frontend;
+    return getRestClient().get(API + API_SEGMENT_FRONTEND, Frontend.class);
   }
 
   public FrontendType getFrontendType() {
-    if (frontend == null) {
-      getFrontend();
+    if (frontendType == null) {
+      frontendType = getFrontend().getFrontendType();
     }
-    return frontend.getFrontendType();
+    return frontendType;
   }
 
   public GameList getImportableTables() {
@@ -131,6 +129,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
       LOG.error("Failed save table details: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public File getMediaDirectory(int gameId, String screen) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/mediadir/" + gameId + "/" + screen, File.class);
   }
 
   public TableDetails autoFillTableDetails(int gameId, boolean overwrite) throws Exception {

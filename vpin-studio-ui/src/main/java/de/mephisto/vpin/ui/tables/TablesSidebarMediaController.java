@@ -330,10 +330,8 @@ public class TablesSidebarMediaController implements Initializable {
 
     GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
     if (selection != null) {
-      GameEmulatorRepresentation emulator = client.getFrontendService().getGameEmulator(selection.getEmulatorId());
-      File emulatorFolder = new File(emulator.getMediaDirectory());
-      File file = new File(emulatorFolder, screen);
-      SystemUtil.openFolder(file);
+      File screendir = client.getFrontendService().getMediaDirectory(selection.getId(), screen);
+      SystemUtil.openFolder(screendir);
     }
   }
 

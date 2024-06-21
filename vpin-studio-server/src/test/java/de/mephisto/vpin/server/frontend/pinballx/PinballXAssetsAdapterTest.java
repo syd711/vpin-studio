@@ -28,13 +28,22 @@ public class PinballXAssetsAdapterTest {
     List<TableAsset> assets;
     
     assets = adapter.search("Visual Pinball", "PlayField", "250Cc");
-    assertEquals(1, assets.size());
-    assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(0).getName());
-
-    assets = adapter.search("Visual Pinball", "Wheel", "Attack from Mars");
+    assertEquals(2, assets.size());
+    assertEquals("250cc (Inder 1992).png", assets.get(0).getName());
+    assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(1).getName());
     //doPrintAssets(assets);
+    
+    //System.out.println("----------------------------------");
+    assets = adapter.search("Visual Pinball", "Wheel", "Attack from Mars");
     assertEquals(15, assets.size());
+    //doPrintAssets(assets);
 
+    //System.out.println("----------------------------------");
+    assets = adapter.search("Visual Pinball", "Loading", "air");
+    assertEquals(12, assets.size());
+    //doPrintAssets(assets);
+
+    //System.out.println("----------------------------------");
     assets = adapter.search("Visual Pinball", "Other2", "250Cc");
     assertEquals(0, assets.size());
     // useless but suppress warning...

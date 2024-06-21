@@ -56,6 +56,8 @@ public class Preferences {
 
   private String dofSettings;
 
+  private String pinballXSettings;
+
   @Column(length = 1024)
   private String highscoreTitles;
 
@@ -156,6 +158,14 @@ public class Preferences {
 
   public void setHighscoreCardSettings(String highscoreCardSettings) {
     this.highscoreCardSettings = highscoreCardSettings;
+  }
+
+  public String getPinballXSettings() {
+    return pinballXSettings;
+  }
+
+  public void setPinballXSettings(String pinballXSettings) {
+    this.pinballXSettings = pinballXSettings;
   }
 
   public String getOverlayPageUrl() {

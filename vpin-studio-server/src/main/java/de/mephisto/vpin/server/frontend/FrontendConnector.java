@@ -9,14 +9,13 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.preferences.Preferences;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -24,9 +23,11 @@ public interface FrontendConnector {
   /** 
    * Let the Frontend initialize itself, called 
    */
-  void initializeConnector(ServerSettings settings);
+  void initializeConnector();
 
-  TableAssetsAdapter getTableAssetAdapter(Preferences preferences);
+  Frontend getFrontend();
+
+  TableAssetsAdapter getTableAssetAdapter();
 
 
   @NonNull
