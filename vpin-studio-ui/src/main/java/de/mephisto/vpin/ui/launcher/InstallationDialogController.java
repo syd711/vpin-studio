@@ -4,19 +4,18 @@ import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.ui.Studio;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToolBar;
-import javafx.scene.layout.BorderPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,16 +39,16 @@ public class InstallationDialogController implements Initializable, DialogContro
   private Button installBtn;
 
   @FXML
-  private Button popperFolderBtn;
+  private TextField installationFolderField;
 
   @FXML
-  private TextField pinUPSystemFolderField;
+  private RadioButton radioA;
 
   @FXML
-  private BorderPane main;
+  private RadioButton radioB;
 
   @FXML
-  private ToolBar toolbar;
+  private RadioButton radioC;
 
   @FXML
   private VBox validationError;
@@ -58,7 +57,7 @@ public class InstallationDialogController implements Initializable, DialogContro
 
   private Stage stage;
   private PropertiesStore store;
-  private File pinUPSystemInstallationFolder;
+  private File installationFolder;
 
   private SystemInfo systemInfo = new SystemInfo();
 
@@ -71,10 +70,19 @@ public class InstallationDialogController implements Initializable, DialogContro
   @FXML
   private void onInstall(ActionEvent e) {
     LOG.info("********************************* Installation Overview ***********************************************");
-    LOG.info("PinUP System Folder: " + pinUPSystemInstallationFolder.getAbsolutePath());
+    LOG.info("Frontend System Folder: " + installationFolder.getAbsolutePath());
     LOG.info("*******************************************************************************************************");
 
-    store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath());
+    if (radioA.isSelected()) {
+      store.set(SystemInfo.PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+    }
+    else if (radioB.isSelected()) {
+      store.set(SystemInfo.PINBALLX_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+    }
+    else if (radioC.isSelected()) {
+      store.set(SystemInfo.STANDALONE_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+    }
+
     result = true;
 
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -84,18 +92,18 @@ public class InstallationDialogController implements Initializable, DialogContro
   @FXML
   private void onPopperFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
-    if (pinUPSystemInstallationFolder != null && pinUPSystemInstallationFolder.exists()) {
-      if(!pinUPSystemInstallationFolder.isDirectory()) {
-        pinUPSystemInstallationFolder = pinUPSystemInstallationFolder.getParentFile();
+    if (installationFolder != null && installationFolder.exists()) {
+      if (!installationFolder.isDirectory()) {
+        installationFolder = installationFolder.getParentFile();
       }
-      directoryChooser.setInitialDirectory(this.pinUPSystemInstallationFolder);
+      directoryChooser.setInitialDirectory(this.installationFolder);
     }
-    directoryChooser.setTitle("Select PinUP System Folder");
+    directoryChooser.setTitle("Select Frontend System Folder");
     File selectedDirectory = directoryChooser.showDialog(stage);
 
     if (selectedDirectory != null) {
-      this.pinUPSystemInstallationFolder = selectedDirectory;
-      this.pinUPSystemFolderField.setText(this.pinUPSystemInstallationFolder.getAbsolutePath());
+      this.installationFolder = selectedDirectory;
+      this.installationFolderField.setText(this.installationFolder.getAbsolutePath());
       validateFolders();
     }
   }
@@ -111,8 +119,39 @@ public class InstallationDialogController implements Initializable, DialogContro
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
 
-    pinUPSystemInstallationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
-    pinUPSystemFolderField.setText(pinUPSystemInstallationFolder.getAbsolutePath());
+    if (radioA.isSelected()) {
+      installationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
+      installationFolderField.setText(installationFolder.getAbsolutePath());
+    }
+
+    ToggleGroup toggleGroup = new ToggleGroup();
+    radioA.setToggleGroup(toggleGroup);
+    radioB.setToggleGroup(toggleGroup);
+    radioC.setToggleGroup(toggleGroup);
+
+    toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
+      @Override
+      public void changed(ObservableValue<? extends Toggle> observable, Toggle oldValue, Toggle newValue) {
+        if (radioA.isSelected()) {
+          installationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
+          installationFolderField.setText(installationFolder.getAbsolutePath());
+        }
+
+        if (radioB.isSelected()) {
+          installationFolder = new File("C:\\PinballX");
+          installationFolderField.setText(installationFolder.getAbsolutePath());
+          validateFolders();
+        }
+
+        if (radioC.isSelected()) {
+          installationFolder = new File("C:\\VisualPinball");
+          installationFolderField.setText(installationFolder.getAbsolutePath());
+          validateFolders();
+        }
+
+        validateFolders();
+      }
+    });
 
     validateFolders();
   }
@@ -121,19 +160,50 @@ public class InstallationDialogController implements Initializable, DialogContro
     installBtn.setDisable(true);
     validationError.setVisible(false);
 
-    if (pinUPSystemInstallationFolder == null) {
+    if (installationFolder == null) {
       validationError.setVisible(true);
-      validationErrorLabel.setText("No PinUP Popper installation folder set.");
+      validationErrorLabel.setText("No frontend installation folder set.");
       return;
     }
 
-    if (!pinUPSystemInstallationFolder.exists()) {
+    if (!installationFolder.exists()) {
       validationError.setVisible(true);
-      validationErrorLabel.setText("PinUP Popper installation folder does not exist.");
+      validationErrorLabel.setText("Frontend installation folder does not exist.");
       return;
+    }
+
+    if (radioA.isSelected()) {
+      if (!hasValidExe("PinUpMenu.exe")) {
+        validationError.setVisible(true);
+        validationErrorLabel.setText("No PinPUP Popper installation found in this folder.");
+        return;
+      }
+    }
+
+    if (radioB.isSelected()) {
+      if (!hasValidExe("Game Manager.exe")) {
+        validationError.setVisible(true);
+        validationErrorLabel.setText("No PinballX installation found in this folder.");
+        return;
+      }
+    }
+
+    if (radioC.isSelected()) {
+      if (!hasValidExe("VPinballX.exe")) {
+        validationError.setVisible(true);
+        validationErrorLabel.setText("No Visual Pinball installation found in this folder.");
+        return;
+      }
     }
 
     installBtn.setDisable(false);
+  }
+
+  private boolean hasValidExe(String s) {
+    if (!StringUtils.isEmpty(this.installationFolderField.getText())) {
+      return new File(this.installationFolderField.getText(), s).exists();
+    }
+    return false;
   }
 
   @Override
