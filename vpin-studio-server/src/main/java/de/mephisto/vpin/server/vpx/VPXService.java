@@ -199,7 +199,7 @@ public class VPXService {
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe) {
-    systemService.killPopper();
+    frontendService.killFrontend();
 
     if (game != null) {
       return vpxCommandLineService.execute(game, "-Play", altExe);

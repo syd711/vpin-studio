@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.image.Image?>
@@ -67,22 +68,75 @@
          <top>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Folder Settings">
+                  <Label layoutX="10.0" layoutY="10.0" text="Frontend Type">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
                   </Label>
+                  <Label styleClass="preference-description" text="Select the frontend type of your cabinet.">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Label>
+                  <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="169.60009765625" minWidth="148.800048828125" prefWidth="166.4000244140625" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="511.99990234375" prefWidth="515.1999755859375" />
+                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="70.0" minWidth="23.60009765625" prefWidth="64.4000244140625" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label prefHeight="20.0" styleClass="preference-label" text="Frontend Type:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <RadioButton fx:id="radioA" mnemonicParsing="false" selected="true" text="PinUP Popper" textFill="WHITE" GridPane.columnIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="PinballX" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <RadioButton fx:id="radioC" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Standalone" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <Label text="Frontend Installation Folder">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="298.199951171875" minWidth="10.0" prefWidth="204.00002441406252" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="399.1999267578125" minWidth="10.0" prefWidth="399.1999267578125" />
+                      <ColumnConstraints hgrow="SOMETIMES" prefWidth="160.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="460.79997558593755" minWidth="10.0" prefWidth="459.99992675781255" />
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="393.4000549316406" minWidth="10.0" prefWidth="108.80007324218752" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <TextField fx:id="pinUPSystemFolderField" editable="false" layoutX="223.0" layoutY="10.0" prefHeight="30.0" prefWidth="339.0" GridPane.columnIndex="1">
+                        <TextField fx:id="installationFolderField" editable="false" layoutX="223.0" layoutY="10.0" prefHeight="30.0" prefWidth="339.0" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -92,12 +146,15 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Label layoutX="10.0" layoutY="15.0" text="PinUP Popper Folder:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="15.0" text="Installation Folder:" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
                      </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
                   </GridPane>
                </children>
                <BorderPane.margin>

@@ -18,7 +18,8 @@ public class SystemInfo {
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
-  public final static String VISUAL_PINBALL_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
+  public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
+  public final static String STANDALONE_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
@@ -27,8 +28,6 @@ public class SystemInfo {
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
 
-  // Assumption is made that environment is installed via baller
-  // TODO add a way to force installation dir of Popper and referece it directly like for c:\PinupSystem
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
     try {
@@ -52,19 +51,6 @@ public class SystemInfo {
     return new File("C:/vPinball/PinUPSystem");
   }
 
-  // not used
-  @NonNull
-  public File resolveVisualPinballInstallationFolder(@NonNull File pinUPSystemInstallationFolder) {
-    File file = new File(pinUPSystemInstallationFolder.getParent(), "VisualPinball");
-    if (!file.exists()) {
-      file = new File(pinUPSystemInstallationFolder.getParent(), "Visual Pinball");
-    }
-    if (!file.exists()) {
-      LOG.info("The system info could not derive the Visual Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-      file = resolveVisualPinballInstallationFolder();
-    }
-    return file;
-  }
   /**
    * Frontends should know where Emulators are installed
    * Method used by Standalone frontend to identify VPS installation directory
@@ -112,18 +98,6 @@ public class SystemInfo {
     }
     // I give up, no more idea...
     return null;
-  }
-
-  public File resolveUserFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "User/");
-  }
-
-  public File resolveMameInstallationFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "VPinMAME/");
-  }
-
-  public File resolveVpxTablesInstallationFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "Tables/");
   }
 
   /** 

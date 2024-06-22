@@ -151,6 +151,6 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    frontendStatusService.addPopperStatusChangeListener(this);
+    frontendStatusService.addFrontendStatusChangeListener(this);
   }
 }

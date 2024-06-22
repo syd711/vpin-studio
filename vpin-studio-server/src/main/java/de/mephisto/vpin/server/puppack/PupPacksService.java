@@ -44,7 +44,7 @@ public class PupPacksService implements InitializingBean {
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
   public PupPack getMenuPupPack() {
-    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupPackFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
     File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
     return loadPupPack(menuPupPackFolder);
   }
@@ -85,7 +85,7 @@ public class PupPacksService implements InitializingBean {
   private void refresh() {
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
-    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupPackFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
@@ -152,7 +152,7 @@ public class PupPacksService implements InitializingBean {
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupVideosFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
       return;
@@ -224,7 +224,7 @@ public class PupPacksService implements InitializingBean {
 
   public PupPack loadPupPack(String rom) {
     if (!StringUtils.isEmpty(rom)) {
-      File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+      File pupVideosFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
       if (pupVideosFolder.exists()) {
         File pupPackFolder = new File(pupVideosFolder, rom);
         if (pupPackFolder.exists()) {

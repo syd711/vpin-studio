@@ -140,4 +140,12 @@ public interface FrontendConnector {
   @NonNull
   FrontendControls getControls();
 
+
+  //----------------------------------
+  // UI Management
+  boolean killFrontend();
+
+  boolean isFrontendRunning();
+
+  boolean restartFrontend();
 }

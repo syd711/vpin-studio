@@ -1,4 +1,3 @@
-
 package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
@@ -8,7 +7,6 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -120,6 +118,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       Platform.runLater(() -> {
         filterGames(games);
         tableView.setItems(data);
+        templateEditorPane.setVisible(!data.isEmpty());
 
         tableView.refresh();
         if (selection != null) {
@@ -156,10 +155,12 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private void onDefaultPictureUpload() {
     GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
-    boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
-    if (uploaded) {
-      refreshRawPreview(Optional.of(game));
-      templateEditorController.selectTable(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), true);
+    if (game != null) {
+      boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
+      if (uploaded) {
+        refreshRawPreview(Optional.of(game));
+        templateEditorController.selectTable(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), true);
+      }
     }
   }
 
@@ -465,7 +466,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     defaultBackgroundTitlePane.expandedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refreshRawPreview(Optional.of(getSelectedTable()));
+        if (getSelectedTable() != null) {
+          refreshRawPreview(Optional.of(getSelectedTable()));
+        }
       }
     });
 

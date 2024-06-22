@@ -104,7 +104,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
         tournamentSynchronizer.setClient(maniaClient);
         tournamentSynchronizer.synchronize();
 
-        frontendStatusService.addPopperStatusChangeListener(this);
+        frontendStatusService.addFrontendStatusChangeListener(this);
       } catch (Exception e) {
         Features.TOURNAMENTS_ENABLED = false;
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);

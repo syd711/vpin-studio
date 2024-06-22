@@ -178,13 +178,13 @@ public class GameService implements InitializingBean {
     else {
       games.addAll(frontendService.getGamesByEmulator(emulatorId));
     }
-    boolean killedPopper = false;
+    boolean killFrontend = false;
     for (Game game : games) {
       boolean newGame = applyGameDetails(game, false, false);
-      if (newGame && !killedPopper) {
-        LOG.info("New games have been found, automatically killing popper to release locks.");
-        systemService.killPopper();
-        killedPopper = true;
+      if (newGame && !killFrontend) {
+        LOG.info("New games have been found, automatically killing frontend to release locks.");
+        frontendService.killFrontend();
+        killFrontend = true;
       }
     }
     GameValidationService.metricFinished();

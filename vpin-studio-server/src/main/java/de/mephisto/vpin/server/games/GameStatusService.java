@@ -61,7 +61,7 @@ public class GameStatusService implements FrontendStatusChangeListener, Initiali
 
   @Override
   public void afterPropertiesSet() {
-    frontendStatusService.addPopperStatusChangeListener(this);
+    frontendStatusService.addFrontendStatusChangeListener(this);
   }
 
   public void resetStatus() {

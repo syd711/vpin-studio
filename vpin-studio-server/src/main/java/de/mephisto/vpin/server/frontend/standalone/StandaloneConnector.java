@@ -6,7 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
@@ -49,7 +51,7 @@ public class StandaloneConnector extends BaseConnector {
   @NotNull
   @Override
   public File getInstallationFolder() {
-    return systemService.resolveVisualPinballInstallationFolder(); //TOOD is it?
+    return systemService.getFrontendInstallationFolder();
   }
 
   public Frontend getFrontend() {
@@ -175,4 +177,73 @@ public class StandaloneConnector extends BaseConnector {
     return null;
   }
 
+  //----------------------------------
+
+  // UI Management
+  private String getVPXExe() { //TODO configurable default exe
+    return "VPinballX64.exe";
+  }
+
+  @Override
+  public boolean killFrontend() {
+    List<ProcessHandle> pinUpProcesses = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains(getVPXExe()) ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().startsWith("VPinball")))
+        .collect(Collectors.toList());
+
+    if (pinUpProcesses.isEmpty()) {
+      LOG.info("No VPX processes found, termination canceled.");
+      return false;
+    }
+
+    for (ProcessHandle pinUpProcess : pinUpProcesses) {
+      String cmd = pinUpProcess.info().command().get();
+      boolean b = pinUpProcess.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isFrontendRunning() {
+    List<ProcessHandle> allProcesses = systemService.getProcesses();
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        if (cmdName.contains("Pinball Player")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean restartFrontend() {
+    killFrontend();
+
+    try {
+      List<String> params = Arrays.asList("cmd", "/c", "start", getVPXExe());
+      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+      executor.setDir(systemService.getFrontendInstallationFolder());
+      executor.executeCommandAsync();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("PinballX restart failed: {}", standardErrorFromCommand);
+        return false;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to start PinballX again: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
+  }
 }
