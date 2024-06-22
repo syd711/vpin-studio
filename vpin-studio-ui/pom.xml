@@ -663,6 +663,7 @@
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Server.zip</argument>
                                 <argument>VPin-Studio-Server.exe</argument>
+                                <argument>VPin-Studio-App.exe</argument>
                             </arguments>
                         </configuration>
                     </execution>

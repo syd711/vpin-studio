@@ -152,7 +152,7 @@ public class ServerFX extends Application {
     });
   }
 
-  private static String resolveDashboard(String value) {
+  public static String resolveDashboard(String value) {
     String fxml = "scene-overlay-" + resolveDashboardResolution();
     if (!StringUtils.isEmpty(value)) {
       fxml = fxml + value;
