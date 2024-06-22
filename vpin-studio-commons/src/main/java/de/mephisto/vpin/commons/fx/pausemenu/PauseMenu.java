@@ -80,7 +80,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
-    pauseMenuStage.setTitle("Pause Menu");
+    pauseMenuStage.setTitle("VPin UI");
     pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;

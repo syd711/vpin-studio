@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.states;
 import de.mephisto.vpin.commons.fx.pausemenu.MenuController;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -129,5 +130,28 @@ public class StateMananger implements GameControllerInputListener {
       menuController.reset();
     });
     GameController.getInstance().removeListener(StateMananger.getInstance());
+  }
+
+
+  public void checkAutoPlay() {
+    boolean autoPlay = true;
+    if (autoPlay && menuController.isVisible()) {
+      PauseMenuItem item = menuController.getSelection();
+      if (item.getYouTubeUrl() != null) {
+        new Thread(() -> {
+          try {
+            Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION * 2);
+          }
+          catch (InterruptedException e) {
+            //ignore
+          }
+          Platform.runLater(() -> {
+            if (menuController.isVisible()) {
+              menuController.showYouTubeVideo(item);
+            }
+          });
+        }).start();
+      }
+    }
   }
 }

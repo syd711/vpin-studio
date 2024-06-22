@@ -185,7 +185,7 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
-    vpxIsRunning = false;
+    vpxIsRunning = true;
     frontendIsRunning = true;
   }
 
