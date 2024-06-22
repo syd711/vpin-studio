@@ -6,4 +6,4 @@
 ### Bugfixes
 
 - **Highscore Card Editor**: Fixed overlay mode only showing videos but no images.
-- **Competitions / TournamentId**: The id that is generated for the Popper field "Tournament Id" contains now the information segment **remote/local** to indicate if the the user is the competition owner or not. E.g. when you subscribed to another ones table subscription, the value will be **remote**.
+- **Competitions / TournamentId**: The id that is generated for the Popper field "Tournament Id" contains now the information segment **remote/local** to indicate if the the user is the competition owner or not. E.g. when you subscribed to another ones table subscription, the value will be **remote**. You can use the keywords to build custom SQL playlists with these keywords.
