@@ -315,26 +315,26 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
   private void zipPopperMedia(ArchivePackageInfo packageInfo, ZipOutputStream zipOut) throws IOException {
     //export popper menu data
-    packageInfo.setPopperMedia(true);
-    VPinScreen[] values = VPinScreen.values();
-    for (VPinScreen value : values) {
-      List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
-      for (GameMediaItem item : items) {
-        if (item.getFile().exists()) {
-          LOG.info("Packing " + item.getFile().getAbsolutePath());
-          File mediaFile = item.getFile();
-
-          //do not archive augmented icons
-          if (value.equals(VPinScreen.Wheel)) {
-            WheelAugmenter augmenter = new WheelAugmenter(item.getFile());
-            if (augmenter.getBackupWheelIcon().exists()) {
-              mediaFile = augmenter.getBackupWheelIcon();
-            }
-          }
-          zipFile(mediaFile, "PinUPSystem/POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
-        }
-      }
-    }
+//    packageInfo.setPopperMedia(true);
+//    VPinScreen[] values = VPinScreen.values();
+//    for (VPinScreen value : values) {
+//      List<GameMediaItem> items = game.getGameMedia().getMediaItems(value);
+//      for (GameMediaItem item : items) {
+//        if (item.getFile().exists()) {
+//          LOG.info("Packing " + item.getFile().getAbsolutePath());
+//          File mediaFile = item.getFile();
+//
+//          //do not archive augmented icons
+//          if (value.equals(VPinScreen.Wheel)) {
+//            WheelAugmenter augmenter = new WheelAugmenter(item.getFile());
+//            if (augmenter.getBackupWheelIcon().exists()) {
+//              mediaFile = augmenter.getBackupWheelIcon();
+//            }
+//          }
+//          zipFile(mediaFile, "PinUPSystem/POPMedia/" + systemService.getPupUpMediaFolderName(game) + "/" + value.name() + "/" + mediaFile.getName(), zipOut);
+//        }
+//      }
+//    }
   }
 
   /**

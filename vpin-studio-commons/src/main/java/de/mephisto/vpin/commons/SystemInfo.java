@@ -28,8 +28,6 @@ public class SystemInfo {
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
 
-  // Assumption is made that environment is installed via baller
-  // TODO add a way to force installation dir of Popper and referece it directly like for c:\PinupSystem
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
     try {

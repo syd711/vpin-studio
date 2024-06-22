@@ -4,10 +4,11 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
-import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
+import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -48,6 +49,9 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Fro
   private SystemService systemService;
 
   @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
   private JobQueue queue;
 
   private boolean overlayVisible;
@@ -56,7 +60,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Fro
   private String overlayKey;
   private String resetKey;
 
-  private Map<String, Long> timingMap = new ConcurrentHashMap<>();
+  private final Map<String, Long> timingMap = new ConcurrentHashMap<>();
   private PauseMenuSettings pauseMenuSettings;
 
   @Override
@@ -97,7 +101,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Fro
           return;
         }
 
-        if (systemService.isPopperMenuRunning(processes)) {
+        if (frontendService.isFrontendRunning()) {
           this.overlayVisible = !overlayVisible;
           Platform.runLater(() -> {
             LOG.info("Toggle pause menu show (Key " + overlayKey + "), was visible: " + !overlayVisible);
@@ -127,7 +131,7 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Fro
       KeyChecker keyChecker = new KeyChecker(resetKey);
       if (keyChecker.matches(nativeKeyEvent)) {
         new Thread(() -> {
-          systemService.restartPopper();
+          frontendService.restartFrontend();
           frontendStatusService.notifyPopperRestart();
         }).start();
       }
@@ -241,13 +245,13 @@ public class KeyEventService implements InitializingBean, NativeKeyListener, Fro
 
     preferencesService.addChangeListener(this);
 
-    boolean pinUPRunning = frontendStatusService.isPinUPRunning();
-    if (pinUPRunning) {
+    boolean frontendRunning = frontendService.isFrontendRunning();
+    if (frontendRunning) {
       frontendLaunched();
     }
     else {
-      LOG.info("Added VPin service popper status listener.");
-      frontendStatusService.addPopperStatusChangeListener(this);
+      LOG.info("Added VPin service frontend status listener.");
+      frontendStatusService.addFrontendStatusChangeListener(this);
     }
 
     GlobalScreen.registerNativeHook();

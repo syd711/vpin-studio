@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import com.formdev.flatlaf.json.Json;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -27,6 +27,7 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service("Popper")
 public class PinUPConnector implements FrontendConnector {
@@ -54,7 +55,7 @@ public class PinUPConnector implements FrontendConnector {
   @Override
   public File getInstallationFolder() {
     //TODO move into this class!!
-    return systemService.getPinUPSystemFolder();
+    return systemService.getFrontendInstallationFolder();
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -1532,7 +1533,7 @@ public class PinUPConnector implements FrontendConnector {
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
-      File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
+      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
         LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
         return result;
@@ -1628,11 +1629,81 @@ public class PinUPConnector implements FrontendConnector {
   public void initializeConnector(ServerSettings settings) {
     this.serverSettings = settings;
 
-    File file = systemService.getPinUPDatabaseFile();
+    File file = getDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 
     sqlVersion = this.getVersion();
-
   }
 
+  public File getDatabaseFile() {
+    return new File(systemService.getFrontendInstallationFolder(), "PUPDatabase.db");
+  }
+
+  @Override
+  public boolean killFrontend() {
+    List<ProcessHandle> pinUpProcesses = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains("PinUpMenu") ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("PinUpPackEditor") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
+
+    if (pinUpProcesses.isEmpty()) {
+      LOG.info("No PinUP processes found, termination canceled.");
+      return false;
+    }
+
+    for (ProcessHandle pinUpProcess : pinUpProcesses) {
+      String cmd = pinUpProcess.info().command().get();
+      boolean b = pinUpProcess.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isFrontendRunning() {
+    List<ProcessHandle> allProcesses = systemService.getProcesses();
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        if (cmdName.contains("PinUpMenu.exe")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  @Override
+  public boolean restartFrontend() {
+    killFrontend();
+
+    try {
+      List<String> params = Arrays.asList("cmd", "/c", "start", "PinUpMenu.exe");
+      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+      executor.setDir(systemService.getFrontendInstallationFolder());
+      executor.executeCommandAsync();
+
+      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error("Popper restart failed: {}", standardErrorFromCommand);
+        return false;
+      }
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to start PinUP Popper again: " + e.getMessage(), e);
+    }
+    return false;
+  }
 }

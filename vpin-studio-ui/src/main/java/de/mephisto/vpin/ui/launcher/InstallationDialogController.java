@@ -189,7 +189,7 @@ public class InstallationDialogController implements Initializable, DialogContro
     }
 
     if (radioC.isSelected()) {
-      if (!hasValidExe("VPinballX.exe")) {
+      if (!hasValidExe("VPinballX.exe") && !hasValidExe("VPinballX64.exe")) {
         validationError.setVisible(true);
         validationErrorLabel.setText("No Visual Pinball installation found in this folder.");
         return;

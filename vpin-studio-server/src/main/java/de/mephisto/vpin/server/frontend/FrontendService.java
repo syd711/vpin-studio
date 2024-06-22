@@ -111,7 +111,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public FrontendType getFrontendType() {
-    return FrontendType.PinballX;
+    return systemService.getFrontendType();
   }
 
   //----------------------------------------
@@ -394,7 +394,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
-      File ini = new File(systemService.getPinUPSystemFolder(), "PinUpPlayer.ini");
+      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
         LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
         return result;
@@ -522,6 +522,18 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in PinUP Popper.");
       LOG.error("****************************************************************************************");
     }
+  }
+
+  public void restartFrontend() {
+    getFrontendConnector().restartFrontend();
+  }
+
+  public boolean isFrontendRunning() {
+    return getFrontendConnector().isFrontendRunning();
+  }
+
+  public boolean killFrontend() {
+    return getFrontendConnector().killFrontend();
   }
 
   //--------------------------

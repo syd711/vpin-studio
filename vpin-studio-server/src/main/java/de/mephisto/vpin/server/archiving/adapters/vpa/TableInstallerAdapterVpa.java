@@ -193,10 +193,10 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       return emulator.getInstallationFolder().getParentFile();
     }
     else if (name.startsWith("PinUPSystem")) {
-      return systemService.getPinUPSystemFolder().getParentFile();
+      return systemService.getFrontendInstallationFolder().getParentFile();
     }
 
-    return systemService.getPinUPSystemFolder().getParentFile();
+    return systemService.getFrontendInstallationFolder().getParentFile();
   }
 
   private File getGameFile(GameEmulator emulator, TableDetails manifest) {

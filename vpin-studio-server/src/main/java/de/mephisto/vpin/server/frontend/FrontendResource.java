@@ -97,7 +97,7 @@ public class FrontendResource {
 
   @GetMapping("/running")
   public boolean isRunning() {
-    return frontendStatusService.isPinUPRunning();
+    return frontendService.isFrontendRunning();
   }
 
   @GetMapping("/manager")

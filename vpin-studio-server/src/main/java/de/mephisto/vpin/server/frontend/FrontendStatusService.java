@@ -78,7 +78,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   }
 
   @SuppressWarnings("unused")
-  public void addPopperStatusChangeListener(FrontendStatusChangeListener listener) {
+  public void addFrontendStatusChangeListener(FrontendStatusChangeListener listener) {
     this.listeners.add(listener);
   }
 
@@ -140,14 +140,8 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     }
   }
 
-  public boolean isPinUPRunning() {
-    Optional<ProcessHandle> pinUP = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent() && p.info().command().get().contains("PinUP")).findFirst();
-    Optional<ProcessHandle> vpx = ProcessHandle.allProcesses().filter(p -> p.info().command().isPresent() && p.info().command().get().contains("VPinball")).findFirst();
-    return pinUP.isPresent() || vpx.isPresent();
-  }
-
   public boolean terminate() {
-    boolean b = systemService.killPopper();
+    boolean b = frontendService.killFrontend();
     for (FrontendStatusChangeListener listener : listeners) {
       listener.frontendExited();
     }
@@ -429,7 +423,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   }
 
   public boolean restart() {
-    systemService.restartPopper();
+    frontendService.restartFrontend();
     return true;
   }
 
