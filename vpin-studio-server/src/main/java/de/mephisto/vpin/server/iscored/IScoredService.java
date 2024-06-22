@@ -65,12 +65,14 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
 
           if (gameRoomGame.isDisabled()) {
             LOG.info("Skipped iScored score submission, because table " + gameRoomGame + " has disabled flag set.");
+            return;
           }
 
           IScored.submitScore(gameRoom, gameRoomGame, tableScore.getPlayerName(), tableScore.getPlayerInitials(), tableScore.getScore());
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load game room from " + tournament.getDashboardUrl() + ": " + e.getMessage(), e);
     }
   }
@@ -85,8 +87,12 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       IScoredGame iScoredGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
       if (iScoredGame != null) {
         String playerName = newScore.getPlayer() != null ? newScore.getPlayer().getName() : newScore.getPlayerInitials();
-        IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
+        if (iScoredGame.isDisabled()) {
+          LOG.info("Skipped iScored score submission, because table " + iScoredGame + " has disabled flag set.");
+          return;
+        }
 
+        IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
         if (Features.NOTIFICATIONS_ENABLED && notificationSettings.isiScoredNotification()) {
           Game game = gameService.getGame(newScore.getGameId());
           Notification notification = new Notification();
