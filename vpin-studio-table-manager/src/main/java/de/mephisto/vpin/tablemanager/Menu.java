@@ -13,7 +13,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
-import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,12 +74,6 @@ public class Menu extends Application {
 
       PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
       StateMananger.getInstance().setControls(pinUPControls);
-
-      GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = java.util.logging.Logger.getLogger(GlobalScreen.class.getPackage().getName());
-      logger.setLevel(Level.OFF);
-      logger.setUseParentHandlers(false);
-      GlobalScreen.addNativeKeyListener(StateMananger.getInstance());
 
       if (PRODUCTION_USE) {
         Menu.client.getPinUPPopperService().terminatePopper();

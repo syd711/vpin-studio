@@ -22,7 +22,6 @@ module de.mephisto.vpin.poppermenu {
   requires de.mephisto.vpin.connectors.discord;
   requires de.mephisto.vpin.restclient;
   requires de.mephisto.vpin.commons;
-  requires jnativehook;
   requires java.logging;
 
   exports de.mephisto.vpin.tablemanager;

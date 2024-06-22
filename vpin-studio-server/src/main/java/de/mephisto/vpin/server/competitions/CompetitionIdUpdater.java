@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.popper.PopperService;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,9 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   @Autowired
   private CompetitionService competitionService;
+
+  @Autowired
+  private DiscordService discordService;
 
   @Override
   public void competitionStarted(@NotNull Competition competition) {
@@ -66,7 +70,8 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   private void setGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
-    String competitionId = CompetitionIdFactory.createId(competition);
+    boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+    String competitionId = CompetitionIdFactory.createId(competition, isOwner);
     List<String> updated = new ArrayList<>();
     String tournamentId = tableDetails.getTourneyId();
     if (tournamentId == null) {
@@ -90,7 +95,8 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   private void unsetGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
-    String competitionId = CompetitionIdFactory.createId(competition);
+    boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+    String competitionId = CompetitionIdFactory.createId(competition, isOwner);
     String tournamentId = tableDetails.getTourneyId();
     if (tournamentId != null) {
       List<String> updated = new ArrayList<>();

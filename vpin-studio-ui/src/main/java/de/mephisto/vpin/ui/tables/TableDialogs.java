@@ -405,22 +405,35 @@ public class TableDialogs {
   }
 
   public static void openAutoMatchAll() {
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
-        "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
-    if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
-      EventManager.getInstance().notifyTablesChanged();
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
+      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
+            "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+        if (!result.isApplyClicked()) {
+          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
+          EventManager.getInstance().notifyTablesChanged();
+        }
+      }
+    }
+    else {
+      ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
+          "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
+      if (!result.isApplyClicked()) {
+        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
+        EventManager.getInstance().notifyTablesChanged();
+      }
     }
   }
 
   public static void openAutoMatch(GameRepresentation game) {
-    if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
+    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
         onOpenAutoMatch(game);
       }
-      return;
     }
-    onOpenAutoMatch(game);
+    else {
+      onOpenAutoMatch(game);
+    }
   }
 
   private static void onOpenAutoMatch(GameRepresentation game) {

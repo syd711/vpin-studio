@@ -19,7 +19,7 @@ public class UploadDescriptorFactory {
     UploadDescriptor descriptor = create();
     descriptor.setGameId(gameId);
     descriptor.setFile(file);
-    descriptor.setOriginalUploadedFileName(file.getOriginalFilename());
+    descriptor.setOriginalUploadFileName(file.getOriginalFilename());
     return descriptor;
   }
 

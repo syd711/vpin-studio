@@ -25,7 +25,7 @@
     <p>In the screenshot shown, the first three rows are selected.</P>
     <ul>
         <li>The first row is a game that has been backed up but the contents of the backup does not match the contents of the game on disk - shown with a red first column marker.</li>
-        <li>The second row is a game that has been backed up and the contents of the backup matches the contents of the game on disk - shown with a green first column marker. This row is shaded in as it has also selected by the user.</li>
+        <li>The second row is a game that has been backed up and the contents of the backup matches the contents of the game on disk - shown with a green first column marker. This row is bolded and shaded in as it has also selected by the user.</li>
         <li>The third row is a game that has not been backed up - shown with a white first column marker.</li>
 	</ul>
     <p>Note that, just like in Pinup Popper, it is possible to have more than one game with the same Name, this generally occurs when the same game is stored in multiple sub-folders of the configured emulator <strong>Games Folder</strong>, but could also be the result of manual renaming of the game within Pinup system.</p>
@@ -79,8 +79,8 @@
     <hr>
 
     <h3><span>&nbsp;&nbsp;<a name="installedGamesControlButtons">Installed Games Control Buttons</a></span></h3>
-    <p>Six buttons across the top of the <strong>Installed Games</strong> panel, plus two additional <strong>Refresh</strong> button on the rows below provide the key operations that are perfomed within <span class="vpbm">VPBM</span>. With the exception of the <strong>Import Backups</strong> and <strong>Refresh All</strong> buttons, operations are performed on all selected games withing the <strong>Installed Games</strong> panel.</p>
-    <p>The operations performed by these six buttons and described below:</p>
+    <p>Five buttons across the top of the <strong>Installed Games</strong> panel, plus two additional <strong>Refresh</strong> buttons on the right hand size of the panel provide the key operations that are perfomed within <span class="vpbm">VPBM</span>. With the exception of the <strong>Import Backups</strong> and <strong>Refresh All</strong> buttons, operations are performed on the selected games withing the <strong>Installed Games</strong> panel.</p>
+    <p>The operations performed by these buttons and described below:</p>
     <br />
     <img src="img/installedGamesButtons.jpg" width="576" alt="Installed Games Buttons">
     <dl>
@@ -123,16 +123,6 @@
         </dd>
         <img src="img/installedGamesDropFiles.jpg"  width="576" alt="Installed Games Drop Files">
         <br />
-        <br />
-        <dt><strong>Export Backups</strong></dt>
-        <dd>This button is only enabled if two pre-conditions are met:
-            <ol>
-                <li>An <strong>Export Path</strong> value has been configured in settings to specify where exported backups should be placed.</li>
-                <li>An <strong>Export Host Identifier</strong> value has been configured in settings to specify which host to generate exported backups for.</li>
-            </ol>
-            If the button is pressed, the existing backups for all selected games will be processed, with new copies made encoded for export to the intended <strong>Export Host Identifier</strong> and placed in the configured export folder structure.</dd>
-        <dd>Once generated, these exports can be copied onto media and transferred to the external export host for use (via its <strong>import</strong> functionality.
-        </dd>
         <dt><strong>Refresh Selected</strong></dt>
         <dd>Pressing this button results in a rescan of all content found in the selected rows set of games. This behaves similarly to the <strong>Refresh</strong> menu option in the <strong>File</strong> menu, but only for those rows selected.</dd>
         <dt><strong>Refresh All</strong></dt>

@@ -184,11 +184,7 @@ public class UploadDescriptor {
     return originalUploadedFileName;
   }
 
-  public String getOriginalUploadedFileName() {
-    return originalUploadedFileName;
-  }
-
-  public void setOriginalUploadedFileName(String originalUploadedFileName) {
+  public void setOriginalUploadFileName(String originalUploadedFileName) {
     this.originalUploadedFileName = originalUploadedFileName;
   }
 

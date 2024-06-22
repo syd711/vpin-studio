@@ -92,6 +92,11 @@
     -fx-font-weight : normal;
 }
 
+.highscore-screen {
+    -fx-border-style: solid;
+    -fx-border-color: -fx-base-3;
+    -fx-border-width: 2;
+}
 
 #validationContainer {
     -fx-background-color: #FF3333;

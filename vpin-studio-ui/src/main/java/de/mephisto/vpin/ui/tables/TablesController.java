@@ -247,7 +247,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
     else if (jobType.equals(JobType.POV_INSTALL)
         || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
-        || jobType.equals(JobType.DIRECTB2S_INSTALL)) {
+        || jobType.equals(JobType.DIRECTB2S_INSTALL)
+        ) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
@@ -264,19 +265,25 @@ public class TablesController implements Initializable, StudioFXController, Stud
     if (id > 0) {
       this.tableOverviewController.reload(id);
     }
+    else {
+      GameRepresentation selection = this.tableOverviewController.getSelection();
+      if (selection != null) {
+        this.tableOverviewController.reload(selection.getId());
+      }
+    }
 
     if (!StringUtils.isEmpty(rom)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) { 
+        if (id!=g.getId()) {
           this.tableOverviewController.reload(g.getId());
         }
       }
-    }  
+    }
     if (!StringUtils.isEmpty(gameName)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) { 
+        if (id!=g.getId()) {
           this.tableOverviewController.reload(g.getId());
         }
       }

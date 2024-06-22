@@ -47,6 +47,7 @@ import java.util.Properties;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
+  public static final double SCALING_DIFF = 0.05;
 
   public static Stage stage;
 
@@ -54,6 +55,8 @@ public class Studio extends Application {
   public static VPinManiaClient maniaClient;
 
   private static HostServices hostServices;
+
+  private static double scaling = 1;
 
   public static void main(String[] args) {
     launch(args);
@@ -216,14 +219,56 @@ public class Studio extends Application {
               Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
               ke.consume();
             }
+            if (ke.getCode() == KeyCode.MINUS && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              if (scaling < SCALING_DIFF) {
+                return;
+              }
+              scaling = scaling - SCALING_DIFF;
+              stage.setWidth(stage.getWidth() * scaling);
+              stage.setHeight(stage.getHeight() * scaling);
+
+              r.setScaleX(scaling);
+              r.setScaleY(scaling);
+              ke.consume();
+            }
+            if (ke.getCode() == KeyCode.PLUS && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              if (scaling > (1 - SCALING_DIFF)) {
+                return;
+              }
+              scaling = scaling + SCALING_DIFF;
+              r.setScaleX(scaling);
+              r.setScaleY(scaling);
+              stage.setWidth(stage.getWidth() * scaling);
+              stage.setHeight(stage.getHeight() * scaling);
+              ke.consume();
+            }
             if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              scaling = 1;
               stage.setWidth(1920);
               stage.setHeight(1080);
+              r.setScaleX(1);
+              r.setScaleY(1);
               ke.consume();
             }
             if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              scaling = 1;
               stage.setWidth(2560);
               stage.setHeight(1440);
+              r.setScaleX(1);
+              r.setScaleY(1);
+              ke.consume();
+            }
+            if (ke.getCode() == KeyCode.C && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              scaling = 1;
+              stage.setWidth(1024);
+              stage.setHeight(600);
+              r.setScaleX(1);
+              r.setScaleY(1);
               ke.consume();
             }
           }

@@ -2,8 +2,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -73,7 +73,8 @@ public class TableUploadProgressModel extends ProgressModel<File> {
       progressResultModel.addProcessed();
       progressResultModel.getResults().add(uploadDescriptor);
       percentage++;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Table upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", "Table upload failed: " + e.getMessage());

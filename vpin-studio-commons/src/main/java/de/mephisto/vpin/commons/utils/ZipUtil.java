@@ -66,19 +66,18 @@ public class ZipUtil {
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
       while (zipEntry != null) {
-        File newFile = new File(destinationDir, zipEntry.getName());
         if (zipEntry.isDirectory()) {
           //not directory creation here!
         }
         else {
-          // fix for Windows-created archives
-          File parent = newFile.getParentFile();
-          if (!parent.isDirectory() && !parent.mkdirs()) {
-            throw new IOException("Failed to create directory " + parent);
-          }
-
           String entryName = zipEntry.getName().toLowerCase().replaceAll("\\\\", "/");
           if (zipEntry.getName().endsWith(name) || entryName.equalsIgnoreCase(name)) {
+            //folder creation
+            File parent = targetFile.getParentFile();
+            if (!parent.isDirectory() && !parent.mkdirs()) {
+              throw new IOException("Failed to create directory " + parent);
+            }
+
             FileOutputStream fos = new FileOutputStream(targetFile);
             int len;
             while ((len = zis.read(buffer)) > 0) {

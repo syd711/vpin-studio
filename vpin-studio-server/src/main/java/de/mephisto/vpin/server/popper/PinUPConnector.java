@@ -156,7 +156,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return info;
@@ -180,7 +181,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to load altexe list: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
 
@@ -278,7 +280,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return manifest;
@@ -301,7 +304,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -416,7 +420,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -438,7 +443,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return info;
@@ -460,7 +466,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by emulatorId '" + emulatorId + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -483,7 +490,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -506,7 +514,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return info;
@@ -526,7 +535,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read startup script: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -550,7 +560,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.warn("Failed to PinUP Popper Database version: " + e.getMessage() + ", using legacy database schema.", e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return version;
@@ -567,7 +578,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update startup script script:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -588,7 +600,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed get custom options: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return options;
@@ -605,7 +618,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -622,7 +636,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update ROM:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -639,7 +654,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update \"" + field + "\2: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -661,7 +677,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read field value \"" + field + "\": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return value;
@@ -728,7 +745,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return -1;
@@ -762,7 +780,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -779,7 +798,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update game stats table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -818,7 +838,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return playlist;
@@ -865,7 +886,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -881,7 +903,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update PlayList: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -903,7 +926,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -918,7 +942,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update playlist [" + sql + "]: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -935,7 +960,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -953,7 +979,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -976,7 +1003,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlist for gameId: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1011,7 +1039,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1039,7 +1068,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1067,7 +1097,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1116,7 +1147,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return f;
@@ -1164,7 +1196,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to functions: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return controls;
@@ -1187,7 +1220,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return count;
@@ -1212,7 +1246,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1238,7 +1273,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -1261,7 +1297,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to get start time: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -1277,7 +1314,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to delete games: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1300,7 +1338,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1331,7 +1370,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1357,7 +1397,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1381,7 +1422,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return script;
@@ -1405,7 +1447,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (SQLException e) {
       LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return script;
@@ -1422,7 +1465,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1543,7 +1587,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     }
     catch (Exception e) {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1565,7 +1610,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       FileReader fileReader = new FileReader(ini);
       try {
         iniConfiguration.read(fileReader);
-      } finally {
+      }
+      finally {
         fileReader.close();
       }
 
@@ -1665,6 +1711,11 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         }
 
         if (!emulator.isEnabled()) {
+          continue;
+        }
+
+        if (StringUtils.isEmpty(emulator.getDirMedia())) {
+          LOG.warn("Ignoring emulator " + emulator.getName() + " because the media dir is not set");
           continue;
         }
 

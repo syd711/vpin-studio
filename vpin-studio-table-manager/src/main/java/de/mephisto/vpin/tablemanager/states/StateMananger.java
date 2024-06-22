@@ -12,14 +12,12 @@ import javafx.application.Platform;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.util.Duration;
-import org.jnativehook.keyboard.NativeKeyEvent;
-import org.jnativehook.keyboard.NativeKeyListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static de.mephisto.vpin.tablemanager.UIDefaults.FOOTER_ANIMATION_DURATION;
 
-public class StateMananger implements JobListener, NativeKeyListener {
+public class StateMananger implements JobListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
   private final MediaPlayer navPlayer;
@@ -140,27 +138,6 @@ public class StateMananger implements JobListener, NativeKeyListener {
       }
       this.menuController.hideProgressbar();
     });
-  }
-
-  @Override
-  public void nativeKeyTyped(NativeKeyEvent nativeKeyEvent) {
-    System.out.println(nativeKeyEvent.getRawCode());
-  }
-
-  @Override
-  public void nativeKeyPressed(NativeKeyEvent nativeKeyEvent) {
-    Platform.runLater(() -> {
-      handle(nativeKeyEvent.getRawCode());
-      try {
-        Thread.sleep(60);
-      } catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    });
-  }
-
-  @Override
-  public void nativeKeyReleased(NativeKeyEvent nativeKeyEvent) {
   }
 
   public void setControls(PinUPControls pinUPControls) {

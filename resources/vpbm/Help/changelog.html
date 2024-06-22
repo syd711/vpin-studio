@@ -19,6 +19,44 @@
 <body>
     <h3><span>&nbsp;&nbsp;VPBM Change Log</span></h3>
     <dl>
+        <dt><strong>Version 3.2</strong></dt>
+        <dd>
+            <li>Bugfix to address cases where generated temp files are deleted between runs and force rescan is not enabled to ensure they are recreated as needed.</li>
+        </dd>
+        <dt><strong>Version 3.1</strong></dt>
+        <dd>
+            <li>Updated auto-updater to work on systems without 7Zip installed.</li>
+            <li>MSI installer updated to cleanup version and icon.</li>
+            <li>Added checks for invalid backup paths in config on first load to ensure cleaner GUI handling.</li>
+            <li>Added menu option to help menu to raise tickets.</li>
+            <li>Cleaned up some docco typos.</li>
+        </dd>
+        <dt><strong>Version 3.0</strong></dt>
+        <dd>
+            <li>
+                Added new 'Alternate Host' functionality which is configured on the <a href="./applicationSettings.html">Application Settings</a> window and allows backup to be shared between up to 3 hosts, rather than requiring multiple export versions to be created. This feature will ultimately replace the Export functionality, with GUI version of VPBM already removing the export button.
+            </li>
+			<li>All new backups have the ability (using alternate hosts) to be processed on the host they are generated on plus 2 other hosts - thse additional two hosts are now shown in the
+			<a href="./selectedGameDisplayControl.html">Selected Game Display Control Panel</a> panel if they have been defined.
+			</li>
+			<li>Added new Emulator and Filter Settings menu item under the file menu. This launches the <a href="./emulatorAndFilterSettings.html">Emulator and Filter Settings</a> window which allows users to view all currently defined filters for each emulator type and add new filters as required.</li>
+			<li>Refactored settings changes to reduce the need for an application restart to just the case where the underlying <strong>Pinup System</strong> path has changed.</li>
+            <li>Bugfix to support games with multiple file extensions.</li>
+            <li>Bugfix to support duplicate emulators set up via use of templates to ensure correct detection of game codes.</li>
+       </dd>
+        <dt><strong>Version 2.7</strong></dt>
+        <dd>
+            <li>Bugfix to support games with names containing trailing spaces prior to the extenson, ie "gameName  .vpx".</li>
+            <li>Bugfix to support game with a variety of newline characters used in game scripts.</li>
+        </dd>
+        <dt><strong>Version 2.6</strong></dt>
+        <dd>
+            <li>Bugfix to address case where right clicking on root node of the content browser would result in application crashing.</li>
+        </dd>
+        <dt><strong>Version 2.5</strong></dt>
+        <dd>
+            <li>Adds code to workaround cases where Pinup Popper game setup has been updated to set inconsistent <strong>Game FileName</strong>, and <strong>FileName</strong> values. <strong>Game FileName</strong> is used by Pinup for naming Pinup media, while <strong>FileName</strong> is used by Pinup to create this media, as well as aligning the actual game filenames. Previously VPBM was using the value of <strong>Game FileName</strong> to populate the <strong>[GAMENAME]</strong> variable, but this meant that tables that had been renamed, may not get found by VPBM filters.</li>
+        </dd>
         <dt><strong>Version 2.4</strong></dt>
         <dd>
             <li>Minor bug patch addressing issue impacting new Orphaned Content Manager loading if unexpected game manifests exist.</li>

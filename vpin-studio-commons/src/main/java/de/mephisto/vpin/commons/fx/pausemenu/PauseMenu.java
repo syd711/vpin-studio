@@ -32,7 +32,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
-import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,11 +138,6 @@ public class PauseMenu extends Application {
       stage.setScene(scene);
 
       StateMananger.getInstance().init(loader.getController());
-
-      GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
-      logger.setLevel(Level.OFF);
-      logger.setUseParentHandlers(false);
 
       if (!PRODUCTION_USE) {
         togglePauseMenu();

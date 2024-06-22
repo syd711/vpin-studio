@@ -45,14 +45,12 @@ for %%f in (*.*) do (
 rem restore key files used in install
 echo VPBM Updater: Backing up vPinBackupManager.json to vPinBackupManager-old.json
 xcopy /y /q old\vPinBackupManager.json vPinBackupManager-old.json*
-xcopy /y /q Resources\7z.exe .
 rmdir /s /q Help Resources runtimes
 
 rem perform install
 echo VPBM Updater: Installing new version
-start 7z.exe -aoa x ".\vPinBackupManager-update.zip"
+start old\Resources\7z.exe -aoa x ".\vPinBackupManager-update.zip"
 timeout /t 5 /nobreak
-del /q 7z.exe
 
 rem restart VPBM
 timeout /T 1 /nobreak
