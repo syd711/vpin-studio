@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>2.21.0</version>
+        <version>2.21.1</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -50,6 +50,17 @@
             <version>16.02-2.01</version>
         </dependency>
         <dependency>
+            <groupId>net.java.jinput</groupId>
+            <artifactId>jinput</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.jinput</groupId>
+            <artifactId>jinput</artifactId>
+            <version>2.0.9</version>
+            <classifier>natives-all</classifier>
+        </dependency>
+        <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
             <version>12.3.1</version>
@@ -90,11 +101,6 @@
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
             <version>0.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.1stleg</groupId>
-            <artifactId>jnativehook</artifactId>
-            <version>2.1.0</version>
         </dependency>
 
         <dependency>
@@ -625,6 +631,7 @@
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Server.zip</argument>
                                 <argument>VPin-Studio-Server.exe</argument>
+                                <argument>VPin-Studio-App.exe</argument>
                             </arguments>
                         </configuration>
                     </execution>

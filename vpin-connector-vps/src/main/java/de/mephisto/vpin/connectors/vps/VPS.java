@@ -39,27 +39,28 @@ public class VPS {
 
   //----------------- 
 
-   public static String getVpsTableUrl(String tableId, String versionId) {
-     String url = getVpsTableUrl(tableId);
-     if (versionId != null) {
-       url += "#" + versionId;
-     }
-     return url;
-   }
-
-   public static String getVpsTableUrl(String tableId) {
-     return BASE_URL + "/?game=" + tableId + "&fileType=table";
+  public static String getVpsTableUrl(String tableId, String versionId) {
+    String url = getVpsTableUrl(tableId);
+    if (versionId != null) {
+      url += "#" + versionId;
     }
+    return url;
+  }
 
-    public static boolean isVpsTableUrl(String url) {
-     return url.startsWith(BASE_URL);
-   }
-   public static String getVpsBaseUrl() {
-     return BASE_URL;
-   }
- 
+  public static String getVpsTableUrl(String tableId) {
+    return BASE_URL + "/?game=" + tableId + "&fileType=table";
+  }
+
+  public static boolean isVpsTableUrl(String url) {
+    return url.startsWith(BASE_URL);
+  }
+
+  public static String getVpsBaseUrl() {
+    return BASE_URL;
+  }
+
   //----------------- 
-  
+
   public VPS() {
     File vpsDbFile = this.getVpsDbFile();
     if (!vpsDbFile.getParentFile().exists()) {
@@ -136,7 +137,7 @@ public class VPS {
     return results;
   }
 
- //----------------- LOADERS
+  //----------------- LOADERS
 
   private File getVpsDbFile() {
     File folder = new File("./resources");
@@ -150,17 +151,18 @@ public class VPS {
     try {
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
       this.tables = Arrays.stream(vpsTables)
-        .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
-        .collect(Collectors.toList());
-        LOG.info(this.tables.size() + " Tables loaded from database");
-      } catch (Exception e) {
+          .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
+          .collect(Collectors.toList());
+      LOG.info(this.tables.size() + " Tables loaded from database");
+    }
+    catch (Exception e) {
       LOG.error("Failed to load VPS json: " + e.getMessage(), e);
       this.tables = Collections.emptyList();
     }
   }
 
   public List<VpsDiffer> update() {
-    if(skipUpdates) {
+    if (skipUpdates) {
       LOG.warn("VPS updates are skipped.");
       return Collections.emptyList();
     }
@@ -201,7 +203,8 @@ public class VPS {
       }
 
       LOG.info("Written " + vpsDbFile.getAbsolutePath() + ", (" + oldSize + " vs " + vpsDbFile.length() + " bytes)");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("VPS download failed: " + e.getMessage());
     }
 
@@ -209,7 +212,7 @@ public class VPS {
     List<VpsTable> oldTables = this.tables;
 
     if (reload()) {
-      
+
       List<VpsDiffer> diffs = this.diff(oldTables, this.tables);
       if (!diffs.isEmpty()) {
         LOG.info("VPS download detected " + diffs.size() + " changes, notifying " + listeners.size() + " listeners...");
@@ -225,7 +228,7 @@ public class VPS {
     }
     return Collections.emptyList();
   }
-  
+
   public Date getChangeDate() {
     return new Date(getVpsDbFile().lastModified());
   }
@@ -236,7 +239,7 @@ public class VPS {
       try (InputStream fin = new FileInputStream(vpsDbFile)) {
         loadTables(fin);
         return true;
-      } 
+      }
       catch (IOException e) {
         LOG.error("Failed to reload VPS file: " + e.getMessage(), e);
       }
@@ -244,7 +247,7 @@ public class VPS {
     return false;
   }
 
-    //----------------- DIFFS
+  //----------------- DIFFS
 
   public VpsDiffer diffById(List<VpsTable> oldTables, List<VpsTable> newTables, String id) {
     Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equals(id)).findFirst();

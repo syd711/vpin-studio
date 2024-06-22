@@ -248,16 +248,21 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="If checked, the exported .vbs files will be kept, matching with the table name so that VPX uses these." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="Otherwise the .vbs files will be removed after import/export." textFill="WHITE" />
-                  <CheckBox fx:id="vpxMonitoringCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="Use VPX Table Monitor for Table Launch/Exit Events." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                  <VBox fx:id="vpxMonitorSettings">
+                     <children>
+                        <CheckBox fx:id="vpxMonitoringCheckbox" mnemonicParsing="false" text="Use VPX Table Monitor for Table Launch/Exit Events." textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through PinUP Popper to use VPin-Studio services." textFill="WHITE" />
+                     </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="1110.0" styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
+                  </VBox>
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

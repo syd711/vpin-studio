@@ -93,7 +93,6 @@ public class BackglassManagerFilterController extends BaseFilterController imple
         if (newValue!=null) {
           stackPane.setMinWidth(newValue.doubleValue());
           stackPane.setMaxWidth(newValue.doubleValue());
-          System.out.println(newValue);
         }
         refreshState();
       }

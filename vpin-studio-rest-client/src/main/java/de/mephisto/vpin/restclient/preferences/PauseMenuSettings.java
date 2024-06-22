@@ -4,49 +4,65 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PauseMenuSettings extends JsonSettings {
-  private String key;
   private boolean useOverlayKey;
   private String authorAllowList;
   private int inputDebounceMs = 0;
   private VPinScreen videoScreen = VPinScreen.Topper;
-
-  private int customLaunchKey;
-  private int customStartKey;
-  private int customLeftKey;
-  private int customRightKey;
-
   private PauseMenuStyle style = PauseMenuStyle.embedded;
 
-  public int getCustomLaunchKey() {
-    return customLaunchKey;
+  private String pauseButton;
+  private String startButton;
+  private String leftButton;
+  private String rightButton;
+  private String overlayButton;
+  private String resetButton;
+
+  public String getPauseButton() {
+    return pauseButton;
   }
 
-  public void setCustomLaunchKey(int customLaunchKey) {
-    this.customLaunchKey = customLaunchKey;
+  public void setPauseButton(String pauseButton) {
+    this.pauseButton = pauseButton;
   }
 
-  public int getCustomStartKey() {
-    return customStartKey;
+  public String getStartButton() {
+    return startButton;
   }
 
-  public void setCustomStartKey(int customStartKey) {
-    this.customStartKey = customStartKey;
+  public void setStartButton(String startButton) {
+    this.startButton = startButton;
   }
 
-  public int getCustomLeftKey() {
-    return customLeftKey;
+  public String getLeftButton() {
+    return leftButton;
   }
 
-  public void setCustomLeftKey(int customLeftKepy) {
-    this.customLeftKey = customLeftKey;
+  public void setLeftButton(String leftButton) {
+    this.leftButton = leftButton;
   }
 
-  public int getCustomRightKey() {
-    return customRightKey;
+  public String getRightButton() {
+    return rightButton;
   }
 
-  public void setCustomRightKey(int customRightKey) {
-    this.customRightKey = customRightKey;
+  public void setRightButton(String rightButton) {
+    this.rightButton = rightButton;
+  }
+
+  public String getOverlayButton() {
+    return overlayButton;
+  }
+
+  public void setOverlayButton(String overlayButton) {
+    this.overlayButton = overlayButton;
+  }
+
+  public String getResetButton() {
+    return resetButton;
+  }
+
+  public void setResetButton(String resetButton) {
+    this.resetButton = resetButton;
   }
 
   public PauseMenuStyle getStyle() {
@@ -82,14 +98,6 @@ public class PauseMenuSettings extends JsonSettings {
 
   public void setAuthorAllowList(String authorAllowList) {
     this.authorAllowList = authorAllowList;
-  }
-
-  public String getKey() {
-    return key;
-  }
-
-  public void setKey(String key) {
-    this.key = key;
   }
 
   public boolean isUseOverlayKey() {

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Insets;
@@ -24,7 +25,7 @@ public class VpsVersionContainer extends VBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsVersionContainer.class);
   private final static int TITLE_WIDTH = 100;
 
-  public VpsVersionContainer(VpsTableVersion item, String customStyle, boolean downloadAction) {
+  public VpsVersionContainer(VpsTable vpsTable, VpsTableVersion item, String customStyle, boolean downloadAction) {
     super(3);
     setPadding(new Insets(3));
     setMinHeight(124);
@@ -76,12 +77,12 @@ public class VpsVersionContainer extends VBox {
     row = new HBox(6);
     Button button = new Button("Download Table");
 
-    if (downloadAction) {
+    if (downloadAction && vpsTable != null) {
       button.setOnAction(event -> {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
           try {
-            desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
+            desktop.browse(new URI(VPS.getVpsTableUrl(vpsTable.getId())));
           } catch (Exception e) {
             LOG.error("Failed to open link: " + e.getMessage());
           }

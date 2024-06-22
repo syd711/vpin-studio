@@ -62,7 +62,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     notification.setImage(game.getWheelImage());
     notification.setTitle1(game.getGameDisplayName());
     notification.setTitle2("A new highscore has been created!");
-    notification.setTitle3(event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getScore());
+    notification.setTitle3(event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
     showNotification(notification);
   }
 

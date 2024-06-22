@@ -26,10 +26,6 @@ public class Preferences {
 
   private String systemPreset;
 
-  private String resetKey;
-
-  private String overlayKey;
-
   private String overlayDesign;
 
   private String overlayPageUrl;
@@ -358,22 +354,6 @@ public class Preferences {
 
   public void setShowOverlayOnStartup(String showOverlayOnStartup) {
     this.showOverlayOnStartup = showOverlayOnStartup;
-  }
-
-  public String getResetKey() {
-    return resetKey;
-  }
-
-  public void setResetKey(String resetKey) {
-    this.resetKey = resetKey;
-  }
-
-  public String getOverlayKey() {
-    return overlayKey;
-  }
-
-  public void setOverlayKey(String overlayKey) {
-    this.overlayKey = overlayKey;
   }
 
   public Asset getAvatar() {

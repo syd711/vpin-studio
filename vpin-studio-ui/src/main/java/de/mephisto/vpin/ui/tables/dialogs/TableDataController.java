@@ -178,7 +178,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private TextArea gPlayLog;
-  
+
   @FXML
   private Slider volumeSlider;
 
@@ -407,7 +407,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onCopyTableVersion() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
-    String vpsTableUrl = VPS.getVpsTableUrl(game.getExtTableId() + "#" + game.getExtTableVersionId());
+    String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+    String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
+    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId), tableDetails.getMappedValue(mappingVpsTableVersionId));
     content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }
@@ -746,7 +748,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         uiSettings.setAutoApplyVpsData(newValue);
         client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       });
-  
+
 
       gameName.setText(tableDetails.getGameName());
       gameName.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -770,14 +772,14 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
 
       gameDisplayName.setText(tableDetails.getGameDisplayName());
-      gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));    
+      gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
 
       gameVersion.setText(tableDetails.getGameVersion());
       gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
         tableDetails.setGameVersion(newValue);
         fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
       });
-  
+
       //---------------
       // TAB Meta Data
 
@@ -827,42 +829,42 @@ public class TableDataController implements Initializable, DialogController, Aut
         gameTypeCombo.valueProperty().setValue(gt);
       }
       gameTypeCombo.valueProperty().addListener((observableValue, gameType, t1) -> tableDetails.setGameType(t1));
-  
+
       SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
       numberOfPlayers.setValueFactory(factory);
       if (tableDetails.getNumberOfPlayers() != null) {
         numberOfPlayers.getValueFactory().setValue(tableDetails.getNumberOfPlayers());
       }
       numberOfPlayers.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNumberOfPlayers(Integer.parseInt(String.valueOf(newValue))));
-  
+
       tags.setText(tableDetails.getTags());
       tags.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTags(newValue));
-  
+
       category.setText(tableDetails.getCategory());
       category.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCategory(newValue));
-  
+
       author.setText(tableDetails.getAuthor());
       author.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAuthor(newValue));
-  
+
       SpinnerValueFactory.IntegerSpinnerValueFactory ratingFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 10, 0);
       gameRating.setValueFactory(ratingFactory);
       if (tableDetails.getGameRating() != null) {
         gameRating.getValueFactory().setValue(tableDetails.getGameRating());
       }
       gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameRating(Integer.parseInt(String.valueOf(newValue))));
-  
+
       IPDBNum.setText(tableDetails.getIPDBNum());
       IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setIPDBNum(newValue));
 
       url.setText(tableDetails.getUrl());
       url.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setUrl(newValue));
-  
+
       designedBy.setText(tableDetails.getDesignedBy());
       designedBy.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDesignedBy(newValue));
-  
+
       notes.setText(tableDetails.getNotes());
       notes.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setNotes(newValue));
-  
+
       //---------------
       // TAB Customization
 
@@ -873,19 +875,19 @@ public class TableDataController implements Initializable, DialogController, Aut
       launcherCombo.valueProperty().addListener((observableValue, s, t1) -> {
         this.tableDetails.setAltLaunchExe(t1);
       });
-      
+
       altRunMode.setText(tableDetails.getAltRunMode());
       altRunMode.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAltRunMode(newValue));
-  
+
       launchCustomVar.setText(tableDetails.getLaunchCustomVar());
       launchCustomVar.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
 
       custom2.setText(tableDetails.getCustom2());
       custom2.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom2(newValue));
-  
+
       custom3.setText(tableDetails.getCustom3());
       custom3.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
-     
+
       dof.setText(tableDetails.getDof());
       dof.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDof(newValue));
 
@@ -901,7 +903,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         volumeSlider.setValue(100);
       }
       volumeSlider.valueProperty().addListener((observableValue, number, t1) -> tableDetails.setVolume(String.valueOf(t1.intValue())));
-  
+
       if (tableDetails.isPopper15()) {
         custom4.setText(tableDetails.getCustom4());
         custom4.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom4(newValue));
@@ -914,14 +916,14 @@ public class TableDataController implements Initializable, DialogController, Aut
 
         webLink.setText(tableDetails.getWebLink2Url());
         webLink.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setWebLink2Url(newValue));
-   
+
         tourneyId.setText(tableDetails.getTourneyId());
         tourneyId.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTourneyId(newValue));
-  
+
         modCheckbox.setSelected(tableDetails.isMod());
         modCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> tableDetails.setMod(t1));
-  
-   
+
+
       }
       else {
         custom4.setDisable(true);
@@ -946,11 +948,11 @@ public class TableDataController implements Initializable, DialogController, Aut
 
         gNotes.setText(tableDetails.getgNotes());
         gNotes.textProperty().addListener((observableValue, oldValue, newValue) -> tableDetails.setgNotes(newValue));
-      } 
+      }
       else {
         extrasTab.setDisable(true);
-      } 
-    } 
+      }
+    }
     else {
 
       this.fixVersionBtn.setDisable(!game.isUpdateAvailable());

@@ -236,9 +236,9 @@ public class MenuController implements Initializable {
     if (oldNode != null) {
       PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
       if (activeSelection.getYouTubeUrl() != null) {
-        webView.setVisible(true);
-        WebEngine engine = webView.getEngine();
-        engine.loadContent("");
+//        webView.setVisible(true);
+//        WebEngine engine = webView.getEngine();
+//        engine.loadContent("");
       }
       else if (activeSelection.getVideoUrl() != null) {
         try {
@@ -282,6 +282,8 @@ public class MenuController implements Initializable {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
     }
+
+    StateMananger.getInstance().checkAutoPlay();
   }
 
   public void reset() {

@@ -50,6 +50,7 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class CompetitionsDiscordController implements Initializable, StudioFXController {
@@ -597,7 +598,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     else if (value.isActive()) {
       status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;";

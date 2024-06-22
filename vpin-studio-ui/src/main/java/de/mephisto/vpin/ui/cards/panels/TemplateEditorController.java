@@ -292,8 +292,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           this.templateCombo.setValue(newTemplate);
 
           highscoreCardsController.refresh(gameRepresentation, templates, false);
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
           LOG.error("Failed to create new template: " + ex.getMessage(), ex);
           WidgetFactory.showAlert(Studio.stage, "Creating Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
         }
@@ -319,8 +318,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           assignTemplate(updatedTemplate);
           highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         LOG.error("Failed to rename template: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Renaming Template Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
       }
@@ -345,8 +343,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           assignTemplate(defaultTemplate);
           highscoreCardsController.refresh(gameRepresentation, templates, true);
         });
-      }
-      catch (Exception ex) {
+      } catch (Exception ex) {
         LOG.error("Failed to delete template: " + ex.getMessage(), ex);
         WidgetFactory.showAlert(Studio.stage, "Template Deletion Failed", "Please check the log file for details.", "Error: " + ex.getMessage());
       }
@@ -371,8 +368,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
             imageList.add(baseName);
           }
         }
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, "Uploading image failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
@@ -610,8 +606,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       wheelImageSpinner.setDisable(renderRawHighscore.isSelected());
       maxScoresSpinner.setDisable(renderRawHighscore.isSelected());
       rowSeparatorSpinner.setDisable(renderRawHighscore.isSelected());
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Error initializing highscore editor fields:" + e.getMessage(), e);
     }
   }
@@ -650,8 +645,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
         refreshPreview(this.gameRepresentation, true);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
         WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
       }
@@ -691,8 +685,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           });
 
         }).start();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.error("Failed to refresh card preview: " + e.getMessage(), e);
       }
     });
@@ -712,11 +705,20 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
-        if(assetMediaPlayer != null) {
+        //images do not have a media player
+        if (assetMediaPlayer != null) {
           assetMediaPlayer.setSize(cardPreview.getFitWidth(), cardPreview.getFitHeight());
           mediaPlayerControl.setVisible(true);
-          previewOverlayPanel.setVisible(true);
         }
+
+        if (previewOverlayPanel.getCenter() instanceof ImageView) {
+          ImageView imageView = (ImageView) previewOverlayPanel.getCenter();
+          imageView.setPreserveRatio(false);
+          imageView.setFitWidth(cardPreview.getFitWidth());
+          imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
+        }
+
+        previewOverlayPanel.setVisible(true);
       }
     }
   }
@@ -764,8 +766,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       accordion.setExpandedPane(backgroundSettingsPane);
 
       cardPreview.setPreserveRatio(true);
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to initialize template editor: " + e.getMessage(), e);
     }
   }

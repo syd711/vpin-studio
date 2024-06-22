@@ -32,7 +32,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
-import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +39,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
-import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
@@ -81,7 +78,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
-    pauseMenuStage.setTitle("Pause Menu");
+    pauseMenuStage.setTitle("VPin UI");
     pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
@@ -139,11 +136,6 @@ public class PauseMenu extends Application {
       stage.setScene(scene);
 
       StateMananger.getInstance().init(loader.getController());
-
-      GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
-      logger.setLevel(Level.OFF);
-      logger.setUseParentHandlers(false);
 
       if (!PRODUCTION_USE) {
         togglePauseMenu();

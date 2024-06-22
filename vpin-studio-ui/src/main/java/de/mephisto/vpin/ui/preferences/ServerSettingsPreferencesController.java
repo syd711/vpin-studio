@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -46,7 +47,7 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Button shutdownBtn;
 
   @FXML
-  private Button restartBtn;
+  private VBox vpxMonitorSettings;
 
   @FXML
   private ComboBox<String> mappingHsFileNameCombo;
@@ -91,6 +92,9 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    vpxMonitorSettings.managedProperty().bindBidirectional(vpxMonitorSettings.visibleProperty());
+    vpxMonitorSettings.setVisible(Features.VPX_MONITORING);
+
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();

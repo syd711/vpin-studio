@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableSubscriptionsController implements Initializable, StudioFXController {
@@ -558,7 +559,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   public static String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     return status;
   }

@@ -19,7 +19,7 @@ import java.util.List;
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "nircmd.exe", "vpxtool.exe", "maintenance.jpg", ScoringDB.SCORING_DB_NAME);
-  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
+  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll", "jinput-raw_64.dll");
 
   public static void execute() {
     try {
@@ -58,7 +58,7 @@ public class ServerUpdatePreProcessing {
         }
       }
       else {
-        LOG.warn("No JVM folder found: " + folder.getAbsolutePath());
+        LOG.error("No JVM folder found: " + folder.getAbsolutePath());
       }
     }
   }

@@ -57,6 +57,7 @@ public class WidgetFactory {
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DISABLED_COLOR = "#B0ABAB";
   public static final String ERROR_COLOR = "#FF3333";
+  public static final String ERROR_STYLE = "-fx-font-color: " + ERROR_COLOR + ";-fx-text-fill:" + ERROR_COLOR + ";";
   public static final String UPDATE_COLOR = "#CCFF66";
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OK_COLOR = "#66FF66";
@@ -187,7 +188,7 @@ public class WidgetFactory {
   public static FontIcon createExclamationIcon() {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);
-    fontIcon.setIconColor(Paint.valueOf("#FF3333"));
+    fontIcon.setIconColor(Paint.valueOf(ERROR_COLOR));
     fontIcon.setIconLiteral("bi-exclamation-circle");
     return fontIcon;
   }

@@ -3,11 +3,10 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
@@ -22,11 +21,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -302,6 +303,8 @@ public class TablesSidebarMediaController implements Initializable {
 //  @FXML
 //  private Node hbox_Wheel;
 
+  private final Tooltip highscoreCardTooltip = new Tooltip("Highscore cards are generated for this screen.");
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -373,6 +376,12 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
+    CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
+    PopperScreen cardScreen = null;
+    if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
+      cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+    }
+
     btn_edit_Audio.setDisable(g.isEmpty());
     btn_edit_AudioLaunch.setDisable(g.isEmpty());
     btn_edit_Topper.setDisable(g.isEmpty());
@@ -424,7 +433,7 @@ public class TablesSidebarMediaController implements Initializable {
 
       GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      refreshMedia(gameMedia, preview);
+      refreshMedia(gameMedia, cardScreen, preview);
     }
     else {
       btn_edit_Audio.setText(" ");
@@ -444,13 +453,20 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
-  public void refreshMedia(GameMediaRepresentation gameMedia, boolean preview) {
+  public void refreshMedia(GameMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview) {
     Platform.runLater(() -> {
       VPinScreen[] values = VPinScreen.values();
-      for (VPinScreen value : values) {
-        BorderPane screen = this.getScreenBorderPaneFor(value);
-        GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(value);
-        WidgetFactory.createMediaContainer(client, screen, item, preview);
+      for (VPinScreen screen : values) {
+        BorderPane mediaRoot = this.getScreenBorderPaneFor(screen);
+        mediaRoot.getStyleClass().remove("highscore-screen");
+        Tooltip.uninstall(mediaRoot, highscoreCardTooltip);
+        if (cardScreen != null && cardScreen.equals(screen)) {
+          mediaRoot.getStyleClass().add("highscore-screen");
+          Tooltip.install(mediaRoot, highscoreCardTooltip);
+        }
+
+        GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
+        WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
       }
     });
   }

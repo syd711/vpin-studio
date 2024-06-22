@@ -12,6 +12,7 @@ open module de.mephisto.vpin.restclient {
   requires de.mephisto.vpin.connectors.iscored;
   requires spring.boot;
   requires sevenzipjbinding;
+  requires logback.classic;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;

@@ -1,9 +1,11 @@
 package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -47,6 +49,10 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
 
   @Autowired
   private PupPacksService pupPacksService;
+
+  @Autowired
+  private NotificationService notificationService;
+  private NotificationSettings notificationSettings;
 
   @Override
   public void tableLaunched(TableStatusChangedEvent event) {
@@ -122,6 +128,14 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
       }
       LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
       highscoreService.scanScore(game);
+
+      if (notificationSettings.isHighscoreCheckedNotification()) {
+        Notification notification = new Notification();
+        notification.setImage(game.getWheelImage());
+        notification.setTitle1(game.getGameDisplayName());
+        notification.setTitle2("Highscore scan finished!");
+        notificationService.showNotification(notification);
+      }
     }).start();
   }
 
@@ -152,5 +166,14 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
   @Override
   public void afterPropertiesSet() throws Exception {
     frontendStatusService.addFrontendStatusChangeListener(this);
+    preferencesService.addChangeListener(this);
+    preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {
+      notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+    }
   }
 }

@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.competitions;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,9 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   @Autowired
   private CompetitionService competitionService;
 
+  @Autowired
+  private DiscordService discordService;
+
   @Override
   public void competitionStarted(@NotNull Competition competition) {
     setGamesTournamentId(competition);
@@ -40,7 +45,9 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         break;
       }
       case ISCORED: {
-        setGamesTournamentId(competition);
+        if (Features.ISCORED_ENABLED) {
+          setGamesTournamentId(competition);
+        }
         break;
       }
     }
@@ -63,47 +70,53 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   private void setGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
-    String competitionId = CompetitionIdFactory.createId(competition);
-    List<String> updated = new ArrayList<>();
-    String tournamentId = tableDetails.getTourneyId();
-    if (tournamentId == null) {
-      tableDetails.setTourneyId(competitionId);
-    }
-    else {
-      String[] split = tournamentId.split(",");
-      for (String s : split) {
-        if (s.equalsIgnoreCase(competitionId)) {
-          continue;
-        }
-        updated.add(s);
+    if (tableDetails != null) {
+      boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+      String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+      List<String> updated = new ArrayList<>();
+      String tournamentId = tableDetails.getTourneyId();
+      if (tournamentId == null) {
+        tableDetails.setTourneyId(competitionId);
       }
-      updated.add(competitionId);
-      tableDetails.setTourneyId(String.join(",", updated));
-    }
+      else {
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (s.equalsIgnoreCase(competitionId)) {
+            continue;
+          }
+          updated.add(s);
+        }
+        updated.add(competitionId);
+        tableDetails.setTourneyId(String.join(",", updated));
+      }
 
-    frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
-    LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+      frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
+      LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+    }
   }
 
   private void unsetGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
-    String competitionId = CompetitionIdFactory.createId(competition);
-    String tournamentId = tableDetails.getTourneyId();
-    if (tournamentId != null) {
-      List<String> updated = new ArrayList<>();
-      String[] split = tournamentId.split(",");
-      for (String s : split) {
-        if (StringUtils.isEmpty(s)) {
-          continue;
+    if (tableDetails != null) {
+      boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+      String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+      String tournamentId = tableDetails.getTourneyId();
+      if (tournamentId != null) {
+        List<String> updated = new ArrayList<>();
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (StringUtils.isEmpty(s)) {
+            continue;
+          }
+          if (s.equalsIgnoreCase(competitionId)) {
+            continue;
+          }
+          updated.add(s);
         }
-        if (s.equalsIgnoreCase(competitionId)) {
-          continue;
-        }
-        updated.add(s);
+        tableDetails.setTourneyId(String.join(",", updated));
+        frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
+        LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
       }
-      tableDetails.setTourneyId(String.join(",", updated));
-      frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
-      LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }
 
