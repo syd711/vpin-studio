@@ -70,49 +70,53 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   private void setGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
-    boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-    String competitionId = CompetitionIdFactory.createId(competition, isOwner);
-    List<String> updated = new ArrayList<>();
-    String tournamentId = tableDetails.getTourneyId();
-    if (tournamentId == null) {
-      tableDetails.setTourneyId(competitionId);
-    }
-    else {
-      String[] split = tournamentId.split(",");
-      for (String s : split) {
-        if (s.equalsIgnoreCase(competitionId)) {
-          continue;
-        }
-        updated.add(s);
+    if (tableDetails != null) {
+      boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+      String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+      List<String> updated = new ArrayList<>();
+      String tournamentId = tableDetails.getTourneyId();
+      if (tournamentId == null) {
+        tableDetails.setTourneyId(competitionId);
       }
-      updated.add(competitionId);
-      tableDetails.setTourneyId(String.join(",", updated));
-    }
+      else {
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (s.equalsIgnoreCase(competitionId)) {
+            continue;
+          }
+          updated.add(s);
+        }
+        updated.add(competitionId);
+        tableDetails.setTourneyId(String.join(",", updated));
+      }
 
-    popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
-    LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+      popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
+      LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+    }
   }
 
   private void unsetGamesTournamentId(@NotNull Competition competition) {
     TableDetails tableDetails = popperService.getTableDetails(competition.getGameId());
-    boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
-    String competitionId = CompetitionIdFactory.createId(competition, isOwner);
-    String tournamentId = tableDetails.getTourneyId();
-    if (tournamentId != null) {
-      List<String> updated = new ArrayList<>();
-      String[] split = tournamentId.split(",");
-      for (String s : split) {
-        if (StringUtils.isEmpty(s)) {
-          continue;
+    if (tableDetails != null) {
+      boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
+      String competitionId = CompetitionIdFactory.createId(competition, isOwner);
+      String tournamentId = tableDetails.getTourneyId();
+      if (tournamentId != null) {
+        List<String> updated = new ArrayList<>();
+        String[] split = tournamentId.split(",");
+        for (String s : split) {
+          if (StringUtils.isEmpty(s)) {
+            continue;
+          }
+          if (s.equalsIgnoreCase(competitionId)) {
+            continue;
+          }
+          updated.add(s);
         }
-        if (s.equalsIgnoreCase(competitionId)) {
-          continue;
-        }
-        updated.add(s);
+        tableDetails.setTourneyId(String.join(",", updated));
+        popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
+        LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
       }
-      tableDetails.setTourneyId(String.join(",", updated));
-      popperService.saveTableDetails(tableDetails, competition.getGameId(), false);
-      LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }
 

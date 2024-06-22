@@ -24,6 +24,13 @@ public class SystemUtilTests {
     assertNotEquals(sum1, sum2);
   }
 
+
+  @Test
+  public void testAllWindowNames() {
+    List<String> allWindowNames = SystemUtil.getAllWindowNames();
+    assertTrue(!allWindowNames.isEmpty());
+  }
+
   @Test
   public void testKill() {
     ProcessHandle.allProcesses().forEach(p -> {

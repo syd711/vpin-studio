@@ -413,7 +413,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     ClipboardContent content = new ClipboardContent();
     String mappingVpsTableId = serverSettings.getMappingVpsTableId();
     String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
-    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId) + "#" + tableDetails.getMappedValue(mappingVpsTableVersionId));
+    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId), tableDetails.getMappedValue(mappingVpsTableVersionId));
     content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }

@@ -102,7 +102,8 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.VPX_MONITORING) {
-      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
+//      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
+      System.out.println(getVPXTableName());
       preferencesService.addChangeListener(this);
       preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     }
@@ -115,9 +116,11 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
         ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         if (serverSettings.isUseVPXTableMonitor()) {
           running.set(true);
+          LOG.info("Enabled VPX Monitor");
         }
         else {
           running.set(false);
+          LOG.info("Disabled VPX Monitor");
         }
       }
     }

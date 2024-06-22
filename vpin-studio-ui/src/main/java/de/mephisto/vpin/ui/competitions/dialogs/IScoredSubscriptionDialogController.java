@@ -196,6 +196,10 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         this.tableView.refresh();
       }
     }
+    else {
+      selection.clear();
+      saveBtn.setDisable(true);
+    }
   }
 
   @Override

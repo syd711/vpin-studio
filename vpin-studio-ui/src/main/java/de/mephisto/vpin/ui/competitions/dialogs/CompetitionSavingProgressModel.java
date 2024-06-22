@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +58,9 @@ public class CompetitionSavingProgressModel extends ProgressModel<CompetitionRep
       progressResultModel.addProcessed(newCmp);
     } catch (Exception e) {
       LOG.error("Failed to save competitions data: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Competition Update Failed", "Failed to save competitions data: " + e.getMessage());
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Competition Update Failed", "Failed to save competitions data: " + e.getMessage());
+      });
     }
   }
 
