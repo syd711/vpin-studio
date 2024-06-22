@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
 import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -39,10 +38,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
-import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);

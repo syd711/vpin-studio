@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.popper.PopperScreen;
@@ -65,12 +66,17 @@ public class IScoredGameCellContainer extends HBox {
 
     String vpsTableId = subscription.getVpsTableId();
     String vpsTableVersionId = subscription.getVpsTableVersionId();
-    if(gameRoom != null) {
+    if (gameRoom != null) {
       IScoredGame gameByVps = gameRoom.getGameByVps(vpsTableId, vpsTableVersionId);
-      if(gameByVps == null) {
+      if (gameByVps == null) {
         Label error = new Label("Table not listed anymore.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");
+        column.getChildren().add(error);
+        return;
+      }
+      else if(gameByVps.isDisabled()) {
+        Label error = new Label("Disabled by iScored admin");
         column.getChildren().add(error);
         return;
       }

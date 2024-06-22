@@ -269,7 +269,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         return new SimpleObjectProperty<>("All versions allowed.");
       }
       GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(cellData.getValue().getVpsTableId(), cellData.getValue().getVpsTableVersionId());
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), gameByVpsTable == null));
+      return new SimpleObjectProperty(new VpsVersionContainer(table, vpsTableVersion, getLabelCss(cellData.getValue()), gameByVpsTable == null));
     });
 
     selectionColumn.setCellValueFactory(cellData -> {

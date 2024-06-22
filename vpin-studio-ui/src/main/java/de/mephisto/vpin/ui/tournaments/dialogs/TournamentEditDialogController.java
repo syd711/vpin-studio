@@ -191,7 +191,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(discordLink));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open discord link: " + e.getMessage(), e);
         }
       }
@@ -206,7 +207,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
         try {
           desktop.browse(new URI(link));
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open discord link: " + e.getMessage(), e);
         }
       }
@@ -477,7 +479,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
               this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
               this.tableView.refresh();
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
             }
@@ -502,15 +505,15 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     Image image = new Image(in);
     Tile avatar = TileBuilder.create()
-      .skinType(Tile.SkinType.IMAGE)
-      .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
-      .backgroundColor(Color.TRANSPARENT)
-      .image(image)
-      .imageMask(Tile.ImageMask.ROUND)
-      .text("")
-      .textSize(Tile.TextSize.BIGGER)
-      .textAlignment(TextAlignment.CENTER)
-      .build();
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .text("")
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
 
     avatarPane.getChildren().add(avatar);
 
@@ -627,12 +630,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
+      VpsTable vpsTable = cellData.getValue().getVpsTable();
       VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
       String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, customStyle, true));
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {
@@ -648,7 +652,8 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournament Data...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }

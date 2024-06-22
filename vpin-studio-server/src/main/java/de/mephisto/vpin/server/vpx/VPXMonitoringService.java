@@ -102,10 +102,9 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.VPX_MONITORING) {
-//      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
-//      System.out.println(getVPXTableName());
-//      preferencesService.addChangeListener(this);
-//      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
+      scheduler.scheduleAtFixedRate(this, 0, 5, TimeUnit.SECONDS);
+      preferencesService.addChangeListener(this);
+      preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     }
   }
 

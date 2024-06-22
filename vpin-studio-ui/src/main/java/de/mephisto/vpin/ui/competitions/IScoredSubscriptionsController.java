@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredSubscriptionsController implements Initializable, StudioFXController {
@@ -126,7 +127,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
             tableView.scrollTo(competitionRepresentation);
           }
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to create iScored subscription: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -228,7 +230,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -249,7 +252,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       CompetitionRepresentation value = cellData.getValue();
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
       VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
-      if(table == null) {
+      if (table == null) {
         return new SimpleStringProperty("No matching VPS table found.");
       }
 
@@ -275,7 +278,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       if (vpsTableVersion == null) {
         return new SimpleStringProperty("All versions allowed.");
       }
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
     });
 
     gameRoomColumn.setCellValueFactory(cellData -> {
@@ -300,7 +303,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
 
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 
@@ -433,14 +437,17 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   public static String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     else {
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
       if (gameRoom != null) {
         IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
         if (gameByVps == null) {
-          status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+          status = ERROR_STYLE;
+        }
+        else if (gameByVps.isDisabled()) {
+          status = WidgetFactory.DISABLED_TEXT_STYLE;
         }
       }
     }

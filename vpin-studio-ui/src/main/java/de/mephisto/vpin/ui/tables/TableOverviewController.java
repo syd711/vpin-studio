@@ -82,6 +82,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -1060,7 +1061,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       Label label = new Label(rom);
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-        String color = "#FF3333";
+        String color = WidgetFactory.ERROR_COLOR;
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
       else {
@@ -1438,11 +1439,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       if (!ignored) {
         if (config.getOption().equals(ValidatorOption.empty)) {
-          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
           tt.append("This asset should remain empty.\n");
         }
         else if (config.getOption().equals(ValidatorOption.optional)) {
-          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
           tt.append("This asset is optional.\n");
         }
         else if (config.getOption().equals(ValidatorOption.mandatory)) {
@@ -1632,7 +1633,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private String getIconColor(GameRepresentation value) {
     if (value.isDisabled()) {
-      return "#B0ABAB";
+      return DISABLED_COLOR;
     }
     return null;
   }

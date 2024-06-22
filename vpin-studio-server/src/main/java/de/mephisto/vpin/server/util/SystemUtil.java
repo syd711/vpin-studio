@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.*;
 
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
@@ -43,23 +44,46 @@ public class SystemUtil {
     Pointer GetWindow(Pointer hWnd, int uCmd);
   }
 
+
+
+  private static final ExecutorService scheduler = Executors.newSingleThreadExecutor();
+  private static int threadId = 0;
+
   public static List<String> getAllWindowNames() {
     final List<String> windowNames = new ArrayList<>();
     final User32 user32 = User32.INSTANCE;
-    user32.EnumWindows(new User32.WNDENUMPROC() {
 
+    Future<?> submit = scheduler.submit(new Runnable() {
       @Override
-      public boolean callback(Pointer hWnd, Pointer arg) {
-        byte[] windowText = new byte[512];
-        user32.GetWindowTextA(hWnd, windowText, 512);
-        String wText = Native.toString(windowText).trim();
-        if (!wText.isEmpty()) {
-          windowNames.add(wText);
-        }
-        return true;
-      }
-    }, null);
+      public void run() {
+        user32.EnumWindows(new User32.WNDENUMPROC() {
 
+          @Override
+          public boolean callback(Pointer hWnd, Pointer arg) {
+            try {
+              threadId++;
+              Thread.currentThread().setName("All-Window-Names-Native-" + threadId);
+              byte[] windowText = new byte[512];
+              user32.GetWindowTextA(hWnd, windowText, 512);
+              String wText = Native.toString(windowText).trim();
+              if (!wText.isEmpty()) {
+                windowNames.add(wText);
+              }
+            }
+            catch (Exception e) {
+              LOG.error("Failed to read window name: " + e.getMessage(), e);
+            }
+            return true;
+          }
+        }, null);
+      }
+    });
+    try {
+      submit.get(100, TimeUnit.MILLISECONDS);
+    }
+    catch (Exception e) {
+      //ignore
+    }
     return windowNames;
   }
 }
