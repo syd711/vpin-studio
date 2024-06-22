@@ -78,7 +78,7 @@ public class FrontendStatusEventsResource {
 
   @PostMapping("/popperLaunch")
   public boolean popperLaunch() {
-    frontendStatusService.notifyPopperLaunch();
+    frontendStatusService.notifyFrontendLaunch();
     return true;
   }
 

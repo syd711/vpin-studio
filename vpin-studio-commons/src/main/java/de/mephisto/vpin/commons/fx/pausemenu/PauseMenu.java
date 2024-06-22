@@ -180,13 +180,11 @@ public class PauseMenu extends Application {
 
         togglePauseKey(0);
 
-        //re-assign key, because they might have been changed
-        FrontendControls frontendControls = client.getFrontendService().getPinUPControls();
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-        StateMananger.getInstance().setControls(frontendControls, pauseMenuSettings);
+        StateMananger.getInstance().setControls(pauseMenuSettings);
 
         VPinScreen cardScreen = null;
         if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {

@@ -148,19 +148,19 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     return b;
   }
 
-  public void notifyPopperLaunch() {
+  public void notifyFrontendLaunch() {
     for (FrontendStatusChangeListener listener : listeners) {
       listener.frontendLaunched();
     }
   }
 
-  public void notifyPopperRestart() {
+  public void notifyFrontendRestart() {
     for (FrontendStatusChangeListener listener : listeners) {
       listener.frontendRestarted();
     }
   }
 
-  public void notifyPopperExit() {
+  public void notifyFrontendExit() {
     for (FrontendStatusChangeListener listener : listeners) {
       listener.frontendExited();
     }
@@ -562,7 +562,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    Thread shutdownHook = new Thread(this::notifyPopperExit);
+    Thread shutdownHook = new Thread(this::notifyFrontendExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);

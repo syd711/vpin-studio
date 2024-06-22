@@ -18,6 +18,8 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.notifications.NotificationService;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import javafx.application.Platform;
@@ -28,8 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class PopperStatusChangeListenerImpl implements InitializingBean, FrontendStatusChangeListener {
-  private final static Logger LOG = LoggerFactory.getLogger(PopperStatusChangeListenerImpl.class);
+public class FrontendStatusChangeListenerImpl implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusChangeListenerImpl.class);
   public static final int EXIT_DELAY = 6000;
 
   @Autowired
@@ -52,6 +54,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
 
   @Autowired
   private NotificationService notificationService;
+
   private NotificationSettings notificationSettings;
 
   @Override
@@ -141,7 +144,7 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
 
   @Override
   public void frontendLaunched() {
-    LOG.info("Popper launch event");
+    LOG.info("Frontend launch event");
     int activeTableId = (int) preferencesService.getPreferenceValue(PreferenceNames.ACTIVE_GAME);
     if (activeTableId >= 0) {
       Game game = gameService.getGame(activeTableId);
@@ -153,13 +156,13 @@ public class PopperStatusChangeListenerImpl implements InitializingBean, Fronten
 
   @Override
   public void frontendExited() {
-    LOG.info("Popper exit event");
+    LOG.info("Frontend exit event");
     discordService.setActivity(null);
   }
 
   @Override
   public void frontendRestarted() {
-    LOG.info("Popper restarted event");
+    LOG.info("Frontend restarted event");
     discordService.setActivity(null);
   }
 

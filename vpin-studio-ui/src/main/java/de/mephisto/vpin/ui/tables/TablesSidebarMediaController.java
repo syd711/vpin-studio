@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -377,9 +379,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    PopperScreen cardScreen = null;
+    VPinScreen cardScreen = null;
     if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-      cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+      cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
     }
 
     btn_edit_Audio.setDisable(g.isEmpty());

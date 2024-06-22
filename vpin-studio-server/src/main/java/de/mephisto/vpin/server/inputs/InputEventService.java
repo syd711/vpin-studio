@@ -6,10 +6,11 @@ import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.server.VPinStudioServerTray;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.PopperStatusChangeListener;
-import de.mephisto.vpin.server.popper.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -27,11 +28,14 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements InitializingBean, PopperStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
-  private PopperService popperService;
+  private FrontendService frontendService;
+
+  @Autowired
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private OverlayClientImpl overlayClient;
@@ -129,8 +133,8 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
     frontendIsRunning = false;
     vpxIsRunning = false;
     new Thread(() -> {
-      systemService.restartPopper();
-      popperService.notifyPopperRestart();
+      frontendService.restartFrontend();
+      frontendStatusService.notifyFrontendRestart();
     }).start();
   }
 
@@ -166,7 +170,7 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
   }
 
   @Override
-  public void popperLaunched() {
+  public void frontendLaunched() {
     frontendIsRunning = true;
 
     Platform.runLater(() -> {
@@ -196,13 +200,13 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
   }
 
   @Override
-  public void popperExited() {
+  public void frontendExited() {
     vpxIsRunning = false;
     frontendIsRunning = false;
   }
 
   @Override
-  public void popperRestarted() {
+  public void frontendRestarted() {
     frontendIsRunning = true;
     vpxIsRunning = false;
   }
@@ -265,13 +269,13 @@ public class InputEventService implements InitializingBean, PopperStatusChangeLi
 
     preferencesService.addChangeListener(this);
 
-    frontendIsRunning = popperService.isPinUPRunning();
+    frontendIsRunning = frontendService.isFrontendRunning();
     if (frontendIsRunning) {
-      popperLaunched();
+      frontendLaunched();
     }
 
     LOG.info("Added VPin service popper status listener.");
-    popperService.addPopperStatusChangeListener(this);
+    frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);
     LOG.info("Server startup finished, running version is " + systemService.getVersion());

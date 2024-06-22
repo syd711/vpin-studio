@@ -278,7 +278,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
-        this.tableOverviewController.reload(selection.getId());
+        this.tableOverviewController.reload(selection, true);
       }
     }
 
