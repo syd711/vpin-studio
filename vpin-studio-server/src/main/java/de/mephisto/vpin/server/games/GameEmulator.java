@@ -72,7 +72,7 @@ public class GameEmulator {
       String[] files = this.installationFolder.list(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-          if(!name.startsWith("VPinball")) {
+          if (!name.startsWith("VPinball")) {
             return false;
           }
           return name.endsWith(".exe");
@@ -193,6 +193,7 @@ public class GameEmulator {
     return id;
   }
 
+  @JsonIgnore
   public File getVPXExe() {
     return new File(installationFolder, vpxExeName);
   }
@@ -309,7 +310,7 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getGameMediaFolder(@NonNull String gameFileName, @NonNull VPinScreen screen) {
-    return mediaStrategy!=null? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen): null;
+    return mediaStrategy != null ? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen) : null;
   }
 
   @NonNull

@@ -87,19 +87,19 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
 
       //PinUP Popper Folder
-      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR)) {
+      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
         this.frontendInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
-        frontendType =FrontendType.Popper;
+        frontendType = FrontendType.Popper;
       }
       //PinballX Folder
-      if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR)) {
+      if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR))) {
         this.frontendInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
-        frontendType =FrontendType.PinballX;
+        frontendType = FrontendType.PinballX;
       }
       //PinUP Popper Folder
-      if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR)) {
+      if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR))) {
         this.frontendInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR));
-        frontendType =FrontendType.Standalone;
+        frontendType = FrontendType.Standalone;
       }
 
       if (!getB2SImageExtractionFolder().exists()) {
@@ -120,7 +120,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
@@ -244,8 +245,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       ds = new DatagramSocket(port);
       ds.setReuseAddress(true);
       return true;
-    } catch (IOException e) {
-    } finally {
+    }
+    catch (IOException e) {
+    }
+    finally {
       if (ds != null) {
         ds.close();
       }
@@ -253,7 +256,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (ss != null) {
         try {
           ss.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           /* should not be thrown */
         }
       }
@@ -283,7 +287,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       String out = standardOutputFromCommand.toString();
       return out.contains("sdk") & out.contains("dotnet");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to execute .net check: " + e.getMessage(), e);
     }
     return false;
@@ -399,8 +404,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       ds = new DatagramSocket(port);
       ds.setReuseAddress(true);
       return true;
-    } catch (IOException e) {
-    } finally {
+    }
+    catch (IOException e) {
+    }
+    finally {
       if (ds != null) {
         ds.close();
       }
@@ -408,7 +415,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (ss != null) {
         try {
           ss.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           /* should not be thrown */
         }
       }
@@ -473,7 +481,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     try {
       targetFolder.mkdirs();
       FileUtils.copyFile(source, target);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to backup DB: " + e.getMessage(), e);
     }
     return target.getName();
