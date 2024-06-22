@@ -135,7 +135,7 @@ public class Studio extends Application {
         SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
       }
       catch (Exception e) {
-        LOG.error("Failed to initialize SevenZip: " + e.getMessage(), e);
+        LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);
       }
 
       SystemSummary systemSummary = client.getSystemService().getSystemSummary();
