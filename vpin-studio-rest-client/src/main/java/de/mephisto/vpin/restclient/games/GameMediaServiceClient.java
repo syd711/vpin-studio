@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
@@ -15,12 +14,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
  * Popper
@@ -128,7 +125,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return null;
   }
 
-  public synchronized TableAssetSearch searchTableAsset(VPinScreen screen, String term) throws Exception {
+  public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {
     term = term.replaceAll("/", "");
     term = term.replaceAll("&", " ");
     term = term.replaceAll(",", " ");
@@ -139,13 +136,14 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     }
 
     TableAssetSearch search = new TableAssetSearch();
+    search.setGameId(gameId);
     search.setTerm(term);
     search.setScreen(screen);
     TableAssetSearch result = getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/search", search, TableAssetSearch.class);
     if (result != null) {
       if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
         String[] split = term.trim().split(" ");
-        return searchTableAsset(screen, split[0]);
+        return searchTableAsset(gameId, screen, split[0]);
       }
 
       cache.add(result);
@@ -165,6 +163,18 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  /**
+   * @param tableAsset The TableAsset from which we need the URL
+   * @return the URL of the asset, prepended by API segments when it starts with "/"
+   */
+  public String getUrl(TableAsset tableAsset) {
+    String url = tableAsset.getUrl();
+    if (url.startsWith("/")) {
+      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + url;
+    }
+    return url;
   }
 
   public void clearCache() {

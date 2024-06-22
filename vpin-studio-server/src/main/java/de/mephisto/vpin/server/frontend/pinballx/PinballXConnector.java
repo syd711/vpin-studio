@@ -2,17 +2,21 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,10 +38,20 @@ public class PinballXConnector extends BaseConnector {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
+  @Autowired
+  private PinballXAssetsAdapter assetsAdapter;
+
+  @Autowired
+  private PreferencesService preferencesService;
+  
   private Map<String, TableDetails> mapTableDetails;
 
   @Override
-  public void initializeConnector(ServerSettings settings) {
+  public void initializeConnector() {
+    PinballXSettings ps = getSettings();
+    if (ps!=null) {
+      assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
+    }
   }
 
   @NotNull
@@ -46,14 +60,50 @@ public class PinballXConnector extends BaseConnector {
     return systemService.getFrontendInstallationFolder();
   }
 
+  public Frontend getFrontend() {
+    Frontend frontend = new Frontend();
+    frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
+    frontend.setFrontendType(FrontendType.PinballX);
+
+    frontend.setFrontendExe("PinballX.exe");
+    frontend.setAdminExe("Game Manager.exe");
+    frontend.setIconName("pinballx.png");
+    List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
+    screens.remove(VPinScreen.Other2);
+    frontend.setSupportedScreens(screens);
+    frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
+        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
+        GameValidationCode.CODE_OUTDATED_RECORDING
+    ));
+
+    PinballXSettings ps = getSettings();
+    frontend.setAssetSearchEnabled(ps!=null && ps.isGameExEnabled());
+    frontend.setAssetSearchLabel("GameEx Assets Search for PinballX");
+    frontend.setPlayfieldMediaInverted(true);
+    return frontend;
+  }
+
   @Override
-  public JsonSettings getSettings() {
-    return new PinballXSettings();//TODO
+  public PinballXSettings getSettings() {
+    try {
+      PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS, PinballXSettings.class);
+      return settings;
+    } catch (Exception e) {
+      LOG.error("Getting pinballX settings failed: " + e.getMessage(), e);
+      return null;
+    }
   }
 
   @Override
   public void saveSettings(@NotNull Map<String, Object> data) {
-    super.saveSettings(data);//TODO
+    try {
+      PinballXSettings settings = JsonSettings.objectMapper.convertValue(data, PinballXSettings.class);
+      preferencesService.savePreference(PreferenceNames.PINBALLX_SETTINGS, settings);
+      // reinitialize the connector with updated settings
+      initializeConnector();
+    } catch (Exception e) {
+      LOG.error("Saving pinballX settings failed: " + e.getMessage(), e);
+    }
   }
 
   @Override
@@ -125,7 +175,7 @@ public class PinballXConnector extends BaseConnector {
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
-    String parameters = s.getString("Parameters");
+    //String parameters = s.getString("Parameters");
 
     String gameext = null;
     if (s.containsKey("SystemType")) {
@@ -158,12 +208,9 @@ public class PinballXConnector extends BaseConnector {
       e.setDirMedia(mediaDir.getAbsolutePath());
     }
     e.setDirGames(tablePath);
-    if (StringUtils.equals(emuname, "Visual Pinball")) {
-      e.setDirRoms(workingPath + "/VPinMAME/roms");
-    }
-    //e.setDescription(rs.getString("Description"));
     e.setEmuLaunchDir(workingPath);
-    e.setLaunchScript(launchScript);
+    e.setExeName(executable);
+
     e.setGamesExt(gameext);
     e.setVisible(enabled);
 
@@ -212,6 +259,11 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     return new PinballXMediaAccessStrategy();
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter() {
+    return assetsAdapter;
   }
 
   //----------------------------------

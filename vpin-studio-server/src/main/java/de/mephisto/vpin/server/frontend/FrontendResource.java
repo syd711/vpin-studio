@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
@@ -130,6 +131,22 @@ public class FrontendResource {
   public List<FrontendPlayerDisplay> getScreens() {
     return frontendStatusService.getPupPlayerDisplays();
   }
+
+  @GetMapping("/mediadir/{gameId}/{name}")
+  public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("name") String name) {
+    GameEmulator emu;
+    String gamefilename = null;
+    if (gameId < 0) {
+      emu = frontendService.getDefaultGameEmulator();
+    } else {
+      Game game = gameService.getGame(gameId);
+      gamefilename = game.getGameFileName();
+      emu = frontendService.getGameEmulator(game.getEmulatorId());  
+    }
+    VPinScreen screen = VPinScreen.valueOf(name);
+    return emu.getGameMediaFolder(gamefilename, screen);
+  }
+
 
   @PostMapping("/tabledetails/vpsLink/{gameId}")
   public boolean vpsLink(@PathVariable("gameId") int gameId, @RequestBody GameVpsMatch vpsmatch) throws Exception {

@@ -6,10 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
-import de.mephisto.vpin.connectors.assets.EncryptDecrypt;
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.connectors.assets.TableAssetsService;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -46,6 +43,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
@@ -53,15 +51,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.File;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.*;
 
@@ -163,13 +158,18 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button addAudioBlank;
 
   @FXML
+  private VBox assetsBox;
+  @FXML
+  private Label assetSearchLabel;
+  @FXML
+  private BorderPane assetSearchList;
+  
+  @FXML
   private Label previewTitleLabel;
 
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private VPinScreen screen = VPinScreen.Wheel;
-  private TableAssetsService tableAssetsService;
-  private EncryptDecrypt encryptDecrypt;
   private Node lastSelected;
   private GameMediaRepresentation gameMedia;
 
@@ -220,10 +220,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onFolderBtn() {
     if (this.gameMedia != null) {
-      int emulatorId = this.game.getEmulatorId();
-      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(emulatorId);
-      String mediaDir = gameEmulator.getMediaDirectory();
-      File screenDir = new File(mediaDir, screen.name());
+      File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
       SystemUtil.openFolder(screenDir);
     }
   }
@@ -364,7 +361,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Platform.runLater(() -> {
       String term = searchField.getText().trim();
       if (!StringUtils.isEmpty(term)) {
-        TableAssetSearch assetSearch = searchPopper(screen, term);
+        TableAssetSearch assetSearch = searchMedia(screen, term);
         ObservableList<TableAsset> assets = FXCollections.observableList(new ArrayList<>(assetSearch.getResult()));
         serverAssetsList.getItems().removeAll(serverAssetsList.getItems());
         serverAssetsList.setItems(assets);
@@ -378,13 +375,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
-  private TableAssetSearch searchPopper(VPinScreen screen, String term) {
+  private TableAssetSearch searchMedia(VPinScreen screen, String term) {
+    // needed despite also implemented in searchService to avoid loop
     TableAssetSearch cached = client.getGameMediaService().getCached(screen, term);
     if (cached != null) {
       return cached;
     }
 
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PopperAssetSearchProgressModel("Popper Asset Search", screen, term));
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, 
+        new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -392,6 +391,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     TableAssetSearch empty = new TableAssetSearch();
     empty.setResult(Collections.emptyList());
+    empty.setGameId(game.getId());
+    empty.setTerm(term);
     empty.setScreen(screen);
     return empty;
   }
@@ -414,14 +415,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-
-      String assetUrl = null;
-      try {
-        assetUrl = this.encryptDecrypt.decrypt(tableAsset.getUrl());
-      }
-      catch (Exception e) {
-        throw new RuntimeException(e);
-      }
+      String assetUrl = client.getGameMediaService().getUrl(tableAsset);
 
       try {
         if (baseType.equals("image")) {
@@ -440,7 +434,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType);
+          Frontend frontend = client.getFrontendService().getFrontend();
+          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
         }
       }
       catch (Exception e) {
@@ -508,6 +503,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
 
+    // needed as the controller is also used by dialog-table-asset-manager-embedded.fxml that does not contain asset search capabilities
+    if (assetsBox!=null) {
+      if (frontend.isAssetSearchEnabled()) {
+        this.assetSearchLabel.setText(frontend.getAssetSearchLabel());
+
+      //Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      //ImageView view1 = new ImageView(image1);
+      //view1.setPreserveRatio(true);
+      //view1.setFitHeight(18);
+
+      } 
+      else {
+        assetsBox.getChildren().remove(assetSearchLabel);
+        assetsBox.getChildren().remove(assetSearchList);
+      }
+    }
+
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
     this.addToPlaylistBtn.managedProperty().bindBidirectional(this.addToPlaylistBtn.visibleProperty());
@@ -515,19 +527,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     this.folderBtn.setVisible(SystemUtil.isFolderActionSupported());
     this.folderSeparator.setVisible(SystemUtil.isFolderActionSupported());
-
-    try {
-      encryptDecrypt = new EncryptDecrypt(EncryptDecrypt.KEY);
-    }
-    catch (UnsupportedEncodingException e) {
-      throw new RuntimeException(e);
-    }
-    catch (NoSuchPaddingException e) {
-      throw new RuntimeException(e);
-    }
-    catch (NoSuchAlgorithmException e) {
-      throw new RuntimeException(e);
-    }
 
     screenAudio.hoverProperty().addListener((observableValue, aBoolean, t1) -> updateState(VPinScreen.Audio, screenAudio, t1, false));
     screenAudio.setOnMouseClicked(mouseEvent -> updateState(VPinScreen.Audio, screenAudio, true, true));
@@ -584,7 +583,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    serverAssetsList.setPlaceholder(new Label("No Popper assets found for this screen and table."));
+    serverAssetsList.setPlaceholder(new Label("No assets found for this screen and table."));
     assetList.setPlaceholder(new Label("No assets found for this screen and table."));
 
     if (!isEmbeddedMode()) {
@@ -594,17 +593,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Label label = new Label("No asset preview activated.");
     label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
     serverAssetMediaPane.setCenter(label);
-
-    tableAssetsService = new TableAssetsService();
-
-    try {
-      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      TableAssetsAdapter adapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
-      tableAssetsService.registerAdapter(adapter);
-    }
-    catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
-    }
 
     this.serverAssetsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableAsset>() {
       @Override
@@ -666,7 +654,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new AudioMediaPlayer(mediaPane, mediaItem, url);
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, true);
+          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
         }
       }
     });
@@ -742,7 +730,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @Override
   public void onDialogCancel() {
     EventManager.getInstance().removeListener(this);
-    EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
+    if ((this.game!=null)) {
+      EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
+    }
   }
 
 
@@ -757,12 +747,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
-      List<GameRepresentation> games = client.getGameService().getGamesCached(this.game.getEmulatorId());
-      ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-      tablesCombo.getItems().addAll(gameRepresentations);
-      tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-        this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
-      });
+      int emulatorId = this.game.getEmulatorId();
+      new Thread(() -> {
+        // as get of games may takes some time, run in a dedicated Thread
+        List<GameRepresentation> games = client.getGameService().getGamesCached(emulatorId);
+        ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+        tablesCombo.getItems().addAll(gameRepresentations);
+        tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+          this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
+        });
+      }).start();
     }
 
     if (game == null) {

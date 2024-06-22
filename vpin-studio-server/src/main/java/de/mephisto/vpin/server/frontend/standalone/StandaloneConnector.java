@@ -12,18 +12,22 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 
 @Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
@@ -37,8 +41,11 @@ public class StandaloneConnector extends BaseConnector {
   @Autowired
   private SystemService systemService;
   
+  @Autowired
+  private PreferencesService preferencesService;
+  
   @Override
-  public void initializeConnector(ServerSettings settings) {
+  public void initializeConnector() {
   }
 
   @NotNull
@@ -47,6 +54,30 @@ public class StandaloneConnector extends BaseConnector {
     return systemService.getFrontendInstallationFolder();
   }
 
+  public Frontend getFrontend() {
+    Frontend frontend = new Frontend();
+    //frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
+    frontend.setFrontendType(FrontendType.Standalone);
+
+    frontend.setIgnoredValidations(Arrays.asList(
+        GameValidationCode.CODE_NO_AUDIO,
+        GameValidationCode.CODE_NO_AUDIO_LAUNCH,
+        GameValidationCode.CODE_NO_APRON,
+        GameValidationCode.CODE_NO_INFO,
+        GameValidationCode.CODE_NO_HELP,
+        GameValidationCode.CODE_NO_TOPPER,
+        GameValidationCode.CODE_NO_BACKGLASS,
+        GameValidationCode.CODE_NO_DMD,
+        GameValidationCode.CODE_NO_PLAYFIELD,
+        GameValidationCode.CODE_NO_LOADING,
+        GameValidationCode.CODE_NO_OTHER2,
+        GameValidationCode.CODE_NO_WHEEL_IMAGE,
+        GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
+        GameValidationCode.CODE_OUTDATED_RECORDING
+    ));
+    frontend.setAssetSearchEnabled(false);
+    return frontend;
+  }
 
   //------------------------------------------------------
   @Override
@@ -74,16 +105,13 @@ public class StandaloneConnector extends BaseConnector {
     e.setDisplayName(emuname);
 
     e.setDirGames(tablesDir.getAbsolutePath());
-
-    if (StringUtils.equals(emuname, "Visual Pinball")) {
-      e.setDirRoms(new File(installDir, "/VPinMAME/roms").getAbsolutePath());
-    }
-    
-    //e.setDescription(rs.getString("Description"));
     e.setEmuLaunchDir(installDir.getAbsolutePath());
 
-    String launchScript = null;
-    e.setLaunchScript(launchScript);
+    String exeName = "VPinballX.exe";
+    if (SystemUtil.is64Bit(preferencesService) && new File(installDir, "VPinballX64.exe").exists()) {
+      exeName = "VPinballX64.exe";
+    }
+    e.setExeName(exeName);
 
     String gameext = getEmulatorExtension(emuname);
     e.setGamesExt(gameext);
@@ -141,6 +169,11 @@ public class StandaloneConnector extends BaseConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     // no associated medias
+    return null;
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter() {
     return null;
   }
 

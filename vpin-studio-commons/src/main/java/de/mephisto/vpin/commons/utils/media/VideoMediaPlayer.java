@@ -29,10 +29,14 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private double fitWidth = -1;
   private double fitHeight = -1;
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType) {
+  private boolean invertPlayfield;
+
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, 
+      @NonNull String mimeType, boolean invertPlayfield) {
     super(parent, url);
     this.mimeType = mimeType;
     this.dialogRendering = true;
+    this.invertPlayfield = invertPlayfield;
 
     if (screenName.equalsIgnoreCase("PlayField")) {
       screen = VPinScreen.PlayField;
@@ -44,11 +48,13 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.render();
   }
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, @NonNull String mimeType, boolean dialogRendering) {
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, 
+      @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;
     this.dialogRendering = dialogRendering;
+    this.invertPlayfield = invertPlayfield;
 
     if (mediaItem.getScreen().equalsIgnoreCase("PlayField")) {
       screen = VPinScreen.PlayField;
@@ -118,7 +124,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90);
+        mediaView.setRotate(90 + (invertPlayfield? 180: 0));
         mediaView.setFitWidth(prefHeight);
         mediaView.setFitHeight(prefWidth);
 

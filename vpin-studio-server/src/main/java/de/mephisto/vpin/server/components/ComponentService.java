@@ -3,12 +3,12 @@ package de.mephisto.vpin.server.components;
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.githubloader.ReleaseArtifact;
 import de.mephisto.githubloader.ReleaseArtifactActionLog;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -147,8 +147,7 @@ public class ComponentService implements InitializingBean {
         releaseArtifact = githubRelease.getLatestArtifact();
       }
       else {
-        String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
-        if (systemPreset == null || systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
+        if (SystemUtil.is64Bit(preferencesService)) {
           releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> r.getName().contains("x64")).findFirst().orElse(null);
         }
         else {

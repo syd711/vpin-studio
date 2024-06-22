@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.popper;
+package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.frontend.EmulatorNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;

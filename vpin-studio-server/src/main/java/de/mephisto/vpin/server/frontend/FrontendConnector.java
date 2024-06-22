@@ -5,15 +5,16 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -22,7 +23,12 @@ public interface FrontendConnector {
   /** 
    * Let the Frontend initialize itself, called 
    */
-  void initializeConnector(ServerSettings settings);
+  void initializeConnector();
+
+  Frontend getFrontend();
+
+  TableAssetsAdapter getTableAssetAdapter();
+
 
   @NonNull
   File getInstallationFolder();

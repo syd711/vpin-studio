@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
+import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -32,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendService implements InitializingBean, PreferenceChangedListener {
+public class FrontendService implements InitializingBean {
 
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
@@ -40,70 +41,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private SystemService systemService;
 
   @Autowired
-  private PreferencesService preferencesService;
+  private TableAssetsService tableAssetsService;
 
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
 
-  private ServerSettings serverSettings;
-
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
   }
 
-  public Frontend getFrontend() {
-    FrontendType frontendType = getFrontendType();
-
-    Frontend frontend = new Frontend();
-    frontend.setInstallationDirectory(getFrontendConnector().getInstallationFolder().getAbsolutePath());
-    frontend.setFrontendType(frontendType);
-
-    switch (frontendType) {
-      case Standalone: {
-        frontend.setIgnoredValidations(Arrays.asList(
-            GameValidationCode.CODE_NO_AUDIO,
-            GameValidationCode.CODE_NO_AUDIO_LAUNCH,
-            GameValidationCode.CODE_NO_APRON,
-            GameValidationCode.CODE_NO_INFO,
-            GameValidationCode.CODE_NO_HELP,
-            GameValidationCode.CODE_NO_TOPPER,
-            GameValidationCode.CODE_NO_BACKGLASS,
-            GameValidationCode.CODE_NO_DMD,
-            GameValidationCode.CODE_NO_PLAYFIELD,
-            GameValidationCode.CODE_NO_LOADING,
-            GameValidationCode.CODE_NO_OTHER2,
-            GameValidationCode.CODE_NO_WHEEL_IMAGE,
-            GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-            GameValidationCode.CODE_OUTDATED_RECORDING));
-        break;
-      }
-      case Popper: {
-        frontend.setFrontendExe("PinUpMenu.exe");
-        frontend.setIconName("PinUpMenuSetup.exe");
-        frontend.setIconName("popper.png");
-        frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
-        break;
-      }
-      case PinballX: {
-        frontend.setFrontendExe("PinballX.exe");
-        frontend.setAdminExe("Game Manager.exe");
-        frontend.setIconName("pinballx.png");
-        List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
-        screens.remove(VPinScreen.Other2);
-        frontend.setSupportedScreens(screens);
-        frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
-            GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-            GameValidationCode.CODE_OUTDATED_RECORDING));
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Unsupported connector type " + frontendType);
-      }
-    }
-    return frontend;
-  }
 
   public FrontendConnector getFrontendConnector() {
     FrontendType frontendType = getFrontendType();
@@ -112,6 +60,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public FrontendType getFrontendType() {
     return systemService.getFrontendType();
+  }
+
+  public Frontend getFrontend() {
+    return getFrontendConnector().getFrontend();
   }
 
   //----------------------------------------
@@ -469,10 +421,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       return false;
     }
 
-    if (StringUtils.isEmpty(emulator.getDirRoms())) {
-      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
-      return false;
-    }
+    // should not ignore as GameEmulator will set a folder by default
+    //if (StringUtils.isEmpty(emulator.getDirRoms())) {
+    //  LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
+    //  return false;
+    //}
 
     if (getFrontendConnector().getMediaAccessStrategy() != null && StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
@@ -539,20 +492,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   //--------------------------
 
   @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    }
-  }
-
-  @Override
   public void afterPropertiesSet() {
-
-    this.serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     FrontendConnector frontend = getFrontendConnector();
     if (frontend != null) {
-      frontend.initializeConnector(this.serverSettings);
+      frontend.initializeConnector();
+      tableAssetsService.registerAdapter(frontend.getTableAssetAdapter());
     }
 
     this.loadEmulators();

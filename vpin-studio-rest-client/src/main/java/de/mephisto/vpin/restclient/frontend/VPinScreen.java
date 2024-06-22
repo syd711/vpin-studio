@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.validation.GameValidationCode;
 
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
+
 
 public enum VPinScreen {
   Audio(-1, "audio", GameValidationCode.CODE_NO_AUDIO),
@@ -59,6 +61,15 @@ public enum VPinScreen {
       VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
       if (vPinScreen != null && vPinScreen.equals(screen)) {
         return pupPlayerDisplay;
+      }
+    }
+    return null;
+  }
+
+  public static VPinScreen valueOfSegment(String segment) {
+    for (VPinScreen v: values()) {
+      if (StringUtils.equalsIgnoreCase(segment, v.segment)) {
+        return v;
       }
     }
     return null;

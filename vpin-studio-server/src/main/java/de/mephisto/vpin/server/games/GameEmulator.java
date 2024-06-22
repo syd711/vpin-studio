@@ -57,7 +57,7 @@ public class GameEmulator {
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
-    this.vpxExeName = emulator.getVpxExeName();
+    this.vpxExeName = emulator.getExeName();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
 

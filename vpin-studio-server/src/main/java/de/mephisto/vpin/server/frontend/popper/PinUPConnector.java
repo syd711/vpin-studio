@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.frontend.popper;
 
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
@@ -9,9 +11,12 @@ import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +32,8 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service("Popper")
@@ -47,10 +54,12 @@ public class PinUPConnector implements FrontendConnector {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private PreferencesService preferencesService;
+
   private int sqlVersion = DB_VERSION;
 
-  private ServerSettings serverSettings;
-
+  
   @NotNull
   @Override
   public File getInstallationFolder() {
@@ -546,6 +555,7 @@ public class PinUPConnector implements FrontendConnector {
     }
   }
 
+  @Override
   public PopperSettings getSettings() {
     Connection connect = connect();
     PopperSettings settings = null;
@@ -958,9 +968,30 @@ public class PinUPConnector implements FrontendConnector {
         e.setDirRoms(rs.getString("DirRoms"));
         e.setDescription(rs.getString("Description"));
         e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-        e.setLaunchScript(rs.getString("LaunchScript"));
         e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
+
+        // specific initialization
+        if (e.isVisualPinball()) {
+          initVisualPinballXScripts(e);
+  
+          String exeName = SystemUtil.is64Bit(preferencesService)? "VPinballX64.exe": "VPinballX.exe";
+          
+          //parsing of the specific popper script
+          String launchScript = rs.getString("LaunchScript");
+          if(StringUtils.isNotEmpty(launchScript)) {
+            Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
+            Matcher m = pattern.matcher(launchScript);
+            while( m.find() ) {
+              String key = m.group(1);
+              String value = m.group(2);
+              if(key != null && key.equals("VPXEXE") && value != null) {
+                exeName = value.trim() + ".exe";
+              }
+            }
+          }
+          e.setExeName(exeName); 
+        }
 
         result.add(e);
       }
@@ -972,13 +1003,6 @@ public class PinUPConnector implements FrontendConnector {
       LOG.error("Failed to get function: " + e.getMessage(), e);
     } finally {
       this.disconnect(connect);
-    }
-
-    // init scripts
-    for (Emulator emu : result) {
-      if (emu.isVisualPinball()) {
-        initVisualPinballXScripts(emu);
-      }
     }
 
     return result;
@@ -1416,6 +1440,8 @@ public class PinUPConnector implements FrontendConnector {
     int emuId = rs.getInt("EMUID");
     boolean emuVisible = rs.getInt("EmuVisible") == 1;
 
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     //GameEmulator emulator = emulators.get(emuId);
     //if (emulator == null || !emulator.isVpx()) {
     //  return null;
@@ -1626,8 +1652,19 @@ public class PinUPConnector implements FrontendConnector {
     return ((mediaDirectory, tableName, screen) -> new File(mediaDirectory, screen.name()));
   }
 
-  public void initializeConnector(ServerSettings settings) {
-    this.serverSettings = settings;
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter() {
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      return (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+    }
+    catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+      return null;
+    }
+  }
+
+  public void initializeConnector() {
 
     File file = getDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
@@ -1637,6 +1674,20 @@ public class PinUPConnector implements FrontendConnector {
 
   public File getDatabaseFile() {
     return new File(systemService.getFrontendInstallationFolder(), "PUPDatabase.db");
+  }
+
+  public Frontend getFrontend() {
+    Frontend frontend = new Frontend();
+    frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
+    frontend.setFrontendType(FrontendType.Popper);
+
+    frontend.setFrontendExe("PinUpMenu.exe");
+    frontend.setIconName("PinUpMenuSetup.exe");
+    frontend.setIconName("popper.png");
+    frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
+    frontend.setAssetSearchEnabled(true);
+    frontend.setAssetSearchLabel("PinUP Popper Assets Search");
+    return frontend;
   }
 
   @Override
@@ -1706,4 +1757,5 @@ public class PinUPConnector implements FrontendConnector {
     }
     return false;
   }
+
 }

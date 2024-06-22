@@ -45,6 +45,11 @@ public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
     File firstFolder = null;
     for (String folder : folders) {
       File mediafolder = new File(mediaDirectory, folder);
+      // no file to search, return first folder
+      if (gameFileName == null) {
+        return mediafolder;
+      }
+      // keep first folder found in case no folder contains our game
       if (firstFolder == null) {
         firstFolder = mediafolder;
       }
@@ -53,6 +58,7 @@ public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
         return mediafolder;
       }
     }
+    // return first folder as no folder contains our game
     return firstFolder;
   }
 }

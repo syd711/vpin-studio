@@ -122,3 +122,5 @@ vpin-studio-logs.zip
 /vpin-studio-server/*.bak
 /.vscode/launch.json
 vpin-studio.code-workspace
+vpin-studio-server/resources/scoringdb.json
+vpin-studio-server/resources/vpsdb.json
