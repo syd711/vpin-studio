@@ -65,7 +65,6 @@ public class NotificationStage {
           y = 1080;
         }
 
-        System.out.println(scaling);
         root.setTranslateY(y);
         root.setTranslateX(-(screenBounds.getWidth() / 2));
         inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
