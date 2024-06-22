@@ -134,8 +134,8 @@ public class Studio extends Application {
         sevenZipTempFolder.mkdirs();
         SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
       }
-      catch (SevenZipNativeInitializationException e) {
-        LOG.error("Failed to initialize SevenZip: " + e.getMessage(), e);
+      catch (Exception e) {
+        LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);
       }
 
       SystemSummary systemSummary = client.getSystemService().getSystemSummary();
