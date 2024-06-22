@@ -480,12 +480,12 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
               return;
             }
             FileUtils.copyFile(mediaFile, cloneTarget);
-            LOG.info("Cloned PinUP Popper media: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
+            LOG.info("Cloned media asset: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
           }
         }
       }
       catch (IOException e) {
-        LOG.info("Failed to clone popper media: " + e.getMessage(), e);
+        LOG.info("Failed to clone media asset: " + e.getMessage(), e);
       }
     }
   }
@@ -505,10 +505,10 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
           if (de.mephisto.vpin.commons.utils.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
             assetRenameCounter++;
-            LOG.info("[" + screen + "] Renamed PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
+            LOG.info("[" + screen + "] Renamed media asset from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
           }
           else {
-            LOG.warn("[" + screen + "] Renaming PinUP Popper media from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
+            LOG.warn("[" + screen + "] Renaming media asset from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
           }
         }
       }

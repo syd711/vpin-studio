@@ -82,7 +82,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
           return;
         }
         catch (IOException e) {
-          LOG.error("Failed to copy popper resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
         }
       }
       else if (name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")) {

@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
@@ -82,7 +83,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
       status = "Extracting " + archiveFile.getAbsolutePath();
       unzipArchive();
-      LOG.info("Finished unzipping of " + archiveDescriptor.getFilename() + ", starting Popper import.");
+      LOG.info("Finished unzipping of " + archiveDescriptor.getFilename() + ", starting game import.");
 
       TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
@@ -93,12 +94,13 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       File gameFile = getGameFile(emulator, manifest);
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
-        LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
+        LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing game import for " + manifest.getGameFileName());
         int newGameId = frontendService.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
         game = gameService.getGame(newGameId);
       }
 
-      status = "Importing Game to Popper";
+      Frontend frontend = frontendService.getFrontend();
+      status = "Importing Game to " + frontend.getName();
       frontendService.saveTableDetails(game.getId(), manifest);
 
       status = "Importing Highscores";

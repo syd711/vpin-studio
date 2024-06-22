@@ -339,7 +339,7 @@ public class GameService implements InitializingBean {
             success = false;
           }
 
-          //only delete the popper assets, if there is no other game with the same "Game Name".
+          //only delete the assets, if there is no other game with the same "Game Name".
           List<Game> allOtherTables = this.frontendService.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
           List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
 
@@ -357,16 +357,16 @@ public class GameService implements InitializingBean {
 
                 if (mediaFile.exists() && !mediaFile.delete()) {
                   success = false;
-                  LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                  LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
                 }
               }
             }
           }
           else {
-            LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+            LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
           }
 
-          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from PinUP Popper.");
+          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
         }
 
         //delete the game folder if it is empty

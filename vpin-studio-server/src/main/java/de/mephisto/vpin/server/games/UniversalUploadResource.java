@@ -142,20 +142,20 @@ public class UniversalUploadResource {
 
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
-    String popperFileName = target.getName();
+    String fileName = target.getName();
     if (uploadDescriptor.isFolderBasedImport()) {
       //use the parents parent so that we are back inside the tables folder
       File targetFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
       targetFolder = FileUtils.uniqueFolder(targetFolder);
       targetFolder.mkdirs();
       target = new File(targetFolder, target.getName());
-      popperFileName = targetFolder.getName() + "\\" + target.getName();
+      fileName = targetFolder.getName() + "\\" + target.getName();
 
       LOG.info("Clone of " + existingVPXFile.getName() + " is created into subfolder \"" + targetFolder.getAbsolutePath() + "\"");
     }
     else {
       target = FileUtils.uniqueFile(target);
-      popperFileName = target.getName();
+      fileName = target.getName();
     }
 
     //copy file
@@ -170,7 +170,7 @@ public class UniversalUploadResource {
       //update table details after new entry creation
       TableDetails tableDetailsClone = frontendStatusService.getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
-      tableDetailsClone.setGameFileName(popperFileName);
+      tableDetailsClone.setGameFileName(fileName);
       tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName())));
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
 
@@ -178,9 +178,9 @@ public class UniversalUploadResource {
       frontendStatusService.updateTableFileUpdated(returningGameId);
       LOG.info("Created database clone entry with game name \"" + tableDetailsClone.getGameName() + "\"");
 
-      //clone popper media
+      //clone media
       Game original = gameService.getGame(uploadDescriptor.getGameId());
-      LOG.info("Cloning Popper assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
+      LOG.info("Cloning assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
       frontendStatusService.cloneGameMedia(original, importedGame);
 
       //clone additional files
@@ -256,7 +256,7 @@ public class UniversalUploadResource {
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
 
-    //update Popper table database entry
+    //update frontend table database entry
     //if the VPX file is inside a subfolder, we have to prepend the folder name
     String name = target.getName();
     String oldName = tableDetails.getGameFileName();

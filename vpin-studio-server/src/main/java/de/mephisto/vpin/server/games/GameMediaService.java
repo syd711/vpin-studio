@@ -45,7 +45,7 @@ public class GameMediaService {
         File out = uniquePopperAsset(game, value, suffix);
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
-          LOG.info("Created \"" + out.getAbsolutePath() + "\" for popper screen \"" + value.name() + "\" from archive file \"" + mediaFile + "\"");
+          LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + value.name() + "\" from archive file \"" + mediaFile + "\"");
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());

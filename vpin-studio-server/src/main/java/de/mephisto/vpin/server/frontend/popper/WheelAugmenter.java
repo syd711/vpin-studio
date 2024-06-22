@@ -125,7 +125,7 @@ public class WheelAugmenter {
         FileUtils.deleteDirectory(thumbsFolder);
       }
     } catch (IOException e) {
-      LOG.info("Failed to reset popper thumbnails: " + e.getMessage(), e);
+      LOG.info("Failed to reset thumbnails: " + e.getMessage(), e);
     }
   }
 

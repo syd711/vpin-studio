@@ -530,7 +530,7 @@ public class WidgetFactory {
       return new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
     }
     else {
-      LOG.error("Invalid media mime type " + mimeType + " of asset used for popper media panel " + parent.getId());
+      LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + parent.getId());
     }
 
     return null;

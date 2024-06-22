@@ -325,7 +325,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip text="Open PinUP Popper system folder for this asset type" />
+                                                <Tooltip text="Open system folder for this asset type" />
                                              </tooltip>
                                           </Button>
                                           <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

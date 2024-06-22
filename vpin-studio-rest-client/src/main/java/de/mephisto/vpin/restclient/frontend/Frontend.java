@@ -5,6 +5,7 @@ import java.util.List;
 
 public class Frontend {
   private FrontendType frontendType;
+  private String name;
   private String installationDirectory;
   private String adminExe;
   private String frontendExe;
@@ -41,6 +42,14 @@ public class Frontend {
 
   public void setFrontendType(FrontendType frontendType) {
     this.frontendType = frontendType;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
   public String getInstallationDirectory() {
@@ -105,5 +114,5 @@ public class Frontend {
 
   public void setPlayfieldMediaInverted(boolean playfieldMediaInverted) {
     this.playfieldMediaInverted = playfieldMediaInverted;
-  }  
+  }
 }

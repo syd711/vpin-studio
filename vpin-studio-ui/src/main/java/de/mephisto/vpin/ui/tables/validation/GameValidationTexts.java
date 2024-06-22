@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables.validation;
 
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,18 +28,21 @@ public class GameValidationTexts {
 
   @NonNull
   public static LocalizedValidation getValidationResult(@NonNull GameRepresentation game, ValidationState state) {
+    Frontend frontend = Studio.client.getFrontendService().getFrontend();
+
     String text;
     String label;
     int code = state.getCode();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
         label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
-        text = "Fix the configuration for this table in PinUP Popper or delete it.";
+        text = "Fix the configuration for this table in " + frontend.getName() + " or delete it.";
         break;
       }
       case CODE_NO_ROM: {
         label = "No ROM name could be resolved.";
-        text = "Consider setting the ROM name in the \"Script Details\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";
+        text = "Consider setting the ROM name in the \"Script Details\" section or " + frontend.getName() 
+          + ". Otherwise no highscore can be evaluated for this table.";
         break;
       }
       case CODE_ROM_NOT_EXISTS: {

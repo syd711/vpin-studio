@@ -36,7 +36,7 @@ public class FrontendStatusEventsResource {
 
   @PostMapping("/gameLaunch")
   public boolean gameLaunch(@RequestParam("table") String table) {
-    LOG.info("Received popper game launch event for " + table.trim());
+    LOG.info("Received game launch event for " + table.trim());
     Game game = resolveGame(table);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
@@ -49,7 +49,7 @@ public class FrontendStatusEventsResource {
     }
 
     new Thread(() -> {
-      Thread.currentThread().setName("Popper Game Launch Thread");
+      Thread.currentThread().setName("Game Launch Thread");
       frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
@@ -57,7 +57,7 @@ public class FrontendStatusEventsResource {
 
   @PostMapping("/gameExit")
   public boolean gameExit(@RequestParam("table") String table) {
-    LOG.info("Received popper game exit event for " + table.trim());
+    LOG.info("Received game exit event for " + table.trim());
     Game game = resolveGame(table);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
@@ -70,7 +70,7 @@ public class FrontendStatusEventsResource {
     }
 
     new Thread(() -> {
-      Thread.currentThread().setName("Popper Game Exit Thread");
+      Thread.currentThread().setName("Game Exit Thread");
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
@@ -88,7 +88,7 @@ public class FrontendStatusEventsResource {
     if (game == null && tableFile.getParentFile() != null) {
       game = gameService.getGameByFilename(tableFile.getParentFile().getName() + "\\" + tableFile.getName());
     }
-    LOG.info("PopperResource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
+    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
     return game;
   }
 

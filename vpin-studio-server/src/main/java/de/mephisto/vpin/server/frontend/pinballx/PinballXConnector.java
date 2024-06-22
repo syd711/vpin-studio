@@ -63,11 +63,12 @@ public class PinballXConnector extends BaseConnector {
 
   public Frontend getFrontend() {
     Frontend frontend = new Frontend();
+    frontend.setName("PinballX");
     frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
     frontend.setFrontendType(FrontendType.PinballX);
 
     frontend.setFrontendExe("PinballX.exe");
-    frontend.setAdminExe("Game Manager.exe");
+    frontend.setAdminExe("Settings.exe");
     frontend.setIconName("pinballx.png");
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
     screens.remove(VPinScreen.Other2);

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
@@ -41,7 +42,8 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onStop() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    Frontend frontend = client.getFrontendService().getFrontend();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and " + frontend.getName() + " processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
