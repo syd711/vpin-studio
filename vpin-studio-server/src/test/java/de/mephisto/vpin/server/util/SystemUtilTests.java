@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.io.File;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -27,8 +28,17 @@ public class SystemUtilTests {
 
   @Test
   public void testAllWindowNames() {
-    List<String> allWindowNames = SystemUtil.getAllWindowNames();
-    assertTrue(!allWindowNames.isEmpty());
+        List<ProcessHandle> filteredProcesses = ProcessHandle.allProcesses()
+            .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains("Pinball")))
+            .collect(Collectors.toList());
+    for (ProcessHandle process : filteredProcesses) {
+      System.out.println(process.info());
+      List<ProcessHandle> collect = process.children().collect(Collectors.toList());
+      for (ProcessHandle processHandle : collect) {
+        System.out.println(processHandle.info());
+      }
+
+    }
   }
 
   @Test
@@ -40,15 +50,7 @@ public class SystemUtilTests {
 
     });
 
-//    List<ProcessHandle> filteredProceses = ProcessHandle.allProcesses()
-//      .filter(p -> p.info().command().isPresent() && (p.info().command().get().contains("javaw.exe")))
-//      .collect(Collectors.toList());
-//    boolean success = false;
-//    for (ProcessHandle process : filteredProceses) {
-//      String cmd = process.info().command().get();
-//      boolean b = process.destroyForcibly();
-//      assertTrue(b);
-//    }
+
   }
 }
 

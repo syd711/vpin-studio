@@ -899,9 +899,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
           }
         }
-        else if (!games.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
 
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
@@ -922,7 +919,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         this.uploadTableBtn.setDisable(false);
 
         tableView.requestFocus();
-        tableView.getSelectionModel().select(selectedItem);
+
+        if (selectedItem == null) {
+          tableView.getSelectionModel().select(0);
+        }
+        else {
+          tableView.getSelectionModel().select(selectedItem);
+        }
 
         for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
           reloadConsumer.accept(selection);
