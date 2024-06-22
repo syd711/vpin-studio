@@ -38,12 +38,14 @@ public class PinballXSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pinballXSettings = client.getFrontendService().getSettings(PinballXSettings.class);
 
+    gameExMailText.setText(pinballXSettings.getGameExMail());
     gameExMailText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("gameExMailText", () -> {
       pinballXSettings.setGameExMail(t1);
       saveSettings();
     }, DEBOUNCE_MS));
 
-    gameExPasswordText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("gameExMailText", () -> {
+    gameExPasswordText.setPromptText("<enter password to change it>");
+    gameExPasswordText.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("gameExPasswordText", () -> {
       pinballXSettings.setGameExPassword(t1);
       saveSettings();
     }, DEBOUNCE_MS));

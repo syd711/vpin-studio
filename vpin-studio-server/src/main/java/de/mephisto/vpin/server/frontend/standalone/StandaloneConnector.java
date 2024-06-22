@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -236,12 +237,12 @@ public class StandaloneConnector extends BaseConnector {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("PinballX restart failed: {}", standardErrorFromCommand);
+        LOG.error("VPX restart failed: {}", standardErrorFromCommand);
         return false;
       }
     }
     catch (Exception e) {
-      LOG.error("Failed to start PinballX again: " + e.getMessage(), e);
+      LOG.error("Failed to start VPX again: " + e.getMessage(), e);
       return false;
     }
     return true;

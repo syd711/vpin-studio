@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -195,8 +196,6 @@ public class PinballXConnector extends BaseConnector {
     else {
       gameext = getEmulatorExtension(emuname);
     }
-
-    String launchScript = executable + " " + StringUtils.defaultString(parameters);
 
     Emulator e = new Emulator();
     e.setId(emuId);
