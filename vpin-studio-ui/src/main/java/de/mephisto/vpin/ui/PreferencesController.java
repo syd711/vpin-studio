@@ -79,6 +79,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button pauseMenuBtn;
 
   @FXML
+  private Button highscoreCardsBtn;
+
+  @FXML
   private BorderPane preferencesMain;
 
   @FXML
@@ -119,7 +122,8 @@ public class PreferencesController implements Initializable, StudioEventListener
         PreferencesController controller = loader.getController();
         preferencesRoot = loader.load();
         preferencesRoot.setUserData(controller);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load preferences: " + e.getMessage(), e);
       }
 
@@ -308,7 +312,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI(UIDefaults.DISCORD_INVITE_LINK));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open discord link: " + e.getMessage(), e);
       }
     }
@@ -320,7 +325,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
       try {
         desktop.browse(new URI("https://ko-fi.com/syd711"));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open kofi link: " + e.getMessage(), e);
       }
     }
@@ -360,7 +366,8 @@ public class PreferencesController implements Initializable, StudioEventListener
       FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
       Node node = loader.load();
       prefsMain.setCenter(node);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to loading settings view: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
@@ -375,6 +382,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
+    highscoreCardsBtn.managedProperty().bindBidirectional(highscoreCardsBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -384,6 +392,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pauseMenuBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+    highscoreCardsBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
 
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;
