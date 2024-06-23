@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -27,6 +28,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
@@ -36,6 +38,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +93,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private StackPane editorRootStack;
 
+  @FXML
+  private Button toggleSidebarBtn;
+
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
 
@@ -97,6 +103,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void onViewActivated() {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+  }
+
+  @FXML
+  private void toggleSidebar() {
+    sidebarVisible = !sidebarVisible;
+    setSidebarVisible(sidebarVisible);
   }
 
   @Override
@@ -188,11 +200,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
   }
 
-  private void toggleSidebar() {
-    sidebarVisible = !sidebarVisible;
-    setSidebarVisible(sidebarVisible);
-  }
-
   public void setSidebarVisible(boolean b) {
     if (b && sidePanelRoot.isVisible()) {
       return;
@@ -208,6 +215,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         @Override
         public void handle(ActionEvent event) {
           sidePanelRoot.setVisible(false);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-left");
+          toggleSidebarBtn.setGraphic(icon);
         }
       });
       t.play();
@@ -218,6 +227,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
         @Override
         public void handle(ActionEvent event) {
           sidePanelRoot.setVisible(true);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
+          toggleSidebarBtn.setGraphic(icon);
         }
       });
       t.play();
