@@ -195,7 +195,8 @@ public class Game {
       try {
         BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
         image = SwingFXUtils.toFXImage(bufferedImage, null);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
@@ -286,7 +287,7 @@ public class Game {
   @Nullable
   public File getHighscoreFile() {
     HighscoreType highscoreType = getHighscoreType();
-    if(highscoreType != null) {
+    if (highscoreType != null) {
       switch (highscoreType) {
         case EM: {
           return getHighscoreTextFile();
@@ -557,12 +558,18 @@ public class Game {
   }
 
   public boolean isRomExists() {
+    if (!StringUtils.isEmpty(this.getRomAlias())) {
+      File romFile = new File(emulator.getRomFolder(), this.getRomAlias() + ".zip");
+      return romFile.exists();
+    }
+
     if (!StringUtils.isEmpty(this.getRom())) {
       File romFile = new File(emulator.getRomFolder(), this.getRom() + ".zip");
       if (romFile.exists()) {
         return true;
       }
     }
+
     return false;
   }
 
