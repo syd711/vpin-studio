@@ -64,7 +64,7 @@
                               <Label styleClass="checkbox-description" text="All files are kept, only the database entry will be deleted from the frontend." />
                            </children>
                         </VBox>
-                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File (.vpx)">
+                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">
                            <font>
                               <Font size="14.0" />
                            </font>

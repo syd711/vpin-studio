@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
@@ -22,6 +23,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController extends BaseFilterController implements Initializable {
 
@@ -71,13 +74,22 @@ public class TableFilterController extends BaseFilterController implements Initi
   private CheckBox withAltColorCheckBox;
 
   @FXML
-  private CheckBox withPovIniCheckBox;
+  private CheckBox withIniCheckBox;
+
+  @FXML
+  private CheckBox withPovCheckBox;
 
   @FXML
   private CheckBox withAliasCheckBox;
 
   @FXML
   private VBox filterRoot;
+
+  @FXML
+  private Node notPlayedSettings;
+
+  @FXML
+  private Node statusSettings;
 
   @FXML
   private Node configurationFilters;
@@ -140,7 +152,8 @@ public class TableFilterController extends BaseFilterController implements Initi
     withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
-    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
+    withIniCheckBox.setSelected(filterSettings.isWithIni());
+    withPovCheckBox.setSelected(filterSettings.isWithPov());
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
     withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     updatesDisabled = false;
@@ -165,13 +178,23 @@ public class TableFilterController extends BaseFilterController implements Initi
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-
     configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());
     tableAssetFilters.managedProperty().bindBidirectional(tableAssetFilters.visibleProperty());
     vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());
     configurationIssuesFilter.managedProperty().bindBidirectional(configurationIssuesFilter.visibleProperty());
+    withPupPackCheckBox.managedProperty().bindBidirectional(withPupPackCheckBox.visibleProperty());
+    missingAssetsCheckBox.managedProperty().bindBidirectional(missingAssetsCheckBox.visibleProperty());
+    notPlayedSettings.managedProperty().bindBidirectional(notPlayedSettings.visibleProperty());
+    statusSettings.managedProperty().bindBidirectional(statusSettings.visibleProperty());
 
-    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getFrontendService().getGameEmulators());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    withPupPackCheckBox.setVisible(frontendType.equals(FrontendType.Popper));
+    statusSettings.setVisible(frontendType.equals(FrontendType.Popper));
+    notPlayedSettings.setVisible(frontendType.supportStatistics());
+    missingAssetsCheckBox.setVisible(frontendType.supportMedias());
+
+    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(client.getFrontendService().getGameEmulators());
     gameEmulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
 
@@ -241,9 +264,14 @@ public class TableFilterController extends BaseFilterController implements Initi
       filterSettings.setWithAltColor(newValue);
       applyFilter();
     });
-    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
-    withPovIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithPovIni(newValue);
+    withPovCheckBox.setSelected(filterSettings.isWithPov());
+    withPovCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithPov(newValue);
+      applyFilter();
+    });
+    withIniCheckBox.setSelected(filterSettings.isWithIni());
+    withIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithIni(newValue);
       applyFilter();
     });
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
