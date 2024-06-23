@@ -15,7 +15,6 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -28,14 +27,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
@@ -94,6 +91,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private StackPane editorRootStack;
 
   private Node sidePanelRoot;
+  private boolean sidebarVisible = true;
+
 
   @Override
   public void onViewActivated() {
@@ -190,13 +189,20 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   private void toggleSidebar() {
-    toggleSidebar = !toggleSidebar;
-    setSidebarVisible(toggleSidebar);
+    sidebarVisible = !sidebarVisible;
+    setSidebarVisible(sidebarVisible);
   }
 
-  private void setSidebarVisible(boolean b) {
-    toggleSidebar = b;
-    if (b) {
+  public void setSidebarVisible(boolean b) {
+    if (b && sidePanelRoot.isVisible()) {
+      return;
+    }
+    if (!b && !sidePanelRoot.isVisible()) {
+      return;
+    }
+
+    sidebarVisible = b;
+    if (!sidebarVisible) {
       TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, 612);
       t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
         @Override
@@ -218,7 +224,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
   }
 
-  private boolean toggleSidebar = false;
 
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
