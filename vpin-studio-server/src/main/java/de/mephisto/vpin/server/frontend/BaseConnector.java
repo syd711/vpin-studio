@@ -25,21 +25,27 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class BaseConnector implements FrontendConnector {
-
   private final static Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
 
   /**
    * the loaded and cached emulators
    */
-  protected Map<Integer, Emulator> emulators;
+  protected Map<Integer, Emulator> emulators = new HashMap<>();
   /**
    * Map by emulator of ids
    */
-  protected Map<Integer, List<String>> gamesByEmu;
+  protected Map<Integer, List<String>> gamesByEmu = new HashMap<>();
   /**
    * Map id to filename
    */
-  protected Map<Integer, String> mapFilenames;
+  protected Map<Integer, String> mapFilenames = new HashMap<>();
+
+  @Override
+  public void clearCache() {
+    this.emulators.clear();
+    this.gamesByEmu.clear();
+    this.mapFilenames.clear();
+  }
 
   /**
    * Get and reload all each time it is called, ie once at server startup
@@ -263,7 +269,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public int importGame(int emulatorId,
-                        @NonNull String gameName, @NonNull  String gameFileName, @NonNull  String gameDisplayName,
+                        @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName,
                         @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     LOG.info("Add game entry for '" + gameName + "', file name '" + gameFileName + "'");
 

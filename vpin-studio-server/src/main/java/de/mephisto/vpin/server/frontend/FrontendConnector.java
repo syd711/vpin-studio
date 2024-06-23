@@ -34,6 +34,11 @@ public interface FrontendConnector {
   File getInstallationFolder();
 
   List<Emulator> getEmulators();
+
+  /**
+   * Force refresh of the whole connector since they can have their own cache, e.g. emulators
+   */
+  void clearCache();
   
   Game getGame(int id);
 

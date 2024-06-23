@@ -62,7 +62,10 @@ public class GameFilterService {
         if (filterSettings.isWithPupPack() && game.getPupPack() == null) {
           continue;
         }
-        if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
+        if (filterSettings.isWithIni() && !game.getIniFile().exists()) {
+          continue;
+        }
+        if (filterSettings.isWithPov() && !game.getPOVFile().exists()) {
           continue;
         }
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
@@ -104,12 +107,12 @@ public class GameFilterService {
         }
 
         TableDetails tableDetails = frontendService.getTableDetails(game.getId());
-        boolean played = tableDetails==null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
+        boolean played = tableDetails == null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
         if (filterSettings.isNotPlayed() && played) {
           continue;
         }
 
-        if (tableDetails==null || (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus())) {
+        if (tableDetails == null || (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus())) {
           continue;
         }
 

@@ -50,7 +50,7 @@ public class PinballXConnector extends BaseConnector {
   @Autowired
   private PreferencesService preferencesService;
 
-  private Map<String, TableDetails> mapTableDetails;
+  private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
   @Override
   public void initializeConnector() {
@@ -113,6 +113,12 @@ public class PinballXConnector extends BaseConnector {
     catch (Exception e) {
       LOG.error("Saving pinballX settings failed: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void clearCache() {
+    this.mapTableDetails.clear();
+    super.clearCache();
   }
 
   @Override

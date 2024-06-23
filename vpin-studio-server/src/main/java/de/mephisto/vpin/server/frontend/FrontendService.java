@@ -436,7 +436,9 @@ public class FrontendService implements InitializingBean {
   }
 
   public void loadEmulators() {
-    List<Emulator> ems = getFrontendConnector().getEmulators();
+    FrontendConnector frontendConnector = getFrontendConnector();
+    frontendConnector.clearCache();
+    List<Emulator> ems = frontendConnector.getEmulators();
     this.emulators.clear();
     for (Emulator emulator : ems) {
       try {
@@ -472,7 +474,7 @@ public class FrontendService implements InitializingBean {
 
     if (this.emulators.isEmpty()) {
       LOG.error("*****************************************************************************************");
-      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your Frontend.");
+      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your frontend.");
       LOG.error("*****************************************************************************************");
     }
   }
@@ -493,7 +495,6 @@ public class FrontendService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-
     FrontendConnector frontend = getFrontendConnector();
     if (frontend != null) {
       frontend.initializeConnector();

@@ -59,7 +59,11 @@ public class PinUPConnector implements FrontendConnector {
 
   private int sqlVersion = DB_VERSION;
 
-  
+  @Override
+  public void clearCache() {
+    //not used yet
+  }
+
   @NotNull
   @Override
   public File getInstallationFolder() {
