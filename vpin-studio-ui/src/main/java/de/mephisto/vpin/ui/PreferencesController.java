@@ -73,6 +73,12 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button vpbmBtn;
 
   @FXML
+  private Button overlayBtn;
+
+  @FXML
+  private Button pauseMenuBtn;
+
+  @FXML
   private BorderPane preferencesMain;
 
   @FXML
@@ -365,7 +371,10 @@ public class PreferencesController implements Initializable, StudioEventListener
     popperSettingsBtn.managedProperty().bindBidirectional(popperSettingsBtn.visibleProperty());
     pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
     repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
+    notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
+    overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
+    pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -373,6 +382,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     // activation of custom Popper options only for Popper fronted
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    pauseMenuBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
 
     initialBtn = avatarBtn;

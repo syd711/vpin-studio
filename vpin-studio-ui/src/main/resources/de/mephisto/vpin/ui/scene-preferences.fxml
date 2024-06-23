@@ -43,12 +43,12 @@
                                  </VBox.margin>
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onControllerSetup" styleClass="preference-button" text="Controller Setup" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
+                              <Button fx:id="overlayBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="124.0" layoutY="76.0" mnemonicParsing="false" onAction="#onOverlay" styleClass="preference-button" text="Overlay">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
                               </Button>
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="Pause Menu" />
+                              <Button fx:id="pauseMenuBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="Pause Menu" />
                               <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="Notifications" />
                               <VBox fx:id="tournamentGroup">
                                  <VBox.margin>
