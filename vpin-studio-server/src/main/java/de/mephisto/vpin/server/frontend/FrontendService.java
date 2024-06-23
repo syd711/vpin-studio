@@ -1,22 +1,15 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +20,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.FileReader;
 import java.sql.Date;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -338,72 +330,20 @@ public class FrontendService implements InitializingBean {
 
   //--------------------------
 
-  public List<FrontendPlayerDisplay> getPupPlayerDisplays() {
-    List<FrontendPlayerDisplay> result = new ArrayList<>();
-    try {
-      INIConfiguration iniConfiguration = new INIConfiguration();
-      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-      iniConfiguration.setSeparatorUsedInOutput("=");
-      iniConfiguration.setSeparatorUsedInInput("=");
-
-      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
-      if (!ini.exists()) {
-        LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
-        return result;
+  @Nullable
+  public FrontendPlayerDisplay getFrontendPlayerDisplays(@NonNull VPinScreen screen) {
+    List<FrontendPlayerDisplay> pupPlayerDisplays = getFrontendPlayerDisplays();
+    for (FrontendPlayerDisplay pupPlayerDisplay : pupPlayerDisplays) {
+      VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
+      if (vPinScreen != null && vPinScreen.equals(screen)) {
+        return pupPlayerDisplay;
       }
-
-      FileReader fileReader = new FileReader(ini);
-      try {
-        iniConfiguration.read(fileReader);
-      } finally {
-        fileReader.close();
-      }
-
-      Map<String, String> sectionMappings = new HashMap<>();
-      sectionMappings.put("INFO", "Topper");
-      sectionMappings.put("INFO1", "DMD");
-      sectionMappings.put("INFO2", "BackGlass");
-      sectionMappings.put("INFO3", "PlayField");
-      sectionMappings.put("INFO4", "Music");
-      sectionMappings.put("INFO5", "Apron/FullDMD");
-      sectionMappings.put("INFO6", "GameSelect");
-      sectionMappings.put("INFO7", "Loading");
-      sectionMappings.put("INFO8", VPinScreen.Other2.name());
-      sectionMappings.put("INFO9", VPinScreen.GameInfo.name());
-      sectionMappings.put("INFO10", VPinScreen.GameHelp.name());
-
-      Set<String> sections = iniConfiguration.getSections();
-      for (String section : sections) {
-        if (section.contains("INFO")) {
-          try {
-            FrontendPlayerDisplay display = new FrontendPlayerDisplay();
-            SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
-            String name = sectionMappings.get(section);
-            if (name != null) {
-              display.setName(name);
-              display.setX(sectionNode.getInt("ScreenXPos"));
-              display.setY(sectionNode.getInt("ScreenYPos"));
-              display.setWidth(sectionNode.getInt("ScreenWidth"));
-              display.setHeight(sectionNode.getInt("ScreenHeight"));
-              display.setRotation(sectionNode.getInt("ScreenRotation"));
-            }
-            else {
-              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
-            }
-            result.add(display);
-          }
-          catch (Exception e) {
-            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
-          }
-        }
-      }
-
-      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
     }
-    catch (Exception e) {
-      LOG.error("Failed to get player displays: " + e.getMessage(), e);
-    }
-    return result;
+    return null;
+  }
+
+  public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
+    return getFrontendConnector().getFrontendPlayerDisplays();
   }
 
   public boolean isValidVPXEmulator(Emulator emulator) {
@@ -503,7 +443,7 @@ public class FrontendService implements InitializingBean {
 
     this.loadEmulators();
 
-    getPupPlayerDisplays();
+    getFrontendConnector().getFrontendPlayerDisplays();
 
     GameEmulator defaultEmulator = getDefaultGameEmulator();
     if (defaultEmulator != null) {

@@ -124,12 +124,12 @@ public class FrontendResource {
   @GetMapping("/screen/{name}")
   public FrontendPlayerDisplay getScreen(@PathVariable("name") String name) {
     VPinScreen screen = VPinScreen.valueOf(name);
-    return frontendStatusService.getPupPlayerDisplay(screen);
+    return frontendService.getFrontendPlayerDisplays(screen);
   }
 
   @GetMapping("/screens")
   public List<FrontendPlayerDisplay> getScreens() {
-    return frontendStatusService.getPupPlayerDisplays();
+    return frontendService.getFrontendPlayerDisplays();
   }
 
   @GetMapping("/mediadir/{gameId}/{name}")

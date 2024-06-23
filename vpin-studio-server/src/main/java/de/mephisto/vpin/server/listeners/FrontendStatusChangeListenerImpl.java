@@ -5,14 +5,15 @@ import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
@@ -36,6 +37,9 @@ public class FrontendStatusChangeListenerImpl implements InitializingBean, Front
 
   @Autowired
   private FrontendStatusService frontendStatusService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private DiscordService discordService;
@@ -104,7 +108,7 @@ public class FrontendStatusChangeListenerImpl implements InitializingBean, Front
           Platform.runLater(() -> {
             FrontendPlayerDisplay pupPlayerDisplay = null;
             if (cardSettings.isNotificationOnPopperScreen()) {
-              pupPlayerDisplay = frontendStatusService.getPupPlayerDisplay(screen);
+              pupPlayerDisplay = frontendService.getFrontendPlayerDisplays(screen);
             }
             ServerFX.getInstance().showHighscoreCard(cardSettings, pupPlayerDisplay, defaultMediaItem.getMimeType(), defaultMediaItem.getFile());
           });

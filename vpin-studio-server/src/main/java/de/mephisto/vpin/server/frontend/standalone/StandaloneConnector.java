@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -23,9 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
@@ -47,6 +44,11 @@ public class StandaloneConnector extends BaseConnector {
   
   @Override
   public void initializeConnector() {
+  }
+
+  @Override
+  public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
+    return List.of();
   }
 
   @NotNull

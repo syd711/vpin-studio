@@ -3,11 +3,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
@@ -290,6 +286,43 @@ public class PinballXConnector extends BaseConnector {
     return assetsAdapter;
   }
 
+  @Override
+  public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
+    File pinballXIni = getPinballXIni();
+
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+    iniConfiguration.setSeparatorUsedInOutput("=");
+//    iniConfiguration.setSeparatorUsedInInput("=");
+
+    // mind pinballX.ini is encoded in UTF-16
+    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
+      iniConfiguration.read(fileReader);
+    }
+    catch (Exception e) {
+      LOG.error("cannot parse ini file " + pinballXIni, e);
+    }
+
+    List<FrontendPlayerDisplay> displayList = new ArrayList<>();
+    SubnodeConfiguration display = iniConfiguration.getSection("Display");
+    displayList.add(createDisplay(display, VPinScreen.PlayField));
+
+    SubnodeConfiguration topper = iniConfiguration.getSection("Topper");
+    displayList.add(createDisplay(topper, VPinScreen.Topper));
+
+    SubnodeConfiguration dmd = iniConfiguration.getSection("DMD");
+    displayList.add(createDisplay(dmd, VPinScreen.DMD));
+
+    SubnodeConfiguration backGlass = iniConfiguration.getSection("BackGlass");
+    displayList.add(createDisplay(backGlass, VPinScreen.BackGlass));
+
+    SubnodeConfiguration apron = iniConfiguration.getSection("Apron");
+    displayList.add(createDisplay(apron, VPinScreen.Menu));
+
+    return displayList;
+  }
+
+
   //----------------------------------
   // UI Management
 
@@ -442,4 +475,19 @@ public class PinballXConnector extends BaseConnector {
     }
     return true;
   }
+
+  private FrontendPlayerDisplay createDisplay(SubnodeConfiguration display, VPinScreen screen) {
+    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+    player.setName(screen.name());
+    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
+    player.setX(Integer.parseInt(display.getString("x", "0")));
+    player.setY(Integer.parseInt(display.getString("y", "0")));
+    player.setWidth(Integer.parseInt(display.getString("width", "0")));
+    player.setHeight(Integer.parseInt(display.getString("height", "0")));
+    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+
+    LOG.info("Created PinballX player display \"" + screen.name() + "\"");
+    return player;
+  }
+
 }
