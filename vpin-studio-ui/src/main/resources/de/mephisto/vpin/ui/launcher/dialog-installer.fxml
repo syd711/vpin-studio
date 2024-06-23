@@ -78,6 +78,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
+                  <Label layoutX="10.0" layoutY="44.0" styleClass="preference-description" text="Note that the VPin Studio Server will adjust the game launch/exit scripts of the selected frontend." />
                   <GridPane alignment="BASELINE_RIGHT" vgap="3.0">
                      <columnConstraints>
                         <ColumnConstraints hgrow="SOMETIMES" maxWidth="169.60009765625" minWidth="148.800048828125" prefWidth="166.4000244140625" />
