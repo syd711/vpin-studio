@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -83,6 +84,11 @@ public class PupPacksService implements InitializingBean {
   }
 
   private void refresh() {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if(!frontendType.equals(FrontendType.Popper)) {
+      return;
+    }
+
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
@@ -242,6 +248,11 @@ public class PupPacksService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if(!frontendType.equals(FrontendType.Popper)) {
+      return;
+    }
+
     new Thread(() -> {
       try {
         Thread.currentThread().setName("PUP Pack Scanner");
