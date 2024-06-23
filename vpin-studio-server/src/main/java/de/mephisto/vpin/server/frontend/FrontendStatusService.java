@@ -525,22 +525,6 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     return true;
   }
 
-  public List<FrontendPlayerDisplay> getPupPlayerDisplays() {
-    return frontendService.getPupPlayerDisplays();
-  }
-
-  @Nullable
-  public FrontendPlayerDisplay getPupPlayerDisplay(@NonNull VPinScreen screen) {
-    List<FrontendPlayerDisplay> pupPlayerDisplays = frontendService.getPupPlayerDisplays();
-    for (FrontendPlayerDisplay pupPlayerDisplay : pupPlayerDisplays) {
-      VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
-      if (vPinScreen != null && vPinScreen.equals(screen)) {
-        return pupPlayerDisplay;
-      }
-    }
-    return null;
-  }
-
   @NonNull
   public List<GameEmulator> getGameEmulators() {
     return frontendService.getGameEmulators();

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
@@ -11,15 +12,25 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
+import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class ValidatorsVPXPreferencesController implements Initializable {
 
   @FXML
   private Parent preferenceList;
+
+  @FXML
+  private VBox pupPackValidator;
+
+  @FXML
+  private VBox outdatedRecordingsValidator;
+
   private List<String> ignoreList;
 
   @FXML
@@ -41,7 +52,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     String value = StringUtils.join(ignoreList, ",");
     Map<String, Object> prefs = new HashMap<>();
     prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    Studio.client.getPreferenceService().setPreferences(prefs);
+    client.getPreferenceService().setPreferences(prefs);
 
     PreferencesController.markDirty(PreferenceType.serverSettings);
   }
@@ -49,11 +60,18 @@ public class ValidatorsVPXPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    pupPackValidator.managedProperty().bindBidirectional(pupPackValidator.visibleProperty());
+    outdatedRecordingsValidator.managedProperty().bindBidirectional(outdatedRecordingsValidator.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    pupPackValidator.setVisible(frontendType.equals(FrontendType.Popper));
+    outdatedRecordingsValidator.setVisible(frontendType.equals(FrontendType.Popper));
+
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
 
-    PreferenceEntryRepresentation entry = Studio.client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
+    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
     ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();

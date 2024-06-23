@@ -59,11 +59,14 @@ public class PinUPConnector implements FrontendConnector {
 
   private int sqlVersion = DB_VERSION;
 
-  
+  @Override
+  public void clearCache() {
+    //not used yet
+  }
+
   @NotNull
   @Override
   public File getInstallationFolder() {
-    //TODO move into this class!!
     return systemService.getFrontendInstallationFolder();
   }
 
@@ -132,7 +135,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return info;
@@ -156,7 +160,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to load altexe list: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
 
@@ -249,7 +254,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get game for id '" + id + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return manifest;
@@ -272,7 +278,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -387,7 +394,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -412,7 +420,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return info;
@@ -437,7 +446,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by emulatorId '" + emulatorId + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -463,7 +473,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by filename '" + filename + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -489,7 +500,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game by gameName '" + gameName + "': " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return info;
@@ -509,7 +521,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read startup script: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -533,7 +546,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.warn("Failed to PinUP Popper Database version: " + e.getMessage() + ", using legacy database schema.", e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return version;
@@ -550,7 +564,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update startup script script:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -572,7 +587,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed get custom settings: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return settings;
@@ -590,7 +606,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update custom options:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -616,7 +633,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update \"LaunchCustomVar\" " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -645,10 +663,81 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read \"LaunchCustomVar\": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return false;
+  }
+
+  @Override
+  public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
+    List<FrontendPlayerDisplay> result = new ArrayList<>();
+    try {
+      INIConfiguration iniConfiguration = new INIConfiguration();
+      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+      iniConfiguration.setSeparatorUsedInOutput("=");
+      iniConfiguration.setSeparatorUsedInInput("=");
+
+      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
+      if (!ini.exists()) {
+        LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
+        return result;
+      }
+
+      FileReader fileReader = new FileReader(ini);
+      try {
+        iniConfiguration.read(fileReader);
+      }
+      finally {
+        fileReader.close();
+      }
+
+      Map<String, String> sectionMappings = new HashMap<>();
+      sectionMappings.put("INFO", "Topper");
+      sectionMappings.put("INFO1", "DMD");
+      sectionMappings.put("INFO2", "BackGlass");
+      sectionMappings.put("INFO3", "PlayField");
+      sectionMappings.put("INFO4", "Music");
+      sectionMappings.put("INFO5", "Apron/FullDMD");
+      sectionMappings.put("INFO6", "GameSelect");
+      sectionMappings.put("INFO7", "Loading");
+      sectionMappings.put("INFO8", VPinScreen.Other2.name());
+      sectionMappings.put("INFO9", VPinScreen.GameInfo.name());
+      sectionMappings.put("INFO10", VPinScreen.GameHelp.name());
+
+      Set<String> sections = iniConfiguration.getSections();
+      for (String section : sections) {
+        if (section.contains("INFO")) {
+          try {
+            FrontendPlayerDisplay display = new FrontendPlayerDisplay();
+            SubnodeConfiguration sectionNode = iniConfiguration.getSection(section);
+            String name = sectionMappings.get(section);
+            if (name != null) {
+              display.setName(name);
+              display.setX(sectionNode.getInt("ScreenXPos"));
+              display.setY(sectionNode.getInt("ScreenYPos"));
+              display.setWidth(sectionNode.getInt("ScreenWidth"));
+              display.setHeight(sectionNode.getInt("ScreenHeight"));
+              display.setRotation(sectionNode.getInt("ScreenRotation"));
+            }
+            else {
+              LOG.warn("Unsupported PinUP display for screen '" + name + "', display has been skipped.");
+            }
+            result.add(display);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to create PinUPPlayerDisplay: " + e.getMessage());
+          }
+        }
+      }
+
+      LOG.info("Loaded " + result.size() + " PinUPPlayer displays.");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to get player displays: " + e.getMessage(), e);
+    }
+    return result;
   }
 
   /**
@@ -695,7 +784,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return -1;
@@ -731,7 +821,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update game table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -748,7 +839,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update game stats table:" + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -787,7 +879,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return playlist;
@@ -834,7 +927,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get playlist: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -850,7 +944,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update PlayList: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -872,7 +967,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -887,7 +983,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update playlist [" + sql + "]: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -904,7 +1001,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -922,7 +1020,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to update playlist details: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -945,7 +1044,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlist for gameId: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -974,23 +1074,23 @@ public class PinUPConnector implements FrontendConnector {
         // specific initialization
         if (e.isVisualPinball()) {
           initVisualPinballXScripts(e);
-  
-          String exeName = SystemUtil.is64Bit(preferencesService)? "VPinballX64.exe": "VPinballX.exe";
-          
+
+          String exeName = SystemUtil.is64Bit(preferencesService) ? "VPinballX64.exe" : "VPinballX.exe";
+
           //parsing of the specific popper script
           String launchScript = rs.getString("LaunchScript");
-          if(StringUtils.isNotEmpty(launchScript)) {
+          if (StringUtils.isNotEmpty(launchScript)) {
             Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
             Matcher m = pattern.matcher(launchScript);
-            while( m.find() ) {
+            while (m.find()) {
               String key = m.group(1);
               String value = m.group(2);
-              if(key != null && key.equals("VPXEXE") && value != null) {
+              if (key != null && key.equals("VPXEXE") && value != null) {
                 exeName = value.trim() + ".exe";
               }
             }
           }
-          e.setExeName(exeName); 
+          e.setExeName(exeName);
         }
 
         result.add(e);
@@ -1001,7 +1101,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -1030,7 +1131,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1058,7 +1160,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get alx data: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1108,7 +1211,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get function: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return f;
@@ -1155,7 +1259,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to functions: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return controls;
@@ -1176,7 +1281,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game count for emulator " + emuId + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return count;
@@ -1197,7 +1303,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read game count: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return result;
@@ -1226,7 +1333,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get games: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return results;
@@ -1248,7 +1356,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to get start time: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
 
@@ -1265,7 +1374,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to delete games: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1289,7 +1399,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1320,7 +1431,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1346,7 +1458,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       disconnect(connect);
     }
     return result;
@@ -1370,7 +1483,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read startup script or " + emuName + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return script;
@@ -1394,7 +1508,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (SQLException e) {
       LOG.error("Failed to read exit script or " + emuName + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
     return script;
@@ -1411,7 +1526,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update script script " + scriptName + " [" + sql + "]: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1546,7 +1662,8 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       this.disconnect(connect);
     }
   }
@@ -1568,7 +1685,8 @@ public class PinUPConnector implements FrontendConnector {
       FileReader fileReader = new FileReader(ini);
       try {
         iniConfiguration.read(fileReader);
-      } finally {
+      }
+      finally {
         fileReader.close();
       }
 

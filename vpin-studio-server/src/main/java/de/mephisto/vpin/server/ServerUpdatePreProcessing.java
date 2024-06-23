@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.system.SystemService;
@@ -13,15 +14,58 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "nircmd.exe", "vpxtool.exe", "maintenance.jpg", ScoringDB.SCORING_DB_NAME);
-  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll", "jinput-raw_64.dll");
+  private final static List<String> jvmFiles = Arrays.asList("jinput-dx8_64.dll");
 
   public static void execute() {
+    init7zip();
+
+    new Thread(() -> {
+      try {
+        Thread.currentThread().setName("ServerUpdatePreProcessing");
+        runJvmCheck();
+        runScriptCheck();
+        runResourcesCheck();
+        synchronizeNVRams();
+        LOG.info("Finished resource updates check.");
+      }
+      catch (Exception e) {
+        LOG.error("Server update failed: " + e.getMessage(), e);
+      }
+    }).start();
+  }
+
+  private static void runScriptCheck() {
+    try {
+      File scriptFolder = new File(SystemService.RESOURCES, "scripts/");
+      scriptFolder.mkdirs();
+
+      File emulatorLaunchScript = new File(scriptFolder, "emulator-launch.bat");
+      if(!emulatorLaunchScript.exists()) {
+        Files.write(emulatorLaunchScript.toPath(), "curl -X POST --data-urlencode \"table=%1\" http://localhost:8089/service/gameLaunch".getBytes());
+      }
+      File emulatorExitScript = new File(scriptFolder, "emulator-exit.bat");
+      if(!emulatorExitScript.exists()) {
+        Files.write(emulatorExitScript.toPath(), "curl -X POST --data-urlencode \"table=%1\" http://localhost:8089/service/gameExit".getBytes());
+      }
+
+      File frontendLaunchScript = new File(scriptFolder, "frontend-launch.bat");
+      if(!frontendLaunchScript.exists()) {
+        Files.write(frontendLaunchScript.toPath(), "curl -X POST --data-urlencode \"system=\" http://localhost:8089/service/frontendLaunch".getBytes());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to scripting: " + e.getMessage());
+    }
+  }
+
+  private static void init7zip() {
     try {
       File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZipServer/");
       sevenZipTempFolder.mkdirs();
@@ -31,20 +75,6 @@ public class ServerUpdatePreProcessing {
     catch (Exception e) {
       LOG.error("Failed to initialize sevenzip: " + e.getMessage());
     }
-
-
-    new Thread(() -> {
-      try {
-        Thread.currentThread().setName("ServerUpdatePreProcessing");
-        runJvmCheck();
-        runResourcesCheck();
-        synchronizeNVRams();
-        LOG.info("Finished resource updates check.");
-      }
-      catch (Exception e) {
-        LOG.error("Server update failed: " + e.getMessage(), e);
-      }
-    }).start();
   }
 
   private static void runJvmCheck() {

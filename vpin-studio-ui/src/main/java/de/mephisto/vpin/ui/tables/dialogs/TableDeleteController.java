@@ -136,10 +136,13 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    pupPackCheckbox.managedProperty().bindBidirectional(pupPackCheckbox.visibleProperty());
+
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
 
     this.frontendSelectionField.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
+    this.pupPackCheckbox.setVisible(frontendType.equals(FrontendType.Popper));
 
     this.deleteBtn.setDisable(true);
     vpxFileCheckbox.setSelected(true);

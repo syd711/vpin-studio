@@ -32,6 +32,15 @@ public class SystemUtil {
   }
 
   public static void openFolder(File folder, File fallback) {
+    if (folder == null) {
+      return;
+    }
+
+    if (isLocal() && !folder.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
+      return;
+    }
+
     if (isLocal()) {
       try {
         if (folder.exists()) {
@@ -41,7 +50,8 @@ public class SystemUtil {
         if (fallback.exists()) {
           new ProcessBuilder("explorer.exe", fallback.getAbsolutePath()).start();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to open folder: " + e.getMessage(), e);
       }
     }
@@ -54,7 +64,8 @@ public class SystemUtil {
           if (remotePath != null) {
             new ProcessBuilder("explorer.exe", remotePath).start();
           }
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           LOG.error("Failed to open network folder: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open network folder: " + e.getMessage());
         }
@@ -83,7 +94,8 @@ public class SystemUtil {
         }
       }
       return null;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to resolve network path: " + e.getMessage(), e);
     }
     return path;

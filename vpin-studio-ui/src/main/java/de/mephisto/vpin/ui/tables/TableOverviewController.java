@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -318,6 +317,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAssetView() {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 
     assetManagerMode = !assetManagerMode;
@@ -346,14 +346,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
     columnRom.setVisible(!assetManagerMode && vpxMode);
     columnB2S.setVisible(!assetManagerMode && vpxMode);
-    columnPUPPack.setVisible(!assetManagerMode && vpxMode);
+    columnPUPPack.setVisible(!assetManagerMode && vpxMode && frontendType.equals(FrontendType.Popper));
     columnAltSound.setVisible(!assetManagerMode && vpxMode);
     columnAltColor.setVisible(!assetManagerMode && vpxMode);
     columnPOV.setVisible(!assetManagerMode && vpxMode);
     columnINI.setVisible(!assetManagerMode && vpxMode);
     columnHSType.setVisible(!assetManagerMode && vpxMode);
-    columnPlaylists.setVisible(!assetManagerMode);
-    columnDateAdded.setVisible(!assetManagerMode);
+    columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists());
+    columnDateAdded.setVisible(!assetManagerMode && frontendType.equals(FrontendType.Popper));
 
     GameRepresentation selectedItem = getSelection();
     tableView.getSelectionModel().clearSelection();
@@ -1783,6 +1783,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       view6.setFitHeight(18);
       assetManagerViewBtn.setGraphic(view6);
     }
+    else {
+      columnPUPPack.setVisible(false);
+      columnDateAdded.setVisible(false);
+    }
+    columnPlaylists.setVisible(frontendType.supportPlaylists());
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);

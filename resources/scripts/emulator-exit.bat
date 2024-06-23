@@ -1,0 +1,1 @@
+curl -X POST --data-urlencode "table=%1" http://localhost:8089/service/gameExit

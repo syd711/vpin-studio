@@ -3,12 +3,21 @@ package de.mephisto.vpin.restclient.frontend;
 import java.util.Objects;
 
 public class FrontendPlayerDisplay {
+  private int monitor;
   private String name;
   private int x;
   private int y;
   private int width;
   private int height;
   private int rotation;
+
+  public int getMonitor() {
+    return monitor;
+  }
+
+  public void setMonitor(int monitor) {
+    this.monitor = monitor;
+  }
 
   public String getName() {
     return name;

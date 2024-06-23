@@ -3,14 +3,11 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -26,9 +23,13 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 @Service("PinballX")
 public class PinballXConnector extends BaseConnector {
@@ -44,13 +45,13 @@ public class PinballXConnector extends BaseConnector {
 
   @Autowired
   private PreferencesService preferencesService;
-  
-  private Map<String, TableDetails> mapTableDetails;
+
+  private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
   @Override
   public void initializeConnector() {
     PinballXSettings ps = getSettings();
-    if (ps!=null) {
+    if (ps != null) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
     }
   }
@@ -79,7 +80,7 @@ public class PinballXConnector extends BaseConnector {
     ));
 
     PinballXSettings ps = getSettings();
-    frontend.setAssetSearchEnabled(ps!=null && ps.isGameExEnabled());
+    frontend.setAssetSearchEnabled(ps != null && ps.isGameExEnabled());
     frontend.setAssetSearchLabel("GameEx Assets Search for PinballX");
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -90,7 +91,8 @@ public class PinballXConnector extends BaseConnector {
     try {
       PinballXSettings settings = preferencesService.getJsonPreference(PreferenceNames.PINBALLX_SETTINGS, PinballXSettings.class);
       return settings;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Getting pinballX settings failed: " + e.getMessage(), e);
       return null;
     }
@@ -103,16 +105,23 @@ public class PinballXConnector extends BaseConnector {
       preferencesService.savePreference(PreferenceNames.PINBALLX_SETTINGS, settings);
       // reinitialize the connector with updated settings
       initializeConnector();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Saving pinballX settings failed: " + e.getMessage(), e);
     }
+  }
+
+  @Override
+  public void clearCache() {
+    this.mapTableDetails.clear();
+    super.clearCache();
   }
 
   @Override
   protected List<Emulator> loadEmulators() {
     List<Emulator> emulators = new ArrayList<>();
     File pinballXFolder = getInstallationFolder();
-    File pinballXIni = new File(pinballXFolder, "/Config/PinballX.ini");
+    File pinballXIni = getPinballXIni();
 
     if (!pinballXIni.exists()) {
       LOG.warn("Ini file not found " + pinballXIni);
@@ -123,8 +132,8 @@ public class PinballXConnector extends BaseConnector {
 
     INIConfiguration iniConfiguration = new INIConfiguration();
     //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-    //iniConfiguration.setSeparatorUsedInOutput("=");
-    //iniConfiguration.setSeparatorUsedInInput("=");
+    iniConfiguration.setSeparatorUsedInOutput("=");
+//    iniConfiguration.setSeparatorUsedInInput("=");
 
     // mind pinballX.ini is encoded in UTF-16
     try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
@@ -158,7 +167,18 @@ public class PinballXConnector extends BaseConnector {
       }
     }
 
+    //check the launch and exist scripts
+    for (Emulator emulator : emulators) {
+      initVisualPinballXScripts(emulator, iniConfiguration);
+    }
+
     return emulators;
+  }
+
+  @NotNull
+  private File getPinballXIni() {
+    File pinballXFolder = getInstallationFolder();
+    return new File(pinballXFolder, "/Config/PinballX.ini");
   }
 
   /*
@@ -172,7 +192,6 @@ public class PinballXConnector extends BaseConnector {
   Parameters=-light
   */
   private Emulator createEmulator(SubnodeConfiguration s, File installDir, int emuId, String emuname) {
-
     boolean enabled = s.getBoolean("Enabled", false);
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
@@ -216,6 +235,7 @@ public class PinballXConnector extends BaseConnector {
 
     return e;
   }
+
 
   @Override
   protected List<String> loadGames(Emulator emu) {
@@ -270,13 +290,50 @@ public class PinballXConnector extends BaseConnector {
     return assetsAdapter;
   }
 
+  @Override
+  public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
+    File pinballXIni = getPinballXIni();
+
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+    iniConfiguration.setSeparatorUsedInOutput("=");
+//    iniConfiguration.setSeparatorUsedInInput("=");
+
+    // mind pinballX.ini is encoded in UTF-16
+    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
+      iniConfiguration.read(fileReader);
+    }
+    catch (Exception e) {
+      LOG.error("cannot parse ini file " + pinballXIni, e);
+    }
+
+    List<FrontendPlayerDisplay> displayList = new ArrayList<>();
+    SubnodeConfiguration display = iniConfiguration.getSection("Display");
+    displayList.add(createDisplay(display, VPinScreen.PlayField));
+
+    SubnodeConfiguration topper = iniConfiguration.getSection("Topper");
+    displayList.add(createDisplay(topper, VPinScreen.Topper));
+
+    SubnodeConfiguration dmd = iniConfiguration.getSection("DMD");
+    displayList.add(createDisplay(dmd, VPinScreen.DMD));
+
+    SubnodeConfiguration backGlass = iniConfiguration.getSection("BackGlass");
+    displayList.add(createDisplay(backGlass, VPinScreen.BackGlass));
+
+    SubnodeConfiguration apron = iniConfiguration.getSection("Apron");
+    displayList.add(createDisplay(apron, VPinScreen.Menu));
+
+    return displayList;
+  }
+
+
   //----------------------------------
   // UI Management
 
 
   @Override
   public boolean killFrontend() {
-    List<ProcessHandle> pinUpProcesses = ProcessHandle
+    List<ProcessHandle> vpinProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
             (
@@ -288,12 +345,12 @@ public class PinballXConnector extends BaseConnector {
                     p.info().command().get().contains("DOF")))
         .collect(Collectors.toList());
 
-    if (pinUpProcesses.isEmpty()) {
+    if (vpinProcesses.isEmpty()) {
       LOG.info("No PinballX processes found, termination canceled.");
       return false;
     }
 
-    for (ProcessHandle pinUpProcess : pinUpProcesses) {
+    for (ProcessHandle pinUpProcess : vpinProcesses) {
       String cmd = pinUpProcess.info().command().get();
       boolean b = pinUpProcess.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
@@ -307,7 +364,7 @@ public class PinballXConnector extends BaseConnector {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        if (cmdName.contains("PinballX") && cmdName.contains("Setup")) {
+        if (cmdName.contains("PinballX")) {
           return true;
         }
       }
@@ -338,4 +395,103 @@ public class PinballXConnector extends BaseConnector {
     }
     return true;
   }
+
+  //---------------- Utilities -----------------------------------------------------------------------------------------
+
+
+  private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
+    if (emulator.isVisualPinball()) {
+      //VPX scripts
+      SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
+      visualPinball.setProperty("LaunchBeforeEnabled", "True");
+      visualPinball.setProperty("LaunchBeforeExecutable", "emulator-launch.bat");
+      visualPinball.setProperty("LaunchBeforeParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
+      visualPinball.setProperty("LaunchBeforeWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+
+      visualPinball.setProperty("LaunchAfterEnabled", "True");
+      visualPinball.setProperty("LaunchAfterExecutable", "emulator-exit.bat");
+      visualPinball.setProperty("LaunchAfterParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
+      visualPinball.setProperty("LaunchAfterWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+
+      //frontend launch script
+      SubnodeConfiguration startup = iniConfiguration.getSection("StartupProgram");
+      startup.setProperty("Enabled", " True");
+      startup.setProperty("Executable", "frontend-launch.bat");
+      startup.setProperty("WorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
+
+      saveIni(iniConfiguration);
+    }
+  }
+
+  private void saveIni(INIConfiguration iniConfiguration) {
+    if (isAdministrationRunning()) {
+      killAdministration();
+    }
+
+    FileWriter fileWriter = null;
+    try {
+      fileWriter = new FileWriter(getPinballXIni(), Charset.forName("UTF-16"));
+      iniConfiguration.write(fileWriter);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write PinballX.ini: " + e.getMessage(), e);
+    }
+    finally {
+      try {
+        if (fileWriter != null) {
+          fileWriter.close();
+        }
+      }
+      catch (IOException e) {
+        //ignore
+      }
+    }
+  }
+
+  private boolean isAdministrationRunning() {
+    List<ProcessHandle> allProcesses = systemService.getProcesses();
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        if (cmdName.contains("Settings.exe")) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public boolean killAdministration() {
+    List<ProcessHandle> processes = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() && p.info().command().get().contains("Settings.exe"))
+        .collect(Collectors.toList());
+
+    if (processes.isEmpty()) {
+      LOG.info("No PinballX processes found, termination canceled.");
+      return false;
+    }
+
+    for (ProcessHandle p : processes) {
+      String cmd = p.info().command().get();
+      boolean b = p.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+    return true;
+  }
+
+  private FrontendPlayerDisplay createDisplay(SubnodeConfiguration display, VPinScreen screen) {
+    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+    player.setName(screen.name());
+    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
+    player.setX(Integer.parseInt(display.getString("x", "0")));
+    player.setY(Integer.parseInt(display.getString("y", "0")));
+    player.setWidth(Integer.parseInt(display.getString("width", "0")));
+    player.setHeight(Integer.parseInt(display.getString("height", "0")));
+    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+
+    LOG.info("Created PinballX player display \"" + screen.name() + "\"");
+    return player;
+  }
+
 }

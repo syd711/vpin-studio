@@ -1,0 +1,1 @@
+curl -X POST --data-urlencode "system=" http://localhost:8089/service/frontendLaunch
