@@ -1,15 +1,21 @@
 The first known pinball-like game, "Bagatelle," originated in France in the 18th century.
+Bagatelle was introduced to the United States in the 19th century, where it evolved into a popular parlor game
+The pinball-like game was created by Montague Redgrave in 1871. He patented a spring-loaded plunger to launch the ball, a feature still used today.
 The game's name evolved from "Bagatelle" to "marble table" and eventually "pinball" due to the addition of pins to the playing surface.
 The coin-operated pinball machine, Ballyhoo, was created in 1931 by Raymond Maloney.
 In the early days, pinball machines were considered games of chance, and many were associated with gambling.
+In the 1930s and 1940s, Gottlieb & Co. was instrumental in developing early pinball machines, introducing innovations like pop bumpers and flippers.
+In 1932, Baffle Ball was a popular pinball machine that offered ten balls for a penny. It was one of the first machines to achieve widespread success.
 The 1933 "Contact" pinball machine was the first to have electrically-powered features.
 The first pinball machine with a tilt mechanism to prevent excessive shaking by players was introduced in 1934.
+The 1935 Big Whiffle tournament was the first official pinball competition, setting the stage for organized pinball events that continue to this day.
 The 1936 "Bumper" pinball machine marked the introduction of the first pop bumpers on the playfield.
 Pinball machines were banned in major cities like New York and Los Angeles in the 1940s due to concerns about gambling.
 The 1947 "Humpty Dumpty" pinball machine by Gottlieb introduced the first flipper buttons, changing the dynamics of gameplay.
 The 1948 "Triple Action" pinball machine was the first to include three flippers on the playfield.
 The introduction of flippers led to increased player control, reducing the element of chance and making pinball more skill-based.
 The 1950s saw the rise of pinball machines as a form of entertainment, leading to the overturning of many bans.
+By the 1950s, electromechanical components, such as relays and stepper units, began to be integrated into pinball machines, adding complexity and new gameplay features.
 In the 1950s, pinball machines started featuring themes based on popular culture, movies, and TV shows.
 The 1950 "Spot Bowler" pinball machine featured a mini-bowling alley on the playfield.
 The 1954 "Super Jumbo" pinball machine by Williams was the first to have an extra-wide body.
@@ -17,17 +23,26 @@ The 1960 "Magic Clock" pinball machine by Williams featured a clock face and han
 The 1963 "Gottlieb Slick Chick" pinball machine featured zipper-flippers, allowing players to control ball movement.
 The 1965 "Bank-A-Ball" pinball machine by Gottlieb introduced the first multiball feature.
 In 1966, the "Batman" pinball machine became the first licensed pinball game, featuring characters from the popular TV series.
+Pinball gained immense popularity in the 1970s and 1980s, becoming a staple in arcades alongside video games.
+The transition to digital pinball machines began in the late 1970s, with the introduction of solid-state electronics, digital displays, and enhanced sound effects.
+Themed pinball machines, featuring popular culture references, movies, and TV shows, began to appear in the 1970s, enhancing their appeal and collectibility.
 The 1970 "Spirit of 76" pinball machine by Micro Games celebrated the United States' bicentennial.
 The 1970s saw the advent of electronic components, replacing many mechanical parts in pinball machines.
 The 1970 "Spanish Eyes" pinball machine by Williams was one of the first to feature drop targets.
+The 1971 "Challenger" machine by Gottlieb allowed head-to-head competition with a double-ended playfield, double sets of flippers and backglass.
+"Fireball" by Bally, released in 1972, was one of the first pinball machines to include a mechanical voice box that emitted sounds.
+The Who's rock opera "Tommy" featured a character who was a pinball wizard, boosting the game's popularity in the 1970s.
 The 1975 "Spirit of 76" pinball machine featured a spinning target, simulating the motion of a roulette wheel.
 The 1976 "Captain Fantastic" pinball machine featured artwork inspired by musician Elton John.
 The 1977 "Fireball" pinball machine by Bally featured a spinning disc in the center of the playfield.
 The 1979 "Gorgar" pinball machine was the first to feature synthesized speech, saying simple phrases during gameplay.
+The 1979 game "Black Knight" by Williams introduced the first multilevel playfield, adding depth and complexity to the gameplay.
 The 1980s saw a decline in pinball's popularity due to the rise of video games.
 The 1980 "Black Knight" pinball machine by Williams featured a Magna-Save button, allowing players to save a drained ball.
+Released by Gottlieb in 1982, "Haunted House" is famous for its eight flippers and a hidden sub-level. 
 The 1984 "Firepower II" pinball machine featured the first usage of the alphanumeric display.
 The 1986 "High Speed" pinball machine by Williams was the first to use alphanumeric displays for scoring.
+Released in 1988, "Banzai Run" is a unique machine featured a motocross theme with a vertical playfield on the backglass which was controlled by magnets. 
 The 1989 "Earthshaker" pinball machine had a shaker motor simulating an earthquake during gameplay.
 The 1990 "Funhouse" pinball machine by Williams featured a talking animatronic head named Rudy.
 The 1991 "Terminator 2: Judgment Day" pinball machine featured a video display, merging digital and physical elements.
@@ -36,8 +51,12 @@ The 1993 "Twilight Zone" pinball machine is known for its complex gameplay and i
 The 1994 "World Cup Soccer" pinball machine coincided with the FIFA World Cup and featured soccer-themed gameplay.
 The 1995 "Attack from Mars" pinball machine is highly regarded for its humor and innovative design.
 Pinball 2000, introduced in 1999, combined traditional pinball with computer-generated video graphics.
+"Revenge from Mars" Bally's 1999 machine was the first to use the Pinball 2000 platform, featuring a holographic display that superimposed animated targets onto the playfield.
+Pinball machines are known for their intricate artwork and design, often created by renowned artists like Dave Christensen and Greg Freres.
 The 2010 "Tron: Legacy" pinball machine by Stern incorporated themes from the movie.
+The highest recorded score on a pinball machine is over 2.8 billion points, achieved on "The Addams Family" machine by Billy Maze in 2011.
 The International Flipper Pinball Association (IFPA) was founded in 2006 to promote competitive pinball.
 The 2013 "The Wizard of Oz" pinball machine features a wide LCD screen as the main display.
 The 2015 "Ghostbusters" pinball machine by Stern pays homage to the popular movie franchise.
 The 2016 "Dialed In!" pinball machine by Jersey Jack Pinball features Bluetooth connectivity and smartphone integration.
+Despite the rise of video games, pinball has endured as a beloved pastime, with new machines and technologies continuing to captivate players of all ages.
