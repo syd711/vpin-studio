@@ -401,12 +401,12 @@ public class PinballXConnector extends BaseConnector {
       SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
       visualPinball.setProperty("LaunchBeforeEnabled", "True");
       visualPinball.setProperty("LaunchBeforeExecutable", "emulator-launch.bat");
-      visualPinball.setProperty("LaunchBeforeParameters", "[TABLEFILE]");
+      visualPinball.setProperty("LaunchBeforeParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
       visualPinball.setProperty("LaunchBeforeWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
 
       visualPinball.setProperty("LaunchAfterEnabled", "True");
       visualPinball.setProperty("LaunchAfterExecutable", "emulator-exit.bat");
-      visualPinball.setProperty("LaunchAfterParameters", "[TABLEFILE]");
+      visualPinball.setProperty("LaunchAfterParameters", "\"[TABLEPATH]\\[TABLEFILE]\"");
       visualPinball.setProperty("LaunchAfterWorkingPath", new File(RESOURCES + "/scripts").getAbsolutePath());
 
       //frontend launch script
