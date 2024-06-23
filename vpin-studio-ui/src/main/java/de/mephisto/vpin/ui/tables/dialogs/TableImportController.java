@@ -81,33 +81,39 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    GameList importableTables = client.getFrontendService().getImportableTables();
-    saveBtn.setDisable(importableTables.getItems().isEmpty());
+    try {
+      GameList importableTables = client.getFrontendService().getImportableTables();
+      saveBtn.setDisable(importableTables.getItems().isEmpty());
 
-    if (importableTables.getItems().isEmpty()) {
-      Label label = new Label("No tables found.");
-      label.setStyle("-fx-font-size: 14px;");
-      tableBox.getChildren().add(label);
-    }
-    else {
-      CheckBox selectCheckbox = new CheckBox("Select All");
-      selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
-      selectCheckbox.setPrefHeight(50);
-      selectCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        for (CheckBox checkBox : checkBoxes) {
-          checkBox.setSelected(newValue);
-        }
-      });
-      tableBox.getChildren().add(selectCheckbox);
-
-      for (GameListItem item : importableTables.getItems()) {
-        CheckBox checkBox = new CheckBox(item.getName());
-        checkBox.setUserData(item);
-        checkBox.setStyle("-fx-font-size: 14px;");
-        checkBox.setPrefHeight(30);
-        tableBox.getChildren().add(checkBox);
-        checkBoxes.add(checkBox);
+      if (importableTables.getItems().isEmpty()) {
+        Label label = new Label("No tables found.");
+        label.setStyle("-fx-font-size: 14px;");
+        tableBox.getChildren().add(label);
       }
+      else {
+        CheckBox selectCheckbox = new CheckBox("Select All");
+        selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
+        selectCheckbox.setPrefHeight(50);
+        selectCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          for (CheckBox checkBox : checkBoxes) {
+            checkBox.setSelected(newValue);
+          }
+        });
+        tableBox.getChildren().add(selectCheckbox);
+
+        for (GameListItem item : importableTables.getItems()) {
+          CheckBox checkBox = new CheckBox(item.getName());
+          checkBox.setUserData(item);
+          checkBox.setStyle("-fx-font-size: 14px;");
+          checkBox.setPrefHeight(30);
+          tableBox.getChildren().add(checkBox);
+          checkBoxes.add(checkBox);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to init import dialog: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
     }
 
   }
