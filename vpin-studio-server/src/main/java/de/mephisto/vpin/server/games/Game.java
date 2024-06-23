@@ -558,11 +558,6 @@ public class Game {
   }
 
   public boolean isRomExists() {
-    if (!StringUtils.isEmpty(this.getRomAlias())) {
-      File romFile = new File(emulator.getRomFolder(), this.getRomAlias() + ".zip");
-      return romFile.exists();
-    }
-
     if (!StringUtils.isEmpty(this.getRom())) {
       File romFile = new File(emulator.getRomFolder(), this.getRom() + ".zip");
       if (romFile.exists()) {
