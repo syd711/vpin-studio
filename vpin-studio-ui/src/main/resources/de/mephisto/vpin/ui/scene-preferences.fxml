@@ -33,7 +33,7 @@
                                  </VBox.margin>
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="500.0" mnemonicParsing="false" onAction="#onServiceInfo" styleClass="preference-button" text="Server Settings" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
+                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="10.0" styleClass="preference-section" text="VPIN STUDIO FRONTEND PREFERENCES">
                                  <font>
                                     <Font size="13.0" />
@@ -50,7 +50,6 @@
                               </Button>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="213.0" mnemonicParsing="false" onAction="#onPauseMenu" styleClass="preference-button" text="Pause Menu" />
                               <Button fx:id="notificationsButton" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="100.0" mnemonicParsing="false" onAction="#onNotifications" styleClass="preference-button" text="Notifications" />
-                              <Button fx:id="repositoriesBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="709.0" mnemonicParsing="false" onAction="#onVpaRepositories" styleClass="preference-button" text="Repositories" />
                               <VBox fx:id="tournamentGroup">
                                  <VBox.margin>
                                     <Insets top="24.0" />

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
