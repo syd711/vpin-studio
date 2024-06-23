@@ -1,19 +1,14 @@
 package de.mephisto.vpin.server.frontend.standalone;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-
+import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.util.SystemUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -22,10 +17,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.restclient.validation.GameValidationCode;
-import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.SystemUtil;
+import java.io.File;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
@@ -33,15 +31,17 @@ public class StandaloneConnector extends BaseConnector {
 
   private static final Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
 
-  /** The default emulator id for VPX */
+  /**
+   * The default emulator id for VPX
+   */
   private static final int VPX_EMUID = 1;
 
   @Autowired
   private SystemService systemService;
-  
+
   @Autowired
   private PreferencesService preferencesService;
-  
+
   @Override
   public void initializeConnector() {
   }
@@ -90,13 +90,16 @@ public class StandaloneConnector extends BaseConnector {
 
     // so far only VPX is supported in standalone mode
     String emuName = "Visual Pinball";
-    File vpxInstallDir = systemService.resolveVisualPinballInstallationFolder();
-    File vpxTableDir = vpxInstallDir!=null? new File(vpxInstallDir, "tables"): null;
-    if (vpxTableDir!=null && vpxTableDir.exists()) {
+    File vpxInstallDir = getInstallationFolder();
+    File vpxTableDir = new File(vpxInstallDir, "Tables");
+    if (vpxTableDir.exists()) {
       LOG.info("Visual Pinball tables folder detected in " + vpxTableDir.getAbsolutePath());
-      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName); 
+      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
       vpxemu.setDescription("default");
       emulators.add(vpxemu);
+    }
+    else {
+      LOG.error("No VPX installation found in folder \"" + vpxInstallDir.getAbsolutePath() + "\"");
     }
     return emulators;
   }
@@ -145,7 +148,7 @@ public class StandaloneConnector extends BaseConnector {
     }
     return filenames;
   }
- 
+
   //------------------------------------------------------------
 
   @Override

@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
@@ -67,6 +68,13 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private Pane systemManagerOverlay;
 
+  @FXML
+  private Pane tournamentsBtn;
+
+  @FXML
+  private Pane cardsBtn;
+
+
   public static StudioFXController activeController;
 
   private static BorderPane staticAvatarPane;
@@ -74,10 +82,6 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   private static Map<String, Parent> viewCache = new HashMap<>();
   private static Map<String, StudioFXController> controllerCache = new HashMap<>();
-
-  @FXML
-  private Pane tournamentsBtn;
-
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -261,6 +265,7 @@ public class NavigationController implements Initializable, StudioEventListener,
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
+    cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
 
     staticAvatarPane = this.avatarPane;
     refreshAvatar();
@@ -270,6 +275,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     staticButtonList = this.buttonList;
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    cardsBtn.setVisible(frontendType.supportMedias());
 
     tournamentsBtn.setVisible(false);
     if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null) {

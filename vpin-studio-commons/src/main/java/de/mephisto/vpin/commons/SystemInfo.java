@@ -51,55 +51,6 @@ public class SystemInfo {
     return new File("C:/vPinball/PinUPSystem");
   }
 
-  /**
-   * Frontends should know where Emulators are installed
-   * Method used by Standalone frontend to identify VPS installation directory
-   */
-  public File resolveVisualPinballInstallationFolder() {
-    String vpxInstDirEnv = System.getenv("VpxInstDir");
-    if (!StringUtils.isEmpty(vpxInstDirEnv)) {
-      return new File(vpxInstDirEnv);
-    }
-
-    String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
-    if (tablesDir != null) {
-      tablesDir = extractRegistryValue(tablesDir);
-      if (tablesDir != null) {
-        LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
-        File file = new File(tablesDir);
-        if (file.exists()) {
-          return file.getParentFile();
-        }
-      }
-    }
-    // else
-    String vpxDir = readRegistry(VPX_REG_KEY_2, null);
-    if (vpxDir!=null) {
-      vpxDir = extractRegistryValue(vpxDir);
-      LOG.info("Resolve Visual Pinball tables folder " + vpxDir);
-      String exe = "VPinballX.exe";
-      if (StringUtils.endsWithIgnoreCase(vpxDir, exe)) {
-        File file = new File(StringUtils.removeEndIgnoreCase(vpxDir, exe));
-        if (file.exists()) {
-          return file;
-        }
-      }
-    }
-    // not found try to derive from pinup, case of baller installation
-    File pinupInstDir = resolvePinUPSystemInstallationFolder();
-    File vpxFile = new File(pinupInstDir.getParent(), "VisualPinball");
-    if (vpxFile.exists()) {
-      return vpxFile;
-    }
-    // not found try default Visual Pinball install directory
-    vpxFile = new File("c:/Visual Pinball");
-    if (vpxFile.exists()) {
-      return vpxFile;
-    }
-    // I give up, no more idea...
-    return null;
-  }
-
   /** 
    * cf https://github.com/vpinball/b2s-backglass/
    * => b2sbackglassserverregisterapp/b2sbackglassserverregisterapp/formBackglassServerRegApp.vb

@@ -229,15 +229,19 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
-                  <CheckBox fx:id="launchPopperCheckbox" layoutX="34.0" layoutY="604.0" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
+                  <VBox fx:id="launchOnExitOption">
+                     <children>
+                        <CheckBox fx:id="launchPopperCheckbox" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="When working remote, the frontend can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
+                     </children>
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="624.0" styleClass="checkbox-description" text="When working remote, the frontend can be launched on the cabinet again when the Studio client disconnects." textFill="WHITE" />
+                  </VBox>
                   <CheckBox fx:id="useOriginalVbsFilesCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="Keep .vbs files when editing table scripts." textFill="WHITE">
                      <font>
                         <Font size="14.0" />

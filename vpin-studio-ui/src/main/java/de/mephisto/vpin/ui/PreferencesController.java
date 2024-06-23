@@ -61,6 +61,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button mameBtn;
 
   @FXML
+  private Button screenValidatorsBtn;
+
+  @FXML
   private Button repositoriesBtn;
 
   @FXML
@@ -89,6 +92,9 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private VBox tournamentGroup;
+
+  @FXML
+  private VBox frontendPreferences;
 
   @FXML
   private Button notificationsButton;
@@ -383,6 +389,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
     highscoreCardsBtn.managedProperty().bindBidirectional(highscoreCardsBtn.visibleProperty());
+    frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
+    screenValidatorsBtn.managedProperty().bindBidirectional(screenValidatorsBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -393,6 +401,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     pauseMenuBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
     highscoreCardsBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+    frontendPreferences.setVisible(!frontendType.equals(FrontendType.Standalone));
+    screenValidatorsBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
 
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;

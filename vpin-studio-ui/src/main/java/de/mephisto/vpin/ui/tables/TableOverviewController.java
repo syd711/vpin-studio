@@ -198,6 +198,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button tableEditBtn;
 
   @FXML
+  private Separator importSeparator;
+
+  @FXML
   private Button assetManagerViewBtn;
 
   @FXML
@@ -342,7 +345,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     refreshViewAssetColumns(assetManagerMode);
 
     columnVersion.setVisible(!assetManagerMode && vpxMode);
-    columnEmulator.setVisible(!assetManagerMode);
+    columnEmulator.setVisible(!assetManagerMode && !frontendType.equals(FrontendType.Standalone));
     columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
     columnRom.setVisible(!assetManagerMode && vpxMode);
     columnB2S.setVisible(!assetManagerMode && vpxMode);
@@ -1711,11 +1714,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
     this.assetManagerViewBtn.managedProperty().bindBidirectional(this.assetManagerViewBtn.visibleProperty());
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
+    this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
 
 
 
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
+
+    if (frontendType.equals(FrontendType.Standalone)) {
+      importBtn.setVisible(false);
+      columnEmulator.setVisible(false);
+    }
 
     if (!frontendType.equals(FrontendType.Popper)) {
       uploadTableBtn.getItems().remove(pupPackUploadItem);
@@ -1727,10 +1736,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     if (!frontendType.supportPlaylists()) {
       playlistCombo.setVisible(false);
+      importSeparator.setVisible(false);
       playlistSplitter.setVisible(false);
     }
     if (!frontendType.supportStandardFields()) {
       playlistCombo.setVisible(false);
+      importSeparator.setVisible(false);
       playlistSplitter.setVisible(false);
       this.tableEditBtn.setVisible(false);
     }
@@ -1816,11 +1827,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshViewForEmulator() {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
-    this.importBtn.setVisible(vpxMode);
+    this.importBtn.setVisible(vpxMode && !frontendType.equals(FrontendType.Standalone));
     this.uploadTableBtn.setVisible(vpxMode);
     this.deleteBtn.setVisible(vpxMode);
     this.scanBtn.setVisible(vpxMode);
@@ -1830,7 +1843,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     deleteSeparator.setVisible(vpxMode);
 
     columnVersion.setVisible(vpxMode && !assetManagerMode);
-    columnEmulator.setVisible(vpxMode && !assetManagerMode);
+    columnEmulator.setVisible(vpxMode && !assetManagerMode && !frontendType.equals(FrontendType.Standalone));
     columnVPS.setVisible(vpxMode && !assetManagerMode);
     columnRom.setVisible(vpxMode && !assetManagerMode);
     columnB2S.setVisible(vpxMode && !assetManagerMode);

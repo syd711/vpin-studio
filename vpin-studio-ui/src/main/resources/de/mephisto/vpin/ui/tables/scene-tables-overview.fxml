@@ -265,7 +265,7 @@
                               <Tooltip text="Edit Popper Table Data" />
                            </tooltip>
                         </Button>
-                        <Separator layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+                        <Separator fx:id="importSeparator" layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
                         <Button fx:id="importBtn" layoutX="560.0" layoutY="11.0" mnemonicParsing="false" onAction="#onImport" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

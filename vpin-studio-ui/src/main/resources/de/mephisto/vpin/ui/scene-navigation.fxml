@@ -65,7 +65,7 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
+                  <VBox fx:id="cardsBtn" alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
                       <children>
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
                           <Label text="Highscore" textFill="WHITE">

@@ -1,11 +1,9 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.system.SystemService;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

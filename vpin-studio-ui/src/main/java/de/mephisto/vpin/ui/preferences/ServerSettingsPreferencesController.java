@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -42,6 +43,9 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private CheckBox launchPopperCheckbox;
+
+  @FXML
+  private Node launchOnExitOption;
 
   @FXML
   private Button shutdownBtn;
@@ -93,12 +97,14 @@ public class ServerSettingsPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     vpxMonitorSettings.managedProperty().bindBidirectional(vpxMonitorSettings.visibleProperty());
+    launchOnExitOption.managedProperty().bindBidirectional(launchOnExitOption.visibleProperty());
     vpxMonitorSettings.setVisible(Features.VPX_MONITORING);
 
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
+    launchOnExitOption.setVisible(frontendType.supportMedias());
 
     shutdownBtn.setDisable(client.getSystemService().isLocal());
 

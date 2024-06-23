@@ -680,18 +680,23 @@ public class TablesSidebarController implements Initializable {
 
   private void refreshView(Optional<GameRepresentation> g) {
     Platform.runLater(() -> {
-      if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
-        this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
-      }
-      else {
-        tablesSidebarMediaController.resetMedia();
+      if (titledPaneMedia != null && tablesSidebarMediaController != null) {
+        if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
+          this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+        }
+        else {
+          tablesSidebarMediaController.resetMedia();
+        }
       }
 
       if (titledPaneMetadata.isExpanded()) {
         this.tablesSidebarMetadataController.setGame(g);
       }
-      if (tablesSidebarPUPPackController != null && titledPanePUPPack.isExpanded()) {
-        this.tablesSidebarPUPPackController.setGame(g);
+
+      if (titledPanePUPPack != null && tablesSidebarPUPPackController != null) {
+        if (titledPanePUPPack.isExpanded()) {
+          this.tablesSidebarPUPPackController.setGame(g);
+        }
       }
       if (titledPaneDMD.isExpanded()) {
         this.tablesSidebarDMDController.setGame(g);
@@ -739,6 +744,7 @@ public class TablesSidebarController implements Initializable {
 
   public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     if (!vpxMode) {
       tableAccordion.getPanes().remove(titledPaneDefaultBackground);
