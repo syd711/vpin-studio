@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -13,19 +15,27 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
@@ -94,6 +104,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setInitialController("scene-tables.fxml", this, root);
     EventManager.getInstance().addListener(this);
+
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     if (!frontendType.supportStatistics()) {
@@ -164,7 +175,50 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
+
+    Platform.runLater(() -> {
+      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.F3) {
+            toggleSidebar();
+          }
+        }
+      });
+    });
+
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
   }
+
+  private void toggleSidebar() {
+    toggleSidebar = !toggleSidebar;
+    setSidebarVisible(toggleSidebar);
+  }
+
+  private void setSidebarVisible(boolean b) {
+    toggleSidebar = b;
+    if (b) {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, 612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(false);
+        }
+      });
+      t.play();
+    }
+    else {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, -612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(true);
+        }
+      });
+      t.play();
+    }
+  }
+
+  private boolean toggleSidebar = false;
 
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
@@ -256,7 +310,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     else if (jobType.equals(JobType.POV_INSTALL)
         || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
         || jobType.equals(JobType.DIRECTB2S_INSTALL)
-        ) {
+    ) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
