@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -12,8 +13,6 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -183,8 +182,11 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private void onVersionFix() {
     if (game.isPresent()) {
+      Frontend frontend = client.getFrontendService().getFrontend();
+
       GameRepresentation gameRepresentation = game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", "This overwrites the existing PinUP Popper table version \""
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", 
+          "This overwrites the existing " + frontend.getName() + " table version \""
           + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
           gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {

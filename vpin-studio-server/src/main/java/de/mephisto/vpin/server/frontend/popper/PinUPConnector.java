@@ -1678,6 +1678,7 @@ public class PinUPConnector implements FrontendConnector {
 
   public Frontend getFrontend() {
     Frontend frontend = new Frontend();
+    frontend.setName("PinUP Popper");
     frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
     frontend.setFrontendType(FrontendType.Popper);
 

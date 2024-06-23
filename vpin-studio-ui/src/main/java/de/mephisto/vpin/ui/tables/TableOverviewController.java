@@ -546,8 +546,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return;
       }
 
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and Popper processes will be terminated.", null, "Do not shown again", false);
-      if (!confirmationResult.isApplyClicked()) {
+      Frontend frontend = client.getFrontendService().getFrontend();
+
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" 
+        + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and " + frontend.getName() 
+        + " processes will be terminated.", null, "Do not shown again", false);
+
+        if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
@@ -559,7 +564,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onStop() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    Frontend frontend = client.getFrontendService().getFrontend();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and " + frontend.getName() + " processes?");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
@@ -923,8 +929,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           this.tableEditBtn.setDisable(false);
         }
         else {
+          Frontend frontend = client.getFrontendService().getFrontend();
           this.validationErrorLabel.setText("No tables found");
-          this.validationErrorText.setText("Check the emulator setup in PinUP Popper. Make sure that all(!) directories are set and reload after fixing these.");
+          this.validationErrorText.setText("Check the emulator setup in " +  frontend.getName()
+            + ". Make sure that all(!) directories are set and reload after fixing these.");
         }
 
         this.importBtn.setDisable(false);
@@ -1058,9 +1066,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
+        Frontend frontend = client.getFrontendService().getFrontend();
+
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
-            "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
+        Tooltip tt = new Tooltip("The table version in " + frontend.getName() + " is \"" + value.getVersion() 
+          + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
+          + "Update the table, correct the selected VPS table or fix the version in the \"" 
+          + frontend.getName() + " Table Settings\" section.");
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);

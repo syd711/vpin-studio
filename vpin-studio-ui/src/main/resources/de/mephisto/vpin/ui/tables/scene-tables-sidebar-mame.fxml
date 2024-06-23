@@ -270,7 +270,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="PinUP Popper Setup" />
+                  <Tooltip text="Open VPMAlias.txt file" />
                </tooltip>
             </Button>
             <Button fx:id="mameBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMameSetup" styleClass="external-component" text="VPin MAME Setup" textFill="WHITE">

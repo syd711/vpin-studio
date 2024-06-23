@@ -65,7 +65,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
     } catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Download Failed", "Popper table asset download failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Download Failed", "Table asset download failed: " + e.getMessage());
       });
     }
   }

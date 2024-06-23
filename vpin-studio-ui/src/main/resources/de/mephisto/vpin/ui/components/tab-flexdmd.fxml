@@ -26,7 +26,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="PinUP Popper Setup" />
+                     <Tooltip text="Open FlexDMD installation folder" />
                   </tooltip>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

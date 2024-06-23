@@ -184,8 +184,8 @@ public class GameMediaResource {
 
       Game game = gameService.getGame(gameId);
       if (game == null) {
-        LOG.error("No game found for popper media upload.");
-        return JobExecutionResultFactory.error("No game found for PinUP Popper media upload.");
+        LOG.error("No game found for media upload.");
+        return JobExecutionResultFactory.error("No game found for media upload.");
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());

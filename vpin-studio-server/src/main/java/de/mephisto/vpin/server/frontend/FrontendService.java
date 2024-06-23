@@ -471,9 +471,9 @@ public class FrontendService implements InitializingBean {
     }
 
     if (this.emulators.isEmpty()) {
-      LOG.error("****************************************************************************************");
-      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in PinUP Popper.");
-      LOG.error("****************************************************************************************");
+      LOG.error("*****************************************************************************************");
+      LOG.error("No valid game emulators folder, fill all(!) emulator directory settings in your Frontend.");
+      LOG.error("*****************************************************************************************");
     }
   }
 
