@@ -167,7 +167,7 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   @Override
-  protected void commitDb() {
+  protected void commitDb(Emulator emu) {
     // do nothing
   }
 

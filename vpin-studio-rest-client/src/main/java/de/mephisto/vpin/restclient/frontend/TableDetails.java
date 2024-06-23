@@ -18,6 +18,7 @@ public class TableDetails {
   private GameType gameType;
   private String gameVersion;
   private Date dateAdded;
+  private Date dateModified;
   private String gameTheme;
   private String notes;
   private Integer gameYear;
@@ -351,6 +352,14 @@ public class TableDetails {
 
   public void setDateAdded(Date dateAdded) {
     this.dateAdded = dateAdded;
+  }
+
+  public Date getDateModified() {
+    return dateModified;
+  }
+
+  public void setDateModified(Date dateModified) {
+    this.dateModified = dateModified;
   }
 
   public String getCategory() {

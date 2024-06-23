@@ -1,8 +1,11 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -11,9 +14,10 @@ import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.EnumUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -30,7 +34,9 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public class PinballXTableParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXTableParser.class);
 
-  private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+  /** Parser for dates */
+  private final FastDateFormat sdf = FastDateFormat.getInstance("yyyy-MM-dd HH:mm:ss");
+
 
   @Nullable
   public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, Emulator emu) {
@@ -129,13 +135,28 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "type": {
-        if (ArrayUtils.contains(GameType.values(), content)) { detail.setGameType(GameType.valueOf(content)); }
+        // EnumUtils does not throw exception but returns null
+        detail.setGameType(EnumUtils.getEnum(GameType.class, content));
         break;
       }
       case "enabled": {
         boolean enabled = BooleanUtils.toBoolean(content);
         // cf statuses: STATUS_DISABLED=0, STATUS_NORMAL=1, STATUS_MATURE=2, STATUS_WIP=3
         detail.setStatus(enabled? 1: 0);
+        break;
+      }
+      case "hidedmd": {
+        // cf constants in TableDataTabScreensController
+        setKeepDisplays(detail, content, "1");
+      }
+      case "hidetopper": {
+        // cf constants in TableDataTabScreensController
+        setKeepDisplays(detail, content, "0");
+        break;
+      }
+      case "hidebackglass": {
+        // cf constants in TableDataTabScreensController
+        setKeepDisplays(detail, content, "2");
         break;
       }
       case "version": {
@@ -162,17 +183,108 @@ public class PinballXTableParser extends DefaultHandler {
         detail.setNumberOfPlayers(Integer.parseInt(content));
         break;
       }
+      case "comment": {
+        detail.setNotes(content);
+        break;
+      }
+      case "alternateexe": {
+        detail.setAltLaunchExe(content);
+        break;
+      }
       case "dateadded": {
         Date dateAdded = sdf.parse(content);
         detail.setDateAdded(dateAdded);
         break;
       }
       case "datemodified": {
-        //Date dateUpdated = sdf.parse(content);
-        //detail.setDateUpdated(dateUpdated);
+        Date dateModified = sdf.parse(content);
+        detail.setDateModified(dateModified);
         break;
       }
     }
+  }
+
+  private void setKeepDisplays(TableDetails detail, String content, String screen) {
+    boolean hide = BooleanUtils.toBoolean(content);
+    if (!hide) {
+      detail.setKeepDisplays(detail.getKeepDisplays()!=null? detail.getKeepDisplays() + "," + screen: screen);
+    }
+  }
+
+  //----------------------------------------
+
+  public void writeGames(File pinballXDb, List<String> games, Map<String, TableDetails> mapTableDetails) {
+    try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
+
+      writer.append("<menu>\n");
+      for (String filename : games) {
+        TableDetails detail = mapTableDetails.get(filename);
+        if (detail!=null) {
+          writer.append("  <game name=\"").append(escapeXml(detail.getGameName())).append("\">\n");
+
+          appendValue(writer, "description", detail.getGameDisplayName());
+          appendValue(writer, "rom", detail.getRomName());
+          appendValue(writer, "manufacturer", detail.getManufacturer());
+          appendValue(writer, "year", detail.getGameYear()!=null? detail.getGameYear().toString(): "");
+          appendValue(writer, "type", detail.getGameType()!=null? detail.getGameType().name(): "");
+          appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), "1");
+          appendKeepDisplays(writer, "hidetopper", detail.getKeepDisplays(), "0");
+          appendKeepDisplays(writer, "hidebackglass", detail.getKeepDisplays(), "2");
+          appendValue(writer, "enabled", detail.getStatus()!=0);
+          appendValue(writer, "rating", detail.getGameRating());
+          appendValue(writer, "players", detail.getNumberOfPlayers());
+          appendValue(writer, "comment", detail.getNotes());
+          appendValue(writer, "alternateexe", detail.getAltLaunchExe());
+          appendValue(writer, "theme", detail.getGameTheme());
+          appendValue(writer, "author", detail.getAuthor());
+          appendValue(writer, "version", detail.getGameVersion());
+          appendValue(writer, "IPDBnr", detail.getIPDBNum());
+          appendValue(writer, "dateadded", detail.getDateAdded());
+          appendValue(writer, "datemodified", detail.getDateModified());
+
+          writer.append("  </game>\n");
+        }
+      }
+      writer.append("</menu>");
+    }
+    catch (Exception e) {
+      LOG.error("Error while writing " + pinballXDb, e);
+    }
+  }
+
+  private void appendKeepDisplays(BufferedWriter writer, String tag,String keepDisplays, String screen) throws IOException {
+    // cf constants in TableDataTabScreensController
+    boolean keep = keepDisplays!=null && keepDisplays.contains(screen);
+    writer.append("    <" + tag + ">").append(keep? "False": "True" ).append("</" + tag + ">\n");   
+  }
+
+  private void appendValue(BufferedWriter writer, String tag, String value) throws IOException {
+    if (value != null) {
+      writer.append("    <" + tag + ">").append(escapeXml(value)).append("</" + tag + ">\n");
+    }
+  }  private void appendValue(BufferedWriter writer, String tag, Integer value) throws IOException {
+    if (value != null) {
+      writer.append("    <" + tag + ">").append(value.toString()).append("</" + tag + ">\n");
+    }
+  }
+  private void appendValue(BufferedWriter writer, String tag, Boolean value) throws IOException {
+    if (value != null) {
+      writer.append("    <" + tag + ">").append(value? "True": "False").append("</" + tag + ">\n");
+    }
+  }
+  private void appendValue(BufferedWriter writer, String tag, Date value) throws IOException {
+    if (value != null) {
+      writer.append("    <" + tag + ">").append(sdf.format(value)).append("</" + tag + ">\n");
+    }
+  }
+  /**
+   * Specific XML escape utilities (vs StringEscapeUtils) to not escape '
+   */
+  private String escapeXml(String value) {
+    value = value.replace("&", "&amp;");
+    value = value.replace("<", "&lt;");
+    value = value.replace(">", "&gt;");
+    return value;
   }
 
 }

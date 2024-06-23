@@ -124,7 +124,7 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * To be implemented to persist modification in database
    */
-  protected abstract void commitDb();
+  protected abstract void commitDb(Emulator emu);
 
   //-------------------------------------------------
 
@@ -219,7 +219,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public void saveTableDetails(int id, TableDetails tableDetails) {
     String filename = mapFilenames.get(id);
     updateGameInDb(filename, tableDetails);
-    commitDb();
+    commitDb(emulators.get(tableDetails.getEmulatorId()));
   }
 
   protected TableDetails fromGame(Game game) {
@@ -247,24 +247,26 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean deleteGame(int gameId) {
     String filename = mapFilenames.remove(gameId);
     if (filename != null) {
+      int _emuId = -1;
       for (Integer emuId : emulators.keySet()) {
         List<String> games = gamesByEmu.get(emuId);
-        games.remove(filename);
+        if (games.remove(filename)) {
+          _emuId = emuId;
+          break;
+        }
       }
-      dropGameFromDb(filename);
-      commitDb();
-      return true;
+      if (_emuId>=0) {
+        dropGameFromDb(filename);
+        commitDb(emulators.get(_emuId));
+        return true;
+      }
     }
     return false;
   }
 
+  @Override
   public void deleteGames() {
-    mapFilenames.clear();
-    for (Integer emuId : emulators.keySet()) {
-      gamesByEmu.get(emuId).clear();
-    }
-    dropGameFromDb(null);
-    commitDb();
+    // not implemented
   }
 
   @Override
@@ -282,7 +284,7 @@ public abstract class BaseConnector implements FrontendConnector {
     details.setLaunchCustomVar(launchCustomVar);
 
     updateGameInDb(gameFileName, details);
-    commitDb();
+    commitDb(emulators.get(emulatorId));
 
     // if everything is good, the game id should have been generated, so add to the cached model
     int id = filenameToId(gameFileName);

@@ -270,8 +270,12 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  protected void commitDb() {
-    //TODO implement persitence in XML
+  protected void commitDb(Emulator emu) {
+    File pinballXFolder = getInstallationFolder();
+    File pinballXDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");
+
+    PinballXTableParser parser = new PinballXTableParser();
+    parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails);
   }
 
   //------------------------------------------------------------
