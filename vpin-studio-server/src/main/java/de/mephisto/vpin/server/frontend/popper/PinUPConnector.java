@@ -63,7 +63,6 @@ public class PinUPConnector implements FrontendConnector {
   @NotNull
   @Override
   public File getInstallationFolder() {
-    //TODO move into this class!!
     return systemService.getFrontendInstallationFolder();
   }
 

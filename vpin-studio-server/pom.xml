@@ -384,6 +384,7 @@
                                         <include>pinemhi/**</include>
                                         <include>vpbm/**</include>
                                         <include>nvrams/**</include>
+                                        <include>scripts/**</include>
                                         <include>competition-badges/*</include>
                                         <include>*.exe</include>
                                         <include>*.dll</include>

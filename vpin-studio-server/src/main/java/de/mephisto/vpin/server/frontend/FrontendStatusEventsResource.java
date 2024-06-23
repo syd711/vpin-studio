@@ -76,8 +76,15 @@ public class FrontendStatusEventsResource {
     return game != null;
   }
 
+  //kept for legacy reasons!
   @PostMapping("/popperLaunch")
   public boolean popperLaunch() {
+    frontendStatusService.notifyFrontendLaunch();
+    return true;
+  }
+
+  @PostMapping("/frontendLaunch")
+  public boolean frontendLaunch() {
     frontendStatusService.notifyFrontendLaunch();
     return true;
   }
