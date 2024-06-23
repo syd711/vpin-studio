@@ -131,7 +131,7 @@ public class PinballXConnector extends BaseConnector {
     INIConfiguration iniConfiguration = new INIConfiguration();
     //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
     iniConfiguration.setSeparatorUsedInOutput("=");
-    iniConfiguration.setSeparatorUsedInInput("=");
+//    iniConfiguration.setSeparatorUsedInInput("=");
 
     // mind pinballX.ini is encoded in UTF-16
     try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
@@ -387,7 +387,7 @@ public class PinballXConnector extends BaseConnector {
 
     FileWriter fileWriter = null;
     try {
-      fileWriter = new FileWriter(getPinballXIni());
+      fileWriter = new FileWriter(getPinballXIni(), Charset.forName("UTF-16"));
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
