@@ -158,9 +158,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button addAudioBlank;
 
   @FXML
-  private VBox assetsBox;
+  private Node assetsBox;
+
+  @FXML
+  private Node assetSearchBox;
+
   @FXML
   private Label assetSearchLabel;
+
   @FXML
   private BorderPane assetSearchList;
   
@@ -500,25 +505,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    assetSearchBox.managedProperty().bindBidirectional(assetSearchBox.visibleProperty());
+
     Frontend frontend = client.getFrontendService().getFrontend();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
 
-    // needed as the controller is also used by dialog-table-asset-manager-embedded.fxml that does not contain asset search capabilities
-    if (assetsBox!=null) {
-      if (frontend.isAssetSearchEnabled()) {
-        this.assetSearchLabel.setText(frontend.getAssetSearchLabel());
-
-      //Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
-      //ImageView view1 = new ImageView(image1);
-      //view1.setPreserveRatio(true);
-      //view1.setFitHeight(18);
-
-      } 
-      else {
-        assetsBox.getChildren().remove(assetSearchLabel);
-        assetsBox.getChildren().remove(assetSearchList);
-      }
-    }
+    assetSearchBox.setVisible(frontend.isAssetSearchEnabled());
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
