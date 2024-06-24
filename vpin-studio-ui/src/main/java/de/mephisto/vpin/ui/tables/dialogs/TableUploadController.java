@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -57,12 +58,18 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private RadioButton uploadAndImportRadio;
+  @FXML
+  private Label uploadAndImportDescription;
 
   @FXML
   private RadioButton uploadAndReplaceRadio;
+  @FXML
+  private Label uploadAndReplaceDescription;
 
   @FXML
   private RadioButton uploadAndCloneRadio;
+  @FXML
+  private Label uploadAndCloneDescription;
 
   @FXML
   private CheckBox keepNamesCheckbox;
@@ -447,6 +454,7 @@ public class TableUploadController implements Initializable, DialogController {
     }));
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    Frontend frontend = client.getFrontendService().getFrontend();
 
     tableNameLabel.setVisible(false);
     tableTitleLabel.setVisible(false);
@@ -473,6 +481,11 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
+    
+    uploadAndImportRadio.setText(uploadAndImportRadio.getText().replace("[Frontend]", frontend.getName()));
+    uploadAndImportDescription.setText(uploadAndImportDescription.getText().replace("[Frontend]", frontend.getName()));
+    uploadAndReplaceDescription.setText(uploadAndReplaceDescription.getText().replace("[Frontend]", frontend.getName()));
+    uploadAndCloneDescription.setText(uploadAndCloneDescription.getText().replace("[Frontend]", frontend.getName()));
 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {

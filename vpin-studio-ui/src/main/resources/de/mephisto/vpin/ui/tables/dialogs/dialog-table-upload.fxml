@@ -97,7 +97,7 @@
                                     <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
                                     <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <children>
-                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Popper Database" textFill="WHITE">
+                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Database" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -211,12 +211,12 @@
                      <children>
                         <VBox fx:id="uploadImportBox" prefWidth="400.0" styleClass="selection-panel">
                            <children>
-                              <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="Upload and Import to PinUP Popper" textFill="WHITE" wrapText="true">
+                              <RadioButton fx:id="uploadAndImportRadio" mnemonicParsing="false" selected="true" text="Upload and Import to [Frontend]" textFill="WHITE" wrapText="true">
                                  <font>
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </RadioButton>
-                              <Label styleClass="checkbox-description" text="The uploaded table will be visible as new game in the &quot;Games Manager&quot; of PinUP Popper." textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndImportDescription" styleClass="checkbox-description" text="The uploaded table will be visible as new game in the &quot;Games Manager&quot; of [Frontend]." textFill="WHITE" wrapText="true" />
                               <Label layoutX="10.0" layoutY="30.0" styleClass="default-headline" text="Import Additional Assets" textFill="WHITE" wrapText="true">
                                  <VBox.margin>
                                     <Insets left="26.0" top="12.0" />
@@ -309,7 +309,7 @@
                                     <Insets />
                                  </VBox.margin>
                               </RadioButton>
-                              <Label styleClass="checkbox-description" text="The uploaded table will replace the selected table. Popper assets will be kept." textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="The uploaded table will replace the selected table. [Frontend] assets will be kept." textFill="WHITE" wrapText="true" />
                               <VBox>
                                  <children>
                                     <CheckBox fx:id="keepNamesCheckbox" mnemonicParsing="false" text="Keep existing VPX filename when replacing table." textFill="WHITE">
@@ -356,7 +356,7 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </RadioButton>
-                              <Label styleClass="checkbox-description" text="The uploaded table will be imported into PinUP Popper using the selected table as template. Backglass and Popper screen assets will be copied too." textFill="WHITE" wrapText="true" />
+                              <Label fx:id="uploadAndCloneDescription" styleClass="checkbox-description" text="The uploaded table will be imported into [Frontend] using the selected table as template. Backglass and media screen assets will be copied too." textFill="WHITE" wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
