@@ -99,7 +99,7 @@
                      <content>
                         <VBox fx:id="dataBox">
                            <children>
-                              <GridPane vgap="3.0">
+                              <GridPane fx:id="b2sSettings" vgap="3.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="160.0" prefWidth="180.0" />
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="338.4000244140625" minWidth="299.1999816894531" prefWidth="338.4000244140625" />
