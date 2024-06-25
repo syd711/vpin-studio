@@ -880,12 +880,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onReloadPressed(ActionEvent e) {
-    client.getFrontendService().clearCache();
+    client.getFrontendService().reload();
     client.getGameService().reload();
     this.onReload();
   }
 
   public void onReload() {
+    doReload(true);
+  }
+  public void onSwitchFromCache() {
+    doReload(false);
+  }
+  public void doReload(boolean clearCache) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
@@ -916,8 +922,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         id = value.getId();
       }
 
-      client.getGameService().clearCache(id);
+      if (clearCache) {
+        client.getGameService().clearCache(id);
+      }
       List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
+
+      // as the load of tables could take some time, users may have switched to another emulators in between
+      // if this is the case, do not refresh the UI with the results
+      GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+      if (valueAfterSearch.getId() != id) {
+        return;
+      }
+
       Platform.runLater(() -> {
 
         setItems(_games);
@@ -1940,7 +1956,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           refreshViewForEmulator();
           tableFilterController.applyFilter();
         });
-        onReload();
+        // just reload from cache
+        onSwitchFromCache();
       });
     }
   }

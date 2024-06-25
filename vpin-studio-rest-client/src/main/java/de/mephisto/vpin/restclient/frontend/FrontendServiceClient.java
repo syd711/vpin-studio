@@ -24,8 +24,6 @@ public class FrontendServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private static final String API_SEGMENT_FRONTEND = "frontend";
 
-  private List<TableAssetSearch> cache = new ArrayList<>();
-
   private FrontendType frontendType;
 
   public FrontendServiceClient(VPinStudioClient client) {
@@ -199,8 +197,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/settings", clazz);
   }
 
-  public void clearCache() {
+  public void reload() {
     getRestClient().clearCache("frontend/emulators");
-    this.cache.clear();
   }
 }
