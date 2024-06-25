@@ -20,6 +20,7 @@ public class TablesAssetViewSidebarController implements Initializable {
 
   @FXML
   private VBox assetSidebarVBox;
+
   private TableAssetManagerDialogController dialogController;
 
   public void setVisible(boolean b) {

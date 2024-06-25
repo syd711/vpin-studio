@@ -1,6 +1,8 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -8,8 +10,8 @@ import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -17,6 +19,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -24,10 +27,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -409,6 +409,29 @@ public class PinballXConnector extends BaseConnector {
       return false;
     }
     return true;
+  }
+
+  /**
+   * Ensures that the VPin Studio Logo is available for PinUP Popper in the T-Arc.
+   */
+  public void setVPinStudioAppEnabled(boolean b) {
+    File pcWheelFolder = new File(this.getInstallationFolder(), "POPMedia/PC Games/Wheel/");
+    if (pcWheelFolder.exists()) {
+      File wheelIcon = new File(pcWheelFolder, UIDefaults.APP_TITLE + ".png");
+      if (!wheelIcon.exists()) {
+        try {
+          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
+          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
+          resourceAsStream.close();
+          LOG.info("Copied VPin Studio App icon.");
+
+          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
+          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
+        } catch (Exception e) {
+          LOG.info("Failed to copy VPin App wheel icon: " + e.getMessage(), e);
+        }
+      }
+    }
   }
 
   //---------------- Utilities -----------------------------------------------------------------------------------------

@@ -21,7 +21,7 @@
          <children>
             <VBox maxHeight="1.7976931348623157E308">
                <children>
-                  <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                  <BorderPane fx:id="assetSearchBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <top>
                         <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                            <BorderPane.margin>

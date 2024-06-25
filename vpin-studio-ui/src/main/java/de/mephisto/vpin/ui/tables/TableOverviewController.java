@@ -320,6 +320,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAssetView() {
+    tablesController.setSidebarVisible(true);
+
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 

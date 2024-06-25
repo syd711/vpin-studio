@@ -12,4 +12,5 @@ public interface UIDefaults {
   int DB_VERSION = 64;
 
   int TOURNAMENT_BROWSER_PAGE_SIZE = 20;
+  String APP_TITLE = "VPin Studio App";
 }

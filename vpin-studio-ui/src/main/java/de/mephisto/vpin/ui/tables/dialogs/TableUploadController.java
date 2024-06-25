@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -430,6 +431,16 @@ public class TableUploadController implements Initializable, DialogController {
       assetAltSoundCheckbox.setText("ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
     }
 
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.equals(FrontendType.Popper)) {
+      assetPupPackCheckbox.setSelected(false);
+      assetPupPackCheckbox.setVisible(false);
+
+      assetMediaCheckbox.setSelected(false);
+      assetMediaCheckbox.setVisible(false);
+    }
+
+
     assetsBox.setVisible(assetBackglassCheckbox.isSelected()
         || assetAltSoundCheckbox.isSelected()
         || assetAltColorCheckbox.isSelected()
@@ -447,6 +458,9 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
+    assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
+
     root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip", "rar"));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;

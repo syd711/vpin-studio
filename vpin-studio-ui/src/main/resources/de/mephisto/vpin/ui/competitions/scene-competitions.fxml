@@ -52,7 +52,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-check" />
                      </graphic>
                   </Tab>
-                  <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="IScored Subscriptions">
+                  <Tab fx:id="iScoredSubscriptionsTab" closable="false" text="iScored Subscriptions">
                      <content>
                         <BorderPane prefHeight="200.0" prefWidth="200.0" />
                      </content>
