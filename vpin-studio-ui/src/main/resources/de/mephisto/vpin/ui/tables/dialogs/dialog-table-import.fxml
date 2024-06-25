@@ -48,7 +48,7 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The list shows the tables files located in the &quot;Tables&quot; folder of Visual Pinball" textFill="WHITE">
+                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The list shows the tables files located in the &quot;Tables&quot; folder of [Emulator]" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -56,7 +56,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="that have not been imported to PinUP Popper yet." textFill="WHITE">
+                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="that have not been imported to [Frontend] yet." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -64,7 +64,7 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="58.0" styleClass="preference-description" text="Rename the &quot;Game Name&quot; in the &quot;Table Data&quot; dialog after the import " textFill="WHITE">
+                  <Label fx:id="text3Description" layoutX="10.0" layoutY="58.0" styleClass="preference-description" text="Rename the &quot;Game Name&quot; in the &quot;Table Data&quot; dialog after the import " textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -72,7 +72,7 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="92.0" styleClass="preference-description" text="if you have already assets in the screen folders of PinUP Popper for this table." textFill="WHITE">
+                  <Label fx:id="text4Description" layoutX="10.0" layoutY="92.0" styleClass="preference-description" text="if you have already assets in the screen folders of [Frontend] for this table." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

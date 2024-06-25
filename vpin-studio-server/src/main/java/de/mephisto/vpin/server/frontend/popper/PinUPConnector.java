@@ -187,6 +187,7 @@ public class PinUPConnector implements FrontendConnector {
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
         manifest.setGameVersion(rs.getString("GAMEVER"));
         manifest.setDateAdded(rs.getTimestamp("DateAdded"));
+        manifest.setDateModified(rs.getTimestamp("DateUpdated"));
         manifest.setNotes(rs.getString("Notes"));
         manifest.setGameYear(rs.getInt("GameYear"));
         if (rs.wasNull()) {

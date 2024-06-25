@@ -174,7 +174,7 @@
                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the PinUP Popper database." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the database." wrapText="true" />
                                                                </tooltip>
                                                             </Label>
                                                          </children>

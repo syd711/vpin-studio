@@ -297,6 +297,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onVpsReset() {
     game.setExtTableId(null);
     game.setExtTableVersionId(null);
+    game.setExtVersion(null);
 
     String vpsTableMappingField = serverSettings.getMappingVpsTableId();
     String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
@@ -307,12 +308,18 @@ public class TableDataController implements Initializable, DialogController, Aut
     autoCompleteNameField.setText("");
     refreshVersionsCombo(null);
     propperRenamingController.setVpsTable(null);
+
+    openVpsTableBtn.setDisable(true);
+    copyTableBtn.setDisable(true);
+    openVpsTableVersionBtn.setDisable(true);
+    copyTableVersionBtn.setDisable(true);
+    fixVersionBtn.setDisable(true);
   }
 
   @FXML
   private void onAutoMatch() {
     boolean autofill = this.autoFillCheckbox.isSelected();
-    GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), autofill);
+    GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
     if (vpsMatch != null) {
 
       String vpsTableMappingField = serverSettings.getMappingVpsTableId();
@@ -322,7 +329,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
       setMappedFieldValue(vpsTableMappingField, mappedTableId);
-      game.setExtTableId(vpsMatch.getExtTableId());
+      game.setExtTableId(mappedTableId);
 
       openVpsTableBtn.setDisable(false);
       copyTableBtn.setDisable(false);
@@ -335,15 +342,22 @@ public class TableDataController implements Initializable, DialogController, Aut
         VpsTableVersion version = vpsTable.getTableVersionById(mappedVersion);
         if (version != null) {
           setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
-          game.setExtTableVersionId(vpsMatch.getExtTableVersionId());
+          game.setExtTableVersionId(mappedVersion);
+          game.setExtVersion(version.getVersion());
+
           propperRenamingController.setVpsTableVersion(version);
+
+          openVpsTableVersionBtn.setDisable(false);
+          copyTableVersionBtn.setDisable(false);
+          fixVersionBtn.setDisable(StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
         }
         refreshVersionsCombo(vpsTable);
         tableVersionsCombo.setValue(version);
       }
 
-      openVpsTableVersionBtn.setDisable(false);
-      copyTableVersionBtn.setDisable(false);
+      if (autofill) {
+        onAutoFill();
+      }
     }
   }
 
@@ -376,7 +390,8 @@ public class TableDataController implements Initializable, DialogController, Aut
           designedBy.setText(td.getDesignedBy());
           tags.setText(td.getTags());
           notes.setText(td.getNotes());
-          gameVersion.setText(td.getGameVersion());
+          // do not overrid the version
+          //gameVersion.setText(td.getGameVersion());
           gNotes.setText(td.getgNotes());
           gDetails.setText(td.getgDetails());
           gLog.setText(td.getgLog());
@@ -448,7 +463,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVersionFix(ActionEvent e) {
-    TableDetails td = client.getFrontendService().getTableDetails(game.getId());
     String gVersion = game.getExtVersion();
     if (StringUtils.isEmpty(gVersion)) {
       VpsTableVersion value = this.tableVersionsCombo.getValue();
@@ -456,8 +470,10 @@ public class TableDataController implements Initializable, DialogController, Aut
         gVersion = value.getVersion();
       }
     }
-    td.setGameVersion(gVersion);
     gameVersion.setText(gVersion);
+    if (tableDetails!=null) {
+      tableDetails.setGameVersion(gVersion);
+    }
     fixVersionBtn.setDisable(true);
   }
 
@@ -525,8 +541,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
   }
 
-  private String findDuplicate(String updated) {
-    GameList importableTables = client.getFrontendService().getImportableTables();
+  private String findDuplicate(int emuId, String updated) {
+    GameList importableTables = client.getFrontendService().getImportableTables(emuId);
     List<GameListItem> items = importableTables.getItems();
     for (GameListItem item : items) {
       String name = item.getName();
@@ -565,7 +581,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
-      String duplicate = findDuplicate(updatedGameFileName);
+      String duplicate = findDuplicate(tableDetails.getEmulatorId(), updatedGameFileName);
       if (duplicate != null) {
         WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
         return;
@@ -584,7 +600,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         tableDetails = client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       }
       client.getFrontendService().vpsLink(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
-      client.getFrontendService().fixVersion(game.getId(), game.getVersion());
+
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
       if (game.isVpxGame()) {
@@ -1066,6 +1082,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       openVpsTableVersionBtn.setDisable(tableVersion == null);
       copyTableVersionBtn.setDisable(tableVersion == null);
+      fixVersionBtn.setDisable(tableVersion == null || StringUtils.equals(tableVersion.getVersion(), gameVersion.getText()));
     }
 
     tableVersionsCombo.valueProperty().addListener(this);
@@ -1095,14 +1112,19 @@ public class TableDataController implements Initializable, DialogController, Aut
    */
   @Override
   public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
-    openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
-    copyTableVersionBtn.setDisable(newValue == null);
-
     String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
-    setMappedFieldValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
-    tableDetails.setMappedValue(mappingVpsTableVersionId, newValue != null ? newValue.getId() : null);
+    String mappedVersionId = newValue != null ? newValue.getId() : null;
+    String mappedVersion = newValue != null ? newValue.getVersion() : null;
+
+    setMappedFieldValue(mappingVpsTableVersionId, mappedVersionId);
+    game.setExtTableVersionId(mappedVersionId);
+    game.setExtVersion(mappedVersion);
 
     propperRenamingController.setVpsTableVersion(newValue);
+
+    openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
+    copyTableVersionBtn.setDisable(newValue == null);
+    fixVersionBtn.setDisable(mappedVersion==null || StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
 
     if (this.autoFillCheckbox.isSelected()) {
       onAutoFill();

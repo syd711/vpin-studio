@@ -189,7 +189,7 @@ public class UniversalUploadResource {
       FileUtils.cloneFile(original.getIniFile(), target.getName());
       FileUtils.cloneFile(original.getResFile(), target.getName());
 
-      frontendStatusService.autoMatch(importedGame, true);
+      frontendStatusService.autoMatch(importedGame, true, false);
 
       tableDetails = frontendStatusService.getTableDetails(importedGame.getId());
       if (tableDetails != null && autoFill) {
@@ -278,7 +278,7 @@ public class UniversalUploadResource {
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
 
-      frontendStatusService.autoMatch(game, true);
+      frontendStatusService.autoMatch(game, true, false);
 
       tableDetails = frontendStatusService.getTableDetails(game.getId());
       if (tableDetails != null && autoFill) {
@@ -313,7 +313,7 @@ public class UniversalUploadResource {
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        frontendStatusService.autoMatch(game, true);
+        frontendStatusService.autoMatch(game, true, false);
 
         TableDetails tableDetails = frontendStatusService.getTableDetails(game.getId());
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {

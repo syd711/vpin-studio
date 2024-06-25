@@ -68,7 +68,7 @@ public class TableDialogs {
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-            "Popper Media Upload", files, screen);
+            "Media Upload", files, screen);
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -417,7 +417,7 @@ public class TableDialogs {
         ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
             "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
         if (!result.isApplyClicked()) {
-          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
+          ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked(), false));
           EventManager.getInstance().notifyTablesChanged();
         }
       }
@@ -426,7 +426,7 @@ public class TableDialogs {
       ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-Match table and version for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
           "Cancel", "Continue", "The table and display name is used to find the matching table.", "You may have to adept the result manually.", "Overwrite existing matchings", false);
       if (!result.isApplyClicked()) {
-        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
+        ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked(), false));
         EventManager.getInstance().notifyTablesChanged();
       }
     }
@@ -447,7 +447,7 @@ public class TableDialogs {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Match table and version for \"" + game.getGameDisplayName() + "\"?",
         "This will overwrite the existing mapping.", "This action will overwrite the Popper fields configured for the VPS table and version IDs.", "Auto-Match");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true));
+      ProgressDialog.createProgressDialog(new TableVpsDataAutoMatchProgressModel(Arrays.asList(game), true, false));
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
@@ -482,9 +482,10 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog() {
-    Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import");
+  public static void openTableImportDialog(GameEmulatorRepresentation emulator) {
+    Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import for '" + emulator.getName() + "'");
     TableImportController controller = (TableImportController) stage.getUserData();
+    controller.setEmulator(emulator);
     stage.showAndWait();
   }
 

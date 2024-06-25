@@ -59,9 +59,9 @@ public class FrontendResource {
     return frontendStatusService.getVersion();
   }
 
-  @GetMapping("/imports")
-  public GameList getImportTables() {
-    return frontendStatusService.getImportTables();
+  @GetMapping("/imports/{emuId}")
+  public GameList getImportTables(@PathVariable("emuId") int emuId) {
+    return frontendStatusService.getImportTables(emuId);
   }
 
   @PostMapping("/import")
@@ -180,7 +180,12 @@ public class FrontendResource {
 
   @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
   public GameVpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
-    return frontendStatusService.autoMatch(gameService.getGame(gameId), overwrite);
+    return frontendStatusService.autoMatch(gameService.getGame(gameId), overwrite, false);
+  }
+
+  @GetMapping("/tabledetails/automatchsimulate/{gameId}/{overwrite}")
+  public GameVpsMatch autoMatchSimulate(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
+    return frontendStatusService.autoMatch(gameService.getGame(gameId), overwrite, true);
   }
 
 }

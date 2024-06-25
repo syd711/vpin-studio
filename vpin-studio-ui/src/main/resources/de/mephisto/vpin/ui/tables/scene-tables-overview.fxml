@@ -262,7 +262,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Edit Popper Table Data" />
+                              <Tooltip text="Edit Table Data" />
                            </tooltip>
                         </Button>
                         <Separator fx:id="importSeparator" layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />

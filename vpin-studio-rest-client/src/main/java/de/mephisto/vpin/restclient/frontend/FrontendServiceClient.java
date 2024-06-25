@@ -48,8 +48,8 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return frontendType;
   }
 
-  public GameList getImportableTables() {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/imports", GameList.class);
+  public GameList getImportableTables(int emulatorId) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/imports/" + emulatorId, GameList.class);
   }
 
   public JobExecutionResult importTable(GameListItem item) throws Exception {
@@ -155,8 +155,12 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public GameVpsMatch autoMatch(int gameId, boolean overwrite) {
-    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
+  public GameVpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate) {
+    if (simulate) {
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatchsimulate/" + gameId + "/" + overwrite, GameVpsMatch.class);
+    } else {
+      return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
+    }
   }
 
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) throws Exception {

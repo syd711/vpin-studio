@@ -82,31 +82,29 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     this.listeners.add(listener);
   }
 
-  public GameList getImportTables() {
-    List<GameEmulator> emulators = frontendService.getVpxGameEmulators();
+  public GameList getImportTables(int emuId) {
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
     GameList list = new GameList();
-    for (GameEmulator emulator : emulators) {
-      File vpxTablesFolder = emulator.getTablesFolder();
-      List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
-      List<Game> games = frontendService.getGames();
-      List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-      for (File file : files) {
-        String gameFileName = emulator.getGameFileName(file);
-        if (!emulatorGameFileNames.contains(gameFileName)) {
-          GameListItem item = new GameListItem();
-          item.setName(file.getName());
-          item.setFileName(file.getAbsolutePath());
-          item.setEmuId(emulator.getId());
-          list.getItems().add(item);
-        }
+    File vpxTablesFolder = emulator.getTablesFolder();
+    List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+    List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
+    List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+    for (File file : files) {
+      String gameFileName = emulator.getGameFileName(file);
+      if (!emulatorGameFileNames.contains(gameFileName)) {
+        GameListItem item = new GameListItem();
+        item.setName(file.getName());
+        item.setFileName(file.getAbsolutePath());
+        item.setEmuId(emulator.getId());
+        list.getItems().add(item);
       }
     }
     Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
     return list;
   }
 
-  public int importVPXGame(File file, boolean importToPopper, int playListId, int emuId) {
-    if (importToPopper) {
+  public int importVPXGame(File file, boolean importToFrontend, int playListId, int emuId) {
+    if (importToFrontend) {
       int gameId = frontendService.importGame(file, emuId);
       if (gameId >= 0 && playListId >= 0) {
         frontendService.addToPlaylist(playListId, gameId, 0);
@@ -169,9 +167,9 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   /**
    * moved from VpsService to break circular dependency.
    */
-  public GameVpsMatch autoMatch(Game game, boolean overwrite) {
+  public GameVpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
     GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
-    if (vpsMatch != null) {
+    if (vpsMatch != null && !simulate) {
       vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
     }
     return vpsMatch;
@@ -299,8 +297,8 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     // update the table in the frontend
     TableDetails tableDetails = getTableDetails(gameId);
     if (tableDetails != null) {
-      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), null);
-      tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), null);
+      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), extTableId);
+      tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), extTableVersionId);
       saveTableDetails(tableDetails, gameId, false);
     }
   }

@@ -17,7 +17,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
   public void testGames() {
     assertFalse(gameService.getGames().isEmpty());
     assertNotNull(gameService.getGameByFilename(AbstractVPinServerTest.EM_TABLE_NAME));
-    assertFalse(gameService.getGamesByRom(EM_ROM_NAME).isEmpty());
+    assertFalse(gameService.getGamesByRom(1, EM_ROM_NAME).isEmpty());
     assertNotNull(gameService.getRecentHighscores(1));
 
     List<Game> games = gameService.getGames();

@@ -48,7 +48,7 @@ public class HighscoreBackupResources {
     Game game = gameService.getGame(gameId);
     List<Game> gamesByRom = Collections.emptyList();
     if (game != null && !StringUtils.isEmpty(game.getRom())) {
-      gamesByRom = gameService.getGamesByRom(game.getRom());
+      gamesByRom = gameService.getGamesByRom(game.getEmulatorId(), game.getRom());
     }
     return highscoreBackupService.restore(game, gamesByRom, filename);
   }

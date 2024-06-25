@@ -7,13 +7,16 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -250,6 +253,15 @@ public class PinballXConnector extends BaseConnector {
 
     return games;
   }
+  
+  @Override
+  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, 
+    @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
+
+      // pinballX does not support gameName, so force equality with gameFileName
+      String gameNameFromFileName = gameFileName;
+      return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+  }
 
 
   //---------------------------------------------------
@@ -261,6 +273,9 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   protected void updateGameInDb(String game, TableDetails details) {
+    // force gameName = gameFileName
+    String gameName = FilenameUtils.getBaseName(details.getGameFileName());
+    details.setGameName(gameName);
     mapTableDetails.put(game, details);
   }
 

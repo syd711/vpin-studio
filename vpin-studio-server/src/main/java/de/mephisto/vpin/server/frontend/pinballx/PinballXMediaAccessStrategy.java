@@ -54,7 +54,7 @@ public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
         firstFolder = mediafolder;
       }
       File[] files = mediafolder.listFiles((dir, name) -> name.startsWith(gameFileName));
-      if (files.length > 0) {
+      if (files!=null && files.length > 0) {
         return mediafolder;
       }
     }

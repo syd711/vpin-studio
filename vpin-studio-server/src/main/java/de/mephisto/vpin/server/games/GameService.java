@@ -109,7 +109,6 @@ public class GameService implements InitializingBean {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
@@ -192,8 +191,8 @@ public class GameService implements InitializingBean {
     return games;
   }
 
-  public List<Game> getGamesByRom(@NonNull String rom) {
-    List<Game> games = this.getGames()
+  public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
+    List<Game> games = frontendService.getGamesByEmulator(emulatorId)
         .stream()
         .filter(g ->
             (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
@@ -311,7 +310,7 @@ public class GameService implements InitializingBean {
           }
 
           if (!StringUtils.isEmpty(game.getRom())) {
-            List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getRom()));
+            List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getEmulatorId(), game.getRom()));
             if (gamesByRom.size() == 1) {
               if (!mameService.deleteOptions(game.getRom())) {
                 success = false;
@@ -340,8 +339,12 @@ public class GameService implements InitializingBean {
           }
 
           //only delete the assets, if there is no other game with the same "Game Name".
-          List<Game> allOtherTables = this.frontendService.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
-          List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
+          List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
+            .stream().filter(g -> g.getId() != game.getId())
+            .collect(Collectors.toList());
+          List<Game> duplicateGameNameTables = allOtherTables
+            .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
+            .collect(Collectors.toList());
 
           if (duplicateGameNameTables.isEmpty()) {
             VPinScreen[] values = VPinScreen.values();

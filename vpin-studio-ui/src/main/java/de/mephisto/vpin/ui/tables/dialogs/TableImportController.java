@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -31,6 +33,15 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableImportController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableImportController.class);
+
+  @FXML
+  private Label text1Description;
+  @FXML
+  private Label text2Description;
+  @FXML
+  private Label text3Description;
+  @FXML
+  private Label text4Description;
 
   @FXML
   private VBox tableBox;
@@ -81,16 +92,26 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+  }
+
+  public void setEmulator(GameEmulatorRepresentation emulator) {
     try {
-      GameList importableTables = client.getFrontendService().getImportableTables();
+      Frontend frontend = client.getFrontendService().getFrontend();
+      GameList importableTables = client.getFrontendService().getImportableTables(emulator.getId());
       saveBtn.setDisable(importableTables.getItems().isEmpty());
 
       if (importableTables.getItems().isEmpty()) {
-        Label label = new Label("No tables found.");
+        Label label = new Label("No tables found for " + frontend.getName() + ".");
         label.setStyle("-fx-font-size: 14px;");
         tableBox.getChildren().add(label);
       }
       else {
+
+        replaceNames(text1Description, frontend.getName(), emulator.getName());
+        replaceNames(text2Description, frontend.getName(), emulator.getName());
+        replaceNames(text3Description, frontend.getName(), emulator.getName());
+        replaceNames(text4Description, frontend.getName(), emulator.getName());
+
         CheckBox selectCheckbox = new CheckBox("Select All");
         selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
         selectCheckbox.setPrefHeight(50);
@@ -115,8 +136,15 @@ public class TableImportController implements Initializable, DialogController {
       LOG.error("Failed to init import dialog: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
     }
-
   }
+
+  private void replaceNames(Label label, String frontend, String emulator) {
+    String txt = label.getText();
+    txt = txt.replace("[Frontend]", frontend);
+    txt = txt.replace("[Emulator]", emulator);
+    label.setText(txt);
+  }
+
 
   @Override
   public void onDialogCancel() {

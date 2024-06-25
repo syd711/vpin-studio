@@ -690,13 +690,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onImport() {
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableImportDialog();
+        TableDialogs.openTableImportDialog(emulatorSelection);
       }
     }
     else {
-      TableDialogs.openTableImportDialog();
+      TableDialogs.openTableImportDialog(emulatorSelection);
     }
   }
 
@@ -1024,12 +1026,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
+
+    if (selectedEmu == null) {
+      this.emulatorCombo.getSelectionModel().selectFirst();
+    }
+
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 

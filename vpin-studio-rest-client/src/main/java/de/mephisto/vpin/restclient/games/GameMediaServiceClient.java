@@ -84,7 +84,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       return exchange.getBody();
     }
     catch (Exception e) {
-      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      LOG.error("Media upload failed: " + e.getMessage(), e);
       throw e;
     }
   }
@@ -99,7 +99,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       return exchange.getBody();
     }
     catch (Exception e) {
-      LOG.error("Popper media upload failed: " + e.getMessage(), e);
+      LOG.error("Media upload failed: " + e.getMessage(), e);
       throw e;
     }
   }
