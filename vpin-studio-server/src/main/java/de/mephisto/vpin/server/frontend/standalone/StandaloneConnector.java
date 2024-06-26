@@ -36,6 +36,8 @@ public class StandaloneConnector extends BaseConnector {
    */
   private static final int VPX_EMUID = 1;
 
+  private static final String VPX_EMUNAME = "Visual Pinball";
+
   @Autowired
   private SystemService systemService;
 
@@ -61,6 +63,7 @@ public class StandaloneConnector extends BaseConnector {
     Frontend frontend = new Frontend();
     //frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
     frontend.setFrontendType(FrontendType.Standalone);
+    frontend.setName(VPX_EMUNAME);
 
     frontend.setIgnoredValidations(Arrays.asList(
         GameValidationCode.CODE_NO_AUDIO,
@@ -89,12 +92,11 @@ public class StandaloneConnector extends BaseConnector {
     List<Emulator> emulators = new ArrayList<>();
 
     // so far only VPX is supported in standalone mode
-    String emuName = "Visual Pinball";
     File vpxInstallDir = getInstallationFolder();
     File vpxTableDir = new File(vpxInstallDir, "Tables");
     if (vpxTableDir.exists()) {
-      LOG.info("Visual Pinball tables folder detected in " + vpxTableDir.getAbsolutePath());
-      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
+      LOG.info("VPX tables folder detected in " + vpxTableDir.getAbsolutePath());
+      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, VPX_EMUNAME);
       vpxemu.setDescription("default");
       emulators.add(vpxemu);
     }
@@ -113,11 +115,7 @@ public class StandaloneConnector extends BaseConnector {
     e.setDirGames(tablesDir.getAbsolutePath());
     e.setEmuLaunchDir(installDir.getAbsolutePath());
 
-    String exeName = "VPinballX.exe";
-    if (SystemUtil.is64Bit(preferencesService) && new File(installDir, "VPinballX64.exe").exists()) {
-      exeName = "VPinballX64.exe";
-    }
-    e.setExeName(exeName);
+    e.setExeName(getVPXExe());
 
     String gameext = getEmulatorExtension(emuname);
     e.setGamesExt(gameext);
@@ -187,7 +185,11 @@ public class StandaloneConnector extends BaseConnector {
 
   // UI Management
   private String getVPXExe() { //TODO configurable default exe
-    return "VPinballX64.exe";
+    String exeName = "VPinballX.exe";
+    if (SystemUtil.is64Bit(preferencesService) && new File(getInstallationFolder(), "VPinballX64.exe").exists()) {
+      exeName = "VPinballX64.exe";
+    }
+    return exeName;
   }
 
   @Override
