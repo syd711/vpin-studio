@@ -4,7 +4,6 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/playlists.png" width="400" />
 
-
 ### Bugfixes
 
 - **Installer**: Added .net check before server installation. Yes, this should be part of the installer, but this was the easier fix.
