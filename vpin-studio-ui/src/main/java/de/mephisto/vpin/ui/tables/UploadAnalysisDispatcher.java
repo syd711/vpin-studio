@@ -70,7 +70,7 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(tablesController.getTablesController(), game, TableUploadType.uploadAndImport, analysis);
+        TableDialogs.openTableUploadDialog(tablesController.getTableOverviewController(), game, TableUploadType.uploadAndImport, analysis);
         return;
       }
     }

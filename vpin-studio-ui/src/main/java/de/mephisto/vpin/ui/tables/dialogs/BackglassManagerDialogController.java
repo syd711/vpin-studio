@@ -308,7 +308,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (game != null) {
       onCancel(e);
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(tablesSidebarController.getTablesController(), this.game);
+        TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), this.game);
       });
     }
   }

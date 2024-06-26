@@ -208,13 +208,13 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private void onTableEdit() {
     if (Studio.client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
+        TableDialogs.openTableDataDialog(this.tablesSidebarController.getTableOverviewController(), this.game.get());
         this.refreshView(this.game);
       }
       return;
     }
 
-    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
+    TableDialogs.openTableDataDialog(this.tablesSidebarController.getTableOverviewController(), this.game.get());
     this.refreshView(this.game);
   }
 

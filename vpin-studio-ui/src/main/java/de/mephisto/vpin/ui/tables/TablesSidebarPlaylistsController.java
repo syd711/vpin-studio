@@ -245,7 +245,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   }
 
   private void refreshPlaylist(Playlist update) {
-    tablesSidebarController.getTablesController().updatePlaylist(update);
+    tablesSidebarController.getTableOverviewController().updatePlaylist(update);
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

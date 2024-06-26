@@ -3,9 +3,11 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -115,6 +117,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setInitialController("scene-tables.fxml", this, root);
     EventManager.getInstance().addListener(this);
+    sidePanelRoot = root.getRight();
 
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
@@ -130,7 +133,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       Parent tablesRoot = loader.load();
       tableOverviewController = loader.getController();
       tableOverviewController.setRootController(this);
-      tablesSideBarController.setTablesController(tableOverviewController);
+      tablesSideBarController.setTableOverviewController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
     }
     catch (IOException e) {
@@ -175,8 +178,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       refreshTabSelection(t1);
     });
 
-    sidePanelRoot = root.getRight();
-
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
@@ -201,6 +202,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   public void setSidebarVisible(boolean b) {
+    toggleSidebarBtn.setDisable(getTablesSideBarController().isEmpty());
+
     if (b && sidePanelRoot.isVisible()) {
       return;
     }

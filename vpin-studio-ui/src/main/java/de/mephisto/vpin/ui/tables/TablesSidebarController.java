@@ -49,9 +49,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   @FXML
   private TitledPane titledPaneMedia;
-
-  @FXML
-  private TitledPane titledPaneDefaultBackground;
+//
+//  @FXML
+//  private TitledPane titledPaneDefaultBackground;
 
   @FXML
   private TitledPane titledPaneHighscores;
@@ -128,8 +128,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   @FXML
   private TablesSidebarAltSoundController tablesSidebarAudioController; //fxml magic! Not unused
 
-  @FXML
-  private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
+//  @FXML
+//  private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarHighscoresController tablesSidebarHighscoresController; //fxml magic! Not unused
@@ -378,17 +378,17 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     pupBackBtn.setVisible(SystemUtil.isFolderActionSupported());
     dmdBtn.setVisible(SystemUtil.isFolderActionSupported());
 
-    titledPaneDefaultBackground.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneHighscores.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPanePov.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneAltSound.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneDirectB2s.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPanePUPPack.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneDMD.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneMame.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneVps.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneAltColor.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneScriptDetails.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDefaultBackground.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneHighscores.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPanePov.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneAltSound.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDirectB2s.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPanePUPPack.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDMD.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneMame.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneVps.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneAltColor.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneScriptDetails.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
 
     client.getPreferenceService().addListener(this);
   }
@@ -428,15 +428,15 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarDefaultBackgroundController = loader.getController();
-      tablesSidebarDefaultBackgroundController.setSidebarController(this);
-      titledPaneDefaultBackground.setContent(tablesRoot);
-    } catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
-    }
+//    try {
+//      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
+//      Parent tablesRoot = loader.load();
+//      tablesSidebarDefaultBackgroundController = loader.getController();
+//      tablesSidebarDefaultBackgroundController.setSidebarController(this);
+//      titledPaneDefaultBackground.setContent(tablesRoot);
+//    } catch (IOException e) {
+//      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+//    }
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarHighscoresController.class.getResource("scene-tables-sidebar-highscores.fxml"));
@@ -616,11 +616,11 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         refreshView(game);
       }
     });
-    titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      if (expanded) {
-        refreshView(game);
-      }
-    });
+//    titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+//      if (expanded) {
+//        refreshView(game);
+//      }
+//    });
     titledPaneTableData.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
@@ -651,12 +651,12 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     refreshSidebarSections();
   }
 
-  public void setTablesController(TableOverviewController tablesController) {
+  public void setTableOverviewController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
     loadSidePanels();
   }
 
-  public TableOverviewController getTablesController() {
+  public TableOverviewController getTableOverviewController() {
     return tablesController;
   }
 
@@ -697,9 +697,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (titledPaneHighscores.isExpanded() && titledPaneHighscores.isVisible()) {
         this.tablesSidebarHighscoresController.setGame(g);
       }
-      if (titledPaneDefaultBackground.isExpanded()) {
-        this.tablesSidebarDefaultBackgroundController.setGame(g);
-      }
+//      if (titledPaneDefaultBackground.isExpanded()) {
+//        this.tablesSidebarDefaultBackgroundController.setGame(g);
+//      }
       if (titledPanePov.isExpanded() && titledPanePov.isVisible()) {
         this.tablesSidebarPovController.setGame(g);
       }
@@ -734,7 +734,6 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
 
     if (!vpxMode) {
-      tableAccordion.getPanes().remove(titledPaneDefaultBackground);
       tableAccordion.getPanes().remove(titledPaneHighscores);
       tableAccordion.getPanes().remove(titledPanePov);
       tableAccordion.getPanes().remove(titledPaneAltSound);
@@ -847,9 +846,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tableAccordion.getPanes().remove(titledPanePUPPack);
     }
 
-    if (!tableAccordion.getPanes().contains(titledPaneDefaultBackground)) {
-      tableAccordion.getPanes().add(titledPaneDefaultBackground);
-    }
+    getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty());
   }
 
   public TitledPane getTitledPanePov() {
@@ -866,6 +863,10 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   public TitledPane getTitledPaneAltColor() {
     return titledPaneAltColor;
+  }
+
+  public boolean isEmpty() {
+    return tableAccordion.getPanes().isEmpty();
   }
 
   @Override
