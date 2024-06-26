@@ -96,7 +96,8 @@ public class StandaloneConnector extends BaseConnector {
     File vpxTableDir = new File(vpxInstallDir, "Tables");
     if (vpxTableDir.exists()) {
       LOG.info("VPX tables folder detected in " + vpxTableDir.getAbsolutePath());
-      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, VPX_EMUNAME);
+      String emuName = vpxInstallDir.getName();
+      Emulator vpxemu = createEmulator(vpxInstallDir, vpxTableDir, VPX_EMUID, emuName);
       vpxemu.setDescription("default");
       emulators.add(vpxemu);
     }
@@ -151,7 +152,18 @@ public class StandaloneConnector extends BaseConnector {
 
   @Override
   protected TableDetails getGameFromDb(String filename) {
-    return null;
+
+    File tableFile = new File(filename);
+    String tableName = StringUtils.removeEndIgnoreCase(tableFile.getName(), ".vpx");
+
+    TableDetails game = new TableDetails();
+    game.setEmulatorId(VPX_EMUID);
+    game.setGameName(tableName);
+    game.setGameFileName(filename);
+    game.setGameDisplayName(tableName);
+    game.setStatus(1);
+
+    return game;
   }
 
   @Override
