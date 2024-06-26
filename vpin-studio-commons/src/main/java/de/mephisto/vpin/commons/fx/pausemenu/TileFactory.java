@@ -74,6 +74,6 @@ public class TileFactory {
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
     }
-    return new AlxTileEntry("Total Games Played", "(Numer of launches from Popper)", String.valueOf(total));
+    return new AlxTileEntry("Total Games Played", "(Numer of launches)", String.valueOf(total));
   }
 }
