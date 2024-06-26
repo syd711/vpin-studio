@@ -548,8 +548,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       save();
     });
 
-    this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
-    this.directb2sList.setItems(FXCollections.observableList(unfilteredBackglasses));
+    new Thread(() -> {
+      this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
+      Platform.runLater(() -> {
+        this.directb2sList.setItems(FXCollections.observableList(unfilteredBackglasses));
+      });
+    }).start();
 
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       setSaveEnabled(false);
