@@ -415,7 +415,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           hideGrill.setDisable(tableData.getGrillHeight() == 0);
 
           if (tableData.isBackgroundAvailable()) {
-            new Thread(() -> {
+            resolutionLabel.setText("Loading...");
+                  new Thread(() -> {
               try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
                 Image image = new Image(in);
                 if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
@@ -438,6 +439,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           }
 
           if (tableData.isDmdImageAvailable()) {
+            dmdResolutionLabel.setText("Loading...");
             new Thread(() -> {
               try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
                 Image image = new Image(in);
