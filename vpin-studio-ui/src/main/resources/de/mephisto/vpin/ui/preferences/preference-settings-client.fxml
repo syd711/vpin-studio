@@ -163,85 +163,179 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="6.0">
-                     <children>
-                        <CheckBox fx:id="uiShowVPSUpdates1" mnemonicParsing="false" text="Emulator" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="uiShowVPSUpdates12" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Added" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                     </children>
+                  <HBox>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
-                  </VBox>
+                     <children>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="columnAltColor" layoutX="10.0" layoutY="248.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnAltSound" layoutX="10.0" layoutY="221.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnDateAdded" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Added" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnBackglass" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnEmulator" mnemonicParsing="false" text="Emulator" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="columnHighscore" mnemonicParsing="false" text="Highscore Type" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text="INI" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnPlaylists" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnPupPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="columnRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnVersion" mnemonicParsing="false" text="Version" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="columnVpsStatus" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) Status" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                   <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="Visible Sidebar Sections" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox spacing="6.0">
-                     <children>
-                        <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionHighscore" layoutX="10.0" layoutY="142.0" mnemonicParsing="false" text="Highscore" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionAssets" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Media Assets" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionPov" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionPupPack" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionScriptDetails" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Script Details" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <CheckBox fx:id="sectionVps" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) " textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                     </children>
+                  <HBox>
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>
-                  </VBox>
+                     <children>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionHighscore" mnemonicParsing="false" text="Highscore" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="Media Assets" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionPov" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionPlaylists" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionPupPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="Script Details" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Table Data" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionVps" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="sectionVPinMAME" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="VPin MAME" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
                   <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">
                      <VBox.margin>
                         <Insets top="24.0" />

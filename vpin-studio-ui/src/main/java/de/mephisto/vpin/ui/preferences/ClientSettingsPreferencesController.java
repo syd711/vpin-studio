@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -91,9 +92,42 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox sectionPupPack;
   @FXML
+  private CheckBox sectionPlaylists;
+  @FXML
   private CheckBox sectionScriptDetails;
   @FXML
+  private CheckBox sectionTableData;
+  @FXML
+  private CheckBox sectionVPinMAME;
+  @FXML
   private CheckBox sectionVps;
+
+  @FXML
+  private CheckBox columnAltColor;
+  @FXML
+  private CheckBox columnAltSound;
+  @FXML
+  private CheckBox columnBackglass;
+  @FXML
+  private CheckBox columnDateAdded;
+  @FXML
+  private CheckBox columnHighscore;
+  @FXML
+  private CheckBox columnEmulator;
+  @FXML
+  private CheckBox columnIni;
+  @FXML
+  private CheckBox columnPlaylists;
+  @FXML
+  private CheckBox columnPov;
+  @FXML
+  private CheckBox columnPupPack;
+  @FXML
+  private CheckBox columnRom;
+  @FXML
+  private CheckBox columnVersion;
+  @FXML
+  private CheckBox columnVpsStatus;
 
 
   public static Debouncer debouncer = new Debouncer();
@@ -124,6 +158,17 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
+    sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
+    vpsPUPPack.managedProperty().bindBidirectional(vpsPUPPack.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.supportPupPacks()) {
+      columnPupPack.setVisible(false);
+      sectionPupPack.setVisible(false);
+      vpsPUPPack.setVisible(false);
+    }
+
     networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
@@ -279,6 +324,192 @@ public class ClientSettingsPreferencesController implements Initializable {
 
       emulatorList.getChildren().add(checkBox);
     }
+
+    // --- Sections ----
+    sectionAltColor.setSelected(uiSettings.isSectionAltColor());
+    sectionAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionAltColor(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionAltSound.setSelected(uiSettings.isSectionAltSound());
+    sectionAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionAltSound(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionBackglass.setSelected(uiSettings.isSectionBackglass());
+    sectionBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionBackglass(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionDMD.setSelected(uiSettings.isSectionDMD());
+    sectionDMD.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionDMD(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionHighscore.setSelected(uiSettings.isSectionHighscore());
+    sectionHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionHighscore(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionAssets.setSelected(uiSettings.isSectionAssets());
+    sectionAssets.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionAssets(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionPov.setSelected(uiSettings.isSectionPov());
+    sectionPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionPov(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionPupPack.setSelected(uiSettings.isSectionPupPack());
+    sectionPupPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionPupPack(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionPlaylists.setSelected(uiSettings.isSectionPlaylists());
+    sectionPlaylists.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionPlaylists(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionScriptDetails.setSelected(uiSettings.isSectionScriptDetails());
+    sectionScriptDetails.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionScriptDetails(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionTableData.setSelected(uiSettings.isSectionTableData());
+    sectionTableData.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionTableData(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionVps.setSelected(uiSettings.isSectionVps());
+    sectionVps.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionVps(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionVPinMAME.setSelected(uiSettings.isSectionVPinMAME());
+    sectionVPinMAME.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionVPinMAME(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+
+    // --- Columns ----
+    columnAltColor.setSelected(uiSettings.isColumnAltColor());
+    columnAltColor.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnAltColor(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnAltSound.setSelected(uiSettings.isColumnAltSound());
+    columnAltSound.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnAltSound(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnBackglass.setSelected(uiSettings.isColumnBackglass());
+    columnBackglass.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnBackglass(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnDateAdded.setSelected(uiSettings.isColumnDateAdded());
+    columnDateAdded.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnDateAdded(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnHighscore.setSelected(uiSettings.isColumnHighscore());
+    columnHighscore.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnHighscore(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnEmulator.setSelected(uiSettings.isColumnEmulator());
+    columnEmulator.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnEmulator(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnIni.setSelected(uiSettings.isColumnIni());
+    columnIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnIni(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnPlaylists.setSelected(uiSettings.isColumnPlaylists());
+    columnPlaylists.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnPlaylists(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnPov.setSelected(uiSettings.isColumnPov());
+    columnPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnIni(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnPupPack.setSelected(uiSettings.isColumnPupPack());
+    columnPupPack.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnPupPack(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnRom.setSelected(uiSettings.isColumnRom());
+    columnRom.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnRom(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnVersion.setSelected(uiSettings.isColumnVersion());
+    columnVersion.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnVersion(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnVpsStatus.setSelected(uiSettings.isColumnVpsStatus());
+    columnVpsStatus.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnVpsStatus(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
   }
 
   private void refreshNetworkStatusLabel(String newValue) {

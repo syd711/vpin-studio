@@ -1924,6 +1924,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
+  public boolean isAssetManagerMode() {
+    return this.assetManagerMode;
+  }
+
   public StackPane getTableStack() {
     return this.tableStack;
   }
