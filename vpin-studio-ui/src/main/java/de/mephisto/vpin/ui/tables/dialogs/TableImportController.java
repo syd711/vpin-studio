@@ -101,15 +101,20 @@ public class TableImportController implements Initializable, DialogController {
       GameList importableTables = client.getFrontendService().getImportableTables(emulator.getId());
       saveBtn.setDisable(importableTables.getItems().isEmpty());
 
+      // should always be done
+      FrontendUtil.replaceNames(text1Description, frontend, emulator.getName());
+      FrontendUtil.replaceNames(text2Description, frontend, emulator.getName());
+
       if (importableTables.getItems().isEmpty()) {
         Label label = new Label("No tables found for [Frontend].");
         FrontendUtil.replaceName(label, frontend);
         label.setStyle("-fx-font-size: 14px;");
         tableBox.getChildren().add(label);
+
+        text3Description.setVisible(false);
+        text4Description.setVisible(false);
       }
       else {
-        FrontendUtil.replaceNames(text1Description, frontend, emulator.getName());
-        FrontendUtil.replaceNames(text2Description, frontend, emulator.getName());
         FrontendUtil.replaceNames(text3Description, frontend, emulator.getName());
         FrontendUtil.replaceNames(text4Description, frontend, emulator.getName());
 
