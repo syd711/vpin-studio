@@ -70,15 +70,17 @@ public class TableOverviewContextMenu {
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
-    MenuItem assetsItem = new MenuItem("Edit Table Assets");
-    assetsItem.setGraphic(iconMedia);
-    assetsItem.setOnAction(actionEvent -> tableOverviewController.onMediaEdit());
-    ctxMenu.getItems().add(assetsItem);
+    if (frontendType.supportMedias()) {
+      MenuItem assetsItem = new MenuItem("Edit Table Assets");
+      assetsItem.setGraphic(iconMedia);
+      assetsItem.setOnAction(actionEvent -> tableOverviewController.onMediaEdit());
+      ctxMenu.getItems().add(assetsItem);
 
-    MenuItem assetsViewItem = new MenuItem("Toggle Asset Management View");
-    assetsViewItem.setGraphic(iconAssetView);
-    assetsViewItem.setOnAction(actionEvent -> tableOverviewController.onAssetView());
-    ctxMenu.getItems().add(assetsViewItem);
+      MenuItem assetsViewItem = new MenuItem("Toggle Asset Management View");
+      assetsViewItem.setGraphic(iconAssetView);
+      assetsViewItem.setOnAction(actionEvent -> tableOverviewController.onAssetView());
+      ctxMenu.getItems().add(assetsViewItem);
+    }
 
     if (game.isVpxGame()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
@@ -107,13 +109,15 @@ public class TableOverviewContextMenu {
       scanAllItem.setOnAction(actionEvent -> tableOverviewController.onTablesScanAll());
       ctxMenu.getItems().add(scanAllItem);
 
-      ctxMenu.getItems().add(new SeparatorMenuItem());
+      if (frontendType.isNotStandalone()) {
+        ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem importsItem = new MenuItem("Import Tables");
-      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
-      importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
-      ctxMenu.getItems().add(importsItem);
-
+        MenuItem importsItem = new MenuItem("Import Tables");
+        importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
+        importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
+        ctxMenu.getItems().add(importsItem);
+      }
+      
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem b2sItem = new MenuItem("Open Backglass Manager");
