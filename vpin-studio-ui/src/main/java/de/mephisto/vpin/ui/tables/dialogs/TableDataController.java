@@ -306,11 +306,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     game.setExtTableVersionId(null);
     game.setExtVersion(null);
 
-    String vpsTableMappingField = serverSettings.getMappingVpsTableId();
-    String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
-
-    setMappedFieldValue(vpsTableMappingField, "");
-    setMappedFieldValue(vpsTableVersionMappingField, "");
+    setVpsTableIdValue("");
+    setVpsVersionIdValue("");
 
     autoCompleteNameField.setText("");
     refreshVersionsCombo(null);
@@ -329,13 +326,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
     if (vpsMatch != null) {
 
-      String vpsTableMappingField = serverSettings.getMappingVpsTableId();
-      String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
-
       String mappedTableId = vpsMatch.getExtTableId();
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
-      setMappedFieldValue(vpsTableMappingField, mappedTableId);
+      setVpsTableIdValue(mappedTableId);
       game.setExtTableId(mappedTableId);
 
       openVpsTableBtn.setDisable(false);
@@ -348,7 +342,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
         VpsTableVersion version = vpsTable.getTableVersionById(mappedVersion);
         if (version != null) {
-          setMappedFieldValue(vpsTableVersionMappingField, mappedVersion);
+          setVpsVersionIdValue(mappedVersion);
           game.setExtTableVersionId(mappedVersion);
           game.setExtVersion(version.getVersion());
 
@@ -377,7 +371,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onAutoFill() {
     try {
       if (tableDetails != null) {
-        LOG.info("Auto-fill table version " + tableDetails.getMappedValue(serverSettings.getMappingVpsTableVersionId()));
+        LOG.info("Auto-fill table version");
         TableDetails td = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
         if (td != null) {
           gameTypeCombo.setValue(td.getGameType());
@@ -429,9 +423,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onCopyTableVersion() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
-    String mappingVpsTableId = serverSettings.getMappingVpsTableId();
-    String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
-    String vpsTableUrl = VPS.getVpsTableUrl(tableDetails.getMappedValue(mappingVpsTableId), tableDetails.getMappedValue(mappingVpsTableVersionId));
+    String vpsTableUrl = VPS.getVpsTableUrl(game.getExtTableId(), game.getExtVersion());
     content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }
@@ -1013,7 +1005,16 @@ public class TableDataController implements Initializable, DialogController, Aut
     tabPane.getSelectionModel().select(tab);
   }
 
-  public void setMappedFieldValue(String field, String value) {
+  private void setVpsTableIdValue(String value) {
+    setMappedFieldValue(serverSettings.getMappingVpsTableId(), value);
+  }
+  private void setVpsVersionIdValue(String value) {
+    setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), value);
+  }
+  public void setHsFilenameValue(String value) {
+    setMappedFieldValue(serverSettings.getMappingHsFileName(), value);
+  }
+  private void setMappedFieldValue(String field, String value) {
     switch (field) {
       case "WEBGameID": {
         webDbId.setText(value);
@@ -1062,10 +1063,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
     autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
 
-    //vps mapping
-    String vpsTableMappingField = serverSettings.getMappingVpsTableId();
-    String vpsTableVersionMappingField = serverSettings.getMappingVpsTableVersionId();
-
     String vpsTableId = game.getExtTableId();
     String vpsTableVersionId = game.getExtTableVersionId();
 
@@ -1093,8 +1090,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     }
 
     tableVersionsCombo.valueProperty().addListener(this);
-    setMappedFieldValue(vpsTableMappingField, vpsTableId);
-    setMappedFieldValue(vpsTableVersionMappingField, vpsTableVersionId);
+    setVpsTableIdValue(vpsTableId);
+    setVpsVersionIdValue(vpsTableVersionId);
   }
 
   private void refreshVersionsCombo(VpsTable tableById) {
@@ -1119,11 +1116,10 @@ public class TableDataController implements Initializable, DialogController, Aut
    */
   @Override
   public void changed(ObservableValue<? extends VpsTableVersion> observable, VpsTableVersion oldValue, VpsTableVersion newValue) {
-    String mappingVpsTableVersionId = serverSettings.getMappingVpsTableVersionId();
     String mappedVersionId = newValue != null ? newValue.getId() : null;
     String mappedVersion = newValue != null ? newValue.getVersion() : null;
 
-    setMappedFieldValue(mappingVpsTableVersionId, mappedVersionId);
+    setVpsVersionIdValue(mappedVersionId);
     game.setExtTableVersionId(mappedVersionId);
     game.setExtVersion(mappedVersion);
 
@@ -1151,8 +1147,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (selectedEntry.isPresent()) {
       VpsTable vpsTable = selectedEntry.get();
 
-      String mappingVpsTableId = serverSettings.getMappingVpsTableId();
-      setMappedFieldValue(mappingVpsTableId, vpsTable.getId());
+      setVpsTableIdValue(vpsTable.getId());
 
       propperRenamingController.setVpsTable(vpsTable);
     }

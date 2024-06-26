@@ -170,6 +170,8 @@ public class PinUPConnector implements FrontendConnector {
 
   @Nullable
   public TableDetails getTableDetails(int id) {
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
     Connection connect = connect();
     TableDetails manifest = null;
     try {
@@ -240,6 +242,11 @@ public class PinUPConnector implements FrontendConnector {
           manifest.setTourneyId(rs.getString("TourneyID"));
           manifest.setCustom4(rs.getString("CUSTOM4"));
           manifest.setCustom5(rs.getString("CUSTOM5"));
+        }
+
+        // add mapped field
+        if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
+          manifest.setHsFilename(rs.getString(serverSettings.getMappingHsFileName()));
         }
       }
       rs.close();
@@ -395,6 +402,40 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to save table details: " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+  }
+
+  @Override
+  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
+
+    ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+
+    Connection connect = this.connect();
+    try {
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Game SET " 
+        + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
+        + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
+        + "DateUpdated=? WHERE GameID=?");
+      int index = 1;
+      preparedStatement.setString(index++, extTableId);
+      preparedStatement.setString(index++, extTableVersionId);
+      preparedStatement.setString(index++, extTableId);
+
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
+      Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+      String ts = sdf.format(timestamp);
+      preparedStatement.setObject(index++, ts);
+      preparedStatement.setInt(index++, gameId);
+
+      preparedStatement.executeUpdate();
+      preparedStatement.close();
+      LOG.info("Update Game with VPS link information.");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to Game with VPS Link:" + e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1580,12 +1621,6 @@ public class PinUPConnector implements FrontendConnector {
     String tableName = rs.getString("ROMALT");
     game.setTableName(tableName);
 
-    //TODO add VPS ids here
-    if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
-      String highscoreFilename = rs.getString(serverSettings.getMappingHsFileName());
-      game.setHsFileName(highscoreFilename);
-    }
-
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
 
@@ -1600,9 +1635,15 @@ public class PinUPConnector implements FrontendConnector {
     File vpxFile = new File(dirGame, gameFileName);
     game.setGameFile(vpxFile);
 
-    game.setExtTableId(rs.getString(serverSettings.getMappingVpsTableId()));
-    game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableVersionId()));
-    game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
+    if (!StringUtils.isEmpty(serverSettings.getMappingVpsTableId())) {
+      game.setExtTableId(rs.getString(serverSettings.getMappingVpsTableId()));
+    }
+    if (!StringUtils.isEmpty(serverSettings.getMappingVpsTableVersionId())) {
+      game.setExtTableVersionId(rs.getString(serverSettings.getMappingVpsTableVersionId()));
+    }
+    if (!StringUtils.isEmpty(serverSettings.getMappingHsFileName())) {
+      game.setHsFileName(rs.getString(serverSettings.getMappingHsFileName()));
+    }
 
     return game;
   }

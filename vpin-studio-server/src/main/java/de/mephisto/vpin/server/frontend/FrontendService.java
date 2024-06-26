@@ -121,6 +121,10 @@ public class FrontendService implements InitializingBean {
     getFrontendConnector().updateTableFileUpdated(id);
   }
 
+  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
+    getFrontendConnector().vpsLink(gameId, extTableId, extTableVersionId);
+  }
+
   //--------------------------
   private Game setGameEmulator(Game game) {
     if (game != null) {

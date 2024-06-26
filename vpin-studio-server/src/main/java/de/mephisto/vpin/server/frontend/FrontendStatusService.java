@@ -3,19 +3,15 @@ package de.mephisto.vpin.server.frontend;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -37,7 +33,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendStatusService implements InitializingBean, PreferenceChangedListener {
+public class FrontendStatusService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
   private final List<FrontendStatusChangeListener> listeners = new ArrayList<>();
@@ -55,9 +51,6 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   private VPXService vpxService;
 
   @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
   private CardService cardService;
 
   @Autowired
@@ -65,8 +58,6 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
 
   @Autowired
   private VpsService vpsService;
-
-  private ServerSettings serverSettings;
 
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
     return frontendService.getPinUPControlFor(screen);
@@ -294,12 +285,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
     gameService.vpsLink(gameId, extTableId, extTableVersionId);
 
     // update the table in the frontend
-    TableDetails tableDetails = getTableDetails(gameId);
-    if (tableDetails != null) {
-      tableDetails.setMappedValue(serverSettings.getMappingVpsTableId(), extTableId);
-      tableDetails.setMappedValue(serverSettings.getMappingVpsTableVersionId(), extTableVersionId);
-      saveTableDetails(tableDetails, gameId, false);
-    }
+    frontendService.vpsLink(gameId, extTableId, extTableVersionId);
   }
 
   public void fixGameVersion(int gameId, String version) {
@@ -411,11 +397,9 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   }
 
   public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
-    String existingRom = String.valueOf(oldDetails.getRomName());
-    boolean romChanged = !String.valueOf(newDetails.getRomName()).equalsIgnoreCase(existingRom);
-
-    String existingHsName = String.valueOf(oldDetails.getMappedValue(serverSettings.getMappingHsFileName()));
-    boolean hsChanged = !String.valueOf(newDetails.getMappedValue(serverSettings.getMappingHsFileName())).equalsIgnoreCase(existingHsName);
+    boolean romChanged = !StringUtils.equalsIgnoreCase(oldDetails.getRomName(), newDetails.getRomName());
+    boolean hsChanged = !StringUtils.equalsIgnoreCase(oldDetails.getHsFilename(), newDetails.getHsFilename());
+        
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game);
@@ -549,14 +533,5 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyFrontendExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
-    preferencesService.addChangeListener(this);
-    preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
-  }
-
-  @Override
-  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    }
   }
 }

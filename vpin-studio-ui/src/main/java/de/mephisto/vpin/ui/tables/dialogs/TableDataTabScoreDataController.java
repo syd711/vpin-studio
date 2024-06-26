@@ -204,26 +204,22 @@ public class TableDataTabScoreDataController implements Initializable {
     scannedAltRomName.setText(game.getScannedAltRom());
     applyAltRomBtn.setDisable(StringUtils.isEmpty(scannedAltRomName.getText()));
 
-
-    String mappingHsField = serverSettings.getMappingHsFileName();
     scannedHighscoreFileName.setText(game.getScannedHsFileName());
     applyHsBtn.setDisable(StringUtils.isEmpty(scannedHighscoreFileName.getText()));
-    hsMappingLabel.setText("The value is mapped to Popper field \"" + mappingHsField + "\"");
+    hsMappingLabel.setText("The value is mapped to Popper field \"" + serverSettings.getMappingHsFileName() + "\"");
 
-    //highscore mapping
-    String hsFileName = tableDetails!=null? tableDetails.getMappedValue(mappingHsField): null;
-    highscoreFileName.setValue(hsFileName);
+    highscoreFileName.setValue(game.getHsFileName());
 
-    tableDataController.setMappedFieldValue(mappingHsField, highscoreFileName.getValue());
+    tableDataController.setHsFilenameValue(highscoreFileName.getValue());
     if (StringUtils.isEmpty(highscoreFileName.getValue()) && !StringUtils.isEmpty(game.getScannedHsFileName())) {
       highscoreFileName.setPromptText(game.getScannedHsFileName() + " (scanned value)");
     }
     highscoreFileName.valueProperty().addListener((observable, oldValue, newValue) -> {
-      onHighscoreFilenameUpdate(newValue, mappingHsField);
+      onHighscoreFilenameUpdate(newValue);
     });
     highscoreFileName.getEditor().textProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("highscoreFileName", () -> {
-        onHighscoreFilenameUpdate(newValue, mappingHsField);
+        onHighscoreFilenameUpdate(newValue);
       }, DEBOUNCE_MS);
     });
   }
@@ -259,8 +255,8 @@ public class TableDataTabScoreDataController implements Initializable {
   }
 
 
-  private void onHighscoreFilenameUpdate(String newValue, String mappingHsField) {
-    tableDataController.setMappedFieldValue(mappingHsField, newValue);
+  private void onHighscoreFilenameUpdate(String newValue) {
+    tableDataController.setHsFilenameValue(newValue);
     refreshStatusIcons();
   }
 

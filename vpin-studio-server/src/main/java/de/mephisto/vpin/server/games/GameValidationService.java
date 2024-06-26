@@ -640,7 +640,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
-    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String rom = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getRomName(): null, gameDetails.getRomName());
+
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
     if (!StringUtils.isEmpty(originalRom)) {
@@ -648,8 +649,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       rom = originalRom;
     }
 
-    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
-    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+    String tableName = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getRomAlt(): null, gameDetails.getTableName());
+    String hsName = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getHsFilename(): null, gameDetails.getHsFileName());
 
     //the highscore file was found
     if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {

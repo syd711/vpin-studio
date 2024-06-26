@@ -60,69 +60,8 @@ public class TableDetails {
   private String gLog;
   private String gPlayLog;
 
-
-  public void setMappedValue(String key, String value) {
-    switch (key) {
-      case "WEBGameID": {
-        this.webGameId = value;
-        break;
-      }
-      case "CUSTOM2": {
-        custom2 = value;
-        break;
-      }
-      case "CUSTOM3": {
-        custom3 = value;
-        break;
-      }
-      case "CUSTOM4": {
-        custom4 = value;
-        break;
-      }
-      case "CUSTOM5": {
-        custom5 = value;
-        break;
-      }
-      case "Special": {
-        special = value;
-        break;
-      }
-      case "MediaSearch": {
-        mediaSearch = value;
-        break;
-      }
-      default: {
-        throw new UnsupportedOperationException("Invalid popper mapping field " + key);
-      }
-    }
-  }
-
-  public String getMappedValue(String key) {
-    switch (key) {
-      case "WEBGameID": {
-        return webGameId;
-      }
-      case "CUSTOM2": {
-        return custom2;
-      }
-      case "CUSTOM3": {
-        return custom3;
-      }
-      case "CUSTOM4": {
-        return custom4;
-      }
-      case "CUSTOM5": {
-        return custom5;
-      }
-      case "Special": {
-        return special;
-      }
-      case "MediaSearch": {
-        return mediaSearch;
-      }
-    }
-    throw new UnsupportedOperationException("Invalid popper mapping field " + key);
-  }
+  // mapped values
+  private String hsFilename;
 
   public String getSpecial() {
     return special;
@@ -512,5 +451,13 @@ public class TableDetails {
 
   public void setDesignedBy(String designedBy) {
     this.designedBy = designedBy;
+  }
+
+  public String getHsFilename() {
+    return hsFilename;
+  }
+
+  public void setHsFilename(String hsFilename) {
+    this.hsFilename = hsFilename;
   }
 }

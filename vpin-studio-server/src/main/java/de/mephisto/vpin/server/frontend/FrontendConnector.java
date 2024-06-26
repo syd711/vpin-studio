@@ -71,6 +71,8 @@ public interface FrontendConnector {
 
   void saveTableDetails(int id, TableDetails tableDetails);
 
+  void vpsLink(int id, String extTableId, String extTableVersionId);
+
   //----------------------------------
   // version and options 
 
