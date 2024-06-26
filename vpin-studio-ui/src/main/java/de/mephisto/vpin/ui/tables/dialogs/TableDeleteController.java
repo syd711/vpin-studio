@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
@@ -138,10 +137,9 @@ public class TableDeleteController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pupPackCheckbox.managedProperty().bindBidirectional(pupPackCheckbox.visibleProperty());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
-    FrontendType frontendType = frontend.getFrontendType();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    this.frontendSelectionField.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.frontendSelectionField.setVisible(frontendType.isNotStandalone());
     this.pupPackCheckbox.setVisible(frontendType.supportPupPacks());
 
     this.deleteBtn.setDisable(true);

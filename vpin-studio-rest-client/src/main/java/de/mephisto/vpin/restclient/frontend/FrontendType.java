@@ -6,13 +6,14 @@ package de.mephisto.vpin.restclient.frontend;
  */
 public enum FrontendType {
 
-  Standalone(false, false, false, false, false, false, false), 
-  Popper(true, true, true, true, true, true, true),
+  Standalone(false, false, false, false, false, false, false, false), 
+  Popper(true, true, true, true, true, true, true, true),
   // playlist and statistics not activated yet but will be supported
-  PinballX(true, false, false, true, false, false, false);
+  PinballX(true, false, false, true, false, false, false, false);
 
   FrontendType(boolean supportStandardFields, boolean supportExtendedFields, boolean supportPlaylists,
-          boolean supportMedias, boolean supportPupPacks, boolean supportStatistics, boolean supportArchive) {
+          boolean supportMedias, boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
+          boolean supportControls) {
     this.supportStandardFields = supportStandardFields;
     this.supportExtendedFields = supportExtendedFields;
     this.supportPlaylists = supportPlaylists;
@@ -20,6 +21,7 @@ public enum FrontendType {
     this.supportPupPacks = supportPupPacks;
     this.supportStatistics = supportStatistics;
     this.supportArchive = supportArchive;
+    this.supportControls = supportControls;
   }
 
   /** Whether stantard vpin metadata are supported (gametype, year, manufacturer, nbPlayers, rating author, theme, IPDB */
@@ -34,8 +36,10 @@ public enum FrontendType {
   private boolean supportPupPacks;
   /** Whether statistics are recorded by the frontend */
   private boolean supportStatistics;
-  /** Whether archive and VPBM are spported by the frontend */
+  /** Whether archive and VPBM are supported by the frontend */
   private boolean supportArchive;
+  /** Whether controls are supported by the frontend */
+  private boolean supportControls;
   
   //----------
 
@@ -60,5 +64,16 @@ public enum FrontendType {
   public boolean supportArchive() {
     return supportArchive;
   }
+  public boolean supportControls() {
+    return supportControls;
+  }
 
+  //----------
+
+  public boolean isStandalone() {
+    return this.equals(Standalone);
+  }
+  public boolean isNotStandalone() {
+    return !isStandalone();
+  }
 }

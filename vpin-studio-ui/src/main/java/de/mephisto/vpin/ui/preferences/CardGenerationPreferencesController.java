@@ -157,7 +157,7 @@ public class CardGenerationPreferencesController implements Initializable {
 
     validationError.setVisible(false);
 
-    if(frontendType.equals(FrontendType.Popper)) {
+    if(frontendType.supportControls()) {
       if (!StringUtils.isEmpty(selectedItem)) {
         FrontendControl fn = client.getFrontendService().getPinUPControlFor(VPinScreen.valueOf(selectedItem));
 

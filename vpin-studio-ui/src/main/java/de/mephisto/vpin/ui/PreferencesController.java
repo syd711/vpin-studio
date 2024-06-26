@@ -396,13 +396,14 @@ public class PreferencesController implements Initializable, StudioEventListener
     vpbmBtn.setVisible(frontendType.supportArchive());
     repositoriesBtn.setVisible(frontendType.supportArchive());
 
-    // activation of custom Popper options only for Popper fronted
+    // activation of custom options according to installed frontend 
+    frontendPreferences.setVisible(frontendType.isNotStandalone());
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
-    pauseMenuBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
-    highscoreCardsBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
-    frontendPreferences.setVisible(!frontendType.equals(FrontendType.Standalone));
-    screenValidatorsBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+
+    pauseMenuBtn.setVisible(frontendType.supportControls());
+    highscoreCardsBtn.setVisible(frontendType.isNotStandalone());
+    screenValidatorsBtn.setVisible(frontendType.isNotStandalone());
 
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;

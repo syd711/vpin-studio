@@ -196,7 +196,7 @@ public class TableOverviewContextMenu {
       povItem.setOnAction(actionEvent -> tableOverviewController.onPOVUpload());
       uploadMenu.getItems().add(povItem);
 
-      if (frontendType.equals(FrontendType.Popper)) {
+      if (frontendType.supportPupPacks()) {
         MenuItem pupPackItem = new MenuItem("Upload PUP Pack");
         pupPackItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
         pupPackItem.setOnAction(actionEvent -> tableOverviewController.onPupPackUpload());

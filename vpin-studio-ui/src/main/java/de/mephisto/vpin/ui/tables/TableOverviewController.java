@@ -347,7 +347,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     refreshViewAssetColumns(assetManagerMode);
 
     columnVersion.setVisible(!assetManagerMode && vpxMode);
-    columnEmulator.setVisible(!assetManagerMode && !frontendType.equals(FrontendType.Standalone));
+    columnEmulator.setVisible(!assetManagerMode && frontendType.isNotStandalone());
     columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
     columnRom.setVisible(!assetManagerMode && vpxMode);
     columnB2S.setVisible(!assetManagerMode && vpxMode);
@@ -358,7 +358,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnINI.setVisible(!assetManagerMode && vpxMode);
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists());
-    columnDateAdded.setVisible(!assetManagerMode && !frontendType.equals(FrontendType.Standalone));
+    columnDateAdded.setVisible(!assetManagerMode && frontendType.isNotStandalone());
 
     GameRepresentation selectedItem = getSelection();
     tableView.getSelectionModel().clearSelection();
@@ -1829,10 +1829,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       columnPUPPack.setVisible(false);
     }
 
-    if (!frontendType.equals(FrontendType.Standalone)) {
-      columnDateAdded.setVisible(false);
-    }
     columnPlaylists.setVisible(frontendType.supportPlaylists());
+    columnDateAdded.setVisible(frontendType.isNotStandalone());
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
@@ -1877,7 +1875,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     deleteSeparator.setVisible(vpxMode);
 
     columnVersion.setVisible(vpxMode && !assetManagerMode);
-    columnEmulator.setVisible(vpxMode && !assetManagerMode && !frontendType.equals(FrontendType.Standalone));
+    columnEmulator.setVisible(vpxMode && !assetManagerMode && frontendType.isNotStandalone());
     columnVPS.setVisible(vpxMode && !assetManagerMode);
     columnRom.setVisible(vpxMode && !assetManagerMode);
     columnB2S.setVisible(vpxMode && !assetManagerMode);

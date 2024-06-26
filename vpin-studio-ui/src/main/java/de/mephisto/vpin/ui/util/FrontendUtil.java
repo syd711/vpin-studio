@@ -25,7 +25,7 @@ public class FrontendUtil {
         tp.setText(replaceName(tp.getText(),frontend));
     }
     public static String replaceName(String text, Frontend frontend) {
-        if (frontend.getFrontendType()==FrontendType.Standalone) {
+        if (frontend.getFrontendType().isStandalone()) {
             text = StringUtils.replace(text, " and [Frontend]", "");
         }
         return StringUtils.replace(text, "[Frontend]", frontend.getName());
