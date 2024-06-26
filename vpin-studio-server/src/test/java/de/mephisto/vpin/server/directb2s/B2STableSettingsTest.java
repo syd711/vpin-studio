@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.directb2s;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.server.util.WinRegistry;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

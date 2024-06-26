@@ -226,13 +226,68 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createPlaylistIcon(Playlist playlist) {
+  public static Label createLocalFavoritePlaylistIcon() {
     Label label = new Label();
-    label.setTooltip(new Tooltip(playlist.getName()));
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+    label.setTooltip(new Tooltip("Local Favorite"));
+    label.setGraphic(fontIcon);
+    return label;
+  }
+
+  public static Label createGlobalFavoritePlaylistIcon() {
+    Label label = new Label();
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2a-alpha-g-circle");
+    label.setTooltip(new Tooltip("Global Favorite"));
+    label.setGraphic(fontIcon);
+    return label;
+  }
+
+  public static Label createPlaylistIcon(@Nullable Playlist playlist) {
+    Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
     fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
     fontIcon.setIconLiteral("mdi2v-view-list");
+
+    if (playlist.getName().contains("Visual Pinball X")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    if (playlist.getName().contains("VPX")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    if (playlist.getName().contains("Future")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("FX3")) {
+      fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Just Added")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Most Played")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Home")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-h-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("VPW")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+
     label.setGraphic(fontIcon);
     return label;
   }
@@ -257,7 +312,8 @@ public class WidgetFactory {
 
     try {
       root = fxmlLoader.load();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error loading: " + e.getMessage(), e);
     }
 
@@ -438,9 +494,9 @@ public class WidgetFactory {
       setText(null);
       if (item != null) {
         setText(item
-          .replaceAll("_", " ")
-          .replaceAll("ATIO", "atio")
-          .replaceAll("x", " x ")
+            .replaceAll("_", " ")
+            .replaceAll("ATIO", "atio")
+            .replaceAll("x", " x ")
         );
       }
     }
@@ -495,12 +551,12 @@ public class WidgetFactory {
     String url = client.getURL(mediaItem.getUri());
 
     double prefWidth = parent.getPrefWidth();
-    if(prefWidth <= 0) {
-      prefWidth = ((Pane)parent.getParent()).getWidth();
+    if (prefWidth <= 0) {
+      prefWidth = ((Pane) parent.getParent()).getWidth();
     }
     double prefHeight = parent.getPrefHeight();
-    if(prefHeight <= 0) {
-      prefHeight =  ((Pane)parent.getParent()).getHeight();
+    if (prefHeight <= 0) {
+      prefHeight = ((Pane) parent.getParent()).getHeight();
     }
 
     if (baseType.equals("image") && !audioOnly) {

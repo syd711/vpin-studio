@@ -26,6 +26,7 @@ open module de.mephisto.vpin.commons {
   requires de.mephisto.vpin.connectors.iscored;
   requires sevenzipjbinding;
   requires org.apache.commons.configuration2;
+  requires com.sun.jna.platform;
 
   exports de.mephisto.vpin.commons;
   exports de.mephisto.vpin.commons.fx;

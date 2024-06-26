@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WinRegistry;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -805,6 +805,34 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
 
+  public PlaylistGame getPlaylistGame(int playlistId, int gameId) {
+    Connection connect = this.connect();
+    String sql = "SELECT * FROM PlayListDetails WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    PlaylistGame game = null;
+    try {
+      Statement stmt = connect.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        game = new PlaylistGame();
+        game.setId(gameId);
+
+        int favMode = rs.getInt(IS_FAV);
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+        break;
+      }
+      rs.close();
+      stmt.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read playlist game [" + sql + "]: " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return game;
+  }
+
   @NonNull
   public Playlist getPlayList(int id) {
     Playlist playlist = new Playlist();
@@ -827,7 +855,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(playlist.getId(), sql));
         }
         else {
           playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
@@ -873,7 +901,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         playlist.setSqlPlayList(sqlPlaylist);
 
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
+          playlist.setGames(getGameIdsFromSqlPlaylist(playlist.getId(), sql));
         }
         else {
           playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
@@ -1378,18 +1406,20 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
 
-  private List<PlaylistGame> getGameIdsFromSqlPlaylist(String sql) {
+  private List<PlaylistGame> getGameIdsFromSqlPlaylist(int playlistId, String sql) {
     List<PlaylistGame> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(sql);
 
+      //TODO bad performance, join select here!
       while (rs.next()) {
-        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        game.setId(gameId);
-        result.add(game);
+        PlaylistGame game = getPlaylistGame(playlistId, gameId);
+        if (game != null) {
+          result.add(game);
+        }
       }
 
       rs.close();

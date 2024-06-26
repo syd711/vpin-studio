@@ -139,6 +139,7 @@ public class VpbmService implements InitializingBean {
 
   private SystemCommandOutput executeVPBM(List<String> options) {
     SystemCommandOutput out = new SystemCommandOutput();
+
     try {
       File dir = new File(RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");

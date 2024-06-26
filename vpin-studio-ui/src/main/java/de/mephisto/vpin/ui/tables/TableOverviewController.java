@@ -4,10 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.connectors.vps.model.VPSChange;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.games.FilterSettings;
@@ -737,11 +735,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       model = new GameRepresentationModel(refreshedGame);
       models.remove(index);
       models.add(index, model);
-      tableView.refresh();
     }
 
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     tableView.getSelectionModel().select(selectedItem);
+    tableView.refresh();
   }
 
   public void showScriptEditor(GameRepresentation game) {
@@ -899,9 +897,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
           }
         }
-        else if (!games.isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
 
         if (!games.isEmpty()) {
           this.validateBtn.setDisable(false);
@@ -923,6 +918,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         tableView.requestFocus();
         tableView.getSelectionModel().select(selectedItem);
+        if(selectedItem == null) {
+          tableView.getSelectionModel().select(0);
+        }
 
         for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
           reloadConsumer.accept(selection);
@@ -1213,28 +1211,36 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       HBox box = new HBox();
       List<Playlist> matches = new ArrayList<>();
       boolean fav = false;
+      boolean globalFav = false;
       for (Playlist playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
-          if (!fav && (playlist.isFavGame(value.getId()) || playlist.isGlobalFavGame(value.getId()))) {
+          if (!fav && playlist.isFavGame(value.getId())) {
             fav = true;
+          }
+          if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
+            globalFav = true;
           }
           matches.add(playlist);
         }
       }
 
+
       if (fav) {
-        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
-        icon.setIconSize(24);
-        icon.setIconColor(Paint.valueOf("#FF9933"));
-        Label label = new Label();
-        label.setTooltip(new Tooltip("The game is marked as favorite on at least one playlist."));
-        label.setGraphic(icon);
+        Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
         box.getChildren().add(label);
       }
 
-      int maxLength = 3;
+      if (globalFav) {
+        Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
+        box.getChildren().add(label);
+      }
+
+      int maxLength = 5;
       if (fav) {
-        maxLength = 2;
+        maxLength--;
+      }
+      if (globalFav) {
+        maxLength--;
       }
       for (Playlist match : matches) {
         box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
@@ -1555,19 +1561,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return models.stream().map(model -> model.getGame()).collect(Collectors.toList());
   }
 
-  public void updatePlaylist(Playlist update) {
-    int pos = this.playlists.indexOf(update);
-    this.playlists.remove(update);
-    this.playlists.add(pos, update);
-
+  public void updatePlaylist() {
+    this.playlists = client.getPlaylistsService().getPlaylists();
     List<Playlist> refreshedData = new ArrayList<>(this.playlists);
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
-
-    GameRepresentation selectedItem = this.getSelection();
-    if (selectedItem != null) {
-      EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
-    }
   }
 
   @Override
@@ -1912,6 +1910,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public int hashCode() {
       return Objects.hashCode(game);
+    }
+
+    @Override
+    public String toString() {
+      return "GameRepresentationModel \"" + game.getGameDisplayName() + "\"";
     }
   }
 }

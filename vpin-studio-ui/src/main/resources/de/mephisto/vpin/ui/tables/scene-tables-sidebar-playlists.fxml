@@ -55,11 +55,7 @@
             </VBox>
             <ScrollPane hbarPolicy="NEVER">
                <content>
-                    <VBox fx:id="dataBox" spacing="3.0">
-                     <padding>
-                        <Insets bottom="6.0" top="6.0" />
-                     </padding>
-                    </VBox>
+                    <VBox fx:id="dataBox" spacing="1.0" />
                </content>
                <VBox.margin>
                   <Insets top="12.0" />

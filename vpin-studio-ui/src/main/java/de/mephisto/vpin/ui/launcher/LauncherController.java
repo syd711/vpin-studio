@@ -3,12 +3,9 @@ package de.mephisto.vpin.ui.launcher;
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.commons.utils.PropertiesStore;
-import de.mephisto.vpin.commons.utils.Updater;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.commons.utils.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -22,9 +19,9 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Cursor;
-import javafx.scene.control.*;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -108,7 +105,8 @@ public class LauncherController implements Initializable {
     if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
       try {
         Desktop.getDesktop().browse(new URI("https://github.com/syd711/vpin-studio/wiki/Troubleshooting"));
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
     }
@@ -116,6 +114,20 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onInstall() {
+    boolean dotNetInstalled = false;
+    try {
+      dotNetInstalled = WinRegistry.isDotNetInstalled();
+    }
+    catch (Exception e) {
+      LOG.error("Error checking .net framework: " + e.getMessage(), e);
+      WidgetFactory.showAlert(stage, "Error", "Error checking .net framework: " + e.getMessage());
+    }
+
+    if (!dotNetInstalled) {
+      WidgetFactory.showAlert(stage, "Error", "No .net framework > 3.5 found.", "The .net framework is required for some server operations.");
+      return;
+    }
+
     boolean install = Dialogs.openInstallerDialog();
     if (install) {
       installServer();
@@ -227,7 +239,8 @@ public class LauncherController implements Initializable {
           try {
             LOG.info("Waiting for server...");
             Thread.sleep(2000);
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             LOG.error("server wait error");
           }
         }
@@ -239,7 +252,8 @@ public class LauncherController implements Initializable {
           Studio.loadStudio(WidgetFactory.createStage(), client);
         });
       }).start();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Server installation failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(stage, "Server installation failed.", "Error: " + e.getMessage());
     }
@@ -250,8 +264,8 @@ public class LauncherController implements Initializable {
     tableView.setPlaceholder(new Label("                 No connections found.\n" +
         "Install the service or connect to another system."));
 
-    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
-    this.installBtn.setDisable(client.getSystemService().getVersion() != null);
+//    this.installBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
+//    this.installBtn.setDisable(client.getSystemService().getVersion() != null);
     this.helpBtn.setVisible(ServerInstallationUtil.SERVER_EXE.exists());
 
     connectBtn.setDisable(true);
@@ -355,7 +369,8 @@ public class LauncherController implements Initializable {
 
     try {
       return future.get(3000, TimeUnit.MILLISECONDS);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       //
     }
 
