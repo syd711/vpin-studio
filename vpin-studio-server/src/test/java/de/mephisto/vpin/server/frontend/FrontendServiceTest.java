@@ -72,7 +72,7 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
     Game gameByFilename = connector.getGameByFilename(game.getGameFile().getName());
     assertNotNull(gameByFilename);
 
-    assertNotEquals(connector.getGameCount(5), 0);
+    assertNotEquals(connector.getGameCount(1), 0);
 
     assertNotNull(connector.getStartupScript());
     assertNotNull(connector.getEmulatorExitScript(EmulatorNames.VISUAL_PINBALL_X));
