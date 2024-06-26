@@ -514,7 +514,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Edit Popper Table Data" />
+                                    <Tooltip text="Rename the backglass" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
@@ -525,7 +525,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Edit Popper Table Data" />
+                                    <Tooltip text="Duplicate the backglass" />
                                  </tooltip>
                               </Button>
                               <Button fx:id="reloadBackglassBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassReload" text="Reload" textFill="WHITE">
@@ -536,7 +536,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Edit Popper Table Data" />
+                                    <Tooltip text="Reload Backglass" />
                                  </tooltip>
                               </Button>
                               <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

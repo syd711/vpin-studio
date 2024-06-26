@@ -85,7 +85,7 @@ public class PupPacksService implements InitializingBean {
 
   private void refresh() {
     FrontendType frontendType = frontendService.getFrontendType();
-    if(!frontendType.equals(FrontendType.Popper)) {
+    if(!frontendType.supportPupPacks()) {
       return;
     }
 
@@ -249,7 +249,7 @@ public class PupPacksService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     FrontendType frontendType = frontendService.getFrontendType();
-    if(!frontendType.equals(FrontendType.Popper)) {
+    if(!frontendType.supportPupPacks()) {
       return;
     }
 

@@ -412,7 +412,7 @@ public class PinballXConnector extends BaseConnector {
   }
 
   /**
-   * Ensures that the VPin Studio Logo is available for PinUP Popper in the T-Arc.
+   * Ensures that the VPin Studio Logo is available for PinballX in the launcher.
    */
   public void setVPinStudioAppEnabled(boolean b) {
     File pcWheelFolder = new File(this.getInstallationFolder(), "POPMedia/PC Games/Wheel/");

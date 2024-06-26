@@ -96,7 +96,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         this.frontendInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
         frontendType = FrontendType.PinballX;
       }
-      //PinUP Popper Folder
+      //Standalone Folder
       if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR))) {
         this.frontendInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR));
         frontendType = FrontendType.Standalone;

@@ -8,12 +8,14 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -66,6 +68,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button stopBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -737,7 +742,13 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
     try {
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);

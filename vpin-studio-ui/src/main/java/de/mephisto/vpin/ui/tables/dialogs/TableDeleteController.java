@@ -60,7 +60,7 @@ public class TableDeleteController implements Initializable, DialogController {
   private CheckBox povCheckbox;
 
   @FXML
-  private CheckBox popperCheckbox;
+  private CheckBox frontendCheckbox;
 
   @FXML
   private CheckBox confirmationCheckbox;
@@ -107,7 +107,7 @@ public class TableDeleteController implements Initializable, DialogController {
     DeleteDescriptor descriptor = new DeleteDescriptor();
     descriptor.setDeleteTable(vpxFileCheckbox.isSelected());
     descriptor.setDeleteDirectB2s(directb2sCheckbox.isSelected());
-    descriptor.setDeleteFromPopper(popperCheckbox.isSelected());
+    descriptor.setDeleteFromFrontend(frontendCheckbox.isSelected());
     descriptor.setDeletePupPack(pupPackCheckbox.isSelected());
     descriptor.setDeleteDMDs(dmdCheckbox.isSelected());
     descriptor.setDeleteHighscores(highscoreCheckbox.isSelected());
@@ -141,8 +141,8 @@ public class TableDeleteController implements Initializable, DialogController {
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
 
-    this.frontendSelectionField.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
-    this.pupPackCheckbox.setVisible(frontendType.equals(FrontendType.Popper));
+    this.frontendSelectionField.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.pupPackCheckbox.setVisible(frontendType.supportPupPacks());
 
     this.deleteBtn.setDisable(true);
     vpxFileCheckbox.setSelected(true);
@@ -156,7 +156,7 @@ public class TableDeleteController implements Initializable, DialogController {
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       vpxFileCheckbox.setSelected(newValue);
       directb2sCheckbox.setSelected(newValue);
-      popperCheckbox.setSelected(newValue);
+      frontendCheckbox.setSelected(newValue);
       pupPackCheckbox.setSelected(newValue);
       dmdCheckbox.setSelected(newValue);
       musicCheckbox.setSelected(newValue);

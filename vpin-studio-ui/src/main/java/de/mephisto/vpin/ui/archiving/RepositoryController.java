@@ -166,7 +166,7 @@ public class RepositoryController implements Initializable, StudioEventListener 
       }
 
       if (client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
           TableDialogs.openTableInstallationDialog(tablesController, selectedItems);
         }
       }

@@ -16,7 +16,7 @@ import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.frontend.GameMediaItem;
-import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import de.mephisto.vpin.commons.utils.ZipUtil;

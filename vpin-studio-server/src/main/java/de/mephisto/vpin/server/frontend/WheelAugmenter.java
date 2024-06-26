@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.frontend.popper;
+package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.server.util.ImageUtil;
 import org.apache.commons.io.FileUtils;

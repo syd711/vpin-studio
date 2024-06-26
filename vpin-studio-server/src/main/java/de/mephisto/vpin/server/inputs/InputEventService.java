@@ -274,7 +274,7 @@ public class InputEventService implements InitializingBean, FrontendStatusChange
       frontendLaunched();
     }
 
-    LOG.info("Added VPin service popper status listener.");
+    LOG.info("Added VPin service status listener.");
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);

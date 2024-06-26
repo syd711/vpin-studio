@@ -351,14 +351,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
     columnRom.setVisible(!assetManagerMode && vpxMode);
     columnB2S.setVisible(!assetManagerMode && vpxMode);
-    columnPUPPack.setVisible(!assetManagerMode && vpxMode && frontendType.equals(FrontendType.Popper));
+    columnPUPPack.setVisible(!assetManagerMode && vpxMode && frontendType.supportPupPacks());
     columnAltSound.setVisible(!assetManagerMode && vpxMode);
     columnAltColor.setVisible(!assetManagerMode && vpxMode);
     columnPOV.setVisible(!assetManagerMode && vpxMode);
     columnINI.setVisible(!assetManagerMode && vpxMode);
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists());
-    columnDateAdded.setVisible(!assetManagerMode && frontendType.equals(FrontendType.Popper));
+    columnDateAdded.setVisible(!assetManagerMode && !frontendType.equals(FrontendType.Standalone));
 
     GameRepresentation selectedItem = getSelection();
     tableView.getSelectionModel().clearSelection();
@@ -522,7 +522,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation selectedItems = getSelection();
       if (selectedItems != null) {
         if (Studio.client.getFrontendService().isFrontendRunning()) {
-          if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
             TableDialogs.openTableDataDialog(this, selectedItems);
           }
           return;
@@ -554,9 +554,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       Frontend frontend = client.getFrontendService().getFrontend();
 
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" 
-        + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and " + frontend.getName() 
-        + " processes will be terminated.", null, "Do not shown again", false);
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, 
+        "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", 
+        FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
+        null, "Do not shown again", false);
 
         if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
@@ -571,7 +572,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontend();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and " + frontend.getName() + " processes?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, 
+      FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
@@ -592,7 +594,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
     if (client.getFrontendService().isFrontendRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
       }
       return;
@@ -635,7 +637,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onDelete() {
     if (client.getFrontendService().isFrontendRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         deleteSelection();
       }
       return;
@@ -695,7 +697,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
 
     if (client.getFrontendService().isFrontendRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         TableDialogs.openTableImportDialog(emulatorSelection);
       }
     }
@@ -955,8 +957,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         else {
           Frontend frontend = client.getFrontendService().getFrontend();
           this.validationErrorLabel.setText("No tables found");
-          this.validationErrorText.setText("Check the emulator setup in " +  frontend.getName()
-            + ". Make sure that all(!) directories are set and reload after fixing these.");
+          this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
+            + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
         }
 
         this.importBtn.setDisable(false);
@@ -1100,10 +1102,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Frontend frontend = client.getFrontendService().getFrontend();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        Tooltip tt = new Tooltip("The table version in " + frontend.getName() + " is \"" + value.getVersion() 
+        Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion() 
           + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
-          + "Update the table, correct the selected VPS table or fix the version in the \"" 
-          + frontend.getName() + " Table Settings\" section.");
+          + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
+        FrontendUtil.replaceName(tt, frontend);
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
@@ -1743,17 +1745,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
     this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
 
-
-
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
+
+    FrontendUtil.replaceName(importBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(uploadTableBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     if (frontendType.equals(FrontendType.Standalone)) {
       importBtn.setVisible(false);
       columnEmulator.setVisible(false);
     }
 
-    if (!frontendType.equals(FrontendType.Popper)) {
+    if (!frontendType.supportPupPacks()) {
       uploadTableBtn.getItems().remove(pupPackUploadItem);
     }
     if (!frontendType.supportMedias()) {
@@ -1808,7 +1812,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     bindTable();
     bindSearchField();
 
-    if (frontendType.equals(FrontendType.Popper)) {
+    if (frontendType.supportPupPacks()) {
       Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
       ImageView iconMedia = new ImageView(image3);
       iconMedia.setFitWidth(18);
@@ -1823,6 +1827,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else {
       columnPUPPack.setVisible(false);
+    }
+
+    if (!frontendType.equals(FrontendType.Standalone)) {
       columnDateAdded.setVisible(false);
     }
     columnPlaylists.setVisible(frontendType.supportPlaylists());

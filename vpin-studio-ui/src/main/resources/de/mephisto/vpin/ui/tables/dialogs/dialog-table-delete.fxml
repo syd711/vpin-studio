@@ -53,7 +53,7 @@
                         </VBox>
                         <VBox fx:id="frontendSelectionField">
                            <children>
-                              <CheckBox fx:id="popperCheckbox" mnemonicParsing="false" selected="true" text="Remove from Frontend">
+                              <CheckBox fx:id="frontendCheckbox" mnemonicParsing="false" selected="true" text="Remove from Frontend">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

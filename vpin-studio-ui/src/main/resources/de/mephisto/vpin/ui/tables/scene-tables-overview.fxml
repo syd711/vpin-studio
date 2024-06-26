@@ -127,7 +127,7 @@
                             </BorderPane.margin>
                             <center>
                                 <BorderPane fx:id="validationError">
-                           <center>
+                                 <center>
                                         <VBox BorderPane.alignment="CENTER">
                                             <BorderPane.margin>
                                                 <Insets bottom="3.0" left="12.0" top="3.0" />
@@ -168,7 +168,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Open PinUP Popper setup" />
+                                                      <Tooltip text="Open Validators Settings" />
                                                    </tooltip>
                                                 </Button>
                                              </children>
@@ -274,7 +274,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Import existing VPX files into PinUP Popper" />
+                              <Tooltip text="Import existing VPX files into [Frontend]" />
                            </tooltip>
                         </Button>
                         <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
@@ -344,7 +344,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Upload VPX files to PinUP Popper" />
+                              <Tooltip text="Upload VPX files to [Frontend]" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
@@ -418,7 +418,7 @@
                                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                                     </graphic>
                                     <tooltip>
-                                        <Tooltip text="Kill all VPX and PinUP Popper processes." />
+                                        <Tooltip text="Kill all VPX and [Frontend] processes." />
                                     </tooltip>
                                 </Button>
                             </items>

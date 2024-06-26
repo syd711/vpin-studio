@@ -75,7 +75,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing Popper assets." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing media assets." wrapText="true" />
                            </tooltip>
                            <HBox.margin>
                               <Insets top="19.0" />

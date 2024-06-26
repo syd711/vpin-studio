@@ -41,13 +41,13 @@ public class PauseMenuItemsFactory {
       }
 
       if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
-        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
       }
       if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
-        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
       }
       if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
-        loadPopperMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
       }
     }
 
@@ -122,7 +122,7 @@ public class PauseMenuItemsFactory {
     return true;
   }
 
-  private static void loadPopperMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, VPinScreen screen, String title, String text, String pictureImage, String videoImage) {
+  private static void loadMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, VPinScreen screen, String title, String text, String pictureImage, String videoImage) {
     List<GameMediaItemRepresentation> mediaItems = game.getGameMedia().getMediaItems(screen);
     for (GameMediaItemRepresentation mediaItem : mediaItems) {
       String mimeType = mediaItem.getMimeType();

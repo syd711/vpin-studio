@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -36,13 +37,13 @@ public class GameValidationTexts {
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
         label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
-        text = "Fix the configuration for this table in " + frontend.getName() + " or delete it.";
+        text = FrontendUtil.replaceName("Fix the configuration for this table in [Frontend] or delete it.", frontend);
         break;
       }
       case CODE_NO_ROM: {
         label = "No ROM name could be resolved.";
-        text = "Consider setting the ROM name in the \"Script Details\" section or " + frontend.getName() 
-          + ". Otherwise no highscore can be evaluated for this table.";
+        text = FrontendUtil.replaceName("Consider setting the ROM name in the \"Script Details\" section or [Frontend]" 
+          + ". Otherwise no highscore can be evaluated for this table.", frontend);
         break;
       }
       case CODE_ROM_NOT_EXISTS: {

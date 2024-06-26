@@ -49,7 +49,7 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Kill all VPX and PinUP Popper processes." />
+                     <Tooltip text="Kill all VPX and [Frontend] processes." />
                   </tooltip>
                </Button>
             </items>

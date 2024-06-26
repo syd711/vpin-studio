@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.ui.tables.alx.AlxTileEntryController;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -39,8 +40,9 @@ public class TableDataTabStatisticsController implements Initializable {
     if (tableDetails!=null && tableDetails.getNumberPlays() != null) {
       played = tableDetails.getNumberPlays();
     }
-    timesPlayedTile.refresh(new AlxTileEntry("Total Times Played", "(The total number of table launches from " 
-      + frontend.getName() + ")", String.valueOf(played)));
+    timesPlayedTile.refresh(new AlxTileEntry("Total Times Played", 
+      FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
+      String.valueOf(played)));
 
     if (!alxSummary.getEntries().isEmpty()) {
       TableAlxEntry entry = alxSummary.getEntries().get(0);

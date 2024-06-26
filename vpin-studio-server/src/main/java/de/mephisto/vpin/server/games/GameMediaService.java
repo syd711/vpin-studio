@@ -42,7 +42,7 @@ public class GameMediaService {
         }
 
         String suffix = FilenameUtils.getExtension(mediaFile);
-        File out = uniquePopperAsset(game, value, suffix);
+        File out = uniqueMediaAsset(game, value, suffix);
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
           LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + value.name() + "\" from archive file \"" + mediaFile + "\"");
@@ -60,15 +60,15 @@ public class GameMediaService {
   }
 
 
-  public File uniquePopperAsset(Game game, VPinScreen screen) {
+  public File uniqueMediaAsset(Game game, VPinScreen screen) {
     String suffix = "mp4";
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       suffix = "mp3";
     }
-    return uniquePopperAsset(game, screen, suffix);
+    return uniqueMediaAsset(game, screen, suffix);
   }
 
-  public File uniquePopperAsset(Game game, VPinScreen screen, String suffix) {
+  public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
     File out = new File(game.getMediaFolder(screen), game.getGameName() + "." + suffix);
     if (out.exists()) {
       String nameIndex = "01";

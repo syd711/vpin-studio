@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend;
 
-import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;

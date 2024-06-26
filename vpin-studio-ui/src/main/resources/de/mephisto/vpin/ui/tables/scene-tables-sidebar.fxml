@@ -23,9 +23,9 @@
                                 <Label text="Table Media" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
-                        <HBox fx:id="popperTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                        <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="popperConfigBtn" mnemonicParsing="false" onAction="#onFrontendAdminOpen" styleClass="external-component">
+                              <Button fx:id="frontendConfigBtn" mnemonicParsing="false" onAction="#onFrontendAdminOpen" styleClass="external-component">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -33,10 +33,10 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="PinUP Popper Setup" />
+                                    <Tooltip text="[Frontend] Setup" />
                                  </tooltip>
                               </Button>
-                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsPopper">
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -44,7 +44,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Open PinUP Popper setup" />
+                                    <Tooltip text="Open Screen Validators Settings" />
                                  </tooltip>
                               </Button>
                            </children>

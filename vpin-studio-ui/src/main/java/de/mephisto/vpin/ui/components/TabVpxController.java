@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -43,7 +44,8 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
   @FXML
   private void onStop() {
     Frontend frontend = client.getFrontendService().getFrontend();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and " + frontend.getName() + " processes?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, 
+      FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
@@ -60,6 +62,9 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
     super.initialize();
     playBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getSystemService().isLocal());
+
+    Frontend frontend = client.getFrontendService().getFrontend();
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     componentUpdateController.setLocalInstallOnly(false);
   }

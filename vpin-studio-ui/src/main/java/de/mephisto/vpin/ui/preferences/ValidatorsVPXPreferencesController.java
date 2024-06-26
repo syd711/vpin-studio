@@ -64,7 +64,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     outdatedRecordingsValidator.managedProperty().bindBidirectional(outdatedRecordingsValidator.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    pupPackValidator.setVisible(frontendType.equals(FrontendType.Popper));
+    pupPackValidator.setVisible(frontendType.supportPupPacks());
     outdatedRecordingsValidator.setVisible(frontendType.equals(FrontendType.Popper));
 
     Parent parent = preferenceList;

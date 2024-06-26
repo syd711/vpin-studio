@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
-import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
@@ -312,7 +311,7 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   }
 
   /**
-   * Some fallback: we use the VPX script metadata for popper if the VPS version data has not been applied.
+   * Some fallback: we use the VPX script metadata if the VPS version data has not been applied.
    */
   private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
     if (tableInfo != null) {

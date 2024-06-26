@@ -179,7 +179,7 @@ public class FileUtils {
     return target;
   }
 
-  public static File uniquePopperAsset(File target) {
+  public static File uniqueAsset(File target) {
     int index = 1;
     String segment = String.format("%02d", index);
     String originalBaseName = FilenameUtils.getBaseName(target.getName());

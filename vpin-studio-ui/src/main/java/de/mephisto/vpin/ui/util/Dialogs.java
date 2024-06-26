@@ -164,14 +164,16 @@ public class Dialogs {
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, stateId);
   }
 
-  public static boolean openPopperRunningWarning(Stage stage) {
+  public static boolean openFrontendRunningWarning(Stage stage) {
     boolean local = client.getSystemService().isLocal();
     Frontend frontend = Studio.client.getFrontendService().getFrontend();
     
     if (!local) {
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, frontend.getName() + " is running.", 
-        "Kill Processes", "Cancel", frontend.getName() + " is running. To perform this operation, you have to close it.", null, 
-        "Switch cabinet to maintenance mode");
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, 
+        FrontendUtil.replaceName("[Frontend] is running.", frontend), 
+        "Kill Processes", "Cancel", 
+        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend), 
+        null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplyClicked()) {
         client.getFrontendService().terminateFrontend();
         if (confirmationResult.isChecked()) {
@@ -182,8 +184,10 @@ public class Dialogs {
       return false;
     }
     else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, frontend.getName() + " is running.", 
-        "Kill Processes", "Cancel", frontend.getName() + " is running. To perform this operation, you have to close it.",
+      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, 
+        FrontendUtil.replaceName("[Frontend] is running.", frontend), 
+        "Kill Processes", "Cancel", 
+        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
         null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getFrontendService().terminateFrontend();

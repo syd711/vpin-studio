@@ -172,15 +172,15 @@ public class MediaUploadController implements Initializable, DialogController {
     }
   }
 
-  private String formatReadable(Label label, List<String> popperMediaFiles) {
-    if (popperMediaFiles.isEmpty()) {
+  private String formatReadable(Label label, List<String> mediaFiles) {
+    if (mediaFiles.isEmpty()) {
       return "-";
     }
 
-    String result = popperMediaFiles.get(0);
-    if (popperMediaFiles.size() > 1) {
-      result = result + " (" + (popperMediaFiles.size() - 1) + " more)";
-      label.setTooltip(new Tooltip(String.join("\n",popperMediaFiles)));
+    String result = mediaFiles.get(0);
+    if (mediaFiles.size() > 1) {
+      result = result + " (" + (mediaFiles.size() - 1) + " more)";
+      label.setTooltip(new Tooltip(String.join("\n",mediaFiles)));
     }
     return result;
   }

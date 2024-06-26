@@ -777,7 +777,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="If no value is set, the PinUP Popper default will be used." />
+                                                            <Tooltip text="If no value is set, the frontend default will be used." />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -822,7 +822,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
+                                                            <Tooltip text="Launches the game at the given volume level (%based on current PC Volume)" />
                                                          </tooltip>
                                                       </Label>
                                                    </children>

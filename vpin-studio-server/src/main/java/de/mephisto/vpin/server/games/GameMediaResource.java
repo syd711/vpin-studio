@@ -99,7 +99,7 @@ public class GameMediaResource {
     File mediaFolder = game.getMediaFolder(s);
     File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
-      target = FileUtils.uniquePopperAsset(target);
+      target = FileUtils.uniqueAsset(target);
     }
     tableAssetsService.download(asset, target);
     return true;
@@ -189,7 +189,7 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.uniquePopperAsset(game, VPinScreen, suffix);
+      File out = gameMediaService.uniqueMediaAsset(game, VPinScreen, suffix);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
@@ -296,7 +296,7 @@ public class GameMediaResource {
 
   private boolean addBlank(int gameId, VPinScreen screen) throws IOException {
     Game game = gameService.getGame(gameId);
-    File target = gameMediaService.uniquePopperAsset(game, screen);
+    File target = gameMediaService.uniqueMediaAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
     //copy base64 asset
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {

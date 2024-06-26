@@ -85,7 +85,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Open Frontend Configuration" />
+                              <Tooltip text="Open [Frontend] Configuration" />
                            </tooltip>
                         </Button>
                         <SplitMenuButton fx:id="preferencesBtn" mnemonicParsing="false" onAction="#onSettings" textFill="WHITE">

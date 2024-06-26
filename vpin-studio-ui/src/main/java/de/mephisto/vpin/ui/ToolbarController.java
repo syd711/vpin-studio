@@ -4,12 +4,12 @@ import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -214,11 +214,14 @@ public class ToolbarController implements Initializable, StudioEventListener {
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontend();
+
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
+
+    FrontendUtil.replaceName(frontendMenuBtn.getTooltip(), frontend);
 
     if (frontend.getIconName() != null) {
       Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));

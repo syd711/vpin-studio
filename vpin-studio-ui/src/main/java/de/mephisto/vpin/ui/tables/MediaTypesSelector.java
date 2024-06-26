@@ -5,7 +5,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PopperMediaTypesSelector {
+public class MediaTypesSelector {
 
   public static List<String> getFileSelection(VPinScreen VPinScreen) {
     List<String> fileSelection = new ArrayList<>();

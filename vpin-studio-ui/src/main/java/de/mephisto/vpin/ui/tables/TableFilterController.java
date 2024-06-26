@@ -189,7 +189,7 @@ public class TableFilterController extends BaseFilterController implements Initi
 
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    withPupPackCheckBox.setVisible(frontendType.equals(FrontendType.Popper));
+    withPupPackCheckBox.setVisible(frontendType.supportPupPacks());
     statusSettings.setVisible(frontendType.equals(FrontendType.Popper));
     notPlayedSettings.setVisible(frontendType.supportStatistics());
     missingAssetsCheckBox.setVisible(frontendType.supportMedias());

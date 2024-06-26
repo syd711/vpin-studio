@@ -10,6 +10,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -186,9 +187,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
       GameRepresentation gameRepresentation = game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", 
-          "This overwrites the existing " + frontend.getName() + " table version \""
-          + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
-          gameRepresentation.getExtVersion() + "\".", "The table update indicator won't be shown afterwards.");
+          FrontendUtil.replaceName("This overwrites the existing [Frontend] table version \""
+            + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
+            gameRepresentation.getExtVersion() + "\".", frontend), 
+          "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           client.getFrontendService().fixVersion(gameRepresentation.getId(), gameRepresentation.getExtVersion());
@@ -205,7 +207,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private void onTableEdit() {
     if (Studio.client.getFrontendService().isFrontendRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         TableDialogs.openTableDataDialog(this.tablesSidebarController.getTablesController(), this.game.get());
         this.refreshView(this.game);
       }

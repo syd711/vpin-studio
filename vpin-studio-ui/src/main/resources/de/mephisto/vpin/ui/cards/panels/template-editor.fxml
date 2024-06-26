@@ -763,7 +763,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Open PinUP Popper system folder for the target folder." />
+                        <Tooltip text="Open [Frontend] system folder for the target folder." />
                      </tooltip>
                   </Button>
                   <HBox fx:id="mediaPlayerControl" spacing="6.0">
@@ -785,7 +785,7 @@
                               <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip text="Kill all VPX and PinUP Popper processes." />
+                              <Tooltip text="Kill all VPX and [Frontend] processes." />
                            </tooltip>
                         </Button>
                      </children>

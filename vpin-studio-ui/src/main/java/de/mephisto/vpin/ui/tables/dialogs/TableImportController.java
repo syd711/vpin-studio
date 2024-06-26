@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -101,16 +102,16 @@ public class TableImportController implements Initializable, DialogController {
       saveBtn.setDisable(importableTables.getItems().isEmpty());
 
       if (importableTables.getItems().isEmpty()) {
-        Label label = new Label("No tables found for " + frontend.getName() + ".");
+        Label label = new Label("No tables found for [Frontend].");
+        FrontendUtil.replaceName(label, frontend);
         label.setStyle("-fx-font-size: 14px;");
         tableBox.getChildren().add(label);
       }
       else {
-
-        replaceNames(text1Description, frontend.getName(), emulator.getName());
-        replaceNames(text2Description, frontend.getName(), emulator.getName());
-        replaceNames(text3Description, frontend.getName(), emulator.getName());
-        replaceNames(text4Description, frontend.getName(), emulator.getName());
+        FrontendUtil.replaceNames(text1Description, frontend, emulator.getName());
+        FrontendUtil.replaceNames(text2Description, frontend, emulator.getName());
+        FrontendUtil.replaceNames(text3Description, frontend, emulator.getName());
+        FrontendUtil.replaceNames(text4Description, frontend, emulator.getName());
 
         CheckBox selectCheckbox = new CheckBox("Select All");
         selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
@@ -137,14 +138,6 @@ public class TableImportController implements Initializable, DialogController {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
     }
   }
-
-  private void replaceNames(Label label, String frontend, String emulator) {
-    String txt = label.getText();
-    txt = txt.replace("[Frontend]", frontend);
-    txt = txt.replace("[Emulator]", emulator);
-    label.setText(txt);
-  }
-
 
   @Override
   public void onDialogCancel() {

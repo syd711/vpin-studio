@@ -42,7 +42,7 @@ public class ServerSettingsPreferencesController implements Initializable {
   private Spinner<Integer> idleSpinner;
 
   @FXML
-  private CheckBox launchPopperCheckbox;
+  private CheckBox launchFrontendCheckbox;
 
   @FXML
   private Node launchOnExitOption;
@@ -151,8 +151,8 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    launchPopperCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
-    launchPopperCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+    launchFrontendCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
+    launchFrontendCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setLaunchPopperOnExit(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });

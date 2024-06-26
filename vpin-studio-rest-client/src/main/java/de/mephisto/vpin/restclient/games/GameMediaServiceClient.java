@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.*;
 
 /*********************************************************************************************************************
- * Popper
+ * Game Media
  ********************************************************************************************************************/
 public class GameMediaServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
@@ -178,7 +178,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   }
 
   public void clearCache() {
-    getRestClient().clearCache("popper/emulators");
+    client.getFrontendService().reload();
     this.cache.clear();
   }
 }

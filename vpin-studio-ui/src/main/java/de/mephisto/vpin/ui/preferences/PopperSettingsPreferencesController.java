@@ -281,7 +281,7 @@ public class PopperSettingsPreferencesController implements Initializable {
   private void save() {
     try {
       if (client.getFrontendService().isFrontendRunning()) {
-        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
           client.getFrontendService().saveSettings(popperSettings);
         }
         return;
@@ -291,7 +291,7 @@ public class PopperSettingsPreferencesController implements Initializable {
     }
     catch (DatabaseLockException e) {
       LOG.error("Failed to save custom options: " + e.getMessage(), e);
-      if (!Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (!Dialogs.openFrontendRunningWarning(Studio.stage)) {
         this.setDisabled(true);
       }
     }

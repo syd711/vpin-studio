@@ -25,8 +25,8 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -325,7 +325,7 @@ public class GameService implements InitializingBean {
           }
         }
 
-        if (descriptor.isDeleteFromPopper()) {
+        if (descriptor.isDeleteFromFrontend()) {
           GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
           if (byPupId != null) {
             gameDetailsRepository.delete(byPupId);

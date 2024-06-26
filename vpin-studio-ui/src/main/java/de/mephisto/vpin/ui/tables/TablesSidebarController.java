@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -117,7 +118,10 @@ public class TablesSidebarController implements Initializable {
   private Button dmdBtn;
 
   @FXML
-  private HBox popperTitleButtonArea;
+  private Button frontendConfigBtn;
+
+  @FXML
+  private HBox frontendTitleButtonArea;
 
   @FXML
   private TablesSidebarAltSoundController tablesSidebarAudioController; //fxml magic! Not unused
@@ -353,7 +357,7 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
-  private void onPrefsPopper() {
+  private void onPrefsScreenValidators() {
     PreferencesController.open("validators-screens");
   }
 
@@ -370,8 +374,8 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
-    popperTitleButtonArea.managedProperty().bindBidirectional(popperTitleButtonArea.visibleProperty());
-    popperTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
+    frontendTitleButtonArea.managedProperty().bindBidirectional(frontendTitleButtonArea.visibleProperty());
+    frontendTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
     altSoundExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     altColorExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     directb2sBtn.setVisible(SystemUtil.isFolderActionSupported());
@@ -398,6 +402,8 @@ public class TablesSidebarController implements Initializable {
   private void loadSidePanels() {
     Frontend frontend = client.getFrontendService().getFrontend();
     FrontendType frontendType = frontend.getFrontendType();
+
+    FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
@@ -519,7 +525,7 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    if (frontendType.equals(FrontendType.Popper)) {
+    if (frontendType.supportPupPacks()) {
       try {
         FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
         Parent tablesRoot = loader.load();

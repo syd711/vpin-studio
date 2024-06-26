@@ -432,7 +432,7 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.equals(FrontendType.Popper)) {
+    if (!frontendType.supportPupPacks()) {
       assetPupPackCheckbox.setSelected(false);
       assetPupPackCheckbox.setVisible(false);
 
@@ -496,11 +496,11 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
     
-    uploadAndImportRadio.setText(uploadAndImportRadio.getText().replace("[Frontend]", frontend.getName()));
-    uploadAndImportDescription.setText(uploadAndImportDescription.getText().replace("[Frontend]", frontend.getName()));
-    uploadAndReplaceDescription.setText(uploadAndReplaceDescription.getText().replace("[Frontend]", frontend.getName()));
-    uploadAndCloneDescription.setText(uploadAndCloneDescription.getText().replace("[Frontend]", frontend.getName()));
-
+    FrontendUtil.replaceName(uploadAndImportRadio, frontend);
+    FrontendUtil.replaceName(uploadAndImportDescription, frontend);
+    FrontendUtil.replaceName(uploadAndReplaceDescription, frontend);
+    FrontendUtil.replaceName(uploadAndCloneDescription, frontend);
+ 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);

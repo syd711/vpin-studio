@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 
 /*********************************************************************************************************************
- * Assets / Popper
+ * Assets
  ********************************************************************************************************************/
 public class AssetServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);

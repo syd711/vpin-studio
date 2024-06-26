@@ -6,7 +6,7 @@ import java.util.List;
 public class DeleteDescriptor {
   private boolean deleteTable;
   private boolean deleteDirectB2s;
-  private boolean deleteFromPopper;
+  private boolean deleteFromFrontend;
   private boolean deletePupPack;
   private boolean deleteDMDs;
   private boolean deleteHighscores;
@@ -93,12 +93,12 @@ public class DeleteDescriptor {
     this.deleteDirectB2s = deleteDirectB2s;
   }
 
-  public boolean isDeleteFromPopper() {
-    return deleteFromPopper;
+  public boolean isDeleteFromFrontend() {
+    return deleteFromFrontend;
   }
 
-  public void setDeleteFromPopper(boolean deleteFromPopper) {
-    this.deleteFromPopper = deleteFromPopper;
+  public void setDeleteFromFrontend(boolean deleteFromFrontend) {
+    this.deleteFromFrontend = deleteFromFrontend;
   }
 
   public boolean isDeletePupPack() {

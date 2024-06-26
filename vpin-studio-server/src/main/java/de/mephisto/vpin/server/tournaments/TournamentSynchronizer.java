@@ -9,7 +9,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.frontend.GameMediaItem;
-import de.mephisto.vpin.server.frontend.popper.WheelAugmenter;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;

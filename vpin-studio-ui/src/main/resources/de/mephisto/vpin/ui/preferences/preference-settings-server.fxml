@@ -231,7 +231,7 @@
                   <Label layoutX="34.0" layoutY="248.0" styleClass="preference-description" text="Miscellaneous options for the VPin Server can be configured here." textFill="WHITE" />
                   <VBox fx:id="launchOnExitOption">
                      <children>
-                        <CheckBox fx:id="launchPopperCheckbox" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">
+                        <CheckBox fx:id="launchFrontendCheckbox" mnemonicParsing="false" text="Launch VPin frontend on maintenance exit." textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -261,7 +261,7 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through PinUP Popper to use VPin-Studio services." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through the frontend to use VPin-Studio services." textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />

@@ -88,7 +88,7 @@ public class CardGenerationPreferencesController implements Initializable {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
-    if (frontendType.equals(FrontendType.Popper)) {
+    if (frontendType.supportPupPacks()) {
       menuPupPack = client.getPupPackService().getMenuPupPack();
       screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
     }
@@ -129,9 +129,9 @@ public class CardGenerationPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
     }, 500));
 
-    boolean notificationOnPopperScreen = cardSettings.isNotificationOnPopperScreen();
-    cardPosPopperRadio.setSelected(notificationOnPopperScreen);
-    cardPosPlayfieldRadio.setSelected(!notificationOnPopperScreen);
+    boolean notificationOnScreen = cardSettings.isNotificationOnPopperScreen();
+    cardPosPopperRadio.setSelected(notificationOnScreen);
+    cardPosPlayfieldRadio.setSelected(!notificationOnScreen);
 
     cardPosPlayfieldRadio.selectedProperty().addListener((observable, oldValue, newValue) -> {
       rotationCombo.setDisable(!newValue);

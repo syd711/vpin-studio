@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -99,13 +101,16 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
+      Frontend frontend = client.getFrontendService().getFrontend();
+
       boolean locked = client.getFrontendService().isFrontendRunning();
       if (locked) {
         emptyDataBox.setVisible(false);
         dataRoot.setVisible(false);
         errorBox.setVisible(true);
         errorTitle.setText("The database is currently locked.");
-        errorText.setText("Exit PinUP Popper to modify playlists.");
+        errorText.setText("Exit [Frontend] to modify playlists.");
+        FrontendUtil.replaceName(errorText, frontend);
         return;
       }
 
