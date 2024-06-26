@@ -74,6 +74,28 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox vpsWheel;
 
+  @FXML
+  private CheckBox sectionAltColor;
+  @FXML
+  private CheckBox sectionAltSound;
+  @FXML
+  private CheckBox sectionBackglass;
+  @FXML
+  private CheckBox sectionDMD;
+  @FXML
+  private CheckBox sectionHighscore;
+  @FXML
+  private CheckBox sectionAssets;
+  @FXML
+  private CheckBox sectionPov;
+  @FXML
+  private CheckBox sectionPupPack;
+  @FXML
+  private CheckBox sectionScriptDetails;
+  @FXML
+  private CheckBox sectionVps;
+
+
   public static Debouncer debouncer = new Debouncer();
   private String networkShareTestPath;
   private UISettings uiSettings;

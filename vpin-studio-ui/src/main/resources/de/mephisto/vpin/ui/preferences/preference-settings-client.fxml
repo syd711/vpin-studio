@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -31,7 +31,7 @@
                   </Label>
                   <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="Miscellaneous options for the user interface can be configured here." textFill="WHITE">
                      <VBox.margin>
-                        <Insets bottom="6.0" top="12.0" />
+                        <Insets bottom="6.0" />
                      </VBox.margin>
                   </Label>
                   <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
@@ -148,6 +148,100 @@
                   </Label>
                   <Label styleClass="preference-description" text="This section configures which game emulators to use in the VPin Studio." textFill="WHITE" />
                   <VBox fx:id="emulatorList" />
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Table Overview Settings">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="You can customize the appearance of the table overview here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="uiShowVPSUpdates1" mnemonicParsing="false" text="Emulator" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="uiShowVPSUpdates12" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Added" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <Label layoutX="34.0" layoutY="572.0" styleClass="default-headline" text="Visible Sidebar Sections" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox spacing="6.0">
+                     <children>
+                        <CheckBox fx:id="sectionAltColor" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionDMD" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="DMD" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionHighscore" layoutX="10.0" layoutY="142.0" mnemonicParsing="false" text="Highscore" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionAssets" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Media Assets" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionPov" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionPupPack" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionScriptDetails" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="Script Details" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <CheckBox fx:id="sectionVps" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Virtual Pinball Spreadsheet (VPS) " textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </VBox>
                   <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">
                      <VBox.margin>
                         <Insets top="24.0" />
