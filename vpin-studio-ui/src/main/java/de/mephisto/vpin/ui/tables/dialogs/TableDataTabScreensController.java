@@ -164,7 +164,9 @@ public class TableDataTabScreensController implements Initializable {
 
       value = String.join(",", result);
     }
-    tableDetails.setKeepDisplays(value);
+    if (tableDetails !=  null) {
+      tableDetails.setKeepDisplays(value);
+    }
   }
 
   @Override

@@ -152,18 +152,7 @@ public class StandaloneConnector extends BaseConnector {
 
   @Override
   protected TableDetails getGameFromDb(String filename) {
-
-    File tableFile = new File(filename);
-    String tableName = StringUtils.removeEndIgnoreCase(tableFile.getName(), ".vpx");
-
-    TableDetails game = new TableDetails();
-    game.setEmulatorId(VPX_EMUID);
-    game.setGameName(tableName);
-    game.setGameFileName(filename);
-    game.setGameDisplayName(tableName);
-    game.setStatus(1);
-
-    return game;
+    return null;
   }
 
   @Override

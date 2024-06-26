@@ -13,6 +13,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,21 +158,22 @@ public abstract class BaseConnector implements FrontendConnector {
         int id = mapFilenames.getKey(filename);
 
         TableDetails details = getGameFromDb(filename);
-
+        String gameName = FilenameUtils.getBaseName(filename);
+    
         Game game = new Game();
         game.setEmulatorId(emuId);
         game.setId(id);
-        game.setGameName(details.getGameName());
-        game.setGameFileName(details.getGameFileName());
-        game.setGameDisplayName(details.getGameDisplayName());
-        game.setDisabled(details.getStatus()==0);
-        game.setVersion(details.getGameVersion());
+        game.setGameName(details!=null? details.getGameName(): gameName);
+        game.setGameFileName(details!=null? details.getGameFileName(): filename);
+        game.setGameDisplayName(details!=null? details.getGameDisplayName(): gameName);
+        game.setDisabled(details!=null? details.getStatus()==0: false);
+        game.setVersion(details!=null? details.getGameVersion(): null);
 
         File table = new File(emu.getDirGames(), filename);
         game.setGameFile(table);
 
-        game.setDateAdded(details.getDateAdded());
-        game.setDateUpdated(details.getDateModified());
+        game.setDateAdded(details!=null? details.getDateAdded(): null);
+        game.setDateUpdated(details!=null? details.getDateModified(): null);
         return game;
       }
     }

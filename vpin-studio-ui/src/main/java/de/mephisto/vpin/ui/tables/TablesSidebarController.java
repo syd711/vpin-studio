@@ -552,22 +552,16 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    if (frontendType.supportStandardFields()) {
-      try {
-        FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledetails.fxml"));
-        Parent tablesRoot = loader.load();
-        tablesSidebarTableDetailsController = loader.getController();
-        tablesSidebarTableDetailsController.setSidebarController(this);
-        titledPaneTableDetails.setContent(tablesRoot);
-      }
-      catch (IOException e) {
-        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
-      }
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledetails.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarTableDetailsController = loader.getController();
+      tablesSidebarTableDetailsController.setSidebarController(this);
+      titledPaneTableDetails.setContent(tablesRoot);
     }
-    else {
-      tableAccordion.getPanes().remove(titledPaneTableDetails);
+    catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
-
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarMameController.class.getResource("scene-tables-sidebar-mame.fxml"));

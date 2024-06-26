@@ -154,7 +154,6 @@ public class Game {
     return extTableId;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableId(String extTableId) {
     this.extTableId = extTableId;
   }
@@ -163,7 +162,6 @@ public class Game {
     return extTableVersionId;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
   }

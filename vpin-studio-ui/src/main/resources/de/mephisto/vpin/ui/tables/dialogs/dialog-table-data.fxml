@@ -1037,14 +1037,14 @@
                   <Insets left="12.0" top="12.0" />
                </BorderPane.margin>
                <center>
-                  <HBox alignment="BASELINE_RIGHT" spacing="6.0">
+                  <HBox fx:id="buttonsBar" alignment="BASELINE_RIGHT" spacing="6.0">
                      <children>
                       <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
                            <HBox.margin>
                               <Insets right="6.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
+                        <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
                         <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
                            <HBox.margin>
                               <Insets />

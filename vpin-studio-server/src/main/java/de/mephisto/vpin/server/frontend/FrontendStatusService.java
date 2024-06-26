@@ -303,6 +303,10 @@ public class FrontendStatusService implements InitializingBean, PreferenceChange
   }
 
   public void fixGameVersion(int gameId, String version) {
+    // keep track of theversion  in the internal database
+    gameService.fixVersion(gameId, version);
+
+    // update the table in the frontend
     TableDetails tableDetails = getTableDetails(gameId);
     if (tableDetails != null) {
       tableDetails.setGameVersion(version);

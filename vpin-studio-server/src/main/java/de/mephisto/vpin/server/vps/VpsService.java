@@ -116,7 +116,7 @@ public class VpsService implements ApplicationContextAware, InitializingBean, Vp
     String gameVersion = game.getVersion();
     game.setUpdateAvailable(false);
 
-    if (gameVersion == null) {
+    if (StringUtils.isEmpty(gameVersion)) {
       return;
     }
 

@@ -52,6 +52,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -220,6 +221,12 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private Button copyTableVersionBtn;
+
+  @FXML
+  private HBox buttonsBar;
+
+  @FXML
+  private Button openAssetMgrBtn;
 
   @FXML
   private Label titleLabel;
@@ -575,13 +582,13 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private synchronized void doSave(Stage stage, boolean closeDialog) {
-    String updatedGameFileName = tableDetails.getGameFileName();
+    String updatedGameFileName = game.getGameFileName();
     if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
       updatedGameFileName = updatedGameFileName + ".vpx";
     }
 
     if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
-      String duplicate = findDuplicate(tableDetails.getEmulatorId(), updatedGameFileName);
+      String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
       if (duplicate != null) {
         WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
         return;
@@ -600,6 +607,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         tableDetails = client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       }
       client.getFrontendService().vpsLink(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
+      client.getFrontendService().fixVersion(game.getId(), gameVersion.getText());
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
@@ -630,6 +638,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     if (!frontendType.supportExtendedFields()) {
       tabPane.getTabs().remove(customizationTab);
       tabPane.getTabs().remove(extrasTab);
+    }
+
+    if (!frontendType.supportMedias()) {
+      buttonsBar.getChildren().remove(openAssetMgrBtn);
     }
 
     hintCustom2.setVisible(false);
@@ -751,10 +763,14 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.overviewController = overviewController;
     this.initialVpxFileName = game.getGameFileName();
 
+    this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(game.getVersion()));
+    gameVersion.setText(game.getVersion());
+    gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
+      fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
+    });
+
     //---------------------------------------------------------
     if (tableDetails!=null) {
-
-      this.fixVersionBtn.setDisable(!game.isUpdateAvailable() && !StringUtils.isEmpty(tableDetails.getGameVersion()));
 
       //---------------
       // TAB Details
@@ -764,7 +780,6 @@ public class TableDataController implements Initializable, DialogController, Aut
         uiSettings.setAutoApplyVpsData(newValue);
         client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       });
-
 
       gameName.setText(tableDetails.getGameName());
       gameName.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -789,12 +804,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       gameDisplayName.setText(tableDetails.getGameDisplayName());
       gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
-
-      gameVersion.setText(tableDetails.getGameVersion());
-      gameVersion.textProperty().addListener((observable, oldValue, newValue) -> {
-        tableDetails.setGameVersion(newValue);
-        fixVersionBtn.setDisable(!StringUtils.isEmpty(game.getExtVersion()) && newValue.equals(game.getExtVersion()));
-      });
 
       //---------------
       // TAB Meta Data
@@ -986,8 +995,6 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       gameDisplayName.setText(game.getGameDisplayName());
       gameDisplayName.setDisable(true);
-
-      gameVersion.setDisable(true);
 
       //---------------
       // TAB Meta Data

@@ -64,7 +64,8 @@ public class PinballXTableParser extends DefaultHandler {
             TableDetails detail = new TableDetails();
             detail.setGameName(gameName);
             detail.setGameFileName(gameFileName);
-            detail.setGameDisplayName(gameName);
+            // will be overriden by description but in case the tag is absent
+            detail.setGameDisplayName(gameName); 
             detail.setEmulatorId(emu.getId());
 
             NodeList childNodes = element.getChildNodes();

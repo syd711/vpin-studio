@@ -358,7 +358,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnINI.setVisible(!assetManagerMode && vpxMode);
     columnHSType.setVisible(!assetManagerMode && vpxMode);
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists());
-    columnDateAdded.setVisible(!assetManagerMode && frontendType.isNotStandalone());
 
     GameRepresentation selectedItem = getSelection();
     tableView.getSelectionModel().clearSelection();
@@ -515,20 +514,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTableEdit() {
-    Frontend frontend = client.getFrontendService().getFrontend();
-    FrontendType frontendType = frontend.getFrontendType();
-
-    if (frontendType.supportStandardFields()) {
-      GameRepresentation selectedItems = getSelection();
-      if (selectedItems != null) {
-        if (Studio.client.getFrontendService().isFrontendRunning()) {
-          if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-            TableDialogs.openTableDataDialog(this, selectedItems);
-          }
-          return;
+    GameRepresentation selectedItems = getSelection();
+    if (selectedItems != null) {
+      if (Studio.client.getFrontendService().isFrontendRunning()) {
+        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+          TableDialogs.openTableDataDialog(this, selectedItems);
         }
-        TableDialogs.openTableDataDialog(this, selectedItems);
+        return;
       }
+      TableDialogs.openTableDataDialog(this, selectedItems);
     }
   }
 
@@ -1770,13 +1764,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       importSeparator.setVisible(false);
       playlistSplitter.setVisible(false);
     }
-    if (!frontendType.supportStandardFields()) {
-      playlistCombo.setVisible(false);
-      importSeparator.setVisible(false);
-      playlistSplitter.setVisible(false);
-      this.tableEditBtn.setVisible(false);
-    }
-
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -1830,7 +1817,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     columnPlaylists.setVisible(frontendType.supportPlaylists());
-    columnDateAdded.setVisible(frontendType.isNotStandalone());
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);

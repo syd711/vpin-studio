@@ -589,13 +589,20 @@ public class GameService implements InitializingBean {
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
     }
 
-    //only apply legacy table name if the Popper fields are empty
+    //only apply legacy table name if the frontend fields are empty
     if (StringUtils.isEmpty(game.getTableName())) {
       game.setTableName(gameDetails.getTableName());
     }
 
     if (StringUtils.isEmpty(game.getRom())) {
       game.setRom(gameDetails.getRomName());
+    }
+
+    if (game.getDateAdded() == null) {
+      game.setDateAdded(gameDetails.getCreatedAt());
+    }
+    if (game.getDateUpdated() == null) {
+      game.setDateUpdated(gameDetails.getUpdatedAt());
     }
 
     //check alias
@@ -618,12 +625,15 @@ public class GameService implements InitializingBean {
       game.setHsFileName(gameDetails.getHsFileName());
     }
 
-    //only apply legacy VPS data if the Popper fields are empty
+    // Only apply VPS data if the frontend does not provide them
     if (StringUtils.isEmpty(game.getExtTableId())) {
       game.setExtTableId(gameDetails.getExtTableId());
     }
     if (StringUtils.isEmpty(game.getExtTableVersionId())) {
       game.setExtTableVersionId(gameDetails.getExtTableVersionId());
+    }
+    if (StringUtils.isEmpty(game.getVersion())) {
+      game.setVersion(gameDetails.getTableVersion());
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
@@ -683,6 +693,12 @@ public class GameService implements InitializingBean {
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Linked game " + gameId + " to " + extTableId);
+  }
+  public void fixVersion(int gameId, String version) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    gameDetails.setTableVersion(version);
+    gameDetailsRepository.saveAndFlush(gameDetails);
+    LOG.info("Version saved for " + gameId + " to " + version);
   }
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {

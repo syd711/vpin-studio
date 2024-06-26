@@ -30,6 +30,9 @@ public class TablesSidebarTableDetailsController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarTableDetailsController.class);
 
   @FXML
+  private VBox tableDataBox;
+
+  @FXML
   private Button tableEditBtn;
 
   @FXML
@@ -171,10 +174,12 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private VBox gameMetaDataFields;
 
+  @FXML
+  private VBox screenFields;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
-  private TableDetails tableDetails;
 
   // Add a public no-args constructor
   public TablesSidebarTableDetailsController() {
@@ -234,43 +239,65 @@ public class TablesSidebarTableDetailsController implements Initializable {
   }
 
   public void setGame(Optional<GameRepresentation> game) {
-    this.game = game;
-    this.tableDetails = null;
     this.refreshView(game);
   }
 
   public void refreshView(Optional<GameRepresentation> g) {
+    this.game = g;
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    if (!frontendType.supportStandardFields()) {
+      tableDataBox.getChildren().remove(gameMetaDataFields);
+    }
+    if (!frontendType.isNotStandalone()) {
+      tableDataBox.getChildren().remove(screenFields);
+    }
+    
     this.tableEditBtn.setDisable(g.isEmpty());
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
-    autoFillBtn.setDisable(g.isEmpty());
+    this.autoFillBtn.setDisable(g.isEmpty());
 
     GameRepresentation game = g.orElse(null);
-    tableDetails = game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
 
-    if (game != null && tableDetails != null) {
+    if (game != null) {
+      autoFillBtn.setVisible(game.isVpxGame() && frontendType.supportStandardFields());
 
-      autoFillBtn.setVisible(game.isVpxGame());
+      dateAdded.setText(game.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(game.getDateAdded()));
+      emulatorLabel.setText(client.getFrontendService().getGameEmulator(game.getEmulatorId()).getName());
+      gameVersion.setText(StringUtils.defaultIfEmpty(game.getVersion(), "-"));
+      gameName.setText(StringUtils.defaultIfEmpty(game.getGameName(), "-"));
+      gameFileName.setText(StringUtils.defaultIfEmpty(game.getGameFileName(), "-"));
+      gameDisplayName.setText(StringUtils.defaultIfEmpty(game.getGameDisplayName(), "-"));
+      // will be overriden by tableDetails status
+      status.setText(game.isDisabled()? "Disabled": "Enabled");
+      notes.setText(StringUtils.defaultIfEmpty(game.getNotes(), ""));
+
+      romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));
+    }
+    else {
+      autoFillBtn.setVisible(false);
+
+      dateAdded.setText("-");
+      emulatorLabel.setText("-");
+      gameName.setText("-");
+      gameFileName.setText("-");
+      gameDisplayName.setText("-");
+      status.setText("-");
+      notes.setText("");
+
+      romName.setText("-");
+    }
+
+
+    TableDetails tableDetails = game != null ? Studio.client.getFrontendService().getTableDetails(game.getId()) : null;
+    if (tableDetails != null) {
 
       extrasPanel.setVisible(tableDetails.isPopper15());
 
-      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
-      if (tableDetails.getNumberPlays() != null) {
-        labelTimesPlayed.setText(String.valueOf(tableDetails.getNumberPlays()));
-      }
-      else {
-        labelTimesPlayed.setText("0");
-      }
-
-      emulatorLabel.setText(client.getFrontendService().getGameEmulator(tableDetails.getEmulatorId()).getName());
       gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : "-");
-      gameName.setText(StringUtils.isEmpty(tableDetails.getGameName()) ? "-" : tableDetails.getGameName());
-      gameFileName.setText(StringUtils.isEmpty(tableDetails.getGameFileName()) ? "-" : tableDetails.getGameFileName());
-      gameVersion.setText(StringUtils.isEmpty(tableDetails.getGameVersion()) ? "-" : tableDetails.getGameVersion());
-      gameDisplayName.setText(StringUtils.isEmpty(tableDetails.getGameDisplayName()) ? "-" : tableDetails.getGameDisplayName());
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
-      dateAdded.setText(tableDetails.getDateAdded() == null ? "-" : DateFormat.getDateTimeInstance().format(tableDetails.getDateAdded()));
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
-      romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());
       numberOfPlayers.setText(tableDetails.getNumberOfPlayers() == null ? "-" : String.valueOf(tableDetails.getNumberOfPlayers()));
       altLaunch.setText(tableDetails.getAltLaunchExe() == null ? "-" : tableDetails.getAltLaunchExe());
@@ -289,6 +316,14 @@ public class TablesSidebarTableDetailsController implements Initializable {
       custom2.setText(StringUtils.isEmpty(tableDetails.getCustom2()) ? "-" : tableDetails.getCustom2());
       custom3.setText(StringUtils.isEmpty(tableDetails.getCustom3()) ? "-" : tableDetails.getCustom3());
       volume.setText(StringUtils.isEmpty(tableDetails.getVolume()) ? "-" : tableDetails.getVolume());
+
+      labelLastPlayed.setText(tableDetails.getLastPlayed() != null ? DateFormat.getDateInstance().format(tableDetails.getLastPlayed()) : "-");
+      if (tableDetails.getNumberPlays() != null) {
+        labelTimesPlayed.setText(String.valueOf(tableDetails.getNumberPlays()));
+      }
+      else {
+        labelTimesPlayed.setText("0");
+      }
 
       if (tableDetails.getStatus() > 0) {
         Optional<TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
@@ -312,23 +347,16 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
     }
     else {
-      autoFillBtn.setVisible(false);
+
       extrasPanel.setVisible(false);
 
       labelLastPlayed.setText("-");
       labelTimesPlayed.setText("-");
 
       isMod.setText("-");
-      status.setText("-");
-      emulatorLabel.setText("-");
-      dateAdded.setText("-");
-      gameName.setText("-");
-      gameFileName.setText("-");
-      gameDisplayName.setText("-");
       gameYear.setText("-");
       gameType.setText("-");
       gameTheme.setText("-");
-      romName.setText("-");
       manufacturer.setText("-");
       numberOfPlayers.setText("-");
       tags.setText("-");
@@ -342,7 +370,6 @@ public class TablesSidebarTableDetailsController implements Initializable {
       altRunMode.setText("-");
       url.setText("-");
       designedBy.setText("-");
-      notes.setText("");
       gDetails.setText("");
       gLog.setText("");
       gPlayLog.setText("");
@@ -352,7 +379,6 @@ public class TablesSidebarTableDetailsController implements Initializable {
       custom3.setText("-");
       custom4.setText("-");
       custom5.setText("-");
-      gameVersion.setText("-");
     }
   }
 
@@ -369,6 +395,5 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     popperRuntimeFields.setVisible(frontendType.supportExtendedFields());
-    gameMetaDataFields.setVisible(frontendType.supportStandardFields());
   }
 }

@@ -49,6 +49,8 @@ public class GameDetails {
 
   private String extTableVersionId;
 
+  private String tableVersion;
+
   private String hsFileName;
 
   private String ignoredValidations;
@@ -81,16 +83,16 @@ public class GameDetails {
     this.updates = updates;
   }
 
-  public String getExtTableId() {
-    return extTableId;
-  }
-
   public String getNotes() {
     return notes;
   }
 
   public void setNotes(String notes) {
     this.notes = notes;
+  }
+
+  public String getExtTableId() {
+    return extTableId;
   }
 
   public void setExtTableId(String extTableId) {
@@ -103,6 +105,14 @@ public class GameDetails {
 
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
+  }
+
+  public String getTableVersion() {
+    return tableVersion;
+  }
+
+  public void setTableVersion(String tableVersion) {
+    this.tableVersion = tableVersion;
   }
 
   public String getTableName() {
