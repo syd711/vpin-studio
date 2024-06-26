@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -24,8 +24,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class PopperScreenController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(PopperScreenController.class);
+public class FrontendScreenController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreenController.class);
 
   @FXML
   private ImageView imageView;
@@ -37,7 +37,7 @@ public class PopperScreenController implements Initializable {
   private StackPane root;
 
   // Add a public no-args constructor
-  public PopperScreenController() {
+  public FrontendScreenController() {
   }
 
   @Override
@@ -45,7 +45,7 @@ public class PopperScreenController implements Initializable {
     imageView.setPreserveRatio(false);
   }
 
-  public void setMediaAsset(PopperScreenAsset screenAsset) {
+  public void setMediaAsset(FrontendScreenAsset screenAsset) {
     try {
       Screen screen = Screen.getPrimary();
       Rectangle2D bounds = screen.getVisualBounds();
@@ -63,7 +63,7 @@ public class PopperScreenController implements Initializable {
     }
   }
 
-  private void showCentered(PopperScreenAsset asset, Rectangle2D bounds) throws IOException {
+  private void showCentered(FrontendScreenAsset asset, Rectangle2D bounds) throws IOException {
     InputStream in = asset.getInputStream();
     Image image = new Image(in);
     in.close();
@@ -97,7 +97,7 @@ public class PopperScreenController implements Initializable {
     }
   }
 
-  private void showOnDisplay(PopperScreenAsset asset) throws IOException {
+  private void showOnDisplay(FrontendScreenAsset asset) throws IOException {
     Image image;
     FrontendPlayerDisplay display = asset.getDisplay();
     String mimeType = asset.getMimeType();

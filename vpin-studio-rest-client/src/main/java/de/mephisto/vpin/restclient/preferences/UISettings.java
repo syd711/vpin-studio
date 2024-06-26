@@ -35,6 +35,244 @@ public class UISettings extends JsonSettings {
   private boolean propperVersionField = true;
   private boolean propperVRField = true;
 
+  //sections
+  private boolean sectionAltColor = true;
+  private boolean sectionAltSound = true;
+  private boolean sectionBackglass = true;
+  private boolean sectionDMD = true;
+  private boolean sectionHighscore = true;
+  private boolean sectionAssets = true;
+  private boolean sectionPov = false; //lets remove POV be default
+  private boolean sectionPupPack = true;
+  private boolean sectionPlaylists = true;
+  private boolean sectionTableData = true;
+  private boolean sectionScriptDetails = true;
+  private boolean sectionVps = true;
+  private boolean sectionVPinMAME = true;
+
+  //columns
+  private boolean columnAltColor = true;
+  private boolean columnAltSound = true;
+  private boolean columnBackglass = true;
+  private boolean columnDateAdded = false;
+  private boolean columnHighscore = true;
+  private boolean columnEmulator = false;
+  private boolean columnIni = true;
+  private boolean columnPlaylists = true;
+  private boolean columnPov = false;
+  private boolean columnPupPack = true;
+  private boolean columnRom = true;
+  private boolean columnVersion = true;
+  private boolean columnVpsStatus = true;
+
+  public boolean isSectionScriptDetails() {
+    return sectionScriptDetails;
+  }
+
+  public void setSectionScriptDetails(boolean sectionScriptDetails) {
+    this.sectionScriptDetails = sectionScriptDetails;
+  }
+
+  public boolean isSectionPlaylists() {
+    return sectionPlaylists;
+  }
+
+  public void setSectionPlaylists(boolean sectionPlaylists) {
+    this.sectionPlaylists = sectionPlaylists;
+  }
+
+  public boolean isSectionVPinMAME() {
+    return sectionVPinMAME;
+  }
+
+  public void setSectionVPinMAME(boolean sectionVPinMAME) {
+    this.sectionVPinMAME = sectionVPinMAME;
+  }
+
+  public boolean isSectionAltColor() {
+    return sectionAltColor;
+  }
+
+  public void setSectionAltColor(boolean sectionAltColor) {
+    this.sectionAltColor = sectionAltColor;
+  }
+
+  public boolean isSectionAltSound() {
+    return sectionAltSound;
+  }
+
+  public void setSectionAltSound(boolean sectionAltSound) {
+    this.sectionAltSound = sectionAltSound;
+  }
+
+  public boolean isSectionBackglass() {
+    return sectionBackglass;
+  }
+
+  public void setSectionBackglass(boolean sectionBackglass) {
+    this.sectionBackglass = sectionBackglass;
+  }
+
+  public boolean isSectionDMD() {
+    return sectionDMD;
+  }
+
+  public void setSectionDMD(boolean sectionDMD) {
+    this.sectionDMD = sectionDMD;
+  }
+
+  public boolean isSectionHighscore() {
+    return sectionHighscore;
+  }
+
+  public void setSectionHighscore(boolean sectionHighscore) {
+    this.sectionHighscore = sectionHighscore;
+  }
+
+  public boolean isSectionAssets() {
+    return sectionAssets;
+  }
+
+  public void setSectionAssets(boolean sectionAssets) {
+    this.sectionAssets = sectionAssets;
+  }
+
+  public boolean isSectionPov() {
+    return sectionPov;
+  }
+
+  public void setSectionPov(boolean sectionPov) {
+    this.sectionPov = sectionPov;
+  }
+
+  public boolean isSectionPupPack() {
+    return sectionPupPack;
+  }
+
+  public void setSectionPupPack(boolean sectionPupPack) {
+    this.sectionPupPack = sectionPupPack;
+  }
+
+  public boolean isSectionTableData() {
+    return sectionTableData;
+  }
+
+  public void setSectionTableData(boolean sectionTableData) {
+    this.sectionTableData = sectionTableData;
+  }
+
+  public boolean isSectionVps() {
+    return sectionVps;
+  }
+
+  public void setSectionVps(boolean sectionVps) {
+    this.sectionVps = sectionVps;
+  }
+
+  public boolean isColumnAltColor() {
+    return columnAltColor;
+  }
+
+  public void setColumnAltColor(boolean columnAltColor) {
+    this.columnAltColor = columnAltColor;
+  }
+
+  public boolean isColumnAltSound() {
+    return columnAltSound;
+  }
+
+  public void setColumnAltSound(boolean columnAltSound) {
+    this.columnAltSound = columnAltSound;
+  }
+
+  public boolean isColumnBackglass() {
+    return columnBackglass;
+  }
+
+  public void setColumnBackglass(boolean columnBackglass) {
+    this.columnBackglass = columnBackglass;
+  }
+
+  public boolean isColumnDateAdded() {
+    return columnDateAdded;
+  }
+
+  public void setColumnDateAdded(boolean columnDateAdded) {
+    this.columnDateAdded = columnDateAdded;
+  }
+
+  public boolean isColumnHighscore() {
+    return columnHighscore;
+  }
+
+  public void setColumnHighscore(boolean columnHighscore) {
+    this.columnHighscore = columnHighscore;
+  }
+
+  public boolean isColumnEmulator() {
+    return columnEmulator;
+  }
+
+  public void setColumnEmulator(boolean columnEmulator) {
+    this.columnEmulator = columnEmulator;
+  }
+
+  public boolean isColumnIni() {
+    return columnIni;
+  }
+
+  public void setColumnIni(boolean columnIni) {
+    this.columnIni = columnIni;
+  }
+
+  public boolean isColumnPlaylists() {
+    return columnPlaylists;
+  }
+
+  public void setColumnPlaylists(boolean columnPlaylists) {
+    this.columnPlaylists = columnPlaylists;
+  }
+
+  public boolean isColumnPov() {
+    return columnPov;
+  }
+
+  public void setColumnPov(boolean columnPov) {
+    this.columnPov = columnPov;
+  }
+
+  public boolean isColumnPupPack() {
+    return columnPupPack;
+  }
+
+  public void setColumnPupPack(boolean columnPupPack) {
+    this.columnPupPack = columnPupPack;
+  }
+
+  public boolean isColumnRom() {
+    return columnRom;
+  }
+
+  public void setColumnRom(boolean columnRom) {
+    this.columnRom = columnRom;
+  }
+
+  public boolean isColumnVersion() {
+    return columnVersion;
+  }
+
+  public void setColumnVersion(boolean columnVersion) {
+    this.columnVersion = columnVersion;
+  }
+
+  public boolean isColumnVpsStatus() {
+    return columnVpsStatus;
+  }
+
+  public void setColumnVpsStatus(boolean columnVpsStatus) {
+    this.columnVpsStatus = columnVpsStatus;
+  }
+
   private List<Integer> ignoredEmulatorIds = new ArrayList<>();
 
   public List<Integer> getIgnoredEmulatorIds() {

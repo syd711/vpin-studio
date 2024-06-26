@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 
 import java.io.InputStream;
 
-public class PopperScreenAsset {
+public class FrontendScreenAsset {
   private Stage screenStage;
   private int rotation;
   private FrontendPlayerDisplay display;

@@ -63,7 +63,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPaneTableDetails" expanded="false">
+                <TitledPane fx:id="titledPaneTableData" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
@@ -179,7 +179,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPaneAudio" expanded="false">
+                <TitledPane fx:id="titledPaneAltSound" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <right>
@@ -338,7 +338,7 @@
                   </BorderPane>
                </graphic>
             </TitledPane>
-                <TitledPane fx:id="titledPaneMetadata" expanded="false">
+                <TitledPane fx:id="titledPaneScriptDetails" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <left>
@@ -364,25 +364,6 @@
                   </BorderPane>
                </graphic>
             </TitledPane>
-                <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="Default Background" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <Label BorderPane.alignment="CENTER">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Used for highscore cards and competition backgrounds." />
-                                    </tooltip>
-                                </Label>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
             </panes>
         </Accordion>
    </center>

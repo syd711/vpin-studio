@@ -323,7 +323,7 @@ public class TablesSidebarMediaController implements Initializable {
       String screen = id.substring(id.lastIndexOf("_") + 1);
       VPinScreen vPinScreen = VPinScreen.valueOf(screen);
 
-      TableDialogs.openTableAssetsDialog(tablesSidebarController.getTablesController(), game.get(), vPinScreen);
+      TableDialogs.openTableAssetsDialog(tablesSidebarController.getTableOverviewController(), game.get(), vPinScreen);
     }
   }
 
@@ -333,7 +333,7 @@ public class TablesSidebarMediaController implements Initializable {
     String id = source.getId();
     String screen = id.substring(id.indexOf("_") + 1);
 
-    GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
+    GameRepresentation selection = tablesSidebarController.getTableOverviewController().getSelection();
     if (selection != null) {
       File screendir = client.getFrontendService().getMediaDirectory(selection.getId(), screen);
       SystemUtil.openFolder(screendir);
@@ -477,40 +477,40 @@ public class TablesSidebarMediaController implements Initializable {
     this.tablesSidebarController = tablesSidebarController;
 
     screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio, false, "mp3"));
-    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Audio, "mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Audio, "mp3"));
 
     screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch, false, "mp3"));
-    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.AudioLaunch, "mp3"));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.AudioLaunch, "mp3"));
 
     screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper, false, "mp4", "png", "jpg"));
-    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Topper, "mp4", "png", "jpg"));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Topper, "mp4", "png", "jpg"));
 
     screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading, false, "mp4"));
-    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Loading, "mp4"));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Loading, "mp4"));
 
     screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField, false, "mp4"));
-    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.PlayField, "mp4"));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.PlayField, "mp4"));
 
     screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
-    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.BackGlass, "mp4", "png", "jpg"));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.BackGlass, "mp4", "png", "jpg"));
 
     screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "mp4", "png", "jpg"));
-    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.GameInfo, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.GameInfo, "mp4", "png", "jpg"));
 
     screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "mp4", "png", "jpg"));
-    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.GameHelp, "mp4", "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.GameHelp, "mp4", "png", "jpg"));
 
     screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
-    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Menu, "mp4", "png", "jpg"));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Menu, "mp4", "png", "jpg"));
 
     screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD, false, "mp4", "png", "jpg"));
-    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.DMD, "mp4", "png", "jpg"));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.DMD, "mp4", "png", "jpg"));
 
     screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
-    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Other2, "mp4", "png", "jpg"));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Other2, "mp4", "png", "jpg"));
 
     screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "apng", "jpg"));
-    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), VPinScreen.Wheel, "png", "apng", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Wheel, "png", "apng", "jpg"));
   }
 
   public void resetMedia() {
@@ -583,7 +583,7 @@ public class TablesSidebarMediaController implements Initializable {
     btn_Wheel.setVisible(isOpenFolderSupported);
 
 
-    Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;
+    Predicate showPredicate = o -> tablesSidebarController.getTableOverviewController().getSelection() != null;
 
     screenAudio.hoverProperty().addListener(new VisibilityHoverListener(top_Audio, showPredicate));
     screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch, showPredicate));

@@ -115,14 +115,14 @@ public class TablesSidebarAltSoundController implements Initializable {
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       if (altSound.getFormat() == null || altSound.getFormat().equals(AltSoundFormats.altsound)) {
-        tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
+        tablesSidebarController.getTableOverviewController().showAltSoundEditor(this.game.get(), altSound);
       }
       else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
         if (altSound.getFilesize() == -1) {
           WidgetFactory.showAlert(Studio.stage, "Invalid Configuration", "The table must be played once, so that the necessary configuration files are generated.");
           return;
         }
-        tablesSidebarController.getTablesController().showAltSound2Editor(this.game.get(), altSound);
+        tablesSidebarController.getTableOverviewController().showAltSound2Editor(this.game.get(), altSound);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "Error", "Unknown alt sound format \"" + altSound.getFormat() + "\".");
@@ -149,7 +149,7 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
-    tablesSidebarController.getTablesController().closeEditors();
+    tablesSidebarController.getTableOverviewController().closeEditors();
 
     if(game.isPresent()) {
       Platform.runLater(() -> {
@@ -164,7 +164,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Restore Backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        tablesSidebarController.getTablesController().closeEditors();
+        tablesSidebarController.getTableOverviewController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
         EventManager.getInstance().notifyTableChange(game.get().getId(), game.get().getRom());
       }

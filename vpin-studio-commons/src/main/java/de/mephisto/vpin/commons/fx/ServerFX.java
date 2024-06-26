@@ -1,8 +1,8 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.PopperScreensManager;
+import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -61,7 +61,7 @@ public class ServerFX extends Application {
 
   private boolean overlayVisible = false;
 
-  private PopperScreenController highscoreCardController;
+  private FrontendScreenController highscoreCardController;
 
   public static ServerFX getInstance() {
     return INSTANCE;
@@ -271,7 +271,7 @@ public class ServerFX extends Application {
           }
         }
 
-        PopperScreenAsset asset = new PopperScreenAsset();
+        FrontendScreenAsset asset = new FrontendScreenAsset();
         asset.setName(file.getName());
         asset.setDisplay(display);
         asset.setRotation(rotation);
@@ -279,7 +279,7 @@ public class ServerFX extends Application {
         asset.setMimeType(mimeType);
         asset.setInputStream(new FileInputStream(file));
 
-        PopperScreensManager.getInstance().showScreen(asset);
+        FrontendScreensManager.getInstance().showScreen(asset);
       }
       else {
         LOG.info("Skipping highscore card overlay, zero time set.");

@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx.pausemenu.model;
 
-import de.mephisto.vpin.commons.PopperScreensManager;
+import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -17,14 +17,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Factory class to create Popper screens for the assets found in the Popper resource folders.
+ * Factory class to create frontend screens for the assets found in the Popper resource folders.
  */
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuScreensFactory.class);
 
-  public static List<PopperScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<FrontendPlayerDisplay> displays) {
-    List<PopperScreenAsset> screens = new ArrayList<>();
-    PopperScreenAsset screenStage = createScreenStage(client, game, displays, VPinScreen.GameHelp);
+  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<FrontendPlayerDisplay> displays) {
+    List<FrontendScreenAsset> screens = new ArrayList<>();
+    FrontendScreenAsset screenStage = createScreenStage(client, game, displays, VPinScreen.GameHelp);
     if (screenStage != null) {
       screens.add(screenStage);
     }
@@ -40,14 +40,14 @@ public class PauseMenuScreensFactory {
   }
 
   @Nullable
-  private static PopperScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<FrontendPlayerDisplay> displays, VPinScreen screen) {
+  private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<FrontendPlayerDisplay> displays, VPinScreen screen) {
     GameMediaItemRepresentation defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
       InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
       if (imageStream != null) {
         FrontendPlayerDisplay display = VPinScreen.valueOfScreen(displays, screen);
 
-        PopperScreenAsset asset = new PopperScreenAsset();
+        FrontendScreenAsset asset = new FrontendScreenAsset();
         asset.setDisplay(display);
         asset.setRotation(0);
         asset.setDuration(0);
@@ -56,7 +56,7 @@ public class PauseMenuScreensFactory {
         asset.setName(defaultMediaItem.getName());
         asset.setUrl(client.getURL(defaultMediaItem.getUri()));
 
-        PopperScreensManager.getInstance().showScreen(asset);
+        FrontendScreensManager.getInstance().showScreen(asset);
         LOG.info("Created stage for screen " + screen + ", asset \"" + defaultMediaItem.getName() + "\"");
         return asset;
       }

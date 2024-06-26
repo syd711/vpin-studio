@@ -1,8 +1,8 @@
 package de.mephisto.vpin.commons;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.fx.PopperScreenController;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.FrontendScreenController;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.animation.FadeTransition;
@@ -22,16 +22,16 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
-public class PopperScreensManager {
-  private final static Logger LOG = LoggerFactory.getLogger(PopperScreensManager.class);
+public class FrontendScreensManager {
+  private final static Logger LOG = LoggerFactory.getLogger(FrontendScreensManager.class);
 
-  private static PopperScreensManager instance = new PopperScreensManager();
+  private static FrontendScreensManager instance = new FrontendScreensManager();
 
-  public static PopperScreensManager getInstance() {
+  public static FrontendScreensManager getInstance() {
     return instance;
   }
 
-  public Stage showScreen(@NonNull PopperScreenAsset asset) {
+  public Stage showScreen(@NonNull FrontendScreenAsset asset) {
     try {
       BorderPane root = new BorderPane();
       root.setStyle("-fx-background-color: transparent;");
@@ -49,10 +49,10 @@ public class PopperScreensManager {
       asset.setScreenStage(screenStage);
 
       try {
-        String resource = "scene-popper-screen.fxml";
-        FXMLLoader loader = new FXMLLoader(PopperScreenController.class.getResource(resource));
+        String resource = "scene-frontend-screen.fxml";
+        FXMLLoader loader = new FXMLLoader(FrontendScreenController.class.getResource(resource));
         Parent widgetRoot = loader.load();
-        PopperScreenController screenController = loader.getController();
+        FrontendScreenController screenController = loader.getController();
         screenController.setMediaAsset(asset);
         root.setCenter(widgetRoot);
       } catch (IOException e) {

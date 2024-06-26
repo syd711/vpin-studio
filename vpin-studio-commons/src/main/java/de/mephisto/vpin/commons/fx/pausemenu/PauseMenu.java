@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -54,7 +53,7 @@ public class PauseMenu extends Application {
 
   private static Robot robot;
 
-  private static List<PopperScreenAsset> screenAssets = new ArrayList<>();
+  private static List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
   static {
     try {
