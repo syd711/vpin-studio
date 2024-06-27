@@ -535,7 +535,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledetails.fxml"));
+      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledata.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarTableDetailsController = loader.getController();
       tablesSidebarTableDetailsController.setSidebarController(this);
