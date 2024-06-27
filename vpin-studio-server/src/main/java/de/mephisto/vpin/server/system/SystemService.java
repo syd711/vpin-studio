@@ -131,6 +131,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public FrontendType getFrontendType() {
     return frontendType;
   }
+  public void setFrontendType(FrontendType frontendType) {
+    this.frontendType = frontendType;
+  }
 
   private void logSystemInfo() {
     LOG.info("********************************* Installation Overview ***********************************************");

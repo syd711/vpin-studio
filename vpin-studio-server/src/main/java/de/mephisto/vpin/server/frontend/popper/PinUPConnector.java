@@ -415,19 +415,15 @@ public class PinUPConnector implements FrontendConnector {
 
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Game SET " 
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET " 
         + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
         + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
         + "DateUpdated=? WHERE GameID=?");
       int index = 1;
       preparedStatement.setString(index++, extTableId);
       preparedStatement.setString(index++, extTableVersionId);
-      preparedStatement.setString(index++, extTableId);
-
-      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      String ts = sdf.format(timestamp);
-      preparedStatement.setObject(index++, ts);
+      preparedStatement.setTimestamp(index++, timestamp);
       preparedStatement.setInt(index++, gameId);
 
       preparedStatement.executeUpdate();
@@ -1407,11 +1403,11 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   @Override
-  public void deleteGames() {
+  public void deleteGames(int emuId) {
     Connection connect = this.connect();
     try {
       Statement statement = connect.createStatement();
-      statement.execute("DELETE FROM Games WHERE EMUID = 1;");
+      statement.execute("DELETE FROM Games WHERE EMUID = " + emuId);
       statement.close();
     }
     catch (SQLException e) {

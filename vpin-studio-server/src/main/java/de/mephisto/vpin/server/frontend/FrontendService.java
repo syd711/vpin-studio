@@ -46,7 +46,9 @@ public class FrontendService implements InitializingBean {
 
 
   public FrontendConnector getFrontendConnector() {
-    FrontendType frontendType = getFrontendType();
+    return getFrontendConnector(getFrontendType());
+  }
+  public FrontendConnector getFrontendConnector(FrontendType frontendType) {
     return frontendsMap.get(frontendType.name());
   }
 
@@ -230,8 +232,8 @@ public class FrontendService implements InitializingBean {
     return getFrontendConnector().deleteGame(id);
   }
 
-  public void deleteGames() {
-    getFrontendConnector().deleteGames();
+  public void deleteGames(int emuId) {
+    getFrontendConnector().deleteGames(emuId);
   }
 
   public int getGameCount() {

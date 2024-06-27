@@ -274,7 +274,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public void deleteGames() {
+  public void deleteGames(int emulatorId) {
     // not implemented
   }
 

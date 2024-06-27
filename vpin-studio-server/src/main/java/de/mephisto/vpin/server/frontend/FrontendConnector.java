@@ -52,7 +52,7 @@ public interface FrontendConnector {
 
   boolean deleteGame(int id);
 
-  void deleteGames();
+  void deleteGames(int emuId);
   
   int getGameCount(int emuId);
 

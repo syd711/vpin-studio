@@ -3,6 +3,7 @@ package de.mephisto.vpin.server;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.archiving.ArchiveService;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapterFactory;
@@ -107,9 +108,8 @@ abstract public class AbstractVPinServerTest {
   @Autowired
   protected AltSoundService altSoundService;
 
-  protected GameEmulator gameEmulator;
-
-  public void setupSystem() {
+  /** To force usage of a given Frontend */
+  protected GameEmulator buildGameEmulator() {
     Emulator emulator = new Emulator();
     emulator.setDescription("VPX");
     emulator.setName("VPX");
@@ -119,14 +119,19 @@ abstract public class AbstractVPinServerTest {
     emulator.setDirGames("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGamesExt("vpx");
 
-    gameEmulator = new GameEmulator(emulator, null);
+    return new GameEmulator(emulator, null);
+  }
 
-    frontendService.deleteGames();
+  public void setupSystem(FrontendType frontendType) {
+    systemService.setFrontendType(frontendType);
+    setupSystem();
+  }
 
+  public void setupSystem() {
+    frontendService.deleteGames(1);
     clearVPinStudioDatabase();
 
     systemService.setArchiveType(ArchiveType.VPA);
-
 
     frontendService.importGame(EM_TABLE, 1);
     frontendService.importGame(VPREG_TABLE, 1);
