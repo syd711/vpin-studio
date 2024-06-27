@@ -1,22 +1,36 @@
 # Compiled class file
 *.class
-
+*.bak
 
 # dependencies
 node_modules
 .pnp
 .pnp.js
 
-
 # testing
 coverage
 # production
 build
+target
+local
+/deployment/
+/releases/
+/Output/
+
 .idea/
-local/
-target/
+/.idea/
+
+/.vscode/launch.json
+vpin-studio.code-workspace
+
+
+vpin-studio-server/resources/scoringdb.json
+vpin-studio-server/resources/vpsdb.json
+vpin-studio-server/resources/system.properties
+
 vpin-studio-server/target/
 vpin-studio-ui/target/
+
 java-runtime/
 java-runtime-linux/
 java-runtime-osx-arm-x64/
@@ -61,24 +75,39 @@ hs_err_pid*
 /resources/vbs/*
 /resources/backups/*
 /resources/vpbm/vPinBackupManager.json
-/.idea/
+
+/config/settings.properties
+
 /VPReg/
-/target/
 /dependency-reduced-pom.xml
+
 /resources/system.properties
+/resources/chrome-launcher.bat
 /resources/*.db-journal
 /resources/*.sqbpro
 /resources/b2s/*.png
+/resources/b2s-raw/
+/resources/backglassdesigner/Projects/**
 /resources/backgrounds/*.directb2s
 /resources/directb2s/*.directb2s
 /resources/pinemhi/PINemHi LeaderBoard/
-/deployment/
-/releases/
+/resources/pinemhi/pinemhi.ini
+/resources/highscore-card-sample.png
+/resources/archives/descriptor.json
+/resources/archives/**
+/resources/vpbm/identifiers.dat
+/resources/vpbm/.screens.json
+/resources/PinVolSettings.ini
+/resources/PinVolTables.ini
+/resources/PinVolVol.ini
+/resources/menu-profile/
+/resources/vpsdb.json.tmp
+
+
 /doftest/DirectOutputTest/bin/Debug/
 /doftest/DirectOutputTest/obj/Debug/
 /doftest/.vs/DirectOutputTest/
 /doftest/*.zip
-/resources/b2s-raw/
 
 npm-debug.log*
 yarn-debug.log*
@@ -88,40 +117,16 @@ yarn-error.log*
 .vs/slnx.sqlite
 
 vpin-studio-logs.zip
-
-/resources/highscore-card-sample.png
-/Output/
 /crash.txt
 /documentation/~$discord-competitions.odp
-/resources/archives/descriptor.json
 /**/Thumbs.db
-/vpin-studio-server/resources/system.properties
-/resources/archives/**
-/resources/vpbm/identifiers.dat
-/resources/PinVolSettings.ini
-/resources/PinVolTables.ini
-/resources/PinVolVol.ini
 /PinVolTables.ini
-
-/resources/pinemhi/pinemhi.ini
 
 /testsystem/vPinball/**/*.png
 /testsystem/vPinball/**/*.mp3
 /testsystem/vPinball/**/*.mp4
 /testsystem/vPinball/**/*.zip
-
 /testsystem/**/*.db
 
-/resources/backglassdesigner/Projects/**
-/config/settings.properties
-/resources/menu-profile/
-/resources/chrome-launcher.bat
-/resources/vpsdb.json.tmp
 /server-restart.bat
-/resources/vpbm/.screens.json
 
-/vpin-studio-server/*.bak
-/.vscode/launch.json
-vpin-studio.code-workspace
-vpin-studio-server/resources/scoringdb.json
-vpin-studio-server/resources/vpsdb.json

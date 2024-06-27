@@ -57,7 +57,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String DMD = "dmd.png";
 
-  private File frontendInstallationFolder;
+  private File pinupInstallationFolder;
+  private File pinballXInstallationFolder;
+  private File standaloneInstallationFolder;
+
   private File backupFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
@@ -85,21 +88,21 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       }
 
-
-      //PinUP Popper Folder
-      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
-        this.frontendInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
-        frontendType = FrontendType.Popper;
+      // Determination of the installed Frontend
+      //Standalone Folder
+      if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR))) {
+        this.standaloneInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.Standalone;
       }
       //PinballX Folder
-      else if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR))) {
-        this.frontendInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
+      if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR))) {
+        this.pinballXInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
         frontendType = FrontendType.PinballX;
       }
-      //Standalone Folder
-      else if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR))) {
-        this.frontendInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR));
-        frontendType = FrontendType.Standalone;
+      //PinUP Popper Folder
+      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
+        this.pinupInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.Popper;
       }
 
       if (!getB2SImageExtractionFolder().exists()) {
@@ -140,7 +143,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     LOG.info(formatPathLog("Locale", Locale.getDefault().getDisplayName()));
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
     LOG.info(formatPathLog("Frontend Type", this.getFrontendType().name()));
-    LOG.info(formatPathLog("Frontend Folder", this.getFrontendInstallationFolder()));
+    if (pinupInstallationFolder != null) {
+      LOG.info(formatPathLog("PinupPopper Folder", this.pinupInstallationFolder));
+    }
+    if (pinballXInstallationFolder != null) {
+      LOG.info(formatPathLog("PinballX Folder", this.pinballXInstallationFolder));
+    }
+    if (standaloneInstallationFolder != null) {
+      LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
+    }
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
@@ -206,9 +217,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public Dimension getScreenSize() {
     return Toolkit.getDefaultToolkit().getScreenSize();
   }
-
-  public File getFrontendInstallationFolder() {
-    return frontendInstallationFolder;
+  
+  public File getPinupInstallationFolder() {
+    return pinupInstallationFolder;
+  }
+  public File getPinballXInstallationFolder() {
+    return pinballXInstallationFolder;
+  }
+  public File getStandaloneInstallationFolder() {
+    return standaloneInstallationFolder;
   }
 
   /**

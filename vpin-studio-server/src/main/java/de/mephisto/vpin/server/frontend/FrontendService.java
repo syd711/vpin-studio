@@ -60,6 +60,10 @@ public class FrontendService implements InitializingBean {
     return getFrontendConnector().getFrontend();
   }
 
+  public File getFrontendInstallationFolder() {
+    return getFrontendConnector().getInstallationFolder();
+  }
+
   //----------------------------------------
   // Access to cached emulators
 

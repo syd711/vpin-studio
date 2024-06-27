@@ -56,7 +56,7 @@ public class StandaloneConnector extends BaseConnector {
   @NotNull
   @Override
   public File getInstallationFolder() {
-    return systemService.getFrontendInstallationFolder();
+    return systemService.getStandaloneInstallationFolder();
   }
 
   public Frontend getFrontend() {
@@ -239,7 +239,7 @@ public class StandaloneConnector extends BaseConnector {
     try {
       List<String> params = Arrays.asList("cmd", "/c", "start", getVPXExe());
       SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(systemService.getFrontendInstallationFolder());
+      executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();

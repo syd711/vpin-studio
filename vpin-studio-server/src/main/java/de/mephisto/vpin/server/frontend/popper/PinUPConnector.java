@@ -67,7 +67,7 @@ public class PinUPConnector implements FrontendConnector {
   @NotNull
   @Override
   public File getInstallationFolder() {
-    return systemService.getFrontendInstallationFolder();
+    return systemService.getPinupInstallationFolder();
   }
 
   private void initVisualPinballXScripts(Emulator emulator) {
@@ -717,7 +717,7 @@ public class PinUPConnector implements FrontendConnector {
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
-      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
+      File ini = new File(getInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
         LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
         return result;
@@ -1714,7 +1714,7 @@ public class PinUPConnector implements FrontendConnector {
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
-      File ini = new File(systemService.getFrontendInstallationFolder(), "PinUpPlayer.ini");
+      File ini = new File(getInstallationFolder(), "PinUpPlayer.ini");
       if (!ini.exists()) {
         LOG.error("Failed to find \"" + ini.getAbsolutePath() + "\", no display info found.");
         return result;
@@ -1829,7 +1829,7 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   public File getDatabaseFile() {
-    return new File(systemService.getFrontendInstallationFolder(), "PUPDatabase.db");
+    return new File(getInstallationFolder(), "PUPDatabase.db");
   }
 
   public Frontend getFrontend() {
@@ -1898,7 +1898,7 @@ public class PinUPConnector implements FrontendConnector {
     try {
       List<String> params = Arrays.asList("cmd", "/c", "start", "PinUpMenu.exe");
       SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(systemService.getFrontendInstallationFolder());
+      executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();

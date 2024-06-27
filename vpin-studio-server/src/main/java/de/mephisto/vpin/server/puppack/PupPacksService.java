@@ -44,8 +44,18 @@ public class PupPacksService implements InitializingBean {
 
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
+  /**
+   * Return where pinup player is installed, read it today from installation directory, 
+   * independently of the frontend, could be usefull to support standalone installation with 
+   * pinup player only
+   * @return The PupVideos folder of a Pinup Plyer installation
+   */
+  private File getPupPackFolder() {
+    return new File(systemService.getPinupInstallationFolder(), "PUPVideos");
+  }
+
   public PupPack getMenuPupPack() {
-    File pupPackFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
+    File pupPackFolder = getPupPackFolder();
     File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
     return loadPupPack(menuPupPackFolder);
   }
@@ -91,7 +101,7 @@ public class PupPacksService implements InitializingBean {
 
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
-    File pupPackFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
+    File pupPackFolder = getPupPackFolder();
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
@@ -158,7 +168,7 @@ public class PupPacksService implements InitializingBean {
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    File pupVideosFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
+    File pupVideosFolder = getPupPackFolder();
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
       return;
@@ -230,7 +240,7 @@ public class PupPacksService implements InitializingBean {
 
   public PupPack loadPupPack(String rom) {
     if (!StringUtils.isEmpty(rom)) {
-      File pupVideosFolder = new File(systemService.getFrontendInstallationFolder(), "PUPVideos");
+      File pupVideosFolder = getPupPackFolder();
       if (pupVideosFolder.exists()) {
         File pupPackFolder = new File(pupVideosFolder, rom);
         if (pupPackFolder.exists()) {

@@ -124,6 +124,8 @@ abstract public class AbstractVPinServerTest {
 
   public void setupSystem(FrontendType frontendType) {
     systemService.setFrontendType(frontendType);
+    // notify frontendService 
+    frontendService.afterPropertiesSet();
     setupSystem();
   }
 

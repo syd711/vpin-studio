@@ -62,7 +62,7 @@ public class PinballXConnector extends BaseConnector {
   @NotNull
   @Override
   public File getInstallationFolder() {
-    return systemService.getFrontendInstallationFolder();
+    return systemService.getPinballXInstallationFolder();
   }
 
   public Frontend getFrontend() {
@@ -146,9 +146,9 @@ public class PinballXConnector extends BaseConnector {
       LOG.error("cannot parse ini file " + pinballXIni, e);
     }
 
-    // check standard emulators
+    // check standard emulators, starts with Visual Pinball as default one
     String[] emuNames = new String[]{
-        "Future Pinball", "Visual Pinball", "Zaccaria", "Pinball FX2", "Pinball FX3", "Pinball Arcade"
+        "Visual Pinball", "Future Pinball", "Zaccaria", "Pinball FX2", "Pinball FX3", "Pinball Arcade"
     };
 
     int emuId = 1;
@@ -394,7 +394,7 @@ public class PinballXConnector extends BaseConnector {
     try {
       List<String> params = Arrays.asList("cmd", "/c", "start", "PinballX.exe");
       SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(systemService.getFrontendInstallationFolder());
+      executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();

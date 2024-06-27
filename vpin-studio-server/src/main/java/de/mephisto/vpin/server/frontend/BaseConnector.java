@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.server.frontend.standalone.StandaloneConnector;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import org.apache.commons.collections4.BidiMap;
@@ -29,7 +28,7 @@ import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 public abstract class BaseConnector implements FrontendConnector {
-  private final static Logger LOG = LoggerFactory.getLogger(StandaloneConnector.class);
+  private final static Logger LOG = LoggerFactory.getLogger(BaseConnector.class);
 
   /**
    * the loaded and cached emulators
@@ -275,7 +274,13 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public void deleteGames(int emulatorId) {
-    // not implemented
+    List<String> filenames = gamesByEmu.remove(emulatorId);
+    for (String filename : filenames) {
+      mapFilenames.removeValue(filename);
+      dropGameFromDb(filename);
+    }
+    gamesByEmu.put(emulatorId, new ArrayList<>());
+    commitDb(emulators.get(emulatorId));
   }
 
   @Override

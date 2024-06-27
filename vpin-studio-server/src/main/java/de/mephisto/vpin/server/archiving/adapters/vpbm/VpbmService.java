@@ -234,8 +234,8 @@ public class VpbmService implements InitializingBean {
       }
 
       if (!pinupSystemPath.exists()) {
-        config.getPinup().setPinupDir(systemService.getFrontendInstallationFolder().getAbsolutePath());
-        LOG.info("Updated PinUPSystem path to " + systemService.getFrontendInstallationFolder().getAbsolutePath());
+        config.getPinup().setPinupDir(systemService.getPinupInstallationFolder().getAbsolutePath());
+        LOG.info("Updated PinUPSystem path to " + systemService.getPinupInstallationFolder().getAbsolutePath());
         dirty = true;
       }
 

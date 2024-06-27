@@ -11,7 +11,6 @@ public class SystemTest extends AbstractVPinServerTest {
 
   @Test
   public void testMaintenanceMode() {
-    assertTrue(systemService.getFrontendInstallationFolder().exists());
     assertTrue(systemService.getPinemhiCommandFile().exists());
     assertTrue(systemService.getBackupFolder().exists());
     assertNotNull(systemService.getArchiveType());
