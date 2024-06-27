@@ -12,7 +12,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +27,6 @@ import java.util.zip.ZipEntry;
 public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpa.class);
 
-  private final SystemService systemService;
   private final GameService gameService;
   private final FrontendService frontendService;
   private final ArchiveDescriptor archiveDescriptor;
@@ -38,12 +36,10 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private double progress;
   private String status;
 
-  public TableInstallerAdapterVpa(@NonNull SystemService systemService,
-                                  @NonNull GameService gameService,
+  public TableInstallerAdapterVpa(@NonNull GameService gameService,
                                   @NonNull FrontendService frontendService,
                                   @NonNull ArchiveDescriptor archiveDescriptor,
                                   @NonNull GameEmulator emulator) {
-    this.systemService = systemService;
     this.gameService = gameService;
     this.frontendService = frontendService;
     this.archiveDescriptor = archiveDescriptor;
@@ -120,7 +116,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private void importHighscore(Game game, File zipFile) {
     String jsonData = VpaArchiveUtil.readVPRegJson(zipFile);
     if (jsonData != null) {
-      VPReg vpReg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
+      VPReg vpReg = new VPReg(emulator.getVPRegFile(), game.getRom(), game.getTableName());
       vpReg.restore(jsonData);
       LOG.info("Imported VPReg.stg data.");
     }

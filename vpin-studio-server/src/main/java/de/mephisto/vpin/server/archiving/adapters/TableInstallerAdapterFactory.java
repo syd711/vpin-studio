@@ -33,7 +33,7 @@ public class TableInstallerAdapterFactory {
 
     switch (archiveType) {
       case VPA: {
-        return new TableInstallerAdapterVpa(systemService, gameService, frontendService, archiveDescriptor, emulator);
+        return new TableInstallerAdapterVpa(gameService, frontendService, archiveDescriptor, emulator);
       }
       case VPBM: {
         return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor);
