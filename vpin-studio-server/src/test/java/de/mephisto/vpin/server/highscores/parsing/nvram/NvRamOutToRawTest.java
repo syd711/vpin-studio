@@ -28,6 +28,12 @@ public class NvRamOutToRawTest {
     // Set the path to this GameEmulator so that nv files can be found
     PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
 
+    // Emulator for test
+    GameEmulator gameEmulator = getGameEmulator();
+
+    // Set the path to this GameEmulator so that nv files can be found
+    PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
+
     ScoringDB scoringDB = ScoringDB.load();
     File folder = gameEmulator.getNvramFolder();
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".nv"));
@@ -72,22 +78,5 @@ public class NvRamOutToRawTest {
     List<Score> parse = parser.parse();
     System.out.println("Parsed " + parse.size() + " score entries.");
     assertFalse(parse.isEmpty());
-  }
-
-  //-----------------
-
-  private File getPinemhiIni() {
-    return new File("../resources/pinemhi", PINemHiService.PINEMHI_INI);
-  }
-  private final File getPinemhiExe() {
-    return new File("../resources/pinemhi", PINemHiService.PINEMHI_COMMAND);
-  }
-
-  private GameEmulator getGameEmulator() {
-    Emulator emulator = new Emulator();
-    emulator.setName("VPX");
-    emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
-    GameEmulator gameEmulator = new GameEmulator(emulator, null);
-    return gameEmulator;
   }
 }
