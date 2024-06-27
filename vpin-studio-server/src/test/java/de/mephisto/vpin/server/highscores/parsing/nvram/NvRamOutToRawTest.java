@@ -1,10 +1,13 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
-
+import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
+import de.mephisto.vpin.server.pinemhi.PINemHiService;
+
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
@@ -19,8 +22,14 @@ public class NvRamOutToRawTest {
 
   @Test
   public void testAllFiles() throws Exception {
+    // Emulator for test
+    GameEmulator gameEmulator = getGameEmulator();
+
+    // Set the path to this GameEmulator so that nv files can be found
+    PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
+
     ScoringDB scoringDB = ScoringDB.load();
-    File folder = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/");
+    File folder = gameEmulator.getNvramFolder();
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".nv"));
     int count = 0;
     for (File entry : files) {
@@ -30,7 +39,7 @@ public class NvRamOutToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry);
+      String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
       System.out.println(raw);
 
@@ -47,9 +56,14 @@ public class NvRamOutToRawTest {
 
   @Test
   public void testSingle() throws Exception {
-    ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/VPinMAME/nvram/", "godzilla.nv");
-    String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(new File("../resources/pinemhi/PINemHi.exe"), entry);
+    // Emulator for test
+    GameEmulator gameEmulator = getGameEmulator();
+
+    // Set the path to this GameEmulator so that nv files can be found
+    PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
+    
+    File entry = new File(gameEmulator.getNvramFolder(), "godzilla.nv");
+    String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
     System.out.println(raw);
 
@@ -58,5 +72,22 @@ public class NvRamOutToRawTest {
     List<Score> parse = parser.parse();
     System.out.println("Parsed " + parse.size() + " score entries.");
     assertFalse(parse.isEmpty());
+  }
+
+  //-----------------
+
+  private File getPinemhiIni() {
+    return new File(new File("..", PINemHiService.PINEMHI_FOLDER), PINemHiService.PINEMHI_INI);
+  }
+  private final File getPinemhiExe() {
+    return new File(new File("..", PINemHiService.PINEMHI_FOLDER), PINemHiService.PINEMHI_COMMAND);
+  }
+
+  private GameEmulator getGameEmulator() {
+    Emulator emulator = new Emulator();
+    emulator.setName("VPX");
+    emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
+    GameEmulator gameEmulator = new GameEmulator(emulator, null);
+    return gameEmulator;
   }
 }
