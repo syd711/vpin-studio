@@ -33,7 +33,6 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.DefaultPictureService;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -96,9 +95,6 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private PlayerService playerService;
-
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private MameService mameService;
@@ -192,16 +188,15 @@ public class GameService implements InitializingBean {
   }
 
   public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
-    List<Game> games = frontendService.getGamesByEmulator(emulatorId)
-        .stream()
+    List<Game> games = frontendService.getGamesByEmulator(emulatorId);
+    for (Game game : games) {
+      applyGameDetails(game, false, false);
+    }
+    return games.stream()
         .filter(g ->
             (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
                 (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
-    for (Game game : games) {
-      applyGameDetails(game, false, false);
-    }
-    return games;
   }
 
   public boolean resetGame(int gameId) {
@@ -559,6 +554,7 @@ public class GameService implements InitializingBean {
 
       if (gameDetails == null) {
         gameDetails = new GameDetails();
+        gameDetails.setCreatedAt(new java.util.Date());
       }
 
       //always prefer PinUP Popper ROM name over the scanned value
@@ -582,7 +578,6 @@ public class GameService implements InitializingBean {
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
 
-      gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
