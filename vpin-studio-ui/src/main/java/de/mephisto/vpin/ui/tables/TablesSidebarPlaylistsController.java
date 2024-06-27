@@ -13,10 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Hyperlink;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -120,17 +117,19 @@ public class TablesSidebarPlaylistsController implements Initializable {
         gameCheckbox.setDisable(playlist.isSqlPlayList());
         gameCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
 
+        boolean wasPlayed = playlist.wasPlayed(game.getId());
+
         HBox favLists = new HBox(12);
         favLists.setPadding(new Insets(0, 0, 3, 27));
         boolean addFavCheckboxes = playlist.getId() != 0 && playlist.containsGame(game.getId()) && playlist.isSqlPlayList() && playlist.getPlayListSQL() != null && playlist.getPlayListSQL().contains("EMUID");
         boolean fav = playlist.isFavGame(game.getId());
         boolean globalFav = playlist.isGlobalFavGame(game.getId());
 
-        if(addFavCheckboxes) {
+        if (addFavCheckboxes) {
           CheckBox favCheckbox = new CheckBox();
           favCheckbox.setText("Local Favorite");
           favCheckbox.setUserData(playlist);
-          favCheckbox.setDisable(!playlist.containsGame(game.getId()));
+          favCheckbox.setDisable(!playlist.containsGame(game.getId()) || !wasPlayed);
           favCheckbox.setSelected(playlist.isFavGame(game.getId()));
           favCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
           favCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -147,18 +146,23 @@ public class TablesSidebarPlaylistsController implements Initializable {
                 }
 
                 refreshPlaylist(playlist, false);
-              } catch (Exception e) {
+              }
+              catch (Exception e) {
                 LOG.error("Failed to update playlists: " + e.getMessage(), e);
                 WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
               }
             }
           });
+          if(!wasPlayed) {
+            favCheckbox.setTooltip(new Tooltip("The game needs to be played once."));
+          }
+
           favLists.getChildren().add(favCheckbox);
 
           CheckBox globalFavCheckbox = new CheckBox();
           globalFavCheckbox.setText("Global Favorite");
           globalFavCheckbox.setUserData(playlist);
-          globalFavCheckbox.setDisable(!playlist.containsGame(game.getId()));
+          globalFavCheckbox.setDisable(!playlist.containsGame(game.getId()) || !wasPlayed);
           globalFavCheckbox.setSelected(playlist.isGlobalFavGame(game.getId()));
           globalFavCheckbox.setStyle("-fx-font-size: 14px;-fx-text-fill: white;");
           globalFavCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -173,12 +177,17 @@ public class TablesSidebarPlaylistsController implements Initializable {
                   client.getPlaylistsService().updatePlaylistGame(playlist, game, playlist.isFavGame(game.getId()), t1);
                 }
                 refreshPlaylist(playlist, false);
-              } catch (Exception e) {
+              }
+              catch (Exception e) {
                 LOG.error("Failed to update playlists: " + e.getMessage(), e);
                 WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
               }
             }
           });
+
+          if(!wasPlayed) {
+            globalFavCheckbox.setTooltip(new Tooltip("The game needs to be played once."));
+          }
           favLists.getChildren().add(globalFavCheckbox);
         }
 
@@ -194,7 +203,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
                 Playlist update = client.getPlaylistsService().removeFromPlaylist(playlist, game);
                 refreshPlaylist(update, false);
               }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to update playlists: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
             }
@@ -208,7 +218,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
             try {
               Playlist update = client.getPlaylistsService().setPlaylistColor(playlist, PreferenceBindingUtil.toHexString(t1));
               refreshPlaylist(update, true);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to update playlists: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
             }
@@ -227,12 +238,13 @@ public class TablesSidebarPlaylistsController implements Initializable {
         VBox entry = new VBox(3);
         entry.getChildren().add(root);
 
-        if(!favLists.getChildren().isEmpty()) {
+        if (!favLists.getChildren().isEmpty()) {
           entry.getChildren().add(favLists);
         }
 
         if (playlist.isSqlPlayList()) {
           Label label = new Label("(SQL Playlist)");
+
           label.getStyleClass().add("default-text");
           label.setStyle("-fx-font-size: 12px;");
           label.setPadding(new Insets(0, 0, 12, 27));
@@ -246,14 +258,14 @@ public class TablesSidebarPlaylistsController implements Initializable {
   private void refreshPlaylist(Playlist update, boolean updateAll) {
     tablesSidebarController.getTablesController().updatePlaylist();
 
-    if(updateAll) {
+    if (updateAll) {
       List<PlaylistGame> games = update.getGames();
       for (PlaylistGame playlistGame : games) {
         EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
       }
     }
     else {
-      if(this.game.isPresent()) {
+      if (this.game.isPresent()) {
         EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
       }
     }

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.popper;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.popper.*;
@@ -9,7 +10,6 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -854,12 +854,21 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
+        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(playlist.getId(), sql));
+          List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
+          for (Integer additionalId : additionalIds) {
+            if (!playlistGameMap.containsKey(additionalIds)) {
+              PlaylistGame notSetPlaylistGame = new PlaylistGame();
+              notSetPlaylistGame.setFav(false);
+              notSetPlaylistGame.setPlayed(false);
+              notSetPlaylistGame.setGlobalFav(false);
+              notSetPlaylistGame.setId(additionalId);
+              playlistGameMap.put(additionalId, notSetPlaylistGame);
+            }
+          }
         }
-        else {
-          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
-        }
+        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
       }
       rs.close();
       statement.close();
@@ -900,12 +909,21 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
+        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(playlist.getId(), sql));
+          List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
+          for (Integer additionalId : additionalIds) {
+            if (!playlistGameMap.containsKey(additionalIds)) {
+              PlaylistGame notSetPlaylistGame = new PlaylistGame();
+              notSetPlaylistGame.setFav(false);
+              notSetPlaylistGame.setPlayed(false);
+              notSetPlaylistGame.setGlobalFav(false);
+              notSetPlaylistGame.setId(additionalId);
+              playlistGameMap.put(additionalId, notSetPlaylistGame);
+            }
+          }
         }
-        else {
-          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
-        }
+        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 
         result.add(playlist);
       }
@@ -1374,8 +1392,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   @NonNull
-  private List<PlaylistGame> getGameIdsFromPlaylist(int id) {
-    List<PlaylistGame> result = new ArrayList<>();
+  private Map<Integer, PlaylistGame> getGamesFromPlaylist(int id) {
+    Map<Integer, PlaylistGame> result = new LinkedHashMap();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
@@ -1390,7 +1408,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         game.setFav(favMode == 1);
         game.setGlobalFav(favMode == 2);
 
-        result.add(game);
+        result.put(gameId, game);
       }
 
       rs.close();
@@ -1406,20 +1424,46 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
 
-  private List<PlaylistGame> getGameIdsFromSqlPlaylist(int playlistId, String sql) {
-    List<PlaylistGame> result = new ArrayList<>();
+//  private List<PlaylistGame> getGameIdsFromSqlPlaylist(int playlistId, String sql) {
+//    List<PlaylistGame> result = new ArrayList<>();
+//    Connection connect = connect();
+//    try {
+//      Statement statement = connect.createStatement();
+//      ResultSet rs = statement.executeQuery(sql);
+//
+//      //TODO bad performance, join select here!
+//      while (rs.next()) {
+//        int gameId = rs.getInt("GameID");
+//        PlaylistGame game = getPlaylistGame(playlistId, gameId);
+//        if (game != null) {
+//          result.add(game);
+//        }
+//      }
+//
+//      rs.close();
+//      statement.close();
+//    }
+//    catch (SQLException e) {
+//      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+//    }
+//    finally {
+//      disconnect(connect);
+//    }
+//    return result;
+//  }
+
+  private List<Integer> getGameIdsFromSqlPlaylist(String sql, Map<Integer, PlaylistGame> playlistGames) {
+    List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(sql);
-
-      //TODO bad performance, join select here!
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
-        PlaylistGame game = getPlaylistGame(playlistId, gameId);
-        if (game != null) {
-          result.add(game);
+        if (playlistGames.containsKey(gameId)) {
+          continue;
         }
+        result.add(gameId);
       }
 
       rs.close();

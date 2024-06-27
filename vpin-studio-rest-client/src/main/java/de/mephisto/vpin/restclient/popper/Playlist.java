@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.popper;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -100,5 +102,11 @@ public class Playlist {
   public boolean isGlobalFavGame(int id) {
     PlaylistGame game = getGame(id);
     return game != null && getGame(id).isGlobalFav();
+  }
+
+  @JsonIgnore
+  public boolean wasPlayed(int id) {
+    PlaylistGame game = getGame(id);
+    return game != null && game.isPlayed();
   }
 }
