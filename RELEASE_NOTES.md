@@ -1,8 +1,12 @@
 ## Release Notes 3.0
 
 We are happy to announce that VPin Studio version 3.0 has been released.
+Here is what's new:
 
 ### PinballX Support
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/pinballx.png" width="400" />
+
 
 The VPin Studio supports **PinballX** now too! The feature set is a bit more limited than the one for PinUP Popper users
 but the basic scoring and asset management functionalities are there.
@@ -18,16 +22,51 @@ You can select between the three modes (PinUP Popper, PinballX and Standalone) w
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/iScored-logo.png" width="400" />
 
+I'm happy to announce the (first!) **iScored** integration for the VPin Studio. 
+Since the VPin Studio server already knows everything about a table highscore and highscore changes, it
+can now push these updates out to any **iScored** dashbard.
+The configuration for this is super easy thanks to the dashboard scan provided by the VPin Studio client 
+competitions for this are setup in no time.
 
+Checkout the video for more details:
+https://www.youtube.com/@vpin-studio/videos
 
 
 ### Notifications
 
+Having highscore cards automatically updated is a nice feature, but I often get the question: "Ok, but when is the card updated?"
+Checking if a highscore has been updated has always bothered me, so the Studio will support notifications now that pop up for different events and only when no emulator is currently running.
+You can configure the available notifications on the corresponding preferences page.
 
-- **Controller Support**: All VPin UI related keybindings have been re-implemeneted using a new API which also includes controller support.
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/notifications.jpg" width="500" />
+
+### VPin Studio App
+
+The dashboard overlay is one of first features that came with the VPin Studio.
+Unfortunately, buttons to bind it are rare on some cabinets. That's why the backend
+now comes with an additional .exe file **VPin Studio App** which can be added to your VPin frontend and launched as any other game.
+This app will show the dashboard and may be extended in the future with additional features, like additional screens (?) and widgets.
+
+<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/notifications.jpg" width="500" />
+
+
+Checkout the video to see how to install the VPin Studio App:
+https://www.youtube.com/@vpin-studio/videos
+
+
+
+### Controller Support
+
+All VPin UI related keybindings have been re-implemented using a new API which also includes controller support.
+This is a **breaking change** since you have to re-map all existing bindings from previous versions of the VPin Studio.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/controller-bindings.png" width="600" />
+
+### Miscellaneous
+
 - **Preferences Changes**: 
 - **Sidebar**: Added toggling
-- **VPin Studio Overlay**: Added app
+
 - **Filter Section**: Splitted filter preferences for .ini and .pov files.
 
 ### Bugfixes
