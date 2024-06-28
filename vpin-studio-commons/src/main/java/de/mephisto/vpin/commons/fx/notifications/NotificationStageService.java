@@ -35,8 +35,9 @@ public class NotificationStageService extends Application {
     queue.offer(notification);
   }
 
-  public void notifyFrontendExit() {
-    Platform.runLater(()-> {
+  public void pollNotifications() {
+    LOG.info("Polling notifications (Queue size: " + queue.size() + ")");
+    Platform.runLater(() -> {
       pollQueue();
     });
   }
@@ -66,6 +67,7 @@ public class NotificationStageService extends Application {
     Notification notification = queue.poll();
     NotificationStage notificationStage = new NotificationStage(notification);
     stages.offer(notificationStage);
+    LOG.info("Showing " + notification);
     notificationStage.getStage().setOnHiding(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
@@ -101,7 +103,7 @@ public class NotificationStageService extends Application {
     queueNotification(notification2);
     queueNotification(notification3);
 
-    notifyFrontendExit();
+    pollNotifications();
 //    showNotification(notification4);
   }
 }

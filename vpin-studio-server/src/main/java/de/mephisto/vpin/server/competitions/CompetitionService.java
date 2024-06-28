@@ -3,11 +3,10 @@ package de.mephisto.vpin.server.competitions;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.server.tournaments.TournamentsService;
+import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -49,9 +48,6 @@ public class CompetitionService implements InitializingBean {
 
   @Autowired
   private CompetitionValidator competitionValidator;
-
-  @Autowired
-  private TournamentsService maniaService;
 
   private final List<CompetitionChangeListener> listeners = new ArrayList<>();
 

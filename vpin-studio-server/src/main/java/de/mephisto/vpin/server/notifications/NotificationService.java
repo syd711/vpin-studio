@@ -8,7 +8,8 @@ import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
-import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NotificationService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, ServerFXListener {
+public class NotificationService implements InitializingBean, PreferenceChangedListener, HighscoreChangeListener, FrontendStatusChangeListener, ServerFXListener {
   private final static Logger LOG = LoggerFactory.getLogger(NotificationService.class);
 
   @Autowired
@@ -38,7 +40,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   private SystemService systemService;
 
   @Autowired
-  private FrontendService frontendService;
+  private FrontendStatusService frontendStatusService;
 
   private NotificationSettings notificationSettings;
 
@@ -58,20 +60,57 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    if (!notificationSettings.isHighscoreUpdatedNotification() || notificationSettings.getDurationSec() == 0) {
+    if (notificationSettings.getDurationSec() == 0) {
       return;
     }
 
     Game game = event.getGame();
-    Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
-        game.getGameDisplayName(), "A new highscore has been created!",
-        event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
-    showNotification(notification);
+
+    if (notificationSettings.isHighscoreUpdatedNotification()) {
+      Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+          game.getGameDisplayName(), "A new highscore has been created!",
+          event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
+      showNotification(notification);
+    }
+
+    if (notificationSettings.isDiscordNotification()) {
+      String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
+      String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
+      if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
+        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Scores has been published on Discord!");
+        showNotification(notification);
+      }
+    }
   }
 
   @Override
   public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
 
+  }
+
+  @Override
+  public void frontendLaunched() {
+
+  }
+
+  @Override
+  public void frontendExited() {
+    NotificationStageService.getInstance().pollNotifications();
+  }
+
+  @Override
+  public void frontendRestarted() {
+    NotificationStageService.getInstance().pollNotifications();
+  }
+
+  @Override
+  public void fxInitialized() {
+    if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
+      Notification notification = NotificationFactory.createNotification(null,
+          "VPin Studio Server", "The server has been started.",
+          "Version " + systemService.getVersion());
+      showNotification(notification);
+    }
   }
 
   @Override
@@ -82,21 +121,12 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
 
         preferencesService.addChangeListener(this);
         highscoreService.addHighscoreChangeListener(this);
+        frontendStatusService.addFrontendStatusChangeListener(this);
         preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
       }
     }
     catch (Exception e) {
       LOG.error("Failed to initialize " + this + ": " + e.getMessage(), e);
-    }
-  }
-
-  @Override
-  public void fxInitialized() {
-    if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
-      Notification notification = NotificationFactory.createNotification(null,
-          "VPin Studio Server", "The server has been started.",
-          "Version " + systemService.getVersion());
-      showNotification(notification);
     }
   }
 }
