@@ -153,7 +153,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
               }
             }
           });
-          if(!wasPlayed) {
+          if (!wasPlayed) {
             favCheckbox.setTooltip(new Tooltip("The game needs to be played once."));
           }
 
@@ -185,7 +185,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
             }
           });
 
-          if(!wasPlayed) {
+          if (!wasPlayed) {
             globalFavCheckbox.setTooltip(new Tooltip("The game needs to be played once."));
           }
           favLists.getChildren().add(globalFavCheckbox);
@@ -255,13 +255,18 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
   }
 
-  private void refreshPlaylist(Playlist update, boolean updateAll) {
+  private void refreshPlaylist(Playlist playlist, boolean updateAll) {
     tablesSidebarController.getTablesController().updatePlaylist();
 
     if (updateAll) {
-      List<PlaylistGame> games = update.getGames();
-      for (PlaylistGame playlistGame : games) {
-        EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
+      List<PlaylistGame> games = playlist.getGames();
+      if (games.size() > 5) {
+        EventManager.getInstance().notifyTablesChanged();
+      }
+      else {
+        for (PlaylistGame playlistGame : games) {
+          EventManager.getInstance().notifyTableChange(playlistGame.getId(), null);
+        }
       }
     }
     else {

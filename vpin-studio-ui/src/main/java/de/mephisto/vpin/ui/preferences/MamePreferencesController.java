@@ -4,9 +4,12 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesSidebarMameController;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,7 +52,7 @@ public class MamePreferencesController implements Initializable {
   private CheckBox colorizeDmd;
 
   @FXML
-  private CheckBox soundMode;
+  private ComboBox<TablesSidebarMameController.SoundMode> soundModeCombo;
 
   @FXML
   private CheckBox forceStereo;
@@ -64,12 +67,12 @@ public class MamePreferencesController implements Initializable {
     options.setUseSound(useSound.isSelected());
     options.setCompactDisplay(compactDisplay.isSelected());
     options.setDoubleDisplaySize(doubleDisplaySize.isSelected());
-    options.setUseSound(useSound.isSelected());
+    options.setSoundMode(soundModeCombo.getValue().getId());
     options.setShowDmd(showDmd.isSelected());
     options.setUseExternalDmd(useExternalDmd.isSelected());
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
-    options.setSoundMode(soundMode.isSelected());
+    options.setSoundMode(soundModeCombo.getValue().getId());
     options.setForceStereo(forceStereo.isSelected());
 
     try {
@@ -107,8 +110,9 @@ public class MamePreferencesController implements Initializable {
     useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     colorizeDmd.setSelected(options.isColorizeDmd());
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    soundMode.setSelected(options.isColorizeDmd());
-    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    soundModeCombo.setItems(FXCollections.observableList(TablesSidebarMameController.SOUND_MODES));
+    soundModeCombo.setValue(TablesSidebarMameController.SOUND_MODES.get(options.getSoundMode()));
+    soundModeCombo.valueProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     forceStereo.setSelected(options.isForceStereo());
     forceStereo.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }

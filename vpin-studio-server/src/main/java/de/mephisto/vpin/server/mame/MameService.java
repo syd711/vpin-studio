@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -9,7 +10,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -102,7 +102,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
       options.setShowDmd(getBoolean(values, KEY_SHOW_DMD));
       options.setUseExternalDmd(getBoolean(values, KEY_USER_EXTERNAL_DMD));
       options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
-      options.setSoundMode(getBoolean(values, KEY_SOUND_MODE));
+      options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
       options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
     }
 
@@ -127,7 +127,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SHOW_DMD, options.isShowDmd() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USER_EXTERNAL_DMD, options.isUseExternalDmd() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_COLORIZE_DMD, options.isColorizeDmd() ? 1 : 0);
-    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.isSoundMode() ? 1 : 0);
+    WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SOUND_MODE, options.getSoundMode());
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_FORCE_STEREO, options.isForceStereo() ? 1 : 0);
 
     mameCache.put(options.getRom().toLowerCase(), options);
@@ -142,6 +142,13 @@ public class MameService implements InitializingBean, ApplicationContextAware {
 
   private boolean getBoolean(Map<String, Object> values, String key) {
     return values.containsKey(key) && values.get(key) instanceof Integer && (((Integer) values.get(key)) == 1);
+  }
+
+  private int getInteger(Map<String, Object> values, String key) {
+    if (values.containsKey(key) && values.get(key) instanceof Integer) {
+      return (int) values.get(key);
+    }
+    return 0;
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {

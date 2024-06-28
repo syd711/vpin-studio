@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -100,18 +101,22 @@
                         </CheckBox>
                         <Label layoutX="10.0" layoutY="638.0" styleClass="checkbox-description" text="Enables basic DMD colorization by VPin Mame." textFill="WHITE" wrapText="true" />
                         <Label layoutX="10.0" layoutY="369.0" styleClass="checkbox-description" text="This flag must also be checked for other colorization frameworks." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="soundMode" layoutX="10.0" layoutY="499.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Sound Mode" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label layoutX="10.0" layoutY="531.0" styleClass="checkbox-description" text="This can enable the use of alternative, external sound package recordings." textFill="WHITE" wrapText="true" />
                         <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="703.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Force Stereo" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
                         <Label layoutX="10.0" layoutY="741.0" styleClass="checkbox-description" text="Relevant for 7.1 systems. If checked, it won't try to use the center." textFill="WHITE" wrapText="true" />
+                        <Label styleClass="default-text" text="Sound Mode" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label layoutX="10.0" layoutY="531.0" styleClass="preference-description" text="This can enable the use of alternative, external sound package recordings." textFill="WHITE" wrapText="true" />
+                        <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />

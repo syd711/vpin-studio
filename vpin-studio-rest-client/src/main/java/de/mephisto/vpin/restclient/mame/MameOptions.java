@@ -19,8 +19,16 @@ public class MameOptions {
   private boolean showDmd;
   private boolean useExternalDmd;
   private boolean colorizeDmd;
-  private boolean soundMode;
+  private int soundMode;
   private boolean forceStereo;
+
+  public int getSoundMode() {
+    return soundMode;
+  }
+
+  public void setSoundMode(int soundMode) {
+    this.soundMode = soundMode;
+  }
 
   private boolean existInRegistry;
 
@@ -46,14 +54,6 @@ public class MameOptions {
 
   public void setDoubleDisplaySize(boolean doubleDisplaySize) {
     this.doubleDisplaySize = doubleDisplaySize;
-  }
-
-  public boolean isSoundMode() {
-    return soundMode;
-  }
-
-  public void setSoundMode(boolean soundMode) {
-    this.soundMode = soundMode;
   }
 
   public boolean isExistInRegistry() {

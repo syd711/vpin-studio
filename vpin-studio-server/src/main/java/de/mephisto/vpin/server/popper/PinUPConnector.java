@@ -856,17 +856,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
         Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
-          for (Integer additionalId : additionalIds) {
-            if (!playlistGameMap.containsKey(additionalIds)) {
-              PlaylistGame notSetPlaylistGame = new PlaylistGame();
-              notSetPlaylistGame.setFav(false);
-              notSetPlaylistGame.setPlayed(false);
-              notSetPlaylistGame.setGlobalFav(false);
-              notSetPlaylistGame.setId(additionalId);
-              playlistGameMap.put(additionalId, notSetPlaylistGame);
-            }
-          }
+          updateSQLPlaylist(sql, playlistGameMap);
         }
         playlist.setGames(new ArrayList<>(playlistGameMap.values()));
       }
@@ -911,17 +901,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
         Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
-          for (Integer additionalId : additionalIds) {
-            if (!playlistGameMap.containsKey(additionalIds)) {
-              PlaylistGame notSetPlaylistGame = new PlaylistGame();
-              notSetPlaylistGame.setFav(false);
-              notSetPlaylistGame.setPlayed(false);
-              notSetPlaylistGame.setGlobalFav(false);
-              notSetPlaylistGame.setId(additionalId);
-              playlistGameMap.put(additionalId, notSetPlaylistGame);
-            }
-          }
+          updateSQLPlaylist(sql, playlistGameMap);
         }
         playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 
@@ -937,6 +917,21 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       this.disconnect(connect);
     }
     return result;
+  }
+
+  private void updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+    //fetch the ids of tables applicable for this playlist
+    List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
+    for (Integer additionalId : additionalIds) {
+      if (!playlistGameMap.containsKey(additionalId.intValue())) {
+        PlaylistGame notSetPlaylistGame = new PlaylistGame();
+        notSetPlaylistGame.setFav(false);
+        notSetPlaylistGame.setPlayed(false);
+        notSetPlaylistGame.setGlobalFav(false);
+        notSetPlaylistGame.setId(additionalId);
+        playlistGameMap.put(additionalId, notSetPlaylistGame);
+      }
+    }
   }
 
   public void setPlaylistColor(int playlistId, long color) {
@@ -1407,6 +1402,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
         int favMode = rs.getInt(IS_FAV);
         game.setFav(favMode == 1);
         game.setGlobalFav(favMode == 2);
+        game.setPlayed(true);
 
         result.put(gameId, game);
       }

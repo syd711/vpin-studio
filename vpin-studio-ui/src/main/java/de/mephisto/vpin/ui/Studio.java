@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -41,6 +42,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -131,8 +134,11 @@ public class Studio extends Application {
     try {
       try {
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
-        sevenZipTempFolder.mkdirs();
-        SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
+        if (!sevenZipTempFolder.exists()) {
+          sevenZipTempFolder.mkdirs();
+          SevenZip.initSevenZipFromPlatformJAR(sevenZipTempFolder);
+          LOG.info("Installed sevenZip");
+        }
       }
       catch (Exception e) {
         LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);

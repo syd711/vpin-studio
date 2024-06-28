@@ -918,7 +918,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         tableView.requestFocus();
         tableView.getSelectionModel().select(selectedItem);
-        if(selectedItem == null) {
+        if (selectedItem == null) {
           tableView.getSelectionModel().select(0);
         }
 
@@ -1224,32 +1224,34 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
 
-
+      int ICON_WIDTH = 26;
+      double width = 0;
       if (fav) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
         box.getChildren().add(label);
+        width += ICON_WIDTH;
       }
 
       if (globalFav) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
         box.getChildren().add(label);
+        width += ICON_WIDTH;
       }
 
-      int maxLength = 5;
-      if (fav) {
-        maxLength--;
-      }
-      if (globalFav) {
-        maxLength--;
-      }
+      int count = 0;
       for (Playlist match : matches) {
-        box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
-        if (box.getChildren().size() == maxLength && matches.size() > box.getChildren().size()) {
-          Label label = new Label("+" + (matches.size() - box.getChildren().size()));
-          label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
-          box.getChildren().add(label);
-          break;
+        if (width  < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
+          box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
+          width += ICON_WIDTH;
+          count++;
+          continue;
         }
+
+        Label label = new Label("+" + (matches.size() - count));
+        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
+        label.getStyleClass().add("default-text");
+        box.getChildren().add(label);
+        break;
       }
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;

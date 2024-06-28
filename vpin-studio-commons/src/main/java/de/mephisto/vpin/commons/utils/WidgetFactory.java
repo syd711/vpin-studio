@@ -595,11 +595,8 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(24);
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.hexColor(item.getMenuColor())));
-        fontIcon.setIconLiteral("mdi2v-view-list");
-        setGraphic(fontIcon);
+        Label playlistIcon = WidgetFactory.createPlaylistIcon(item);
+        setGraphic(playlistIcon);
 
         setText(" " + item.toString());
       }
