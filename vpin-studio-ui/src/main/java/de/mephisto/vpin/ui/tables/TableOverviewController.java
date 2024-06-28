@@ -7,10 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -549,11 +546,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Frontend frontend = client.getFrontendService().getFrontend();
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
-        "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
-        FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
-        null, "Do not shown again", false);
+          "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
+          FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
+          null, "Do not shown again", false);
 
-        if (!confirmationResult.isApplyClicked()) {
+      if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
@@ -567,7 +564,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontend();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-      FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
+        FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
@@ -884,9 +881,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onReload() {
     doReload(true);
   }
+
   public void onSwitchFromCache() {
     doReload(false);
   }
+
   public void doReload(boolean clearCache) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
@@ -909,76 +908,86 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     setBusy("Loading Tables...", true);
     new Thread(() -> {
+      try {
+        GameRepresentation selection = getSelection();
+        GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        int id = -1;
+        if (value != null) {
+          id = value.getId();
+        }
 
-      GameRepresentation selection = getSelection();
-      GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-      GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-      int id = -1;
-      if (value != null) {
-        id = value.getId();
-      }
+        if (clearCache) {
+          client.getGameService().clearCache(id);
+        }
+        List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
 
-      if (clearCache) {
-        client.getGameService().clearCache(id);
-      }
-      List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
+        // as the load of tables could take some time, users may have switched to another emulators in between
+        // if this is the case, do not refresh the UI with the results
+        GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+        if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
+          return;
+        }
 
-      // as the load of tables could take some time, users may have switched to another emulators in between
-      // if this is the case, do not refresh the UI with the results
-      GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-      if (valueAfterSearch.getId() != id) {
-        return;
-      }
+        Platform.runLater(() -> {
 
-      Platform.runLater(() -> {
+          setItems(_games);
 
-        setItems(_games);
-
-        if (selection != null) {
-          final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
-          if (updatedGame.isPresent()) {
-            GameRepresentation gameRepresentation = updatedGame.get();
-            //tableView.getSelectionModel().select(gameRepresentation);
-            this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+          if (selection != null) {
+            final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
+            if (updatedGame.isPresent()) {
+              GameRepresentation gameRepresentation = updatedGame.get();
+              //tableView.getSelectionModel().select(gameRepresentation);
+              this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+            }
           }
-        }
 
-        if (!games.isEmpty()) {
-          this.validateBtn.setDisable(false);
-          this.deleteBtn.setDisable(false);
-          this.tableEditBtn.setDisable(false);
-        }
-        else {
-          Frontend frontend = client.getFrontendService().getFrontend();
-          this.validationErrorLabel.setText("No tables found");
-          this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
-            + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
-        }
+          if (!games.isEmpty()) {
+            this.validateBtn.setDisable(false);
+            this.deleteBtn.setDisable(false);
+            this.tableEditBtn.setDisable(false);
+          }
+          else {
+            Frontend frontend = client.getFrontendService().getFrontend();
+            this.validationErrorLabel.setText("No tables found");
+            this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
+                + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+          }
 
-        this.importBtn.setDisable(false);
-        this.stopBtn.setDisable(false);
-        this.textfieldSearch.setDisable(false);
-        this.reloadBtn.setDisable(false);
-        this.scanBtn.setDisable(false);
-        this.scanAllBtn.setDisable(false);
-        this.uploadTableBtn.setDisable(false);
+          this.importBtn.setDisable(false);
+          this.stopBtn.setDisable(false);
+          this.textfieldSearch.setDisable(false);
+          this.reloadBtn.setDisable(false);
+          this.scanBtn.setDisable(false);
+          this.scanAllBtn.setDisable(false);
+          this.uploadTableBtn.setDisable(false);
 
-        tableView.requestFocus();
+          tableView.requestFocus();
 
-        if (selectedItem == null) {
-          tableView.getSelectionModel().select(0);
-        }
-        else {
-          tableView.getSelectionModel().select(selectedItem);
-        }
+          if (selectedItem == null) {
+            tableView.getSelectionModel().select(0);
+          }
+          else {
+            tableView.getSelectionModel().select(selectedItem);
+          }
 
-        for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-          reloadConsumer.accept(selection);
-        }
-        reloadConsumers.clear();
+          for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+            reloadConsumer.accept(selection);
+          }
+          reloadConsumers.clear();
 
-        setBusy("", false);
-      });
+          setBusy("", false);
+        });
+
+
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load tables: " + e.getMessage(), e);
+        Platform.runLater(() -> {
+          WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage());
+        });
+      }
+
     }).start();
   }
 
@@ -1097,8 +1106,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
-          + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
-          + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
+            + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
+            + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
         FrontendUtil.replaceName(tt, frontend);
         tt.setWrapText(true);
         tt.setMaxWidth(400);
@@ -1301,7 +1310,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       int count = 0;
       for (Playlist match : matches) {
-        if (width  < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
+        if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
           width += ICON_WIDTH;
           count++;
