@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
@@ -110,6 +111,11 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   @FXML
   private void onReloadPressed() {
     onReload(true);
+  }
+
+  @FXML
+  private void onHighscoreSettings() {
+    PreferencesController.open("highscore_cards");
   }
 
   @FXML

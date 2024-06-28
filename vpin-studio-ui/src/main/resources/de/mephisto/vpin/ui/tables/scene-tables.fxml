@@ -72,6 +72,20 @@
                         <Tooltip text="Toggle Sidebar [F3]" />
                      </tooltip>
                   </Button>
+                  <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onTableSettings" StackPane.alignment="TOP_RIGHT">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Open Screen Validators Settings" />
+                     </tooltip>
+                     <StackPane.margin>
+                        <Insets right="43.0" top="6.0" />
+                     </StackPane.margin>
+                  </Button>
                     </children>
                 </StackPane>
             </center>

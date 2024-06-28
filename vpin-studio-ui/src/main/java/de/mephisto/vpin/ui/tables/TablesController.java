@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
@@ -98,6 +99,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private Button toggleSidebarBtn;
 
+  @FXML
+  private Button tableSettingsBtn;
+
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
 
@@ -105,6 +109,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void onViewActivated() {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+  }
+
+
+  @FXML
+  private void onTableSettings() {
+    PreferencesController.open("settings-client");
   }
 
   @FXML

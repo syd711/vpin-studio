@@ -33,5 +33,4 @@ You can select between the three modes (PinUP Popper, PinballX and Standalone) w
 ### Bugfixes
 
 - **Pause Menu**: Fixed auto-play issues of YouTube videos.
-- **VPin Studio Launcher**: Improved error handling so that the Studio still launches on seven-zip issues.
 - **VPX Monitor**: I disabled this feature for now since when enabled, this VPX process watcher hangs and I haven't found the problem yet.
