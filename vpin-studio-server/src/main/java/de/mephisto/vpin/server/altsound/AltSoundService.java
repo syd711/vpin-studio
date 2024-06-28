@@ -86,7 +86,7 @@ public class AltSoundService implements InitializingBean {
   public boolean setAltSoundEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
-      options.setSoundMode(b);
+      options.setSoundMode(1);
       mameService.saveOptions(options);
     }
     return b;
@@ -95,7 +95,7 @@ public class AltSoundService implements InitializingBean {
   public boolean isAltSoundEnabled(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
       MameOptions options = mameService.getOptions(game.getRom());
-      return options.isSoundMode();
+      return options.getSoundMode() > 0;
     }
     return false;
   }

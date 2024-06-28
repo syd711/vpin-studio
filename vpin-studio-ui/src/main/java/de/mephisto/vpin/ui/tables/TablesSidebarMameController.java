@@ -15,12 +15,13 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
@@ -31,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -38,6 +41,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarMameController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarMameController.class);
+
+  public final static java.util.List<SoundMode> SOUND_MODES = Arrays.asList(
+      new SoundMode(0, "0 - Standard built-in PinMAME emulation"),
+      new SoundMode(1, "1 - Built-in alternate sound file support"),
+      new SoundMode(2, "2 - External pinsound"),
+      new SoundMode(3, "3 - External pinsound + psrec sound recording"));
 
   @FXML
   private ScrollPane dataScrollPane;
@@ -91,7 +100,7 @@ public class TablesSidebarMameController implements Initializable {
   private CheckBox colorizeDmd;
 
   @FXML
-  private CheckBox soundMode;
+  private ComboBox<SoundMode> soundModeCombo;
 
   @FXML
   private CheckBox forceStereo;
@@ -163,7 +172,8 @@ public class TablesSidebarMameController implements Initializable {
         client.getMameService().clearCache();
         EventManager.getInstance().notifyTablesChanged();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open alias text file: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open alias text file: " + e.getMessage());
     }
@@ -192,7 +202,8 @@ public class TablesSidebarMameController implements Initializable {
           else {
             desktop.open(file);
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to open Mame Setup: " + e.getMessage());
         }
       }
@@ -214,7 +225,9 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.setSelected(defaultOptions.isShowDmd());
     useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
     colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
-    soundMode.setSelected(defaultOptions.isSoundMode());
+    if (defaultOptions.getSoundMode() >= 0) {
+      soundModeCombo.setValue(SOUND_MODES.get(defaultOptions.getSoundMode()));
+    }
     forceStereo.setSelected(defaultOptions.isForceStereo());
 
     saveDisabled = false;
@@ -247,7 +260,8 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useExternalDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     colorizeDmd.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
-    soundMode.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
+    soundModeCombo.setItems(FXCollections.observableList(SOUND_MODES));
+    soundModeCombo.valueProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     forceStereo.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
   }
 
@@ -283,7 +297,7 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.setSelected(false);
     useExternalDmd.setSelected(false);
     colorizeDmd.setSelected(false);
-    soundMode.setSelected(false);
+    soundModeCombo.setValue(SOUND_MODES.get(0));
     forceStereo.setSelected(false);
 
     this.errorBox.setVisible(false);
@@ -328,7 +342,7 @@ public class TablesSidebarMameController implements Initializable {
           showDmd.setSelected(options.isShowDmd());
           useExternalDmd.setSelected(options.isUseExternalDmd());
           colorizeDmd.setSelected(options.isColorizeDmd());
-          soundMode.setSelected(options.isSoundMode());
+          soundModeCombo.setValue(SOUND_MODES.get(options.getSoundMode()));
           forceStereo.setSelected(options.isForceStereo());
 
           if (options.getValidationStates() != null && !options.getValidationStates().isEmpty()) {
@@ -355,7 +369,7 @@ public class TablesSidebarMameController implements Initializable {
     showDmd.setDisable(b);
     useExternalDmd.setDisable(b);
     colorizeDmd.setDisable(b);
-    soundMode.setDisable(b);
+    soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
   }
 
@@ -377,13 +391,14 @@ public class TablesSidebarMameController implements Initializable {
     options.setUseExternalDmd(useExternalDmd.isSelected());
     options.setCabinetMode(cabinetMode.isSelected());
     options.setColorizeDmd(colorizeDmd.isSelected());
-    options.setSoundMode(soundMode.isSelected());
+    options.setSoundMode(soundModeCombo.getValue().getId());
     options.setForceStereo(forceStereo.isSelected());
 
     try {
       client.getMameService().saveOptions(options);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save mame settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
     }
@@ -391,5 +406,41 @@ public class TablesSidebarMameController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  public static class SoundMode {
+    private int id;
+    private String label;
+
+    public SoundMode(int id, String label) {
+      this.id = id;
+      this.label = label;
+    }
+
+    public int getId() {
+      return id;
+    }
+
+    public String getLabel() {
+      return label;
+    }
+
+    @Override
+    public String toString() {
+      return label;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      SoundMode soundMode = (SoundMode) o;
+      return id == soundMode.id;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(id);
+    }
   }
 }

@@ -548,8 +548,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       Frontend frontend = client.getFrontendService().getFrontend();
 
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, 
-        "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", 
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
+        "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
         FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
         null, "Do not shown again", false);
 
@@ -566,7 +566,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontend();
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, 
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
       FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
@@ -757,7 +757,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
-        tableView.refresh();
+
       }
 
       // select the reloaded game
@@ -1096,7 +1096,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Frontend frontend = client.getFrontendService().getFrontend();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion() 
+        Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
           + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
           + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
         FrontendUtil.replaceName(tt, frontend);
@@ -1272,37 +1272,47 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       HBox box = new HBox();
       List<Playlist> matches = new ArrayList<>();
       boolean fav = false;
+      boolean globalFav = false;
       for (Playlist playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
-          if (!fav && (playlist.isFavGame(value.getId()) || playlist.isGlobalFavGame(value.getId()))) {
+          if (!fav && playlist.isFavGame(value.getId())) {
             fav = true;
+          }
+          if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
+            globalFav = true;
           }
           matches.add(playlist);
         }
       }
 
+      int ICON_WIDTH = 26;
+      double width = 0;
       if (fav) {
-        FontIcon icon = WidgetFactory.createIcon("mdi2s-star");
-        icon.setIconSize(24);
-        icon.setIconColor(Paint.valueOf("#FF9933"));
-        Label label = new Label();
-        label.setTooltip(new Tooltip("The game is marked as favorite on at least one playlist."));
-        label.setGraphic(icon);
+        Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
         box.getChildren().add(label);
+        width += ICON_WIDTH;
       }
 
-      int maxLength = 3;
-      if (fav) {
-        maxLength = 2;
+      if (globalFav) {
+        Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
+        box.getChildren().add(label);
+        width += ICON_WIDTH;
       }
+
+      int count = 0;
       for (Playlist match : matches) {
-        box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
-        if (box.getChildren().size() == maxLength && matches.size() > box.getChildren().size()) {
-          Label label = new Label("+" + (matches.size() - box.getChildren().size()));
-          label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
-          box.getChildren().add(label);
-          break;
+        if (width  < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
+          box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
+          width += ICON_WIDTH;
+          count++;
+          continue;
         }
+
+        Label label = new Label("+" + (matches.size() - count));
+        label.setStyle("-fx-font-size: 14px;-fx-font-weight: bold; -fx-padding: 1 0 0 0;");
+        label.getStyleClass().add("default-text");
+        box.getChildren().add(label);
+        break;
       }
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;
@@ -1616,19 +1626,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return models.stream().map(model -> model.getGame()).collect(Collectors.toList());
   }
 
-  public void updatePlaylist(Playlist update) {
-    int pos = this.playlists.indexOf(update);
-    this.playlists.remove(update);
-    this.playlists.add(pos, update);
-
+  public void updatePlaylist() {
+    this.playlists = client.getPlaylistsService().getPlaylists();
     List<Playlist> refreshedData = new ArrayList<>(this.playlists);
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
-
-    GameRepresentation selectedItem = this.getSelection();
-    if (selectedItem != null) {
-      EventManager.getInstance().notifyTableChange(selectedItem.getId(), null);
-    }
   }
 
   @Override
@@ -2017,6 +2019,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public int hashCode() {
       return Objects.hashCode(game);
+    }
+
+    @Override
+    public String toString() {
+      return "GameRepresentationModel \"" + game.getGameDisplayName() + "\"";
     }
   }
 }

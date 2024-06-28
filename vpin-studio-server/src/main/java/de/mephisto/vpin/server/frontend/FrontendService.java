@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -7,7 +8,6 @@ import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.WinRegistry;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;

@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.popper;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -415,7 +416,7 @@ public class PinUPConnector implements FrontendConnector {
 
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET " 
+      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET "
         + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
         + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
         + "DateUpdated=? WHERE GameID=?");
@@ -884,6 +885,34 @@ public class PinUPConnector implements FrontendConnector {
   }
 
 
+  public PlaylistGame getPlaylistGame(int playlistId, int gameId) {
+    Connection connect = this.connect();
+    String sql = "SELECT * FROM PlayListDetails WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
+    PlaylistGame game = null;
+    try {
+      Statement stmt = connect.createStatement();
+      ResultSet rs = stmt.executeQuery(sql);
+      while (rs.next()) {
+        game = new PlaylistGame();
+        game.setId(gameId);
+
+        int favMode = rs.getInt(IS_FAV);
+        game.setFav(favMode == 1);
+        game.setGlobalFav(favMode == 2);
+        break;
+      }
+      rs.close();
+      stmt.close();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read playlist game [" + sql + "]: " + e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    return game;
+  }
+
   @NonNull
   public Playlist getPlayList(int id) {
     Playlist playlist = new Playlist();
@@ -905,12 +934,11 @@ public class PinUPConnector implements FrontendConnector {
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
+        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
+          updateSQLPlaylist(sql, playlistGameMap);
         }
-        else {
-          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
-        }
+        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
       }
       rs.close();
       statement.close();
@@ -951,12 +979,11 @@ public class PinUPConnector implements FrontendConnector {
         }
         playlist.setSqlPlayList(sqlPlaylist);
 
+        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          playlist.setGames(getGameIdsFromSqlPlaylist(sql));
+          updateSQLPlaylist(sql, playlistGameMap);
         }
-        else {
-          playlist.setGames(getGameIdsFromPlaylist(playlist.getId()));
-        }
+        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 
         result.add(playlist);
       }
@@ -970,6 +997,21 @@ public class PinUPConnector implements FrontendConnector {
       this.disconnect(connect);
     }
     return result;
+  }
+
+  private void updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+    //fetch the ids of tables applicable for this playlist
+    List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
+    for (Integer additionalId : additionalIds) {
+      if (!playlistGameMap.containsKey(additionalId.intValue())) {
+        PlaylistGame notSetPlaylistGame = new PlaylistGame();
+        notSetPlaylistGame.setFav(false);
+        notSetPlaylistGame.setPlayed(false);
+        notSetPlaylistGame.setGlobalFav(false);
+        notSetPlaylistGame.setId(additionalId);
+        playlistGameMap.put(additionalId, notSetPlaylistGame);
+      }
+    }
   }
 
   public void setPlaylistColor(int playlistId, long color) {
@@ -1445,8 +1487,8 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   @NonNull
-  private List<PlaylistGame> getGameIdsFromPlaylist(int id) {
-    List<PlaylistGame> result = new ArrayList<>();
+  private Map<Integer, PlaylistGame> getGamesFromPlaylist(int id) {
+    Map<Integer, PlaylistGame> result = new LinkedHashMap();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
@@ -1460,8 +1502,9 @@ public class PinUPConnector implements FrontendConnector {
         int favMode = rs.getInt(IS_FAV);
         game.setFav(favMode == 1);
         game.setGlobalFav(favMode == 2);
+        game.setPlayed(true);
 
-        result.add(game);
+        result.put(gameId, game);
       }
 
       rs.close();
@@ -1477,18 +1520,46 @@ public class PinUPConnector implements FrontendConnector {
   }
 
 
-  private List<PlaylistGame> getGameIdsFromSqlPlaylist(String sql) {
-    List<PlaylistGame> result = new ArrayList<>();
+//  private List<PlaylistGame> getGameIdsFromSqlPlaylist(int playlistId, String sql) {
+//    List<PlaylistGame> result = new ArrayList<>();
+//    Connection connect = connect();
+//    try {
+//      Statement statement = connect.createStatement();
+//      ResultSet rs = statement.executeQuery(sql);
+//
+//      //TODO bad performance, join select here!
+//      while (rs.next()) {
+//        int gameId = rs.getInt("GameID");
+//        PlaylistGame game = getPlaylistGame(playlistId, gameId);
+//        if (game != null) {
+//          result.add(game);
+//        }
+//      }
+//
+//      rs.close();
+//      statement.close();
+//    }
+//    catch (SQLException e) {
+//      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+//    }
+//    finally {
+//      disconnect(connect);
+//    }
+//    return result;
+//  }
+
+  private List<Integer> getGameIdsFromSqlPlaylist(String sql, Map<Integer, PlaylistGame> playlistGames) {
+    List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(sql);
-
       while (rs.next()) {
-        PlaylistGame game = new PlaylistGame();
         int gameId = rs.getInt("GameID");
-        game.setId(gameId);
-        result.add(game);
+        if (playlistGames.containsKey(gameId)) {
+          continue;
+        }
+        result.add(gameId);
       }
 
       rs.close();

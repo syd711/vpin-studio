@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
@@ -122,16 +123,20 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="soundMode" mnemonicParsing="false" text="Sound Mode" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
                         <CheckBox fx:id="forceStereo" layoutX="10.0" layoutY="319.0" mnemonicParsing="false" text="Force Stereo" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
+                        <Label styleClass="default-text" text="Sound Mode" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <ComboBox fx:id="soundModeCombo" prefWidth="320.0" />
                         <Label layoutX="10.0" layoutY="10.0" text="Table Alias Settings" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />

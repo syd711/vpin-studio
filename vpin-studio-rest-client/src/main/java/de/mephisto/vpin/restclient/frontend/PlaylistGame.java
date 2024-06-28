@@ -4,6 +4,15 @@ public class PlaylistGame {
   private int id;
   private boolean fav;
   private boolean globalFav;
+  private boolean played;
+
+  public boolean isPlayed() {
+    return played;
+  }
+
+  public void setPlayed(boolean played) {
+    this.played = played;
+  }
 
   public int getId() {
     return id;

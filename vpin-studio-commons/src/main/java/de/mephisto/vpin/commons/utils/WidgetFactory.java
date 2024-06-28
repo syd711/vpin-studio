@@ -228,13 +228,68 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createPlaylistIcon(Playlist playlist) {
+  public static Label createLocalFavoritePlaylistIcon() {
     Label label = new Label();
-    label.setTooltip(new Tooltip(playlist.getName()));
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+    label.setTooltip(new Tooltip("Local Favorite"));
+    label.setGraphic(fontIcon);
+    return label;
+  }
+
+  public static Label createGlobalFavoritePlaylistIcon() {
+    Label label = new Label();
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
+    fontIcon.setIconLiteral("mdi2a-alpha-g-circle");
+    label.setTooltip(new Tooltip("Global Favorite"));
+    label.setGraphic(fontIcon);
+    return label;
+  }
+
+  public static Label createPlaylistIcon(@Nullable Playlist playlist) {
+    Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
     fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
     fontIcon.setIconLiteral("mdi2v-view-list");
+
+    if (playlist.getName().contains("Visual Pinball X")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    if (playlist.getName().contains("VPX")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    if (playlist.getName().contains("Future")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("FX3")) {
+      fontIcon.setIconLiteral("mdi2n-numeric-3-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Just Added")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-j-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Most Played")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-m-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Home")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-h-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("VPW")) {
+      fontIcon.setIconLiteral("mdi2a-alpha-v-circle");
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+
     label.setGraphic(fontIcon);
     return label;
   }
@@ -546,11 +601,8 @@ public class WidgetFactory {
       setGraphic(null);
       setText(null);
       if (item != null) {
-        FontIcon fontIcon = new FontIcon();
-        fontIcon.setIconSize(24);
-        fontIcon.setIconColor(Paint.valueOf(WidgetFactory.hexColor(item.getMenuColor())));
-        fontIcon.setIconLiteral("mdi2v-view-list");
-        setGraphic(fontIcon);
+        Label playlistIcon = WidgetFactory.createPlaylistIcon(item);
+        setGraphic(playlistIcon);
 
         setText(" " + item.toString());
       }

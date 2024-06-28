@@ -20,10 +20,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -109,7 +106,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         }
 
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to execute component check: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute component check: " + e.getMessage());
       }
@@ -142,7 +140,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         componentTab.postProcessing(simulate);
 
         EventManager.getInstance().notify3rdPartyVersionUpdate(type);
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to run component update: " + ex.getMessage(), ex);
         textArea.setText("Action failed: " + ex.getMessage());
       }
@@ -181,6 +180,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || (localInstallOnly && !client.getSystemService().isLocal()));
+    if (installBtn.isDisabled()) {
+      installBtn.setTooltip(new Tooltip("The component can not be updated via remote client."));
+    }
 
     if (!component.getReleases().isEmpty()) {
       GithubReleaseRepresentation release = component.getReleases().get(0);
@@ -269,7 +271,8 @@ public class ComponentUpdateController implements Initializable, StudioEventList
             textArea.positionCaret(textArea.getLength());
             textArea.deselect();
           });
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           throw new RuntimeException(e);
         }
       }).start();
