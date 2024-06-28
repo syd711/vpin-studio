@@ -7,8 +7,17 @@ public class NotificationSettings extends JsonSettings {
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
   private boolean iScoredNotification = true;
+  private boolean discordNotification = true;
 
   private int durationSec = 5;
+
+  public boolean isDiscordNotification() {
+    return discordNotification;
+  }
+
+  public void setDiscordNotification(boolean discordNotification) {
+    this.discordNotification = discordNotification;
+  }
 
   public boolean isHighscoreCheckedNotification() {
     return highscoreCheckedNotification;

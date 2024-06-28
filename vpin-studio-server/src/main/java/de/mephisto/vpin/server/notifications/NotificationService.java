@@ -38,7 +38,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   private NotificationSettings notificationSettings;
 
   public void showNotification(Notification notification) {
-    if (Features.NOTIFICATIONS_ENABLED) {
+    if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
       notification.setDurationSec(notificationSettings.getDurationSec());
       NotificationStageService.getInstance().showNotification(notification);
     }

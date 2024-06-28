@@ -110,6 +110,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private void toggleSidebar() {
     sidebarVisible = !sidebarVisible;
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings.setSidebarVisible(sidebarVisible);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings, true);
+
     setSidebarVisible(sidebarVisible);
   }
 

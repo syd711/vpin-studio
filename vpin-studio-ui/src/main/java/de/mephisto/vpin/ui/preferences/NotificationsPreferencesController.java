@@ -34,6 +34,9 @@ public class NotificationsPreferencesController implements Initializable {
   private CheckBox iScoredCheckbox;
 
   @FXML
+  private CheckBox discordCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -72,6 +75,12 @@ public class NotificationsPreferencesController implements Initializable {
     iScoredCheckbox.setSelected(notificationSettings.isiScoredNotification());
     iScoredCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       notificationSettings.setiScoredNotification(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
+
+    discordCheckbox.setSelected(notificationSettings.isDiscordNotification());
+    discordCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setDiscordNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
 

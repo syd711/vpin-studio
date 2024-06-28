@@ -24,7 +24,7 @@ public class PreferencesDialogs {
   }
 
   public static void openButtonRecorder() {
-    Stage stage = Dialogs.createStudioDialogStage(BtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", "Button Recorder");
+    Stage stage = Dialogs.createStudioDialogStage(BtnRecorderDialogController.class, "preference-table-pause-btn-recorder-dialog.fxml", "Controller Bindings");
     BtnRecorderDialogController controller = (BtnRecorderDialogController) stage.getUserData();
     stage.showAndWait();
   }

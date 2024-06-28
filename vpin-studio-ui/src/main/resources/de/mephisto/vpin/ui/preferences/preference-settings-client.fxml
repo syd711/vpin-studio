@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -17,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <content>
@@ -34,120 +33,16 @@
                         <Insets bottom="6.0" />
                      </VBox.margin>
                   </Label>
-                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
-                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new VPX file has been uploaded." textFill="WHITE" />
-                  <CheckBox fx:id="uiShowVPSUpdates" layoutX="34.0" layoutY="612.0" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="640.0" text="Show update indicators for the following update types:" textFill="WHITE">
-                     <styleClass>
-                        <String fx:value="checkbox-description" />
-                        <String fx:value="default-text" />
-                     </styleClass>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <HBox spacing="48.0">
-                     <VBox.margin>
-                        <Insets left="24.0" top="6.0" />
-                     </VBox.margin>
-                     <children>
-                        <VBox spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="vpsPOV" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="POV" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="vpsSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsToppper" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Topper " textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox spacing="6.0">
-                           <children>
-                              <CheckBox fx:id="vpsWheel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Wheel" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
                   <Label styleClass="preference-subtitle" text="Emulators">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
                   <Label styleClass="preference-description" text="This section configures which game emulators to use in the VPin Studio." textFill="WHITE" />
-                  <VBox fx:id="emulatorList" />
+                  <VBox fx:id="emulatorList" spacing="6.0">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin></VBox>
                   <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Table Overview Settings">
                      <VBox.margin>
                         <Insets top="24.0" />
@@ -158,6 +53,25 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
+                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
+                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
                   <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -334,6 +248,93 @@
                               </CheckBox>
                            </children>
                         </VBox>
+                     </children>
+                  </HBox>
+                  <Label layoutX="34.0" layoutY="640.0" styleClass="default-headline" text="Visible Virtual Pinball Spreadsheet Update Indicators" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="uiShowVPSUpdates" mnemonicParsing="false" text="Show VPS table status in table overview." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label styleClass="checkbox-description" text="Toggles the visibility of the VPS status indicators and related actions in the table overview and VPS section." textFill="WHITE" />
+                  <HBox>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                     <children>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsAltColor" mnemonicParsing="false" text="ALT Color" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsAltSound" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="ALT Sound" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsBackglass" mnemonicParsing="false" text="Backglass" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsPOV" mnemonicParsing="false" text="POV" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </VBox>
+                        <VBox prefWidth="180.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsPUPPack" mnemonicParsing="false" text="PUP Pack" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsSound" mnemonicParsing="false" text="Sound/Music" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsToppper" mnemonicParsing="false" text="Topper " textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox layoutX="151.0" layoutY="10.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="vpsTutorial" mnemonicParsing="false" text="Tutorial" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <CheckBox fx:id="vpsWheel" mnemonicParsing="false" text="Wheel" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0" />
                      </children>
                   </HBox>
                   <Label layoutX="34.0" layoutY="904.0" styleClass="preference-subtitle" text="Network Settings">

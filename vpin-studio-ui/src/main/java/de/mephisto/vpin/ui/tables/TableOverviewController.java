@@ -338,23 +338,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
     }
 
-
-    boolean vpxMode = emulatorCombo.getValue() == null || emulatorCombo.getValue().isVpxEmulator();
-
     refreshViewAssetColumns(assetManagerMode);
-
-    columnVersion.setVisible(!assetManagerMode && vpxMode);
-    columnEmulator.setVisible(!assetManagerMode && frontendType.isNotStandalone());
-    columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
-    columnRom.setVisible(!assetManagerMode && vpxMode);
-    columnB2S.setVisible(!assetManagerMode && vpxMode);
-    columnPUPPack.setVisible(!assetManagerMode && vpxMode && frontendType.supportPupPacks());
-    columnAltSound.setVisible(!assetManagerMode && vpxMode);
-    columnAltColor.setVisible(!assetManagerMode && vpxMode);
-    columnPOV.setVisible(!assetManagerMode && vpxMode);
-    columnINI.setVisible(!assetManagerMode && vpxMode);
-    columnHSType.setVisible(!assetManagerMode && vpxMode);
-    columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists());
+    refreshColumns();
 
     GameRepresentation selectedItem = getSelection();
     tableView.getSelectionModel().clearSelection();
@@ -1268,12 +1253,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }, true);
 
     configureColumn(columnDateAdded, (value, model) -> {
+      Label label = null;
       if (value.getDateAdded() != null) {
-        return new Label(dateAddedDateFormat.format(value.getDateAdded()));
+        label = new Label(dateAddedDateFormat.format(value.getDateAdded()));
       }
       else {
-        return new Label("-");
+        label = new Label("-");
       }
+      label.getStyleClass().add("default-text");
+      return label;
     }, true);
 
     columnPlaylists.setSortable(false);
@@ -1401,8 +1389,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   //------------------------------
   @FunctionalInterface
-  private static interface ColumnRenderer {
-    public Node render(GameRepresentation game, GameRepresentationModel model);
+  private interface ColumnRenderer {
+    Node render(GameRepresentation game, GameRepresentationModel model);
   }
 
   private void configureColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, ColumnRenderer renderer, boolean visible) {
@@ -1651,7 +1639,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
 
-
     validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
     playBtn.setDisable(disable);
@@ -1852,12 +1839,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHelp.setVisible(false);
     columnOther2.setVisible(false);
 
+    refreshColumns();
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
   }
 
   private void refreshViewForEmulator() {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
@@ -1871,26 +1858,36 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     deleteSeparator.setVisible(vpxMode);
 
-    columnVersion.setVisible(vpxMode && !assetManagerMode);
-    columnEmulator.setVisible(vpxMode && !assetManagerMode && frontendType.isNotStandalone());
-    columnVPS.setVisible(vpxMode && !assetManagerMode);
-    columnRom.setVisible(vpxMode && !assetManagerMode);
-    columnB2S.setVisible(vpxMode && !assetManagerMode);
-    columnPUPPack.setVisible(vpxMode && !assetManagerMode);
-    columnAltSound.setVisible(vpxMode && !assetManagerMode);
-    columnAltColor.setVisible(vpxMode && !assetManagerMode);
-    columnPOV.setVisible(vpxMode && !assetManagerMode);
-    columnINI.setVisible(vpxMode && !assetManagerMode);
-    columnHSType.setVisible(vpxMode && !assetManagerMode);
+    refreshColumns();
 
     tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
+  }
+
+  private void refreshColumns() {
+    GameEmulatorRepresentation newValue = emulatorCombo.getValue();
+    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    columnVersion.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVersion());
+    columnEmulator.setVisible(vpxMode && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
+    columnVPS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
+    columnB2S.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
+    columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
+    columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
+    columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
+    columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
+    columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
+    columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
+      refreshColumns();
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);

@@ -186,7 +186,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
           url = VPS.getVpsTableUrl(selection.getExtTableId());
         }
         Desktop.getDesktop().browse(new URI(url));
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
     }
@@ -209,7 +210,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -221,7 +223,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -235,7 +238,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         File gamePupFolder = new File(pupFolder, game.get().getRom());
         SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -248,7 +252,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
-    } catch (
+    }
+    catch (
         Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
@@ -263,7 +268,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -275,7 +281,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -296,7 +303,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
       GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
       SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -314,7 +322,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
         builder.start();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open VPX: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
     }
@@ -337,7 +346,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
           }
         }
 
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open frontend administration: " + e.getMessage(), e);
       }
     }
@@ -405,7 +415,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
       titledPaneAltSound.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -414,7 +425,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       Parent tablesRoot = loader.load();
       tablesSidebarAltColorController = loader.getController();
       titledPaneAltColor.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -424,7 +436,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarVpsController = loader.getController();
       tablesSidebarVpsController.setSidebarController(this);
       titledPaneVps.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -444,7 +457,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarHighscoresController = loader.getController();
       tablesSidebarHighscoresController.setSidebarController(this);
       titledPaneHighscores.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -455,7 +469,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         tablesSidebarMediaController = loader.getController();
         tablesSidebarMediaController.setSidebarController(this);
         titledPaneMedia.setContent(tablesRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
       }
     }
@@ -471,7 +486,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         tablesSidebarPlaylistsController = loader.getController();
         tablesSidebarPlaylistsController.setSidebarController(this);
         titledPanePlaylists.setContent(tablesRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
       }
     }
@@ -485,7 +501,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarMetadataController = loader.getController();
       tablesSidebarMetadataController.setSidebarController(this);
       titledPaneScriptDetails.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -495,7 +512,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarPovController = loader.getController();
       tablesSidebarPovController.setSidebarController(this);
       titledPanePov.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -505,7 +523,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarDirectB2SController = loader.getController();
       tablesSidebarDirectB2SController.setSidebarController(this);
       titledPaneDirectB2s.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -516,7 +535,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         tablesSidebarPUPPackController = loader.getController();
         tablesSidebarPUPPackController.setSidebarController(this);
         titledPanePUPPack.setContent(tablesRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
       }
     }
@@ -530,7 +550,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarDMDController = loader.getController();
       tablesSidebarDMDController.setSidebarController(this);
       titledPaneDMD.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -552,7 +573,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       tablesSidebarMameController = loader.getController();
       tablesSidebarMameController.setSidebarController(this);
       titledPaneMame.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -751,98 +773,32 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   public void refreshSidebarSections() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    if (uiSettings.isSectionAssets() && !tableAccordion.getPanes().contains(titledPaneMedia)) {
-      tableAccordion.getPanes().add(titledPaneMedia);
+    refreshSection(titledPaneMedia, uiSettings.isSectionAssets());
+    refreshSection(titledPaneTableData, uiSettings.isSectionTableData());
+    refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass());
+    refreshSection(titledPaneDMD, uiSettings.isSectionDMD());
+    refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists());
+    refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound());
+    refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor());
+    refreshSection(titledPanePov, uiSettings.isSectionPov());
+    refreshSection(titledPaneHighscores, uiSettings.isSectionHighscore());
+    refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME());
+    refreshSection(titledPaneVps, uiSettings.isSectionVps());
+    refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails());
+    refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack());
+
+    getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+  }
+
+  private void refreshSection(TitledPane section, boolean sectionAssets) {
+    if (sectionAssets) {
+      if (!tableAccordion.getPanes().contains(section)) {
+        tableAccordion.getPanes().add(section);
+      }
     }
     else {
-      tableAccordion.getPanes().remove(titledPaneMedia);
+      tableAccordion.getPanes().remove(section);
     }
-
-    if (uiSettings.isSectionTableData() && !tableAccordion.getPanes().contains(titledPaneTableData)) {
-      tableAccordion.getPanes().add(titledPaneTableData);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneTableData);
-    }
-
-    if (uiSettings.isSectionBackglass() && !tableAccordion.getPanes().contains(titledPaneDirectB2s)) {
-      tableAccordion.getPanes().add(titledPaneDirectB2s);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneDirectB2s);
-    }
-
-    if (uiSettings.isSectionDMD() && !tableAccordion.getPanes().contains(titledPaneDMD)) {
-      tableAccordion.getPanes().add(titledPaneDMD);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneDMD);
-    }
-
-    if (uiSettings.isSectionPlaylists() && !tableAccordion.getPanes().contains(titledPanePlaylists)) {
-      tableAccordion.getPanes().add(titledPanePlaylists);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPanePlaylists);
-    }
-
-    if (uiSettings.isSectionAltSound() && !tableAccordion.getPanes().contains(titledPaneAltSound)) {
-      tableAccordion.getPanes().add(titledPaneAltSound);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneAltSound);
-    }
-
-    if (uiSettings.isSectionAltColor() && !tableAccordion.getPanes().contains(titledPaneAltColor)) {
-      tableAccordion.getPanes().add(titledPaneAltColor);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneAltColor);
-    }
-
-    if (uiSettings.isSectionPov() && !tableAccordion.getPanes().contains(titledPanePov)) {
-      tableAccordion.getPanes().add(titledPanePov);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPanePov);
-    }
-
-    if (uiSettings.isSectionHighscore() && !tableAccordion.getPanes().contains(titledPaneHighscores)) {
-      tableAccordion.getPanes().add(titledPaneHighscores);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneHighscores);
-    }
-
-    if (uiSettings.isSectionVPinMAME() && !tableAccordion.getPanes().contains(titledPaneMame)) {
-      tableAccordion.getPanes().add(titledPaneMame);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneMame);
-    }
-
-    if (uiSettings.isSectionVps() && !tableAccordion.getPanes().contains(titledPaneVps)) {
-      tableAccordion.getPanes().add(titledPaneVps);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneVps);
-    }
-
-    if (uiSettings.isSectionScriptDetails() && !tableAccordion.getPanes().contains(titledPaneScriptDetails)) {
-      tableAccordion.getPanes().add(titledPaneScriptDetails);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPaneScriptDetails);
-    }
-
-    if (tablesSidebarPUPPackController != null && uiSettings.isSectionPupPack() && !tableAccordion.getPanes().contains(titledPanePUPPack)) {
-      tableAccordion.getPanes().add(titledPanePUPPack);
-    }
-    else {
-      tableAccordion.getPanes().remove(titledPanePUPPack);
-    }
-
-    getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty());
   }
 
   public TitledPane getTitledPanePov() {

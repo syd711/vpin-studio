@@ -50,6 +50,8 @@ public class UISettings extends JsonSettings {
   private boolean sectionVps = true;
   private boolean sectionVPinMAME = true;
 
+  private boolean sidebarVisible = true;
+
   //columns
   private boolean columnAltColor = true;
   private boolean columnAltSound = true;
@@ -64,6 +66,14 @@ public class UISettings extends JsonSettings {
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+
+  public boolean isSidebarVisible() {
+    return sidebarVisible;
+  }
+
+  public void setSidebarVisible(boolean sidebarVisible) {
+    this.sidebarVisible = sidebarVisible;
+  }
 
   public boolean isSectionScriptDetails() {
     return sectionScriptDetails;

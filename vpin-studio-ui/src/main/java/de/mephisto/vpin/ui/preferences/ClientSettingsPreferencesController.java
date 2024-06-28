@@ -305,7 +305,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       checkBox.setUserData(gameEmulator);
       checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
       checkBox.setSelected(checkBox.isDisabled() || !uiSettings.getIgnoredEmulatorIds().contains(gameEmulator.getId()));
-      checkBox.getStyleClass().add("preference-checkbox");
+      checkBox.getStyleClass().add("default-text");
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
