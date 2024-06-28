@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.listeners;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
+import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
@@ -134,10 +135,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       highscoreService.scanScore(game);
 
       if (notificationSettings.isHighscoreCheckedNotification()) {
-        Notification notification = new Notification();
-        notification.setImage(game.getWheelImage());
-        notification.setTitle1(game.getGameDisplayName());
-        notification.setTitle2("Highscore scan finished!");
+        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Highscore scan finished!");
         notificationService.showNotification(notification);
       }
     }).start();

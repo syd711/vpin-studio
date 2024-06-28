@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.iscored;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
+import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
@@ -95,11 +96,10 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
         IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
         if (Features.NOTIFICATIONS_ENABLED && notificationSettings.isiScoredNotification()) {
           Game game = gameService.getGame(newScore.getGameId());
-          Notification notification = new Notification();
-          notification.setImage(game.getWheelImage());
-          notification.setTitle1(game.getGameDisplayName());
-          notification.setTitle2("An iScored highscore has been posted!");
-          notification.setTitle3(newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
+
+          Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+              game.getGameDisplayName(), "An iScored highscore has been posted!",
+              newScore.getPosition() + ". " + newScore.getPlayerInitials() + "\t" + newScore.getScore());
           notificationService.showNotification(notification);
         }
       }

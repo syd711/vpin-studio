@@ -50,6 +50,8 @@
                      <children>
                         <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Posts" />
                         <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
+                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Changes" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows a notification every time a competition starts, ends or is cancelled." textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="iScoredSettings">

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.ServerFXListener;
 import de.mephisto.vpin.commons.fx.notifications.Notification;
+import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
@@ -62,11 +63,9 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     }
 
     Game game = event.getGame();
-    Notification notification = new Notification();
-    notification.setImage(game.getWheelImage());
-    notification.setTitle1(game.getGameDisplayName());
-    notification.setTitle2("A new highscore has been created!");
-    notification.setTitle3(event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
+    Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
+        game.getGameDisplayName(), "A new highscore has been created!",
+        event.getNewScore().getPosition() + ". " + event.getNewScore().getPlayerInitials() + "\t" + event.getNewScore().getFormattedScore());
     showNotification(notification);
   }
 
@@ -85,20 +84,19 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         highscoreService.addHighscoreChangeListener(this);
         preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to initialize " + this + ": " + e.getMessage(), e);
     }
   }
 
   @Override
-  public void toolkitRead() {
+  public void fxInitialized() {
     if (notificationSettings.isStartupNotification() && notificationSettings.getDurationSec() > 0) {
-      Notification startup = new Notification();
-      startup.setImage(null);
-      startup.setTitle1("VPin Studio Server");
-      startup.setTitle2("The server has been started.");
-      startup.setTitle3("Version " + systemService.getVersion());
-      showNotification(startup);
+      Notification notification = NotificationFactory.createNotification(null,
+          "VPin Studio Server", "The server has been started.",
+          "Version " + systemService.getVersion());
+      showNotification(notification);
     }
   }
 }

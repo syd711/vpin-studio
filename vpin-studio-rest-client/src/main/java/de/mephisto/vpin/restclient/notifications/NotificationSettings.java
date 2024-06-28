@@ -12,6 +12,14 @@ public class NotificationSettings extends JsonSettings {
 
   private int durationSec = 5;
 
+  public boolean isCompetitionNotification() {
+    return competitionNotification;
+  }
+
+  public void setCompetitionNotification(boolean competitionNotification) {
+    this.competitionNotification = competitionNotification;
+  }
+
   public boolean isDiscordNotification() {
     return discordNotification;
   }

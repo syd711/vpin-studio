@@ -82,7 +82,7 @@ public class ServerFX extends Application {
       latch.await();
       LOG.info("OverlayFX creation finished.");
       for (ServerFXListener listener : listeners) {
-        listener.toolkitRead();
+        listener.fxInitialized();
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
