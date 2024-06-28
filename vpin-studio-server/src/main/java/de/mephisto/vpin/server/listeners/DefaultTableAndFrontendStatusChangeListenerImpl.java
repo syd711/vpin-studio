@@ -10,10 +10,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
-import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
-import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.*;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
@@ -31,8 +28,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FrontendStatusChangeListenerImpl implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener {
-  private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusChangeListenerImpl.class);
+public class DefaultTableAndFrontendStatusChangeListenerImpl implements InitializingBean, TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener {
+  private final static Logger LOG = LoggerFactory.getLogger(DefaultTableAndFrontendStatusChangeListenerImpl.class);
   public static final int EXIT_DELAY = 6000;
 
   @Autowired
@@ -172,7 +169,9 @@ public class FrontendStatusChangeListenerImpl implements InitializingBean, Front
 
   @Override
   public void afterPropertiesSet() throws Exception {
+    frontendStatusService.addTableStatusChangeListener(this);
     frontendStatusService.addFrontendStatusChangeListener(this);
+
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.NOTIFICATION_SETTINGS, null, null);
   }

@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -35,12 +36,15 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private FrontendService frontendService;
+
   private NotificationSettings notificationSettings;
 
   public void showNotification(Notification notification) {
     if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
       notification.setDurationSec(notificationSettings.getDurationSec());
-      NotificationStageService.getInstance().showNotification(notification);
+      NotificationStageService.getInstance().queueNotification(notification);
     }
   }
 

@@ -120,7 +120,7 @@ public class NotificationStage {
       });
 
       inTransition.onFinishedProperty().set(event -> {
-        NotificationStageService.getInstance().setLocked(false);
+        NotificationStageService.getInstance().setMaxNotificationsLock(false);
         new Thread(() -> {
           try {
             ThreadUtils.sleep(Duration.of(notification.getDurationSec(), ChronoUnit.SECONDS));

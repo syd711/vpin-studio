@@ -31,15 +31,17 @@ public class NotificationStageService extends Application {
     launch(args);
   }
 
-  public void showNotification(Notification notification) {
+  public void queueNotification(Notification notification) {
     queue.offer(notification);
+  }
 
+  public void notifyFrontendExit() {
     Platform.runLater(()-> {
       pollQueue();
     });
   }
 
-  public void setLocked(boolean b) {
+  public void setMaxNotificationsLock(boolean b) {
     locked.set(b);
     if (!locked.get()) {
       pollQueue();
@@ -50,11 +52,12 @@ public class NotificationStageService extends Application {
     if (locked.get()) {
       return;
     }
+
     if (!queue.isEmpty() && stages.size() < MAX_NOTIFICATIONS) {
       for (NotificationStage stage : stages) {
         stage.move();
       }
-      setLocked(true);
+      setMaxNotificationsLock(true);
       showNotificationStage();
     }
   }
@@ -66,7 +69,7 @@ public class NotificationStageService extends Application {
     notificationStage.getStage().setOnHiding(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
-        setLocked(false);
+        setMaxNotificationsLock(false);
         stages.poll();
         pollQueue();
       }
@@ -94,9 +97,11 @@ public class NotificationStageService extends Application {
     notification4.setTitle1("Test3");
     notification4.setDurationSec(3);
 
-    showNotification(notification1);
-    showNotification(notification2);
-    showNotification(notification3);
+    queueNotification(notification1);
+    queueNotification(notification2);
+    queueNotification(notification3);
+
+    notifyFrontendExit();
 //    showNotification(notification4);
   }
 }

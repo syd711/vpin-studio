@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.VPinStudioServerTray;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -28,7 +29,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class InputEventService implements InitializingBean, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
+public class InputEventService implements InitializingBean, TableStatusChangeListener, FrontendStatusChangeListener, PreferenceChangedListener, GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(InputEventService.class);
 
   @Autowired
@@ -275,6 +276,7 @@ public class InputEventService implements InitializingBean, FrontendStatusChange
     }
 
     LOG.info("Added VPin service status listener.");
+    frontendStatusService.addTableStatusChangeListener(this);
     frontendStatusService.addFrontendStatusChangeListener(this);
 
     GameController.getInstance().addListener(this);

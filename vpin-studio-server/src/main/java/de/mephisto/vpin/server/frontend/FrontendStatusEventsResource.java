@@ -76,7 +76,7 @@ public class FrontendStatusEventsResource {
     return game != null;
   }
 
-  //kept for legacy reasons!
+  //kept for legacy reasons, do not delete!
   @PostMapping("/popperLaunch")
   public boolean popperLaunch() {
     frontendStatusService.notifyFrontendLaunch();

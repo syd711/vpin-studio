@@ -8,6 +8,7 @@ public class NotificationSettings extends JsonSettings {
   private boolean highscoreCheckedNotification = true;
   private boolean iScoredNotification = true;
   private boolean discordNotification = true;
+  private boolean competitionNotification = true;
 
   private int durationSec = 5;
 

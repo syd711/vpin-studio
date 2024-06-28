@@ -36,7 +36,8 @@ import java.util.stream.Collectors;
 public class FrontendStatusService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusService.class);
 
-  private final List<FrontendStatusChangeListener> listeners = new ArrayList<>();
+  private final List<TableStatusChangeListener> tableStatusChangeListeners = new ArrayList<>();
+  private final List<FrontendStatusChangeListener> frontendStatusChangeListeners = new ArrayList<>();
 
   @Autowired
   private SystemService systemService;
@@ -67,9 +68,12 @@ public class FrontendStatusService implements InitializingBean {
     return frontendService.getControls();
   }
 
-  @SuppressWarnings("unused")
+  public void addTableStatusChangeListener(TableStatusChangeListener listener) {
+    this.tableStatusChangeListeners.add(listener);
+  }
+
   public void addFrontendStatusChangeListener(FrontendStatusChangeListener listener) {
-    this.listeners.add(listener);
+    this.frontendStatusChangeListeners.add(listener);
   }
 
   public GameList getImportTables(int emuId) {
@@ -118,7 +122,7 @@ public class FrontendStatusService implements InitializingBean {
       }
     };
 
-    for (FrontendStatusChangeListener listener : this.listeners) {
+    for (TableStatusChangeListener listener : this.tableStatusChangeListeners) {
       if (started) {
         listener.tableLaunched(event);
       }
@@ -130,26 +134,26 @@ public class FrontendStatusService implements InitializingBean {
 
   public boolean terminate() {
     boolean b = frontendService.killFrontend();
-    for (FrontendStatusChangeListener listener : listeners) {
+    for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendExited();
     }
     return b;
   }
 
   public void notifyFrontendLaunch() {
-    for (FrontendStatusChangeListener listener : listeners) {
+    for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendLaunched();
     }
   }
 
   public void notifyFrontendRestart() {
-    for (FrontendStatusChangeListener listener : listeners) {
+    for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendRestarted();
     }
   }
 
   public void notifyFrontendExit() {
-    for (FrontendStatusChangeListener listener : listeners) {
+    for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendExited();
     }
   }

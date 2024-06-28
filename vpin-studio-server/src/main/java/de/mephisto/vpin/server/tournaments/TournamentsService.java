@@ -11,7 +11,7 @@ import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
+import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -26,7 +26,7 @@ import org.springframework.web.server.ResponseStatusException;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @Service
-public class TournamentsService implements InitializingBean, PreferenceChangedListener, FrontendStatusChangeListener {
+public class TournamentsService implements InitializingBean, PreferenceChangedListener, TableStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsService.class);
 
   @Value("${vpinmania.server.host}")
@@ -104,7 +104,7 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
         tournamentSynchronizer.setClient(maniaClient);
         tournamentSynchronizer.synchronize();
 
-        frontendStatusService.addFrontendStatusChangeListener(this);
+        frontendStatusService.addTableStatusChangeListener(this);
       } catch (Exception e) {
         Features.TOURNAMENTS_ENABLED = false;
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);

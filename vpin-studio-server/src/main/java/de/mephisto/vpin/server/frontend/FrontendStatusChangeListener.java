@@ -1,22 +1,9 @@
 package de.mephisto.vpin.server.frontend;
 
-import de.mephisto.vpin.server.games.TableStatusChangedEvent;
-
 public interface FrontendStatusChangeListener {
+  void frontendLaunched();
 
-  void tableLaunched(TableStatusChangedEvent event);
+  void frontendExited();
 
-  void tableExited(TableStatusChangedEvent event);
-
-  default void frontendLaunched() {
-
-  }
-
-  default void frontendExited() {
-
-  }
-
-  default void frontendRestarted() {
-
-  }
+  void frontendRestarted();
 }
