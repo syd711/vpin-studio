@@ -418,7 +418,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {
-      refreshView(Optional.empty());
+      onReload();
     }
   }
 
