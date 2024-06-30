@@ -44,7 +44,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   public static final int DB_VERSION = 64;
   public static final String IS_FAV = "isFav";
   public static final String POPPER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
-  private String dbFilePath;
+  public String dbFilePath;
 
   @Autowired
   private SystemService systemService;
@@ -856,7 +856,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
         Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          updateSQLPlaylist(sql, playlistGameMap);
+          playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
         }
         playlist.setGames(new ArrayList<>(playlistGameMap.values()));
       }
@@ -901,7 +901,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
 
         Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
         if (sqlPlaylist) {
-          updateSQLPlaylist(sql, playlistGameMap);
+          playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
         }
         playlist.setGames(new ArrayList<>(playlistGameMap.values()));
 
@@ -919,19 +919,25 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
-  private void updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+  private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
     //fetch the ids of tables applicable for this playlist
-    List<Integer> additionalIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
-    for (Integer additionalId : additionalIds) {
-      if (!playlistGameMap.containsKey(additionalId.intValue())) {
-        PlaylistGame notSetPlaylistGame = new PlaylistGame();
-        notSetPlaylistGame.setFav(false);
-        notSetPlaylistGame.setPlayed(false);
-        notSetPlaylistGame.setGlobalFav(false);
-        notSetPlaylistGame.setId(additionalId);
-        playlistGameMap.put(additionalId, notSetPlaylistGame);
+    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql);
+    Map<Integer, PlaylistGame> updated = new HashMap<>();
+    for (Integer gameId : sqlPlaylistIds) {
+      if (playlistGameMap.containsKey(gameId)) {
+        playlistGameMap.get(gameId).setPlayed(true);
+        updated.put(gameId, playlistGameMap.get(gameId));
+      }
+      else {
+        PlaylistGame playlistGame = new PlaylistGame();
+        playlistGame.setId(gameId);
+        playlistGame.setPlayed(false);
+        playlistGame.setFav(false);
+        playlistGame.setGlobalFav(false);
+        updated.put(gameId, playlistGame);
       }
     }
+    return updated;
   }
 
   public void setPlaylistColor(int playlistId, long color) {
@@ -1419,36 +1425,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
     return result;
   }
 
-
-//  private List<PlaylistGame> getGameIdsFromSqlPlaylist(int playlistId, String sql) {
-//    List<PlaylistGame> result = new ArrayList<>();
-//    Connection connect = connect();
-//    try {
-//      Statement statement = connect.createStatement();
-//      ResultSet rs = statement.executeQuery(sql);
-//
-//      //TODO bad performance, join select here!
-//      while (rs.next()) {
-//        int gameId = rs.getInt("GameID");
-//        PlaylistGame game = getPlaylistGame(playlistId, gameId);
-//        if (game != null) {
-//          result.add(game);
-//        }
-//      }
-//
-//      rs.close();
-//      statement.close();
-//    }
-//    catch (SQLException e) {
-//      LOG.error("Failed to read playlists: " + e.getMessage(), e);
-//    }
-//    finally {
-//      disconnect(connect);
-//    }
-//    return result;
-//  }
-
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql, Map<Integer, PlaylistGame> playlistGames) {
+  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
@@ -1456,12 +1433,8 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       ResultSet rs = statement.executeQuery(sql);
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
-        if (playlistGames.containsKey(gameId)) {
-          continue;
-        }
         result.add(gameId);
       }
-
       rs.close();
       statement.close();
     }
