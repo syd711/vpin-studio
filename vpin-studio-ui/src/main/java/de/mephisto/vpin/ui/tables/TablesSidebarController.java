@@ -783,32 +783,35 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias());
-    refreshSection(titledPaneTableData, uiSettings.isSectionTableData());
-    refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass());
-    refreshSection(titledPaneDMD, uiSettings.isSectionDMD());
-    refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists());
-    refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound());
-    refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor());
-    refreshSection(titledPanePov, uiSettings.isSectionPov());
-    refreshSection(titledPaneHighscores, uiSettings.isSectionHighscore());
-    refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME());
-    refreshSection(titledPaneVps, uiSettings.isSectionVps());
-    refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails());
-    refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks());
+    int index = 0;
+    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias(), index);
+    index = refreshSection(titledPaneTableData, uiSettings.isSectionTableData(), index);
+    index = refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass(), index);
+    index = refreshSection(titledPaneDMD, uiSettings.isSectionDMD(), index);
+    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists(), index);
+    index = refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound(), index);
+    index = refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor(), index);
+    index = refreshSection(titledPanePov, uiSettings.isSectionPov(), index);
+    index = refreshSection(titledPaneHighscores, uiSettings.isSectionHighscore(), index);
+    index = refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME(), index);
+    index = refreshSection(titledPaneVps, uiSettings.isSectionVps(), index);
+    index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
+    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
     getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
   }
 
-  private void refreshSection(TitledPane section, boolean sectionAssets) {
+  private int refreshSection(TitledPane section, boolean sectionAssets, int index) {
     if (sectionAssets) {
       if (!tableAccordion.getPanes().contains(section)) {
-        tableAccordion.getPanes().add(section);
+        tableAccordion.getPanes().add(index, section);
       }
+      index++;
     }
     else {
       tableAccordion.getPanes().remove(section);
     }
+    return index;
   }
 
   public TitledPane getTitledPanePov() {
