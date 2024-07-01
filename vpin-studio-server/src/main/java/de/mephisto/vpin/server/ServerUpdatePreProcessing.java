@@ -46,11 +46,11 @@ public class ServerUpdatePreProcessing {
 
       File emulatorLaunchScript = new File(scriptFolder, "emulator-launch.bat");
       if(!emulatorLaunchScript.exists()) {
-        Files.write(emulatorLaunchScript.toPath(), "curl -X POST --data-urlencode \"table=%1\" http://localhost:8089/service/gameLaunch".getBytes());
+        Files.write(emulatorLaunchScript.toPath(), "curl -X POST --data-urlencode \"table=%~1\" http://localhost:8089/service/gameLaunch".getBytes());
       }
       File emulatorExitScript = new File(scriptFolder, "emulator-exit.bat");
       if(!emulatorExitScript.exists()) {
-        Files.write(emulatorExitScript.toPath(), "curl -X POST --data-urlencode \"table=%1\" http://localhost:8089/service/gameExit".getBytes());
+        Files.write(emulatorExitScript.toPath(), "curl -X POST --data-urlencode \"table=%~1\" http://localhost:8089/service/gameExit".getBytes());
       }
 
       File frontendLaunchScript = new File(scriptFolder, "frontend-launch.bat");
