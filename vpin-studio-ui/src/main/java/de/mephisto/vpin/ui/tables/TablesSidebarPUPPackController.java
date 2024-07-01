@@ -38,6 +38,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TablesSidebarPUPPackController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarPUPPackController.class);
 
@@ -144,7 +146,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       deleteBtn.setDisable(true);
       new Thread(() -> {
-        Studio.client.getPupPackService().delete(this.game.get().getId());
+        client.getPupPackService().delete(this.game.get().getId());
         Platform.runLater(() -> {
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         });
@@ -160,10 +162,13 @@ public class TablesSidebarPUPPackController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         JobExecutionResult jobExecutionResult = null;
         try {
-          jobExecutionResult = Studio.client.getPupPackService().option(game.get().getId(), option);
+          jobExecutionResult = client.getPupPackService().option(game.get().getId(), option);
           if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
             WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", jobExecutionResult.getError());
           }
+
+          client.getPupPackService().clearCache();
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
 
           if (!StringUtils.isEmpty(jobExecutionResult.getMessage())) {
             WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getMessage());
@@ -172,8 +177,6 @@ public class TablesSidebarPUPPackController implements Initializable {
         catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
-        } finally {
-          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         }
       }
     }
@@ -183,7 +186,7 @@ public class TablesSidebarPUPPackController implements Initializable {
   private void onPupPackEnable() {
     if (game.isPresent() && game.get().getPupPackName() != null) {
       GameRepresentation g = game.get();
-      Studio.client.getPupPackService().setPupPackEnabled(g.getId(), enabledCheckbox.isSelected());
+      client.getPupPackService().setPupPackEnabled(g.getId(), enabledCheckbox.isSelected());
       EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
     }
   }
@@ -214,7 +217,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+        Frontend frontend = client.getFrontendService().getFrontendCached();
         File file = new File(frontend.getInstallationDirectory(), "PinUpPackEditor.exe");
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -259,11 +262,11 @@ public class TablesSidebarPUPPackController implements Initializable {
     emptyDataBox.setVisible(true);
 
     openBtn.setText("View");
-    if (Studio.client.getSystemService().isLocal()) {
+    if (client.getSystemService().isLocal()) {
       openBtn.setText("Edit");
     }
 
-    pupPackEditorBtn.setDisable(!Studio.client.getSystemService().isLocal());
+    pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
 
     optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
     txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> openBtn.setDisable(StringUtils.isEmpty(newValue)));
@@ -317,7 +320,7 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      pupPack = Studio.client.getPupPackService().getPupPack(game.getId());
+      pupPack = client.getPupPackService().getPupPack(game.getId());
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
       screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());
