@@ -382,6 +382,7 @@ public class TablesSidebarMameController implements Initializable {
 
   private void setInputDisabled(boolean b) {
     deleteBtn.setDisable(b);
+    applyDefaultsBtn.setDisable(b);
 
     skipPinballStartupTest.setDisable(b);
     useSound.setDisable(b);
