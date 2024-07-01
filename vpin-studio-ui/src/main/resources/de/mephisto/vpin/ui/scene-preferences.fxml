@@ -63,20 +63,6 @@
                                     <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onAccount" styleClass="preference-button" text="Account Settings" />
                                  </children>
                               </VBox>
-                              <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">
-                                 <font>
-                                    <Font size="13.0" />
-                                 </font>
-                                 <VBox.margin>
-                                    <Insets top="24.0" />
-                                 </VBox.margin>
-                              </Label>
-                              <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
-                              <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="Direct Output Framework (DOF)" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol &amp; Volume" />
-                              <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
-                              <Button fx:id="vpbmBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
                               <VBox fx:id="frontendPreferences">
                                  <children>
                                     <Label alignment="BASELINE_LEFT" styleClass="preference-section" text="FRONTEND PREFERENCES">
@@ -134,6 +120,20 @@
                               </Label>
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="672.0" mnemonicParsing="false" onAction="#onDiscordBot" styleClass="preference-button" text="Bot Settings" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="832.0" mnemonicParsing="false" onAction="#onDiscordBotFaq" styleClass="preference-button" text="Bot FAQ" />
+                              <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="10.0" styleClass="preference-section" text="3RD PARTY PREFERENCES">
+                                 <font>
+                                    <Font size="13.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="24.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <Button fx:id="backglassBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onBackglassServer" styleClass="preference-button" text="Backglass Server" />
+                              <Button fx:id="dofBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="130.0" layoutY="213.0" mnemonicParsing="false" onAction="#onDOF" styleClass="preference-button" text="Direct Output Framework (DOF)" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="133.0" mnemonicParsing="false" onAction="#onPINemHi" styleClass="preference-button" text="PINemHi" />
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="100.0" mnemonicParsing="false" onAction="#onPinVol" styleClass="preference-button" text="PinVol &amp; Volume" />
+                              <Button fx:id="mameBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onMame" styleClass="preference-button" text="VPin MAME" />
+                              <Button fx:id="vpbmBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="864.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="preference-button" text="Visual Pinball Backup Manager" />
                               <Label alignment="BASELINE_LEFT" layoutX="34.0" layoutY="982.0" styleClass="preference-section" text="HELP &amp; SUPPORT">
                                  <font>
                                     <Font size="13.0" />

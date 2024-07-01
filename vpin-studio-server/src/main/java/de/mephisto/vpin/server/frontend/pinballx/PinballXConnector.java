@@ -57,6 +57,7 @@ public class PinballXConnector extends BaseConnector {
     if (ps != null) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
     }
+    LOG.info("Finished initialization of " + this);
   }
 
   @NotNull
@@ -253,14 +254,14 @@ public class PinballXConnector extends BaseConnector {
 
     return games;
   }
-  
-  @Override
-  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, 
-    @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
 
-      // pinballX does not support gameName, so force equality with gameFileName
-      String gameNameFromFileName = gameFileName;
-      return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
+  @Override
+  public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName,
+                        @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
+
+    // pinballX does not support gameName, so force equality with gameFileName
+    String gameNameFromFileName = gameFileName;
+    return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
 
 
@@ -427,7 +428,8 @@ public class PinballXConnector extends BaseConnector {
 
           File thumbsFolder = new File(pcWheelFolder, "pthumbs");
           de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.info("Failed to copy VPin App wheel icon: " + e.getMessage(), e);
         }
       }
@@ -531,5 +533,4 @@ public class PinballXConnector extends BaseConnector {
     LOG.info("Created PinballX player display \"" + screen.name() + "\"");
     return player;
   }
-
 }

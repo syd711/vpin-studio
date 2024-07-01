@@ -319,33 +319,34 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onAssetView() {
     tablesController.setSidebarVisible(true);
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 
     assetManagerMode = !assetManagerMode;
     tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
 
-    if (assetManagerMode) {
-      tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
-      assetManagerViewBtn.getStyleClass().add("toggle-selected");
-      if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
-        assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+    Platform.runLater(() -> {
+      if (assetManagerMode) {
+        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
+        assetManagerViewBtn.getStyleClass().add("toggle-selected");
+        if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
+          assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+        }
       }
-    }
-    else {
-      assetManagerViewBtn.getStyleClass().remove("toggle-selected");
-      assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
-    }
+      else {
+        assetManagerViewBtn.getStyleClass().remove("toggle-selected");
+        assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+      }
 
-    refreshViewAssetColumns(assetManagerMode);
-    refreshColumns();
+      refreshViewAssetColumns(assetManagerMode);
+      refreshColumns();
 
-    GameRepresentation selectedItem = getSelection();
-    tableView.getSelectionModel().clearSelection();
-    if (selectedItem != null) {
-      selectGameInModel(selectedItem);
-    }
+      GameRepresentation selectedItem = getSelection();
+      tableView.getSelectionModel().clearSelection();
+      if (selectedItem != null) {
+        selectGameInModel(selectedItem);
+      }
+    });
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {

@@ -2,11 +2,14 @@ package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -25,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendService implements InitializingBean {
+public class FrontendService implements InitializingBean, PreferenceChangedListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
@@ -34,6 +37,9 @@ public class FrontendService implements InitializingBean {
 
   @Autowired
   private TableAssetsService tableAssetsService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
@@ -48,6 +54,7 @@ public class FrontendService implements InitializingBean {
   public FrontendConnector getFrontendConnector() {
     return getFrontendConnector(getFrontendType());
   }
+
   public FrontendConnector getFrontendConnector(FrontendType frontendType) {
     return frontendsMap.get(frontendType.name());
   }
@@ -499,6 +506,15 @@ public class FrontendService implements InitializingBean {
           LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
         }
       }
+    }
+
+    preferencesService.addChangeListener(this);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
+    if (propertyName.equals(PreferenceNames.PINBALLX_SETTINGS)) {
+      getFrontendConnector().initializeConnector();
     }
   }
 }

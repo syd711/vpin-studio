@@ -1891,7 +1891,6 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   public void initializeConnector() {
-
     File file = getDatabaseFile();
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 

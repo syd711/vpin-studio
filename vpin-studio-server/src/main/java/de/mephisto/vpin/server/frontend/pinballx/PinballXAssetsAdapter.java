@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -81,9 +82,12 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
   
     List<TableAsset> results = new ArrayList<>();
 
+    long start = System.currentTimeMillis();
     FTPClient ftp = null;
     try {
       ftp = open();
+      ftp.setDataTimeout(Duration.ofMillis(15000));
+      ftp.setDefaultTimeout(10000);
 
       String[] folders = clean(screenToFolders);
       String emulator = clean(emulatorName);
@@ -91,7 +95,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
         @Override
         public boolean accept(FTPFile ftpFile) {
           String name = clean(ftpFile.getName());
-          // returns all folders that are for the desired screen, for recusrsive scan
+          // returns all folders that are for the desired screen, for recursive scan
           if (ftpFile.isDirectory()) {
             return !isForAnotherEmulator(name, emulator) && !isForAnotherScreen(name, folders);
           }
@@ -105,6 +109,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
       };
   
       searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders);
+      LOG.info("PinballX search finished, took " + (System.currentTimeMillis() - start) + "ms.");
       for (TableAsset asset: results) {
         asset.setSourceId("PinballX");
         asset.setAuthor("gameex");
@@ -140,6 +145,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     FTPFile[] files = ftp.listFiles(rootfolder + "/" + folder, filter);
     for (FTPFile file : files) {
       if (file.isDirectory()) {
+        LOG.info("Searching FTP dir: " + file.getName());
         String name = clean(file.getName());
         searchRecursive(results, ftp, folder + "/" + file.getName(), filter,
             isForEmulator || isForEmulator(name, emulator), emulator,

@@ -3,14 +3,18 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
+import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -19,7 +23,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class PinballXSettingsPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXSettingsPreferencesController.class);
-  public static final int DEBOUNCE_MS = 500;
+  public static final int DEBOUNCE_MS = 300;
 
   private final Debouncer debouncer = new Debouncer();
 
@@ -33,6 +37,20 @@ public class PinballXSettingsPreferencesController implements Initializable {
   private CheckBox gameExEnabledCheckbox;
 
   private PinballXSettings pinballXSettings;
+
+  @FXML
+  private void onLink(ActionEvent event) {
+    Hyperlink link = (Hyperlink) event.getSource();
+    String linkText = link.getText();
+    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+      try {
+        desktop.browse(new URI(linkText));
+      } catch (Exception e) {
+        LOG.error("Failed to open link: " + e.getMessage());
+      }
+    }
+  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {

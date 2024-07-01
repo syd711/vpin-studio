@@ -1,15 +1,11 @@
 package de.mephisto.vpin.server.frontend;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.server.games.Game;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.io.FilenameUtils;
@@ -17,15 +13,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.FrontendControl;
-import de.mephisto.vpin.restclient.frontend.FrontendControls;
-import de.mephisto.vpin.restclient.frontend.Playlist;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.server.games.Game;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
   private final static Logger LOG = LoggerFactory.getLogger(BaseConnector.class);
@@ -158,21 +151,21 @@ public abstract class BaseConnector implements FrontendConnector {
 
         TableDetails details = getGameFromDb(filename);
         String gameName = FilenameUtils.getBaseName(filename);
-    
+
         Game game = new Game();
         game.setEmulatorId(emuId);
         game.setId(id);
-        game.setGameName(details!=null? details.getGameName(): gameName);
-        game.setGameFileName(details!=null? details.getGameFileName(): filename);
-        game.setGameDisplayName(details!=null? details.getGameDisplayName(): gameName);
-        game.setDisabled(details!=null? details.getStatus()==0: false);
-        game.setVersion(details!=null? details.getGameVersion(): null);
+        game.setGameName(details != null ? details.getGameName() : gameName);
+        game.setGameFileName(details != null ? details.getGameFileName() : filename);
+        game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
+        game.setDisabled(details != null ? details.getStatus() == 0 : false);
+        game.setVersion(details != null ? details.getGameVersion() : null);
 
         File table = new File(emu.getDirGames(), filename);
         game.setGameFile(table);
 
-        game.setDateAdded(details!=null? details.getDateAdded(): null);
-        game.setDateUpdated(details!=null? details.getDateModified(): null);
+        game.setDateAdded(details != null ? details.getDateAdded() : null);
+        game.setDateUpdated(details != null ? details.getDateModified() : null);
         return game;
       }
     }
@@ -250,6 +243,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean deleteGame(int gameId) {
     return deleteGame(gameId, true);
   }
+
   private boolean deleteGame(int gameId, boolean commit) {
     String filename = mapFilenames.remove(gameId);
     if (filename != null) {
@@ -261,7 +255,7 @@ public abstract class BaseConnector implements FrontendConnector {
           break;
         }
       }
-      if (_emuId>=0) {
+      if (_emuId >= 0) {
         dropGameFromDb(filename);
         if (commit) {
           commitDb(emulators.get(_emuId));
@@ -455,4 +449,8 @@ public abstract class BaseConnector implements FrontendConnector {
     return null;
   }
 
+  @Override
+  public String toString() {
+    return "Frontend Connector \"" + this.getFrontend().getFrontendType().name() + "\"";
+  }
 }

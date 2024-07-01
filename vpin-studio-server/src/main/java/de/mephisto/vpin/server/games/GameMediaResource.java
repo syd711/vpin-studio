@@ -38,8 +38,13 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -66,6 +71,8 @@ public class GameMediaResource {
   @Autowired
   private TableAssetsService tableAssetsService;
 
+  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
   @GetMapping("/{id}")
   public GameMedia getGameMedia(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -79,11 +86,25 @@ public class GameMediaResource {
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) {
     try {
       Game game = gameService.getGame(search.getGameId());
-      List<TableAsset> results = tableAssetsService.search(game.getEmulator().getName(), search.getScreen().getSegment(), search.getTerm());
-      search.setResult(results);
+      Future<?> submit = executorService.submit(new Runnable() {
+        @Override
+        public void run() {
+          try {
+            List<TableAsset> results = tableAssetsService.search(game.getEmulator().getName(), search.getScreen().getSegment(), search.getTerm());
+            search.setResult(results);
+          }
+          catch (Exception e) {
+            LOG.error("Asset search failed: " + e.getMessage(), e);
+            executorService.shutdownNow();
+          }
+        }
+      });
+      submit.get(15, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      LOG.error("Asset search failed: " + e.getMessage(), e);
+      executorService.shutdownNow();
+      LOG.error("Asset search executor failed: " + e.getMessage());
+      search.setResult(Collections.emptyList());
     }
     return search;
   }
