@@ -60,12 +60,21 @@ public class UISettings extends JsonSettings {
   private boolean columnHighscore = true;
   private boolean columnEmulator = false;
   private boolean columnIni = true;
+  private boolean columnRes = false;
   private boolean columnPlaylists = true;
   private boolean columnPov = false;
   private boolean columnPupPack = true;
   private boolean columnRom = true;
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
+
+  public boolean isColumnRes() {
+    return columnRes;
+  }
+
+  public void setColumnRes(boolean columnRes) {
+    this.columnRes = columnRes;
+  }
 
   public boolean isSidebarVisible() {
     return sidebarVisible;

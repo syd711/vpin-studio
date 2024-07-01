@@ -407,6 +407,10 @@ public class Game {
     return this.getIniFile().exists();
   }
 
+  public boolean isResAvailable() {
+    return this.getResFile().exists();
+  }
+
   public void setGameFile(@NonNull File gameFile) {
     this.gameFile = gameFile;
   }

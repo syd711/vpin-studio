@@ -118,7 +118,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text="INI" textFill="WHITE">
+                              <CheckBox fx:id="columnIni" mnemonicParsing="false" text=".ini File" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -128,7 +128,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text="Point of View (POV)" textFill="WHITE">
+                              <CheckBox fx:id="columnPov" mnemonicParsing="false" text=".pov File (Point of View)" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -142,6 +142,11 @@
                         </VBox>
                         <VBox spacing="6.0">
                            <children>
+                              <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text=".res File" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                               <CheckBox fx:id="columnRom" mnemonicParsing="false" text="ROM" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

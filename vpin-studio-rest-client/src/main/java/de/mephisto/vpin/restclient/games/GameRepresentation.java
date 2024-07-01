@@ -47,6 +47,7 @@ public class GameRepresentation {
   private String highscoreType;
   private boolean povAvailable;
   private boolean iniAvailable;
+  private boolean resAvailable;
   private boolean selected;
   private boolean romRequired;
   private String assets;
@@ -62,6 +63,14 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
+
+  public boolean isResAvailable() {
+    return resAvailable;
+  }
+
+  public void setResAvailable(boolean resAvailable) {
+    this.resAvailable = resAvailable;
+  }
 
   public String getNotes() {
     return notes;

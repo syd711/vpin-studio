@@ -16,11 +16,20 @@ public class FilterSettings {
   private boolean withAltSound;
   private boolean withAltColor;
   private boolean withPov;
+  private boolean withRes;
   private boolean withIni;
   private boolean withNVOffset;
   private boolean withAlias;
   private int gameStatus = -1;
   private NoteType noteType;
+
+  public boolean isWithRes() {
+    return withRes;
+  }
+
+  public void setWithRes(boolean withRes) {
+    this.withRes = withRes;
+  }
 
   public boolean isWithPov() {
     return withPov;
@@ -198,6 +207,7 @@ public class FilterSettings {
         && !this.withBackglass
         && !this.withIni
         && !this.withPov
+        && !this.withRes
         && !this.withPupPack
         && !this.withNVOffset
         && !this.withAlias

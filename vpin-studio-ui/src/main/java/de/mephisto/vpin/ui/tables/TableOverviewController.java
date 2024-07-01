@@ -125,6 +125,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnINI;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnRES;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnHSType;
 
   @FXML
@@ -853,7 +856,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
    * @return true if the filtered list did change and reload is required
    */
   public synchronized boolean onRefresh(FilterSettings filterSettings) {
-
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
     if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       predicateFactory.setFilterIds(null);
@@ -1182,6 +1184,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (value.isIniAvailable()) {
         FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
         Tooltip.install(checkboxIcon, new Tooltip("INI file available"));
+        return checkboxIcon;
+      }
+      return null;
+    }, true);
+
+    configureColumn(columnRES, (value, model) -> {
+      if (value.isResAvailable()) {
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
+        Tooltip.install(checkboxIcon, new Tooltip("RES file available"));
         return checkboxIcon;
       }
       return null;
@@ -1895,6 +1906,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
     columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
+    columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());

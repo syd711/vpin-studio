@@ -68,6 +68,9 @@ public class GameFilterService {
         if (filterSettings.isWithPov() && !game.getPOVFile().exists()) {
           continue;
         }
+        if (filterSettings.isWithRes() && !game.getResFile().exists()) {
+          continue;
+        }
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
           continue;
         }
@@ -112,7 +115,7 @@ public class GameFilterService {
           continue;
         }
 
-        if (tableDetails == null || (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus())) {
+        if (tableDetails != null && filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
           continue;
         }
 
@@ -121,10 +124,9 @@ public class GameFilterService {
         }
       }
 
-
       result.add(game.getId());
     }
-    LOG.info("Filtering from " + knownGames.size() + " games took " + (System.currentTimeMillis() - start) + "ms");
+    LOG.info("Filtering " + result.size() + " from " + knownGames.size() + " games took " + (System.currentTimeMillis() - start) + "ms");
     return result;
   }
 }

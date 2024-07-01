@@ -80,6 +80,9 @@ public class TableFilterController extends BaseFilterController implements Initi
   private CheckBox withPovCheckBox;
 
   @FXML
+  private CheckBox withResCheckBox;
+
+  @FXML
   private CheckBox withAliasCheckBox;
 
   @FXML
@@ -154,6 +157,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
     withIniCheckBox.setSelected(filterSettings.isWithIni());
     withPovCheckBox.setSelected(filterSettings.isWithPov());
+    withResCheckBox.setSelected(filterSettings.isWithRes());
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
     withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     updatesDisabled = false;
@@ -267,6 +271,11 @@ public class TableFilterController extends BaseFilterController implements Initi
     withPovCheckBox.setSelected(filterSettings.isWithPov());
     withPovCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithPov(newValue);
+      applyFilter();
+    });
+    withResCheckBox.setSelected(filterSettings.isWithRes());
+    withResCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithRes(newValue);
       applyFilter();
     });
     withIniCheckBox.setSelected(filterSettings.isWithIni());
