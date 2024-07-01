@@ -58,10 +58,13 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button backglassBtn;
 
   @FXML
+  private Button settings_clientBtn;
+
+  @FXML
   private Button mameBtn;
 
   @FXML
-  private Button screenValidatorsBtn;
+  private Button validators_screensBtn;
 
   @FXML
   private Button repositoriesBtn;
@@ -82,7 +85,13 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button pauseMenuBtn;
 
   @FXML
-  private Button highscoreCardsBtn;
+  private Button validators_vpxBtn;
+
+  @FXML
+  private Button highscore_cardsBtn;
+
+  @FXML
+  private Button highscoresBtn;
 
   @FXML
   private BorderPane preferencesMain;
@@ -176,7 +185,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
-    load("preference-settings-client.fxml", event);
+    load("preference-settings_client.fxml", event);
   }
 
   @FXML
@@ -186,7 +195,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-validators-screens.fxml", event);
+    load("preference-validators_screens.fxml", event);
   }
 
   @FXML
@@ -308,7 +317,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
-      load("preference-" + preferenceType + ".fxml", null, preferenceType);
+      load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
     });
   }
 
@@ -388,9 +397,9 @@ public class PreferencesController implements Initializable, StudioEventListener
     vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
     overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
     pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
-    highscoreCardsBtn.managedProperty().bindBidirectional(highscoreCardsBtn.visibleProperty());
+    highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
-    screenValidatorsBtn.managedProperty().bindBidirectional(screenValidatorsBtn.visibleProperty());
+    validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -402,8 +411,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
 
     pauseMenuBtn.setVisible(frontendType.supportControls());
-    highscoreCardsBtn.setVisible(frontendType.isNotStandalone());
-    screenValidatorsBtn.setVisible(frontendType.isNotStandalone());
+    highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
+    validators_screensBtn.setVisible(frontendType.isNotStandalone());
 
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;

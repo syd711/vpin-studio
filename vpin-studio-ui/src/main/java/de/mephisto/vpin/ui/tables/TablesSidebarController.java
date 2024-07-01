@@ -369,7 +369,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   @FXML
   private void onPrefsScreenValidators() {
-    PreferencesController.open("validators-screens");
+    PreferencesController.open("validators_screens");
   }
 
   @FXML

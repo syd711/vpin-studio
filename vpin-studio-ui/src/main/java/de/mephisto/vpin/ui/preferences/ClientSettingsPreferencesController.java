@@ -477,7 +477,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     columnPov.setSelected(uiSettings.isColumnPov());
     columnPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      uiSettings.setColumnIni(t1);
+      uiSettings.setColumnPov(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });

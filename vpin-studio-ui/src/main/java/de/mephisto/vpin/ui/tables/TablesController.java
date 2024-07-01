@@ -114,7 +114,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private void onTableSettings() {
-    PreferencesController.open("settings-client");
+    PreferencesController.open("settings_client");
   }
 
   @FXML

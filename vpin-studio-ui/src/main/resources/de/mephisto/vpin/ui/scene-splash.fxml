@@ -16,10 +16,10 @@
       </ImageView>
       <Label fx:id="versionLabel" text="Label" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
          <font>
-            <Font size="18.0" />
+            <Font size="14.0" />
          </font>
          <StackPane.margin>
-            <Insets bottom="37.0" left="31.0" />
+            <Insets bottom="46.0" left="31.0" />
          </StackPane.margin>
       </Label>
       <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Label" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">

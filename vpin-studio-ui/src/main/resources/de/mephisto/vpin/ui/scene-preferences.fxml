@@ -27,7 +27,7 @@
                                  </font>
                               </Label>
                               <Button fx:id="avatarBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="32.0" mnemonicParsing="false" onAction="#onCabinetSettings" styleClass="preference-button" text="Cabinet Settings" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onClientSettings" styleClass="preference-button" text="Client Settings">
+                              <Button fx:id="settings_clientBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" mnemonicParsing="false" onAction="#onClientSettings" styleClass="preference-button" text="Client Settings">
                                  <VBox.margin>
                                     <Insets />
                                  </VBox.margin>
@@ -99,8 +99,8 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="screenValidatorsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="Screen Validators" />
-                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXValidation" styleClass="preference-button" text="Table Validators" />
+                              <Button fx:id="validators_screensBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="282.0" mnemonicParsing="false" onAction="#onMediaValidation" styleClass="preference-button" text="Screen Validators" />
+                              <Button fx:id="validators_vpxBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="250.0" layoutY="10.0" mnemonicParsing="false" onAction="#onVPXValidation" styleClass="preference-button" text="Table Validators" />
                               <Label alignment="BASELINE_LEFT" layoutX="210.0" layoutY="133.0" styleClass="preference-section" text="HIGHSCORE PREFERENCES">
                                  <font>
                                     <Font size="13.0" />
@@ -109,12 +109,12 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
-                              <Button fx:id="highscoreCardsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Card Settings">
+                              <Button fx:id="highscore_cardsBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="125.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHighscoreCards" styleClass="preference-button" text="Highscore Card Settings">
                                  <VBox.margin>
                                     <Insets top="4.0" />
                                  </VBox.margin>
                               </Button>
-                              <Button fx:id="highscores" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Highscore Settings" />
+                              <Button fx:id="highscoresBtn" alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="160.0" layoutY="409.0" mnemonicParsing="false" onAction="#onScoreFormat" styleClass="preference-button" text="Highscore Settings" />
                               <Label alignment="BASELINE_LEFT" layoutX="160.0" layoutY="380.0" styleClass="preference-section" text="PLAYER PREFERENCES">
                                  <font>
                                     <Font size="13.0" />
