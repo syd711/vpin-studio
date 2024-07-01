@@ -63,6 +63,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 ### Miscellaneous
 
+- **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header. 
+- **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
 - **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Filter Section**: Splitted filter preferences for .ini and .pov files.
@@ -71,3 +73,4 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 - **Pause Menu**: Fixed auto-play issues of YouTube videos.
 - **VPX Monitor**: I disabled this feature for now since when enabled, this VPX process watcher hangs and I haven't found the problem yet.
+- **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.

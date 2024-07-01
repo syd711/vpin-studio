@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -83,6 +84,10 @@ public class MameServiceClient extends VPinStudioClientService {
       LOG.error("Rom upload failed: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public Boolean deleteSettings(@NonNull String rom) {
+    return getRestClient().delete(API + "mame/options/" + rom);
   }
 
   public MameOptions saveOptions(MameOptions options) throws Exception {

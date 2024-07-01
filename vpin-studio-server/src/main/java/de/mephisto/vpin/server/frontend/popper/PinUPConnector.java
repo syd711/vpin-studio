@@ -667,7 +667,6 @@ public class PinUPConnector implements FrontendConnector {
       }
       preparedStatement.executeUpdate();
       preparedStatement.close();
-      LOG.info("Updated of ROM of \"" + game + "\" to " + game.getRom());
       LOG.info("Updated of LaunchCustomVar of \"" + game + "\" to \"" + (enable ? "" : "HIDEPUP") + "\"");
     }
     catch (Exception e) {

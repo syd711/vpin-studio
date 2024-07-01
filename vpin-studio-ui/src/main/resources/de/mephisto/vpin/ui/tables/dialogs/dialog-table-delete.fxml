@@ -61,7 +61,18 @@
                                     <Insets top="12.0" />
                                  </VBox.margin>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="All files are kept, only the database entry will be deleted from the frontend." />
+                              <Label styleClass="checkbox-description" text="This will remove the game from the frontend's database.">
+                                 <VBox.margin>
+                                    <Insets top="3.0" />
+                                 </VBox.margin></Label>
+                              <CheckBox fx:id="keepAssetsCheckbox" layoutX="10.0" layoutY="22.0" mnemonicParsing="false" text="Keep Frontend Media Assets">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="24.0" top="3.0" />
+                                 </VBox.margin>
+                              </CheckBox>
                            </children>
                         </VBox>
                         <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">

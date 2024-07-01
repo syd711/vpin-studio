@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -39,6 +41,9 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @FXML
   private CheckBox deleteAllCheckbox;
+
+  @FXML
+  private CheckBox keepAssetsCheckbox;
 
   @FXML
   private CheckBox vpxFileCheckbox;
@@ -118,6 +123,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteIni(iniCheckbox.isSelected());
     descriptor.setDeleteRes(resCheckbox.isSelected());
     descriptor.setDeleteVbs(vbsCheckbox.isSelected());
+    descriptor.setKeepAssets(keepAssetsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
     Platform.runLater(() -> {
@@ -166,6 +172,13 @@ public class TableDeleteController implements Initializable, DialogController {
       iniCheckbox.setSelected(newValue);
       resCheckbox.setSelected(newValue);
       povCheckbox.setSelected(newValue);
+    });
+
+    frontendCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        keepAssetsCheckbox.setDisable(!newValue);
+      }
     });
   }
 

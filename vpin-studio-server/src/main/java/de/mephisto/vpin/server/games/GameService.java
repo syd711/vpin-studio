@@ -299,17 +299,15 @@ public class GameService implements InitializingBean {
           }
         }
 
+        //cfg files belong to MAME
         if (descriptor.isDeleteCfg()) {
           if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
             success = false;
           }
 
           if (!StringUtils.isEmpty(game.getRom())) {
-            List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getEmulatorId(), game.getRom()));
-            if (gamesByRom.size() == 1) {
-              if (!mameService.deleteOptions(game.getRom())) {
-                success = false;
-              }
+            if (!mameService.deleteOptions(game.getRom())) {
+              success = false;
             }
           }
         }
@@ -333,35 +331,38 @@ public class GameService implements InitializingBean {
             success = false;
           }
 
-          //only delete the assets, if there is no other game with the same "Game Name".
-          List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
-            .stream().filter(g -> g.getId() != game.getId())
-            .collect(Collectors.toList());
-          List<Game> duplicateGameNameTables = allOtherTables
-            .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
-            .collect(Collectors.toList());
+          if (!descriptor.isKeepAssets()) {
+            //only delete the assets, if there is no other game with the same "Game Name".
+            List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
+                .stream().filter(g -> g.getId() != game.getId())
+                .collect(Collectors.toList());
+            List<Game> duplicateGameNameTables = allOtherTables
+                .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
+                .collect(Collectors.toList());
 
-          if (duplicateGameNameTables.isEmpty()) {
-            VPinScreen[] values = VPinScreen.values();
-            for (VPinScreen originalScreenValue : values) {
-              List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
-              for (GameMediaItem mediaItem : gameMediaItem) {
-                File mediaFile = mediaItem.getFile();
+            if (duplicateGameNameTables.isEmpty()) {
+              LOG.info("Deleting screen assets for \"" + game.getGameDisplayName() + "\"");
+              VPinScreen[] values = VPinScreen.values();
+              for (VPinScreen originalScreenValue : values) {
+                List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+                for (GameMediaItem mediaItem : gameMediaItem) {
+                  File mediaFile = mediaItem.getFile();
 
-                if (originalScreenValue.equals(VPinScreen.Wheel)) {
-                  WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-                  augmenter.deAugment();
-                }
+                  if (originalScreenValue.equals(VPinScreen.Wheel)) {
+                    WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
+                    augmenter.deAugment();
+                  }
 
-                if (mediaFile.exists() && !mediaFile.delete()) {
-                  success = false;
-                  LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                  if (mediaFile.exists() && !mediaFile.delete()) {
+                    success = false;
+                    LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                  }
                 }
               }
             }
-          }
-          else {
-            LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+            else {
+              LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+            }
           }
 
           LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
@@ -562,11 +563,11 @@ public class GameService implements InitializingBean {
       String scannedTableName = scanResult.getTableName();
 
       TableDetails tableDetails = frontendService.getTableDetails(game.getId());
-      if (tableDetails!=null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+      if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
 
-      if (tableDetails!=null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+      if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
         scannedTableName = tableDetails.getRomAlt();
       }
 
@@ -689,6 +690,7 @@ public class GameService implements InitializingBean {
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Linked game " + gameId + " to " + extTableId);
   }
+
   public void fixVersion(int gameId, String version) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
     gameDetails.setTableVersion(version);

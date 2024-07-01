@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -112,6 +113,9 @@ public class TablesSidebarMameController implements Initializable {
   private Button mameBtn;
 
   @FXML
+  private Button deleteBtn;
+
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -138,6 +142,23 @@ public class TablesSidebarMameController implements Initializable {
   public TablesSidebarMameController() {
   }
 
+  @FXML
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
+    String rom = game.get().getRom();
+    if (StringUtils.isEmpty(rom)) {
+      return;
+    }
+
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      new Thread(() -> {
+        client.getMameService().deleteSettings(rom);
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+        });
+      }).start();
+    }
+  }
 
   @FXML
   private void onRomAliasCopy() {
@@ -281,6 +302,7 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
     dataScrollPane.setVisible(g.isPresent());
+    deleteBtn.setDisable(g.isEmpty());
 
     labelRomAlias.setText("-");
     labelRom.setText("-");
@@ -359,6 +381,8 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   private void setInputDisabled(boolean b) {
+    deleteBtn.setDisable(b);
+
     skipPinballStartupTest.setDisable(b);
     useSound.setDisable(b);
     useSamples.setDisable(b);

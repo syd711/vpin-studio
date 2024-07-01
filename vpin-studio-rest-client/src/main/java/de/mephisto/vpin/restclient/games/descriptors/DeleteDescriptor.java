@@ -18,6 +18,15 @@ public class DeleteDescriptor {
   private boolean deleteRes;
   private boolean deleteIni;
   private boolean deleteVbs;
+  private boolean keepAssets;
+
+  public boolean isKeepAssets() {
+    return keepAssets;
+  }
+
+  public void setKeepAssets(boolean keepAssets) {
+    this.keepAssets = keepAssets;
+  }
 
   public boolean isDeleteCfg() {
     return deleteCfg;

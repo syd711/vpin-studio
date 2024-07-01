@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
@@ -320,6 +321,8 @@ public class TablesSidebarPUPPackController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
+      TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
+
       pupPack = client.getPupPackService().getPupPack(game.getId());
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
@@ -333,6 +336,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
       enabledCheckbox.setSelected(false);
+      enabledCheckbox.setDisable(StringUtils.isEmpty(tableDetails.getRomName()));
 
       if (pupPackAvailable) {
         nameLabel.setText(pupPack.getName());
