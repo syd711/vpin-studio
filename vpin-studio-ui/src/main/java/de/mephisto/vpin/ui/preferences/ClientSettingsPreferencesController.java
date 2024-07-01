@@ -160,6 +160,7 @@ public class ClientSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
+    sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
 
     sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
     columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
@@ -172,6 +173,8 @@ public class ClientSettingsPreferencesController implements Initializable {
 
     sectionPlaylists.setVisible(frontendType.supportPlaylists());
     columnPlaylists.setVisible(frontendType.supportPlaylists());
+
+    sectionAssets.setVisible(frontendType.supportMedias());
 
 
     networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
