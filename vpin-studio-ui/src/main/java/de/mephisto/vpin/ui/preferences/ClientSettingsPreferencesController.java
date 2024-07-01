@@ -160,14 +160,19 @@ public class ClientSettingsPreferencesController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
+
+    sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
+    columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
     vpsPUPPack.managedProperty().bindBidirectional(vpsPUPPack.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.supportPupPacks()) {
-      columnPupPack.setVisible(false);
-      sectionPupPack.setVisible(false);
-      vpsPUPPack.setVisible(false);
-    }
+    columnPupPack.setVisible(frontendType.supportPupPacks());
+    sectionPupPack.setVisible(frontendType.supportPupPacks());
+    vpsPUPPack.setVisible(frontendType.supportPupPacks());
+
+    sectionPlaylists.setVisible(frontendType.supportPlaylists());
+    columnPlaylists.setVisible(frontendType.supportPlaylists());
+
 
     networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
 

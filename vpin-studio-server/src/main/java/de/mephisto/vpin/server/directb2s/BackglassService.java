@@ -173,9 +173,8 @@ public class BackglassService {
     return serverSettingsParser.getSettings();
   }
 
-  public DirectB2ServerSettings saveServerSettings(int gameId, DirectB2ServerSettings settings) {
-    Game game = gameService.getGame(gameId);
-    GameEmulator emulator = game.getEmulator();
+  public DirectB2ServerSettings saveServerSettings(int emulatorId, DirectB2ServerSettings settings) {
+    GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
     File settingsXml = emulator.getB2STableSettingsXml();
     if (!settingsXml.exists()) {
       emulator = frontendService.getDefaultGameEmulator();
@@ -184,7 +183,7 @@ public class BackglassService {
 
     B2SServerSettingsSerializer serverSettingsSerializer = new B2SServerSettingsSerializer(settingsXml);
     serverSettingsSerializer.serialize(settings);
-    return getServerSettings(gameId);
+    return getServerSettings(emulatorId);
   }
 
   public List<DirectB2S> getBackglasses() {

@@ -781,12 +781,13 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   public void refreshSidebarSections() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    refreshSection(titledPaneMedia, uiSettings.isSectionAssets());
+    refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias());
     refreshSection(titledPaneTableData, uiSettings.isSectionTableData());
     refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass());
     refreshSection(titledPaneDMD, uiSettings.isSectionDMD());
-    refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists());
+    refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists());
     refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound());
     refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor());
     refreshSection(titledPanePov, uiSettings.isSectionPov());
@@ -794,7 +795,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME());
     refreshSection(titledPaneVps, uiSettings.isSectionVps());
     refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails());
-    refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack());
+    refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks());
 
     getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
   }

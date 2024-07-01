@@ -25,14 +25,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import javax.xml.bind.DatatypeConverter;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.DatatypeConverter;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -59,20 +57,21 @@ public class DirectB2SResource {
   }
 
   @GetMapping("/background/{emuId}/{filename}")
-  public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+  public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
     return download(backglassService.getBackgroundBase64(emuId, filename), filename, ".png");
   }
+
   @GetMapping("/dmdimage/{emuId}/{filename}")
-  public ResponseEntity<Resource> getDmdImage(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename ) {
+  public ResponseEntity<Resource> getDmdImage(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
     filename = URLDecoder.decode(filename, StandardCharsets.UTF_8);
     return download(backglassService.getDmdBase64(emuId, filename), filename, ".dmd.png");
   }
 
   protected ResponseEntity<Resource> download(String base64, String filename, String extension) {
-    String name = StringUtils.indexOf(filename, '/')>=0? StringUtils.substringAfterLast(filename, "/"): filename;
+    String name = StringUtils.indexOf(filename, '/') >= 0 ? StringUtils.substringAfterLast(filename, "/") : filename;
     name = StringUtils.substringBeforeLast(name, ".") + extension;
 
     HttpHeaders headers = new HttpHeaders();
@@ -81,7 +80,7 @@ public class DirectB2SResource {
     headers.add("Pragma", "no-cache");
     headers.add("Expires", "0");
 
-    if (base64==null) {
+    if (base64 == null) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
@@ -89,10 +88,10 @@ public class DirectB2SResource {
     ByteArrayResource resource = new ByteArrayResource(image);
 
     return ResponseEntity.ok()
-            .headers(headers)
-            .contentLength(resource.contentLength())
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .body(resource);
+        .headers(headers)
+        .contentLength(resource.contentLength())
+        .contentType(MediaType.APPLICATION_OCTET_STREAM)
+        .body(resource);
   }
 
   @PostMapping("/get")
@@ -134,7 +133,8 @@ public class DirectB2SResource {
   public DirectB2STableSettings saveTableSettings(@PathVariable("gameId") int gameId, @RequestBody DirectB2STableSettings settings) {
     try {
       return backglassService.saveTableSettings(gameId, settings);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Table not supported: " + e.getMessage());
     }
   }
@@ -148,8 +148,10 @@ public class DirectB2SResource {
   public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
     try {
       return backglassService.saveServerSettings(emuId, settings);
-    } catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving custom options failed: " + e.getMessage());
+    }
+    catch (Exception e) {
+      LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving b2s server settings failed: " + e.getMessage());
     }
   }
 
@@ -163,7 +165,8 @@ public class DirectB2SResource {
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       return descriptor;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "DirectB2S upload failed: " + e.getMessage());
     }
