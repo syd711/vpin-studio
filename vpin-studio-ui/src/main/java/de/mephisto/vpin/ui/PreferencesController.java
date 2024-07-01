@@ -409,6 +409,8 @@ public class PreferencesController implements Initializable, StudioEventListener
     frontendPreferences.setVisible(frontendType.isNotStandalone());
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+    notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
+    overlayBtn.setVisible(frontendType.isNotStandalone());
 
     pauseMenuBtn.setVisible(frontendType.supportControls());
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
@@ -420,9 +422,6 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
-
-    notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
-    notificationsButton.setVisible(Features.NOTIFICATIONS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());
