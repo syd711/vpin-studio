@@ -84,7 +84,7 @@ public class IScoredGameCellContainer extends HBox {
 
     if (subscription.getGameId() > 0) {
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(subscription.getGameId());
-      if (StringUtils.isEmpty(summary.getRaw())) {
+      if (summary == null || StringUtils.isEmpty(summary.getRaw())) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

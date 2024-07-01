@@ -5,13 +5,13 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -19,14 +19,14 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -404,9 +404,14 @@ public class GameService implements InitializingBean {
   /**
    * Returns the current highscore for the given game
    */
+  @Nullable
   public ScoreSummary getScores(int gameId) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return highscoreService.getScoreSummary(serverId, getGame(gameId));
+    Game game = getGame(gameId);
+    if (game != null) {
+      return highscoreService.getScoreSummary(serverId, game);
+    }
+    return null;
   }
 
   /**

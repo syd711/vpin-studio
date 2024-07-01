@@ -713,7 +713,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onValidationSettings() {
-    PreferencesController.open("validators_vpx");
+    GameRepresentation game = getSelection();
+    if(game != null) {
+      ValidationState validationState = game.getValidationState();
+      int code = validationState.getCode();
+      if(code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_WHEEL_IMAGE) {
+        PreferencesController.open("validators_screens");
+      }
+      else {
+        PreferencesController.open("validators_vpx");
+      }
+
+    }
   }
 
   @FXML
