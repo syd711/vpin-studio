@@ -29,31 +29,27 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    new Thread(() -> {
-      Thread.currentThread().setName("iScored Highscore ChangeListener Thread");
+    Game game = event.getGame();
+    Score newScore = event.getNewScore();
 
-      Game game = event.getGame();
-      Score newScore = event.getNewScore();
-
-      try {
-        List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
-        for (Competition iScoredSubscription : iScoredSubscriptions) {
-          int gameId = iScoredSubscription.getGameId();
-          if (gameId == game.getId()) {
-            String url = iScoredSubscription.getUrl();
-            if (iScoredService.isIscoredGameRoomUrl(url)) {
-              iScoredService.submitScore(url, newScore, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
-            }
-            else {
-              LOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
-            }
+    try {
+      List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
+      for (Competition iScoredSubscription : iScoredSubscriptions) {
+        int gameId = iScoredSubscription.getGameId();
+        if (gameId == game.getId()) {
+          String url = iScoredSubscription.getUrl();
+          if (iScoredService.isIscoredGameRoomUrl(url)) {
+            iScoredService.submitScore(url, newScore, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
+          }
+          else {
+            LOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
           }
         }
       }
-      catch (Exception e) {
-        LOG.error("Failed emitting iScored highscore: " + e.getMessage(), e);
-      }
-    }).start();
+    }
+    catch (Exception e) {
+      LOG.error("Failed emitting iScored highscore: " + e.getMessage(), e);
+    }
   }
 
 
