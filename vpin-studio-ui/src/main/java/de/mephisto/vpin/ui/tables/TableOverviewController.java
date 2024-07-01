@@ -66,6 +66,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.kordamp.ikonli.javafx.FontIconTableCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +81,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.hexColor;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -1211,13 +1213,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       HBox box = new HBox();
       List<Playlist> matches = new ArrayList<>();
       boolean fav = false;
+      Integer favColor = null;
+
       boolean globalFav = false;
+      Integer globalFavColor = null;
+
       for (Playlist playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
           if (!fav && playlist.isFavGame(value.getId())) {
+            favColor = playlist.getMenuColor();
             fav = true;
           }
           if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
+            globalFavColor = playlist.getMenuColor();
             globalFav = true;
           }
           matches.add(playlist);
@@ -1228,12 +1236,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       double width = 0;
       if (fav) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
+        if(favColor != null) {
+          ((FontIcon)label.getGraphic()).setIconColor(Paint.valueOf(hexColor(favColor)));
+        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
       if (globalFav) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
+        if(globalFavColor != null) {
+          ((FontIcon)label.getGraphic()).setIconColor(Paint.valueOf(hexColor(globalFavColor)));
+        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
