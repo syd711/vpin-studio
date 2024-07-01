@@ -73,6 +73,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 - **Pause Menu**: Fixed auto-play issues of YouTube videos.
 - **VPX Monitor**: I disabled this feature for now since when enabled, this VPX process watcher hangs and I haven't found the problem yet.
+- **Table Overview / ALT Sound**: Fixed missing refresh after uploading a new ALT sound package.
+- **Table Overview / ALT Sound**: Removed "Enabled" checkbox. This was a leftover from the previous fixed where the audio setting was a boolean flag and set a numeric value. 
 - **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.
 - **Table Overview / VPin MAME**: Added delete button. Since the MAME settings not only contain the visible flags, but also some UI settings, resetting a table may help somestimes to fix table problems.
 - **Table Overview / VPin MAME**: Applying the MAME defaults is only possible now, when the table has existing settings / has been played once. 
