@@ -41,22 +41,22 @@
                   </HBox>
                   <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Startup Notification" />
                   <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
-                  <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Changes" />
+                  <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Change" />
                   <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
                   <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
                   <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="Shows a notification everytime the VPin Studio completes a highscore scan on table exit." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
                   <VBox fx:id="discordSettings" layoutX="34.0" layoutY="399.0">
                      <children>
-                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Posts" />
+                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Post" />
                         <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
-                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Changes" />
+                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Change" />
                         <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows a notification every time a competition starts, ends or is cancelled." textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="iScoredSettings">
                      <children>
-                        <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Posts" />
+                        <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Post" />
                         <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to iScored." textFill="WHITE" />
                      </children>
                   </VBox>
