@@ -45,7 +45,7 @@ public class TableOverviewPredicateFactory {
       public boolean test(GameRepresentationModel model) {
         GameRepresentation game = model.getGame();
 
-        if (filteredIds != null && !filteredIds.isEmpty() && !filteredIds.contains(game.getId())) {
+        if (filteredIds != null && !filteredIds.contains(game.getId())) {
           return false;
         }
 
