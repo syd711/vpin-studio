@@ -36,7 +36,7 @@ public class SystemUtil {
       return;
     }
 
-    if (isLocal() && !folder.exists()) {
+    if (!folder.exists() && (fallback != null && !fallback.exists())) {
       WidgetFactory.showAlert(Studio.stage, "Error", "The local folder \"" + folder.getAbsolutePath() + "\" does not exist.");
       return;
     }

@@ -236,6 +236,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         Frontend frontend = client.getFrontendService().getFrontendCached();
         File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
+        if (!gamePupFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          gamePupFolder = new File(pupFolder, game.get().getRomAlias());
+        }
         SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
     }
@@ -250,6 +253,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
+        if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          altSoundFolder = new File(altSoundFolder, game.get().getRomAlias());
+        }
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
     }
@@ -266,6 +272,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (this.game.isPresent()) {
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
+        if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          folder = new File(folder, game.get().getRomAlias());
+        }
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
     }
