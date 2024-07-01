@@ -23,12 +23,14 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
 
   private final Iterator<File> iterator;
+  private final int gameId;
   private final File file;
   private final int emulatorId;
   private final String rom;
 
-  public AltSoundUploadProgressModel(String title, File file, int emulatorId, String rom) {
+  public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom) {
     super(file, title);
+    this.gameId = gameId;
     this.file = file;
     this.emulatorId = emulatorId;
     this.rom = rom;
@@ -64,11 +66,10 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
-      else {
-        Platform.runLater(() -> {
-          EventManager.getInstance().notifyTableChange(-1, rom);
-        });
-      }
+
+      Platform.runLater(() -> {
+        EventManager.getInstance().notifyTableChange(gameId, rom);
+      });
       progressResultModel.addProcessed();
     }
     catch (Exception e) {

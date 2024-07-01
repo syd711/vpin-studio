@@ -17,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -65,9 +64,6 @@ public class TablesSidebarAltSoundController implements Initializable {
   private Label formatLabel;
 
   @FXML
-  private CheckBox enabledCheckbox;
-
-  @FXML
   private VBox dataRoot;
 
   @FXML
@@ -100,7 +96,11 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onUpload() {
-    TableDialogs.openAltSoundUploadDialog(null, null);
+    int gameId = -1;
+    if (this.game.isPresent()) {
+      gameId = this.game.get().getId();
+    }
+    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
   }
 
   @FXML
@@ -131,15 +131,6 @@ public class TablesSidebarAltSoundController implements Initializable {
   }
 
   @FXML
-  private void onAltSoundEnable() {
-    if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      GameRepresentation g = game.get();
-      Studio.client.getAltSoundService().setAltSoundEnabled(game.get().getId(), enabledCheckbox.isSelected());
-      EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
-    }
-  }
-
-  @FXML
   private void onDismiss() {
     GameRepresentation g = game.get();
     DismissalUtil.dismissValidation(g, this.validationState);
@@ -151,7 +142,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     this.reloadBtn.setDisable(true);
     tablesSidebarController.getTableOverviewController().closeEditors();
 
-    if(game.isPresent()) {
+    if (game.isPresent()) {
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new AltSoundRefreshProgressModel(game.get()));
         this.reloadBtn.setDisable(false);
@@ -192,7 +183,6 @@ public class TablesSidebarAltSoundController implements Initializable {
 
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
-    enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
@@ -217,12 +207,9 @@ public class TablesSidebarAltSoundController implements Initializable {
       deleteBtn.setDisable(!altSoundAvailable);
       altSoundBtn.setDisable(!altSoundAvailable);
       restoreBtn.setDisable(!altSoundAvailable);
-      enabledCheckbox.setDisable(!altSoundAvailable);
-      enabledCheckbox.setVisible(altSoundAvailable);
 
       if (altSoundAvailable) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-        enabledCheckbox.setSelected(Studio.client.getAltSoundService().isAltSoundEnabled(game.getId()));
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));

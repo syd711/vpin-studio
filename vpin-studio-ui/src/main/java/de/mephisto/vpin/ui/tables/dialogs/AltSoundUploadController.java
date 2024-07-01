@@ -66,6 +66,7 @@ public class AltSoundUploadController implements Initializable, DialogController
   private File selection;
   private UploaderAnalysis uploaderAnalysis;
   private GameEmulatorRepresentation emulatorRepresentation;
+  private int gameId;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -80,7 +81,7 @@ public class AltSoundUploadController implements Initializable, DialogController
       stage.close();
 
       Platform.runLater(() -> {
-        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel("ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
+        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
         ProgressDialog.createProgressDialog(model);
       });
     }
@@ -164,10 +165,12 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   }
 
-  public void setFile(Stage stage, File file, UploaderAnalysis uploaderAnalysis) {
+  public void setData(Stage stage, File file, UploaderAnalysis uploaderAnalysis, int gameId) {
     this.stage = stage;
     this.selection = file;
     this.uploaderAnalysis = uploaderAnalysis;
+    this.gameId = gameId;
+
     if (this.selection != null) {
       refreshMatchingGame(uploaderAnalysis);
       this.fileNameField.setText(this.selection.getAbsolutePath());

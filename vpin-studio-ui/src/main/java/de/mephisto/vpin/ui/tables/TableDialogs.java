@@ -300,10 +300,10 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis) {
+  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis, int gameId) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
-    controller.setFile(stage, file, analysis);
+    controller.setData(stage, file, analysis, gameId);
     stage.showAndWait();
   }
 

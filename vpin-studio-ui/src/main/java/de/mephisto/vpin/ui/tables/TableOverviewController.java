@@ -366,7 +366,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAltSoundUpload() {
-    TableDialogs.openAltSoundUploadDialog(null, null);
+    List<GameRepresentation> selectedItems = getSelections();
+    int gameId = -1;
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      gameId = selectedItems.get(0).getId();
+    }
+    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
   }
 
   @FXML

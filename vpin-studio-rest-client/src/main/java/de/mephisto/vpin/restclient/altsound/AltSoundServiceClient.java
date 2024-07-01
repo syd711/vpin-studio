@@ -45,10 +45,6 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "altsound/enabled/" + gameId, Boolean.class);
   }
 
-  public boolean setAltSoundEnabled(int gameId, boolean b) {
-    return getRestClient().get(API + "altsound/set/" + gameId + "/" + b, Boolean.class);
-  }
-
   public boolean delete(int gameId) {
     return getRestClient().delete(API + "altsound/" + gameId);
   }

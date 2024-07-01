@@ -66,7 +66,7 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(file, analysis);
+        TableDialogs.openAltSoundUploadDialog(file, analysis, -1);
         return;
       }
       case VPX: {
