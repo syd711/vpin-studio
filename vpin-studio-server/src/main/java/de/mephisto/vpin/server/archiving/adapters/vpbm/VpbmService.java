@@ -160,7 +160,8 @@ public class VpbmService implements InitializingBean {
         LOG.error("VPBM Command Error: " + standardErrorFromCommand);
         out.setErrOut(standardErrorFromCommand.toString());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       out.setErrOut("Failed to execute VPBM: " + e.getMessage());
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
@@ -169,13 +170,11 @@ public class VpbmService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    new Thread(()-> {
-      Thread.currentThread().setName("VpbmService Thread");
-      refreshConfig();
-    }).start();
+    refreshConfig();
   }
 
   private void refreshConfig() {
+    long start = System.currentTimeMillis();
     try {
       File configFileFolder = new File(VPBM_FOLDER);
       File configJsonFile = new File(configFileFolder, "vPinBackupManager.json");
@@ -253,8 +252,9 @@ public class VpbmService implements InitializingBean {
           LOG.info("Updated internal host id to '" + hostId.trim() + "'");
         }
       }
-      LOG.info("Finished vpbm configuration check.");
-    } catch (Exception e) {
+      LOG.info("Finished VPBM configuration check, took " + (System.currentTimeMillis() - start) + "ms.");
+    }
+    catch (Exception e) {
       String msg = "Failed to run configuration check for vpbm: " + e.getMessage();
       LOG.error(msg, e);
     }
