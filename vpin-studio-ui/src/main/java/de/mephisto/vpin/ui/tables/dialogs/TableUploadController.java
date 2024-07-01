@@ -468,7 +468,7 @@ public class TableUploadController implements Initializable, DialogController {
     }));
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     tableNameLabel.setVisible(false);
     tableTitleLabel.setVisible(false);

@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -745,7 +744,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 

@@ -49,7 +49,6 @@ This app will show the dashboard and may be extended in the future with addition
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/notifications.jpg" width="500" />
 
-
 Checkout the video to see how to install the VPin Studio App:
 https://www.youtube.com/@vpin-studio/videos
 
@@ -64,9 +63,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 ### Miscellaneous
 
-- **Preferences Changes**: 
-- **Sidebar**: Added toggling
-
+- **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
+- **Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Filter Section**: Splitted filter preferences for .ini and .pov files.
 
 ### Bugfixes

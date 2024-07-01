@@ -29,7 +29,7 @@ public class GameValidationTexts {
 
   @NonNull
   public static LocalizedValidation getValidationResult(@NonNull GameRepresentation game, ValidationState state) {
-    Frontend frontend = Studio.client.getFrontendService().getFrontend();
+    Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
     String text;
     String label;

@@ -188,7 +188,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
   @FXML
   private void onVersionFix() {
     if (game.isPresent()) {
-      Frontend frontend = client.getFrontendService().getFrontend();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
 
       GameRepresentation gameRepresentation = game.get();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", 

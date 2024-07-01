@@ -99,7 +99,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      Frontend frontend = client.getFrontendService().getFrontend();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
 
       boolean locked = client.getFrontendService().isFrontendRunning();
       if (locked) {

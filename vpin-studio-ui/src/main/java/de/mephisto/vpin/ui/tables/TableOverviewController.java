@@ -349,7 +349,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {
-    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontend().getSupportedScreens();
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
     columnPlayfield.setVisible(supportedScreens.contains(VPinScreen.PlayField) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.PlayField.getValidationCode())));
     columnBackglass.setVisible(supportedScreens.contains(VPinScreen.BackGlass) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
     columnLoading.setVisible(supportedScreens.contains(VPinScreen.Loading) && assetManagerMode && !ignoredValidations.contains(String.valueOf(VPinScreen.Loading.getValidationCode())));
@@ -528,7 +528,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return;
       }
 
-      Frontend frontend = client.getFrontendService().getFrontend();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
 
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
           "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
@@ -547,7 +547,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
         FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -933,7 +933,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             this.tableEditBtn.setDisable(false);
           }
           else {
-            Frontend frontend = client.getFrontendService().getFrontend();
+            Frontend frontend = client.getFrontendService().getFrontendCached();
             this.validationErrorLabel.setText("No tables found");
             this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
                 + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
@@ -1087,7 +1087,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
-        Frontend frontend = client.getFrontendService().getFrontend();
+        Frontend frontend = client.getFrontendService().getFrontendCached();
 
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
         Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
@@ -1315,7 +1315,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       return box;
     }, true);
 
-    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontend().getSupportedScreens();
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
     configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
     configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
     configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
@@ -1737,7 +1737,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
     this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
 
     FrontendUtil.replaceName(importBtn.getTooltip(), frontend);

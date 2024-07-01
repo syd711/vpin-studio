@@ -391,7 +391,7 @@ public class TableDialogs {
   }
 
   public static void openAutoFillAll() {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
         "Cancel", "Continue", 
         FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),
@@ -403,7 +403,7 @@ public class TableDialogs {
   }
 
   public static TableDetails openAutoFill(GameRepresentation game) {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
         "Cancel", "Continue", 
         FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),

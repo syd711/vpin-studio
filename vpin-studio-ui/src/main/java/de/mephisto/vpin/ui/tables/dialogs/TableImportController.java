@@ -97,7 +97,7 @@ public class TableImportController implements Initializable, DialogController {
 
   public void setEmulator(GameEmulatorRepresentation emulator) {
     try {
-      Frontend frontend = client.getFrontendService().getFrontend();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
       GameList importableTables = client.getFrontendService().getImportableTables(emulator.getId());
       saveBtn.setDisable(importableTables.getItems().isEmpty());
 

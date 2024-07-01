@@ -9,17 +9,17 @@
 
 <StackPane xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.SplashScreenController">
    <children>
-      <ImageView fitHeight="401.0" fitWidth="600.0" pickOnBounds="true" preserveRatio="true">
+      <ImageView fitHeight="768.0" fitWidth="1024.0" pickOnBounds="true" preserveRatio="true">
          <image>
             <Image url="@splash.png" />
          </image>
       </ImageView>
       <Label fx:id="versionLabel" text="Label" textFill="WHITE" StackPane.alignment="BOTTOM_LEFT">
          <font>
-            <Font size="14.0" />
+            <Font size="18.0" />
          </font>
          <StackPane.margin>
-            <Insets bottom="27.0" left="19.0" />
+            <Insets bottom="37.0" left="31.0" />
          </StackPane.margin>
       </Label>
       <Label fx:id="factLabel" alignment="CENTER_RIGHT" contentDisplay="RIGHT" text="Label" textAlignment="RIGHT" textFill="WHITE" wrapText="true" StackPane.alignment="TOP_RIGHT">
@@ -27,7 +27,7 @@
             <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
          </StackPane.margin>
          <font>
-            <Font name="System Bold Italic" size="14.0" />
+            <Font name="System Bold Italic" size="16.0" />
          </font>
       </Label>
    </children>

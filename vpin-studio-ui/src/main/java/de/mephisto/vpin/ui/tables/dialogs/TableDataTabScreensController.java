@@ -183,7 +183,7 @@ public class TableDataTabScreensController implements Initializable {
     flyerCheckbox.managedProperty().bindBidirectional(flyerCheckbox.visibleProperty());
     helpCheckbox.managedProperty().bindBidirectional(helpCheckbox.visibleProperty());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
 
     //screens

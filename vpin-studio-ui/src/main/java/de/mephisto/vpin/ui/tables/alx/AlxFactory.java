@@ -134,7 +134,7 @@ public class AlxFactory {
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
-      Frontend frontend = Studio.client.getFrontendService().getFrontend();
+      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
       AlxTileEntryController controller = loader.getController();
       controller.refresh(new AlxTileEntry("Total Games Played", 

@@ -119,7 +119,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        Frontend frontend = client.getFrontendService().getFrontend();
+        Frontend frontend = client.getFrontendService().getFrontendCached();
         File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
         if (!file.exists()) {
           WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -213,7 +213,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);

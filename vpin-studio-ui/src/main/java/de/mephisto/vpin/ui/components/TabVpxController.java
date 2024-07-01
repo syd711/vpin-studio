@@ -43,7 +43,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onStop() {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, 
       FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -63,7 +63,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
     playBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getSystemService().isLocal());
 
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     componentUpdateController.setLocalInstallOnly(false);

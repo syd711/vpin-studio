@@ -192,7 +192,7 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     if (frontend.getFrontendType().supportArchive()) {
       for (GameRepresentation selectedGame : selectedGames) {
         boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();

@@ -233,7 +233,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onPupPack() {
     try {
       if (this.game.isPresent()) {
-        Frontend frontend = client.getFrontendService().getFrontend();
+        Frontend frontend = client.getFrontendService().getFrontendCached();
         File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
         SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
@@ -335,7 +335,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
-        Frontend frontend = client.getFrontendService().getFrontend();
+        Frontend frontend = client.getFrontendService().getFrontendCached();
         if (frontend.getAdminExe() != null) {
           File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
           if (!file.exists()) {
@@ -404,7 +404,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   }
 
   private void loadSidePanels() {
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
 
     FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);

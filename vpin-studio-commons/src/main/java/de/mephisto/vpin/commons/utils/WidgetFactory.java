@@ -581,7 +581,7 @@ public class WidgetFactory {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      Frontend frontend = client.getFrontendService().getFrontend();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
       return new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
     }
     else {

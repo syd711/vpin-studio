@@ -34,7 +34,7 @@ public class TableDataTabStatisticsController implements Initializable {
 
   public void setGame(GameRepresentation game, TableDetails tableDetails) {
     AlxSummary alxSummary = client.getAlxService().getAlxSummary(game.getId());
-    Frontend frontend = client.getFrontendService().getFrontend();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     int played = 0;
     if (tableDetails!=null && tableDetails.getNumberPlays() != null) {

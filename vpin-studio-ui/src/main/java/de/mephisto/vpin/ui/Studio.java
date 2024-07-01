@@ -291,16 +291,17 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
+    Image image = new Image(Studio.class.getResourceAsStream("splash.png"));
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
-    Scene scene = new Scene(root, 600, 400);
+    Scene scene = new Scene(root, image.getWidth(), image.getHeight());
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.UNDECORATED);
     stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
     stage.setScene(scene);
-    stage.setX((screenBounds.getWidth() / 2) - (600 / 2));
-    stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
+    stage.setX((screenBounds.getWidth() / 2) - (image.getWidth() / 2));
+    stage.setY((screenBounds.getHeight() / 2) - (image.getHeight() / 2));
     stage.setResizable(false);
     stage.show();
     return stage;

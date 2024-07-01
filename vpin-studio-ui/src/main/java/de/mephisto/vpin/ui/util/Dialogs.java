@@ -166,7 +166,7 @@ public class Dialogs {
 
   public static boolean openFrontendRunningWarning(Stage stage) {
     boolean local = client.getSystemService().isLocal();
-    Frontend frontend = Studio.client.getFrontendService().getFrontend();
+    Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
     
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, 
