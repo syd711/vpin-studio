@@ -36,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
@@ -63,6 +64,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private Label nameLabel;
@@ -427,6 +431,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+
     this.dataManagerBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);

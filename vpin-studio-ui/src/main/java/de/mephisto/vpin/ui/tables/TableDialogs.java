@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
@@ -27,11 +28,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -283,9 +280,15 @@ public class TableDialogs {
   }
 
   public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController) {
-    Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager");
+    Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager", "backglassManager");
     BackglassManagerDialogController controller = (BackglassManagerDialogController) stage.getUserData();
     controller.setTableSidebarController(tablesSidebarController);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(1408);
+    stage.setMinHeight(600);
+
     stage.showAndWait();
 
     return true;
@@ -393,7 +396,7 @@ public class TableDialogs {
   public static void openAutoFillAll() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
-        "Cancel", "Continue", 
+        "Cancel", "Continue",
         FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),
         "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {
@@ -405,7 +408,7 @@ public class TableDialogs {
   public static TableDetails openAutoFill(GameRepresentation game) {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
-        "Cancel", "Continue", 
+        "Cancel", "Continue",
         FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),
         "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
     if (!result.isApplyClicked()) {

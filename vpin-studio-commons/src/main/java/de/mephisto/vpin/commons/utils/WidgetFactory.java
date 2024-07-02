@@ -5,10 +5,10 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -320,13 +320,29 @@ public class WidgetFactory {
     }
 
     DialogController controller = fxmlLoader.getController();
+    final Stage stage = createStage();
 
     Node header = root.lookup("#header");
-    DialogHeaderController dialogHeaderController = (DialogHeaderController) header.getUserData();
-    dialogHeaderController.setTitle(title);
+    Object userData = header.getUserData();
+    if (userData instanceof DialogHeaderController) {
+      DialogHeaderController dialogHeaderController = (DialogHeaderController) userData;
+      dialogHeaderController.setStage(stage);
+      dialogHeaderController.setTitle(title);
+      stage.setOnShowing(new EventHandler<WindowEvent>() {
+        @Override
+        public void handle(WindowEvent event) {
+          Platform.runLater(() -> {
+            dialogHeaderController.enableStateListener(stage, controller, stateId);
+          });
+        }
+      });
+    }
+    else if (userData instanceof DialogHeaderResizeableController) {
+      DialogHeaderResizeableController dialogHeaderController = (DialogHeaderResizeableController) userData;
+      dialogHeaderController.setStateId(stateId);
+      dialogHeaderController.setTitle(title);
+    }
 
-    final Stage stage = createStage();
-    dialogHeaderController.setStage(stage);
     stage.initOwner(owner);
     stage.initModality(Modality.WINDOW_MODAL);
     stage.initStyle(StageStyle.UNDECORATED);
@@ -344,15 +360,6 @@ public class WidgetFactory {
         stage.setWidth(position.getWidth());
         stage.setHeight(position.getHeight());
       }
-
-      stage.setOnShowing(new EventHandler<WindowEvent>() {
-        @Override
-        public void handle(WindowEvent event) {
-          Platform.runLater(() -> {
-            dialogHeaderController.enableStateListener(stage, controller, stateId);
-          });
-        }
-      });
     }
 
     stage.initOwner(owner);
@@ -367,6 +374,16 @@ public class WidgetFactory {
         stage.close();
       }
     });
+
+    scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+          public void handle(KeyEvent ke) {
+            if (ke.getCode() == KeyCode.S && ke.isAltDown() && ke.isControlDown()) {
+              LOG.info("Stage Size " + stage.getWidth() + " x " + stage.getHeight());
+            }
+          }
+        }
+    );
+
     return stage;
   }
 

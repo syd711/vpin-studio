@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.util;
+package de.mephisto.vpin.commons.utils;
 
 import javafx.collections.ObservableList;
 import javafx.event.EventHandler;

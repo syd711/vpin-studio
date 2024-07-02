@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.TableColumn?>
@@ -25,19 +26,127 @@
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController">
    <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/dialog-header-resizeable.fxml" />
    </top>
    <center>
-      <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+      <BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
          <top>
             <BorderPane BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets left="12.0" right="12.0" top="12.0" />
+                  <Insets />
                </BorderPane.margin>
-               <right>
-                  <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
-                     <center>
-                        <VBox spacing="24.0" BorderPane.alignment="CENTER">
+               <top>
+                  <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+                    <items>
+                        <Button fx:id="filterButton" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Toggle Filter View" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                           </graphic>
+                        </Button>
+                        <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Reload all table data" />
+                           </tooltip>
+                        </Button>
+                        <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" />
+                        <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Rename the backglass" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Duplicate the backglass" />
+                           </tooltip>
+                        </Button>
+                        <Button fx:id="reloadBackglassBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassReload" text="Reload" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Reload Backglass" />
+                           </tooltip>
+                        </Button>
+                        <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
+                           </graphic>
+                        </Button>
+                    </items>
+                  </ToolBar>
+               </top>
+            </BorderPane>
+         </top>
+         <left>
+            <BorderPane BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets />
+               </BorderPane.margin>
+               <center>
+                  <StackPane fx:id="loaderStack">
+                     <children>
+
+                           <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                     <children>
+                        <TableView fx:id="directb2sList" maxWidth="630.0" minWidth="630.0" style="-fx-background-color: #2a2a2a;">
+                           <columns>
+                                 <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
+                                 <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                 <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
+                                 <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
+                                 <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
+                           </columns>
+                        </TableView>
+                     </children>
+                     </StackPane>
+                     </children>
+                  </StackPane>
+
+               </center>
+            </BorderPane>
+         </left>
+         <center>
+            <BorderPane BorderPane.alignment="CENTER">
+               <center>
+                  <ScrollPane>
+                     <content>
+                        <VBox spacing="24.0">
                            <children>
                               <HBox prefHeight="100.0" prefWidth="200.0" spacing="48.0">
                                  <children>
@@ -278,7 +387,7 @@
                                           <CheckBox fx:id="startAsExe" layoutX="162.0" layoutY="386.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="12" />
                                        </children>
                                     </GridPane>
-                                    <VBox prefWidth="500.0">
+                                    <VBox prefWidth="350.0">
                                        <children>
                                           <VBox>
                                              <children>
@@ -354,7 +463,7 @@
                                                       <Font name="System Bold" size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
@@ -365,7 +474,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
@@ -376,7 +485,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
@@ -387,7 +496,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
@@ -398,7 +507,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
@@ -409,7 +518,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
@@ -421,7 +530,7 @@
                                                    </font>
                                                 </Label>
                                                 
-                                                            <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
+                                                                        <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -431,7 +540,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
@@ -442,7 +551,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
                                                    <font>
                                                       <Font size="14.0" />
@@ -453,7 +562,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                                    <font>
                                                       <Font size="14.0" />
@@ -464,7 +573,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                                    <font>
                                                       <Font size="14.0" />
@@ -475,7 +584,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                             <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
                                                    <font>
                                                       <Font size="14.0" />
@@ -486,7 +595,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-
+            
                                                          </children>
                                              <VBox.margin>
                                                 <Insets top="24.0" />
@@ -501,121 +610,14 @@
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                            </padding>
                         </VBox>
-                     </center>
-                     <top>
-                        <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
-                          <items>
-                              <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" />
-                              <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Rename the backglass" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-duplicate" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Duplicate the backglass" />
-                                 </tooltip>
-                              </Button>
-                              <Button fx:id="reloadBackglassBtn" layoutX="116.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassReload" text="Reload" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Reload Backglass" />
-                                 </tooltip>
-                              </Button>
-                              <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                              <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
-                                 </graphic>
-                              </Button>
-                          </items>
-                        </ToolBar>
-                     </top>
-                  </BorderPane>
-               </right>
-               <center>
-                  <BorderPane BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets />
-                     </BorderPane.margin>
-                     <center>
-                        <StackPane fx:id="loaderStack">
-                           <children>
-      
-                           <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
-                           <children>
-                              <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
-                                 <columns>
-                                       <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                       <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
-                                       <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
-                                       <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
-                                       <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
-                                 </columns>
-                              </TableView>
-                           </children>
-                           </StackPane>
-                           </children>
-                        </StackPane>
-
-                     </center>
-                     <top>
-                        <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
-                           <items>
-                              <Button fx:id="filterButton" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <tooltip>
-                                    <Tooltip text="Toggle Filter View" />
-                                 </tooltip>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
-                                 </graphic>
-                              </Button>
-                              <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                 </graphic>
-                                 <tooltip>
-                                    <Tooltip text="Reload all table data" />
-                                 </tooltip>
-                              </Button>
-                           </items>
-                        </ToolBar>
-                     </top>
-                  </BorderPane>
+                     </content>
+                  </ScrollPane>
                </center>
             </BorderPane>
-         </top>
+         </center>
+         <BorderPane.margin>
+            <Insets bottom="6.0" left="6.0" right="6.0" />
+         </BorderPane.margin>
       </BorderPane>
    </center>
    <bottom>
