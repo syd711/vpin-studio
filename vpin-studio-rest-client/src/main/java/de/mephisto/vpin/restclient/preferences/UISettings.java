@@ -60,7 +60,7 @@ public class UISettings extends JsonSettings {
   private boolean columnHighscore = true;
   private boolean columnEmulator = false;
   private boolean columnIni = true;
-  private boolean columnRes = false;
+  private boolean columnRes = true;
   private boolean columnPlaylists = true;
   private boolean columnPov = false;
   private boolean columnPupPack = true;
