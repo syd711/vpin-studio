@@ -199,5 +199,6 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public void reload() {
     getRestClient().clearCache("frontend/emulators");
+    getRestClient().clearCache("frontend");
   }
 }
