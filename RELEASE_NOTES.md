@@ -68,6 +68,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Filter Section**: Splitted filter preferences for .ini and .pov files.
+- **Backglass Manager**: The window is resizeable now and the size and position is saved.
+- **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
 
 ### Bugfixes
 

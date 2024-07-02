@@ -114,7 +114,7 @@
             </BorderPane>
          </top>
          <left>
-            <BorderPane BorderPane.alignment="CENTER">
+            <BorderPane maxWidth="640.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>
@@ -124,7 +124,7 @@
 
                            <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
-                        <TableView fx:id="directb2sList" maxWidth="630.0" minWidth="630.0" style="-fx-background-color: #2a2a2a;">
+                        <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
                            <columns>
                                  <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
@@ -464,7 +464,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
+                                                                                    <Label text="Name:" textFill="WHITE" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -475,7 +475,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
+                                                                                    <Label text="Table Type:" textFill="WHITE" GridPane.rowIndex="2">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -486,7 +486,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
+                                                                                    <Label text="Author:" textFill="WHITE" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -497,7 +497,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
+                                                                                    <Label text="Artwork:" textFill="WHITE" GridPane.rowIndex="4">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -508,7 +508,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
+                                                                                    <Label text="Grill Height:" textFill="WHITE" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -519,7 +519,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
+                                                                                    <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -530,7 +530,7 @@
                                                    </font>
                                                 </Label>
                                                 
-                                                                        <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
+                                                                                                <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -541,7 +541,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
+                                                                                    <Label text="Score Elements:" textFill="WHITE" GridPane.rowIndex="8">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -552,7 +552,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
+                                                                                    <Label text="Bulbs:" textFill="WHITE" GridPane.rowIndex="9">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -563,7 +563,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                                                                    <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -574,7 +574,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
+                                                                                    <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -585,7 +585,7 @@
                                                    </font>
                                                 </Label>
             
-                                                            <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
+                                                                                    <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -596,7 +596,7 @@
                                                    </font>
                                                 </Label>
             
-                                                         </children>
+                                                                                 </children>
                                              <VBox.margin>
                                                 <Insets top="24.0" />
                                              </VBox.margin>
