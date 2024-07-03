@@ -33,6 +33,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
@@ -88,6 +89,7 @@ public class VPinStudioClient implements OverlayClient {
   private final TournamentsServiceClient tournamentsServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
+  private final ResServiceClient resServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
@@ -119,6 +121,7 @@ public class VPinStudioClient implements OverlayClient {
     this.mameServiceClient = new MameServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
+    this.resServiceClient = new ResServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.frontendServiceClient = new FrontendServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
@@ -141,6 +144,10 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public ResServiceClient getResService() {
+    return resServiceClient;
   }
 
   public HighscoreCardTemplatesServiceClient getHighscoreCardTemplatesClient() {

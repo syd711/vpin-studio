@@ -85,6 +85,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.directBackglassUpload(Studio.stage, game, file);
         return;
       }
+      case RES: {
+        TableDialogs.directResUpload(Studio.stage, game, file);
+        return;
+      }
       case INI: {
         TableDialogs.directIniUpload(Studio.stage, game, file);
         break;

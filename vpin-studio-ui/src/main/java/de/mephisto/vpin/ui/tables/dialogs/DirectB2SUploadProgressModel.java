@@ -62,15 +62,13 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
-      else {
-        Platform.runLater(() -> {
-          EventManager.getInstance().notifyJobFinished(DIRECTB2S_INSTALL, gameId);
-        });
-      }
+      Platform.runLater(() -> {
+        EventManager.getInstance().notifyTableChange(gameId, null);
+      });
       progressResultModel.addProcessed();
     }
     catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error("Res upload failed: " + e.getMessage(), e);
     }
   }
 
