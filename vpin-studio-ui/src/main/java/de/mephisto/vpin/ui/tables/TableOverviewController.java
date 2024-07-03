@@ -270,6 +270,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem povItem;
 
   @FXML
+  private MenuItem resItem;
+
+  @FXML
   private Button filterBtn;
 
   @FXML
@@ -465,6 +468,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       if (b) {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
+    }
+  }
+
+  @FXML
+  public void onResUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.directResUpload(stage, selectedItems.get(0));
     }
   }
 
@@ -1664,6 +1675,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     altColorUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
+    resItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
 

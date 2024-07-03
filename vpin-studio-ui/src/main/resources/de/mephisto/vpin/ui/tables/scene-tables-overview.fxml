@@ -330,6 +330,11 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem fx:id="resItem" mnemonicParsing="false" onAction="#onResUpload" text="Upload .res File">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="pupPackUploadItem" mnemonicParsing="false" onAction="#onPupPackUpload" text="Upload PUP Pack">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />

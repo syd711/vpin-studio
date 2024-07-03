@@ -207,10 +207,16 @@ public class TableOverviewContextMenu {
         uploadMenu.getItems().add(pupPackItem);
       }
 
+      MenuItem resItem = new MenuItem("Upload .res File");
+      resItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      resItem.setOnAction(actionEvent -> tableOverviewController.onResUpload());
+      uploadMenu.getItems().add(resItem);
+
       MenuItem romsItem = new MenuItem("Upload ROMs");
       romsItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       romsItem.setOnAction(actionEvent -> tableOverviewController.onRomsUpload());
       uploadMenu.getItems().add(romsItem);
+
 
       ctxMenu.getItems().add(uploadMenu);
     }

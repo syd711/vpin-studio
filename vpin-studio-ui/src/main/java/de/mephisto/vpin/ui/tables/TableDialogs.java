@@ -156,6 +156,34 @@ public class TableDialogs {
     return false;
   }
 
+  public static boolean directResUpload(Stage stage, GameRepresentation game) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select .res File");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter(".res File", "*.res", "*.zip", "*.rar"));
+
+    File file = fileChooser.showOpenDialog(stage);
+    if (file != null && file.exists()) {
+      Platform.runLater(() -> {
+        String analyze = null;
+        String suffix = FilenameUtils.getExtension(file.getName());
+        if (!suffix.equalsIgnoreCase(AssetType.RES.name()) && PackageUtil.isSupportedArchive(suffix)) {
+          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.RES);
+        }
+
+        if (!StringUtils.isEmpty(analyze)) {
+          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
+        }
+        else {
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), ".res File Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        }
+      });
+      return true;
+    }
+    return false;
+  }
+
   public static boolean directResUpload(Stage stage, GameRepresentation game, File file) {
     if (file != null && file.exists()) {
       String help2 = null;
