@@ -300,6 +300,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive does not not contain a .directb2s file.";
       }
+      case RES: {
+        if (hasFileWithSuffix("res")) {
+          return null;
+        }
+        return "This archive does not not contain a .res file.";
+      }
       case ROM: {
         if (isRom() || hasFileWithSuffix("zip")) {
           return null;
@@ -389,6 +395,10 @@ public class UploaderAnalysis<T> {
 
     if (hasFileWithSuffix("directb2s")) {
       return AssetType.DIRECTB2S;
+    }
+
+    if (hasFileWithSuffix("res")) {
+      return AssetType.RES;
     }
 
     if (isAltSound()) {
@@ -561,6 +571,10 @@ public class UploaderAnalysis<T> {
 
   public boolean isBackglass() {
     return hasFileWithSuffix("directb2s");
+  }
+
+  public boolean isRes() {
+    return hasFileWithSuffix("res");
   }
 
   private boolean hasFileWithSuffix(String s) {

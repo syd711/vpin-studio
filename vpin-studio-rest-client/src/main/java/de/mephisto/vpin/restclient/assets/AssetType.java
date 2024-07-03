@@ -12,6 +12,7 @@ public enum AssetType {
   PAL,
   PAC,
   CRZ,
+  RES,
   VNI,
   ALT_COLOR,
   ALT_SOUND,

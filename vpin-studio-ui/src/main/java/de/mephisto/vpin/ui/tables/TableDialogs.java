@@ -156,6 +156,24 @@ public class TableDialogs {
     return false;
   }
 
+  public static boolean directResUpload(Stage stage, GameRepresentation game, File file) {
+    if (file != null && file.exists()) {
+      String help2 = null;
+      if (game.isDirectB2SAvailable()) {
+        help2 = "The existing .res file of this table will be overwritten.";
+      }
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
+      if (result.get().equals(ButtonType.OK)) {
+        Platform.runLater(() -> {
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
+          ProgressDialog.createProgressDialog(model);
+        });
+        return true;
+      }
+    }
+    return false;
+  }
+
   public static boolean directIniUpload(Stage stage, GameRepresentation game) {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select .ini File");
