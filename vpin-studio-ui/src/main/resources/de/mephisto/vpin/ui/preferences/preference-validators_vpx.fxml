@@ -53,7 +53,7 @@
                   <VBox fx:id="outdatedRecordingsValidator">
                      <children>
                         <CheckBox fx:id="pref_90" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Outdated Recordings" />
-                        <Label styleClass="checkbox-description" text="Checks if the playfield and backglass recordings are outdated." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="Checks if the playfield and backglass recordings are outdated (compared to the game and backglass file)." textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="Disable this validator if you don't record screens yourself." textFill="WHITE" />
                      </children>
                   </VBox>
