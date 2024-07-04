@@ -59,6 +59,7 @@ https://www.youtube.com/@vpin-studio/videos
 All VPin UI related keybindings have been re-implemented using a new API which also includes controller support.
 This is a **breaking change** since you have to re-map all existing bindings from previous versions of the VPin Studio.
 
+
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/controller-bindings.png" width="600" />
 
 ### Miscellaneous
@@ -69,7 +70,11 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Filter Section**: Splitted filter preferences for .ini and .pov files.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
+- **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
+- **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. 
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
 
 ### Bugfixes
 

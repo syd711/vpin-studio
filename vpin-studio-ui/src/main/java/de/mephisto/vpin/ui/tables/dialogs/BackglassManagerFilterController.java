@@ -42,9 +42,11 @@ public class BackglassManagerFilterController extends BaseFilterController imple
   @FXML
   private CheckBox missingTableCheckBox;
 
-
   @FXML
   private ComboBox<B2SVisibility> grillVisibilityComboBox;
+
+  @FXML
+  private CheckBox backglassVisibilityCheckBox;
 
   @FXML
   private CheckBox b2sdmdVisibilityCheckBox;
@@ -79,6 +81,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
 
     grillVisibilityComboBox.getSelectionModel().clearSelection();
     b2sdmdVisibilityCheckBox.setSelected(false);
+    backglassVisibilityCheckBox.setSelected(false);
     dmdVisibilityComboBox.getSelectionModel().clearSelection();
 
     updatesDisabled = false;
@@ -116,6 +119,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
       || missingTableCheckBox.isSelected()
       || isNotEmpty(grillVisibilityComboBox)
       || b2sdmdVisibilityCheckBox.isSelected()
+      || backglassVisibilityCheckBox.isSelected()
       || isNotEmpty(dmdVisibilityComboBox);
     toggleFilterButton(hasFilter);
 
@@ -173,6 +177,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
 
     setupComboBox(grillVisibilityComboBox, visibilitiesModel, backglassManagerController.grillVisibilityFilter);
     setupCheckbox(b2sdmdVisibilityCheckBox, backglassManagerController.b2sdmdVisibilityFilter);
+    setupCheckbox(backglassVisibilityCheckBox, backglassManagerController.backglassVisibilityFilter);
     setupComboBox(dmdVisibilityComboBox, visibilitiesModel, backglassManagerController.dmdVisibilityFilter);
 
   }

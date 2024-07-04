@@ -5,6 +5,7 @@ public class DirectB2STableSettings {
 
   private int hideGrill = 2;
   private boolean hideB2SDMD = false;
+  private boolean hideB2SBackglass = false;
   private int hideDMD = 2;
   private int lampsSkipFrames = 1;
   private int solenoidsSkipFrames = 3;
@@ -16,6 +17,14 @@ public class DirectB2STableSettings {
   private boolean startAsEXE = false;
   private boolean startBackground = false;
   private boolean formToFront = false;
+
+  public boolean isHideB2SBackglass() {
+    return hideB2SBackglass;
+  }
+
+  public void setHideB2SBackglass(boolean hideB2SBackglass) {
+    this.hideB2SBackglass = hideB2SBackglass;
+  }
 
   public boolean isStartAsEXE() {
     return startAsEXE;

@@ -135,6 +135,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private CheckBox hideB2SDMD;
 
   @FXML
+  private CheckBox hideB2SBackglass;
+
+  @FXML
   private ComboBox<B2SVisibility> hideDMD;
 
   @FXML
@@ -232,6 +235,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   Property<B2SVisibility> grillVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
   Property<Boolean> b2sdmdVisibilityFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> backglassVisibilityFilter = new SimpleBooleanProperty(false);
   Property<B2SVisibility> dmdVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
 
   /**
@@ -467,6 +471,14 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       save();
     });
 
+    hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      if (tableSettings == null) {
+        return;
+      }
+      tableSettings.setHideB2SBackglass(newValue);
+      save();
+    });
+
     hideDMD.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideDMD.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       if (tableSettings == null) {
@@ -595,6 +607,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.dataManagerBtn.setDisable(newValue == null);
       this.duplicateBtn.setDisable(newValue == null);
       this.hideB2SDMD.setDisable(newValue == null);
+      this.hideB2SBackglass.setDisable(newValue == null);
       this.hideGrill.setDisable(newValue == null);
       this.hideDMD.setDisable(newValue == null);
       this.startBackground.setDisable(newValue == null);
@@ -881,6 +894,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       hideGrill.setDisable(tmpTableSettings == null);
       hideB2SDMD.setSelected(false);
       hideB2SDMD.setDisable(tmpTableSettings == null);
+      hideB2SBackglass.setSelected(false);
+      hideB2SBackglass.setDisable(tmpTableSettings == null);
       hideDMD.setDisable(tmpTableSettings == null);
       skipLampFrames.getValueFactory().setValue(0);
       skipLampFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
@@ -903,6 +918,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         startAsExe.setSelected(tmpTableSettings.isStartAsEXE());
         hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideGrill()).findFirst().orElse(null));
         hideB2SDMD.selectedProperty().setValue(tmpTableSettings.isHideB2SDMD());
+        hideB2SBackglass.selectedProperty().setValue(tmpTableSettings.isHideB2SBackglass());
         hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideDMD()).findFirst().orElse(null));
         skipLampFrames.getValueFactory().valueProperty().set(tmpTableSettings.getLampsSkipFrames());
         skipGIFrames.getValueFactory().valueProperty().set(tmpTableSettings.getGiStringsSkipFrames());
@@ -939,6 +955,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
           Platform.runLater(() -> {
             this.refresh(this.directb2sList.getSelectionModel().getSelectedItem().backglass);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
           });
         }
       }
@@ -982,6 +999,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     private int hideGrill;
     private boolean hideB2SDMD;
+    private boolean hideBackglass;
     private int hideDMD;
 
     private DirectB2SEntryModel(BackglassManagerDialogController controller, DirectB2S backglass) {
@@ -1015,6 +1033,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           if (tmpTableSettings != null) {
             this.hideGrill = tmpTableSettings.getHideGrill();
             this.hideB2SDMD = tmpTableSettings.isHideB2SDMD();
+            this.hideBackglass = tmpTableSettings.isHideB2SBackglass();
             this.hideDMD = tmpTableSettings.getHideDMD();
           }
         }
@@ -1063,6 +1082,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         return false;
       }
       if (equalsVisibility(controller.grillVisibilityFilter.getValue(), this.hideGrill)) {
+        return false;
+      }
+      if (controller.backglassVisibilityFilter.getValue() && !this.hideBackglass) {
         return false;
       }
       if (controller.b2sdmdVisibilityFilter.getValue() && !this.hideB2SDMD) {

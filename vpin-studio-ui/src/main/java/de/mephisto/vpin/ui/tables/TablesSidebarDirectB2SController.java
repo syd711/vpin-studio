@@ -134,6 +134,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private ComboBox<B2SVisibility> hideGrill;
 
   @FXML
+  private CheckBox hideB2SBackglass;
+
+  @FXML
   private CheckBox hideB2SDMD;
 
   @FXML
@@ -252,6 +255,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
       tableSettings.setHideB2SDMD(newValue);
+      save();
+    });
+
+    hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      tableSettings.setHideB2SBackglass(newValue);
       save();
     });
 
@@ -460,6 +468,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           if (tableSettings != null) {
             hideGrill.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
             hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+            hideB2SBackglass.selectedProperty().setValue(tableSettings.isHideB2SBackglass());
             hideDMD.setValue(VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
             skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
             skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());

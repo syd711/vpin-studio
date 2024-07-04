@@ -27,7 +27,7 @@ import java.util.List;
 
 public class B2STableSettingsSerializer {
   private final static Logger LOG = LoggerFactory.getLogger(B2STableSettingsSerializer.class);
-  private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideDMD", "HideDMD",
+  private final static List<String> tableEntries = Arrays.asList("HideGrill", "HideB2SDMD", "HideB2SBackglass", "HideDMD",
       "SolenoidsSkipFrames", "GIStringsSkipFrames", "LEDsSkipFrames",
       "UsedLEDType", "IsGlowBulbOn", "GlowIndex", "StartAsEXE", "StartBackground", "FormToFront", "Animations");
   private final File xmlFile;
@@ -47,22 +47,29 @@ public class B2STableSettingsSerializer {
       doc.getDocumentElement().normalize();
 
       NodeList list = doc.getElementsByTagName(settings.getRom());
-      Node romNode = null;
+      Node rootNodeByRom = null;
       if (list.getLength() == 0) {
-        romNode = doc.createElement(settings.getRom());
-        doc.getDocumentElement().appendChild(romNode);
+        rootNodeByRom = doc.createElement(settings.getRom());
+        doc.getDocumentElement().appendChild(rootNodeByRom);
         for (String tableEntry : tableEntries) {
           Element child = doc.createElement(tableEntry);
-          romNode.appendChild(child);
+          rootNodeByRom.appendChild(child);
         }
       }
       else {
-        romNode = list.item(0);
+        //check if all children are present
+        rootNodeByRom = list.item(0);
+        for (String tableEntry : tableEntries) {
+          if (!isChildOf(rootNodeByRom.getChildNodes(), tableEntry)) {
+            Element child = doc.createElement(tableEntry);
+            rootNodeByRom.appendChild(child);
+          }
+        }
       }
 
 
-      if (romNode.getNodeType() == Node.ELEMENT_NODE) {
-        Element element = (Element) romNode;
+      if (rootNodeByRom.getNodeType() == Node.ELEMENT_NODE) {
+        Element element = (Element) rootNodeByRom;
         NodeList childNodes = element.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
           Node settingsNode = childNodes.item(i);
@@ -74,10 +81,21 @@ public class B2STableSettingsSerializer {
       }
 
       write(xmlFile, doc);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       String msg = "Failed to write '" + xmlFile.getAbsolutePath() + "': " + e.getMessage();
       throw new VPinStudioException(msg, e);
     }
+  }
+
+  private boolean isChildOf(NodeList childNodes, String tableEntry) {
+    for (int i = 0; i < childNodes.getLength(); i++) {
+      Node settingsNode = childNodes.item(i);
+      if (settingsNode.getNodeName().equals(tableEntry)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private static void write(File povFile, Document doc) throws IOException, TransformerException {
@@ -92,7 +110,8 @@ public class B2STableSettingsSerializer {
       StreamResult result = new StreamResult(writer);
       transformer.transform(source, result);
       LOG.info("Written " + povFile.getAbsolutePath());
-    } finally {
+    }
+    finally {
       if (writer != null) {
         writer.close();
       }
@@ -108,6 +127,10 @@ public class B2STableSettingsSerializer {
       }
       case "HideB2SDMD": {
         node.setTextContent(intValue(settings.isHideB2SDMD()));
+        break;
+      }
+      case "HideB2SBackglass": {
+        node.setTextContent(intValue(settings.isHideB2SBackglass()));
         break;
       }
       case "HideDMD": {
