@@ -54,7 +54,7 @@ public class IniUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getVpxService().uploadIniFile(next, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getIniService().uploadIniFile(next, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {

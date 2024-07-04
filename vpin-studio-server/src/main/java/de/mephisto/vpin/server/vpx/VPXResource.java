@@ -168,22 +168,4 @@ public class VPXResource {
       descriptor.finalizeUpload();
     }
   }
-
-  @PostMapping("/ini/upload")
-  public UploadDescriptor iniUpload(@RequestParam(value = "file", required = false) MultipartFile file,
-                                    @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
-    try {
-      descriptor.getAssetsToImport().add(AssetType.INI);
-      descriptor.upload();
-      universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
-      gameService.resetUpdate(gameId, VpsDiffTypes.pov);
-      return descriptor;
-    } catch (Exception e) {
-      LOG.error("INI upload failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "INI upload failed: " + e.getMessage());
-    } finally {
-      descriptor.finalizeUpload();
-    }
-  }
 }

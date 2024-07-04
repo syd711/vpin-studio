@@ -90,6 +90,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private TitledPane titledPaneAltColor;
 
   @FXML
+  private TitledPane titledPaneIni;
+
+  @FXML
   private CheckBox mediaPreviewCheckbox;
 
   @FXML
@@ -103,6 +106,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   @FXML
   private Button altColorExplorerBtn;
+
+  @FXML
+  private Button iniExplorerBtn;
 
   @FXML
   private Button scriptBtn;
@@ -166,6 +172,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   @FXML
   private TablesSidebarAltColorController tablesSidebarAltColorController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarIniController tablesSidebarIniController; //fxml magic! Not unused
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -297,6 +306,19 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   }
 
   @FXML
+  private void onIni() {
+    try {
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
   private void onDMD() {
     try {
       if (this.game.isPresent()) {
@@ -389,6 +411,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     frontendTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
     altSoundExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     altColorExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
+    iniExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     directb2sBtn.setVisible(SystemUtil.isFolderActionSupported());
     scriptBtn.setVisible(SystemUtil.isFolderActionSupported());
     nvramExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
@@ -434,6 +457,16 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       Parent tablesRoot = loader.load();
       tablesSidebarAltColorController = loader.getController();
       titledPaneAltColor.setContent(tablesRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarIniController.class.getResource("scene-tables-sidebar-ini.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarIniController = loader.getController();
+      titledPaneIni.setContent(tablesRoot);
     }
     catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
@@ -663,6 +696,11 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
         refreshView(game);
       }
     });
+    titledPaneIni.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
     titledPaneMame.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
@@ -730,6 +768,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
       if (titledPanePov.isExpanded() && titledPanePov.isVisible()) {
         this.tablesSidebarPovController.setGame(g);
       }
+      if (titledPaneIni.isExpanded() && titledPaneIni.isVisible()) {
+        this.tablesSidebarIniController.setGame(g);
+      }
       if (titledPaneTableData.isExpanded() && titledPaneTableData.isVisible()) {
         this.tablesSidebarTableDetailsController.setGame(g);
       }
@@ -763,6 +804,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     if (!vpxMode) {
       tableAccordion.getPanes().remove(titledPaneHighscores);
       tableAccordion.getPanes().remove(titledPanePov);
+      tableAccordion.getPanes().remove(titledPaneIni);
       tableAccordion.getPanes().remove(titledPaneAltSound);
       tableAccordion.getPanes().remove(titledPaneDirectB2s);
       tableAccordion.getPanes().remove(titledPanePUPPack);
@@ -792,6 +834,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     index = refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound(), index);
     index = refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor(), index);
     index = refreshSection(titledPanePov, uiSettings.isSectionPov(), index);
+    index = refreshSection(titledPaneIni, uiSettings.isSectionIni(), index);
     index = refreshSection(titledPaneHighscores, uiSettings.isSectionHighscore(), index);
     index = refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME(), index);
     index = refreshSection(titledPaneVps, uiSettings.isSectionVps(), index);
@@ -816,6 +859,10 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   public TitledPane getTitledPanePov() {
     return titledPanePov;
+  }
+
+  public TitledPane getTitledPaneIni() {
+    return titledPaneIni;
   }
 
   public TitledPane getTitledPaneDirectB2s() {

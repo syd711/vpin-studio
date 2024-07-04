@@ -20,16 +20,17 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
+import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -77,6 +78,7 @@ public class VPinStudioClient implements OverlayClient {
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
   private final HighscoreCardTemplatesServiceClient highscoreCardTemplatesServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
+  private final IniServiceClient iniServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
@@ -117,6 +119,7 @@ public class VPinStudioClient implements OverlayClient {
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.highscoreCardTemplatesServiceClient = new HighscoreCardTemplatesServiceClient(this);
     this.imageCache = new ImageCache(this);
+    this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
@@ -144,6 +147,10 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public IniServiceClient getIniService() {
+    return iniServiceClient;
   }
 
   public ResServiceClient getResService() {

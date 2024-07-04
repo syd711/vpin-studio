@@ -90,6 +90,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox sectionPov;
   @FXML
+  private CheckBox sectionIni;
+  @FXML
   private CheckBox sectionPupPack;
   @FXML
   private CheckBox sectionPlaylists;
@@ -381,6 +383,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionPov.setSelected(uiSettings.isSectionPov());
     sectionPov.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setSectionPov(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    sectionIni.setSelected(uiSettings.isSectionIni());
+    sectionIni.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setSectionIni(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });

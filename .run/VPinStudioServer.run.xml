@@ -8,7 +8,7 @@
     <option name="VM_PARAMETERS" value="-Dfile.encoding=utf8" />
     <extension name="coverage">
       <pattern>
-        <option name="PATTERN" value="de.mephisto.vpin.server.*" />
+        <option name="PATTERN" value="de.mephisto.vpin.server.ini.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>

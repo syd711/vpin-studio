@@ -373,7 +373,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
     uploadBtn.setDisable(!g.isPresent());
-    deleteBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
@@ -394,6 +393,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
+
+    deleteBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
       new Thread(() -> {

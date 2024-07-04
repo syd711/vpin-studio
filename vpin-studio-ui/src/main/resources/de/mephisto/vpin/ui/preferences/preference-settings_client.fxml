@@ -207,6 +207,11 @@
                         </VBox>
                         <VBox prefWidth="180.0" spacing="6.0">
                            <children>
+                              <CheckBox fx:id="sectionIni" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text=".ini File" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                               <CheckBox fx:id="sectionAssets" mnemonicParsing="false" text="Media Assets" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -227,15 +232,15 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
                               <CheckBox fx:id="sectionScriptDetails" mnemonicParsing="false" text="Script Details" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox spacing="6.0">
-                           <children>
                               <CheckBox fx:id="sectionTableData" layoutX="10.0" layoutY="36.0" mnemonicParsing="false" text="Table Data" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

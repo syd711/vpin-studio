@@ -440,7 +440,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onIniUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.directIniUpload(stage, selectedItems.get(0));
+      boolean b = TableDialogs.directIniUpload(stage, selectedItems.get(0));
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneIni().setExpanded(true);
+      }
     }
   }
 
@@ -728,10 +731,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private void onValidationSettings() {
     GameRepresentation game = getSelection();
-    if(game != null) {
+    if (game != null) {
       ValidationState validationState = game.getValidationState();
       int code = validationState.getCode();
-      if(code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_WHEEL_IMAGE) {
+      if (code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_WHEEL_IMAGE) {
         PreferencesController.open("validators_screens");
       }
       else {
