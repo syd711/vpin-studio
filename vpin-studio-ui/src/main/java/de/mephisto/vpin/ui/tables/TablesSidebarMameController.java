@@ -112,10 +112,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private Button mameBtn;
 
-  @FXML
-  private Button deleteBtn;
-
-  @FXML
+   @FXML
   private Button reloadBtn;
 
   @FXML
@@ -142,7 +139,7 @@ public class TablesSidebarMameController implements Initializable {
   public TablesSidebarMameController() {
   }
 
-  @FXML
+  
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
     String rom = game.get().getRom();
@@ -234,13 +231,9 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onApplyDefaults() {
     if (options.isExistInRegistry()) {
-      try {
-        client.getMameService().deleteOptions(options.getRom());
-      } catch (Exception e) {
-        LOG.error("Failed to delete mame settings: " + e.getMessage(), e);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete mame settings: " + e.getMessage());
-      }
-    } else {
+      onDelete();
+    } 
+    else {
       MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
       options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
@@ -258,14 +251,13 @@ public class TablesSidebarMameController implements Initializable {
   
       try {
         client.getMameService().saveOptions(options);
-        
-      } catch (Exception e) {
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+      } 
+      catch (Exception e) {
         LOG.error("Failed to save mame settings: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
       }
     }
-    EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
-
   }
 
   @FXML
@@ -315,7 +307,6 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
     dataScrollPane.setVisible(g.isPresent());
-    deleteBtn.setDisable(g.isEmpty());
 
     labelRomAlias.setText("-");
     labelRom.setText("-");
@@ -396,9 +387,6 @@ public class TablesSidebarMameController implements Initializable {
   }
 
   private void setInputDisabled(boolean b) {
-    deleteBtn.setDisable(b);
-    applyDefaultsBtn.setDisable(b);
-
     skipPinballStartupTest.setDisable(b);
     useSound.setDisable(b);
     useSamples.setDisable(b);
