@@ -233,26 +233,39 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onApplyDefaults() {
-    MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    if (options.isExistInRegistry()) {
+      try {
+        client.getMameService().deleteOptions(options.getRom());
+      } catch (Exception e) {
+        LOG.error("Failed to delete mame settings: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete mame settings: " + e.getMessage());
+      }
+    } else {
+      MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
-    saveDisabled = true;
-    skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
-    useSound.setSelected(defaultOptions.isUseSound());
-    useSamples.setSelected(defaultOptions.isUseSamples());
-    compactDisplay.setSelected(defaultOptions.isCompactDisplay());
-    doubleDisplaySize.setSelected(defaultOptions.isDoubleDisplaySize());
-    ignoreRomCrcError.setSelected(defaultOptions.isIgnoreRomCrcError());
-    cabinetMode.setSelected(defaultOptions.isCabinetMode());
-    showDmd.setSelected(defaultOptions.isShowDmd());
-    useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
-    colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
-    if (defaultOptions.getSoundMode() >= 0) {
-      soundModeCombo.setValue(SOUND_MODES.get(defaultOptions.getSoundMode()));
+      options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
+      options.setUseSound(defaultOptions.isUseSound());
+      options.setUseSamples(defaultOptions.isUseSamples());
+      options.setCompactDisplay(defaultOptions.isCompactDisplay());
+      options.setDoubleDisplaySize(defaultOptions.isDoubleDisplaySize());
+      options.setIgnoreRomCrcError(defaultOptions.isIgnoreRomCrcError());
+      options.setCabinetMode(defaultOptions.isCabinetMode());
+      options.setShowDmd(defaultOptions.isShowDmd());
+      options.setUseExternalDmd(defaultOptions.isUseExternalDmd());
+      options.setColorizeDmd(defaultOptions.isColorizeDmd());
+      options.setSoundMode(defaultOptions.getSoundMode());
+      options.setForceStereo(defaultOptions.isForceStereo());
+  
+      try {
+        client.getMameService().saveOptions(options);
+        
+      } catch (Exception e) {
+        LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      }
     }
-    forceStereo.setSelected(defaultOptions.isForceStereo());
+    EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
 
-    saveDisabled = false;
-    saveOptions();
   }
 
   @FXML
@@ -376,6 +389,8 @@ public class TablesSidebarMameController implements Initializable {
             this.errorText.setText(validationResult.getText());
           }
         }
+      } else {
+        applyDefaultsBtn.setDisable(true);
       }
     }
   }
@@ -396,6 +411,8 @@ public class TablesSidebarMameController implements Initializable {
     colorizeDmd.setDisable(b);
     soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
+
+    applyDefaultsBtn.setText(b? "Override Defaults": "Apply Defaults");
   }
 
   private void saveOptions() {
