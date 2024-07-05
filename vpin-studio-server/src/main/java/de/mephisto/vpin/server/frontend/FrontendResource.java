@@ -160,17 +160,16 @@ public class FrontendResource {
     return true;
   }
 
-  @PutMapping("/tabledetails/autofill/{gameId}/{overwrite}")
-  public TableDetails autofill(@PathVariable("gameId") int gameId,
-                               @PathVariable("overwrite") boolean overwrite) {
+  @PutMapping("/tabledetails/autofill/{gameId}")
+  public TableDetails autofill(@PathVariable("gameId") int gameId) {
     TableDetails tableDetails = frontendStatusService.getTableDetails(gameId);
-    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, overwrite, false);
+    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, false);
   }
 
   @PostMapping("/tabledetails/autofillsimulate/{gameId}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
                                @RequestBody TableDetails tableDetails) {
-    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, true, true);
+    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, true);
   }
 
   @PostMapping("/tabledetails/{gameId}")

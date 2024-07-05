@@ -439,26 +439,31 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openAutoFillAll() {
+
+  public static void openAutoFillSettingsDialog(Stage stage) {
+    Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings");
+    AutoFillSelectionController controller = (AutoFillSelectionController) dialogStage.getUserData();
+    dialogStage.showAndWait();
+  }
+
+  public static void openAutoFillAll(Stage stage) {
+    openAutoFillSettingsDialog(stage);
+
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
-        "Cancel", "Continue",
-        FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),
-        "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
-    if (!result.isApplyClicked()) {
-      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getVpxGamesCached(), result.isChecked()));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-fill table meta data for all " + client.getGameService().getVpxGamesCached().size() + " tables?",
+        FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend), null, "Auto-Fill");
+    if (result.get().equals(ButtonType.OK)) {
+      ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(client.getGameService().getVpxGamesCached()));
       EventManager.getInstance().notifyTablesChanged();
     }
   }
 
   public static TableDetails openAutoFill(GameRepresentation game) {
     Frontend frontend = client.getFrontendService().getFrontendCached();
-    ConfirmationResult result = WidgetFactory.showAlertOptionWithCheckbox(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
-        "Cancel", "Continue",
-        FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend),
-        "You can choose to overwrite existing data or to fill only empty values.", "Overwrite existing data", false);
-    if (!result.isApplyClicked()) {
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game), result.isChecked()));
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-fill table meta data for \"" + game.getGameDisplayName() + "\"?",
+        FrontendUtil.replaceName("The VPX script meta data and VPS table information will be used to fill the [Frontend] database fields.", frontend), null, "Auto-Fill");
+    if (result.get().equals(ButtonType.OK)) {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(Arrays.asList(game)));
       if (!progressDialog.getResults().isEmpty()) {
         return (TableDetails) progressDialog.getResults().get(0);
       }

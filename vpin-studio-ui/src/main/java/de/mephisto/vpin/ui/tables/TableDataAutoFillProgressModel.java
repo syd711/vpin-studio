@@ -16,12 +16,10 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   private final static Logger LOG = LoggerFactory.getLogger(TableDataAutoFillProgressModel.class);
   private List<GameRepresentation> games;
 
-  private final boolean overwrite;
   private Iterator<GameRepresentation> gameIterator;
 
-  public TableDataAutoFillProgressModel(List<GameRepresentation> games, boolean overwrite) {
+  public TableDataAutoFillProgressModel(List<GameRepresentation> games) {
     super("Auto-Fill Table Data");
-    this.overwrite = overwrite;
     this.games = games;
     this.gameIterator = games.iterator();
   }
@@ -54,7 +52,7 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
-      TableDetails tableDetails = client.getFrontendService().autoFillTableDetails(next.getId(), overwrite);
+      TableDetails tableDetails = client.getFrontendService().autoFillTableDetails(next.getId());
       progressResultModel.addProcessed(tableDetails);
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);

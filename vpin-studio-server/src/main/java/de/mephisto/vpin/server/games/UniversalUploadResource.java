@@ -193,7 +193,7 @@ public class UniversalUploadResource {
 
       tableDetails = frontendStatusService.getTableDetails(importedGame.getId());
       if (tableDetails != null && autoFill) {
-        frontendStatusService.autoFill(importedGame, tableDetails, true, false);
+        frontendStatusService.autoFill(importedGame, tableDetails, false);
       }
       LOG.info("Cloning of \"" + importedGame.getGameDisplayName() + "\" successful.");
     }
@@ -282,7 +282,7 @@ public class UniversalUploadResource {
 
       tableDetails = frontendStatusService.getTableDetails(game.getId());
       if (tableDetails != null && autoFill) {
-        frontendStatusService.autoFill(game, tableDetails, true, false);
+        frontendStatusService.autoFill(game, tableDetails, false);
       }
       LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
     }
@@ -317,7 +317,7 @@ public class UniversalUploadResource {
 
         TableDetails tableDetails = frontendStatusService.getTableDetails(game.getId());
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          frontendStatusService.autoFill(game, tableDetails, true, false);
+          frontendStatusService.autoFill(game, tableDetails, false);
         }
 
         uploadDescriptor.setGameId(returningGameId);

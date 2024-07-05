@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
@@ -11,11 +12,14 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -60,6 +64,9 @@ public class FrontendStatusService implements InitializingBean {
 
   @Autowired
   private HighscoreService highscoreService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Autowired
   private VpsService vpsService;
@@ -177,107 +184,128 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   @NonNull
-  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean overwrite, boolean simulate) {
+  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
     String vpsTableId = game.getExtTableId();
     String vpsTableVersionId = game.getExtTableVersionId();
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
+    AutoFillSettings autoFillSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class).getAutoFillSettings();
+
     if (!StringUtils.isEmpty(vpsTableId)) {
       VpsTable vpsTable = vpsService.getTableById(vpsTableId);
       if (vpsTable != null) {
-        if ((tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite) && vpsTable.getYear() > 0) {
-          tableDetails.setGameYear(vpsTable.getYear());
-        }
-
-        if ((tableDetails.getNumberOfPlayers() == null || tableDetails.getNumberOfPlayers() == 0 || overwrite) && vpsTable.getPlayers() > 0) {
-          tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
-        }
-
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getUrl())) && !StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
-          tableDetails.setUrl(vpsTable.getIpdbUrl());
-
-          String url = vpsTable.getIpdbUrl();
-          if (url.contains("id=")) {
-            tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
+        if (autoFillSettings.isGameYear()) {
+          if (vpsTable.getYear() > 0) {
+            tableDetails.setGameYear(vpsTable.getYear());
           }
         }
 
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getGameTheme())) && vpsTable.getTheme() != null && !vpsTable.getTheme().isEmpty()) {
-          tableDetails.setGameTheme(String.join(",", vpsTable.getTheme()));
-        }
-
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getDesignedBy())) && vpsTable.getDesigners() != null && !vpsTable.getDesigners().isEmpty()) {
-          tableDetails.setDesignedBy(String.join(",", vpsTable.getDesigners()));
-        }
-
-        if ((overwrite || StringUtils.isEmpty(tableDetails.getManufacturer())) && !StringUtils.isEmpty(vpsTable.getManufacturer())) {
-          tableDetails.setManufacturer(vpsTable.getManufacturer());
-        }
-
-        if ((overwrite || tableDetails.getGameType() == null) && !StringUtils.isEmpty(vpsTable.getType())) {
-          try {
-            String gameType = vpsTable.getType();
-            tableDetails.setGameType(gameType);
+        if (autoFillSettings.isNumberOfPlayers()) {
+          if (vpsTable.getPlayers() > 0) {
+            tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
           }
-          catch (Exception e) {
-            //ignore
+        }
+
+        if (autoFillSettings.isIpdbNumber()) {
+          if (!StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
+            tableDetails.setUrl(vpsTable.getIpdbUrl());
+
+            String url = vpsTable.getIpdbUrl();
+            if (url.contains("id=")) {
+              tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
+            }
+          }
+        }
+
+        if (autoFillSettings.isGameTheme()) {
+          if (vpsTable.getTheme() != null && !vpsTable.getTheme().isEmpty()) {
+            tableDetails.setGameTheme(String.join(",", vpsTable.getTheme()));
+          }
+        }
+
+
+        if (autoFillSettings.isDesignBy()) {
+          if (vpsTable.getDesigners() != null && !vpsTable.getDesigners().isEmpty()) {
+            tableDetails.setDesignedBy(String.join(",", vpsTable.getDesigners()));
+          }
+        }
+
+        if (autoFillSettings.isManufacturer()) {
+          if (!StringUtils.isEmpty(vpsTable.getManufacturer())) {
+            tableDetails.setManufacturer(vpsTable.getManufacturer());
+          }
+        }
+
+        if (autoFillSettings.isGameType()) {
+          if (!StringUtils.isEmpty(vpsTable.getType())) {
+            try {
+              String gameType = vpsTable.getType();
+              tableDetails.setGameType(gameType);
+            }
+            catch (Exception e) {
+              //ignore
+            }
           }
         }
 
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
           VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
           if (tableVersion != null) {
-            if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableVersion.getVersion())) {
-              tableDetails.setGameVersion(tableVersion.getVersion());
+
+            if (autoFillSettings.isGameVersion()) {
+              if (!StringUtils.isEmpty(tableVersion.getVersion())) {
+                tableDetails.setGameVersion(tableVersion.getVersion());
+              }
             }
 
-            List<String> authors = tableVersion.getAuthors();
-            if (overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) {
-              if (authors != null) {
+            if (autoFillSettings.isAuthor()) {
+              List<String> authors = tableVersion.getAuthors();
+              if (authors != null && !authors.isEmpty()) {
                 tableDetails.setAuthor(String.join(", ", authors));
               }
             }
 
-            if (overwrite || (StringUtils.isEmpty(tableDetails.getgDetails()) && tableInfo != null && tableInfo.getTableDescription() != null)) {
-              if (tableInfo != null) {
-                StringBuilder details = new StringBuilder();
-                if (!StringUtils.isEmpty(tableVersion.getComment())) {
-                  details.append("VPS Comment:\n");
-                  details.append(tableVersion.getComment());
-                }
+            if (autoFillSettings.isDetails()) {
+              StringBuilder details = new StringBuilder();
+              if (!StringUtils.isEmpty(tableVersion.getComment())) {
+                details.append("VPS Comment:\n");
+                details.append(tableVersion.getComment());
+              }
+              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableDescription())) {
                 String tableDescription = tableInfo.getTableDescription();
                 details.append("\n\n");
                 details.append(tableDescription);
-                tableDetails.setgDetails(details.toString());
               }
+              tableDetails.setgDetails(details.toString());
             }
 
-            if (overwrite || (StringUtils.isEmpty(tableDetails.getgNotes()) && tableInfo != null && tableInfo.getTableRules() != null)) {
-              if (tableInfo != null) {
+            if (autoFillSettings.isNotes()) {
+              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableRules())) {
                 tableDetails.setgNotes(tableInfo.getTableRules());
               }
             }
 
-//            if (overwrite || StringUtils.isEmpty(tableDetails.getTags())) {
-//              if (tableVersion.getFeatures() != null) {
-//                String tags = String.join(", ", tableVersion.getFeatures());
-//                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
-//                if (!tableDetailTags.contains(tags)) {
-//                  tableDetailTags = tableDetailTags + ", " + tags;
-//                }
-//                tableDetails.setTags(tableDetailTags);
-//              }
-//            }
+            if (autoFillSettings.isTags()) {
+              if (tableVersion.getFeatures() != null && !tableVersion.getFeatures().isEmpty()) {
+                String tags = String.join(", ", tableVersion.getFeatures());
+                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
+                if (!tableDetailTags.contains(tags)) {
+                  tableDetailTags = tableDetailTags + ", " + tags;
+                }
+                tableDetails.setTags(tableDetailTags);
+              }
+            }
+
             LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
           }
         }
         else {
-          fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
+          fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
         }
       }
     }
     else {
-      fillTableInfoWithVpxData(tableInfo, game, tableDetails, overwrite);
+      fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
     }
 
     if (simulate) {
@@ -314,18 +342,21 @@ public class FrontendStatusService implements InitializingBean {
   /**
    * Some fallback: we use the VPX script metadata if the VPS version data has not been applied.
    */
-  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, boolean overwrite) {
+  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, @NonNull AutoFillSettings autoFillSettings) {
     if (tableInfo != null) {
-      if ((overwrite || StringUtils.isEmpty(tableDetails.getGameVersion())) && !StringUtils.isEmpty(tableInfo.getTableVersion())) {
-        tableDetails.setGameVersion(tableInfo.getTableVersion());
+      if (autoFillSettings.isGameVersion()) {
+        if (!StringUtils.isEmpty(tableInfo.getTableVersion())) {
+          tableDetails.setGameVersion(tableInfo.getTableVersion());
+        }
       }
 
-      if ((overwrite || StringUtils.isEmpty(tableDetails.getAuthor())) && !StringUtils.isEmpty(tableInfo.getAuthorName())) {
-        tableDetails.setAuthor(tableInfo.getAuthorName());
+      if (autoFillSettings.isAuthor()) {
+        if (!StringUtils.isEmpty(tableInfo.getAuthorName())) {
+          tableDetails.setAuthor(tableInfo.getAuthorName());
+        }
       }
     }
   }
-
 
   public TableDetails getTableDetails(int gameId) {
     return frontendService.getTableDetails(gameId);

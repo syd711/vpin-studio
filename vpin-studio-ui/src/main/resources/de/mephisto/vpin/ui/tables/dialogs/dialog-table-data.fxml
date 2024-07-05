@@ -404,28 +404,43 @@
                                                       </Label>
                                                    </left>
                                                    <right>
-                                                      <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                         <items>
-                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                      <HBox BorderPane.alignment="CENTER_RIGHT">
+                                                         <children>
+                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
+                                                               <items>
+                                                                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                                     <graphic>
+                                                                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                        </FontIcon>
+                                                                     </graphic>
+                                                                  </MenuItem>
+                                                               </items>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
                                                                <graphic>
-                                                                  <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </FontIcon>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                                </graphic>
-                                                            </MenuItem>
-                                                         </items>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
-                                                         </tooltip>
-                                                      </SplitMenuButton>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
+                                                               </tooltip>
+                                                            </SplitMenuButton>
+                                                            <Button mnemonicParsing="false" onAction="#onAutoFillSettings" textFill="WHITE">
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
+                                                               <graphic>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="20" />
+                                                               </graphic>
+                                                               <tooltip>
+                                                                  <Tooltip text="Open Auto-Fill Settings" />
+                                                               </tooltip>
+                                                            </Button>
+                                                         </children>
+                                                      </HBox>
                                                    </right>
                                                 </BorderPane>
                                                 <GridPane hgap="3.0" vgap="3.0">
@@ -565,7 +580,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Tags:" GridPane.rowIndex="12">
+                                                      <Label styleClass="default-text" text="Tags:*" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -915,7 +930,7 @@
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gNotes" prefHeight="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label styleClass="default-text" text="Notes:" GridPane.rowIndex="1">
+                                                <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>

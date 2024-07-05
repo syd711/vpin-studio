@@ -224,6 +224,11 @@ public class TablesSidebarTableDetailsController implements Initializable {
   }
 
   @FXML
+  private void onAutoFillSettings() {
+    TableDialogs.openAutoFillSettingsDialog(Studio.stage);
+  }
+
+  @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
       TableDetails td = TableDialogs.openAutoFill(this.game.get());
@@ -235,7 +240,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
   @FXML
   private void onAutoFillAll() {
-    TableDialogs.openAutoFillAll();
+    TableDialogs.openAutoFillAll(Studio.stage);
   }
 
   public void setGame(Optional<GameRepresentation> game) {

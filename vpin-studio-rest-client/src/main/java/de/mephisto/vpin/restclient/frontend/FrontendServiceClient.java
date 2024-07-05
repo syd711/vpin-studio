@@ -133,9 +133,9 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/mediadir/" + gameId + "/" + screen, File.class);
   }
 
-  public TableDetails autoFillTableDetails(int gameId, boolean overwrite) throws Exception {
+  public TableDetails autoFillTableDetails(int gameId) throws Exception {
     try {
-      return getRestClient().put(API + API_SEGMENT_FRONTEND + "/tabledetails/autofill/" + gameId + "/" + overwrite, Collections.emptyMap(), TableDetails.class);
+      return getRestClient().put(API + API_SEGMENT_FRONTEND + "/tabledetails/autofill/" + gameId, Collections.emptyMap(), TableDetails.class);
     }
     catch (Exception e) {
       LOG.error("Failed autofilling table details: " + e.getMessage(), e);

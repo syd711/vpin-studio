@@ -366,6 +366,11 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   @FXML
+  private void onAutoFillSettings() {
+    TableDialogs.openAutoFillSettingsDialog(this.stage);
+  }
+
+  @FXML
   private void onAutoMatchAll() {
     TableDialogs.openAutoMatchAll();
   }
@@ -409,7 +414,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onAutoFillAll() {
-    TableDialogs.openAutoFillAll();
+    TableDialogs.openAutoFillAll(this.stage);
   }
 
 

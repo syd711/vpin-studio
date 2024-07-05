@@ -69,6 +69,16 @@ public class UISettings extends JsonSettings {
   private boolean columnVersion = true;
   private boolean columnVpsStatus = true;
 
+  private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public AutoFillSettings getAutoFillSettings() {
+    return autoFillSettings;
+  }
+
+  public void setAutoFillSettings(AutoFillSettings autoFillSettings) {
+    this.autoFillSettings = autoFillSettings;
+  }
+
   public boolean isSectionIni() {
     return sectionIni;
   }
