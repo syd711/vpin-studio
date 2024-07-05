@@ -274,8 +274,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onCreate(ActionEvent e) {
+    CardTemplate selection = this.templateCombo.getValue();
+    String gameName = gameRepresentation.get().getGameName();
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template will be used as default.", null);
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + selection.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
 
@@ -285,7 +288,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         return;
       }
 
-      CardTemplate selection = this.templateCombo.getValue();
       Platform.runLater(() -> {
         selection.setName(s);
         selection.setId(null);

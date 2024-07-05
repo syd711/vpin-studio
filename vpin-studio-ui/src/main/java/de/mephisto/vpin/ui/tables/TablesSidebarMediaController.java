@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -20,13 +21,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
@@ -420,6 +424,9 @@ public class TablesSidebarMediaController implements Initializable {
     btn_delete_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).isEmpty());
 
     if (g.isPresent()) {
+      GameRepresentation game = g.get();
+      DirectB2SData directB2SData = client.getBackglassServiceClient().getDirectB2SData(game.getId());
+
       btn_edit_Audio.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Audio).size()));
       btn_edit_AudioLaunch.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.AudioLaunch).size()));
       btn_edit_Topper.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Topper).size()));
@@ -433,9 +440,8 @@ public class TablesSidebarMediaController implements Initializable {
       btn_edit_PlayField.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.PlayField).size()));
       btn_edit_Wheel.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).size()));
 
-      GameRepresentation game = g.get();
       GameMediaRepresentation gameMedia = game.getGameMedia();
-      refreshMedia(gameMedia, cardScreen, preview);
+      refreshMedia(gameMedia, cardScreen, preview, directB2SData);
     }
     else {
       btn_edit_Audio.setText(" ");
@@ -455,7 +461,7 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
-  public void refreshMedia(GameMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview) {
+  public void refreshMedia(GameMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview, DirectB2SData directB2SData) {
     Platform.runLater(() -> {
       VPinScreen[] values = VPinScreen.values();
       for (VPinScreen screen : values) {
@@ -469,6 +475,16 @@ public class TablesSidebarMediaController implements Initializable {
 
         GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
         WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
+
+//        Node center = mediaRoot.getCenter();
+//        if (screen.equals(VPinScreen.BackGlass) && center instanceof Label && directB2SData != null && directB2SData.isBackgroundAvailable()) {
+//          VBox box = new VBox(3);
+//          box.setAlignment(Pos.CENTER);
+//          box.getChildren().add(center);
+//          Label backglasslabel = new Label("Has ackgds");
+//          box.getChildren().add(backglasslabel);
+//          mediaRoot.setCenter(box);
+//        }
       }
     });
   }
@@ -631,7 +647,8 @@ public class TablesSidebarMediaController implements Initializable {
             }
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to update focus state of media players: " + e.getMessage());
       }
     });
