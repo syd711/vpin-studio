@@ -135,7 +135,7 @@ public class CardGraphics {
 
       String title = template.getTitle();
       int titleWidth = g.getFontMetrics().stringWidth(title);
-      currentY = titleFontSize;
+      currentY = currentY + titleFontSize;
       g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
       g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
 
