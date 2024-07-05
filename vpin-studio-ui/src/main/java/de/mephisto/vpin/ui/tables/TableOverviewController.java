@@ -1896,17 +1896,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
-    boolean supportedEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
+    boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
+    boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
 
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
-    this.importBtn.setDisable(!supportedEmulator);
-    this.uploadTableBtn.setVisible(supportedEmulator);
-    this.deleteBtn.setVisible(supportedEmulator);
-    this.scanBtn.setVisible(supportedEmulator);
-    this.playBtn.setVisible(supportedEmulator);
-    this.stopBtn.setVisible(supportedEmulator);
+    this.importBtn.setDisable(!vpxOrFpEmulator);
+    this.deleteBtn.setVisible(vpxOrFpEmulator);
+    this.uploadTableBtn.setVisible(vpxEmulator);
+    this.scanBtn.setVisible(vpxEmulator);
+    this.playBtn.setVisible(vpxEmulator);
+    this.stopBtn.setVisible(vpxEmulator);
 
-    deleteSeparator.setVisible(supportedEmulator);
+    deleteSeparator.setVisible(vpxOrFpEmulator);
 
     refreshColumns();
 

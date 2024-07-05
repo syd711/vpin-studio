@@ -69,6 +69,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header.
+- **Table Overview / Emulators**: Enabled import and delete actions for the **Future Pinball** emulator. 
 - **Table Overview / Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Table Overview / Filter Section**: Splitted filter preferences for .ini and .pov files.
 - **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
@@ -91,3 +92,4 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.
 - **Table Overview / VPin MAME**: Added delete button. Since the MAME settings not only contain the visible flags, but also some UI settings, resetting a table may help somestimes to fix table problems.
 - **Table Overview / VPin MAME**: Applying the MAME defaults is only possible now, when the table has existing settings / has been played once. 
+- **Table Overview / Highscores**: Fixed out-dated help text on how to setup highscore resolving. 

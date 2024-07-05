@@ -17,7 +17,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarHighscoresController">
     <center>
         <ScrollPane hbarPolicy="NEVER">
             <padding>
@@ -45,14 +45,14 @@
                                  </VBox.margin>
                               </Label>
                               <Label fx:id="statusLabel11" layoutX="23.0" layoutY="23.0" styleClass="default-text" text="- Make sure that the table has been launched at least once." wrapText="true" />
-                              <Label fx:id="statusLabel111" layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Make sure that the ROM name is set in the &quot;Script Details&quot; section." wrapText="true" />
+                              <Label fx:id="statusLabel111" layoutX="23.0" layoutY="43.0" styleClass="default-text" text="- Make sure that the ROM name is set in the &quot;Table Data Manager&quot; dialog." wrapText="true" />
                               <Label fx:id="statusLabel11112" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- If the table scan resolves the wrong or no ROM name," wrapText="true" />
-                              <Label fx:id="statusLabel111121" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="  set the correct one in section &quot;PinUP Popper Table Settings&quot; for field &quot;ROM Name&quot;." wrapText="true" />
+                              <Label fx:id="statusLabel111121" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="  set the correct one in the &quot;Table Data Manager&quot; for field &quot;ROM Name&quot;." wrapText="true" />
                               <Label fx:id="statusLabel11111" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- Note that not all solid state (SS) tables are supported." wrapText="true" />
                               <Label fx:id="statusLabel111111" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="- For textfile based highscores, check if the correct value for &quot;Score .txt Filename&quot; is set" wrapText="true" />
                               <Label fx:id="statusLabel1111111" layoutX="23.0" layoutY="136.0" styleClass="default-text" text="  in the &quot;Script Details&quot; section." wrapText="true" />
                               <Label fx:id="statusLabel11111111" layoutX="23.0" layoutY="156.0" styleClass="default-text" text="- Compare the name of the textfile written in the &quot;\VisualPinball\User&quot; folder" wrapText="true" />
-                              <Label fx:id="statusLabel111111111" layoutX="23.0" layoutY="196.0" styleClass="default-text" text="  with the value of the &quot;Score .txt Filename&quot; field." wrapText="true" />
+                              <Label fx:id="statusLabel111111111" layoutX="23.0" layoutY="196.0" styleClass="default-text" text="  with the value of the &quot;Highscore Filename&quot; field in the Table Data Manager." wrapText="true" />
                            </children>
                            <padding>
                               <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
