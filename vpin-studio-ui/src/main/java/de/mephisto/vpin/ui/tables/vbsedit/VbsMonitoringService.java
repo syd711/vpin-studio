@@ -82,7 +82,6 @@ public class VbsMonitoringService {
                       id = Integer.parseInt(idNumber);
                     }
                     File changedFile = new File(vbsFolder, changed.toFile().getName());
-                    String gameName = FilenameUtils.getBaseName(changedFile.getName());
 
                     LOG.info("VBS monitor: " + changedFile.getAbsolutePath() + " has changed (" + event.kind() + ")");
                     TextFile textFile = new TextFile(VPinFile.VBScript);
