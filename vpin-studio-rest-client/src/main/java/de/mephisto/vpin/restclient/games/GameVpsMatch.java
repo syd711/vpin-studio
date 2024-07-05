@@ -8,6 +8,8 @@ public class GameVpsMatch {
 
   private String extTableVersionId;
 
+  private String version;
+
   public int getGameId() {
     return gameId;
   }
@@ -30,5 +32,13 @@ public class GameVpsMatch {
 
   public void setExtTableVersionId(String extVersionId) {
     this.extTableVersionId = extVersionId;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
   }
 }
