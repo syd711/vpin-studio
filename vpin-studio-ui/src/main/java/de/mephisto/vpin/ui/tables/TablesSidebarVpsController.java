@@ -6,9 +6,7 @@ import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -130,7 +128,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   private AutoCompleteTextField autoCompleteNameField;
 
   private ValidationState validationState;
-  private ServerSettings serverSettings;
+
   private UISettings uiSettings;
 
 
@@ -639,9 +637,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       this.vpsResetBtn.setVisible(!uiSettings.isHideVPSUpdates());
-    }
-    else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     }
   }
 }

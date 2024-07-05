@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -152,7 +153,15 @@ public class StandaloneConnector extends BaseConnector {
 
   @Override
   protected TableDetails getGameFromDb(String filename) {
-    return null;
+    TableDetails details = new TableDetails();
+    details.setEmulatorId(VPX_EMUID);
+    details.setStatus(1);
+    details.setEmulatorType(filename);
+    details.setGameFileName(filename);
+    String basename = FilenameUtils.getBaseName(filename);
+    details.setGameDisplayName(basename);
+    details.setGameName(basename);
+    return details;
   }
 
   @Override

@@ -48,63 +48,11 @@ public class VpsService implements ApplicationContextAware, InitializingBean, Vp
    * @return non null array of ids if matching was done
    */
   public GameVpsMatch autoMatch(Game game, boolean overwrite) {
-    try {
-      GameVpsMatch vpsMatch = new GameVpsMatch();
-      vpsMatch.setGameId(game.getId());
-      vpsMatch.setExtTableId(game.getExtTableId());
-      vpsMatch.setExtTableVersionId(game.getExtTableVersionId());
 
-      if (StringUtils.isEmpty(game.getExtTableId()) || overwrite) {
+    TableInfo tableInfo = vpxService.getTableInfo(game);
 
-        TableMatcher matcher = TableMatcher.getInstance();
-
-        VpsTable vpsTable = null;
-
-        // first check already mapped table and confirm mapping
-        if (StringUtils.isNotEmpty(game.getExtTableId())) {
-          VpsTable vpsTableById = vpsDatabase.getTableById(game.getExtTableId());
-          if (matcher.isClose(game.getGameDisplayName(), game.getRom(), vpsTableById)) {
-            vpsTable = vpsTableById;
-          }
-        }
-        // if not found, find closest
-        if (vpsTable == null) {
-          VpsTable vpsCloseTable = matcher.findClosest(game.getGameDisplayName(), game.getRom(), vpsDatabase.getTables());
-          if (vpsCloseTable != null) {
-            vpsTable = vpsCloseTable;
-          }
-        }
-
-        if (vpsTable != null) {
-          // table found => update the TableId
-          vpsMatch.setExtTableId(vpsTable.getId());
-    
-          if (StringUtils.isEmpty(game.getExtTableVersionId()) || overwrite) {
-
-            TableInfo tableInfo = vpxService.getTableInfo(game);
-
-            VpsTableVersion version = matcher.findVersion(vpsTable, game, tableInfo);
-            if (version != null) {
-              LOG.info(game.getGameDisplayName() + ": Applied table version \"" + version + "\"");
-              vpsMatch.setExtTableVersionId(version.getId());
-            }
-            else {
-              LOG.info(game.getGameDisplayName() + ": Emptied table version");
-              vpsMatch.setExtTableVersionId(null);
-            }
-          }
-        } else {
-          LOG.info(game.getGameDisplayName() + ": Emptied table id and version");
-          vpsMatch.setExtTableId(null);
-          vpsMatch.setExtTableVersionId(null);
-        }
-      }
-      LOG.info("Finished auto-match for \"" + game.getGameDisplayName() + "\"");
-      return vpsMatch;
-    } catch (Exception e) {
-      LOG.error("Error auto-matching table data: " + e.getMessage(), e);
-      return null;
-    }
+    VpsAutomatcher automatcher = VpsAutomatcher.getInstance();
+    return automatcher.autoMatch(vpsDatabase, game, tableInfo, false, overwrite);
   }
 
   /**

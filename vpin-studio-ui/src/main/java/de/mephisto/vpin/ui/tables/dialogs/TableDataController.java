@@ -329,6 +329,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       String mappedTableId = vpsMatch.getExtTableId();
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
+      // set the detected version
+      gameVersion.setText(vpsMatch.getVersion());
+
       setVpsTableIdValue(mappedTableId);
       game.setExtTableId(mappedTableId);
 
@@ -423,7 +426,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onCopyTableVersion() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
     ClipboardContent content = new ClipboardContent();
-    String vpsTableUrl = VPS.getVpsTableUrl(game.getExtTableId(), game.getExtVersion());
+    String vpsTableUrl = VPS.getVpsTableUrl(game.getExtTableId(), game.getExtTableVersionId());
     content.putString(vpsTableUrl);
     clipboard.setContent(content);
   }
@@ -470,9 +473,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
     gameVersion.setText(gVersion);
-    if (tableDetails != null) {
-      tableDetails.setGameVersion(gVersion);
-    }
     fixVersionBtn.setDisable(true);
   }
 
@@ -550,7 +550,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
 
-    List<GameRepresentation> gamesCached = client.getGameService().getGamesCached(-1);
+    List<GameRepresentation> gamesCached = client.getGameService().getGamesCached(emuId);
     for (GameRepresentation gameRepresentation : gamesCached) {
       if (gameRepresentation.getId() != this.game.getId() && gameRepresentation.getGameFileName().trim().equalsIgnoreCase(updated)) {
         return gameRepresentation.getGameFileName();
@@ -574,16 +574,18 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   private synchronized void doSave(Stage stage, boolean closeDialog) {
-    String updatedGameFileName = game.getGameFileName();
-    if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
-      updatedGameFileName = updatedGameFileName + ".vpx";
-    }
+    if (tableDetails!=null) {
+      String updatedGameFileName = tableDetails.getGameFileName();
+      if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
+        updatedGameFileName = updatedGameFileName + ".vpx";
+      }
 
-    if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
-      String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
-      if (duplicate != null) {
-        WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
-        return;
+      if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
+        String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
+        if (duplicate != null) {
+          WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
+          return;
+        }
       }
     }
 
@@ -596,10 +598,10 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
 
       if (tableDetails != null) {
+        tableDetails.setGameVersion(gameVersion.getText());
         tableDetails = client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       }
       client.getFrontendService().vpsLink(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
-      client.getFrontendService().fixVersion(game.getId(), gameVersion.getText());
 
       EventManager.getInstance().notifyTableChange(game.getId(), null);
 
@@ -784,6 +786,7 @@ public class TableDataController implements Initializable, DialogController, Aut
           gameName.setText(oldValue);
         }
       });
+      gameName.setDisable(frontendType.isStandalone());
 
       gameFileName.setText(tableDetails.getGameFileName());
       gameFileName.setDisable(StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\") || !game.isVpxGame());
@@ -798,6 +801,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
       gameDisplayName.setText(tableDetails.getGameDisplayName());
       gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
+      gameDisplayName.setDisable(frontendType.isStandalone());
 
       //---------------
       // TAB Meta Data

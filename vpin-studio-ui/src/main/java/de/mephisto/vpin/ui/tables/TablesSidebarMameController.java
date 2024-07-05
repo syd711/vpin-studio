@@ -112,10 +112,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private Button mameBtn;
 
-  @FXML
-  private Button deleteBtn;
-
-  @FXML
+   @FXML
   private Button reloadBtn;
 
   @FXML
@@ -142,7 +139,7 @@ public class TablesSidebarMameController implements Initializable {
   public TablesSidebarMameController() {
   }
 
-  @FXML
+  
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
     String rom = game.get().getRom();
@@ -233,26 +230,34 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onApplyDefaults() {
-    MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
+    if (options.isExistInRegistry()) {
+      onDelete();
+    } 
+    else {
+      MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
-    saveDisabled = true;
-    skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
-    useSound.setSelected(defaultOptions.isUseSound());
-    useSamples.setSelected(defaultOptions.isUseSamples());
-    compactDisplay.setSelected(defaultOptions.isCompactDisplay());
-    doubleDisplaySize.setSelected(defaultOptions.isDoubleDisplaySize());
-    ignoreRomCrcError.setSelected(defaultOptions.isIgnoreRomCrcError());
-    cabinetMode.setSelected(defaultOptions.isCabinetMode());
-    showDmd.setSelected(defaultOptions.isShowDmd());
-    useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
-    colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
-    if (defaultOptions.getSoundMode() >= 0) {
-      soundModeCombo.setValue(SOUND_MODES.get(defaultOptions.getSoundMode()));
+      options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
+      options.setUseSound(defaultOptions.isUseSound());
+      options.setUseSamples(defaultOptions.isUseSamples());
+      options.setCompactDisplay(defaultOptions.isCompactDisplay());
+      options.setDoubleDisplaySize(defaultOptions.isDoubleDisplaySize());
+      options.setIgnoreRomCrcError(defaultOptions.isIgnoreRomCrcError());
+      options.setCabinetMode(defaultOptions.isCabinetMode());
+      options.setShowDmd(defaultOptions.isShowDmd());
+      options.setUseExternalDmd(defaultOptions.isUseExternalDmd());
+      options.setColorizeDmd(defaultOptions.isColorizeDmd());
+      options.setSoundMode(defaultOptions.getSoundMode());
+      options.setForceStereo(defaultOptions.isForceStereo());
+  
+      try {
+        client.getMameService().saveOptions(options);
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+      } 
+      catch (Exception e) {
+        LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      }
     }
-    forceStereo.setSelected(defaultOptions.isForceStereo());
-
-    saveDisabled = false;
-    saveOptions();
   }
 
   @FXML
@@ -302,7 +307,6 @@ public class TablesSidebarMameController implements Initializable {
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
     dataScrollPane.setVisible(g.isPresent());
-    deleteBtn.setDisable(g.isEmpty());
 
     labelRomAlias.setText("-");
     labelRom.setText("-");
@@ -376,14 +380,13 @@ public class TablesSidebarMameController implements Initializable {
             this.errorText.setText(validationResult.getText());
           }
         }
+      } else {
+        applyDefaultsBtn.setDisable(true);
       }
     }
   }
 
   private void setInputDisabled(boolean b) {
-    deleteBtn.setDisable(b);
-    applyDefaultsBtn.setDisable(b);
-
     skipPinballStartupTest.setDisable(b);
     useSound.setDisable(b);
     useSamples.setDisable(b);
@@ -396,6 +399,8 @@ public class TablesSidebarMameController implements Initializable {
     colorizeDmd.setDisable(b);
     soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
+
+    applyDefaultsBtn.setText(b? "Override Defaults": "Apply Defaults");
   }
 
   private void saveOptions() {

@@ -168,6 +168,9 @@ public class FrontendStatusService implements InitializingBean {
     GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
     if (vpsMatch != null && !simulate) {
       vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
+      if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
+        fixGameVersion(game.getId(), vpsMatch.getVersion());
+      }
     }
     return vpsMatch;
   }
@@ -342,6 +345,8 @@ public class FrontendStatusService implements InitializingBean {
       gameFilename = gameFilename + ".vpx";
       updatedTableDetails.setGameFileName(gameFilename);
     }
+
+    gameService.fixVersion(gameId,updatedTableDetails.getGameVersion());
     frontendService.saveTableDetails(gameId, updatedTableDetails);
 
     //for upload and replace, we do not need any renaming

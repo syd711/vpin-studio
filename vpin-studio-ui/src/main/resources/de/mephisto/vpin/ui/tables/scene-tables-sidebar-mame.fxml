@@ -266,14 +266,6 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-               </graphic>
-            </Button>
             <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button mnemonicParsing="false" onAction="#onVPMAlias" styleClass="text-button" text="VPMAlias.txt" textFill="WHITE">
                <font>
