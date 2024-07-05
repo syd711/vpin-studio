@@ -7,7 +7,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
@@ -1893,16 +1896,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
-    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    boolean supportedEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
 
-    this.importBtn.setVisible(vpxMode && !frontendType.equals(FrontendType.Standalone));
-    this.uploadTableBtn.setVisible(vpxMode);
-    this.deleteBtn.setVisible(vpxMode);
-    this.scanBtn.setVisible(vpxMode);
-    this.playBtn.setVisible(vpxMode);
-    this.stopBtn.setVisible(vpxMode);
+    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.importBtn.setDisable(!supportedEmulator);
+    this.uploadTableBtn.setVisible(supportedEmulator);
+    this.deleteBtn.setVisible(supportedEmulator);
+    this.scanBtn.setVisible(supportedEmulator);
+    this.playBtn.setVisible(supportedEmulator);
+    this.stopBtn.setVisible(supportedEmulator);
 
-    deleteSeparator.setVisible(vpxMode);
+    deleteSeparator.setVisible(supportedEmulator);
 
     refreshColumns();
 

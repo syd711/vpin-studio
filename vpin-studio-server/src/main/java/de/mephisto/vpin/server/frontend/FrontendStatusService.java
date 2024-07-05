@@ -91,7 +91,15 @@ public class FrontendStatusService implements InitializingBean {
     GameEmulator emulator = frontendService.getGameEmulator(emuId);
     GameList list = new GameList();
     File vpxTablesFolder = emulator.getTablesFolder();
-    List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+
+    List<File> files = new ArrayList<>();
+    if (emulator.isVpxEmulator()) {
+      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+    }
+    else if (emulator.isFpEmulator()) {
+      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"fpt"}, true));
+    }
+
     List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
     List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
     for (File file : files) {

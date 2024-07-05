@@ -50,6 +50,7 @@ public class GameEmulator {
 
   private String backglassServerFolder;
   private boolean vpxEmulator;
+  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator, @NonNull MediaAccessStrategy mediaStrategy) {
@@ -115,6 +116,15 @@ public class GameEmulator {
     }
 
     this.vpxEmulator = emulator.isVisualPinball();
+    this.fpEmulator = emulator.isFuturePinball();
+  }
+
+  public boolean isFpEmulator() {
+    return fpEmulator;
+  }
+
+  public void setFpEmulator(boolean fpEmulator) {
+    this.fpEmulator = fpEmulator;
   }
 
   public List<String> getAltVPXExeNames() {

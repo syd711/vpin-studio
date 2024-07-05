@@ -8,10 +8,14 @@ public class Emulator {
   private String dirMedia;
   private String dirGames;
   private String dirRoms;
-  /** opportunity for emulator to set a specific b2s folder, if null use dirGames */
+  /**
+   * opportunity for emulator to set a specific b2s folder, if null use dirGames
+   */
   private String dirB2S;
   private String emuLaunchDir;
-  /** the executable to run the table */
+  /**
+   * the executable to run the table
+   */
   private String exeName;
   private String gamesExt;
   private boolean visible;
@@ -56,7 +60,7 @@ public class Emulator {
   public void setEmuLaunchDir(String emuLaunchDir) {
     this.emuLaunchDir = emuLaunchDir;
   }
-  
+
   public String getExeName() {
     return exeName;
   }
@@ -126,6 +130,10 @@ public class Emulator {
     return isVisualPinball(this.name, this.displayName, this.description, this.gamesExt);
   }
 
+  public boolean isFuturePinball() {
+    return isFuturePinball(this.name, this.displayName, this.description, this.gamesExt);
+  }
+
   public static boolean isVisualPinball(String name, String displayName, String description, String gamesExt) {
     if (matchesVPX(name)) {
       return true;
@@ -139,20 +147,41 @@ public class Emulator {
     return String.valueOf(gamesExt).toLowerCase().contains("vpx");
   }
 
+  public static boolean isFuturePinball(String name, String displayName, String description, String gamesExt) {
+    if (matchesFP(name)) {
+      return true;
+    }
+    if (matchesFP(displayName)) {
+      return true;
+    }
+    if (matchesFP(description)) {
+      return true;
+    }
+    return String.valueOf(gamesExt).toLowerCase().contains("fpt");
+  }
+
   private static boolean matchesVPX(String name) {
     if (name == null) {
       return false;
     }
 
     return name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL_X.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALL.toLowerCase())
-      || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALLX.toLowerCase());
+        || name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL.toLowerCase())
+        || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALL.toLowerCase())
+        || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALLX.toLowerCase());
+  }
+
+  private static boolean matchesFP(String name) {
+    if (name == null) {
+      return false;
+    }
+
+    return name.toLowerCase().startsWith(EmulatorNames.FUTURE_PINBALL.toLowerCase())
+        || name.toLowerCase().startsWith(EmulatorNames.FUTUREPINBALL.toLowerCase());
   }
 
   @Override
   public String toString() {
     return "Emulator \"" + this.name + "\" (EMUID #" + this.id + ")";
   }
-
 }

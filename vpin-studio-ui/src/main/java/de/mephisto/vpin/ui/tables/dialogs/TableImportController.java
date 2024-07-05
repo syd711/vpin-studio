@@ -106,8 +106,7 @@ public class TableImportController implements Initializable, DialogController {
       FrontendUtil.replaceNames(text2Description, frontend, emulator.getName());
 
       if (importableTables.getItems().isEmpty()) {
-        Label label = new Label("No tables found for [Frontend].");
-        FrontendUtil.replaceName(label, frontend);
+        Label label = new Label("No tables found for \"" + emulator.getName() + "\" that have not been imported yet.");
         label.setStyle("-fx-font-size: 14px;");
         tableBox.getChildren().add(label);
 
