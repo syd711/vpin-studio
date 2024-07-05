@@ -59,27 +59,30 @@ public class GameMediaService {
     }
   }
 
-
   public File uniqueMediaAsset(Game game, VPinScreen screen) {
+    return buildMediaAsset(game, screen, true);
+  }
+  public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
+    return buildMediaAsset(game, screen, suffix, true);
+  }
+
+  public File buildMediaAsset(Game game, VPinScreen screen, boolean append) {
     String suffix = "mp4";
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       suffix = "mp3";
     }
-    return uniqueMediaAsset(game, screen, suffix);
+    return buildMediaAsset(game, screen, suffix, append);
   }
 
-  public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
+  public File buildMediaAsset(Game game, VPinScreen screen, String suffix, boolean append) {
     File out = new File(game.getMediaFolder(screen), game.getGameName() + "." + suffix);
-    if (out.exists()) {
-      String nameIndex = "01";
-      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
-    }
-
-    int index = 1;
-    while (out.exists()) {
-      index++;
-      String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-      out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
+    if (append) {
+      int index = 1;
+      while (out.exists()) {
+        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
+        out = new File(out.getParentFile(), game.getGameName() + nameIndex + "." + suffix);
+        index++;
+      }
     }
     return out;
   }

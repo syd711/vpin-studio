@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
@@ -10,17 +11,21 @@ import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.DragEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
@@ -88,10 +93,29 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
         game = dialogController.getGame();
       }
 
+      GameMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
+      boolean append = false;
+      if (medias.getMediaItems(screen).size() > 0) {
+        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media ?", 
+          "A media asset already exists,", 
+          "Append new asset or Overwrite existing asset ?", "Overwrite", "Append");
+        if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+        }
+        else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+          append = true;
+        }
+        else {
+          return;
+        }
+      }
+
       TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-          "Popper Media Upload", draggedCopies, screen);
+          "Media Upload", draggedCopies, screen, append);
       ProgressDialog.createProgressDialog(model);
 
+      if (tablesController != null) {
+        tablesController.getTablesController().getAssetViewSideBarController().refreshTableMediaView();
+      }
       if (dialogController != null) {
         dialogController.refreshTableMediaView();
       }

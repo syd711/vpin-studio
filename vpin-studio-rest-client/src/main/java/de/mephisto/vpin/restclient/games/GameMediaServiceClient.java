@@ -75,9 +75,9 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   }
 
 
-  public JobExecutionResult uploadMedia(File file, int gameId, VPinScreen screen, FileUploadProgressListener listener) throws Exception {
+  public JobExecutionResult uploadMedia(File file, int gameId, VPinScreen screen, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
-      String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/upload/" + screen.name();
+      String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/upload/" + screen.name() + "/" + append;
       HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
       ResponseEntity<JobExecutionResult> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobExecutionResult.class);
       finalizeUpload(upload);

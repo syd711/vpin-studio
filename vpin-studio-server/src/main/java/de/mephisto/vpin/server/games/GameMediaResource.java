@@ -193,8 +193,9 @@ public class GameMediaResource {
     return handleRequestWithName(id, screen, null);
   }
 
-  @PostMapping("/upload/{screen}")
+  @PostMapping("/upload/{screen}/{append}")
   public JobExecutionResult upload(@PathVariable("screen") VPinScreen VPinScreen,
+                                   @PathVariable("append") boolean append,
                                    @RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam("objectId") Integer gameId) {
     try {
@@ -210,7 +211,7 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.uniqueMediaAsset(game, VPinScreen, suffix);
+      File out = gameMediaService.buildMediaAsset(game, VPinScreen, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 

@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -66,8 +67,25 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
+
+        GameMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
+        boolean append = false;
+        if (medias.getMediaItems(screen).size() > 0) {
+          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media ?", 
+            "A media asset already exists,", 
+            "Append new asset or Overwrite existing asset ?", "Overwrite", "Append");
+          if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+          }
+          else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+            append = true;
+          }
+          else {
+            return;
+          }
+        }
+
         TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-            "Media Upload", files, screen);
+            "Media Upload", files, screen, append);
         ProgressDialog.createProgressDialog(model);
       });
     }
