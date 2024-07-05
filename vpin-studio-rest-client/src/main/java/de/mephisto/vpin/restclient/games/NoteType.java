@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.games;
 
 public enum NoteType {
-  Any, Errors, Todos;
+  Any, Errors, Todos, Outdated;
 
 
   @Override
@@ -15,6 +15,9 @@ public enum NoteType {
       }
       case Todos: {
         return "Todos";
+      }
+      case Outdated: {
+        return "Outdated";
       }
       default: {
         throw new UnsupportedOperationException("Unmapped note type " + this);
