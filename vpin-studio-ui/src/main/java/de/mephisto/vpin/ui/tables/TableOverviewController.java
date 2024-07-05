@@ -1280,6 +1280,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         else if (notes.contains("//TODO")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
         }
+        else if (notes.contains("//OUTDATED")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+        }
       }
 
       btn.setGraphic(graphics);

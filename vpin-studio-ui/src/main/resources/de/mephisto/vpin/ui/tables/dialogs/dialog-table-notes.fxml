@@ -74,6 +74,11 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
+                  <Label layoutX="10.0" layoutY="264.0" styleClass="preference-description" text="- Use &quot;//OUTDATED&quot; to mark table as outdated." textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
                </children>
             </VBox>
          </center>

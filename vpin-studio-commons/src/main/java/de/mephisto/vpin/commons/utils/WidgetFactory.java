@@ -60,6 +60,7 @@ public class WidgetFactory {
   public static final String ERROR_STYLE = "-fx-font-color: " + ERROR_COLOR + ";-fx-text-fill:" + ERROR_COLOR + ";";
   public static final String UPDATE_COLOR = "#CCFF66";
   public static final String TODO_COLOR = UPDATE_COLOR;
+  public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
 
   public static Label createDefaultLabel(String msg) {

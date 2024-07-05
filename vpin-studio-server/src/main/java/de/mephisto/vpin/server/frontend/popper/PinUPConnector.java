@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -17,7 +16,6 @@ import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -197,9 +195,7 @@ public class PinUPConnector implements FrontendConnector {
           manifest.setGameYear(null);
         }
         String gameType = rs.getString("GameType");
-        if (gameType != null && (gameType.equals(GameType.SS.name()) || gameType.equals(GameType.EM.name()) || gameType.equals(GameType.Original.name()))) {
-          manifest.setGameType(GameType.valueOf(gameType));
-        }
+        manifest.setGameType(gameType);
 
         manifest.setRomName(rs.getString("ROM"));
         manifest.setManufacturer(rs.getString("Manufact"));
@@ -336,7 +332,7 @@ public class PinUPConnector implements FrontendConnector {
       stmtBuilder.append("'ALTEXE' = ?, ");
       params.add(tableDetails.getAltLaunchExe());
       stmtBuilder.append("'GameType' = ?, ");
-      params.add(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : null);
+      params.add(tableDetails.getGameType() != null ? tableDetails.getGameType() : "");
       stmtBuilder.append("'GAMEVER' = ?, ");
       params.add(tableDetails.getGameVersion());
       stmtBuilder.append("'DOFStuff' = ?, ");
@@ -417,9 +413,9 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET "
-        + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
-        + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
-        + "DateUpdated=? WHERE GameID=?");
+          + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
+          + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
+          + "DateUpdated=? WHERE GameID=?");
       int index = 1;
       preparedStatement.setString(index++, extTableId);
       preparedStatement.setString(index++, extTableVersionId);
@@ -1756,6 +1752,31 @@ public class PinUPConnector implements FrontendConnector {
     }
   }
 
+  private Map<String, String> getLookups() {
+    Connection connect = this.connect();
+    Map<String, String> results = new HashMap<>();
+    try {
+      Statement statement = connect.createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM PupLookups;");
+      while (rs.next()) {
+        results.put("GameType", rs.getString("GameType"));
+        results.put("GameTheme", rs.getString("GameTheme"));
+        results.put("Manufact", rs.getString("Manufact"));
+        results.put("Category", rs.getString("Category"));
+        results.put("Custom1", rs.getString("Custom1"));
+        results.put("Custom2", rs.getString("Custom2"));
+        results.put("Custom3", rs.getString("Custom3"));
+        break;
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to read lookups: " + e.getMessage(), e);
+    }
+    return results;
+  }
+
   private void importGameExtraValues(int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
     Connection connect = this.connect();
     try {
@@ -1913,7 +1934,29 @@ public class PinUPConnector implements FrontendConnector {
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setAssetSearchEnabled(true);
     frontend.setAssetSearchLabel("PinUP Popper Assets Search");
+
+    Map<String, String> lookups = getLookups();
+    frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));
+    frontend.getFieldLookups().getGameTheme().addAll(toList(lookups, "GameTheme"));
+    frontend.getFieldLookups().getManufacturer().addAll(toList(lookups, "Manufact"));
+    frontend.getFieldLookups().getCategory().addAll(toList(lookups, "Category"));
+    frontend.getFieldLookups().getCustom1().addAll(toList(lookups, "Custom1"));
+    frontend.getFieldLookups().getCustom2().addAll(toList(lookups, "Custom2"));
+    frontend.getFieldLookups().getCustom3().addAll(toList(lookups, "Custom3"));
+
     return frontend;
+  }
+
+  private List<String> toList(Map<String, String> lookups, String key) {
+    List<String> result = new ArrayList<>();
+    if (lookups.containsKey(key)) {
+      String value = lookups.get(key);
+      if (value != null) {
+        List<String> values = Arrays.stream(value.split("\n")).map(StringUtils::trim).filter(v -> !StringUtils.isEmpty(v)).collect(Collectors.toList());
+        result.addAll(values);
+      }
+    }
+    return result;
   }
 
   @Override

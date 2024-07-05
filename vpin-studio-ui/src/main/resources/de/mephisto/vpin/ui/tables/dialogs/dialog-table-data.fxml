@@ -463,12 +463,7 @@
                                                             </Label>
                                                          </graphic>
                                                       </Label>
-                                                      <ComboBox fx:id="gameTypeCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="gameTheme" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
+                                                      <ComboBox fx:id="gameTypeCombo" editable="true" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                       <Label styleClass="default-text" text="Game Theme:*" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
@@ -493,11 +488,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="manufacturer" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
                                                       <Label styleClass="default-text" text="Author:*" GridPane.rowIndex="5">
                                                          <font>
                                                             <Font size="14.0" />
@@ -513,11 +503,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="category" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
                                                       <Label styleClass="default-text" text="Number of Players:*" GridPane.rowIndex="7">
                                                          <font>
                                                             <Font size="14.0" />
@@ -590,12 +575,15 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" />
+                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                                       <Label text="Status:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="6.0" />

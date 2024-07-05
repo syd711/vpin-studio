@@ -9,15 +9,15 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.connectors.vps.model.VpsUrl;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
-import de.mephisto.vpin.restclient.frontend.GameType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -94,10 +94,10 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextField gameVersion;
 
   @FXML
-  private ComboBox<GameType> gameTypeCombo;
+  private ComboBox<String> gameTypeCombo;
 
   @FXML
-  private TextField gameTheme;
+  private ComboBox<String> gameTheme;
 
   @FXML
   private TextField gameDisplayName;
@@ -106,7 +106,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextField gameYear;
 
   @FXML
-  private TextField manufacturer;
+  private ComboBox<String> manufacturer;
 
   @FXML
   private Spinner<Integer> numberOfPlayers;
@@ -115,7 +115,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextField tags;
 
   @FXML
-  private TextField category;
+  private ComboBox<String> category;
 
   @FXML
   private TextField author;
@@ -375,11 +375,11 @@ public class TableDataController implements Initializable, DialogController, Aut
         TableDetails td = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
         if (td != null) {
           gameTypeCombo.setValue(td.getGameType());
-          gameTheme.setText(td.getGameTheme());
+          gameTheme.setValue(td.getGameTheme());
           gameYear.setText("" + td.getGameYear());
-          manufacturer.setText(td.getManufacturer());
+          manufacturer.setValue(td.getManufacturer());
           author.setText(td.getAuthor());
-          category.setText(td.getCategory());
+          category.setValue(td.getCategory());
           if (td.getNumberOfPlayers() != null) {
             numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
           }
@@ -470,7 +470,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
     gameVersion.setText(gVersion);
-    if (tableDetails!=null) {
+    if (tableDetails != null) {
       tableDetails.setGameVersion(gVersion);
     }
     fixVersionBtn.setDisable(true);
@@ -595,7 +595,7 @@ public class TableDataController implements Initializable, DialogController, Aut
         stage.close();
       }
 
-      if (tableDetails!=null) {
+      if (tableDetails != null) {
         tableDetails = client.getFrontendService().saveTableDetails(this.tableDetails, game.getId());
       }
       client.getFrontendService().vpsLink(game.getId(), game.getExtTableId(), game.getExtTableVersionId());
@@ -703,7 +703,9 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.uiSettings = overviewController.getUISettings();
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
+
     FrontendType frontendType = client.getFrontendService().getFrontendType();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
@@ -762,7 +764,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     });
 
     //---------------------------------------------------------
-    if (tableDetails!=null) {
+    if (tableDetails != null) {
 
       //---------------
       // TAB Details
@@ -812,8 +814,9 @@ public class TableDataController implements Initializable, DialogController, Aut
         this.tableDetails.setStatus(t1.getValue());
       });
 
-      gameTheme.setText(tableDetails.getGameTheme());
-      gameTheme.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameTheme(newValue));
+      gameTheme.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameTheme()));
+      gameTheme.setValue(tableDetails.getGameTheme());
+      gameTheme.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameTheme(newValue));
 
       gameYear.textProperty().addListener((observable, oldValue, newValue) -> {
         if (!newValue.matches("\\d*")) {
@@ -837,14 +840,12 @@ public class TableDataController implements Initializable, DialogController, Aut
         }
       });
 
-      manufacturer.setText(tableDetails.getManufacturer());
-      manufacturer.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
+      manufacturer.setItems(FXCollections.observableList(frontend.getFieldLookups().getManufacturer()));
+      manufacturer.setValue(tableDetails.getManufacturer());
+      manufacturer.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setManufacturer(newValue));
 
-      gameTypeCombo.setItems(FXCollections.observableList(Arrays.asList(GameType.values())));
-      GameType gt = tableDetails.getGameType();
-      if (gt != null) {
-        gameTypeCombo.valueProperty().setValue(gt);
-      }
+      gameTypeCombo.setItems(FXCollections.observableList(frontend.getFieldLookups().getGameType()));
+      gameTypeCombo.valueProperty().setValue(tableDetails.getGameType());
       gameTypeCombo.valueProperty().addListener((observableValue, gameType, t1) -> tableDetails.setGameType(t1));
 
       SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 4, 0);
@@ -857,8 +858,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       tags.setText(tableDetails.getTags());
       tags.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setTags(newValue));
 
-      category.setText(tableDetails.getCategory());
-      category.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCategory(newValue));
+      category.setItems(FXCollections.observableList(frontend.getFieldLookups().getCategory()));
+      category.setValue(tableDetails.getCategory());
+      category.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCategory(newValue));
 
       author.setText(tableDetails.getAuthor());
       author.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAuthor(newValue));
@@ -1008,12 +1010,15 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void setVpsTableIdValue(String value) {
     setMappedFieldValue(serverSettings.getMappingVpsTableId(), value);
   }
+
   private void setVpsVersionIdValue(String value) {
     setMappedFieldValue(serverSettings.getMappingVpsTableVersionId(), value);
   }
+
   public void setHsFilenameValue(String value) {
     setMappedFieldValue(serverSettings.getMappingHsFileName(), value);
   }
+
   private void setMappedFieldValue(String field, String value) {
     switch (field) {
       case "WEBGameID": {
@@ -1127,7 +1132,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
-    fixVersionBtn.setDisable(mappedVersion==null || StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
+    fixVersionBtn.setDisable(mappedVersion == null || StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
 
     if (this.autoFillCheckbox.isSelected()) {
       onAutoFill();

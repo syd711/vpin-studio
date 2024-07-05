@@ -15,7 +15,7 @@ public class TableDetails {
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
-  private GameType gameType;
+  private String gameType;
   private String gameVersion;
   private Date dateAdded;
   private Date dateModified;
@@ -245,11 +245,11 @@ public class TableDetails {
     this.launcherList = launcherList;
   }
 
-  public GameType getGameType() {
+  public String getGameType() {
     return gameType;
   }
 
-  public void setGameType(GameType gameType) {
+  public void setGameType(String gameType) {
     this.gameType = gameType;
   }
 

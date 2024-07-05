@@ -295,7 +295,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
 
       extrasPanel.setVisible(tableDetails.isPopper15());
 
-      gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType().name() : "-");
+      gameType.setText(tableDetails.getGameType() != null ? tableDetails.getGameType() : "-");
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());

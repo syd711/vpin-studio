@@ -64,16 +64,18 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 ### Miscellaneous
 
-- **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header. 
-- **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
 - **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
-- **Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
-- **Filter Section**: Splitted filter preferences for .ini and .pov files.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
+- **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
+- **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header.
+- **Table Overview / Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
+- **Table Overview / Filter Section**: Splitted filter preferences for .ini and .pov files.
+- **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
+- **Table Overview / Status Comments**: Added "OUTDATED" as an additional comment type.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
-- **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. 
-
+- **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX. 
+ 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
 
 ### Bugfixes

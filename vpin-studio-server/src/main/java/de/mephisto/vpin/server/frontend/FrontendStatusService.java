@@ -4,7 +4,10 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.TableManagerSettings;
-import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
@@ -209,7 +212,7 @@ public class FrontendStatusService implements InitializingBean {
 
         if ((overwrite || tableDetails.getGameType() == null) && !StringUtils.isEmpty(vpsTable.getType())) {
           try {
-            GameType gameType = GameType.valueOf(vpsTable.getType());
+            String gameType = vpsTable.getType();
             tableDetails.setGameType(gameType);
           }
           catch (Exception e) {
@@ -403,7 +406,7 @@ public class FrontendStatusService implements InitializingBean {
   public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
     boolean romChanged = !StringUtils.equalsIgnoreCase(oldDetails.getRomName(), newDetails.getRomName());
     boolean hsChanged = !StringUtils.equalsIgnoreCase(oldDetails.getHsFilename(), newDetails.getHsFilename());
-        
+
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
       highscoreService.scanScore(game);

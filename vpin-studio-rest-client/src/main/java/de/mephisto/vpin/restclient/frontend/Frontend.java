@@ -10,15 +10,27 @@ public class Frontend {
   private String adminExe;
   private String frontendExe;
   private String iconName;
-  
+
   private boolean assetSearchEnabled;
   private String assetSearchLabel;
   private String assetSearchIcon;
-  /** Wether playfield media should be 180 rotated vs Popper standard layout */
+  /**
+   * Wether playfield media should be 180 rotated vs Popper standard layout
+   */
   private boolean playfieldMediaInverted;
 
   private List<VPinScreen> supportedScreens = new ArrayList<>();
   private List<Integer> ignoredValidations = new ArrayList<>();
+
+  private FieldLookups fieldLookups = new FieldLookups();
+
+  public FieldLookups getFieldLookups() {
+    return fieldLookups;
+  }
+
+  public void setFieldLookups(FieldLookups fieldLookups) {
+    this.fieldLookups = fieldLookups;
+  }
 
   public List<Integer> getIgnoredValidations() {
     return ignoredValidations;

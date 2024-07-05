@@ -27,7 +27,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.helpers.DefaultHandler;
 
 import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.GameType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -137,7 +136,7 @@ public class PinballXTableParser extends DefaultHandler {
       }
       case "type": {
         // EnumUtils does not throw exception but returns null
-        detail.setGameType(EnumUtils.getEnum(GameType.class, content));
+        detail.setGameType(content);
         break;
       }
       case "enabled": {
@@ -227,7 +226,7 @@ public class PinballXTableParser extends DefaultHandler {
           appendValue(writer, "rom", detail.getRomName());
           appendValue(writer, "manufacturer", detail.getManufacturer());
           appendValue(writer, "year", detail.getGameYear()!=null? detail.getGameYear().toString(): "");
-          appendValue(writer, "type", detail.getGameType()!=null? detail.getGameType().name(): "");
+          appendValue(writer, "type", detail.getGameType()!=null? detail.getGameType(): "");
           appendKeepDisplays(writer, "hidedmd", detail.getKeepDisplays(), "1");
           appendKeepDisplays(writer, "hidetopper", detail.getKeepDisplays(), "0");
           appendKeepDisplays(writer, "hidebackglass", detail.getKeepDisplays(), "2");
