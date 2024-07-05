@@ -86,7 +86,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
               }
               else {
                 subText += "\nThe highscore of this table has not been resetted.";
-                Optional<Highscore> hs = highscoreService.getHighscore(game, true);
+                Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
                 if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
                   String raw = hs.get().getRaw();
                   List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);

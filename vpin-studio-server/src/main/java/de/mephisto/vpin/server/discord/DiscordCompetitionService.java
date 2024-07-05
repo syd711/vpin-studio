@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.players.Player;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -56,7 +57,7 @@ public class DiscordCompetitionService {
     if (competition != null) {
       if (!competition.getType().equals(CompetitionType.OFFLINE.name())) {
         Game game = gameService.getGame(competition.getGameId());
-        highscoreService.scanScore(game);
+        highscoreService.scanScore(game, EventOrigin.COMPETITION_UPDATE);
 
         LOG.info("Synchronizing " + competition);
         Date startDate = competition.getCreatedAt();
@@ -88,7 +89,7 @@ public class DiscordCompetitionService {
               Score oldScore = oldScores.get(changedPosition - 1);
               Score newScore = newScores.get(changedPosition - 1);
 
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false);
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, versionedScoreSummary.getRaw(), oldScores.size(), false, EventOrigin.DISCORD_COMPETITION_UPDATE);
               event.setEventReplay(true);
               highscoreService.triggerHighscoreChange(event);
             }

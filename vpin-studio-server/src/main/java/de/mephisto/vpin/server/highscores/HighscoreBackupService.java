@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -77,7 +78,7 @@ public class HighscoreBackupService implements InitializingBean {
     if (result) {
       highscoreService.setPauseHighscoreEvents(true);
       for (Game allRomGames : games) {
-        highscoreService.scanScore(allRomGames);
+        highscoreService.scanScore(allRomGames, EventOrigin.USER_INITIATED);
       }
       highscoreService.setPauseHighscoreEvents(false);
     }

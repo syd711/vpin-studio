@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +118,7 @@ public class GamesResource {
 
   @GetMapping("/scanscore/{id}")
   public HighscoreMetadata scanGameScore(@PathVariable("id") int pupId) {
-    return gameService.scanScore(pupId);
+    return gameService.scanScore(pupId, EventOrigin.USER_INITIATED);
   }
 
   @PostMapping("/delete")

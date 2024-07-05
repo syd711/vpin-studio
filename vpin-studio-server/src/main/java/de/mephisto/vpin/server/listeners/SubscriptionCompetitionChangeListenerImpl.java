@@ -94,7 +94,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
               competition.setDiscordChannelId(subscriptionChannel.getId());
               competitionService.save(competition);
 
-              Optional<Highscore> highscore = highscoreService.getHighscore(game, true);
+              Optional<Highscore> highscore = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
 
               byte[] image = assetService.getSubscriptionCard(competition, game);
               String message = discordSubscriptionMessageFactory.createSubscriptionCreatedMessage(competition.getDiscordServerId(), botId, competition.getUuid());

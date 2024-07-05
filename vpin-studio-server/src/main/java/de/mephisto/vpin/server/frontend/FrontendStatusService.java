@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
@@ -346,7 +347,7 @@ public class FrontendStatusService implements InitializingBean {
       updatedTableDetails.setGameFileName(gameFilename);
     }
 
-    gameService.fixVersion(gameId,updatedTableDetails.getGameVersion());
+    gameService.fixVersion(gameId, updatedTableDetails.getGameVersion());
     frontendService.saveTableDetails(gameId, updatedTableDetails);
 
     //for upload and replace, we do not need any renaming
@@ -414,7 +415,7 @@ public class FrontendStatusService implements InitializingBean {
 
     if (romChanged || hsChanged) {
       LOG.info("Game highscore data fields have been changed, triggering score check.");
-      highscoreService.scanScore(game);
+      highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
       cardService.generateCard(game);
     }
   }

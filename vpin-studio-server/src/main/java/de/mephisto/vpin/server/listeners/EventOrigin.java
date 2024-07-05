@@ -1,0 +1,12 @@
+package de.mephisto.vpin.server.listeners;
+
+public enum EventOrigin {
+  TABLE_SCAN,
+  TABLE_EXIT_EVENT,
+  TABLE_LAUNCH_EVENT,
+  FRONTEND_LAUNCH_EVENT,
+  USER_INITIATED,
+  BOT_CMD,
+  DISCORD_COMPETITION_UPDATE,
+  COMPETITION_UPDATE
+}

@@ -69,7 +69,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     }
 
     discordService.setActivity(game.getGameDisplayName());
-    highscoreService.scanScore(game);
+    highscoreService.scanScore(game, EventOrigin.TABLE_LAUNCH_EVENT);
 
     try {
       //rescan highscore of last game in case Discord was offline
@@ -77,7 +77,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       if (activeTableId >= 0) {
         Game lastGamePlayed = gameService.getGame(activeTableId);
         if (lastGamePlayed != null && lastGamePlayed.getId() != game.getId()) {
-          highscoreService.scanScore(game);
+          highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
         }
         preferencesService.savePreference(PreferenceNames.ACTIVE_GAME, game.getId());
       }
@@ -132,7 +132,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
         //ignore
       }
       LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
-      highscoreService.scanScore(game);
+      highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 
       if (notificationSettings.isHighscoreCheckedNotification()) {
         Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Highscore scan finished!");
@@ -148,7 +148,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     if (activeTableId >= 0) {
       Game game = gameService.getGame(activeTableId);
       if (game != null) {
-        highscoreService.scanScore(game);
+        highscoreService.scanScore(game, EventOrigin.FRONTEND_LAUNCH_EVENT);
       }
     }
   }

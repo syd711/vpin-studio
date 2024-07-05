@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
@@ -152,7 +153,7 @@ public class HighscoreBackupUtil {
   }
 
   public static boolean writeBackupFile(@NonNull HighscoreService highscoreService, @NonNull SystemService systemService, @NonNull Game game, @NonNull File romBackupFolder) {
-    Optional<Highscore> hs = highscoreService.getHighscore(game, true);
+    Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
     if (hs.isPresent()) {
       String filename = dateFormatter.format(new Date());
       filename = filename + "." + FILE_SUFFIX;

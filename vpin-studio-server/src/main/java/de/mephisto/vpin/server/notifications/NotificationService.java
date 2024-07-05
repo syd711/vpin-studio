@@ -7,7 +7,6 @@ import de.mephisto.vpin.commons.fx.notifications.Notification;
 import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.commons.fx.notifications.NotificationStageService;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
@@ -17,6 +16,7 @@ import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -72,8 +72,15 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       return;
     }
 
-    Game game = event.getGame();
+    //e.g. we want to ignore notifications on manual (bulk) scans
+    EventOrigin origin = event.getEventOrigin();
+    if (!origin.equals(EventOrigin.TABLE_EXIT_EVENT) &&
+        !origin.equals(EventOrigin.TABLE_LAUNCH_EVENT) &&
+        !origin.equals(EventOrigin.FRONTEND_LAUNCH_EVENT)) {
+      return;
+    }
 
+    Game game = event.getGame();
     if (notificationSettings.isHighscoreUpdatedNotification()) {
       Notification notification = NotificationFactory.createNotification(game.getWheelImage(),
           game.getGameDisplayName(), "A new highscore has been created!",

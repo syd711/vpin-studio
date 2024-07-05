@@ -23,6 +23,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.GameMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
@@ -479,7 +480,7 @@ public class GameService implements InitializingBean {
         applyGameDetails(game, true, true);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
-          highscoreService.scanScore(game);
+          highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
         }
         return getGame(gameId);
       }
@@ -499,10 +500,10 @@ public class GameService implements InitializingBean {
   }
 
   @Nullable
-  public HighscoreMetadata scanScore(int gameId) {
+  public HighscoreMetadata scanScore(int gameId, EventOrigin eventOrigin) {
     Game game = getGame(gameId);
     if (game != null) {
-      return highscoreService.scanScore(game);
+      return highscoreService.scanScore(game, eventOrigin);
     }
     return null;
   }
@@ -656,7 +657,7 @@ public class GameService implements InitializingBean {
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
-    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan);
+    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
