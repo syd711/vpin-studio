@@ -432,12 +432,12 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         List<GameMediaItem> gameMediaItems = media.get(screen.name());
         for (GameMediaItem gameMediaItem : gameMediaItems) {
           String name = gameMediaItem.getName();
-          Date modified = new Date(gameMediaItem.getFile().lastModified());
+          Date mediaLastModified = new Date(gameMediaItem.getFile().lastModified());
           if (name.endsWith(".mp4")) {
-            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
+            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(mediaLastModified)) {
               result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
             }
-            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(modified)) {
+            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(mediaLastModified)) {
               result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
             }
           }
