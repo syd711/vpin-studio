@@ -67,7 +67,7 @@ public class IniService {
     INIConfiguration iniConfiguration = new INIConfiguration();
     iniConfiguration.setCommentLeadingCharsUsedInInput(";");
     iniConfiguration.setSeparatorUsedInOutput(" = ");
-    iniConfiguration.setSeparatorUsedInInput(" = ");
+    iniConfiguration.setSeparatorUsedInInput("=");
 
     FileReader fileReader = new FileReader(iniFile, StandardCharsets.UTF_8);
     try {

@@ -92,6 +92,7 @@ public class TablesSidebarIniController implements Initializable {
   public void refreshView(Optional<GameRepresentation> g) {
     reloadBtn.setDisable(g.isEmpty());
 
+    dataBox.getChildren().removeAll(dataBox.getChildren());
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
