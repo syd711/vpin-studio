@@ -75,8 +75,12 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Status Comments**: Added "OUTDATED" as an additional comment type.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
 - **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX. 
- 
+
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
+
+- **Table Overview / Auto-Fill**: Added **preference dialog for the auto-fill** function. The settings button for this is next to every auto-fill menu drop-down (inside the Table Data Manager and the Table Data section).
+
+- <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/auto-fill.png" width="550" />
 
 ### Bugfixes
 

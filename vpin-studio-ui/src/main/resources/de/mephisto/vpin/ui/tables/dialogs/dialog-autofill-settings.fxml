@@ -37,7 +37,8 @@
                   <Insets bottom="6.0" />
                </BorderPane.margin>
                <children>
-                  <Label styleClass="preference-description" text="Select the fields than can be overwritten on auto-fill:">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select the fields than can be overwritten on auto-fill." />
+                  <Label styleClass="preference-description" text="Existing values won't be replaced with empty ones.">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin></Label>
