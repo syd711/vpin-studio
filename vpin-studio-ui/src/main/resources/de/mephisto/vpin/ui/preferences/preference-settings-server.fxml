@@ -242,6 +242,19 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </VBox>
+                  <VBox fx:id="tableBackupOption" layoutX="34.0" layoutY="910.0">
+                     <children>
+                        <CheckBox fx:id="uploadTableBackups" mnemonicParsing="false" text="Backup .vpx files on upload." textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="When selected, existing .vpx files will be moved into the &quot;Tables (Backups)&quot; folder of VPX." textFill="WHITE" />
+                     </children>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
                   <CheckBox fx:id="useOriginalVbsFilesCheckbox" layoutX="34.0" layoutY="961.0" mnemonicParsing="false" text="Keep .vbs files when editing table scripts." textFill="WHITE">
                      <font>
                         <Font size="14.0" />

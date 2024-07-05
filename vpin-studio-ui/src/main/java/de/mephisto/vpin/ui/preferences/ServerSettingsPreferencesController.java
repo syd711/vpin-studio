@@ -39,6 +39,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox vpxMonitoringCheckbox;
 
   @FXML
+  private CheckBox uploadTableBackups;
+
+  @FXML
   private Spinner<Integer> idleSpinner;
 
   @FXML
@@ -166,6 +169,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
     vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setUseVPXTableMonitor(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    uploadTableBackups.setSelected(serverSettings.isBackupTableOnOverwrite());
+    uploadTableBackups.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }
