@@ -121,7 +121,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextField author;
 
   @FXML
-  private TextField launchCustomVar;
+  private ComboBox<String> launchCustomVar;
 
   @FXML
   private Spinner<Integer> gameRating;
@@ -145,10 +145,10 @@ public class TableDataController implements Initializable, DialogController, Aut
   private TextArea notes;
 
   @FXML
-  private TextField custom2;
+  private ComboBox<String> custom2;
 
   @FXML
-  private TextField custom3;
+  private ComboBox<String> custom3;
 
   @FXML
   private TextField custom4;
@@ -902,14 +902,17 @@ public class TableDataController implements Initializable, DialogController, Aut
       altRunMode.setText(tableDetails.getAltRunMode());
       altRunMode.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setAltRunMode(newValue));
 
-      launchCustomVar.setText(tableDetails.getLaunchCustomVar());
-      launchCustomVar.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
+      launchCustomVar.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom1()));
+      launchCustomVar.setValue(tableDetails.getLaunchCustomVar());
+      launchCustomVar.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setLaunchCustomVar(newValue));
 
-      custom2.setText(tableDetails.getCustom2());
-      custom2.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom2(newValue));
+      custom2.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom2()));
+      custom2.setValue(tableDetails.getCustom2());
+      custom2.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom2(newValue));
 
-      custom3.setText(tableDetails.getCustom3());
-      custom3.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
+      custom3.setItems(FXCollections.observableList(frontend.getFieldLookups().getCustom3()));
+      custom3.setValue(tableDetails.getCustom3());
+      custom3.valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setCustom3(newValue));
 
       dof.setText(tableDetails.getDof());
       dof.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setDof(newValue));
@@ -1033,14 +1036,14 @@ public class TableDataController implements Initializable, DialogController, Aut
         break;
       }
       case "CUSTOM2": {
-        custom2.setText(value);
+        custom2.setValue(value);
         custom2.setDisable(true);
         custom2.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         hintCustom2.setVisible(true);
         break;
       }
       case "CUSTOM3": {
-        custom3.setText(value);
+        custom3.setValue(value);
         custom3.setDisable(true);
         custom3.setTooltip(new Tooltip("This field has been reserved for VPin Studio data."));
         hintCustom3.setVisible(true);

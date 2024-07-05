@@ -729,26 +729,11 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="custom2" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                                <TextField fx:id="custom3" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <Label styleClass="default-text" text="Custom 3:" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="launchCustomVar" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <Label styleClass="default-text" text="Custom Launch Parameters:" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
@@ -871,8 +856,12 @@
                                                       <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                    </tooltip>
                                                 </Label>
+                                                <ComboBox fx:id="launchCustomVar" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <ComboBox fx:id="custom2" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <ComboBox fx:id="custom3" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                              </children>
                                           </GridPane>
+                                          <ComboBox fx:id="gameTheme1" editable="true" prefWidth="300.0" />
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
