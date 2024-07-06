@@ -476,15 +476,26 @@ public class TablesSidebarMediaController implements Initializable {
         GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
         WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
 
-//        Node center = mediaRoot.getCenter();
-//        if (screen.equals(VPinScreen.BackGlass) && center instanceof Label && directB2SData != null && directB2SData.isBackgroundAvailable()) {
-//          VBox box = new VBox(3);
-//          box.setAlignment(Pos.CENTER);
-//          box.getChildren().add(center);
-//          Label backglasslabel = new Label("Has ackgds");
-//          box.getChildren().add(backglasslabel);
-//          mediaRoot.setCenter(box);
-//        }
+        Node center = mediaRoot.getCenter();
+        if (screen.equals(VPinScreen.BackGlass) && center instanceof Label && directB2SData != null && directB2SData.isBackgroundAvailable()) {
+          VBox box = new VBox(3);
+          box.setAlignment(Pos.CENTER);
+          box.getChildren().add(center);
+          Label l = new Label("Backglass available");
+          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
+          box.getChildren().add(l);
+          mediaRoot.setCenter(box);
+        }
+
+        if (screen.equals(VPinScreen.Menu) && center instanceof Label && directB2SData != null && directB2SData.isDmdImageAvailable()) {
+          VBox box = new VBox(3);
+          box.setAlignment(Pos.CENTER);
+          box.getChildren().add(center);
+          Label l = new Label("FullDMD available");
+          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
+          box.getChildren().add(l);
+          mediaRoot.setCenter(box);
+        }
       }
     });
   }
