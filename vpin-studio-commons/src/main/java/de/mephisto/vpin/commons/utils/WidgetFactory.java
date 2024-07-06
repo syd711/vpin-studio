@@ -62,6 +62,7 @@ public class WidgetFactory {
   public static final String TODO_COLOR = UPDATE_COLOR;
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
+  public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
 
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);
@@ -540,7 +541,7 @@ public class WidgetFactory {
         label.setText("No media found");
       }
       label.setUserData(mediaItem);
-      label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
+      label.setStyle(MEDIA_CONTAINER_LABEL);
 
       if (mediaItem != null) {
         label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");

@@ -199,7 +199,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     try {
       if (this.game.isPresent()) {
         GameRepresentation gameRepresentation = this.game.get();
-        if (tableData!=null) {
+        if (tableData != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + tableData.getFilename() + "\"?", null, "Delete");
           if (result.isPresent() && result.get().equals(ButtonType.OK)) {
             client.getBackglassServiceClient().deleteBackglass(tableData.toDirectB2S());
@@ -207,7 +207,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           }
         }
       }
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
     }
   }
@@ -222,10 +223,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private void onOpenDirectB2SBackground() {
-    if (tableData!=null) {
+    if (tableData != null) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         MediaUtil.openMedia(in);
-      } catch (IOException ioe) {
+      }
+      catch (IOException ioe) {
         LOG.error("Cannot open media for game " + game.get().getId(), ioe);
       }
     }
@@ -250,6 +252,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
       tableSettings.setHideGrill(t1.getId());
       save();
+
+      this.tableSettings = client.getBackglassServiceClient().getTableSettings(game.get().getId());
+      this.tableData = client.getBackglassServiceClient().getDirectB2SData(game.get().getId());
       refreshView(this.game);
     });
 
@@ -324,7 +329,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     usedLEDType.setItems(FXCollections.observableList(LED_TYPES));
     usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (t1!=null) {
+      if (t1 != null) {
         tableSettings.setUsedLEDType(t1.getId());
         glowing.setDisable(t1.getId() == 1);
         lightBulbOn.setDisable(t1.getId() == 1);
@@ -351,7 +356,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
         if (this.saveEnabled) {
           this.tableSettings = client.getBackglassServiceClient().saveTableSettings(g.getId(), this.tableSettings);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
       }
@@ -363,7 +369,8 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     if (b) {
       try {
         Thread.sleep(DEBOUNCE_MS + 100);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         throw new RuntimeException(e);
       }
     }
@@ -373,6 +380,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
+    this.tableSettings = null;
+    if (game.isPresent()) {
+      this.tableSettings = client.getBackglassServiceClient().getTableSettings(game.get().getId());
+      this.tableData = client.getBackglassServiceClient().getDirectB2SData(game.get().getId());
+    }
     this.refreshView(game);
   }
 
@@ -384,7 +396,6 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
     emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
 
-    this.tableSettings = null;
     setDisable(b2sSettings, true);
 
     nameLabel.setText("-");
@@ -406,10 +417,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
     if (g.isPresent() && g.get().isDirectB2SAvailable()) {
       new Thread(() -> {
-        this.tableSettings = client.getBackglassServiceClient().getTableSettings(g.get().getId());
-        this.tableData = client.getBackglassServiceClient().getDirectB2SData(g.get().getId());
         Platform.runLater(() -> {
-
           nameLabel.setText(tableData.getName());
           typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
           authorLabel.setText(tableData.getAuthor());
@@ -425,7 +433,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
           if (tableData.isBackgroundAvailable()) {
             resolutionLabel.setText("Loading...");
-                  new Thread(() -> {
+            new Thread(() -> {
               try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
                 Image image = new Image(in);
                 if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
@@ -437,8 +445,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                   thumbnailImage.setImage(imageToLoad);
                   resolutionLabel.setText("Resolution: " + (int) imageToLoad.getWidth() + " x " + (int) imageToLoad.getHeight());
                 });
-              } catch (IOException ioe) {
-                LOG.error("Cannot load background Image for game "+g.get().getId(), ioe);
+              }
+              catch (IOException ioe) {
+                LOG.error("Cannot load background Image for game " + g.get().getId(), ioe);
               }
             }, "B2S Image Loader").start();
           }
@@ -456,8 +465,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
                   dmdThumbnailImage.setImage(image);
                   dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
                 });
-              } catch (IOException ioe) {
-                LOG.error("Cannot load DMD Image for game "+g.get().getId(), ioe);
+              }
+              catch (IOException ioe) {
+                LOG.error("Cannot load DMD Image for game " + g.get().getId(), ioe);
               }
             }, "B2S DMD Loader").start();
           }
@@ -499,7 +509,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   }
 
   private void setDisable(Pane parent, boolean disabled) {
-    for (Node child: parent.getChildren()) {
+    for (Node child : parent.getChildren()) {
       child.setDisable(disabled);
     }
   }
