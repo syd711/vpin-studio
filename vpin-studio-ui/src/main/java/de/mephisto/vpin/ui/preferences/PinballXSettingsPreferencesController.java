@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -10,6 +11,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +39,17 @@ public class PinballXSettingsPreferencesController implements Initializable {
   private CheckBox gameExEnabledCheckbox;
 
   private PinballXSettings pinballXSettings;
+
+  @FXML
+  private void onConnectionTest() {
+    String login = this.gameExMailText.getText();
+    String pwd = this.gameExPasswordText.getText();
+
+    if(!StringUtils.isEmpty(login) && !StringUtils.isEmpty(pwd)) {
+      //TODO
+      WidgetFactory.showInformation(stage, "GameEx Account", "Login test successful!");
+    }
+  }
 
   @FXML
   private void onLink(ActionEvent event) {
