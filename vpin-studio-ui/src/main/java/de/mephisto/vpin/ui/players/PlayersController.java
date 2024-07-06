@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.players.dialogs.PlayerScoreLoadingProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -166,7 +167,7 @@ public class PlayersController implements Initializable, StudioFXController {
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
   }
 }

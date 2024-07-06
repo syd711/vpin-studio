@@ -2,16 +2,10 @@ package de.mephisto.vpin.ui.cards;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.cards.panels.TemplateEditorController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -49,7 +43,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class HighscoreCardsController implements Initializable, StudioFXController, PreferenceChangeListener, ListChangeListener<GameRepresentation>, StudioEventListener {
+public class HighscoreCardsController implements Initializable, StudioFXController, ListChangeListener<GameRepresentation>, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreCardsController.class);
 
   private final Debouncer debouncer = new Debouncer();
@@ -80,6 +74,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private MenuButton filterButton;
 
   @FXML
+  private Button tableEditBtn;
+
+  @FXML
   private TextField searchField;
 
   @FXML
@@ -96,8 +93,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
   private final List<String> ignoreList = new ArrayList<>();
 
-  private CardSettings cardSettings;
-
   private Parent tablesLoadingOverlay;
 
   private long lastKeyInputTime = System.currentTimeMillis();
@@ -106,6 +101,14 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private TemplateEditorController templateEditorController;
 
   public HighscoreCardsController() {
+  }
+
+  @FXML
+  private void onTableEdit() {
+    GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
+    if (selection != null) {
+      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(selection.getId()));
+    }
   }
 
   @FXML
@@ -209,7 +212,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
           resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load raw b2s: " + e.getMessage(), e);
     }
   }
@@ -217,6 +221,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
     List<String> breadcrumb = new ArrayList<>(Arrays.asList("Highscore Cards"));
     templateEditorPane.setVisible(game.isPresent());
+    tableEditBtn.setDisable(game.isEmpty());
     if (game.isPresent()) {
       breadcrumb.add(game.get().getGameDisplayName());
     }
@@ -229,18 +234,20 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Highscore Cards"));
     Optional<GameRepresentation> selectedItem = Optional.ofNullable(tableView.getSelectionModel().getSelectedItem());
+    if (options != null && options.getGameId() > 0) {
+      selectedItem = tableView.getItems().stream().filter(g -> g.getId() == options.getGameId()).findFirst();
+      if (selectedItem.isPresent()) {
+        GameRepresentation game = selectedItem.get();
+        tableView.getSelectionModel().clearSelection();
+        tableView.getSelectionModel().select(game);
+        tableView.scrollTo(game);
+      }
+    }
     templateEditorController.selectTable(selectedItem, false);
     refreshRawPreview(selectedItem);
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.HIGHSCORE_CARD_SETTINGS)) {
-      this.cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    }
   }
 
   private void filterGames(List<GameRepresentation> games) {
@@ -319,7 +326,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       templateEditorController = loader.getController();
       templateEditorController.setCardsController(this);
       templateEditorPane.setCenter(editorRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load template editor: " + e.getMessage(), e);
     }
 
@@ -327,9 +335,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
 
     try {
-      cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       ignoreList.addAll(Arrays.asList("popperScreen"));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to init card editor: " + e.getMessage(), e);
     }
 
@@ -339,7 +347,8 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       tablesLoadingOverlay.setTranslateY(-100);
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tables...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -450,8 +459,6 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       filterGames(games);
       tableView.setItems(data);
     });
-
-    client.getPreferenceService().addListener(this);
 
     List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
     for (GameEmulatorRepresentation gameEmulator : gameEmulators) {

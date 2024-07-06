@@ -4,11 +4,14 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -18,15 +21,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.SplitMenuButton;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.ResourceLoader;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -105,6 +111,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private Button vpSaveEditBtn;
 
+  @FXML
+  private ImageView cardImage;
+
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -117,6 +126,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
     vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
   }
@@ -127,7 +137,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       ProcessBuilder builder = new ProcessBuilder(new File("resources", "VPSaveEdit.exe").getAbsolutePath());
       builder.directory(new File("resources"));
       builder.start();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to open VPSaveEdit: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPSaveEdit: " + e.getMessage());
     }
@@ -136,15 +147,7 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private void onCard() {
     if (this.game.isPresent()) {
-      GameRepresentation g = this.game.get();
-      boolean b = Studio.client.getHighscoreCardsService().generateHighscoreCardSample(g);
-      if (b) {
-        ByteArrayInputStream s = Studio.client.getHighscoreCardsService().getHighscoreCard(g);
-        MediaUtil.openMedia(s);
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Card Generation Failed.", "The card generation failed, check log files for details.");
-      }
+      NavigationController.navigateTo(NavigationItem.HighscoreCards, new NavigationOptions(this.game.get().getId()));
     }
   }
 
@@ -175,7 +178,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
           Studio.client.getHigscoreBackupService().backup(g.getId());
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to back highscore: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed create highscore backup: " + e.getMessage());
         }
@@ -190,8 +194,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation g = this.game.get();
       if (StringUtils.isEmpty(g.getRom()) && StringUtils.isEmpty(g.getTableName())) {
         WidgetFactory.showAlert(Studio.stage, "ROM name is missing.",
-          "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
-          "You can enter the values for this manually in the \"Script Details\" section.");
+            "To backup the the highscore of a table, the ROM name or tablename must have been resolved.",
+            "You can enter the values for this manually in the \"Script Details\" section.");
       }
       else {
         TableDialogs.openHighscoresAdminDialog(tablesSidebarController, this.game.get());
@@ -204,7 +208,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithMandatoryCheckbox(Studio.stage, "Reset Highscores", "Cancel", "Reset Highscores", "Reset the highscores of \"" + g.getGameDisplayName() + "\"?",
-        "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
+          "An automatic backup will be made before the scores are deleted.", "Yes, I know what I'm doing.");
       if (confirmationResult.isChecked() && !confirmationResult.isApplyClicked()) {
         if (!Studio.client.getGameService().resetHighscore(g.getId())) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
@@ -249,6 +253,21 @@ public class TablesSidebarHighscoresController implements Initializable {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
       restoreBtn.setDisable(false);
+
+      List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
+      Long templateId = g.get().getTemplateId();
+      Optional<CardTemplate> first = templates.stream().filter(t -> t.getId().equals(templateId)).findFirst();
+      if (first.isEmpty()) {
+        first = templates.stream().filter(t -> t.getName().equals(CardTemplate.DEFAULT)).findFirst();
+      }
+      InputStream highscoreCard = client.getHighscoreCardsService().getHighscoreCardPreview(game, first.get());
+
+      if (highscoreCard != null) {
+        cardImage.setImage(new Image(highscoreCard));
+      }
+      else {
+        cardImage.setImage(new Image(ResourceLoader.class.getResourceAsStream("empty-preview.png")));
+      }
 
       String rom = game.getRom();
       if (StringUtils.isEmpty(rom)) {
@@ -347,7 +366,8 @@ public class TablesSidebarHighscoresController implements Initializable {
         Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);
         try {
           scoreGraph.setCenter(highscoresGraphTile);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           //ignore
         }
       }

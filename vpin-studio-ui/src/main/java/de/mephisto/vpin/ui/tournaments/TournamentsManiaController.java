@@ -517,7 +517,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     cabinet = maniaClient.getCabinetClient().getCabinet();
 
     Platform.runLater(() -> {

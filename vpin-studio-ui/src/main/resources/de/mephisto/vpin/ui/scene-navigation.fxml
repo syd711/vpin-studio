@@ -35,7 +35,7 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
+                  <VBox fx:id="playersBtn" alignment="CENTER" onMousePressed="#onPlayersClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple-outline" iconSize="28" />
                         <Label text="Players" textFill="WHITE">
@@ -55,7 +55,7 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
+                  <VBox fx:id="competitionsBtn" alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-outline" iconSize="28" />
                         <Label text="Competitions" textFill="WHITE">
@@ -82,7 +82,7 @@
                   </VBox>
                   <StackPane fx:id="systemManagerStack" onMousePressed="#onSystemClick" styleClass="navigation-button">
                      <children>
-                        <VBox alignment="CENTER" onMousePressed="#onSystemClick">
+                        <VBox fx:id="systemManagerBtn" alignment="CENTER" onMousePressed="#onSystemClick">
                            <children>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2r-remote-desktop" iconSize="24" />
                               <Label text="System" textFill="WHITE">

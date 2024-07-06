@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.discord.DiscordUserEntryController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
@@ -12,10 +11,10 @@ import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionDiscordDialogController;
-import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -131,7 +130,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     refreshUsers(competition);
     competitionMembersPane.setExpanded(competition.isPresent() && competition.get().getType().equals(CompetitionType.DISCORD.name()));
     refreshView(tabPane.getSelectionModel().selectedIndexProperty().get());
@@ -139,8 +138,8 @@ public class CompetitionsController implements Initializable, StudioFXController
 //    tableSubscriptionsController.onReload();
 
 //    offlineController.onViewActivated();
-    discordController.onViewActivated();
-    tableSubscriptionsController.onViewActivated();
+    discordController.onViewActivated(options);
+    tableSubscriptionsController.onViewActivated(options);
   }
 
   @FXML
