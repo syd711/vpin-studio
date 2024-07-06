@@ -126,6 +126,11 @@ public class GameMediaResource {
     return true;
   }
 
+  @GetMapping("/assets/test")
+  public boolean testConnection() {
+    return tableAssetsService.testConnection();
+  }
+
 
   @GetMapping("/assets/d/{url}")
   public ResponseEntity<StreamingResponseBody> getAsset(@PathVariable("url") String url ) {

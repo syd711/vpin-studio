@@ -67,6 +67,21 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     this.rootfolder = rootfolder;
   }
 
+  public boolean testConnection() {
+    FTPClient ftp = null;
+    try {
+      ftp = open();
+      return true;
+    }
+    catch (Exception e) {
+      LOG.error("Cannot log in", e);
+      return false;
+    }
+    finally {
+      close(ftp);
+    }
+  }
+
   public List<TableAsset> search(@NonNull String emulatorName, @NonNull String screenSegment, @NonNull String term) throws Exception {
     if (term.length() < 3) {
         return Collections.emptyList();
@@ -283,13 +298,20 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
         throw new IOException("Exception in connecting to FTP Server");
     }
 
-    ftp.login(user, pwd);
-    return ftp;
+    if (ftp.login(user, pwd)) {
+      return ftp;
+    }
+    throw new IOException("Error, user cannot log in.");
   }
 
-  void close(FTPClient ftp) throws IOException {
+  void close(FTPClient ftp) {
     if (ftp!=null) {
-      ftp.disconnect();
+      try {
+        ftp.disconnect();
+      }
+      catch (IOException ioe) {
+        LOG.error("Error while closing FTP connection", ioe);
+      }
     }
   }
 
