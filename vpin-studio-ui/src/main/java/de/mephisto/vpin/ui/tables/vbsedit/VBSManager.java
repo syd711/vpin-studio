@@ -77,7 +77,7 @@ public class VBSManager {
     }
     else {
       try {
-        Runtime.getRuntime().exec("open \"" + vbsFile.getAbsolutePath() + "\"");
+        Runtime.getRuntime().exec("xdg-open \"" + vbsFile.getAbsolutePath() + "\"");
       } catch (IOException e) {
         LOG.error("Failed to open vbs file: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open vbs file: " + e.getMessage());

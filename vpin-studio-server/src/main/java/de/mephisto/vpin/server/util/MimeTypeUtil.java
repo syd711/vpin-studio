@@ -38,7 +38,7 @@ public class MimeTypeUtil {
           mimeType = "video/avi";
         }
         else{
-          LOG.error("Failed to determine mime type for " + file.getAbsolutePath());
+          LOG.warn("Failed to determine mime type for " + file.getAbsolutePath());
         }
       }
       return mimeType;

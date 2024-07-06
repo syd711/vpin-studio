@@ -1426,6 +1426,10 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
   }
 
   private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
+    if (StringUtils.isEmpty(sql)) {
+      return Collections.emptyList();
+    }
+
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
@@ -1438,7 +1442,7 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       rs.close();
       statement.close();
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     }
     finally {
