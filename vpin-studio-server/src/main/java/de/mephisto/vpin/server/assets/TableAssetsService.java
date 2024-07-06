@@ -59,4 +59,12 @@ public class TableAssetsService {
       adapter.writeAsset(outputStream, url);
     }
   }
+
+
+  public boolean testConnection() {
+    if (adapter!=null) {
+      return adapter.testConnection();
+    }
+    return false;
+  }
 }

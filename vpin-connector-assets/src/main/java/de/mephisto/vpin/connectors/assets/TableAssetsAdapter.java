@@ -9,6 +9,17 @@ public interface TableAssetsAdapter {
 
   List<TableAsset> search(@NonNull String emulatorName, @NonNull String screenSegment, @NonNull String term) throws Exception;
 
-  public void writeAsset(OutputStream outputStream, String url) throws Exception;
+  /**
+   * Download the asset and write it to the stream 
+   * @param outputStream The OutputStream where the asset should be writen to
+   * @param url The URL of the asset
+   */
+  void writeAsset(OutputStream outputStream, String url) throws Exception;
+
+  /**
+   * Test the connection to the remote search server
+   * @return true if connection successfull 
+   */
+  boolean testConnection();
 
 }
