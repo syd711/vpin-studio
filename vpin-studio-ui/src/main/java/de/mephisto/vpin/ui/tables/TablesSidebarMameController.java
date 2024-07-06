@@ -112,7 +112,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private Button mameBtn;
 
-   @FXML
+  @FXML
   private Button reloadBtn;
 
   @FXML
@@ -139,7 +139,7 @@ public class TablesSidebarMameController implements Initializable {
   public TablesSidebarMameController() {
   }
 
-  
+
   private void onDelete() {
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
     String rom = game.get().getRom();
@@ -232,7 +232,7 @@ public class TablesSidebarMameController implements Initializable {
   private void onApplyDefaults() {
     if (options.isExistInRegistry()) {
       onDelete();
-    } 
+    }
     else {
       MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
@@ -248,11 +248,11 @@ public class TablesSidebarMameController implements Initializable {
       options.setColorizeDmd(defaultOptions.isColorizeDmd());
       options.setSoundMode(defaultOptions.getSoundMode());
       options.setForceStereo(defaultOptions.isForceStereo());
-  
+
       try {
         client.getMameService().saveOptions(options);
         EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
-      } 
+      }
       catch (Exception e) {
         LOG.error("Failed to save mame settings: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
@@ -380,7 +380,8 @@ public class TablesSidebarMameController implements Initializable {
             this.errorText.setText(validationResult.getText());
           }
         }
-      } else {
+      }
+      else {
         applyDefaultsBtn.setDisable(true);
       }
     }
@@ -400,7 +401,10 @@ public class TablesSidebarMameController implements Initializable {
     soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
 
-    applyDefaultsBtn.setText(b? "Override Defaults": "Apply Defaults");
+    applyDefaultsBtn.setText(b ? "Override Defaults" : "Apply Defaults");
+
+    Tooltip tooltip = new Tooltip(b ? "Uses the default VPin MAME settings and applies them for the ROM of the selected game." : "Delete the VPin MAME settings for this table so that the system defaults are used.");
+    applyDefaultsBtn.setTooltip(tooltip);
   }
 
   private void saveOptions() {
