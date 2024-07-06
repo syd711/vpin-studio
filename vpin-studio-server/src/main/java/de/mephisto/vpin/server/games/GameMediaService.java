@@ -62,6 +62,7 @@ public class GameMediaService {
   public File uniqueMediaAsset(Game game, VPinScreen screen) {
     return buildMediaAsset(game, screen, true);
   }
+
   public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
     return buildMediaAsset(game, screen, suffix, true);
   }
