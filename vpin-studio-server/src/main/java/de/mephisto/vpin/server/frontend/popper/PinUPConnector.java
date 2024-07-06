@@ -1544,6 +1544,10 @@ public class PinUPConnector implements FrontendConnector {
 //  }
 
   private List<Integer> getGameIdsFromSqlPlaylist(String sql, Map<Integer, PlaylistGame> playlistGames) {
+    if (StringUtils.isEmpty(sql)) {
+      return Collections.emptyList();
+    }
+
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
@@ -1560,7 +1564,7 @@ public class PinUPConnector implements FrontendConnector {
       rs.close();
       statement.close();
     }
-    catch (SQLException e) {
+    catch (Exception e) {
       LOG.error("Failed to read playlists: " + e.getMessage(), e);
     }
     finally {

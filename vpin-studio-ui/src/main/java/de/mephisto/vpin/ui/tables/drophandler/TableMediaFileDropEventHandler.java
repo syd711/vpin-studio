@@ -95,10 +95,10 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
 
       GameMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
       boolean append = false;
-      if (medias.getMediaItems(screen).size() > 0) {
-        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media ?", 
-          "A media asset already exists,", 
-          "Append new asset or Overwrite existing asset ?", "Overwrite", "Append");
+      if (!medias.getMediaItems(screen).isEmpty()) {
+        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
+          "A media asset already exists.",
+          "Append new asset or overwrite existing asset?", "Overwrite", "Append");
         if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
         }
         else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
