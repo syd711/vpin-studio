@@ -56,7 +56,8 @@ public class VBSManager {
           openFile(vbsFile);
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open table VPS: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPS file: " + e.getMessage());
     }
@@ -65,20 +66,13 @@ public class VBSManager {
   private static void openFile(File vbsFile) {
     String osName = System.getProperty("os.name");
     if (osName.contains("Windows")) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-        try {
-          desktop.edit(vbsFile);
-        } catch (Exception e) {
-          HostServices hostServices = Studio.getStudioHostServices();
-          hostServices.showDocument(vbsFile.getAbsolutePath());
-        }
-      }
+      Studio.edit(vbsFile);
     }
     else {
       try {
         Runtime.getRuntime().exec("xdg-open \"" + vbsFile.getAbsolutePath() + "\"");
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to open vbs file: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open vbs file: " + e.getMessage());
       }

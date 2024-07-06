@@ -7,23 +7,20 @@ import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.preferences.dialogs.PreferencesDialogs;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import de.mephisto.vpin.ui.util.Keys;
+import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
@@ -80,16 +77,8 @@ public class OverlayPreferencesController implements Initializable {
 
   @FXML
   private void onOpenExternalPage() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     String url = this.externalPageUrl.getText();
-    boolean open = url != null && url.startsWith(url);
-    if (open && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(url));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(url);
   }
 
   @FXML

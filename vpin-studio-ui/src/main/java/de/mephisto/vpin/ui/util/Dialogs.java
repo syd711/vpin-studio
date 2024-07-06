@@ -38,19 +38,13 @@ public class Dialogs {
   public static void editFile(File file) {
     try {
       if (file.exists()) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-          try {
-            desktop.edit(file);
-          } catch (Exception e) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute \"" + file.getAbsolutePath() + "\": " + e.getMessage());
-          }
-        }
+        Studio.edit(file);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -123,21 +117,14 @@ public class Dialogs {
         else {
           WidgetFactory.showAlert(Studio.stage, "No Data", "The file \"" + file.getAbsolutePath() + "\" does not contain any data or wasn't found.");
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to create temporary file for text file: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to create temporary file for text file: " + e.getMessage());
         return;
       }
     }
-
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        desktop.open(file);
-      } catch (Exception e) {
-        LOG.error("Failed to open discord link: " + e.getMessage(), e);
-      }
-    }
+    Studio.open(file);
   }
 
   public static Stage createStudioDialogStage(String fxml, String title) {
@@ -167,7 +154,7 @@ public class Dialogs {
     boolean local = client.getSystemService().isLocal();
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
-        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
+          "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplyClicked()) {
         client.getPinUPPopperService().terminatePopper();
         if (confirmationResult.isChecked()) {
@@ -179,8 +166,8 @@ public class Dialogs {
     }
     else {
       Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
-        "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.",
-        null);
+          "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.",
+          null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getPinUPPopperService().terminatePopper();
         return true;

@@ -19,9 +19,6 @@ import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -30,7 +27,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -172,7 +168,8 @@ public class TablesSidebarPUPPackController implements Initializable {
         catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", e.getMessage());
-        } finally {
+        }
+        finally {
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
         }
       }
@@ -211,21 +208,13 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private void onPupPackEditor() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpPackEditor.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to open PinUpPackEditor: " + e.getMessage(), e);
-      }
+    SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+    File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpPackEditor.exe");
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find PinUpPackEditor.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      Studio.open(file);
     }
   }
 

@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
-import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
@@ -16,6 +15,7 @@ import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FXResizeHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -34,16 +34,14 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -335,5 +333,43 @@ public class Studio extends Application {
       LOG.error("Failed to read version number: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public static void browse(@Nullable String url) {
+    if (!StringUtils.isEmpty(url)) {
+      Studio.hostServices.showDocument(url);
+    }
+  }
+
+  public static boolean open(@Nullable File file) {
+    if (file != null && file.exists()) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+        try {
+          desktop.open(file);
+          return true;
+        }
+        catch (Exception e) {
+          LOG.error("Failed to open file: " + e.getMessage(), e);
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean edit(@Nullable File file) {
+    if (file != null && file.exists()) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
+        try {
+          desktop.open(file);
+          return true;
+        }
+        catch (Exception e) {
+          LOG.error("Failed to open file: " + e.getMessage(), e);
+        }
+      }
+    }
+    return false;
   }
 }

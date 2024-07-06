@@ -49,10 +49,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -66,17 +62,13 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.kordamp.ikonli.javafx.FontIconTableCell;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -478,15 +470,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onVps() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null && !StringUtils.isEmpty(selectedItems.getExtTableVersionId())) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(VPS.getVpsTableUrl(selectedItems.getExtTableId()));
     }
   }
 

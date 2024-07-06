@@ -18,9 +18,6 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -29,7 +26,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -188,24 +184,16 @@ public class TablesSidebarMameController implements Initializable {
   private void onMameSetup() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-        try {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-          File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
-          if (!file.exists()) {
-            file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
-          }
-          if (!file.exists()) {
-            WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-          }
-          else {
-            desktop.open(file);
-          }
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open Mame Setup: " + e.getMessage());
-        }
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+      File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
+      if (!file.exists()) {
+        file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
+      }
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      }
+      else {
+        Studio.open(file);
       }
     }
   }

@@ -20,7 +20,6 @@ import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -62,7 +61,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.List;
 import java.util.*;
@@ -420,35 +418,19 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVpsTableOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        String mappingVpsTableId = serverSettings.getMappingVpsTableId();
-        String mappedValue = tableDetails.getMappedValue(mappingVpsTableId);
-        if (!StringUtils.isEmpty(mappedValue)) {
-          desktop.browse(new URI(VPS.getVpsTableUrl(mappedValue)));
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
+    String mappingVpsTableId = serverSettings.getMappingVpsTableId();
+    String mappedValue = tableDetails.getMappedValue(mappingVpsTableId);
+    if (!StringUtils.isEmpty(mappedValue)) {
+      Studio.browse(VPS.getVpsTableUrl(mappedValue));
     }
   }
 
   @FXML
   private void onVpsTableVersionOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        VpsTableVersion value = this.tableVersionsCombo.getValue();
-        if (value != null) {
-          VpsUrl vpsUrl = value.getUrls().get(0);
-          desktop.browse(new URI(vpsUrl.getUrl()));
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
+    VpsTableVersion value = this.tableVersionsCombo.getValue();
+    if (value != null) {
+      VpsUrl vpsUrl = value.getUrls().get(0);
+      Studio.browse(vpsUrl.getUrl());
     }
   }
 
@@ -503,15 +485,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onWeblinkProperty() {
     String text = this.webLink.getText();
     if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(text));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(text);
     }
   }
 
@@ -519,15 +493,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private void onUrlProperty() {
     String text = this.url.getText();
     if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(text));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(text);
     }
   }
 

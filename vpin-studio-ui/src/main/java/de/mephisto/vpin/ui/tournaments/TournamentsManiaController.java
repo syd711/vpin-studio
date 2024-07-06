@@ -31,9 +31,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
@@ -42,16 +39,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -134,7 +128,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   @FXML
   private void onJoin() {
     String tournamentToken = WidgetFactory.showInputDialog(Studio.stage, "Join Tournament", "Enter the token of the private tournament you want to join.",
-      "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
+        "If the tournament is public, you can also use the tournament browser.", "The unique token retrieved from the tournament owner.", null);
     if (tournamentToken != null) {
       Tournament tournament = maniaClient.getTournamentClient().lookupTournament(tournamentToken);
       if (tournament == null) {
@@ -166,14 +160,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         return;
       }
 
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(url));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage(), e);
-        }
-      }
+      Studio.browse(url);
     }
   }
 
@@ -221,7 +208,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error creating tournament: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, e.getMessage());
     }
@@ -252,7 +240,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
               }
             }
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Error duplicating tournament: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -275,7 +264,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           }
           onReload();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error browsing tournament: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -295,7 +285,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
             Tournament update = (Tournament) progressDialog.getResults().get(0);
             onReload(Optional.of(new TreeItem<>(new TournamentTreeModel(update, null, null, null, null))));
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Error editing tournament: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
@@ -321,12 +312,12 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private void unsubscribeTournament(Tournament tournament) {
     String remainingDayMsg = tournament.remainingDays() == 1 ? "The tournament is active for another day." :
-      "The tournament is still active for another " + tournament.remainingDays() + " days.";
+        "The tournament is still active for another " + tournament.remainingDays() + " days.";
     String help = "You are a member of this tournament. The tournament information will not be shown anymore.";
     String help2 = remainingDayMsg;
 
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Unsubscribe from Tournament '" + tournament.getDisplayName() + "'?",
-      help, help2);
+        help, help2);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
       String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
@@ -338,11 +329,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private void deleteTournament(Tournament tournament) {
     String remainingDayMsg = tournament.remainingDays() == 1 ? "The tournament is active for another day." :
-      "The tournament is still active for another " + tournament.remainingDays() + " days.";
+        "The tournament is still active for another " + tournament.remainingDays() + " days.";
     String help = remainingDayMsg;
     String help2 = "This will cancel the tournament, no winner will be announced.";
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Tournament '" + tournament.getDisplayName() + "'?",
-      help, help2);
+        help, help2);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       treeTableView.getSelectionModel().clearSelection();
       maniaClient.getTournamentClient().deleteTournament(tournament.getId());
@@ -400,14 +391,14 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       reloadBtn.setDisable(false);
 
       treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-        "Create a new tournament by pressing the '+' button."));
+          "Create a new tournament by pressing the '+' button."));
 
       treeTableView.setRoot(null);
       treeTableView.refresh();
     }
     else {
       treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
-        "Go to the players section and select the default player of your VPin!"));
+          "Go to the players section and select the default player of your VPin!"));
 
       tableStack.getChildren().remove(loadingOverlay);
       treeTableView.setRoot(null);
@@ -575,7 +566,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         tournamentBadgeFile = File.createTempFile("default-tournament-badge", ".png");
         tournamentBadgeFile.deleteOnExit();
         return SwingFXUtils.fromFXImage(image, null);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Error writing tournament badge file: " + e.getMessage(), e);
       }
     }
@@ -595,7 +587,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Tournaments...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 

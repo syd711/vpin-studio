@@ -179,7 +179,8 @@ public class TablesSidebarController implements Initializable {
           url = VPS.getVpsTableUrl(selection.getExtTableId());
         }
         Desktop.getDesktop().browse(new URI(url));
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
     }
@@ -202,7 +203,8 @@ public class TablesSidebarController implements Initializable {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -214,7 +216,8 @@ public class TablesSidebarController implements Initializable {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -228,7 +231,8 @@ public class TablesSidebarController implements Initializable {
         File gamePupFolder = new File(pupFolder, game.get().getRom());
         SystemUtil.openFolder(gamePupFolder, new File(systemSummary.getPinupSystemDirectory(), "PUPVideos"));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -241,8 +245,9 @@ public class TablesSidebarController implements Initializable {
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
-    } catch (
-      Exception e) {
+    }
+    catch (
+        Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
 
@@ -256,7 +261,8 @@ public class TablesSidebarController implements Initializable {
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -268,7 +274,8 @@ public class TablesSidebarController implements Initializable {
         GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -289,7 +296,8 @@ public class TablesSidebarController implements Initializable {
 
       GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
       SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
@@ -307,7 +315,8 @@ public class TablesSidebarController implements Initializable {
         builder.directory(new File(emulatorRepresentation.getInstallationDirectory()));
         builder.start();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open VPX: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPX: " + e.getMessage());
     }
@@ -316,20 +325,13 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private void onPopperBtn() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpMenuSetup.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open PinUpMenuSetup: " + e.getMessage(), e);
-      }
+    SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
+    File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpMenuSetup.exe");
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      Studio.open(file);
     }
   }
 
@@ -388,7 +390,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
       titledPaneAudio.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -397,7 +400,8 @@ public class TablesSidebarController implements Initializable {
       Parent tablesRoot = loader.load();
       tablesSidebarAltColorController = loader.getController();
       titledPaneAltColor.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -407,7 +411,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarVpsController = loader.getController();
       tablesSidebarVpsController.setSidebarController(this);
       titledPaneVps.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -417,7 +422,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarDefaultBackgroundController = loader.getController();
       tablesSidebarDefaultBackgroundController.setSidebarController(this);
       titledPaneDefaultBackground.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -427,7 +433,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarHighscoresController = loader.getController();
       tablesSidebarHighscoresController.setSidebarController(this);
       titledPaneHighscores.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -437,7 +444,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarMediaController = loader.getController();
       tablesSidebarMediaController.setSidebarController(this);
       titledPaneMedia.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -447,7 +455,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarPlaylistsController = loader.getController();
       tablesSidebarPlaylistsController.setSidebarController(this);
       titledPanePlaylists.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -457,7 +466,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarMetadataController = loader.getController();
       tablesSidebarMetadataController.setSidebarController(this);
       titledPaneMetadata.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -467,7 +477,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarPovController = loader.getController();
       tablesSidebarPovController.setSidebarController(this);
       titledPanePov.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -477,7 +488,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarDirectB2SController = loader.getController();
       tablesSidebarDirectB2SController.setSidebarController(this);
       titledPaneDirectB2s.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -487,7 +499,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarPUPPackController = loader.getController();
       tablesSidebarPUPPackController.setSidebarController(this);
       titledPanePUPPack.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -497,7 +510,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarDMDController = loader.getController();
       tablesSidebarDMDController.setSidebarController(this);
       titledPaneDMD.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -507,7 +521,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarPopperController = loader.getController();
       tablesSidebarPopperController.setSidebarController(this);
       titledPanePopper.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
@@ -517,7 +532,8 @@ public class TablesSidebarController implements Initializable {
       tablesSidebarMameController = loader.getController();
       tablesSidebarMameController.setSidebarController(this);
       titledPaneMame.setContent(tablesRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 

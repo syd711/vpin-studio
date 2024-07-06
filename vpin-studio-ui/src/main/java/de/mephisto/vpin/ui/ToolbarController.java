@@ -114,8 +114,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onPopperMenu() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
         String pinupSystemDirectory = client.getSystemService().getSystemSummary().getPinupSystemDirectory();
         File file = new File(pinupSystemDirectory, "PinUpMenuSetup.exe");
@@ -123,13 +121,12 @@ public class ToolbarController implements Initializable, StudioEventListener {
           WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }
         else {
-          desktop.open(file);
+          Studio.open(file);
         }
       }
       catch (Exception e) {
         LOG.error("Failed to open PinUpMenuSetup.exe: " + e.getMessage(), e);
       }
-    }
   }
 
   @FXML

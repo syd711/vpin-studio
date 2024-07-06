@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -14,8 +15,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.List;
@@ -78,14 +77,7 @@ public class VpsVersionContainer extends VBox {
 
     if (downloadAction) {
       button.setOnAction(event -> {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(VPS.getVpsTableUrl(item.getId())));
-          } catch (Exception e) {
-            LOG.error("Failed to open link: " + e.getMessage());
-          }
-        }
+        Studio.browse(VPS.getVpsTableUrl(item.getId()));
       });
 
       FontIcon icon = new FontIcon("mdi2o-open-in-new");

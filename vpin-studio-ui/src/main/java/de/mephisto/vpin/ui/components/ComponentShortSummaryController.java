@@ -15,8 +15,6 @@ import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -41,14 +39,7 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
   private void onLink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(linkText));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(linkText);
   }
 
   public void refresh(@NonNull ComponentRepresentation component) {

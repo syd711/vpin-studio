@@ -14,9 +14,7 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -74,26 +72,12 @@ public class VPBMPreferencesController implements Initializable {
 
   @FXML
   private void onVPBMLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("https://github.com/mmattner/vPinBackupManagerApp/"));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse("https://github.com/mmattner/vPinBackupManagerApp/");
   }
 
   @FXML
   private void onDotNetLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.16-windows-x64-installer?cid=getdotnetcore"));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse("https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-desktop-6.0.16-windows-x64-installer?cid=getdotnetcore");
   }
 
   @FXML

@@ -60,14 +60,7 @@ public class ComponentSummaryController implements Initializable {
   public void onHyperlink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(linkText));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(linkText);
   }
 
   @FXML

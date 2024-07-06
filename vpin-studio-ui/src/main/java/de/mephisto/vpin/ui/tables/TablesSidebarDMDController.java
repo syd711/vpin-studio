@@ -25,7 +25,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -100,7 +99,8 @@ public class TablesSidebarDMDController implements Initializable {
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
       }
@@ -111,21 +111,13 @@ public class TablesSidebarDMDController implements Initializable {
   private void onFlexDMDUI() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-        try {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
-          File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
-          if (!file.exists()) {
-            WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
-          }
-          else {
-            desktop.open(file);
-          }
-        } catch (Exception e) {
-          LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
-        }
+      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+      File file = new File(emulatorRepresentation.getMameDirectory(), "FlexDMDUI.exe");
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+      }
+      else {
+        Studio.open(file);
       }
     }
   }

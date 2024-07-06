@@ -1,17 +1,13 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
 import de.mephisto.vpin.connectors.iscored.GameRoom;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-
-import java.awt.*;
-import java.net.URI;
 
 public class GameRoomCellContainer extends HBox {
   private final static int TITLE_WIDTH = 140;
@@ -67,13 +63,7 @@ public class GameRoomCellContainer extends HBox {
     Hyperlink hyperlink = new Hyperlink(gameRoom.getUrl());
     hyperlink.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 12px;" + customStyle);
     hyperlink.setOnAction(event -> {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(gameRoom.getUrl()));
-        } catch (Exception e) {
-        }
-      }
+      Studio.browse(gameRoom.getUrl());
     });
     column.getChildren().add(hyperlink);
     setPadding(new Insets(3, 0, 6, 0));}

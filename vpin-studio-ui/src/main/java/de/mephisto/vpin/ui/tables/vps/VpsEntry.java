@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -15,8 +16,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,14 +53,7 @@ public class VpsEntry extends HBox {
     button.setPrefWidth(70);
     button.setTooltip(new Tooltip(link));
     button.setOnAction(event -> {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(link));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(link);
     });
 
     FontIcon fontIcon = new FontIcon();

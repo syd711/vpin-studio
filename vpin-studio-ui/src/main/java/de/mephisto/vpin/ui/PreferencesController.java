@@ -5,8 +5,8 @@ import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -25,9 +25,7 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -100,7 +98,8 @@ public class PreferencesController implements Initializable, StudioEventListener
         PreferencesController controller = loader.getController();
         preferencesRoot = loader.load();
         preferencesRoot.setUserData(controller);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load preferences: " + e.getMessage(), e);
       }
 
@@ -270,26 +269,12 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onDiscordLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(UIDefaults.DISCORD_INVITE_LINK));
-      } catch (Exception e) {
-        LOG.error("Failed to open discord link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse(UIDefaults.DISCORD_INVITE_LINK);
   }
 
   @FXML
   private void onKofiLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("https://ko-fi.com/syd711"));
-      } catch (Exception e) {
-        LOG.error("Failed to open kofi link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse("https://ko-fi.com/syd711");
   }
 
   private void load(String screen, ActionEvent event) throws IOException {
@@ -326,7 +311,8 @@ public class PreferencesController implements Initializable, StudioEventListener
       FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
       Node node = loader.load();
       prefsMain.setCenter(node);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to loading settings view: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", e.getMessage());
     }
