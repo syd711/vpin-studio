@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -93,11 +94,11 @@ public class DashboardController implements Initializable, StudioFXController {
       LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
 
-    onViewActivated();
+    onViewActivated(null);
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(@Nullable NavigationOptions options) {
     Platform.runLater(() -> {
       latestScoresController.refresh();
       playerRankController.refresh();

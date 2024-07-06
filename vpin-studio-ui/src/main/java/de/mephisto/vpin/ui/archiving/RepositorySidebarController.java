@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -160,7 +161,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label notes;
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
 
   }
 

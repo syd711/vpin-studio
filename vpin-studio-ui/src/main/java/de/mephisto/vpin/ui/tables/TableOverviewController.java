@@ -1638,7 +1638,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
   }
 
@@ -1760,7 +1760,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void selectGameInModel(GameRepresentation game) {
     Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame() == game).findFirst();
     if (model.isPresent()) {
+      this.tableView.getSelectionModel().clearSelection();
       this.tableView.getSelectionModel().select(model.get());
+      this.tableView.scrollTo(model.get());
+    }
+  }
+
+  public void selectGameInModel(int gameId) {
+    Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == gameId).findFirst();
+    if (model.isPresent()) {
+      this.tableView.getSelectionModel().clearSelection();
+      this.tableView.getSelectionModel().select(model.get());
+      this.tableView.scrollTo(model.get());
     }
   }
 

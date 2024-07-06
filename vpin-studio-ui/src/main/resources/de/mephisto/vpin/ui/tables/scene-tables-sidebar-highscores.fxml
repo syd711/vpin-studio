@@ -9,6 +9,7 @@
 <?import javafx.scene.control.SplitMenuButton?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -194,6 +195,26 @@
                                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                     </padding>
                                 </VBox>
+                        <Label fx:id="rawTitleLabel1" layoutX="10.0" layoutY="232.0" text="Highscore Card Preview" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <VBox prefWidth="560.0" styleClass="media-container">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                           <children>
+                              <ImageView fx:id="cardImage" fitHeight="312.0" fitWidth="554.0" pickOnBounds="true" preserveRatio="true">
+                                 <VBox.margin>
+                                    <Insets />
+                                 </VBox.margin>
+                              </ImageView>
+                           </children>
+                        </VBox>
                                 <VBox fx:id="scoreGraphWrapper">
                                     <VBox.margin>
                                         <Insets top="24.0" />
@@ -244,7 +265,7 @@
             </SplitMenuButton>
                 <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-list-ol" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />

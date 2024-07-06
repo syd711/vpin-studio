@@ -8,10 +8,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -107,8 +104,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    if(options != null) {
+      tableOverviewController.selectGameInModel(options.getGameId());
+    }
   }
 
 
@@ -130,7 +130,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setInitialController("scene-tables.fxml", this, root);
+    NavigationController.setInitialController(NavigationItem.Tables, this, root);
     EventManager.getInstance().addListener(this);
     sidePanelRoot = root.getRight();
 
