@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
@@ -90,7 +91,8 @@ public class GameMediaResource {
         @Override
         public void run() {
           try {
-            List<TableAsset> results = tableAssetsService.search(game.getEmulator().getName(), search.getScreen().getSegment(), search.getTerm());
+            EmulatorType emulatorType = game.getEmulator().getEmulatorType();
+            List<TableAsset> results = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
             search.setResult(results);
           }
           catch (Exception e) {

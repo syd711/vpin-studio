@@ -15,11 +15,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
-import org.apache.commons.net.ftp.FTPReply;
 import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
@@ -28,18 +26,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Service
-public class PinballXAssetsAdapter implements TableAssetsAdapter {
+public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsAdapter.class);
-
-  @Value("${pinballX.mediaserver.host}")
-  private String host;
-  @Value("${pinballX.mediaserver.port}")
-  private int port;
-  @Value("${pinballX.mediaserver.rootfolder}")
-  private String rootfolder;
-
-  private String user;
-  private String pwd;
 
   // for exclusive search : if searching for an emulators, will exclude all folders below except the one searched
   private static final String[] EMULATORS = clean(
@@ -55,34 +43,8 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     "Table Image", "Table Video", "Topper Image", "Topper Video", "Wheel"
   );
 
-
-  public void configureCredentials(String user, String pwd) {
-    this.user = user;
-    this.pwd = pwd;
-  }
-
-  public void configure(String host, int port, String rootfolder) {
-    this.host = host;
-    this.port = port;
-    this.rootfolder = rootfolder;
-  }
-
-  public boolean testConnection() {
-    FTPClient ftp = null;
-    try {
-      ftp = open();
-      return true;
-    }
-    catch (Exception e) {
-      LOG.error("Cannot log in", e);
-      return false;
-    }
-    finally {
-      close(ftp);
-    }
-  }
-
-  public List<TableAsset> search(@NonNull String emulatorName, @NonNull String screenSegment, @NonNull String term) throws Exception {
+  @Override
+  public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
     if (term.length() < 3) {
         return Collections.emptyList();
     }
@@ -105,7 +67,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
       ftp.setDefaultTimeout(10000);
 
       String[] folders = clean(screenToFolders);
-      String emulator = clean(emulatorName);
+      String emulator = clean(emulatorType);
       FTPFileFilter filter = new FTPFileFilter() {
         @Override
         public boolean accept(FTPFile ftpFile) {
@@ -128,7 +90,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
       for (TableAsset asset: results) {
         asset.setSourceId("PinballX");
         asset.setAuthor("gameex");
-        asset.setEmulator(emulatorName);
+        asset.setEmulator(emulatorType);
         asset.setScreen(screen.name());
       }  
 
@@ -186,7 +148,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     return StringUtils.contains(name, emulator) || StringUtils.contains(emulator, name);
   }
   private boolean isForAnotherEmulator(String name, String emulator) {
-    return isAmoung(EMULATORS, name) && !isForEmulator(name, emulator);
+    return isAmong(EMULATORS, name) && !isForEmulator(name, emulator);
   }
   private boolean isForScreen(String name, String[] screens) {
     for (String screen : screens) {
@@ -197,10 +159,10 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
     return false;
   }
   private boolean isForAnotherScreen(String name, String[] screens) {
-    return isAmoung(SCREENS, name) && !isForScreen(name, screens);
+    return isAmong(SCREENS, name) && !isForScreen(name, screens);
   }
 
-  private boolean isAmoung(String[] names, String name) {
+  private boolean isAmong(String[] names, String name) {
     int low = 0;
     int high = names.length - 1;
     while (low <= high) {
@@ -240,6 +202,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
 
   //-------------------------------------
 
+  @Override
   public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
     LOG.info("downlaoding " + url);
     
@@ -250,7 +213,7 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
       String folder = StringUtils.substringBeforeLast(url, "/");
       String name = StringUtils.substringAfterLast(url, "/");
 
-      ftp.changeWorkingDirectory(rootfolder + folder);
+      ftp.changeWorkingDirectory(folder);
       ftp.retrieveFile(name, outputStream); 
     }
     catch (CopyStreamException cse) {
@@ -285,33 +248,6 @@ public class PinballXAssetsAdapter implements TableAssetsAdapter {
       case GameHelp: return true;
       case Loading: return true;
       default: return false;
-    }
-  }
-
-  private FTPClient open() throws IOException {
-    FTPClient ftp = new FTPClient();
-
-    ftp.connect(host, port);
-    int reply = ftp.getReplyCode();
-    if (!FTPReply.isPositiveCompletion(reply)) {
-        ftp.disconnect();
-        throw new IOException("Exception in connecting to FTP Server");
-    }
-
-    if (ftp.login(user, pwd)) {
-      return ftp;
-    }
-    throw new IOException("Error, user cannot log in.");
-  }
-
-  void close(FTPClient ftp) {
-    if (ftp!=null) {
-      try {
-        ftp.disconnect();
-      }
-      catch (IOException ioe) {
-        LOG.error("Error while closing FTP connection", ioe);
-      }
     }
   }
 

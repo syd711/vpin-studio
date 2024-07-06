@@ -43,7 +43,8 @@ public class PinballXConnector extends BaseConnector {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
   @Autowired
-  private PinballXAssetsAdapter assetsAdapter;
+  //private PinballXAssetsAdapter assetsAdapter;
+  private PinballXAssetsIndexAdapter assetsAdapter;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -55,6 +56,8 @@ public class PinballXConnector extends BaseConnector {
     PinballXSettings ps = getSettings();
     if (ps != null) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
+      // start a refresh of the index
+      assetsAdapter.reloadIndex(true);
     }
     LOG.info("Finished initialization of " + this);
   }

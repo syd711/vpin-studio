@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Service
@@ -25,9 +27,9 @@ public class TableAssetsService {
   }
 
 
-  public List<TableAsset> search(@NonNull String emulatorName, @NonNull String screen, @NonNull String term) throws Exception {
+  public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
     if (adapter!=null) {
-      return adapter.search(emulatorName, screen, term);
+      return adapter.search(emulatorType.name(), screen.getSegment(), term);
     } else {
       return Collections.emptyList();
     }
