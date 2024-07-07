@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -218,14 +219,25 @@
                      <children>
                         <VBox fx:id="assetSearchBox">
                            <children>
-                              <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
+                              <BorderPane>
                                  <VBox.margin>
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
-                              </Label>
+                                 <left>
+                                    <VBox alignment="BOTTOM_LEFT" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </left>
+                                 <right>
+                                    <ImageView fx:id="frontendImage" fitHeight="60.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                                 </right>
+                              </BorderPane>
                               <BorderPane fx:id="assetSearchList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                                  <top>
                                     <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
@@ -275,6 +287,17 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                                    </graphic>
                                                 </Button>
+                                                <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Rebuild Search Index" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Rebuilds the search index to fetch the latest assets." />
+                                                   </tooltip>
+                                                </Button>
                                             </items>
                                           </ToolBar>
                                        </top>
@@ -294,132 +317,133 @@
                               </BorderPane>
                            </children>
                            <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </VBox>
-                        <Label text="Installed Assets" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets bottom="6.0" top="6.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
-                           <top>
-                              <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
-                                 <left>
-                                    <ListView fx:id="assetList" prefHeight="200.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
-                                 </left>
-                                 <center>
-                                    <BorderPane BorderPane.alignment="CENTER">
-                                       <center>
-                                          <BorderPane fx:id="mediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-                                       </center>
-                                    </BorderPane>
-                                 </center>
-                                 <top>
-                                    <ToolBar BorderPane.alignment="CENTER">
-                                       <items>
-                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Open system folder for this asset type" />
-                                             </tooltip>
-                                          </Button>
-                                          <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Update the ROM name for this table." />
-                                             </tooltip>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
-                                             </tooltip>
-                                          </Button>
-                                          <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
-                                             </tooltip>
-                                          </Button>
-                                       </items>
-                                    </ToolBar>
-                                 </top>
-                              </BorderPane>
-                           </top>
-                           <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                        </BorderPane>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="Installed Assets" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+                                 <top>
+                                    <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets />
+                                       </BorderPane.margin>
+                                       <left>
+                                          <ListView fx:id="assetList" prefHeight="200.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                       </left>
+                                       <center>
+                                          <BorderPane BorderPane.alignment="CENTER">
+                                             <center>
+                                                <BorderPane fx:id="mediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                             </center>
+                                          </BorderPane>
+                                       </center>
+                                       <top>
+                                          <ToolBar BorderPane.alignment="CENTER">
+                                             <items>
+                                                <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open system folder for this asset type" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Update the ROM name for this table." />
+                                                   </tooltip>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Button>
+                                                <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                             </items>
+                                          </ToolBar>
+                                       </top>
+                                    </BorderPane>
+                                 </top>
+                              </BorderPane>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                </center>

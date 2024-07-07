@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -25,6 +26,9 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
+/**
+ * No more used TableAssetsAdapter, does not use index
+ */
 @Service
 public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAssetsAdapter {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsAdapter.class);
@@ -195,9 +199,9 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       mimeType = "video/x-f4v";
     } 
     asset.setMimeType(mimeType);
-    // double encoding needed
-    String url = URLEncoder.encode(URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-    asset.setUrl("/assets/d/" + url);
+    // URL encoded
+    String url = "/" + URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8);
+    asset.setUrl(url);
     asset.setSourceId(folder);
     asset.setName(filename);
 
@@ -208,16 +212,19 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
 
   @Override
   public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
-    LOG.info("downlaoding " + url);
     
     FTPClient ftp = null;
     try {
       ftp = open();
 
-      String folder = StringUtils.substringBeforeLast(url, "/");
-      String name = StringUtils.substringAfterLast(url, "/");
+      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+      decodeUrl = decodeUrl.substring(1);
+      LOG.info("downloading " + decodeUrl);
 
-      ftp.changeWorkingDirectory(folder);
+      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
+      String name = StringUtils.substringAfterLast(decodeUrl, "/");
+
+      ftp.changeWorkingDirectory(rootfolder + folder);
       ftp.retrieveFile(name, outputStream); 
     }
     catch (CopyStreamException cse) {

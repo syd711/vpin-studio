@@ -46,8 +46,7 @@ public class TableAssetsService {
       }
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
         String downloadUrl = asset.getUrl();
-        String urlString = downloadUrl.replaceAll(" ", "%20");
-        adapter.writeAsset(fileOutputStream, urlString);
+        adapter.writeAsset(fileOutputStream, downloadUrl);
         LOG.info("Downloaded file " + target.getAbsolutePath());
       } catch (Exception e) {
         //do not log URL
@@ -56,7 +55,7 @@ public class TableAssetsService {
     }
   }
 
-  public void writeAsset(OutputStream outputStream, String url) throws Exception {
+  public void download(String url, OutputStream outputStream) throws Exception {
     if (adapter!=null) {
       adapter.writeAsset(outputStream, url);
     }

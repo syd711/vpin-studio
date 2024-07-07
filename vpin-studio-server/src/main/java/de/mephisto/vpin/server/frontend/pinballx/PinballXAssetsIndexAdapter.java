@@ -3,6 +3,8 @@ package de.mephisto.vpin.server.frontend.pinballx;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 
@@ -79,20 +81,22 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
 
   @Override
   public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
-    LOG.info("downloading " + url);
-    
     FTPClient ftp = null;
     try {
       ftp = open();
 
-      String folder = StringUtils.substringBeforeLast(url, "/");
-      String name = StringUtils.substringAfterLast(url, "/");
+      String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
+      decodeUrl = decodeUrl.substring(1);
+      LOG.info("downloading " + decodeUrl);
 
-      ftp.changeWorkingDirectory(folder);
+      String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
+      String name = StringUtils.substringAfterLast(decodeUrl, "/");
+
+      ftp.changeWorkingDirectory(rootfolder + folder);
       ftp.retrieveFile(name, outputStream); 
     }
     catch (CopyStreamException cse) {
-      LOG.error("Error while downloading asset " + url + ": " + cse.getMessage());
+      LOG.error("Error while downloading asset", cse);
     }
     finally {
       close(ftp);

@@ -41,12 +41,12 @@ public class PinballXAssetsIndexer {
     
     PinballXIndex index = new PinballXIndex();
 
-    searchRecursive(index, ftp, rootfolder + "/Media", null, null, "gameex");
+    searchRecursive(index, ftp, rootfolder, "/Media", null, null, "gameex");
     if (full) {
       FTPFile[] files = ftp.listFiles(rootfolder + "/Other Uploads");
       for (FTPFile file : files) {
         if (file.isDirectory()) {
-          searchRecursive(index, ftp, rootfolder + "/Other Uploads/" + file.getName(), null, null, file.getName());
+          searchRecursive(index, ftp, rootfolder, "/Other Uploads/" + file.getName(), null, null, file.getName());
         }
       }
     }
@@ -63,9 +63,9 @@ public class PinballXAssetsIndexer {
    * @param screen The cleaned name of the screen
    * @throws IOException if error
    */
-  private void searchRecursive(PinballXIndex index, FTPClient ftp, String folder, 
+  private void searchRecursive(PinballXIndex index, FTPClient ftp, String rootfolder, String folder, 
         EmulatorType emulator, VPinScreen screen, String author) throws IOException {
-    FTPFile[] files = ftp.listFiles(folder);
+    FTPFile[] files = ftp.listFiles(rootfolder + folder);
 
     boolean hasEmulatorAndScreen = screen!=null && (emulator!=null || PinballXIndex.isScreenEmulatorIndependent(screen));
 
@@ -80,7 +80,7 @@ public class PinballXAssetsIndexer {
           EmulatorType emulatorType = fromFolderToEmulator(emulatorFromName);
           // continue crawling for emulators that should be indexed only
           if (emulatorType!=null) {
-            searchRecursive(index, ftp, folder + "/" + file.getName(), emulatorType, screen, author);
+            searchRecursive(index, ftp, rootfolder, folder + "/" + file.getName(), emulatorType, screen, author);
           }
         }
         else {
@@ -90,12 +90,12 @@ public class PinballXAssetsIndexer {
             VPinScreen vpinscreen = fromFolderToScreen(screenFromName);
             // continue crawling only for VpinScreens, other types of screens are ignored
             if (vpinscreen!=null) {
-              searchRecursive(index, ftp, folder + "/" + file.getName(), emulator, vpinscreen, author);
+              searchRecursive(index, ftp, rootfolder, folder + "/" + file.getName(), emulator, vpinscreen, author);
             }
           }
           else {
             // just pass through
-            searchRecursive(index, ftp, folder + "/" + file.getName(), emulator, screen, author);
+            searchRecursive(index, ftp, rootfolder, folder + "/" + file.getName(), emulator, screen, author);
           }
         }
       } 

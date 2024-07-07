@@ -439,7 +439,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           imageView.setFitHeight(getServerAssetPreviewHeight());
           imageView.setPreserveRatio(true);
 
-          Image image = new Image(assetUrl);
+          Image image = new Image(assetUrl, true);
           imageView.setImage(image);
           imageView.setUserData(tableAsset);
 
@@ -647,7 +647,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           imageView.setFitHeight(getLocalAssetPreviewWidth());
           imageView.setPreserveRatio(true);
 
-          Image image = new Image(url);
+          Image image = new Image(url, true);
           imageView.setImage(image);
           imageView.setUserData(mediaItem);
 
@@ -748,6 +748,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
+  public void loadAllTables(int emulatorId) {
+    if (!isEmbeddedMode()) {
+      new Thread(() -> {
+        // as get of games may takes some time, run in a dedicated Thread
+        List<GameRepresentation> games = client.getGameService().getGamesCached(emulatorId);
+        ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
+        tablesCombo.getItems().addAll(gameRepresentations);
+        tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
+          this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
+        });
+      }).start();
+    }
+  }
 
   public void setGame(@NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @NonNull VPinScreen screen) {
     this.overviewController = overviewController;
@@ -760,16 +773,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
-      int emulatorId = this.game.getEmulatorId();
-      new Thread(() -> {
-        // as get of games may takes some time, run in a dedicated Thread
-        List<GameRepresentation> games = client.getGameService().getGamesCached(emulatorId);
-        ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
-        tablesCombo.getItems().addAll(gameRepresentations);
-        tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-          this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
-        });
-      }).start();
     }
 
     if (game == null) {

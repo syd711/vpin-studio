@@ -322,6 +322,7 @@ public class TableDialogs {
     }
     Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
+    controller.loadAllTables(game.getEmulatorId());
     controller.setGame(overviewController, game, screen);
 
 //    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);

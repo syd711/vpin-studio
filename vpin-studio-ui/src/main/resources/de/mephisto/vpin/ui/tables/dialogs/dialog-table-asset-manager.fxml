@@ -215,7 +215,7 @@
 
                </left>
                <center>
-                  <VBox BorderPane.alignment="CENTER">
+                  <VBox fx:id="assetsBox" BorderPane.alignment="CENTER">
                      <children>
                         <VBox fx:id="assetSearchBox">
                            <children>

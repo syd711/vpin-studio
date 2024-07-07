@@ -37,11 +37,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -85,27 +85,22 @@ public class GameMediaResource {
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) {
+    Game game = gameService.getGame(search.getGameId());
+    EmulatorType emulatorType = game.getEmulator().getEmulatorType();
+
+    Future<List<TableAsset>> submit = null;
     try {
-      Game game = gameService.getGame(search.getGameId());
-      Future<?> submit = executorService.submit(new Runnable() {
+      submit = executorService.submit(new Callable<>() {
         @Override
-        public void run() {
-          try {
-            EmulatorType emulatorType = game.getEmulator().getEmulatorType();
-            List<TableAsset> results = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
-            search.setResult(results);
-          }
-          catch (Exception e) {
-            LOG.error("Asset search failed: " + e.getMessage(), e);
-            executorService.shutdownNow();
-          }
+        public List<TableAsset> call() throws Exception {
+          return tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
         }
       });
-      submit.get(15, TimeUnit.SECONDS);
+      List<TableAsset> results = submit.get(15, TimeUnit.SECONDS);
+      search.setResult(results);
     }
     catch (Exception e) {
-      executorService.shutdownNow();
-      LOG.error("Asset search executor failed: " + e.getMessage());
+      LOG.error("Asset search executor failed or interrupted: " + e.getMessage());
       search.setResult(Collections.emptyList());
     }
     return search;
@@ -136,10 +131,6 @@ public class GameMediaResource {
 
   @GetMapping("/assets/d/{url}")
   public ResponseEntity<StreamingResponseBody> getAsset(@PathVariable("url") String url ) {
-    // first decoding done by the RestService but an extra one is needed
-    url = URLDecoder.decode(url, StandardCharsets.UTF_8);
-
-    //String name = StringUtils.indexOf(url, '/')>=0? StringUtils.substringAfterLast(url, "/"): url;
 
     HttpHeaders headers = new HttpHeaders();
     //headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
@@ -150,7 +141,8 @@ public class GameMediaResource {
     final String theurl = url;
     StreamingResponseBody responseBody = outputStream -> {
       try {
-        tableAssetsService.writeAsset(outputStream, theurl);
+        // put the "/" back that we removed in GameMediaServiceClient.getUrl() 
+        tableAssetsService.download("/" + theurl, outputStream);
       } catch (Exception e) {
         LOG.error("cannot download asset " + theurl, e);
       }

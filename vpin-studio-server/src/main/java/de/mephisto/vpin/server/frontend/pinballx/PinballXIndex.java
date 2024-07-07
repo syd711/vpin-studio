@@ -125,6 +125,9 @@ public class PinballXIndex {
 
   //--------------------------------------------------------
 
+  /*
+   * the url in TableAsset is the folder from rootfolder, double encrypted
+   */
   static class Asset {
     public String folder;
     public String name;
@@ -145,10 +148,9 @@ public class PinballXIndex {
       } 
       asset.setMimeType(mimeType);
 
-      // double encoding needed
-      String url = URLEncoder.encode(URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-      asset.setUrl("/assets/d/" + url);
-
+      // double encoding needed, first one here, second in client
+      String url = "/" + URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8);
+      asset.setUrl(url);
       asset.setSourceId(folder);
       asset.setName(name);
       asset.setAuthor(author);
