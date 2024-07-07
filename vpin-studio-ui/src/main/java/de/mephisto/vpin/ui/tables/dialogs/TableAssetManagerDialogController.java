@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -104,7 +105,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button folderBtn;
 
   @FXML
+  private Button clearCacheBtn;
+
+  @FXML
   private Separator folderSeparator;
+
+  @FXML
+  private ImageView frontendImage;
 
   @FXML
   private ListView<GameMediaItemRepresentation> assetList;
@@ -166,7 +173,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private BorderPane assetSearchList;
-  
+
   @FXML
   private Label previewTitleLabel;
 
@@ -193,6 +200,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);
     }
+  }
+
+  @FXML
+  private void onClearCache() {
+    ProgressDialog.createProgressDialog(new MediaCacheProgressModel());
   }
 
   @FXML
@@ -385,7 +397,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       return cached;
     }
 
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, 
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage,
         new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
@@ -473,7 +485,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     String targetName = game.getGameName() + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
-      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Asset Exists", 
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Asset Exists",
           "An asset with the same name already exists.",
           "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
@@ -653,6 +665,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (isEmbeddedMode()) {
       assetList.prefHeightProperty().bind(root.prefHeightProperty());
     }
+    else {
+      clearCacheBtn.setVisible(frontend.getFrontendType().isSupportMediaCache());
+
+      if (frontend.getFrontendType().equals(FrontendType.Popper)) {
+        frontendImage.setImage(new Image(Studio.class.getResourceAsStream("pinup-system.png")));
+      }
+      if (frontend.getFrontendType().equals(FrontendType.PinballX)) {
+        frontendImage.setImage(new Image(Studio.class.getResourceAsStream("gameex.png")));
+      }
+    }
   }
 
   private boolean isEmbeddedMode() {
@@ -721,7 +743,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @Override
   public void onDialogCancel() {
     EventManager.getInstance().removeListener(this);
-    if ((this.game!=null)) {
+    if ((this.game != null)) {
       EventManager.getInstance().notifyTableChange(this.game.getId(), null, this.game.getGameName());
     }
   }

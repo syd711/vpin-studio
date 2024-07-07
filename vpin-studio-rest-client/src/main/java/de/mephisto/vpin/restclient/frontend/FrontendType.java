@@ -9,7 +9,7 @@ public enum FrontendType {
   Standalone(false, false, false, false, false, false, false, false, false),
   Popper(true, true, true, true, false, true, true, true, true),
   // playlist and statistics not activated yet but will be supported
-  PinballX(true, false, false, true, false, false, false, false, false);
+  PinballX(true, false, false, true, true, false, false, false, false);
 
   FrontendType(boolean supportStandardFields, boolean supportExtendedFields, boolean supportPlaylists,
           boolean supportMedias,
@@ -20,6 +20,7 @@ public enum FrontendType {
     this.supportExtendedFields = supportExtendedFields;
     this.supportPlaylists = supportPlaylists;
     this.supportMedias = supportMedias;
+    this.supportMediaCache = supportMediaCache;
     this.supportPupPacks = supportPupPacks;
     this.supportStatistics = supportStatistics;
     this.supportArchive = supportArchive;

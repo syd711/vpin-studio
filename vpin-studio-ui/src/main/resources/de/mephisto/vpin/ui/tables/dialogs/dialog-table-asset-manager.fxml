@@ -10,6 +10,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -218,14 +219,25 @@
                      <children>
                         <VBox fx:id="assetSearchBox">
                            <children>
-                              <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
-                                 <font>
-                                    <Font name="System Bold" size="14.0" />
-                                 </font>
+                              <BorderPane>
                                  <VBox.margin>
                                     <Insets bottom="6.0" />
                                  </VBox.margin>
-                              </Label>
+                                 <left>
+                                    <VBox alignment="BOTTOM_LEFT" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
+                                 </left>
+                                 <right>
+                                    <ImageView fx:id="frontendImage" fitHeight="60.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                                 </right>
+                              </BorderPane>
                               <BorderPane fx:id="assetSearchList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
                                  <top>
                                     <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
@@ -275,7 +287,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                                    </graphic>
                                                 </Button>
-                                                <Button mnemonicParsing="false" text="Clear Cache" textFill="WHITE">
+                                                <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Rebuild Search Index" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -283,7 +295,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip text="Invalidate media search cache." />
+                                                      <Tooltip text="Rebuilds the search index to fetch the latest assets." />
                                                    </tooltip>
                                                 </Button>
                                             </items>
@@ -305,7 +317,7 @@
                               </BorderPane>
                            </children>
                            <VBox.margin>
-                              <Insets top="24.0" />
+                              <Insets />
                            </VBox.margin>
                         </VBox>
                         <VBox>
