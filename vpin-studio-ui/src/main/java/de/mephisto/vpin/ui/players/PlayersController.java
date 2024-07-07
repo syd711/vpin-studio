@@ -1,20 +1,22 @@
 package de.mephisto.vpin.ui.players;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.players.dialogs.PlayerScoreLoadingProgressModel;
+import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -25,6 +27,8 @@ import java.net.URL;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class PlayersController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(PlayersController.class);
@@ -54,25 +58,37 @@ public class PlayersController implements Initializable, StudioFXController {
   private Label errorTitleLabel;
 
   @FXML
+  private Label playerScoreLabel;
+
+  @FXML
   private Label playerCountLabel;
 
   @FXML
   private TitledPane highscoresTitledPane;
 
+  @FXML
+  private CheckBox loadScoreList;
+
   private BuiltInPlayersController builtInPlayersController;
   private DiscordPlayersController discordPlayersController;
+
+  private Optional<PlayerRepresentation> selection = Optional.empty();
 
   // Add a public no-args constructor
   public PlayersController() {
   }
 
   public void updateSelection(Optional<PlayerRepresentation> player) {
+    this.selection = player;
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
     updateForTabSelection(player);
     validationError.setVisible(false);
 
     highscoreList.getChildren().removeAll(highscoreList.getChildren());
     noScoreLabel.setVisible(false);
-    highscoresTitledPane.setText("Player Highscores");
+    playerScoreLabel.setText("Player Highscores");
     if (player.isPresent()) {
       PlayerRepresentation p = player.get();
       if (StringUtils.isEmpty(p.getInitials())) {
@@ -81,14 +97,22 @@ public class PlayersController implements Initializable, StudioFXController {
         return;
       }
 
+      if(!uiSettings.isShowPlayerScores()) {
+        noScoreLabel.setVisible(true);
+        noScoreLabel.setText("The score list has been disabled.");
+        return;
+      }
+
       if (!StringUtils.isEmpty(p.getDuplicatePlayerName())) {
         validationError.setVisible(true);
         errorTextLabel.setText("Player '" + p.getName() + "' has the same initials like user \"" + p.getDuplicatePlayerName() + "\". Change the initials for one of them.");
       }
 
-      highscoresTitledPane.setText("Player Highscores \"" + player.get().getName() + "\"");
+      playerScoreLabel.setText("Player Highscores \"" + player.get().getName() + "\"");
 
-      ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
+      Platform.runLater(() -> {
+        ProgressDialog.createProgressDialog(new PlayerScoreLoadingProgressModel(p, highscoreList, noScoreLabel));
+      });
     }
     else {
       noScoreLabel.setText("");
@@ -148,6 +172,13 @@ public class PlayersController implements Initializable, StudioFXController {
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       refreshTabSelection(t1);
+    });
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    loadScoreList.setSelected(uiSettings.isShowPlayerScores());
+    loadScoreList.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setShowPlayerScores(t1);
+      updateSelection(this.selection);
     });
 
     updateForTabSelection(Optional.empty());

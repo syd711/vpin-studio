@@ -6,8 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UISettings extends JsonSettings {
+  private boolean showPlayerScores = true;
+
   private boolean hideVersions;
   private boolean hideVPSUpdates;
+
   private boolean vpsAltSound = true;
   private boolean vpsAltColor = true;
   private boolean vpsBackglass = true;
@@ -70,6 +73,14 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public boolean isShowPlayerScores() {
+    return showPlayerScores;
+  }
+
+  public void setShowPlayerScores(boolean showPlayerScores) {
+    this.showPlayerScores = showPlayerScores;
+  }
 
   public AutoFillSettings getAutoFillSettings() {
     return autoFillSettings;
