@@ -74,6 +74,9 @@
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
                   </CheckBox>
                   <Label styleClass="checkbox-description" text="Your vpin-mania.net account is bound to your cabinet, including the cabinet name and avatar." textFill="WHITE" />
                   <Label layoutX="10.0" layoutY="102.0" styleClass="preference-subtitle" text="Tournament Settings">
@@ -81,7 +84,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="172.0" styleClass="preference-description" text="If you want to organize tournaments, you can configure some pre-configured values here." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="172.0" styleClass="preference-description" text="If you want to organize tournaments, you can set some pre-configured values here." textFill="WHITE" />
                   <Label styleClass="default-headline" text="Dashboard URL">
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -208,8 +211,8 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="Add a nice welcome text here which is used as default description for every new tournament." textFill="WHITE" />
-                  <Label layoutX="10.0" layoutY="191.0" styleClass="preference-description" text="You can still adept the text when creating a new tournament." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="169.0" styleClass="preference-description" text="Write a nice welcome text here which is used as default description for every new tournament." textFill="WHITE" />
+                  <Label layoutX="10.0" layoutY="191.0" styleClass="preference-description" text="You can still adapt the text when creating a new tournament." textFill="WHITE" />
                   <VBox prefWidth="100.0">
                      <children>
                         <TextArea fx:id="descriptionText">
