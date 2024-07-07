@@ -91,7 +91,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
       }
 
       frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
-      LOG.info("Written competition id of \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+      LOG.info("Written competition id of game " + competition.getGameId() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }
 
@@ -115,7 +115,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         }
         tableDetails.setTourneyId(String.join(",", updated));
         frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
-        LOG.info("Removed competition id from \"" + tableDetails.getGameDisplayName() + "\", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
+        LOG.info("Removed competition id from game " + competition.getGameId() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
       }
     }
   }

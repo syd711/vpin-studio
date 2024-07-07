@@ -26,15 +26,11 @@ import java.util.*;
  ********************************************************************************************************************/
 public class GameMediaServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
-  private static final int CACHE_SIZE = 300;
   private static final String API_SEGMENT_MEDIA = "media";
-
-  private List<TableAssetSearch> cache = new ArrayList<>();
 
   public GameMediaServiceClient(VPinStudioClient client) {
     super(client);
   }
-
 
   public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
     return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name() + "/" + name);
@@ -108,34 +104,12 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
-  public synchronized TableAssetSearch getCached(VPinScreen screen, String term) {
-    for (TableAssetSearch s : this.cache) {
-      if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
-        return s;
-      }
-    }
 
-    if (!StringUtils.isEmpty(term) && term.trim().contains(" ")) {
-      term = term.split(" ")[0];
-      for (TableAssetSearch s : this.cache) {
-        if (s.getTerm().equals(term) && s.getScreen().equals(screen)) {
-          return s;
-        }
-      }
-    }
-
-    return null;
-  }
 
   public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {
     term = term.replaceAll("/", "");
     term = term.replaceAll("&", " ");
     term = term.replaceAll(",", " ");
-
-    TableAssetSearch cached = getCached(screen, term);
-    if (cached != null) {
-      return cached;
-    }
 
     TableAssetSearch search = new TableAssetSearch();
     search.setGameId(gameId);
@@ -146,11 +120,6 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       if (result.getResult().isEmpty() && !StringUtils.isEmpty(term) && term.trim().contains(" ")) {
         String[] split = term.trim().split(" ");
         return searchTableAsset(gameId, screen, split[0]);
-      }
-
-      cache.add(result);
-      if (cache.size() > CACHE_SIZE) {
-        cache.remove(0);
       }
       return result;
     }
@@ -190,10 +159,5 @@ public class GameMediaServiceClient extends VPinStudioClientService {
         + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
     }
     return url;
-  }
-
-  public void clearCache() {
-    client.getFrontendService().reload();
-    this.cache.clear();
   }
 }

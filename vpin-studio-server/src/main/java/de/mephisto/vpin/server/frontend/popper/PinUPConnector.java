@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
@@ -1907,7 +1908,9 @@ public class PinUPConnector implements FrontendConnector {
   public TableAssetsAdapter getTableAssetAdapter() {
     try {
       Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      return (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      // add cache to Popper search adapter
+      return new CacheTableAssetsAdapter(assetAdapter);
     }
     catch (Exception e) {
       LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());

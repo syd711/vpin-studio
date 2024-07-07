@@ -59,7 +59,7 @@ public class PinballXConnector extends BaseConnector {
       // start a refresh of the index in background
       new Thread(() -> {
         assetsAdapter.invalidateMediaCache();
-      }, "PInballX Search indexer").start();
+      }, "PinballX Search indexer").start();
       
     }
     LOG.info("Finished initialization of " + this);
@@ -307,6 +307,7 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   public TableAssetsAdapter getTableAssetAdapter() {
+    //return new CacheTableAssetsAdapter(assetsAdapter);
     return assetsAdapter;
   }
 

@@ -391,12 +391,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
-    // needed despite also implemented in searchService to avoid loop
-    TableAssetSearch cached = client.getGameMediaService().getCached(screen, term);
-    if (cached != null) {
-      return cached;
-    }
-
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage,
         new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
