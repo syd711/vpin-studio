@@ -275,6 +275,17 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                                    </graphic>
                                                 </Button>
+                                                <Button mnemonicParsing="false" text="Clear Cache" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Invalidate media search cache." />
+                                                   </tooltip>
+                                                </Button>
                                             </items>
                                           </ToolBar>
                                        </top>

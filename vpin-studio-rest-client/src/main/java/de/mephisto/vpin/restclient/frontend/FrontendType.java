@@ -6,13 +6,15 @@ package de.mephisto.vpin.restclient.frontend;
  */
 public enum FrontendType {
 
-  Standalone(false, false, false, false, false, false, false, false), 
-  Popper(true, true, true, true, true, true, true, true),
+  Standalone(false, false, false, false, false, false, false, false, false),
+  Popper(true, true, true, true, false, true, true, true, true),
   // playlist and statistics not activated yet but will be supported
-  PinballX(true, false, false, true, false, false, false, false);
+  PinballX(true, false, false, true, false, false, false, false, false);
 
   FrontendType(boolean supportStandardFields, boolean supportExtendedFields, boolean supportPlaylists,
-          boolean supportMedias, boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
+          boolean supportMedias,
+               boolean supportMediaCache,
+               boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
           boolean supportControls) {
     this.supportStandardFields = supportStandardFields;
     this.supportExtendedFields = supportExtendedFields;
@@ -32,6 +34,8 @@ public enum FrontendType {
   private boolean supportPlaylists;
   /** Whether medias are supported by the frontend */
   private boolean supportMedias;
+  /** Whether a media cache is supported by the frontend */
+  private boolean supportMediaCache;
   /** Whether puppacks are supported by the frontend */
   private boolean supportPupPacks;
   /** Whether statistics are recorded by the frontend */
@@ -66,6 +70,9 @@ public enum FrontendType {
   }
   public boolean supportControls() {
     return supportControls;
+  }
+  public boolean isSupportMediaCache() {
+    return supportMediaCache;
   }
 
   //----------

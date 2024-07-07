@@ -115,6 +115,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/restart", Boolean.class);
   }
 
+  public boolean invalidateMediaCache() {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/invalidateMediaCache", Boolean.class);
+  }
+
   public TableDetails getTableDetails(int gameId) {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/" + gameId, TableDetails.class);
   }
