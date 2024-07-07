@@ -171,19 +171,12 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private void onVpsBtn() {
-    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      try {
-        String url = VPS.getVpsBaseUrl();
-        GameRepresentation selection = this.tablesController.getSelection();
-        if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
-          url = VPS.getVpsTableUrl(selection.getExtTableId());
-        }
-        Desktop.getDesktop().browse(new URI(url));
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to open link: " + ex.getMessage(), ex);
-      }
+    String url = VPS.getVpsBaseUrl();
+    GameRepresentation selection = this.tablesController.getSelection();
+    if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+      url = VPS.getVpsTableUrl(selection.getExtTableId());
     }
+    Studio.browse(url);
   }
 
   @FXML

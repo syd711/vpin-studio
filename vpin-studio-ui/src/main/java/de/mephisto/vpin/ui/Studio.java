@@ -337,7 +337,19 @@ public class Studio extends Application {
 
   public static void browse(@Nullable String url) {
     if (!StringUtils.isEmpty(url)) {
-      Studio.hostServices.showDocument(url);
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
+        Studio.hostServices.showDocument(url);
+      }
+      else {
+        try {
+          Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+        }
+        catch (IOException e) {
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+        }
+      }
     }
   }
 
@@ -359,14 +371,17 @@ public class Studio extends Application {
 
   public static boolean edit(@Nullable File file) {
     if (file != null && file.exists()) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
+        Studio.hostServices.showDocument(file.getAbsolutePath());
+      }
+      else {
         try {
-          desktop.open(file);
-          return true;
+          Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }
-        catch (Exception e) {
-          LOG.error("Failed to open file: " + e.getMessage(), e);
+        catch (IOException e) {
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
       }
     }
