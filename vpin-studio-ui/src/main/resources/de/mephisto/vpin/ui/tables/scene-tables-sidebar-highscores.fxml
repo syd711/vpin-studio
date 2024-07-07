@@ -265,11 +265,14 @@
             </SplitMenuButton>
                 <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />
                     </font>
+               <tooltip>
+                  <Tooltip text="Open Highscore Card Editor" />
+               </tooltip>
                 </Button>
             <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
