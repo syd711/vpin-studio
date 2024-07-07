@@ -275,7 +275,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     cardsBtn.setVisible(frontendType.supportMedias());
 
     tournamentsBtn.setVisible(false);
-    if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null) {
+    if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
     }

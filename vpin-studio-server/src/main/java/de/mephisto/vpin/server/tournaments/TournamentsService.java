@@ -93,7 +93,13 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
       try {
         TournamentConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
-        maniaClient.getTournamentClient().getTournaments();
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+        if(cabinet != null) {
+          LOG.info("Cabinet is registered on VPin-Mania");
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
 
         tournamentsHighscoreChangeListener.setVPinManiaClient(maniaClient);
         highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);

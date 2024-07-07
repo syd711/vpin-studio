@@ -407,8 +407,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       treeTableView.refresh();
     }
     else {
-      treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
-        "Go to the players section and select the default player of your VPin!"));
+      treeTableView.setPlaceholder(new Label("                                        No VPin Mania default player set!\n" +
+        "Go to the players section and select the default player for VPin Mania tournaments!"));
 
       tableStack.getChildren().remove(loadingOverlay);
       treeTableView.setRoot(null);

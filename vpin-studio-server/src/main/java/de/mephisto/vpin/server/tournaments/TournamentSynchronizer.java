@@ -1,15 +1,16 @@
 package de.mephisto.vpin.server.tournaments;
 
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
+import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
+import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -80,8 +81,12 @@ public class TournamentSynchronizer {
   }
 
   public boolean synchronize() {
-    List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-    return synchronize(tournaments);
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    if (cabinet != null) {
+      List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+      return synchronize(tournaments);
+    }
+    return false;
   }
 
   public boolean synchronize(Game game) {
@@ -163,7 +168,8 @@ public class TournamentSynchronizer {
         finishTable(corps);
       }
       LOG.info("----------------------------/end of sync -------------------------------------------");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to synchronize tournaments: " + e.getMessage(), e);
     }
 
