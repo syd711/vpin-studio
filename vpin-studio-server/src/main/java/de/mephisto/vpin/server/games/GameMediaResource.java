@@ -128,6 +128,10 @@ public class GameMediaResource {
     return tableAssetsService.testConnection();
   }
 
+  @GetMapping("/assets/invalidateMediaCache")
+  public boolean invalidateMediaCache() {
+    return tableAssetsService.invalidateMediaCache();
+  }
 
   @GetMapping("/assets/d/{url}")
   public ResponseEntity<StreamingResponseBody> getAsset(@PathVariable("url") String url ) {

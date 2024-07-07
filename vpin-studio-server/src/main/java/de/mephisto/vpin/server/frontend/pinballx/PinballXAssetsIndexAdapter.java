@@ -30,8 +30,11 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
 
   private PinballXIndex index = new PinballXIndex();
 
-
-  public void reloadIndex(boolean full) {
+  @Override
+  public void invalidateMediaCache() {
+    invalidateMediaCache(true);
+  }
+  public void invalidateMediaCache(boolean full) {
     FTPClient ftp = null;
     try {
       ftp = open();
@@ -103,11 +106,12 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
     }
   }
 
+  //-----------------------------------
+
   public PinballXIndex getIndex() {
     return index;
   }
 
-  
   private File getIndexFile() {
     File folder = new File("./resources");
     if (!folder.exists()) {

@@ -61,11 +61,18 @@ public class TableAssetsService {
     }
   }
 
-
   public boolean testConnection() {
     if (adapter!=null) {
       return adapter.testConnection();
     }
     return false;
+  }
+
+  public boolean invalidateMediaCache() {
+    if (adapter!=null) {
+      adapter.invalidateMediaCache();
+      LOG.info("Invalidated media cache.");
+    }
+    return true;
   }
 }

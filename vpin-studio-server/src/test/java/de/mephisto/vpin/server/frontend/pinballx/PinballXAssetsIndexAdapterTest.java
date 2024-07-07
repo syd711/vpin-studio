@@ -25,7 +25,9 @@ public class PinballXAssetsIndexAdapterTest {
   @Test
   public void testPersist() throws Exception {
     PinballXAssetsIndexAdapter adapter = createAdapter();
-    adapter.reloadIndex(false);
+    // a bit quicker for test, use full=false
+    adapter.invalidateMediaCache(false);
+  
     PinballXIndex index = adapter.getIndex();
     int count = index.getNbAssets();
 

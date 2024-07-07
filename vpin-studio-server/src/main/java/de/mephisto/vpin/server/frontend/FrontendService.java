@@ -363,14 +363,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().getFrontendPlayerDisplays();
   }
 
-  public boolean invalidateMediaCache() {
-    if (getFrontendType().isSupportMediaCache()) {
-      //TODO
-    }
-    LOG.info("Invalidated media cache.");
-    return true;
-  }
-
   public boolean isValidVPXEmulator(Emulator emulator) {
     if (!emulator.isVisualPinball()) {
       return false;

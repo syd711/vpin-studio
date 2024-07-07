@@ -58,7 +58,7 @@ public class PinballXConnector extends BaseConnector {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
       // start a refresh of the index in background
       new Thread(() -> {
-        assetsAdapter.reloadIndex(true);
+        assetsAdapter.invalidateMediaCache();
       }, "PInballX Search indexer").start();
       
     }

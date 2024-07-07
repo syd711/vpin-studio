@@ -22,4 +22,10 @@ public interface TableAssetsAdapter {
    */
   boolean testConnection();
 
+  /**
+   * Invalidate the underlying cache if any. 
+   * Do nothing by default, must be overwriden when cache is used.
+   */
+  default void invalidateMediaCache() {
+  }
 }

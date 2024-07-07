@@ -174,6 +174,10 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/test", Boolean.class);
   }
 
+  public boolean invalidateMediaCache() {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/invalidateMediaCache", Boolean.class);
+  }
+
   /**
    * @param tableAsset The TableAsset from which we need the URL
    * @return the URL of the asset, prepended by API segments when it starts with "/" (usefull fo pinballX)

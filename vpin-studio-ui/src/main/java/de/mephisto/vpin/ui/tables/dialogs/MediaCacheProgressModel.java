@@ -45,7 +45,7 @@ public class MediaCacheProgressModel extends ProgressModel<String> {
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, String tableAsset) {
-    client.getFrontendService().invalidateMediaCache();
+    client.getGameMediaService().invalidateMediaCache();
   }
 
   @Override

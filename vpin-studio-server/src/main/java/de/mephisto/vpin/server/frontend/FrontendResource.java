@@ -111,11 +111,6 @@ public class FrontendResource {
     return frontendStatusService.terminate();
   }
 
-  @GetMapping("/invalidateMediaCache")
-  public boolean invalidateMediaCache() {
-    return frontendService.invalidateMediaCache();
-  }
-
   @GetMapping("/restart")
   public boolean restart() {
     return frontendStatusService.restart();
