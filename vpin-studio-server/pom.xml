@@ -370,6 +370,7 @@
                                         <include>vpbm-128.png</include>
                                         <include>scoringdb.json</include>
                                         <include>vpsdb.json</include>
+                                        <include>*.index</include>
                                     </includes>
                                     <excludes>
                                         <exclude>vpbm/identifiers.dat</exclude>
