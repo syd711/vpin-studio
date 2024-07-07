@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -141,6 +142,12 @@ public class GameEmulator {
 
   public void setVpxEmulator(boolean vpxEmulator) {
     this.vpxEmulator = vpxEmulator;
+  }
+
+  public EmulatorType getEmulatorType() {
+    return isVpxEmulator() ? EmulatorType.VisualPinball :
+          isFpEmulator() ? EmulatorType.FuturePinball : 
+          null;
   }
 
   public String getGameFileName(@NonNull File file) {

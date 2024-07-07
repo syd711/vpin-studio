@@ -442,7 +442,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
       }
       catch (Exception e) {
-        LOG.error("Preview failed for " + tableAsset);
+        LOG.error("Preview failed for " + tableAsset, e);
       }
     });
   }
