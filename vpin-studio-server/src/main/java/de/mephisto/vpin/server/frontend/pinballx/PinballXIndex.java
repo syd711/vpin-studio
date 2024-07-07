@@ -52,7 +52,7 @@ public class PinballXIndex {
     if (screenAssets != null) {
       List<Asset> listAssets = screenAssets.get(screen);
       if (listAssets != null) {
-        assets = listAssets.stream().filter(t -> StringUtils.containsIgnoreCase(t.name, term)).map(t -> t.createAsset(emutype)).collect(Collectors.toList());
+        assets = listAssets.stream().filter(t -> StringUtils.containsIgnoreCase(t.name, term)).map(t -> t.createAsset(emutype, screen)).collect(Collectors.toList());
       }
     }
     return assets;
@@ -131,10 +131,11 @@ public class PinballXIndex {
     public String author;
 
 
-    TableAsset createAsset(EmulatorType emutype) {
+    TableAsset createAsset(EmulatorType emutype, VPinScreen screen) {
       TableAsset asset = new TableAsset();
 
       asset.setEmulator(emutype!=null? emutype.name(): null);
+      asset.setScreen(screen.getSegment());
 
       String mimeType = URLConnection.guessContentTypeFromName(name);
       if (StringUtils.endsWithIgnoreCase(name, ".apng")) {
@@ -148,6 +149,7 @@ public class PinballXIndex {
       String url = URLEncoder.encode(URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
       asset.setUrl("/assets/d/" + url);
 
+      asset.setSourceId(folder);
       asset.setName(name);
       asset.setAuthor(author);
 

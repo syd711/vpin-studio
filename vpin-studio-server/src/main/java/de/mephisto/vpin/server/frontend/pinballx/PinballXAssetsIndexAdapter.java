@@ -29,37 +29,36 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
   private PinballXIndex index = new PinballXIndex();
 
 
-  public PinballXIndex reloadIndex(boolean full) {
-      FTPClient ftp = null;
-      try {
-        ftp = open();
+  public void reloadIndex(boolean full) {
+    FTPClient ftp = null;
+    try {
+      ftp = open();
 
-        PinballXAssetsIndexer indexer = new PinballXAssetsIndexer();
-        this.index = indexer.buildIndex(ftp, rootfolder, full);
+      PinballXAssetsIndexer indexer = new PinballXAssetsIndexer();
+      this.index = indexer.buildIndex(ftp, rootfolder, full);
 
-        // persist the file
-        File indexFile = getIndexFile();
-        File tmp = new File(indexFile.getParentFile(), indexFile.getName() + ".tmp");
-        if (tmp.exists() && !tmp.delete()) {
-          LOG.error("Failed to delete existing tmp file " + indexFile.getName() + ".tmp");
-        }
-        index.saveToFile(tmp);
-
-        // switch files
-        if (indexFile.exists() && !indexFile.delete()) {
-          LOG.error("Failed to delete " + indexFile.getName());
-        }
-        if (!tmp.renameTo(indexFile)) {
-          LOG.error("Failed to rename " + indexFile.getName());
-        }
+      // persist the pfile
+      File indexFile = getIndexFile();
+      File tmp = new File(indexFile.getParentFile(), indexFile.getName() + ".tmp");
+      if (tmp.exists() && !tmp.delete()) {
+        LOG.error("Failed to delete existing tmp file " + indexFile.getName() + ".tmp");
       }
-      catch (IOException ioe) {
-        LOG.error("Error while reloading index file", ioe);
+      index.saveToFile(tmp);
+
+      // switch files
+      if (indexFile.exists() && !indexFile.delete()) {
+        LOG.error("Failed to delete " + indexFile.getName());
       }
-      finally {
-        close(ftp);
-      } 
-      return index; 
+      if (!tmp.renameTo(indexFile)) {
+        LOG.error("Failed to rename " + indexFile.getName());
+      }
+    }
+    catch (IOException ioe) {
+      LOG.error("Error while reloading index file", ioe);
+    }
+    finally {
+      close(ftp);
+    } 
   }
 
   @Override

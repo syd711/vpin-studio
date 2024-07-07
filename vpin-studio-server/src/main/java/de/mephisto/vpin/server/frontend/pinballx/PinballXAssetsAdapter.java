@@ -85,7 +85,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         }
       };
   
-      searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders);
+      searchRecursive(results, ftp, "", filter, isScreenEmulatorIndependent(screen), emulator, false, folders, screenSegment);
       LOG.info("PinballX search finished, took " + (System.currentTimeMillis() - start) + "ms.");
       for (TableAsset asset: results) {
         asset.setSourceId("PinballX");
@@ -118,7 +118,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
    * @throws IOException if error
    */
   private void searchRecursive(List<TableAsset> results, FTPClient ftp, String folder, FTPFileFilter filter,
-        boolean isForEmulator, String emulator, boolean isForScreen, String[] screens) throws IOException {
+        boolean isForEmulator, String emulator, boolean isForScreen, String[] screens, String screenSegment) throws IOException {
     FTPFile[] files = ftp.listFiles(rootfolder + "/" + folder, filter);
     for (FTPFile file : files) {
       if (file.isDirectory()) {
@@ -126,10 +126,10 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
         String name = clean(file.getName());
         searchRecursive(results, ftp, folder + "/" + file.getName(), filter,
             isForEmulator || isForEmulator(name, emulator), emulator,
-            isForScreen || isForScreen(name, screens), screens);
+            isForScreen || isForScreen(name, screens), screens, screenSegment);
       } 
       else if (file.isFile() && isForEmulator && isForScreen) {
-        results.add(toTableAsset(folder, file));
+        results.add(toTableAsset(folder, file, emulator, screenSegment));
       }
     }
   }
@@ -182,9 +182,12 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     return false;
   }
 
-  private TableAsset toTableAsset(String folder, FTPFile file) {
+  private TableAsset toTableAsset(String folder, FTPFile file, String emulator, String screenSegment) {
     String filename = file.getName();
     TableAsset asset = new TableAsset();
+    asset.setEmulator(emulator);
+    asset.setScreen(screenSegment);
+
     String mimeType = URLConnection.guessContentTypeFromName(filename);
     if (StringUtils.endsWithIgnoreCase(filename, ".apng")) {
       mimeType = "image/png";
@@ -195,8 +198,9 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     // double encoding needed
     String url = URLEncoder.encode(URLEncoder.encode(folder + "/" + filename, StandardCharsets.UTF_8), StandardCharsets.UTF_8);
     asset.setUrl("/assets/d/" + url);
+    asset.setSourceId(folder);
     asset.setName(filename);
-    //asset.setSize(file.getSize());
+
     return asset;
   }
 
