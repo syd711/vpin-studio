@@ -600,13 +600,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         Label label = new Label("No asset preview activated.");
         label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
         serverAssetMediaPane.setCenter(label);
+
+        onPreview();
       }
     });
-
-    this.serverAssetsList.setOnMouseClicked(click -> {
-      onPreview();
-    });
-
 
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
       @Override

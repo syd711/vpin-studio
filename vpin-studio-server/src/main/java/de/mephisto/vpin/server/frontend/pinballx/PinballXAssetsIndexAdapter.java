@@ -34,6 +34,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
   public void invalidateMediaCache() {
     invalidateMediaCache(true);
   }
+
   public void invalidateMediaCache(boolean full) {
     FTPClient ftp = null;
     try {
