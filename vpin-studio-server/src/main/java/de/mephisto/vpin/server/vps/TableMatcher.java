@@ -159,8 +159,10 @@ public class TableMatcher {
       }
       return found;
     }
-    // else
-    return true;
+    // else when rom is expected but the table does not declare any rom 
+    else {
+      return false;
+    }
   }
 
   // ------------------------------------------------------
