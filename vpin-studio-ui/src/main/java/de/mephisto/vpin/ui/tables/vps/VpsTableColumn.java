@@ -79,7 +79,7 @@ public class VpsTableColumn extends HBox {
         builder.append("\n");
       }
 
-      String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the VPS button from the toolbar.";
+      String tooltip = "The table or its assets have received updates:\n\n" + builder + "\n\nYou can reset this indicator with the reset action from the context menu.";
       Tooltip tt = new Tooltip(tooltip);
       tt.setStyle("-fx-font-weight: bold;");
       tt.setWrapText(true);
