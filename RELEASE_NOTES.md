@@ -2,5 +2,5 @@
  
 ### Bugfixes
 
-- **Open / Browse Actions**: Fixed browse action links for Linux clients.
+- **Open / Browse Actions**: Fixed broken browse and open actions for Linux clients.
 - **VPS Reset**: Fixed tooltip for VPS updates on where to find the VPS reset action.
