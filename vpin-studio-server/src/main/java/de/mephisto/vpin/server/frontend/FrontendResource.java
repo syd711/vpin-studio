@@ -156,7 +156,7 @@ public class FrontendResource {
 
   @PutMapping("/tabledetails/fixVersion/{gameId}")
   public boolean fixVersion(@PathVariable("gameId") int gameId, @RequestBody Map<String, String> data) throws Exception {
-    frontendStatusService.fixGameVersion(gameId, data.get("version"));
+    frontendStatusService.fixGameVersion(gameId, data.get("version"), true);
     return true;
   }
 
