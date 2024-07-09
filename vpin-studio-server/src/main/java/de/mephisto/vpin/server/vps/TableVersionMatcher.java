@@ -75,7 +75,6 @@ public class TableVersionMatcher {
       }
       
       // distance on version
-      String v = tableVersion.getVersion();
       double dVersion = 1;
       double dAuthor = 0.5d;
 
@@ -86,8 +85,8 @@ public class TableVersionMatcher {
         dAuthor = 0;
       } 
       else {
-        if (StringUtils.isNotEmpty(v) && StringUtils.isNotEmpty(tableInfoVersion)) {
-          dVersion = versionDistance(v, tableInfoVersion);
+        if (StringUtils.isNotEmpty(tableVersion.getVersion()) && StringUtils.isNotEmpty(tableInfoVersion)) {
+          dVersion = versionDistance(tableVersion.getVersion(), tableInfoVersion);
         }
 
         // check match of authors 
@@ -138,10 +137,8 @@ public class TableVersionMatcher {
 
   /**
    * Version 1 is the version from the VPS table
-   * the version 2 (matched table version) cannot be anterior to the VPS table
-   * @param version1
-   * @param version2
-   * @return
+   * the version 2 (matched table version) 
+   * version2 cannot be anterior to the VPS table, so penalize distance
    */
   public double versionDistance(String version1, String version2) {
 
@@ -158,31 +155,39 @@ public class TableVersionMatcher {
     while (tokenizer1.MoveNext()) {
       if (!tokenizer2.MoveNext()) {
         // Version1 is longer than version2
-        return 0.3 - depth/10.0;
+        return 0.3 / Math.pow(10.0, depth);
       }
       number1 = tokenizer1.getNumber();
       number2 = tokenizer2.getNumber();
-      depth++;
 
       // release
       if (number1 < number2) {
         // the more deep we are and the lesser the difference has an impact
-        return (11 - depth) / 3;  
-      } else if (number1 > number2) {
+        return Math.max(3 - depth, 1);  
+      } 
+      else if (number1 > number2) {
         // calculate number of release difference
-        return Math.min((number1 - number2) / (depth + 1.0), 0.3);
+        return Math.min((number1 - number2) / Math.pow(10.0, depth), 0.3);
       }
+      depth++;
     }
     if (tokenizer2.MoveNext()) {
       // Version2 is longer than version1
-      return 0.3 - depth/10.0;
+      return 0.3 / Math.pow(10.0, depth);
     }
 
     String suffix1 = tokenizer1.getSuffix();
     String suffix2 = tokenizer2.getSuffix();
-    if (StringUtils.startsWithAny(suffix1, "-", "r") && StringUtils.startsWithAny(suffix2, "-", "r")) {
-      return versionDistance(suffix1.substring(1), suffix2.substring(1)) / 3;
+    if (StringUtils.startsWithAny(suffix1, "-", "r", "/", ":") && StringUtils.startsWithAny(suffix2, "-", "r", "/", ":")) {
+      return versionDistance(suffix1.substring(1), suffix2.substring(1)) / 4;
     } else {
+      if (StringUtils.isNotEmpty(suffix1) && StringUtils.isEmpty(suffix2)) {
+        return 0.2;
+      }
+      if (StringUtils.isEmpty(suffix1) && StringUtils.isNotEmpty(suffix2)) {
+        return 0.2;
+      }
+
       int diff = StringUtils.compare(suffix1, suffix2);
       if (diff<0) {
         return 1;
@@ -219,12 +224,12 @@ public class TableVersionMatcher {
     }
     if (StringUtils.startsWithIgnoreCase(version, "VP")) {
       int p = 2, l = version.length();
-      while (p<l && StringUtils.indexOf("XS 0123456789.", version.charAt(p))>=0) {
+      while (p<l && StringUtils.indexOf("XS0123456789.", version.charAt(p))>=0) {
         p++;
       }
       version = version.substring(p);
     }
-    return version;
+    return version.trim();
   }
 
   
