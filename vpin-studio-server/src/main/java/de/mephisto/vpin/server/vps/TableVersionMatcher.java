@@ -27,7 +27,7 @@ public class TableVersionMatcher {
     tableInfoName = StringUtils.defaultString(tableInfoName, _extra);
 
     // the version in filename takes precedence over the version in the VPX file
-    String tableInfoVersion = StringUtils.defaultIfEmpty(_version, tableInfo!=null? tableInfo.getTableVersion() : null);
+    String tableInfoVersion = StringUtils.defaultIfEmpty(_version, tableInfo!=null? cleanVersion(tableInfo.getTableVersion()) : null);
 
     String tableInfoAuthor = tableInfo!=null? tableInfo.getAuthorName(): null;
  
