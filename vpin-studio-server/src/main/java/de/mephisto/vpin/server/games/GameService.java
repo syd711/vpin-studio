@@ -689,19 +689,24 @@ public class GameService implements InitializingBean {
     return getGame(game.getId());
   }
 
-  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
+  public boolean vpsLink(int gameId, String extTableId, String extTableVersionId) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
     gameDetails.setExtTableId(extTableId);
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Linked game " + gameId + " to " + extTableId);
+    return true;
   }
 
-  public void fixVersion(int gameId, String version) {
+  public boolean fixVersion(int gameId, String version, boolean overwrite) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
-    gameDetails.setTableVersion(version);
-    gameDetailsRepository.saveAndFlush(gameDetails);
-    LOG.info("Version saved for " + gameId + " to " + version);
+    if (overwrite || StringUtils.isEmpty(gameDetails.getTableVersion())) {
+      gameDetails.setTableVersion(version);
+      gameDetailsRepository.saveAndFlush(gameDetails);
+      LOG.info("Version saved for " + gameId + " to " + version);
+      return true;
+    }
+    return false;
   }
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {

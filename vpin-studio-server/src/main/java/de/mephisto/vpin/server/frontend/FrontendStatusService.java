@@ -185,7 +185,7 @@ public class FrontendStatusService implements InitializingBean {
     if (vpsMatch != null && !simulate) {
       vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
       if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
-        fixGameVersion(game.getId(), vpsMatch.getVersion());
+        fixGameVersion(game.getId(), vpsMatch.getVersion(), false);
       }
     }
     return vpsMatch;
@@ -329,21 +329,21 @@ public class FrontendStatusService implements InitializingBean {
 
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
     // keep track of the match in the internal database
-    gameService.vpsLink(gameId, extTableId, extTableVersionId);
-
-    // update the table in the frontend
-    frontendService.vpsLink(gameId, extTableId, extTableVersionId);
+    if (gameService.vpsLink(gameId, extTableId, extTableVersionId)) {
+      // update the table in the frontend
+      frontendService.vpsLink(gameId, extTableId, extTableVersionId);
+    }
   }
 
-  public void fixGameVersion(int gameId, String version) {
+  public void fixGameVersion(int gameId, String version, boolean overwrite) {
     // keep track of theversion  in the internal database
-    gameService.fixVersion(gameId, version);
-
-    // update the table in the frontend
-    TableDetails tableDetails = getTableDetails(gameId);
-    if (tableDetails != null) {
-      tableDetails.setGameVersion(version);
-      saveTableDetails(tableDetails, gameId, false);
+    if (gameService.fixVersion(gameId, version, overwrite)) {
+      // update the table in the frontend
+      TableDetails tableDetails = getTableDetails(gameId);
+      if (tableDetails != null) {
+        tableDetails.setGameVersion(version);
+        saveTableDetails(tableDetails, gameId, false);
+      }
     }
   }
 
@@ -386,7 +386,7 @@ public class FrontendStatusService implements InitializingBean {
       updatedTableDetails.setGameFileName(gameFilename);
     }
 
-    gameService.fixVersion(gameId, updatedTableDetails.getGameVersion());
+    gameService.fixVersion(gameId, updatedTableDetails.getGameVersion(), true);
     frontendService.saveTableDetails(gameId, updatedTableDetails);
 
     //for upload and replace, we do not need any renaming
