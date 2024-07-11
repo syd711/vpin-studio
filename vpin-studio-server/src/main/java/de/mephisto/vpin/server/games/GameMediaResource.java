@@ -96,11 +96,10 @@ public class GameMediaResource {
                                     @PathVariable("screen") String screen,
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) throws Exception {
-    screen = screen.replace("Backglass", "BackGlass");
+    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = gameService.getGame(gameId);
-    VPinScreen s = VPinScreen.valueOf(screen);
-    File mediaFolder = game.getMediaFolder(s);
+    File mediaFolder = game.getMediaFolder(vPinScreen);
     File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniqueAsset(target);
@@ -123,14 +122,14 @@ public class GameMediaResource {
   public ResponseEntity<InputStreamResource> getAsset(@PathVariable("screen") String screen,
                                                       @PathVariable("gameId") int gameId,
                                                       @PathVariable("url") String url) throws Exception {
-    screen = screen.replace("Backglass", "BackGlass");
+    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = gameService.getGame(gameId);
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
     String folder = decode.substring(0, decode.lastIndexOf("/"));
     String name = decode.substring(decode.lastIndexOf("/") + 1);
-    Optional<TableAsset> result = tableAssetsService.get(emulatorType, VPinScreen.valueOf(screen), folder, name);
+    Optional<TableAsset> result = tableAssetsService.get(emulatorType, vPinScreen, folder, name);
     if (result.isEmpty()) {
       throw new ResponseStatusException(NOT_FOUND);
     }
@@ -147,8 +146,7 @@ public class GameMediaResource {
 
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
-    screen = screen.replace("Backglass", "BackGlass");
-    VPinScreen vPinScreen = VPinScreen.valueOf(screen);
+    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = gameService.getGame(id);
     if (game != null) {
       GameMedia gameMedia = game.getGameMedia();
