@@ -1,12 +1,11 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
@@ -23,8 +22,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
 @Service
-public class PinballXAssetsIndexAdapter extends PinballXFtpClient 
-      implements TableAssetsAdapter, InitializingBean {
+public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter, InitializingBean {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
@@ -64,14 +62,13 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
     }
     finally {
       close(ftp);
-    } 
+    }
   }
 
   @Override
   public List<TableAsset> search(@NonNull String emulatorType, @NonNull String screenSegment, @NonNull String term) throws Exception {
-
     if (term.length() < 3) {
-        return Collections.emptyList();
+      return Collections.emptyList();
     }
 
     EmulatorType emutype = EmulatorType.valueOf(emulatorType);
@@ -80,11 +77,18 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
     return index.match(emutype, screen, term);
   }
 
+  @Override
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+    EmulatorType emutype = EmulatorType.valueOf(emulatorName);
+    VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
+    return index.get(emutype, screen, folder, name);
+  }
+
   //-------------------------------------
 
 
   @Override
-  public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
+  public InputStream readAsset(@NonNull String url) throws Exception {
     FTPClient ftp = null;
     try {
       ftp = open();
@@ -96,8 +100,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
       String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
       String name = StringUtils.substringAfterLast(decodeUrl, "/");
 
-      ftp.changeWorkingDirectory(rootfolder + folder);
-      ftp.retrieveFile(name, outputStream); 
+      ftp.changeWorkingDirectory(folder);
+
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      ftp.retrieveFile(name, out);
+
+      byte[] byteArray = out.toByteArray();
+      LOG.info("Read FTP file \"" + url + "\", " + byteArray.length + " bytes");
+      return new ByteArrayInputStream(byteArray);
     }
     catch (CopyStreamException cse) {
       LOG.error("Error while downloading asset", cse);
@@ -105,6 +115,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
     finally {
       close(ftp);
     }
+    return null;
   }
 
   //-----------------------------------
@@ -127,5 +138,5 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient
     LOG.info("Load pinballX Asset index from file : " + indexFile);
     index.loadFromFile(indexFile);
   }
-  
+
 }

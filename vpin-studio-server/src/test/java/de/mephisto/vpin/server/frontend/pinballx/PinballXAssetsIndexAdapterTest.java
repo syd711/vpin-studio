@@ -1,17 +1,18 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import de.mephisto.vpin.connectors.assets.TableAsset;
+import org.apache.commons.io.IOUtils;
+import org.junit.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.junit.Test;
-
-import de.mephisto.vpin.connectors.assets.TableAsset;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class PinballXAssetsIndexAdapterTest {
 
@@ -27,7 +28,7 @@ public class PinballXAssetsIndexAdapterTest {
     PinballXAssetsIndexAdapter adapter = createAdapter();
     // a bit quicker for test, use full=false
     adapter.invalidateMediaCache(false);
-  
+
     PinballXIndex index = adapter.getIndex();
     int count = index.getNbAssets();
 
@@ -53,13 +54,13 @@ public class PinballXAssetsIndexAdapterTest {
     assertEquals(27974, index.getNbAssets());
 
     List<TableAsset> assets;
-    
+
     assets = adapter.search("VisualPinball", "PlayField", "250Cc");
     assertEquals(2, assets.size());
     assertEquals("250cc (Inder 1992).png", assets.get(0).getName());
     assertEquals("250cc (Inder) (1992) (JPSalas) (1.1.0).f4v", assets.get(1).getName());
     //doPrintAssets(assets);
-    
+
     //System.out.println("----------------------------------");
     assets = adapter.search("VisualPinball", "Wheel", "Attack from Mars");
     assertEquals(22, assets.size());
@@ -78,7 +79,7 @@ public class PinballXAssetsIndexAdapterTest {
   }
 
   private void doPrintAssets(List<TableAsset> assets) {
-    for (TableAsset res: assets) {
+    for (TableAsset res : assets) {
       System.out.println(res.getUrl() + "/" + res.getName());
     }
   }
@@ -88,15 +89,16 @@ public class PinballXAssetsIndexAdapterTest {
     PinballXAssetsIndexAdapter adapter = createAdapter();
 
     String url = "/-PinballX-/Media/Visual Pinball/Table Videos/250cc (Inder) (1992) (JPSalas) (1.1.0).f4v";
-    
-    Path tempPath = Files.createTempFile("test", "temp"); 
+
+    Path tempPath = Files.createTempFile("test", "temp");
     File temp = tempPath.toFile();
     try (FileOutputStream fout = new FileOutputStream(temp)) {
-      adapter.writeAsset(fout, url);
+      InputStream inputStream = adapter.readAsset(url);
+      IOUtils.copy(inputStream, fout);
 
       assertTrue(temp.exists());
       assertEquals(11634196, Files.size(tempPath));
-    } 
+    }
     Files.deleteIfExists(tempPath);
   }
 

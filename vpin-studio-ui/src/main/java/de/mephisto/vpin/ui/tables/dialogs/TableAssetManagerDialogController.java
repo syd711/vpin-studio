@@ -424,7 +424,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
 
       String baseType = mimeType.split("/")[0];
-      String assetUrl = client.getGameMediaService().getUrl(tableAsset);
+      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
 
       try {
         if (baseType.equals("image")) {

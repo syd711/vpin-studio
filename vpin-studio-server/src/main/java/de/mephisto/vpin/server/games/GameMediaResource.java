@@ -22,8 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,16 +33,12 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.servlet.http.HttpServletResponse;
+import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -84,25 +82,12 @@ public class GameMediaResource {
   }
 
   @PostMapping("/assets/search")
-  public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) {
+  public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
     Game game = gameService.getGame(search.getGameId());
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
-    Future<List<TableAsset>> submit = null;
-    try {
-      submit = executorService.submit(new Callable<>() {
-        @Override
-        public List<TableAsset> call() throws Exception {
-          return tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
-        }
-      });
-      List<TableAsset> results = submit.get(15, TimeUnit.SECONDS);
-      search.setResult(results);
-    }
-    catch (Exception e) {
-      LOG.error("Asset search executor failed or interrupted: " + e.getMessage());
-      search.setResult(Collections.emptyList());
-    }
+    List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
+    search.setResult(result);
     return search;
   }
 
@@ -111,6 +96,7 @@ public class GameMediaResource {
                                     @PathVariable("screen") String screen,
                                     @PathVariable("append") boolean append,
                                     @RequestBody TableAsset asset) throws Exception {
+    screen = screen.replace("Backglass", "BackGlass");
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = gameService.getGame(gameId);
     VPinScreen s = VPinScreen.valueOf(screen);
@@ -133,32 +119,35 @@ public class GameMediaResource {
     return tableAssetsService.invalidateMediaCache();
   }
 
-  @GetMapping("/assets/d/{url}")
-  public ResponseEntity<StreamingResponseBody> getAsset(@PathVariable("url") String url ) {
+  @GetMapping("/assets/d/{screen}/{gameId}/{url}")
+  public ResponseEntity<InputStreamResource> getAsset(@PathVariable("screen") String screen,
+                                                      @PathVariable("gameId") int gameId,
+                                                      @PathVariable("url") String url) throws Exception {
+    screen = screen.replace("Backglass", "BackGlass");
+    Game game = gameService.getGame(gameId);
+    EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
-    HttpHeaders headers = new HttpHeaders();
-    //headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + name);
-    headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
-    headers.add("Pragma", "no-cache");
-    headers.add("Expires", "0");
+    String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
+    String folder = decode.substring(0, decode.lastIndexOf("/"));
+    String name = decode.substring(decode.lastIndexOf("/") + 1);
+    Optional<TableAsset> result = tableAssetsService.get(emulatorType, VPinScreen.valueOf(screen), folder, name);
+    if (result.isEmpty()) {
+      throw new ResponseStatusException(NOT_FOUND);
+    }
 
-    final String theurl = url;
-    StreamingResponseBody responseBody = outputStream -> {
-      try {
-        // put the "/" back that we removed in GameMediaServiceClient.getUrl() 
-        tableAssetsService.download("/" + theurl, outputStream);
-      } catch (Exception e) {
-        LOG.error("cannot download asset " + theurl, e);
-      }
-    };
+    TableAsset tableAsset = result.get();
+    // put the "/" back that we removed in GameMediaServiceClient.getUrl()
+    InputStream in = tableAssetsService.download("/" + url);
+    InputStreamResource inputStreamResource = new InputStreamResource(in);
     return ResponseEntity.ok()
-            .headers(headers)
-            .contentType(MediaType.APPLICATION_OCTET_STREAM)
-            .body(responseBody);
+        .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
+        .header("X-Frame-Options", "SAMEORIGIN")
+        .body(inputStreamResource);
   }
 
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
+    screen = screen.replace("Backglass", "BackGlass");
     VPinScreen vPinScreen = VPinScreen.valueOf(screen);
     Game game = gameService.getGame(id);
     if (game != null) {
@@ -238,7 +227,8 @@ public class GameMediaResource {
     catch (Exception e) {
       LOG.error(AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }

@@ -151,11 +151,11 @@ public class GameMediaServiceClient extends VPinStudioClientService {
    * @param tableAsset The TableAsset from which we need the URL
    * @return the URL of the asset, prepended by API segments when it starts with "/" (usefull fo pinballX)
    */
-  public String getUrl(TableAsset tableAsset) {
+  public String getUrl(TableAsset tableAsset, int gameId) {
     String url = tableAsset.getUrl();
     if (url.startsWith("/")) {
       // add API and do an URK encoding that will be decoded by spring-boot
-      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" 
+      url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
         + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
     }
     return url;

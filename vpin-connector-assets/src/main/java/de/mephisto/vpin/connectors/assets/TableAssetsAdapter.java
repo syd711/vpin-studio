@@ -1,18 +1,21 @@
 package de.mephisto.vpin.connectors.assets;
 
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Optional;
 
 public interface TableAssetsAdapter {
 
   List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception;
 
+  Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception;
+
   /**
-   * Download the asset and write it to the stream 
-   * @param outputStream The OutputStream where the asset should be writen to
+   * Download the asset and write it to the stream
    * @param url The URL of the asset
    */
-  void writeAsset(OutputStream outputStream, String url) throws Exception;
+  InputStream readAsset(String url) throws Exception;
 
   /**
    * Test the connection to the remote search server

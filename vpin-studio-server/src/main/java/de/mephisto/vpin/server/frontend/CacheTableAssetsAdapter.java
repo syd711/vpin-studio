@@ -1,13 +1,13 @@
 package de.mephisto.vpin.server.frontend;
 
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class CacheTableAssetsAdapter implements TableAssetsAdapter {
 
@@ -19,6 +19,11 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
 
   public CacheTableAssetsAdapter(TableAssetsAdapter delegate) {
     this.delegate = delegate;
+  }
+
+  @Override
+  public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
+    return delegate.get(emulatorName, screenSegment, folder, name);
   }
 
   private synchronized TableAssetCacheResult getCached(String screenSegment, String term) {
@@ -52,7 +57,7 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
     cached.term = term;
     cached.screen = screenSegment;
     cached.result = delegate.search(emulatorName, screenSegment, term);
-    
+
     cache.add(cached);
     if (cache.size() > CACHE_SIZE) {
       cache.remove(0);
@@ -62,8 +67,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public void writeAsset(OutputStream outputStream, String url) throws Exception {
-    delegate.writeAsset(outputStream, url);
+  public InputStream readAsset(String url) throws Exception {
+    return delegate.readAsset(url);
   }
 
   @Override

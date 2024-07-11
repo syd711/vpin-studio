@@ -1,23 +1,17 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.*;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import org.apache.commons.lang3.StringUtils;
-
-import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PinballXIndex {
 
@@ -49,10 +43,26 @@ public class PinballXIndex {
     if (screenAssets != null) {
       List<Asset> listAssets = screenAssets.get(screen);
       if (listAssets != null) {
-        assets = listAssets.stream().filter(t -> StringUtils.containsIgnoreCase(t.name, term)).map(t -> t.createAsset(emutype, screen)).collect(Collectors.toList());
+        assets = listAssets.stream().filter(t -> StringUtils.containsIgnoreCase(t.name, term)
+            || StringUtils.containsIgnoreCase(t.folder, term)
+        ).map(t -> t.createAsset(emutype, screen)).collect(Collectors.toList());
       }
     }
     return assets;
+  }
+
+  public Optional<TableAsset> get(EmulatorType emutype, VPinScreen screen, String folder, String name) {
+    Map<VPinScreen, List<Asset>> screenAssets = isScreenEmulatorIndependent(screen) ? index.get(null) : index.get(emutype);
+    if (screenAssets != null) {
+      List<Asset> listAssets = screenAssets.get(screen);
+      if (listAssets != null) {
+        return listAssets.stream()
+            .filter(t -> t.name.equalsIgnoreCase(name) && t.folder.equalsIgnoreCase(folder))
+            .map(t -> t.createAsset(emutype, screen))
+            .findFirst();
+      }
+    }
+    return Optional.empty();
   }
 
   public static boolean isScreenEmulatorIndependent(VPinScreen screen) {
@@ -128,9 +138,9 @@ public class PinballXIndex {
     int count = 0;
     Collection<Map<VPinScreen, List<Asset>>> values = index.values();
     for (Map<VPinScreen, List<Asset>> value : values) {
-      Collection<List<Asset>> assetLists= value.values();
+      Collection<List<Asset>> assetLists = value.values();
       for (List<Asset> assetList : assetLists) {
-        count+= assetList.size();
+        count += assetList.size();
       }
     }
 

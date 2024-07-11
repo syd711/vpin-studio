@@ -309,7 +309,8 @@ public class Game {
   public List<File> getMediaFiles(@NonNull VPinScreen screen) {
     String baseFilename = getGameName();
     File mediaFolder = getMediaFolder(screen);
-    if (mediaFolder.exists()) {
+    //keep null check for serialization
+    if (mediaFolder != null && mediaFolder.exists()) {
       File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
       if (mediaFiles != null) {
         Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
