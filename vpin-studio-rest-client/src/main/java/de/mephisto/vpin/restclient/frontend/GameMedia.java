@@ -1,8 +1,4 @@
-package de.mephisto.vpin.server.frontend;
-
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
+package de.mephisto.vpin.restclient.frontend;
 
 import java.util.HashMap;
 import java.util.List;
@@ -10,19 +6,17 @@ import java.util.Map;
 
 public class GameMedia {
 
-  private Map<String, List<GameMediaItem>> media = new HashMap<>();
+  private final Map<String, List<GameMediaItem>> media = new HashMap<>();
 
   public Map<String, List<GameMediaItem>> getMedia() {
     return media;
   }
 
-  @NonNull
-  public List<GameMediaItem> getMediaItems(@NonNull VPinScreen screen) {
+  public List<GameMediaItem> getMediaItems(VPinScreen screen) {
     return media.get(screen.name());
   }
 
-  @Nullable
-  public GameMediaItem getDefaultMediaItem(@NonNull VPinScreen screen) {
+  public GameMediaItem getDefaultMediaItem( VPinScreen screen) {
     if (!media.containsKey(screen.name())) {
       return null;
     }
@@ -43,7 +37,7 @@ public class GameMedia {
     return fallback;
   }
 
-  public GameMediaItem getMediaItem(@NonNull VPinScreen screen, @NonNull String name) {
+  public GameMediaItem getMediaItem(VPinScreen screen, String name) {
     if (!media.containsKey(screen.name())) {
       return null;
     }

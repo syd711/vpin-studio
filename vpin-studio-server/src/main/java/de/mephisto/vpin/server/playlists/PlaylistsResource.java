@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.playlists;
 
-import de.mephisto.vpin.restclient.frontend.Playlist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +16,7 @@ public class PlaylistsResource {
 
   @GetMapping
   public List<Playlist> getPlaylists() {
-    return playlistService.getPlaylists(false);
-  }
-
-  @GetMapping("/static")
-  public List<Playlist> getStaticPlaylists() {
-    return playlistService.getPlaylists(true);
+    return playlistService.getPlaylists();
   }
 
   @GetMapping("/{playlistId}")

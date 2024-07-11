@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.frontend.GameMedia;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.GameMedia;
+import de.mephisto.vpin.restclient.frontend.GameMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -192,8 +192,7 @@ public class Game {
       try {
         BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
         image = SwingFXUtils.toFXImage(bufferedImage, null);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
@@ -263,9 +262,11 @@ public class Game {
     this.emulator = emulator;
     this.emulatorId = emulator.getId();
   }
+
   public int getEmulatorId() {
     return this.emulatorId;
   }
+
   public void setEmulatorId(int emuId) {
     this.emulatorId = emuId;
   }
@@ -308,7 +309,7 @@ public class Game {
   public List<File> getMediaFiles(@NonNull VPinScreen screen) {
     String baseFilename = getGameName();
     File mediaFolder = getMediaFolder(screen);
-    if (mediaFolder!=null) {
+    if (mediaFolder.exists()) {
       File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
       if (mediaFiles != null) {
         Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
@@ -327,7 +328,7 @@ public class Game {
       List<GameMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getMediaFiles(screen);
       for (File file : mediaFiles) {
-        GameMediaItem item = new GameMediaItem(this, screen, file);
+        GameMediaItem item = new GameMediaItem(this.getId(), screen, file);
         itemList.add(item);
       }
       gameMedia.getMedia().put(screen.name(), itemList);

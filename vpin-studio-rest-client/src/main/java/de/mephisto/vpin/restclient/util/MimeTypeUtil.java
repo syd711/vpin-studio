@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.util;
+package de.mephisto.vpin.restclient.util;
 
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;

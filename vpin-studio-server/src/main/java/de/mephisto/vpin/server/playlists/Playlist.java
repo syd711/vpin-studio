@@ -1,6 +1,8 @@
-package de.mephisto.vpin.restclient.frontend;
+package de.mephisto.vpin.server.playlists;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import de.mephisto.vpin.restclient.frontend.GameMedia;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +14,15 @@ public class Playlist {
   private String playListSQL;
   private boolean sqlPlayList;
   private List<PlaylistGame> games = new ArrayList<>();
+  private GameMedia playlistMedia;
+
+  public GameMedia getPlaylistMedia() {
+    return playlistMedia;
+  }
+
+  public void setPlaylistMedia(GameMedia playlistMedia) {
+    this.playlistMedia = playlistMedia;
+  }
 
   public List<PlaylistGame> getGames() {
     return games;

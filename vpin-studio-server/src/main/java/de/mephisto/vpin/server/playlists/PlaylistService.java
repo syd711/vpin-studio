@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.playlists;
 
-import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +15,8 @@ public class PlaylistService {
   @Autowired
   private FrontendService frontendService;
 
-  public List<Playlist> getPlaylists(boolean excludeSqlLists) {
-    return frontendService.getPlayLists(excludeSqlLists);
+  public List<Playlist> getPlaylists() {
+    return frontendService.getPlayLists();
   }
 
   public Playlist getPlaylist(int playlistId) {
