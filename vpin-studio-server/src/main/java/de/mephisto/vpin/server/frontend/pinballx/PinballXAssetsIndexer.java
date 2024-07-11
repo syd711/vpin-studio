@@ -65,7 +65,7 @@ public class PinballXAssetsIndexer {
    */
   private void searchRecursive(PinballXIndex index, FTPClient ftp, String rootfolder, String folder, 
         EmulatorType emulator, VPinScreen screen, String author) throws IOException {
-    LOG.info("GameEx Search Indexer: " + rootfolder + folder);
+    LOG.info("GameEx Search Indexer: " + rootfolder + folder + ", collected " + index.size() + " assets.");
     FTPFile[] files = ftp.listFiles(rootfolder + folder);
 
     boolean hasEmulatorAndScreen = screen!=null && (emulator!=null || PinballXIndex.isScreenEmulatorIndependent(screen));

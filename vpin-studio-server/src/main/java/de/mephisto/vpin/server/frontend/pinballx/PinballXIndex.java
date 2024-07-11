@@ -10,10 +10,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +20,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 public class PinballXIndex {
-    
+
   private Map<EmulatorType, Map<VPinScreen, List<Asset>>> index = new HashMap<>();
 
   public void addAsset(EmulatorType emulator, VPinScreen screen, String author, String folder, String name) {
@@ -42,7 +39,7 @@ public class PinballXIndex {
     Asset asset = new Asset();
     asset.folder = folder;
     asset.name = name;
-    asset.author  =author;
+    asset.author = author;
     listAssets.add(asset);
   }
 
@@ -60,22 +57,26 @@ public class PinballXIndex {
 
   public static boolean isScreenEmulatorIndependent(VPinScreen screen) {
     switch (screen) {
-      case GameInfo: return true;
-      case GameHelp: return true;
-      case Loading: return true;
-      default: return false;
+      case GameInfo:
+        return true;
+      case GameHelp:
+        return true;
+      case Loading:
+        return true;
+      default:
+        return false;
     }
   }
 
   //-----------------------------------------
   public void saveToFile(File indexFile) throws IOException {
     try (FileWriter fw = new FileWriter(indexFile, Charset.forName("UTF-8"));
-        BufferedWriter w = new BufferedWriter(fw)) {
+         BufferedWriter w = new BufferedWriter(fw)) {
 
-      for (EmulatorType type: index.keySet()) {
-        for (VPinScreen screen: index.get(type).keySet()) {
-          for (Asset asset: index.get(type).get(screen)) {
-            w.write((type!=null? type : "") + "@@" + screen 
+      for (EmulatorType type : index.keySet()) {
+        for (VPinScreen screen : index.get(type).keySet()) {
+          for (Asset asset : index.get(type).get(screen)) {
+            w.write((type != null ? type : "") + "@@" + screen
                 + "@@" + asset.author + "@@" + asset.folder + "@@" + asset.name + "\n");
           }
         }
@@ -86,9 +87,9 @@ public class PinballXIndex {
   public void loadFromFile(File indexFile) throws IOException {
     if (indexFile.exists()) {
       index.clear();
-    
+
       try (FileReader fr = new FileReader(indexFile, Charset.forName("UTF-8"));
-          BufferedReader r = new BufferedReader(fr)) {
+           BufferedReader r = new BufferedReader(fr)) {
 
         String line = null;
         int nbLines = 0;
@@ -97,7 +98,7 @@ public class PinballXIndex {
             nbLines++;
             String[] parts = StringUtils.splitByWholeSeparatorPreserveAllTokens(line, "@@");
 
-            EmulatorType type = parts[0].length() > 0 ? EmulatorType.valueOf(parts[0]): null;
+            EmulatorType type = parts[0].length() > 0 ? EmulatorType.valueOf(parts[0]) : null;
             VPinScreen screen = VPinScreen.valueOf(parts[1]);
             addAsset(type, screen, parts[2], parts[3], parts[4]);
           }
@@ -111,8 +112,8 @@ public class PinballXIndex {
 
   public int getNbAssets() {
     int count = 0;
-    for (EmulatorType type: index.keySet()) {
-      for (VPinScreen screen: index.get(type).keySet()) {
+    for (EmulatorType type : index.keySet()) {
+      for (VPinScreen screen : index.get(type).keySet()) {
         count += index.get(type).get(screen).size();
       }
     }
@@ -121,6 +122,19 @@ public class PinballXIndex {
 
   public void clear() {
     index.clear();
+  }
+
+  public int size() {
+    int count = 0;
+    Collection<Map<VPinScreen, List<Asset>>> values = index.values();
+    for (Map<VPinScreen, List<Asset>> value : values) {
+      Collection<List<Asset>> assetLists= value.values();
+      for (List<Asset> assetList : assetLists) {
+        count+= assetList.size();
+      }
+    }
+
+    return count;
   }
 
   //--------------------------------------------------------
@@ -137,15 +151,16 @@ public class PinballXIndex {
     TableAsset createAsset(EmulatorType emutype, VPinScreen screen) {
       TableAsset asset = new TableAsset();
 
-      asset.setEmulator(emutype!=null? emutype.name(): null);
+      asset.setEmulator(emutype != null ? emutype.name() : null);
       asset.setScreen(screen.getSegment());
 
       String mimeType = URLConnection.guessContentTypeFromName(name);
       if (StringUtils.endsWithIgnoreCase(name, ".apng")) {
         mimeType = "image/png";
-      } else if (StringUtils.endsWithIgnoreCase(name, ".f4v")) {
+      }
+      else if (StringUtils.endsWithIgnoreCase(name, ".f4v")) {
         mimeType = "video/x-f4v";
-      } 
+      }
       asset.setMimeType(mimeType);
 
       // double encoding needed, first one here, second in client
