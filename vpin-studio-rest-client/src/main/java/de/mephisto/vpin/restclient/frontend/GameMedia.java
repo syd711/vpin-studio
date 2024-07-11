@@ -16,7 +16,7 @@ public class GameMedia {
     return media.get(screen.name());
   }
 
-  public GameMediaItem getDefaultMediaItem( VPinScreen screen) {
+  public GameMediaItem getDefaultMediaItem(VPinScreen screen) {
     if (!media.containsKey(screen.name())) {
       return null;
     }
@@ -45,7 +45,7 @@ public class GameMedia {
     List<GameMediaItem> gameMediaItems = media.get(screen.name());
     for (GameMediaItem gameMediaItem : gameMediaItems) {
       //TODO mpf
-      if (gameMediaItem.getName().equalsIgnoreCase(name) || gameMediaItem.getName().replaceAll(" ",  "+").equalsIgnoreCase(name)) {
+      if (gameMediaItem.getName().equalsIgnoreCase(name) || gameMediaItem.getName().replaceAll(" ", "+").equalsIgnoreCase(name)) {
         return gameMediaItem;
       }
     }

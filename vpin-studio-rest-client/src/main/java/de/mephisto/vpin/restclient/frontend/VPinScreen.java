@@ -72,7 +72,7 @@ public enum VPinScreen {
         return v;
       }
     }
-    return null;
+    return valueOfScreen(segment);
   }
 
   public int getValidationCode() {

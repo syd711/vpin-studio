@@ -414,42 +414,45 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     downloadBtn.setVisible(true);
-    serverAssetMediaPane.setCenter(new ProgressIndicator());
-
     Platform.runLater(() -> {
+      serverAssetMediaPane.setCenter(new ProgressIndicator());
       String mimeType = tableAsset.getMimeType();
       if (mimeType == null) {
         LOG.info("No mimetype found for asset " + tableAsset);
         return;
       }
 
-      String baseType = mimeType.split("/")[0];
-      String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
+      new Thread(() -> {
+        String baseType = mimeType.split("/")[0];
+        String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
 
-      try {
-        if (baseType.equals("image")) {
-          ImageView imageView = new ImageView();
-          imageView.setFitWidth(getServerAssetPreviewWidth());
-          imageView.setFitHeight(getServerAssetPreviewHeight());
-          imageView.setPreserveRatio(true);
+        Platform.runLater(() -> {
+          try {
+            if (baseType.equals("image")) {
+              ImageView imageView = new ImageView();
+              imageView.setFitWidth(getServerAssetPreviewWidth());
+              imageView.setFitHeight(getServerAssetPreviewHeight());
+              imageView.setPreserveRatio(true);
 
-          Image image = new Image(assetUrl, true);
-          imageView.setImage(image);
-          imageView.setUserData(tableAsset);
+              Image image = new Image(assetUrl, true);
+              imageView.setImage(image);
+              imageView.setUserData(tableAsset);
 
-          serverAssetMediaPane.setCenter(imageView);
-        }
-        else if (baseType.equals("audio")) {
-          new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
-        }
-        else if (baseType.equals("video")) {
-          Frontend frontend = client.getFrontendService().getFrontendCached();
-          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Preview failed for " + tableAsset, e);
-      }
+              serverAssetMediaPane.setCenter(imageView);
+            }
+            else if (baseType.equals("audio")) {
+              new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+            }
+            else if (baseType.equals("video")) {
+              Frontend frontend = client.getFrontendService().getFrontendCached();
+              new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+            }
+          }
+          catch (Exception e) {
+            LOG.error("Preview failed for " + tableAsset, e);
+          }
+        });
+      }).start();
     });
   }
 
