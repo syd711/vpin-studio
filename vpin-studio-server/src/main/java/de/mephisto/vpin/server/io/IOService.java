@@ -14,7 +14,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.GameMediaItem;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;

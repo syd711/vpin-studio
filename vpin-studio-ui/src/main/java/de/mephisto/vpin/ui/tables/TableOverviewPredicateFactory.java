@@ -1,14 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
-import java.util.List;
-import java.util.function.Predicate;
-
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.Playlist;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
+import java.util.function.Predicate;
 
 public class TableOverviewPredicateFactory {
 
@@ -16,7 +15,7 @@ public class TableOverviewPredicateFactory {
 
   private List<Integer> filteredIds;
 
-  private Playlist playlist;
+  private PlaylistRepresentation playlist;
 
   GameEmulatorRepresentation emulator;
 
@@ -28,7 +27,7 @@ public class TableOverviewPredicateFactory {
     this.filteredIds = filterIds;
   }
 
-  public void setFilterPlaylist(Playlist playlist) {
+  public void setFilterPlaylist(PlaylistRepresentation playlist) {
     this.playlist = playlist;
   }
 

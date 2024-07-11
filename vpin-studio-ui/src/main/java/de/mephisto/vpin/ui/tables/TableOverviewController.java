@@ -9,12 +9,8 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.Playlist;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
@@ -237,7 +233,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button reloadBtn;
 
   @FXML
-  private ComboBox<Playlist> playlistCombo;
+  private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
   private Separator playlistSplitter;
@@ -288,7 +284,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private WaitOverlayController tablesLoadingController;
 
   private TablesController tablesController;
-  private List<Playlist> playlists;
+  private List<PlaylistRepresentation> playlists;
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -1061,7 +1057,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
-    List<Playlist> pl = new ArrayList<>(playlists);
+    List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
@@ -1315,10 +1311,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnPlaylists.setSortable(false);
     configureColumn(columnPlaylists, (value, model) -> {
       HBox box = new HBox();
-      List<Playlist> matches = new ArrayList<>();
+      List<PlaylistRepresentation> matches = new ArrayList<>();
       boolean fav = false;
       boolean globalFav = false;
-      for (Playlist playlist : playlists) {
+      for (PlaylistRepresentation playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
           if (!fav && playlist.isFavGame(value.getId())) {
             fav = true;
@@ -1345,7 +1341,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       int count = 0;
-      for (Playlist match : matches) {
+      for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
           width += ICON_WIDTH;
@@ -1673,7 +1669,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void updatePlaylist() {
     this.playlists = client.getPlaylistsService().getPlaylists();
-    List<Playlist> refreshedData = new ArrayList<>(this.playlists);
+    List<PlaylistRepresentation> refreshedData = new ArrayList<>(this.playlists);
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
   }
@@ -1846,9 +1842,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.valueProperty().addListener(new ChangeListener<Playlist>() {
+    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
       @Override
-      public void changed(ObservableValue<? extends Playlist> observableValue, Playlist Playlist, Playlist t1) {
+      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlist, PlaylistRepresentation t1) {
         predicateFactory.setFilterPlaylist(t1);
         data.setPredicate(predicateFactory.buildPredicate());
       }

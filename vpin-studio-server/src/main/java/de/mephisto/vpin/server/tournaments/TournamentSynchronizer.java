@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.GameMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -271,8 +272,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   @NonNull
-  public List<Playlist> getPlayLists(boolean excludeSqlLists) {
-    return getFrontendConnector().getPlayLists(excludeSqlLists);
+  public List<Playlist> getPlayLists() {
+    return getFrontendConnector().getPlayLists();
   }
 
   public void setPlaylistColor(int playlistId, long color) {

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -104,7 +105,7 @@ public interface FrontendConnector {
   Playlist getPlayList(int id);
 
   @NonNull
-  List<Playlist> getPlayLists(boolean excludeSqlLists);
+  List<Playlist> getPlayLists();
 
   void setPlaylistColor(int playlistId, long color);
 

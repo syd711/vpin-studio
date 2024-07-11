@@ -8,7 +8,7 @@ import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.GameMediaItem;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;

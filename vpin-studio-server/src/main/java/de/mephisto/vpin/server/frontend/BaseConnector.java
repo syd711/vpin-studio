@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.collections4.BidiMap;
@@ -352,7 +353,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public List<Playlist> getPlayLists(boolean excludeSqlLists) {
+  public List<Playlist> getPlayLists() {
     List<Playlist> result = new ArrayList<>();
     return result;
   }
