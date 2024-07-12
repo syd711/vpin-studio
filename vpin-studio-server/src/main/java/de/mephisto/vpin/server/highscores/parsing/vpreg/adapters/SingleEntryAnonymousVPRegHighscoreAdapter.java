@@ -12,7 +12,7 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
 
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) throws IOException {
-    if (getHighscoreEntry(gameFolder) != null && !gameFolder.hasEntry("hsa1") && !gameFolder.hasEntry("HSA1")) {
+    if (getHighscoreEntry(gameFolder) != null && !gameFolder.hasEntry("hsa1") && !gameFolder.hasEntry("HSA1") && !gameFolder.hasEntry("Initial1")) {
       return true;
     }
     return false;

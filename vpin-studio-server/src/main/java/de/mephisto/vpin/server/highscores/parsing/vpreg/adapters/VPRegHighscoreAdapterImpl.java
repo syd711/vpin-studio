@@ -48,6 +48,9 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
     if (gameFolder.hasEntry("HighScore")) {
       return (DocumentNode) gameFolder.getEntry("HighScore");
     }
+    if (gameFolder.hasEntry("HiScore")) {
+      return (DocumentNode) gameFolder.getEntry("HiScore");
+    }
     if (gameFolder.hasEntry("DBHiScore")) {
       return (DocumentNode) gameFolder.getEntry("DBHiScore");
     }
