@@ -133,6 +133,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/mediadir/" + gameId + "/" + screen, File.class);
   }
 
+  public File getPlaylistMediaDirectory(int playlistId, String screen) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/playlistmediadir/" + playlistId + "/" + screen, File.class);
+  }
+
   public TableDetails autoFillTableDetails(int gameId) throws Exception {
     try {
       return getRestClient().put(API + API_SEGMENT_FRONTEND + "/tabledetails/autofill/" + gameId, Collections.emptyMap(), TableDetails.class);

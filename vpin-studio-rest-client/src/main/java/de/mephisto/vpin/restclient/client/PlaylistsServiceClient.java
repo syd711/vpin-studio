@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.client;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import org.slf4j.Logger;
@@ -18,6 +19,11 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
   public PlaylistsServiceClient(VPinStudioClient client) {
     super(client);
   }
+
+  public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
+    return getRestClient().delete(API + "playlists" + "/media/" + gameId + "/" + screen.name() + "/" + name);
+  }
+
 
   public List<PlaylistRepresentation> getPlaylists() {
     return Arrays.asList(getRestClient().get(API + "playlists", PlaylistRepresentation[].class));

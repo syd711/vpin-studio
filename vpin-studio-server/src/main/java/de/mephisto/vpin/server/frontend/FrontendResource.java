@@ -11,6 +11,8 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.playlists.Playlist;
+import de.mephisto.vpin.server.playlists.PlaylistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +40,9 @@ public class FrontendResource {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private PlaylistService playlistService;
 
   @GetMapping
   public Frontend getFrontend() {
@@ -138,13 +143,21 @@ public class FrontendResource {
     String gamefilename = null;
     if (gameId < 0) {
       emu = frontendService.getDefaultGameEmulator();
-    } else {
+    }
+    else {
       Game game = gameService.getGame(gameId);
       gamefilename = game.getGameFileName();
-      emu = frontendService.getGameEmulator(game.getEmulatorId());  
+      emu = frontendService.getGameEmulator(game.getEmulatorId());
     }
     VPinScreen screen = VPinScreen.valueOf(name);
     return emu.getGameMediaFolder(gamefilename, screen);
+  }
+
+  @GetMapping("/playlistmediadir/{playlistId}/{name}")
+  public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("name") String name) {
+    VPinScreen screen = VPinScreen.valueOf(name);
+    Playlist playList = frontendService.getPlayList(playlistId);
+    return frontendService.getPlaylistMediaFolder(playList, screen);
   }
 
 

@@ -1,8 +1,11 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.List;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
@@ -13,6 +16,17 @@ public class PlaylistsResource {
 
   @Autowired
   private PlaylistService playlistService;
+
+  @Autowired
+  private FrontendService frontendService;
+
+  @DeleteMapping("/media/{playlistId}/{screen}/{file}")
+  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
+    Playlist playlist = playlistService.getPlaylist(playlistId);
+    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
+    File media = new File(mediaFolder, filename);
+    return media.exists() && media.delete();
+  }
 
   @GetMapping
   public List<Playlist> getPlaylists() {

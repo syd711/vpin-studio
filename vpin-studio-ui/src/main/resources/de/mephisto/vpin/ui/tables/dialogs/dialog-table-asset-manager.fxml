@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
@@ -449,38 +450,6 @@
                </center>
                <top>
                   <BorderPane BorderPane.alignment="CENTER_LEFT">
-                     <center>
-                        <HBox>
-                           <children>
-                              <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
-                                    <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </HBox>
-                     </center>
                      <right>
                         <HBox spacing="3.0" BorderPane.alignment="CENTER">
                            <children>
@@ -509,6 +478,82 @@
                            </children>
                         </HBox>
                      </right>
+                     <left>
+                        <HBox BorderPane.alignment="CENTER">
+                           <children>
+                              <HBox fx:id="tableSelection">
+                                 <children>
+                                    <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                              <HBox fx:id="playlistSelection">
+                                 <children>
+                                    <GridPane vgap="3.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="67.00004882812499" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="tableLabel21" layoutX="186.0" layoutY="15.0" text="Playlist:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </left>
+                     <center>
+                        <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
+                           <children>
+                              <RadioButton fx:id="playlistsRadio" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton fx:id="tablesRadio" mnemonicParsing="false" selected="true" text="Tables" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                           <padding>
+                              <Insets right="24.0" />
+                           </padding>
+                        </HBox>
+                     </center>
                   </BorderPane>
                </top>
             </BorderPane>

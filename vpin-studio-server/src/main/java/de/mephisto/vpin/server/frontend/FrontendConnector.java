@@ -15,8 +15,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface FrontendConnector {
-  /** 
-   * Let the Frontend initialize itself, called 
+  /**
+   * Let the Frontend initialize itself, called
    */
   void initializeConnector();
 
@@ -34,7 +34,7 @@ public interface FrontendConnector {
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators
    */
   void clearCache();
-  
+
   Game getGame(int id);
 
   @Nullable
@@ -54,7 +54,7 @@ public interface FrontendConnector {
   boolean deleteGame(int id);
 
   void deleteGames(int emuId);
-  
+
   int getGameCount(int emuId);
 
   List<Integer> getGameIds(int emuId);
@@ -87,7 +87,7 @@ public interface FrontendConnector {
   // Media management
 
   /**
-   * Returns the strategy to access files. 
+   * Returns the strategy to access files.
    * By returning a null value, it tells the frontend does not support media
    */
   MediaAccessStrategy getMediaAccessStrategy();
@@ -121,6 +121,8 @@ public interface FrontendConnector {
 
   @NonNull
   List<Integer> getGameIdsFromPlaylists();
+
+  File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen);
 
   //----------------------------------
   // Statistics management

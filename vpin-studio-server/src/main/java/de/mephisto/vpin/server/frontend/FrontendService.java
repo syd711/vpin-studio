@@ -512,6 +512,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     preferencesService.addChangeListener(this);
   }
 
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+    return getFrontendConnector().getPlaylistMediaFolder(playList, screen);
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.PINBALLX_SETTINGS)) {

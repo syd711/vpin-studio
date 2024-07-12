@@ -3,7 +3,9 @@ package de.mephisto.vpin.server.playlists;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.GameMedia;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -11,6 +11,7 @@ import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -350,6 +351,11 @@ public abstract class BaseConnector implements FrontendConnector {
     //playlist.setMenuColor(rs.getInt("MenuColor"));
     //playlist.setSqlPlayList(sqlPlaylist);
     return playlist;
+  }
+
+  @Override
+  public File getPlaylistMediaFolder(@NotNull Playlist playList, @NotNull VPinScreen screen) {
+    return null;
   }
 
   @Override

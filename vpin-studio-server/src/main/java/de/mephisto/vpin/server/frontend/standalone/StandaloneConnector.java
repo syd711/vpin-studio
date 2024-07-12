@@ -89,7 +89,6 @@ public class StandaloneConnector extends BaseConnector {
   //------------------------------------------------------
   @Override
   protected List<Emulator> loadEmulators() {
-
     List<Emulator> emulators = new ArrayList<>();
 
     // so far only VPX is supported in standalone mode
