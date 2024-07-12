@@ -18,7 +18,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.Preferences;
@@ -419,7 +419,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
       return Collections.emptyList();
     }
-    Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
+    Map<String, List<FrontendMediaItem>> media = game.getGameMedia().getMedia();
     VPinScreen[] values = VPinScreen.values();
     List<ValidationState> result = new ArrayList<>();
     for (VPinScreen screen : values) {
@@ -429,10 +429,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
 
       if (media.containsKey(screen.name())) {
-        List<GameMediaItem> gameMediaItems = media.get(screen.name());
-        for (GameMediaItem gameMediaItem : gameMediaItems) {
-          String name = gameMediaItem.getName();
-          Date mediaLastModified = new Date(gameMediaItem.getFile().lastModified());
+        List<FrontendMediaItem> frontendMediaItems = media.get(screen.name());
+        for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
+          String name = frontendMediaItem.getName();
+          Date mediaLastModified = new Date(frontendMediaItem.getFile().lastModified());
           if (name.endsWith(".mp4")) {
             if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(mediaLastModified)) {
               result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));

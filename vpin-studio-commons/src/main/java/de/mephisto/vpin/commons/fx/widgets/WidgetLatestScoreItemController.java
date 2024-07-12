@@ -2,8 +2,8 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import javafx.fxml.FXML;
@@ -61,8 +61,8 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     }
     Image image = new Image(gameMediaItem);
 
-    GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaRepresentation gameMedia = game.getGameMedia();
+    FrontendMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (wheelMedia == null) {
       image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
     }

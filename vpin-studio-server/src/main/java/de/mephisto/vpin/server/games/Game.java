@@ -3,11 +3,11 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.restclient.frontend.GameMedia;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -186,11 +186,11 @@ public class Game {
 
   @JsonIgnore
   public Image getWheelImage() {
-    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaItem frontendMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     Image image = null;
-    if (gameMediaItem != null) {
+    if (frontendMediaItem != null) {
       try {
-        BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
+        BufferedImage bufferedImage = ImageUtil.loadImage(frontendMediaItem.getFile());
         image = SwingFXUtils.toFXImage(bufferedImage, null);
       } catch (IOException e) {
         throw new RuntimeException(e);
@@ -322,19 +322,19 @@ public class Game {
   }
 
   @NonNull
-  public GameMedia getGameMedia() {
-    GameMedia gameMedia = new GameMedia();
+  public FrontendMedia getGameMedia() {
+    FrontendMedia frontendMedia = new FrontendMedia();
     VPinScreen[] screens = VPinScreen.values();
     for (VPinScreen screen : screens) {
-      List<GameMediaItem> itemList = new ArrayList<>();
+      List<FrontendMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getMediaFiles(screen);
       for (File file : mediaFiles) {
-        GameMediaItem item = new GameMediaItem(this.getId(), screen, file);
+        FrontendMediaItem item = new FrontendMediaItem(this.getId(), screen, file);
         itemList.add(item);
       }
-      gameMedia.getMedia().put(screen.name(), itemList);
+      frontendMedia.getMedia().put(screen.name(), itemList);
     }
-    return gameMedia;
+    return frontendMedia;
   }
 
   @JsonIgnore

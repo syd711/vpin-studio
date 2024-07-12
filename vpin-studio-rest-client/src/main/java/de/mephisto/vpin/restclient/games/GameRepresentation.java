@@ -36,7 +36,7 @@ public class GameRepresentation {
   private int id;
   private String notes;
   private Date modified;
-  private GameMediaRepresentation gameMedia;
+  private FrontendMediaRepresentation gameMedia;
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
   private ValidationState validationState;
@@ -296,11 +296,11 @@ public class GameRepresentation {
     this.tableName = tableName;
   }
 
-  public GameMediaRepresentation getGameMedia() {
+  public FrontendMediaRepresentation getGameMedia() {
     return gameMedia;
   }
 
-  public void setGameMedia(GameMediaRepresentation gameMedia) {
+  public void setGameMedia(FrontendMediaRepresentation gameMedia) {
     this.gameMedia = gameMedia;
   }
 

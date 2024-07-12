@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
@@ -22,7 +22,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private final boolean dialogRendering;
 
-  private GameMediaItemRepresentation mediaItem;
+  private FrontendMediaItemRepresentation mediaItem;
   private MediaView mediaView;
   private Media media;
 
@@ -48,8 +48,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     this.render();
   }
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, 
-      @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
+                          @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;

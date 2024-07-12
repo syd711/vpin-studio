@@ -919,25 +919,7 @@ public class PinUPConnector implements FrontendConnector {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
       while (rs.next()) {
-        String sql = rs.getString("PlayListSQL");
-        String name = rs.getString("PlayName");
-        boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
-        playlist.setId(rs.getInt("PlayListID"));
-        playlist.setName(name);
-        playlist.setPlayListSQL(sql);
-
-        playlist.setMenuColor(rs.getInt("MenuColor"));
-        if (rs.wasNull()) {
-          playlist.setMenuColor(null);
-        }
-        playlist.setSqlPlayList(sqlPlaylist);
-
-        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
-        if (sqlPlaylist) {
-          updateSQLPlaylist(sql, playlistGameMap);
-        }
-        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
-        addPlaylistMedia(playlist);
+        playlist = createPlaylist(rs);
       }
       rs.close();
       statement.close();
@@ -959,28 +941,7 @@ public class PinUPConnector implements FrontendConnector {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
       while (rs.next()) {
-        String sql = rs.getString("PlayListSQL");
-        String name = rs.getString("PlayName");
-        boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
-
-        Playlist playlist = new Playlist();
-        playlist.setId(rs.getInt("PlayListID"));
-        playlist.setName(name);
-        playlist.setPlayListSQL(sql);
-
-        playlist.setMenuColor(rs.getInt("MenuColor"));
-        if (rs.wasNull()) {
-          playlist.setMenuColor(null);
-        }
-        playlist.setSqlPlayList(sqlPlaylist);
-
-        Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
-        if (sqlPlaylist) {
-          updateSQLPlaylist(sql, playlistGameMap);
-        }
-        playlist.setGames(new ArrayList<>(playlistGameMap.values()));
-
-        addPlaylistMedia(playlist);
+        Playlist playlist = createPlaylist(rs);
         result.add(playlist);
       }
       rs.close();
@@ -996,28 +957,28 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   private void addPlaylistMedia(Playlist playlist) {
-    GameMedia gameMedia = new GameMedia();
+    FrontendMedia frontendMedia = new FrontendMedia();
     VPinScreen[] screens = VPinScreen.values();
     for (VPinScreen screen : screens) {
-      List<GameMediaItem> itemList = new ArrayList<>();
+      List<FrontendMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getPlaylistMediaFiles(playlist, screen);
       for (File file : mediaFiles) {
-        GameMediaItem item = new GameMediaItem(playlist.getId(), screen, file);
+        FrontendMediaItem item = new PlaylistFrontendMediaItem(playlist.getId(), screen, file);
         itemList.add(item);
       }
-      gameMedia.getMedia().put(screen.name(), itemList);
+      frontendMedia.getMedia().put(screen.name(), itemList);
     }
-    playlist.setPlaylistMedia(gameMedia);
+    playlist.setPlaylistMedia(frontendMedia);
   }
 
   @NonNull
   public List<File> getPlaylistMediaFiles(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
-    String baseFilename = playlist.getName();
+    String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
     File mediaFolder = getPlaylistMediaFolder(playlist, screen);
     if (mediaFolder.exists()) {
-      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith("pl_" + baseFilename.toLowerCase()));
+      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
       if (mediaFiles != null && mediaFiles.length > 0) {
-        Pattern plainMatcher = Pattern.compile(Pattern.quote("pl_" + baseFilename.toLowerCase()) + "\\d{0,2}");
+        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}");
         return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(FilenameUtils.getBaseName(f.getName().toLowerCase())).matches()).collect(Collectors.toList());
       }
     }
@@ -1696,6 +1657,31 @@ public class PinUPConnector implements FrontendConnector {
 
    */
 
+  @NonNull
+  private Playlist createPlaylist(ResultSet rs) throws SQLException {
+    Playlist playlist = new Playlist();
+    String sql = rs.getString("PlayListSQL");
+    String name = rs.getString("PlayName");
+    boolean sqlPlaylist = rs.getInt("PlayListType") == 1;
+    playlist.setId(rs.getInt("PlayListID"));
+    playlist.setMediaName(rs.getString("Logo"));
+    playlist.setName(name);
+    playlist.setPlayListSQL(sql);
+
+    playlist.setMenuColor(rs.getInt("MenuColor"));
+    if (rs.wasNull()) {
+      playlist.setMenuColor(null);
+    }
+    playlist.setSqlPlayList(sqlPlaylist);
+
+    Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
+    if (sqlPlaylist) {
+      updateSQLPlaylist(sql, playlistGameMap);
+    }
+    playlist.setGames(new ArrayList<>(playlistGameMap.values()));
+    addPlaylistMedia(playlist);
+    return playlist;
+  }
 
   @Nullable
   private Game createGame(@NonNull ResultSet rs) throws SQLException {
@@ -2040,7 +2026,7 @@ public class PinUPConnector implements FrontendConnector {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        if (cmdName.contains("PinUpMenu.exe")) {
+        if (cmdName.contains("PinUpMenu")) {
           return true;
         }
       }

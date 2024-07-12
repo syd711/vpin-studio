@@ -7,7 +7,7 @@ import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -523,7 +523,7 @@ public class WidgetFactory {
     }
   }
 
-  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, GameMediaItemRepresentation mediaItem, boolean previewEnabled) {
+  public static void createMediaContainer(VPinStudioClient client, BorderPane parent, FrontendMediaItemRepresentation mediaItem, boolean previewEnabled) {
     if (parent.getCenter() != null) {
       Node node = parent.getCenter();
       if (node instanceof AssetMediaPlayer) {
@@ -560,7 +560,7 @@ public class WidgetFactory {
     parent.setCenter(label);
   }
 
-  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, GameMediaItemRepresentation mediaItem, BorderPane parent) {
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);

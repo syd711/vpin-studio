@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -195,9 +195,9 @@ public class TournamentSynchronizer {
   private void finishTable(TournamentTableInfo tournamentTableInfo) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-      if (gameMediaItem != null) {
-        WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
+      FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+      if (frontendMediaItem != null) {
+        WheelAugmenter augmenter = new WheelAugmenter(frontendMediaItem.getFile());
         augmenter.deAugment();
       }
     }
@@ -209,12 +209,12 @@ public class TournamentSynchronizer {
   private void startTable(Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-      if (gameMediaItem != null) {
+      FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+      if (frontendMediaItem != null) {
         if (!StringUtils.isEmpty(metaData.getBadge())) {
           File badgeFile = systemService.getBadgeFile(metaData.getBadge());
           if (badgeFile.exists()) {
-            WheelAugmenter augmenter = new WheelAugmenter(gameMediaItem.getFile());
+            WheelAugmenter augmenter = new WheelAugmenter(frontendMediaItem.getFile());
             augmenter.augment(badgeFile);
           }
         }

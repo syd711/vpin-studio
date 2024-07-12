@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -56,8 +56,8 @@ public class DnDOverlayController implements Initializable {
       tableLabel.setVisible(true);
       tableWheelImage.setVisible(true);
 
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaRepresentation gameMedia = game.getGameMedia();
+      FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         tableWheelImage.setImage(new Image(gameMediaItem));

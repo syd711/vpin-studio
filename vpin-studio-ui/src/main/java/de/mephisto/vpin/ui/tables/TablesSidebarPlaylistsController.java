@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -54,6 +55,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
   @FXML
   private Hyperlink dismissLink;
 
+  @FXML
+  private Button assetManagerBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -78,6 +82,17 @@ public class TablesSidebarPlaylistsController implements Initializable {
 //    DismissalUtil..dismissValidation(g, options.getValidationStates().get(0));
   }
 
+  @FXML
+  private void onMediaEdit() {
+    if (this.game.isPresent()) {
+      List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
+      if (!playlists.isEmpty()) {
+        PlaylistRepresentation playlistRepresentation = playlists.get(0);
+        TableDialogs.openTableAssetsDialog(this.tablesSidebarController.getTableOverviewController(), this.game.get(), playlistRepresentation, VPinScreen.Wheel);
+      }
+    }
+  }
+
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
@@ -94,6 +109,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
 
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
+    dataRoot.setVisible(g.isPresent());
+
+    assetManagerBtn.setDisable(g.isEmpty());
 
     this.errorBox.setVisible(false);
     if (g.isPresent()) {

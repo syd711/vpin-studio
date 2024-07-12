@@ -11,8 +11,8 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
@@ -122,7 +122,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private ImageView frontendImage;
 
   @FXML
-  private ListView<GameMediaItemRepresentation> assetList;
+  private ListView<FrontendMediaItemRepresentation> assetList;
 
   @FXML
   private ListView<TableAsset> serverAssetsList;
@@ -204,6 +204,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private GameRepresentation game;
   private PlaylistRepresentation playlist;
   private VPinScreen screen = VPinScreen.Wheel;
+  private FrontendMediaRepresentation frontendMedia;
   private Node lastSelected;
 
 
@@ -269,7 +270,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onPlaylistAdd() {
-    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       try {
         client.getGameMediaService().toFullScreen(game.getId(), screen);
@@ -303,14 +304,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onMediaUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    TableDialogs.directAssetUpload(stage, game, screen);
+    if (isPlaylistMode()) {
+      TableDialogs.directAssetUpload(stage, playlist, screen);
+    }
+    else {
+      TableDialogs.directAssetUpload(stage, game, screen);
+    }
     refreshTableMediaView();
   }
 
   @FXML
   private void onAssetDownload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    GameMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    FrontendMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       StudioFolderChooser chooser = new StudioFolderChooser();
       chooser.setTitle("Select Download Folder");
@@ -332,16 +338,16 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    GameMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
 
         if (isPlaylistMode()) {
-          client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
+          client.getPlaylistMediaService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
         }
         else {
-          client.getPlaylistsService().deleteMedia(playlist.getId(), screen, selectedItem.getName());
+          client.getGameMediaService().deleteMedia(game.getId(), screen, selectedItem.getName());
         }
 
         Platform.runLater(() -> {
@@ -368,7 +374,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onRename() {
-    GameMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
+    FrontendMediaItemRepresentation selectedItem = this.assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
@@ -513,7 +519,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     TableAsset tableAsset = this.serverAssetsList.getSelectionModel().getSelectedItem();
     boolean append = false;
 
-    ObservableList<GameMediaItemRepresentation> items = assetList.getItems();
+    ObservableList<FrontendMediaItemRepresentation> items = assetList.getItems();
     String targetName = game.getGameName() + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
@@ -700,9 +706,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     });
 
-    this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameMediaItemRepresentation>() {
+    this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<FrontendMediaItemRepresentation>() {
       @Override
-      public void changed(ObservableValue<? extends GameMediaItemRepresentation> observable, GameMediaItemRepresentation oldValue, GameMediaItemRepresentation mediaItem) {
+      public void changed(ObservableValue<? extends FrontendMediaItemRepresentation> observable, FrontendMediaItemRepresentation oldValue, FrontendMediaItemRepresentation mediaItem) {
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         if (screen.equals(VPinScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
@@ -768,11 +774,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private void updateState(VPinScreen s, BorderPane borderPane, Boolean hovered, Boolean clicked) {
-    List<GameMediaItemRepresentation> mediaItems = new ArrayList<>();
-    GameMediaRepresentation gameMedia = getActiveGameMedia();
-
-    if (gameMedia != null) {
-      mediaItems = gameMedia.getMediaItems(s);
+    List<FrontendMediaItemRepresentation> mediaItems = new ArrayList<>();
+    if (frontendMedia != null) {
+      mediaItems = frontendMedia.getMediaItems(s);
     }
 
     if (mediaItems.isEmpty()) {
@@ -811,21 +815,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
   }
 
-  private GameMediaRepresentation getActiveGameMedia() {
-    if (isPlaylistMode()) {
-      if (this.playlist != null) {
-        return this.playlist.getPlaylistMedia();
-      }
-      return null;
-    }
-
-    if (this.game != null) {
-      return client.getGameMediaService().getGameMedia(this.game.getId());
-    }
-    return null;
-  }
-
-  private boolean isPlaylistMode() {
+  public boolean isPlaylistMode() {
     return playlistsRadio != null && playlistsRadio.isSelected() && this.playlist != null;
   }
 
@@ -1026,8 +1016,21 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     updateState(VPinScreen.Wheel, screenWheel, false, this.screen.equals(VPinScreen.Wheel));
   }
 
-
   public void refreshTableMediaView() {
+    if (this.game == null && this.playlist == null) {
+      return;
+    }
+
+    if (isPlaylistMode()) {
+      this.frontendMedia = client.getPlaylistsService().getPlaylist(this.playlist.getId()).getPlaylistMedia();
+    }
+    else {
+      if (this.game == null) {
+        this.game = tablesCombo.getItems().get(0);
+      }
+      this.frontendMedia = client.getGameMediaService().getGameMedia(this.game.getId());
+    }
+
     if (!isEmbeddedMode()) {
       this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
     }
@@ -1039,10 +1042,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.addAudioBlank.setVisible(screen.equals(VPinScreen.AudioLaunch));
 
 
-    GameMediaRepresentation gameMedia = getActiveGameMedia();
-    if (gameMedia != null) {
-      List<GameMediaItemRepresentation> items = gameMedia.getMediaItems(screen);
-      ObservableList<GameMediaItemRepresentation> assets = FXCollections.observableList(items);
+    if (frontendMedia != null) {
+      List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(screen);
+      ObservableList<FrontendMediaItemRepresentation> assets = FXCollections.observableList(items);
       assetList.getItems().removeAll(assetList.getItems());
       assetList.setItems(assets);
       assetList.refresh();
@@ -1081,7 +1083,19 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     });
   }
 
+  public PlaylistRepresentation getPlaylist() {
+    return playlist;
+  }
+
   public GameRepresentation getGame() {
     return game;
+  }
+
+  public FrontendMediaRepresentation getFrontendMedia() {
+    return frontendMedia;
+  }
+
+  public void setPlaylistMode() {
+    this.playlistsRadio.setSelected(true);
   }
 }

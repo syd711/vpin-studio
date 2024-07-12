@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -26,7 +26,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   private static AudioMediaPlayer activePlayer = null;
 
   @Nullable
-  private final GameMediaItemRepresentation mediaItem;
+  private final FrontendMediaItemRepresentation mediaItem;
   private ProgressBar progressBar;
   private DoubleBinding binding;
   private MediaView mediaView;
@@ -36,7 +36,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     this(parent, null, url);
   }
 
-  public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable GameMediaItemRepresentation mediaItem, @NonNull String url) {
+  public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.render();

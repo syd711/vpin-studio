@@ -1,7 +1,6 @@
 package de.mephisto.vpin.restclient.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.frontend.GameMedia;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 
 import java.util.ArrayList;
@@ -12,15 +11,24 @@ public class PlaylistRepresentation {
   private Integer menuColor;
   private String name;
   private String playListSQL;
+  private String mediaName;
   private boolean sqlPlayList;
   private List<PlaylistGame> games = new ArrayList<>();
-  private GameMediaRepresentation playlistMedia;
+  private FrontendMediaRepresentation playlistMedia;
 
-  public GameMediaRepresentation getPlaylistMedia() {
+  public String getMediaName() {
+    return mediaName;
+  }
+
+  public void setMediaName(String mediaName) {
+    this.mediaName = mediaName;
+  }
+
+  public FrontendMediaRepresentation getPlaylistMedia() {
     return playlistMedia;
   }
 
-  public void setPlaylistMedia(GameMediaRepresentation playlistMedia) {
+  public void setPlaylistMedia(FrontendMediaRepresentation playlistMedia) {
     this.playlistMedia = playlistMedia;
   }
 

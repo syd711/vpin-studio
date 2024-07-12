@@ -1477,7 +1477,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   private Node createAssetStatus(GameRepresentation value, VPinScreen VPinScreen) {
-    GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
+    FrontendMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
     boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());

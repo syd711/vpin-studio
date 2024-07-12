@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.messaging;
 
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -59,7 +59,7 @@ public class MessageContainer extends BorderPane {
     else if(result.getGameId() > 0) {
       Image image;
       GameRepresentation game = Studio.client.getGameService().getGame(result.getGameId());
-      GameMediaItemRepresentation item = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaItemRepresentation item = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (item == null) {
         image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
       }

@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.players;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -54,8 +54,8 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    GameMediaRepresentation gameMedia = game.getGameMedia();
-    GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaRepresentation gameMedia = game.getGameMedia();
+    FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (item != null) {
       ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
       Image image = new Image(gameMediaItem);
@@ -90,8 +90,8 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       wheelImageView.setImage(wheel);
     }
     else {
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaRepresentation gameMedia = game.getGameMedia();
+      FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);

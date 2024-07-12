@@ -3,17 +3,14 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
-import de.mephisto.vpin.restclient.frontend.GameMedia;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -25,25 +22,19 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -73,7 +64,7 @@ public class GameMediaResource {
   private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   @GetMapping("/{id}")
-  public GameMedia getGameMedia(@PathVariable("id") int id) {
+  public FrontendMedia getGameMedia(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
@@ -149,17 +140,17 @@ public class GameMediaResource {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = gameService.getGame(id);
     if (game != null) {
-      GameMedia gameMedia = game.getGameMedia();
-      GameMediaItem gameMediaItem = gameMedia.getDefaultMediaItem(vPinScreen);
+      FrontendMedia frontendMedia = game.getGameMedia();
+      FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
       if (!StringUtils.isEmpty(name)) {
         name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
         name = name.replaceAll("\\+", "%2B");
         name = URLDecoder.decode(name, Charset.defaultCharset());
-        gameMediaItem = gameMedia.getMediaItem(vPinScreen, name);
+        frontendMediaItem = frontendMedia.getMediaItem(vPinScreen, name);
       }
 
-      if (gameMediaItem != null) {
-        File file = gameMediaItem.getFile();
+      if (frontendMediaItem != null) {
+        File file = frontendMediaItem.getFile();
         FileInputStream in = new FileInputStream(file);
         byte[] bytes = IOUtils.toByteArray(in);
         ByteArrayResource bytesResource = new ByteArrayResource(bytes);
@@ -167,7 +158,7 @@ public class GameMediaResource {
 
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set(CONTENT_LENGTH, String.valueOf(file.length()));
-        responseHeaders.set(CONTENT_TYPE, gameMediaItem.getMimeType());
+        responseHeaders.set(CONTENT_TYPE, frontendMediaItem.getMimeType());
         responseHeaders.set("Access-Control-Allow-Origin", "*");
         responseHeaders.set("Access-Control-Expose-Headers", "origin, range");
         responseHeaders.set("Cache-Control", "public, max-age=3600");
@@ -184,7 +175,7 @@ public class GameMediaResource {
   }
 
   @PostMapping("/upload/{screen}/{append}")
-  public JobExecutionResult upload(@PathVariable("screen") VPinScreen VPinScreen,
+  public JobExecutionResult upload(@PathVariable("screen") VPinScreen screen,
                                    @PathVariable("append") boolean append,
                                    @RequestParam(value = "file", required = false) MultipartFile file,
                                    @RequestParam("objectId") Integer gameId) {
@@ -201,14 +192,14 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.buildMediaAsset(game, VPinScreen, suffix, append);
+      File out = gameMediaService.buildMediaAsset(game, screen, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
       return JobExecutionResultFactory.empty();
     }
     catch (Exception e) {
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "ALT sound upload failed: " + e.getMessage());
+      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());
     }
   }
 

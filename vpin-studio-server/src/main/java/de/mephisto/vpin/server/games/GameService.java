@@ -20,7 +20,7 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -345,8 +345,8 @@ public class GameService implements InitializingBean {
               LOG.info("Deleting screen assets for \"" + game.getGameDisplayName() + "\"");
               VPinScreen[] values = VPinScreen.values();
               for (VPinScreen originalScreenValue : values) {
-                List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
-                for (GameMediaItem mediaItem : gameMediaItem) {
+                List<FrontendMediaItem> frontendMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+                for (FrontendMediaItem mediaItem : frontendMediaItem) {
                   File mediaFile = mediaItem.getFile();
 
                   if (originalScreenValue.equals(VPinScreen.Wheel)) {

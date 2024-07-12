@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.control.Label;
@@ -37,14 +37,14 @@ abstract public class AssetMediaPlayer extends BorderPane {
     return mediaPlayer;
   }
 
-  protected Label getErrorLabel(@Nullable GameMediaItemRepresentation mediaItem) {
+  protected Label getErrorLabel(@Nullable FrontendMediaItemRepresentation mediaItem) {
     Label label = new Label("  Media available\n(but not playable)");
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     label.setUserData(mediaItem);
     return label;
   }
 
-  protected Label getEncodingNotSupportedLabel(@Nullable GameMediaItemRepresentation mediaItem) {
+  protected Label getEncodingNotSupportedLabel(@Nullable FrontendMediaItemRepresentation mediaItem) {
     Label label = new Label("        Media available\n(encoding not supported)");
     label.setStyle("-fx-font-color: #33CC00;-fx-text-fill:#33CC00; -fx-font-weight: bold;");
     label.setUserData(mediaItem);

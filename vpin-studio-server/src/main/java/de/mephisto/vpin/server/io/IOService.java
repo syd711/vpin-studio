@@ -14,7 +14,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -153,7 +153,7 @@ public class IOService {
 
     descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
 
-    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     if (mediaItem != null) {
       descriptor.setImageUrl(mediaItem.getUri());
     }

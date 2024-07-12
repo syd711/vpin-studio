@@ -20,14 +20,6 @@ public class PlaylistsResource {
   @Autowired
   private FrontendService frontendService;
 
-  @DeleteMapping("/media/{playlistId}/{screen}/{file}")
-  public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
-    Playlist playlist = playlistService.getPlaylist(playlistId);
-    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
-    File media = new File(mediaFolder, filename);
-    return media.exists() && media.delete();
-  }
-
   @GetMapping
   public List<Playlist> getPlaylists() {
     return playlistService.getPlaylists();

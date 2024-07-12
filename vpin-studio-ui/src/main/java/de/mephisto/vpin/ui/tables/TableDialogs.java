@@ -16,10 +16,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -68,12 +65,12 @@ public class TableDialogs {
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
 
-        GameMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
+        FrontendMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
           Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
-            "A media asset already exists.",
-            "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+              "A media asset already exists.",
+              "Append new asset or overwrite existing asset?", "Overwrite", "Append");
           if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
           }
           else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
@@ -84,7 +81,40 @@ public class TableDialogs {
           }
         }
 
-        TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
+            "Media Upload", files, screen, append);
+        ProgressDialog.createProgressDialog(model);
+      });
+    }
+  }
+
+  public static void directAssetUpload(Stage stage, PlaylistRepresentation playlist, VPinScreen screen) {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select Media");
+    fileChooser.getExtensionFilters().addAll(
+        new FileChooser.ExtensionFilter("Files", MediaTypesSelector.getFileSelection(screen)));
+
+    List<File> files = fileChooser.showOpenMultipleDialog(stage);
+    if (files != null && !files.isEmpty()) {
+      Platform.runLater(() -> {
+
+        FrontendMediaRepresentation medias = client.getPlaylistsService().getPlaylist(playlist.getId()).getPlaylistMedia();
+        boolean append = false;
+        if (medias.getMediaItems(screen).size() > 0) {
+          Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
+              "A media asset already exists.",
+              "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+          if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+          }
+          else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+            append = true;
+          }
+          else {
+            return;
+          }
+        }
+
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
             "Media Upload", files, screen, append);
         ProgressDialog.createProgressDialog(model);
       });
@@ -325,11 +355,27 @@ public class TableDialogs {
     controller.loadAllTables(game.getEmulatorId());
     controller.setGame(overviewController, game, screen);
 
-//    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-//    stage.setUserData(fxResizeHelper);
+    stage.showAndWait();
+    return true;
+  }
+
+  public static boolean openTableAssetsDialog(TableOverviewController overviewController, GameRepresentation game, PlaylistRepresentation playlist, VPinScreen screen) {
+    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
+    GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
+    boolean hd = defaultConfiguration.getBounds().getHeight() <= 1080;
+
+    String fxml = "dialog-table-asset-manager.fxml";
+    if (hd) {
+      fxml = "dialog-table-asset-manager-hd.fxml";
+    }
+    Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
+    TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
+    controller.loadAllTables(game.getEmulatorId());
+    controller.setPlaylistMode();
+    controller.setPlaylist(overviewController, playlist, screen);
 
     stage.showAndWait();
-
     return true;
   }
 
@@ -691,7 +737,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, GameMediaItemRepresentation item) {
+  public static void openMediaDialog(VPinStudioClient client, GameRepresentation game, FrontendMediaItemRepresentation item) {
     Parent root = null;
     try {
       root = FXMLLoader.load(Studio.class.getResource("dialog-media.fxml"));

@@ -68,8 +68,8 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     }
   }
 
-  public GameMediaRepresentation getGameMedia(int gameId) {
-    return getRestClient().get(API + API_SEGMENT_MEDIA + "/" + gameId, GameMediaRepresentation.class);
+  public FrontendMediaRepresentation getGameMedia(int gameId) {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/" + gameId, FrontendMediaRepresentation.class);
   }
 
 

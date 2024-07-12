@@ -24,7 +24,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.ScoreList;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -187,7 +187,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   public ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen) {
     try {
       Game game = gameService.getGame(id);
-      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         File file = defaultMediaItem.getFile();
         FileInputStream fileInputStream = new FileInputStream(file);

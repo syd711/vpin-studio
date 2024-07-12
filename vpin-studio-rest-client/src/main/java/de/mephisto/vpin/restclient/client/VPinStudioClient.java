@@ -31,6 +31,8 @@ import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
+import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
+import de.mephisto.vpin.restclient.playlists.PlaylistsServiceClient;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -94,6 +96,7 @@ public class VPinStudioClient implements OverlayClient {
   private final ResServiceClient resServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
+  private final PlaylistMediaServiceClient playlistMediaServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -135,6 +138,7 @@ public class VPinStudioClient implements OverlayClient {
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
+    this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
@@ -147,6 +151,10 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public PlaylistMediaServiceClient getPlaylistMediaService() {
+    return playlistMediaServiceClient;
   }
 
   public IniServiceClient getIniService() {

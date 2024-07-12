@@ -7,8 +7,8 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -352,7 +352,7 @@ public class TablesSidebarMediaController implements Initializable {
 
 
     GameRepresentation gameRepresentation = game.get();
-    GameMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(VPinScreen.valueOf(screen));
+    FrontendMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(VPinScreen.valueOf(screen));
     if (defaultMediaItem != null) {
       TableDialogs.openMediaDialog(client, gameRepresentation, defaultMediaItem);
     }
@@ -366,7 +366,7 @@ public class TablesSidebarMediaController implements Initializable {
 
     VPinScreen vPinScreen = VPinScreen.valueOf(screen);
     GameRepresentation gameRepresentation = game.get();
-    GameMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(vPinScreen);
+    FrontendMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(vPinScreen);
     if (defaultMediaItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -440,7 +440,7 @@ public class TablesSidebarMediaController implements Initializable {
       btn_edit_PlayField.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.PlayField).size()));
       btn_edit_Wheel.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).size()));
 
-      GameMediaRepresentation gameMedia = game.getGameMedia();
+      FrontendMediaRepresentation gameMedia = game.getGameMedia();
       refreshMedia(gameMedia, cardScreen, preview, directB2SData);
     }
     else {
@@ -461,7 +461,7 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
-  public void refreshMedia(GameMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview, DirectB2SData directB2SData) {
+  public void refreshMedia(FrontendMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview, DirectB2SData directB2SData) {
     Platform.runLater(() -> {
       VPinScreen[] values = VPinScreen.values();
       for (VPinScreen screen : values) {
@@ -473,7 +473,7 @@ public class TablesSidebarMediaController implements Initializable {
           Tooltip.install(mediaRoot, highscoreCardTooltip);
         }
 
-        GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
+        FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
         WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
 
         Node center = mediaRoot.getCenter();

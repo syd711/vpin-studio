@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
-import de.mephisto.vpin.restclient.frontend.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -102,7 +102,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       String popperScreen = cardSettings.getPopperScreen();
       if (popperScreen != null && !popperScreen.isEmpty()) {
         VPinScreen screen = VPinScreen.valueOf(popperScreen);
-        GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+        FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
             FrontendPlayerDisplay pupPlayerDisplay = null;

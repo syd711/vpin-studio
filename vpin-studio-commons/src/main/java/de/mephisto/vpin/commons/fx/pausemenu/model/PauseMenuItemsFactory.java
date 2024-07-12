@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu.model;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -123,8 +123,8 @@ public class PauseMenuItemsFactory {
   }
 
   private static void loadMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, VPinScreen screen, String title, String text, String pictureImage, String videoImage) {
-    List<GameMediaItemRepresentation> mediaItems = game.getGameMedia().getMediaItems(screen);
-    for (GameMediaItemRepresentation mediaItem : mediaItems) {
+    List<FrontendMediaItemRepresentation> mediaItems = game.getGameMedia().getMediaItems(screen);
+    for (FrontendMediaItemRepresentation mediaItem : mediaItems) {
       String mimeType = mediaItem.getMimeType();
       String baseType = mimeType.split("/")[0];
       if (baseType.equals("image")) {

@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -708,7 +708,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
       VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
-      GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
+      FrontendMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
         //images do not have a media player
