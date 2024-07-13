@@ -1724,13 +1724,28 @@ public class PinUPConnector implements InitializingBean, PreferenceChangedListen
       return false;
     }
 
+    if (!new File(emulator.getDirGames()).exists()) {
+      LOG.warn("Ignoring " + emulator + ", because \"Games Folder\" does not exist.");
+      return false;
+    }
+
     if (StringUtils.isEmpty(emulator.getDirRoms())) {
       LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is not set.");
       return false;
     }
 
+    if (!new File(emulator.getDirRoms()).exists()) {
+      LOG.warn("Ignoring " + emulator + ", because \"Roms Folder\" is does not exist.");
+      return false;
+    }
+
     if (StringUtils.isEmpty(emulator.getDirMedia())) {
       LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" is not set.");
+      return false;
+    }
+
+    if (!new File(emulator.getDirMedia()).exists()) {
+      LOG.warn("Ignoring " + emulator + ", because \"Media Dir\" does not exist.");
       return false;
     }
 
