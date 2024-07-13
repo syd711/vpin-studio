@@ -89,7 +89,7 @@ public class VPRegTest {
   @Test
   public void testSingleInitialsHighscores() {
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-local.stg");
-    VPReg reg = new VPReg(vpRegFile, "pabst", null);
+    VPReg reg = new VPReg(vpRegFile, "Aloha", null);
     ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
     assertNotNull(vpRegScoreSummary);
     assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");

@@ -7,6 +7,11 @@
       "textFile": "spongebob_hiscores.txt"
     },
     {
+      "rom": "Big_Shot_1974",
+      "tableName": "BigShot_VPX",
+      "textFile": ""
+    },
+    {
       "rom": "hpgof",
       "tableName": "",
       "textFile": ""
