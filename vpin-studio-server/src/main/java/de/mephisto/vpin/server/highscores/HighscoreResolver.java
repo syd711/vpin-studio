@@ -8,7 +8,6 @@ import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -84,7 +83,16 @@ class HighscoreResolver {
   private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
-      hsFile = game.getAlternateHighscoreTextFile();
+      hsFile = game.getAlternateHighscoreTextFile(game.getTableName());
+    }
+
+    if ((hsFile == null || !hsFile.exists())) {
+      if (!StringUtils.isEmpty(game.getRom())) {
+        ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+        if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
+          hsFile = game.getAlternateHighscoreTextFile(highscoreMapping.getTextFile());
+        }
+      }
     }
 
     if (hsFile != null && hsFile.exists()) {

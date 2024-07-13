@@ -349,9 +349,8 @@ public class Game {
 
   @JsonIgnore
   @Nullable
-  public File getAlternateHighscoreTextFile() {
-    if (!StringUtils.isEmpty(this.getTableName())) {
-      String name = this.getTableName();
+  public File getAlternateHighscoreTextFile(@NonNull String name) {
+    if (!StringUtils.isEmpty(name)) {
       if (!name.endsWith(".txt")) {
         name = name + ".txt";
       }
