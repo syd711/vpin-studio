@@ -376,7 +376,7 @@ public class GameService implements InitializingBean {
 
         //delete the game folder if it is empty
         File gameFolder = game.getGameFile().getParentFile();
-        if (gameFolder.exists()) {
+        if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getTablesFolder())) {
           String[] list = gameFolder.list();
           if (list == null || list.length == 0) {
             if (gameFolder.delete()) {

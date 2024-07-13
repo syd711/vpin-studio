@@ -82,18 +82,23 @@ public class PopperService implements InitializingBean, PreferenceChangedListene
     GameList list = new GameList();
     for (GameEmulator emulator : emulators) {
       File vpxTablesFolder = emulator.getTablesFolder();
-      List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
-      List<Game> games = pinUPConnector.getGames();
-      List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-      for (File file : files) {
-        String gameFileName = emulator.getGameFileName(file);
-        if (!emulatorGameFileNames.contains(gameFileName)) {
-          GameListItem item = new GameListItem();
-          item.setName(file.getName());
-          item.setFileName(file.getAbsolutePath());
-          item.setEmuId(emulator.getId());
-          list.getItems().add(item);
+      if (vpxTablesFolder.exists()) {
+        List<File> files = new ArrayList<>(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+        List<Game> games = pinUPConnector.getGames();
+        List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+        for (File file : files) {
+          String gameFileName = emulator.getGameFileName(file);
+          if (!emulatorGameFileNames.contains(gameFileName)) {
+            GameListItem item = new GameListItem();
+            item.setName(file.getName());
+            item.setFileName(file.getAbsolutePath());
+            item.setEmuId(emulator.getId());
+            list.getItems().add(item);
+          }
         }
+      }
+      else {
+        LOG.error("Emulator tables folder does not exist: " + vpxTablesFolder.getAbsolutePath());
       }
     }
     Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
