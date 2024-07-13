@@ -3,7 +3,7 @@
 ### Bugfixes
 
 - **Highscore Scanning**: Improved highscore detection for VPReg.stg based scores (e.g. "Aloha", "Pabst Can Crusher").
-- **Highscore Scanning**: Improved highscore detection "Mountain Climbing" (text file based).
+- **Highscore Scanning**: Added highscore detection for "Mountain Climbing" (text file based).
 - **Table Overview / Table Deletion**: Fixed issue that the emulator folder is deleted together with the last game of it. 
 
 Some technical stuff:
