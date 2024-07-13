@@ -366,11 +366,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   @FXML
-  private void onAutoFillSettings() {
-    TableDialogs.openAutoFillSettingsDialog(this.stage);
-  }
-
-  @FXML
   private void onAutoMatchAll() {
     TableDialogs.openAutoMatchAll();
   }
@@ -380,7 +375,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     try {
       if (tableDetails != null) {
         LOG.info("Auto-fill table version");
-        TableDetails td = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
+        TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails);
         if (td != null) {
           gameTypeCombo.setValue(td.getGameType());
           gameTheme.setValue(td.getGameTheme());
@@ -399,7 +394,7 @@ public class TableDataController implements Initializable, DialogController, Aut
           designedBy.setText(td.getDesignedBy());
           tags.setText(td.getTags());
           notes.setText(td.getNotes());
-          // do not overrid the version
+          // do not override the version
           //gameVersion.setText(td.getGameVersion());
           gNotes.setText(td.getgNotes());
           gDetails.setText(td.getgDetails());
@@ -414,7 +409,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onAutoFillAll() {
-    TableDialogs.openAutoFillAll(this.stage);
+    List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
+    TableDialogs.openAutoFillSettingsDialog(Studio.stage, vpxGamesCached, null);
   }
 
 

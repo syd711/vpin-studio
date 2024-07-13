@@ -428,17 +428,6 @@
                                                                   <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
                                                                </tooltip>
                                                             </SplitMenuButton>
-                                                            <Button mnemonicParsing="false" onAction="#onAutoFillSettings" textFill="WHITE">
-                                                               <font>
-                                                                  <Font size="14.0" />
-                                                               </font>
-                                                               <graphic>
-                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="20" />
-                                                               </graphic>
-                                                               <tooltip>
-                                                                  <Tooltip text="Open Auto-Fill Settings" />
-                                                               </tooltip>
-                                                            </Button>
                                                          </children>
                                                       </HBox>
                                                    </right>

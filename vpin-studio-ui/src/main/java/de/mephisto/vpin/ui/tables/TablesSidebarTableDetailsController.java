@@ -3,8 +3,8 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
@@ -21,6 +21,8 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -191,10 +193,10 @@ public class TablesSidebarTableDetailsController implements Initializable {
       Frontend frontend = client.getFrontendService().getFrontendCached();
 
       GameRepresentation gameRepresentation = game.get();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?", 
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Auto-Fix Table Version?",
           FrontendUtil.replaceName("This overwrites the existing [Frontend] table version \""
-            + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
-            gameRepresentation.getExtVersion() + "\".", frontend), 
+              + gameRepresentation.getVersion() + "\" with the VPS table version \"" +
+              gameRepresentation.getExtVersion() + "\".", frontend),
           "The table update indicator won't be shown afterwards.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
@@ -224,23 +226,16 @@ public class TablesSidebarTableDetailsController implements Initializable {
   }
 
   @FXML
-  private void onAutoFillSettings() {
-    TableDialogs.openAutoFillSettingsDialog(Studio.stage);
-  }
-
-  @FXML
   private void onAutoFill() {
     if (this.game.isPresent()) {
-      TableDetails td = TableDialogs.openAutoFill(this.game.get());
-      if (td != null) {
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-      }
+      TableDialogs.openAutoFillSettingsDialog(Studio.stage, Arrays.asList(this.game.get()), null);
     }
   }
 
   @FXML
   private void onAutoFillAll() {
-    TableDialogs.openAutoFillAll(Studio.stage);
+    List<GameRepresentation> vpxGamesCached = client.getGameService().getVpxGamesCached();
+    TableDialogs.openAutoFillSettingsDialog(Studio.stage, vpxGamesCached, null);
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -258,7 +253,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
     if (!frontendType.isNotStandalone()) {
       tableDataBox.getChildren().remove(screenFields);
     }
-    
+
     this.tableEditBtn.setDisable(g.isEmpty());
     this.fixVersionBtn.setDisable(g.isEmpty() || !g.get().isUpdateAvailable());
     this.autoFillBtn.setDisable(g.isEmpty());
@@ -275,7 +270,7 @@ public class TablesSidebarTableDetailsController implements Initializable {
       gameFileName.setText(StringUtils.defaultIfEmpty(game.getGameFileName(), "-"));
       gameDisplayName.setText(StringUtils.defaultIfEmpty(game.getGameDisplayName(), "-"));
       // will be overriden by tableDetails status
-      status.setText(game.isDisabled()? "Disabled": "Enabled");
+      status.setText(game.isDisabled() ? "Disabled" : "Enabled");
       notes.setText(StringUtils.defaultIfEmpty(game.getNotes(), ""));
 
       romName.setText(StringUtils.defaultIfEmpty(game.getRom(), "-"));

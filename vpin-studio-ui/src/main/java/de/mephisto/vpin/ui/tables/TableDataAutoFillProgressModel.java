@@ -53,7 +53,7 @@ public class TableDataAutoFillProgressModel extends ProgressModel<GameRepresenta
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation next) {
     try {
       TableDetails tableDetails = client.getFrontendService().autoFillTableDetails(next.getId());
-      progressResultModel.addProcessed(tableDetails);
+      progressResultModel.addProcessed(next);
     } catch (Exception e) {
       LOG.error("Error auto-filling table data: " + e.getMessage(), e);
     }

@@ -13,9 +13,10 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <bottom>
-      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="submit-button" text="Close">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
+            <Button fx:id="autoFillBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAutoFill" styleClass="submit-button" text="Auto-Fill">
                <HBox.margin>
                   <Insets />
                </HBox.margin>

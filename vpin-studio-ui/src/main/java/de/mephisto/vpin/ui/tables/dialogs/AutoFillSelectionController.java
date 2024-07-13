@@ -3,38 +3,29 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
-import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
+import de.mephisto.vpin.ui.tables.TableDataAutoFillProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -73,6 +64,44 @@ public class AutoFillSelectionController implements Initializable, DialogControl
   private CheckBox tags;
   @FXML
   private CheckBox details;
+
+  @FXML
+  private Button autoFillBtn;
+
+  private List<GameRepresentation> games;
+  private TableDetails tableDetails;
+
+  @FXML
+  private void onAutoFill(ActionEvent e) {
+    if (tableDetails == null) {
+      Platform.runLater(() -> {
+        ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableDataAutoFillProgressModel(games));
+        List<Object> results = progressDialog.getResults();
+        if (!results.isEmpty()) {
+          if (results.size() == 1) {
+            GameRepresentation game = (GameRepresentation) results.get(0);
+            EventManager.getInstance().notifyTableChange(game.getId(), null, null);
+          }
+          else {
+            EventManager.getInstance().notifyTablesChanged();
+          }
+        }
+      });
+    }
+    else {
+      GameRepresentation game = this.games.get(0);
+      try {
+        tableDetails = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
+      }
+      catch (Exception ex) {
+        LOG.error("Failed to fill table details: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(stage, "Error", "Failed to fill table details: " + ex.getMessage());
+      }
+    }
+
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    stage.close();
+  }
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -175,4 +204,15 @@ public class AutoFillSelectionController implements Initializable, DialogControl
 
   }
 
+  public void setData(List<GameRepresentation> games, TableDetails tableDetails) {
+    this.games = games;
+    this.tableDetails = tableDetails;
+    if (this.games.size() > 1) {
+      autoFillBtn.setText("Auto-Fill All");
+    }
+  }
+
+  public TableDetails getTableDetails() {
+    return tableDetails;
+  }
 }

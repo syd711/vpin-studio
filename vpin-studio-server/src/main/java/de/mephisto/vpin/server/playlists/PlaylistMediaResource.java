@@ -38,17 +38,15 @@ public class PlaylistMediaResource {
   private final static Logger LOG = LoggerFactory.getLogger(PlaylistMediaResource.class);
 
   @Autowired
-  private PlaylistService playlistService;
+  private PlaylistMediaService playlistMediaService;
 
   @Autowired
-  private FrontendService frontendService;
+  private PlaylistService playlistService;
+
 
   @DeleteMapping("/{playlistId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
-    Playlist playlist = playlistService.getPlaylist(playlistId);
-    File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
-    File media = new File(mediaFolder, filename);
-    return media.exists() && media.delete();
+    return playlistMediaService.deleteMedia(playlistId, screen, filename);
   }
 
   @GetMapping("/{id}/{screen}/{name}")
@@ -103,7 +101,7 @@ public class PlaylistMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = buildMediaAsset(playlist, screen, suffix, append);
+      File out = playlistMediaService.buildMediaAsset(playlist, screen, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
@@ -112,21 +110,5 @@ public class PlaylistMediaResource {
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());
     }
-  }
-
-  private File buildMediaAsset(Playlist playlist, VPinScreen screen, String suffix, boolean append) {
-    File playlistMediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
-    String mediaName = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName() : playlist.getName();
-
-    File out = new File(playlistMediaFolder, mediaName + "." + suffix);
-    if (append) {
-      int index = 1;
-      while (out.exists()) {
-        String nameIndex = index <= 9 ? "0" + index : String.valueOf(index);
-        out = new File(out.getParentFile(), mediaName + nameIndex + "." + suffix);
-        index++;
-      }
-    }
-    return out;
   }
 }

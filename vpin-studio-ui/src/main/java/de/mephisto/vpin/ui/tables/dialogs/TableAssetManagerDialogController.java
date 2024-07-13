@@ -867,13 +867,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     this.renameBtn.setVisible(false);
-    tableSelection.setVisible(false);
-    playlistSelection.setVisible(true);
-    openDataManager.setVisible(false);
-    nextButton.setDisable(true);
-    prevButton.setDisable(true);
 
     if (!isEmbeddedMode()) {
+      nextButton.setDisable(true);
+      prevButton.setDisable(true);
+      openDataManager.setVisible(false);
+      tableSelection.setVisible(false);
+      playlistSelection.setVisible(true);
+
       this.playlistCombo.setValue(playlist);
       this.helpBtn.setVisible(false);
     }
@@ -892,14 +893,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     this.renameBtn.setVisible(true);
-    tableSelection.setVisible(true);
-    playlistSelection.setVisible(false);
-    openDataManager.setVisible(true);
-    nextButton.setDisable(false);
-    prevButton.setDisable(false);
-
 
     if (!isEmbeddedMode()) {
+      nextButton.setDisable(false);
+      prevButton.setDisable(false);
+      openDataManager.setVisible(true);
+      tableSelection.setVisible(true);
+      playlistSelection.setVisible(false);
+
       this.tablesCombo.setValue(game);
       this.helpBtn.setDisable(!VPinScreen.Loading.equals(screen));
     }
