@@ -62,8 +62,9 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/controller-bindings.png" width="600" />
 
-### Miscellaneous
+### We have also been busy with...
 
+- **Documentation**: Indeed, we sometimes do that! The wiki has been updated (https://github.com/syd711/vpin-studio/wiki) and a lot of YouTube videos have been (re-)recorded.
 - **Navigation**: The navigation supports deep links now. E.g. you can jump from the **Table Overview / Highscores** section to the corresponding table in the **Highscore Cards** view (and back!).
 - **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
@@ -79,7 +80,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Status Comments**: Added "OUTDATED" as an additional comment type.
 - **Table Overview / Highscore Section**: Added highscore card preview image shown in the lower part of the section.
 - **Table Overview / Highscore Section**: The "Open Card" button has been replaced with and "Edit Card" button which jumps into the Highscore Card designer, selecting the table's card.
-- **Table Overview / Replace or Append media**: On media upload, when a media already exists, a confirmation pops up to ask whether the media file should replace existing one or be appended to the list of media files.
+- **Table Overview / Replace or Append Media**: On media upload, when a media already exists, a confirmation pops up to ask whether the media file should replace existing one or be appended to the list of media files.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
 - **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX. 
 

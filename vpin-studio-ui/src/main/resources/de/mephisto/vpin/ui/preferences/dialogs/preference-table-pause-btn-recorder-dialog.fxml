@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -10,6 +11,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.BtnRecorderDialogController">
    <top>
@@ -124,11 +126,26 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel111" layoutX="10.0" layoutY="150.0" text="Overlay Key:" textFill="WHITE" GridPane.rowIndex="2">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="2">
+                     <children>
+                        <Label fx:id="usersLabel111" text="Overlay Key:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="When pressed, a fullscreen overlay is shown on the playfield with data of your VPin." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                   <Label fx:id="keyCodeOverlay" layoutX="206.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <font>
                         <Font size="14.0" />
@@ -139,11 +156,26 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label fx:id="usersLabel1111" layoutX="10.0" layoutY="83.0" text="Reset Key:" textFill="WHITE" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="usersLabel1111" text="Reset Key:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="When pressed, the active emulator will be killed and the frontend restarts." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
                   <Label fx:id="keyCodeReset" layoutX="206.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
