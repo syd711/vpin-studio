@@ -21,16 +21,17 @@
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="800.0" styleClass="subpanel">
                <children>
                   <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
-                  <Label styleClass="preference-subtitle" text="Inputs">
+                  <Label styleClass="preference-subtitle" text="Controller Setup">
                      <VBox.margin>
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="This section lets you configure the UI components that can be shown while the emulator is running." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="321.0" styleClass="preference-description" text="This section configures the input methods for the UI components " textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
+                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="and other options supported by the VPin Studio server." textFill="WHITE" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" maxWidth="371.2000732421875" minWidth="10.0" prefWidth="161.5999755859375" />

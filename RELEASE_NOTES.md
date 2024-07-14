@@ -68,6 +68,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
+- **Table Asset Manager**: Added support for **Playlist** assets.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Data Manager / VPS matching**: The automatching to VPS has been improved and now exploit all information in game filename to better determine the VPS version. Also the table version when empty and detected during the matching process is automatically filled in. 
 - **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header.
@@ -84,9 +85,9 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
 
-- **Table Overview / Auto-Fill**: Added **preference dialog for the auto-fill** function. The settings button for this is next to every auto-fill menu drop-down (inside the Table Data Manager and the Table Data section).
+- **Table Overview / Auto-Fill**: Added **preference dialog for the auto-fill** function. The dialog allows to select the fields that should be overwritten. The settings button for this is next to every auto-fill menu drop-down (inside the Table Data Manager and the Table Data section).
 
-- <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/auto-fill.png" width="550" />
+- <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/auto-fill.png" width="500" />
 
 ### Bugfixes
 
