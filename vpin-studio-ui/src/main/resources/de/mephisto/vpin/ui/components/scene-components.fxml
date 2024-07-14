@@ -86,7 +86,7 @@
                                     <Insets left="9.0" />
                                  </VBox.margin>
                                  <children>
-                                    <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="https://discord.gg/69YqHYd3wD" textFill="WHITE">
+                                    <Hyperlink onAction="#onHyperlink" styleClass="error-title" text="https://discord.gg/AMPwvAZHvy" textFill="WHITE">
                                        <padding>
                                           <Insets bottom="2.0" />
                                        </padding>
