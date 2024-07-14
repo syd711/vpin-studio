@@ -353,7 +353,7 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(TableAssetManagerDialogController.class, fxml, "Asset Manager", null);
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
-    controller.setGame(overviewController, game, screen);
+    controller.setGame(stage, overviewController, game, screen);
 
     stage.showAndWait();
     return true;
@@ -373,7 +373,7 @@ public class TableDialogs {
     TableAssetManagerDialogController controller = (TableAssetManagerDialogController) stage.getUserData();
     controller.loadAllTables(game.getEmulatorId());
     controller.setPlaylistMode();
-    controller.setPlaylist(overviewController, playlist, screen);
+    controller.setPlaylist(stage, overviewController, playlist, screen);
 
     stage.showAndWait();
     return true;

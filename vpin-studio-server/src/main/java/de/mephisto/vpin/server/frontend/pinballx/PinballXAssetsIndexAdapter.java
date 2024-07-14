@@ -36,7 +36,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   public void invalidateMediaCache(boolean full) {
     FTPClient ftp = null;
     try {
-      ftp = open();
+      ftp = open(true);
 
       PinballXAssetsIndexer indexer = new PinballXAssetsIndexer();
       this.index = indexer.buildIndex(ftp, rootfolder, full);
@@ -56,6 +56,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       if (!tmp.renameTo(indexFile)) {
         LOG.error("Failed to rename " + indexFile.getName());
       }
+      LOG.info("Written " + indexFile.getAbsolutePath());
     }
     catch (IOException ioe) {
       LOG.error("Error while reloading index file", ioe);
@@ -91,7 +92,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   public InputStream readAsset(@NonNull String url) throws Exception {
     FTPClient ftp = null;
     try {
-      ftp = open();
+      ftp = open(false);
 
       String decodeUrl = URLDecoder.decode(url, StandardCharsets.UTF_8);
       decodeUrl = decodeUrl.substring(1);

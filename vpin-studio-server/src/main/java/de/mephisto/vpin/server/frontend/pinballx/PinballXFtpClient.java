@@ -24,7 +24,7 @@ public class PinballXFtpClient {
   protected String user;
   protected String pwd;
 
-  
+
   public void configureCredentials(String user, String pwd) {
     this.user = user;
     this.pwd = pwd;
@@ -39,7 +39,7 @@ public class PinballXFtpClient {
   public boolean testConnection() {
     FTPClient ftp = null;
     try {
-      ftp = open();
+      ftp = open(true);
       return true;
     }
     catch (Exception e) {
@@ -51,13 +51,17 @@ public class PinballXFtpClient {
     }
   }
 
-  protected FTPClient open() throws IOException {
+  protected FTPClient open(boolean passive) throws IOException {
     FTPClient ftp = new FTPClient();
     ftp.connect(host, port);
+    ftp.setBufferSize(1024 * 1024);
+    if (passive) {
+      ftp.enterLocalPassiveMode();
+    }
     int reply = ftp.getReplyCode();
     if (!FTPReply.isPositiveCompletion(reply)) {
-        ftp.disconnect();
-        throw new IOException("Exception in connecting to FTP Server");
+      ftp.disconnect();
+      throw new IOException("Exception in connecting to FTP Server");
     }
 
     if (ftp.login(user, pwd)) {
@@ -67,7 +71,7 @@ public class PinballXFtpClient {
   }
 
   protected void close(FTPClient ftp) {
-    if (ftp!=null) {
+    if (ftp != null) {
       try {
         ftp.disconnect();
       }

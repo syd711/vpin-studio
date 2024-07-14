@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -37,13 +38,14 @@ public class TablesAssetViewSidebarController implements Initializable {
       Parent root = loader.load();
       dialogController = loader.getController();
       assetSidebarVBox.getChildren().add(root);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load table overview: " + e.getMessage(), e);
     }
   }
 
   public void setGame(TableOverviewController tableOverviewController, GameRepresentation game, VPinScreen VPinScreen) {
-    dialogController.setGame(tableOverviewController, game, VPinScreen);
+    dialogController.setGame(Studio.stage, tableOverviewController, game, VPinScreen);
   }
 
   public void refreshTableMediaView() {

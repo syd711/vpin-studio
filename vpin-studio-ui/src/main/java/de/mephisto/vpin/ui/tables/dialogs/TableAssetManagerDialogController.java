@@ -63,7 +63,6 @@ import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
@@ -200,6 +199,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
+  private Stage localStage;
   private TableOverviewController overviewController;
   private GameRepresentation game;
   private PlaylistRepresentation playlist;
@@ -228,7 +228,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onClearCache() {
-    ProgressDialog.createProgressDialog(new MediaCacheProgressModel());
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(localStage, "Rebuild Index", "The rebuilding of the index can take a few minutes.", "Please wait until the indexing is finished.", "Build Index");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ProgressDialog.createProgressDialog(new MediaCacheProgressModel());
+    }
   }
 
   @FXML
@@ -238,7 +241,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
     catch (Exception e) {
-      WidgetFactory.showAlert(Studio.stage, "Error", "Adding blank media failed: " + e.getMessage());
+      WidgetFactory.showAlert(localStage, "Error", "Adding blank media failed: " + e.getMessage());
     }
     refreshTableMediaView();
   }
@@ -276,7 +279,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         client.getGameMediaService().toFullScreen(game.getId(), screen);
       }
       catch (Exception e) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Fullscreen switch failed: " + e.getMessage());
+        WidgetFactory.showAlert(localStage, "Error", "Fullscreen switch failed: " + e.getMessage());
       }
       refreshTableMediaView();
     }
@@ -379,7 +382,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       String name = selectedItem.getName();
       String baseName = FilenameUtils.getBaseName(name);
       String suffix = FilenameUtils.getExtension(name);
-      String s = WidgetFactory.showInputDialog(Studio.stage, "Rename", "Renaming of Table Asset \"" + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
+      String s = WidgetFactory.showInputDialog(localStage, "Rename", "Renaming of Table Asset \"" + selectedItem.getName() + "\"", "Enter a new name:", null, baseName);
       if (!StringUtils.isEmpty(s) && FileUtils.isValidFilename(s)) {
         if (s.equalsIgnoreCase(baseName)) {
           return;
@@ -390,7 +393,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
 
         if (!s.startsWith(game.getGameName())) {
-          WidgetFactory.showAlert(Studio.stage, "Error", "The asset name must start with \"" + game.getGameName() + "\".");
+          WidgetFactory.showAlert(localStage, "Error", "The asset name must start with \"" + game.getGameName() + "\".");
           onRename();
           return;
         }
@@ -402,11 +405,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
         catch (Exception e) {
           LOG.error("Renaming table asset failed: " + e.getMessage(), e);
-          WidgetFactory.showAlert(Studio.stage, "Error", "Renaming failed: " + e.getMessage());
+          WidgetFactory.showAlert(localStage, "Error", "Renaming failed: " + e.getMessage());
         }
       }
       else if (!StringUtils.isEmpty(s) && !FileUtils.isValidFilename(s)) {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Renaming cancelled, invalid character found.");
+        WidgetFactory.showAlert(localStage, "Error", "Renaming cancelled, invalid character found.");
         onRename();
       }
     }
@@ -432,7 +435,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   }
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
-    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage,
+    ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
         new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
@@ -466,6 +469,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       new Thread(() -> {
         String baseType = mimeType.split("/")[0];
         String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
+        LOG.info("Loading asset: " + assetUrl);
 
         Platform.runLater(() -> {
           try {
@@ -523,7 +527,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     String targetName = game.getGameName() + "." + FilenameUtils.getExtension(tableAsset.getName());
     boolean alreadyExists = items.stream().anyMatch(i -> i.getName().equalsIgnoreCase(targetName));
     if (alreadyExists) {
-      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Asset Exists",
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(localStage, "Asset Exists",
           "An asset with the same name already exists.",
           "Overwrite existing asset or append new asset?", "Overwrite", "Append");
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
@@ -587,10 +591,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (game != null) {
-            setGame(overviewController, game, screen);
+            setGame(localStage, overviewController, game, screen);
           }
           else {
-            setGame(overviewController, tablesCombo.getValue(), screen);
+            setGame(localStage, overviewController, tablesCombo.getValue(), screen);
           }
         }
       });
@@ -598,10 +602,10 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (playlist != null) {
-            setPlaylist(overviewController, playlist, screen);
+            setPlaylist(localStage, overviewController, playlist, screen);
           }
           else {
-            setPlaylist(overviewController, playlistCombo.getValue(), screen);
+            setPlaylist(localStage, overviewController, playlistCombo.getValue(), screen);
           }
         }
       });
@@ -609,7 +613,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         @Override
         public void changed(ObservableValue<? extends PlaylistRepresentation> observable, PlaylistRepresentation oldValue, PlaylistRepresentation newValue) {
           if (newValue != null) {
-            setPlaylist(overviewController, newValue, screen);
+            setPlaylist(localStage, overviewController, newValue, screen);
           }
         }
       });
@@ -852,13 +856,14 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
         tablesCombo.getItems().addAll(gameRepresentations);
         tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {
-          this.setGame(this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
+          this.setGame(localStage, this.overviewController, t1, this.screen != null ? this.screen : VPinScreen.Wheel);
         });
       }).start();
     }
   }
 
-  public void setPlaylist(@NonNull TableOverviewController overviewController, @NonNull PlaylistRepresentation playlist, @Nullable VPinScreen screen) {
+  public void setPlaylist(Stage stage, @NonNull TableOverviewController overviewController, @NonNull PlaylistRepresentation playlist, @Nullable VPinScreen screen) {
+    localStage = stage;
     this.overviewController = overviewController;
     this.playlist = playlist;
     this.searchField.setText("");
@@ -884,7 +889,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     initDragAndDrop();
   }
 
-  public void setGame(@NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @Nullable VPinScreen screen) {
+  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @Nullable VPinScreen screen) {
+    localStage = stage;
     this.overviewController = overviewController;
     this.game = game;
     this.searchField.setText("");

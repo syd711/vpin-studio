@@ -57,10 +57,9 @@ public class PinballXConnector extends BaseConnector {
     if (ps != null) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
       // start a refresh of the index in background
-      new Thread(() -> {
-        assetsAdapter.invalidateMediaCache();
-      }, "PinballX Search indexer").start();
-      
+//      new Thread(() -> {
+//        assetsAdapter.invalidateMediaCache();
+//      }, "PinballX Search indexer").start();
     }
     LOG.info("Finished initialization of " + this);
   }
@@ -162,7 +161,9 @@ public class PinballXConnector extends BaseConnector {
       SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
       if (!s.isEmpty()) {
         Emulator emu = createEmulator(s, pinballXFolder, emuId, emuName);
-        emulators.add(emu);
+        if (emu != null) {
+          emulators.add(emu);
+        }
         emuId++;
       }
     }
@@ -171,7 +172,10 @@ public class PinballXConnector extends BaseConnector {
       SubnodeConfiguration s = iniConfiguration.getSection("System_" + k);
       if (!s.isEmpty()) {
         String emuname = s.getString("Name");
-        emulators.add(createEmulator(s, pinballXFolder, emuId++, emuname));
+        Emulator emulator = createEmulator(s, pinballXFolder, emuId++, emuname);
+        if (emulator != null) {
+          emulators.add(emulator);
+        }
       }
     }
 
@@ -234,6 +238,17 @@ public class PinballXConnector extends BaseConnector {
     if (mediaDir.exists() && mediaDir.isDirectory()) {
       e.setDirMedia(mediaDir.getAbsolutePath());
     }
+
+    if (tablePath == null || !new File(tablePath).exists()) {
+      LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
+      return null;
+    }
+
+    if (workingPath == null || !new File(workingPath).exists()) {
+      LOG.warn("Skipped loading of \"" + emuname + "\" because the workingPath is invalid");
+      return null;
+    }
+
     e.setDirGames(tablePath);
     e.setEmuLaunchDir(workingPath);
     e.setExeName(executable);

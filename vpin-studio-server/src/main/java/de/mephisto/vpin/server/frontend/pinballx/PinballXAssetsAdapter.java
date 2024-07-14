@@ -68,7 +68,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
     long start = System.currentTimeMillis();
     FTPClient ftp = null;
     try {
-      ftp = open();
+      ftp = open(true);
       ftp.setDataTimeout(Duration.ofMillis(15000));
       ftp.setDefaultTimeout(10000);
 

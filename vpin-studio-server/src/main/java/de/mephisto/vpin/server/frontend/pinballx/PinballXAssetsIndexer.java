@@ -72,7 +72,6 @@ public class PinballXAssetsIndexer {
 
     for (FTPFile file : files) {
       if (file.isDirectory()) {
-        //LOG.info("Indexing FTP dir: " + file.getName());
         String name = clean(file.getName());
         
         // is folder name an emulator-like folder ?
