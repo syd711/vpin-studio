@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>2.21.5</version>
+    <version>2.21.6</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -440,6 +440,7 @@
                                     <directory>./</directory>
                                     <includes>
                                         <include>VPin-Studio-Server.l4j.ini</include>
+                                        <include>uninstall.bat</include>
                                     </includes>
                                 </resource>
                             </resources>

@@ -50,7 +50,7 @@ Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\7z.dll"; DestDir: 
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\update-runtime.bat"; DestDir: "{app}\resources"; Flags: ignoreversion; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\vpsdb.json"; DestDir: "{app}\resources"; Flags: ignoreversion; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -61,3 +61,10 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
+Type: files; Name: "{app}\*.log"
+Type: files; Name: "{app}\*.exe"
+Type: files; Name: "{app}\*.bat"
+Type: filesandordirs; Name: "{app}\win32"
+Type: filesandordirs; Name: "{app}\resources"
+Type: filesandordirs; Name: "{app}\config"
+Type: filesandordirs; Name: "{app}"

@@ -49,9 +49,10 @@ Name: "{app}"; Permissions: users-full
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
 Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\uninstall.bat"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
@@ -63,6 +64,15 @@ Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpbm\{#MyAppE
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
+Type: files; Name: "{app}\server.vbs"
+Type: files; Name: "{app}\VPin-Studio-Server.l4j.ini"
+Type: files; Name: "{app}\VPin-Studio-Server.bat"
+Type: files; Name: "{app}\*.log"
+Type: files; Name: "{app}\*.bat"
+Type: filesandordirs; Name: "{app}\win32"
+Type: filesandordirs; Name: "{app}\resources"
+Type: filesandordirs; Name: "{app}\config"
+Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{app}\VPin-Studio-Server.bat"""; Flags: uninsdeletevalue
