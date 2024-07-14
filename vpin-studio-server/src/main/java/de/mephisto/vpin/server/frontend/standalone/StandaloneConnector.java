@@ -208,6 +208,8 @@ public class StandaloneConnector extends BaseConnector {
         .filter(p -> p.info().command().isPresent() &&
             (
                 p.info().command().get().contains(getVPXExe()) ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball")))
