@@ -64,6 +64,8 @@ public class AutoFillSelectionController implements Initializable, DialogControl
   private CheckBox tags;
   @FXML
   private CheckBox details;
+  @FXML
+  private CheckBox overwrite;
 
   @FXML
   private Button autoFillBtn;
@@ -194,6 +196,12 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     details.setSelected(uiSettings.getAutoFillSettings().isDetails());
     details.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.getAutoFillSettings().setDetails(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+    overwrite.setSelected(uiSettings.getAutoFillSettings().isOverwrite());
+    overwrite.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.getAutoFillSettings().setOverwrite(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });

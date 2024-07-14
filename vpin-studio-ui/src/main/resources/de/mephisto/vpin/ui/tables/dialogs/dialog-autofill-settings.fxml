@@ -35,11 +35,10 @@
          <center>
             <VBox spacing="3.0" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets bottom="6.0" />
+                  <Insets bottom="24.0" />
                </BorderPane.margin>
                <children>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select the fields than can be overwritten on auto-fill." />
-                  <Label styleClass="preference-description" text="Existing values won't be replaced with empty ones.">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select the fields that should be written on auto-fill.">
                      <VBox.margin>
                         <Insets bottom="12.0" />
                      </VBox.margin></Label>
@@ -76,6 +75,9 @@
                </children>
             </VBox>
          </center>
+         <bottom>
+            <CheckBox fx:id="overwrite" mnemonicParsing="false" styleClass="default-text" text="Overwrite existing values" BorderPane.alignment="CENTER_LEFT" />
+         </bottom>
       </BorderPane>
    </center>
 </BorderPane>

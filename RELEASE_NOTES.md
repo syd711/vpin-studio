@@ -20,7 +20,7 @@ You can select between the three modes (PinUP Popper, PinballX and Standalone) w
 
 ### iScored Subscriptions
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/iScored-logo.png" width="400" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/iscored.png" width="400" />
 
 I'm happy to announce the (first!) **iScored** integration for the VPin Studio. 
 Since the VPin Studio server already knows everything about a table highscore and highscore changes, it

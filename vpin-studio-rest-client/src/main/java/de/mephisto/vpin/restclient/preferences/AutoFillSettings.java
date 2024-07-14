@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.preferences;
 
 public class AutoFillSettings {
+  private boolean overwrite = true;
+
   private boolean gameVersion = true;
   private boolean gameYear = true;
   private boolean gameType = true;
@@ -15,6 +17,14 @@ public class AutoFillSettings {
   private boolean notes = true;
   private boolean tags = true;
   private boolean details = true;
+
+  public boolean isOverwrite() {
+    return overwrite;
+  }
+
+  public void setOverwrite(boolean overwrite) {
+    this.overwrite = overwrite;
+  }
 
   public boolean isDetails() {
     return details;
