@@ -20,6 +20,11 @@
       "rom": "pizzatime",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "rom": "MountainClimbingHS",
+      "tableName": "",
+      "textFile": "MountainClimbingHS.txt"
     }
   ],
   "ignoredTextFiles": [
