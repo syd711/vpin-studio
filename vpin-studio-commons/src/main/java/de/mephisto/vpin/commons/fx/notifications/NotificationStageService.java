@@ -33,6 +33,7 @@ public class NotificationStageService extends Application {
 
   public void queueNotification(Notification notification) {
     queue.offer(notification);
+    pollNotifications();
   }
 
   public void pollNotifications() {
@@ -103,7 +104,7 @@ public class NotificationStageService extends Application {
     queueNotification(notification2);
     queueNotification(notification3);
 
-    pollNotifications();
+//    pollNotifications();
 //    showNotification(notification4);
   }
 }

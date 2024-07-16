@@ -221,7 +221,7 @@ public class PINemHiService implements InitializingBean {
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
-    adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), false);
+    adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
   }
 
   /**

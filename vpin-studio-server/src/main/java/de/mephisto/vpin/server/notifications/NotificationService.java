@@ -57,6 +57,9 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         NotificationStageService.getInstance().queueNotification(notification);
       }
     }
+    else {
+      LOG.info("Notifications not supported in standalone mode.");
+    }
   }
 
   @Override
@@ -69,6 +72,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     if (notificationSettings.getDurationSec() == 0) {
+      LOG.info("Skipped notification, duration is not set.");
       return;
     }
 

@@ -60,6 +60,7 @@ public class NvRamHighscoreToRawConverter {
       }
 
       List<String> commands = Arrays.asList(commandFile.getName(), originalNVRamFile.getName().toLowerCase());
+//      LOG.info("PinemHI: " + String.join(" ", commands));
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(commandFile.getParentFile());
       executor.executeCommand();

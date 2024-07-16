@@ -39,6 +39,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
         if (gameId == game.getId()) {
           String url = iScoredSubscription.getUrl();
           if (iScoredService.isIscoredGameRoomUrl(url)) {
+            LOG.info("Emitting iScored game score to " + url);
             iScoredService.submitScore(url, newScore, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
           }
           else {
