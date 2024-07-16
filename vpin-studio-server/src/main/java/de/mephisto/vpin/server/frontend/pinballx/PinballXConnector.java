@@ -84,7 +84,7 @@ public class PinballXConnector extends BaseConnector {
     frontend.setSupportedScreens(screens);
     frontend.setIgnoredValidations(Arrays.asList(GameValidationCode.CODE_NO_OTHER2,
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
-        GameValidationCode.CODE_OUTDATED_RECORDING
+        GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
 
     PinballXSettings ps = getSettings();

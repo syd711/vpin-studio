@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.ui.PreferencesController;
-import de.mephisto.vpin.ui.Studio;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -13,10 +11,11 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.CheckBox;
 import javafx.scene.layout.VBox;
-import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -28,10 +27,7 @@ public class ValidatorsVPXPreferencesController implements Initializable {
   @FXML
   private VBox pupPackValidator;
 
-  @FXML
-  private VBox outdatedRecordingsValidator;
-
-  private List<String> ignoreList;
+  private IgnoredValidationSettings ignoredValidationSettings;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -39,20 +35,9 @@ public class ValidatorsVPXPreferencesController implements Initializable {
     String id = checkBox.getId();
     boolean checked = checkBox.isSelected();
     String code = id.split("_")[1];
-    if (checked) {
-      ignoreList.remove(code);
-    }
-    else {
-      if (ignoreList.contains(code)) {
-        return;
-      }
-      ignoreList.add(code);
-    }
 
-    String value = StringUtils.join(ignoreList, ",");
-    Map<String, Object> prefs = new HashMap<>();
-    prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    client.getPreferenceService().setPreferences(prefs);
+    ignoredValidationSettings.getIgnoredValidators().put(code, !checked);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, ignoredValidationSettings);
 
     PreferencesController.markDirty(PreferenceType.serverSettings);
   }
@@ -61,23 +46,20 @@ public class ValidatorsVPXPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     pupPackValidator.managedProperty().bindBidirectional(pupPackValidator.visibleProperty());
-    outdatedRecordingsValidator.managedProperty().bindBidirectional(outdatedRecordingsValidator.visibleProperty());
+
+    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     pupPackValidator.setVisible(frontendType.supportPupPacks());
-    outdatedRecordingsValidator.setVisible(frontendType.equals(FrontendType.Popper));
 
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     findAllCheckboxes(parent, settingsCheckboxes);
-
-    PreferenceEntryRepresentation entry = client.getPreference(PreferenceNames.IGNORED_VALIDATIONS);
-    ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
       String validationCode = id.split("_")[1];
 
-      boolean ignored = ignoreList.contains(validationCode);
+      boolean ignored = ignoredValidationSettings.isIgnored(validationCode);
       checkBox.setSelected(!ignored);
     }
   }

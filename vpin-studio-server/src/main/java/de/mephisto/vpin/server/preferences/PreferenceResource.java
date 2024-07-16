@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
+import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
@@ -66,6 +67,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.VALIDATION_SETTINGS: {
           return preferencesService.getJsonPreference(key, ValidationSettings.class);
+        }
+        case PreferenceNames.IGNORED_VALIDATIONS: {
+          return preferencesService.getJsonPreference(key, IgnoredValidationSettings.class);
         }
         case PreferenceNames.NOTIFICATION_SETTINGS: {
           return preferencesService.getJsonPreference(key, NotificationSettings.class);

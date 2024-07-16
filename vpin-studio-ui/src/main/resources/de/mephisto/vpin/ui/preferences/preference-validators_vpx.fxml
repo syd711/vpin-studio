@@ -35,28 +35,6 @@
                   <Label styleClass="checkbox-description" text="Checks if the VPX file for the selected table was found." textFill="WHITE" />
                   <CheckBox fx:id="pref_20" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="DirectB2S or Pup Pack Required" />
                   <Label styleClass="checkbox-description" text="Checks if either a PUP pack or a directb2s file was found." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Additional Media Validators">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-description" text="Several validators checking the integrity of the media files and bundles." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn of the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
-                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing" />
-                  <Label styleClass="checkbox-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
-                  <VBox fx:id="pupPackValidator">
-                     <children>
-                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Files Missing" />
-                        <Label styleClass="checkbox-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
-                     </children>
-                  </VBox>
-                  <VBox fx:id="outdatedRecordingsValidator">
-                     <children>
-                        <CheckBox fx:id="pref_90" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Outdated Recordings" />
-                        <Label styleClass="checkbox-description" text="Checks if the playfield and backglass recordings are outdated (compared to the game and backglass file)." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="Disable this validator if you don't record screens yourself." textFill="WHITE" />
-                     </children>
-                  </VBox>
                   <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="MAME Settings Validators">
                      <VBox.margin>
                         <Insets top="12.0" />
@@ -80,6 +58,21 @@
                   <CheckBox fx:id="pref_70" layoutX="34.0" layoutY="700.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="Virtual Pinball Spreadsheet Data" />
                   <Label layoutX="34.0" layoutY="738.0" styleClass="checkbox-description" text="Checks if a table and its version has been matched against the &quot;Virtual Pinball Spreadsheet&quot; data." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="798.0" styleClass="checkbox-description" text="This ensures that table updates will be shown in the table overview." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Additional Media Validators">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-description" text="Several validators checking the integrity of the media files and bundles." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn of the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
+                  <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing" />
+                  <Label styleClass="checkbox-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
+                  <VBox fx:id="pupPackValidator">
+                     <children>
+                        <CheckBox fx:id="pref_60" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="PUP Pack Files Missing" />
+                        <Label styleClass="checkbox-description" text="Checks if files for PUP packs are missing." textFill="WHITE" />
+                     </children>
+                  </VBox>
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

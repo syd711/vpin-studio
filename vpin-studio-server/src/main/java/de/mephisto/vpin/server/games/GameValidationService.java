@@ -4,28 +4,25 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -118,9 +115,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
-  private Preferences preferences;
-  private ServerSettings serverSettings;
   private ValidationSettings validationSettings;
+  private IgnoredValidationSettings ignoredValidationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     GameValidationService.metricsStart();
@@ -213,14 +209,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
     if (isVPX) {
       List<ValidationState> validationStates = validateAltSound(game);
-      if (!validationStates.isEmpty()) {
-        result.add(validationStates.get(0));
-        if (findFirst) {
-          return result;
-        }
-      }
-
-      validationStates = validateRecordings(game);
       if (!validationStates.isEmpty()) {
         result.add(validationStates.get(0));
         if (findFirst) {
@@ -415,38 +403,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return result;
   }
 
-  public List<ValidationState> validateRecordings(Game game) {
-    if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
-      return Collections.emptyList();
-    }
-    Map<String, List<FrontendMediaItem>> media = game.getGameMedia().getMedia();
-    VPinScreen[] values = VPinScreen.values();
-    List<ValidationState> result = new ArrayList<>();
-    for (VPinScreen screen : values) {
-      //only validate playfield and backglass
-      if (!(VPinScreen.BackGlass.equals(screen) || VPinScreen.PlayField.equals(screen))) {
-        continue;
-      }
-
-      if (media.containsKey(screen.name())) {
-        List<FrontendMediaItem> frontendMediaItems = media.get(screen.name());
-        for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
-          String name = frontendMediaItem.getName();
-          Date mediaLastModified = new Date(frontendMediaItem.getFile().lastModified());
-          if (name.endsWith(".mp4")) {
-            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(mediaLastModified)) {
-              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
-            }
-            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(mediaLastModified)) {
-              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
-            }
-          }
-        }
-      }
-    }
-    return result;
-  }
-
   public List<ValidationState> validateAltColor(Game game) {
     if (game.getAltColorType() == null || game.getAltColorType().equals(AltColorTypes.mame)) {
       return Collections.emptyList();
@@ -563,6 +519,9 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (frontend.getIgnoredValidations().contains(code)) {
       return false;
     }
+    if (ignoredValidationSettings.isIgnored(String.valueOf(code))) {
+      return false;
+    }
 
     List<Integer> ignoredValidations = game.getIgnoredValidations();
     if (ignoredValidations == null) {
@@ -570,13 +529,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (ignoredValidations.contains(code)) {
-      return false;
-    }
-
-    String ignoredPrefValidations = preferences.getIgnoredValidations();
-    List<Integer> ignoredIds = ValidationState.toIds(ignoredPrefValidations);
-
-    if (ignoredIds.contains(code)) {
       return false;
     }
 
@@ -640,7 +592,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
-    String rom = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getRomName(): null, gameDetails.getRomName());
+    String rom = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomName() : null, gameDetails.getRomName());
 
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
@@ -649,8 +601,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       rom = originalRom;
     }
 
-    String tableName = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getRomAlt(): null, gameDetails.getTableName());
-    String hsName = StringUtils.defaultIfEmpty(tableDetails!=null? tableDetails.getHsFilename(): null, gameDetails.getHsFileName());
+    String tableName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomAlt() : null, gameDetails.getTableName());
+    String hsName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getHsFilename() : null, gameDetails.getHsFileName());
 
     //the highscore file was found
     if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {
@@ -750,21 +702,20 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Override
   public void afterPropertiesSet() {
-    preferences = preferencesService.getPreferences();
     preferencesService.addChangeListener(this);
     frontend = frontendService.getFrontend();
     this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
+    this.preferenceChanged(PreferenceNames.IGNORED_VALIDATIONS, null, null);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    if (propertyName.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
+      ignoredValidationSettings = preferencesService.getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
     }
     if (propertyName.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = preferencesService.getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
-    preferences = preferencesService.getPreferences();
   }
 }
