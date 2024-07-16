@@ -581,8 +581,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           setSelection(match.get());
+
           if (uiSettings.isAutoEditTableData()) {
             Platform.runLater(() -> {
+              if (assetManagerMode) {
+                onAssetView();
+              }
+
               TableDialogs.openTableDataDialog(this, match.get());
             });
           }
@@ -1220,8 +1225,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       double width = 0;
       if (fav) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
-        if(favColor != null) {
-          ((FontIcon)label.getGraphic()).setIconColor(Paint.valueOf(hexColor(favColor)));
+        if (favColor != null) {
+          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(favColor)));
         }
         box.getChildren().add(label);
         width += ICON_WIDTH;
@@ -1229,8 +1234,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       if (globalFav) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
-        if(globalFavColor != null) {
-          ((FontIcon)label.getGraphic()).setIconColor(Paint.valueOf(hexColor(globalFavColor)));
+        if (globalFavColor != null) {
+          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(globalFavColor)));
         }
         box.getChildren().add(label);
         width += ICON_WIDTH;
@@ -1238,7 +1243,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       int count = 0;
       for (Playlist match : matches) {
-        if (width  < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
+        if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
           width += ICON_WIDTH;
           count++;

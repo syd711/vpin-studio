@@ -222,7 +222,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
       if (altSoundAvailable) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-        enabledCheckbox.setSelected(Studio.client.getAltSoundService().isAltSoundEnabled(game.getId()));
+        enabledCheckbox.setSelected(Studio.client.getAltSoundService().getAltSoundMode(game.getId()) > 0);
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));

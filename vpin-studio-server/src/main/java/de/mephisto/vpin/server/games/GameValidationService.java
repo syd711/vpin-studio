@@ -528,7 +528,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validateAltSound(Game game) {
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_ALT_SOUND_NOT_ENABLED)) {
-      if (game.isAltSoundAvailable() && !altSoundService.isAltSoundEnabled(game)) {
+      if (game.isAltSoundAvailable() && altSoundService.getAltSoundMode(game) <= 0) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ALT_SOUND_NOT_ENABLED));
       }
     }
