@@ -66,13 +66,13 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 - **Documentation**: Indeed, we sometimes do that! The wiki has been updated (https://github.com/syd711/vpin-studio/wiki) and a lot of YouTube videos have been (re-)recorded.
 - **Navigation**: The navigation supports deep links now. E.g. you can jump from the **Table Overview / Highscores** section to the corresponding table in the **Highscore Cards** view (and back!).
-- **Preferences Changes**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
+- **Preferences Changes (breaking)**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
 - **Table Asset Manager**: Added support for **Playlist** assets.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Data Manager / VPS matching**: The automatching to VPS has been improved and now exploit all information in game filename to better determine the VPS version. Also the table version when empty and detected during the matching process is automatically filled in. 
-- **Table Overview**: You can now directly access the UI settings for the table overview via an preferences button on the tab header.
+- **Table Overview**: You can now directly access the UI settings for the table overview via a preferences button on the tab header.
 - **Table Overview / Emulators**: Enabled import and delete actions for the **Future Pinball** emulator. 
 - **Table Overview / Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Table Overview / Filter Section**: Splitted filter preferences for .ini and .pov files.
@@ -83,6 +83,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Replace or Append Media**: On media upload, when a media already exists, a confirmation pops up to ask whether the media file should replace existing one or be appended to the list of media files.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
 - **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX. 
+- **Table Overview / Validation (breaking)**: Removed the "Outdated Recordings" validators. Since the modification date of the table is changed on edit (same for the backglass), this validator was simply too fuzzy. 
+- **Table Overview / Ignored Validation (breaking)**: Changed the way ignored validators are persisted. This way, new validators can be ignored by default and for new users more exotic validators are disabled from the start.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
 

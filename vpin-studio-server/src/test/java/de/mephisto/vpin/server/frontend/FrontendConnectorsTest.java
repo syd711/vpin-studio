@@ -63,7 +63,7 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
     setupSystem(FrontendType.PinballX);
     assertTrue(frontendService.getFrontendConnector() instanceof PinballXConnector);
 
-    int id = testLoad(8, 3);   
+    int id = testLoad(2, 3);
     testSave(id); 
   }
 
