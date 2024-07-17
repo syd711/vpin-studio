@@ -2,15 +2,14 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
@@ -103,9 +102,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   private CompetitionsController competitionsController;
   private WaitOverlayController loaderController;
 
-  private long discordBotId;
-  private DiscordBotStatus discordStatus;
-
   // Add a public no-args constructor
   public IScoredSubscriptionsController() {
   }
@@ -160,25 +156,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
-    }
-
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
-      textfieldSearch.setDisable(true);
-      addBtn.setDisable(true);
-      deleteBtn.setDisable(true);
-      reloadBtn.setDisable(true);
-      tableView.setVisible(true);
-      tableStack.getChildren().remove(loadingOverlay);
-
-      if (competitionWidget != null) {
-        competitionWidget.setVisible(false);
-      }
-
-      tableView.setItems(FXCollections.emptyObservableList());
-      tableView.refresh();
-      return;
     }
 
     new Thread(() -> {
@@ -381,11 +358,19 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       newSelection = competition.get();
     }
 
-    boolean disable = newSelection == null;
-//    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(discordStatus.getBotId()));
-    deleteBtn.setDisable(disable);
-    reloadBtn.setDisable(this.discordBotId <= 0);
-    addBtn.setDisable(this.discordBotId <= 0);
+    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    deleteBtn.setDisable(defaultPlayer == null);
+    reloadBtn.setDisable(defaultPlayer == null);
+    addBtn.setDisable(defaultPlayer == null);
+
+    if(defaultPlayer == null) {
+      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
+          "Go to the players section and set the default player for this cabinet!"));
+    }
+    else {
+      tableView.setPlaceholder(new Label("            No IScored subscription found.\nClick the '+' button to create a new one."));
+    }
+
 
     if (competition.isPresent()) {
       validationError.setVisible(newSelection.getValidationState().getCode() > 0);
@@ -412,8 +397,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {
       onReload();
     }
