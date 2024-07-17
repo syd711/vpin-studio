@@ -79,8 +79,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private final static TableStatus STATUS_MATURE = new TableStatus(2, "Visible (Mature/Hidden)");
   private final static TableStatus STATUS_WIP = new TableStatus(3, "Work In Progress");
 
-  private final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE));
-  public final static List<TableStatus> TABLE_STATUSES_15 = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
   public static int lastTab = 0;
 
 
@@ -808,11 +807,8 @@ public class TableDataController implements Initializable, DialogController, Aut
       // TAB Meta Data
 
       statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES));
-      if (tableDetails.isPopper15()) {
-        statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES_15));
-      }
       if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3) {
-        TableStatus tableStatus = TABLE_STATUSES_15.get(tableDetails.getStatus());
+        TableStatus tableStatus = TABLE_STATUSES.get(tableDetails.getStatus());
         statusCombo.setValue(tableStatus);
       }
       statusCombo.valueProperty().addListener((observableValue, tableStatus, t1) -> {

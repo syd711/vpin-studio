@@ -325,8 +325,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
         labelTimesPlayed.setText("0");
       }
 
-      if (tableDetails.getStatus() > 0) {
-        Optional<TableStatus> first = TableDataController.TABLE_STATUSES_15.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+      if (tableDetails.getStatus() >= 0) {
+        Optional<TableStatus> first = TableDataController.TABLE_STATUSES.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
         }

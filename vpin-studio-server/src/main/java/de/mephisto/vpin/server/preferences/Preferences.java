@@ -71,6 +71,8 @@ public class Preferences {
 
   private String serverSettings;
 
+  private String filterSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -96,6 +98,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getFilterSettings() {
+    return filterSettings;
+  }
+
+  public void setFilterSettings(String filterSettings) {
+    this.filterSettings = filterSettings;
+  }
 
   public String getNotificationSettings() {
     return notificationSettings;

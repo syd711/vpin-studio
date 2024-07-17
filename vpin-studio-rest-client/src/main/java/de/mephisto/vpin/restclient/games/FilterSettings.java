@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.games;
 
-public class FilterSettings {
+import de.mephisto.vpin.restclient.JsonSettings;
+
+public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
   private boolean otherIssues;

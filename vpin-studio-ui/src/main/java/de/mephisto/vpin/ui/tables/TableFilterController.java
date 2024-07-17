@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -27,9 +27,6 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableFilterController extends BaseFilterController implements Initializable {
-
-  @FXML
-  private VBox filterPanel;
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -121,16 +118,23 @@ public class TableFilterController extends BaseFilterController implements Initi
   private void onReset() {
     GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      updateSettings(new FilterSettings());
+      this.filterSettings = new FilterSettings();
+      saveFilterSettings();
+      resetFilters();
       applyFilter();
     }
   }
 
+  private void saveFilterSettings() {
+    client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
+  }
+
   public void setTableController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
-    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(), 
-      tableOverviewController.getTableStack(), tableOverviewController.getTableView());
+    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(),
+        tableOverviewController.getTableStack(), tableOverviewController.getTableView());
 
+    applyFilter();
   }
 
   @FXML
@@ -138,7 +142,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     super.toggleDrawer();
   }
 
-  private void updateSettings(FilterSettings filterSettings) {
+  private void resetFilters() {
     updatesDisabled = true;
     statusCombo.setValue(null);
     notesCombo.setValue(null);
@@ -202,7 +206,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     gameEmulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
 
-    filterSettings = new FilterSettings();
+    filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setMissingAssets(newValue);
@@ -294,9 +298,12 @@ public class TableFilterController extends BaseFilterController implements Initi
       applyFilter();
     });
 
-    List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES_15);
+    List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES);
     statuses.add(0, null);
     statusCombo.setItems(FXCollections.observableList(statuses));
+    if (filterSettings.getGameStatus() >= 0) {
+      statusCombo.setValue(TableDataController.TABLE_STATUSES.get(filterSettings.getGameStatus()));
+    }
     statusCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
         filterSettings.setGameStatus(-1);
@@ -310,6 +317,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
     noteTypes.add(0, null);
     notesCombo.setItems(FXCollections.observableList(noteTypes));
+    notesCombo.setValue(filterSettings.getNoteType());
     notesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
         filterSettings.setNoteType(null);

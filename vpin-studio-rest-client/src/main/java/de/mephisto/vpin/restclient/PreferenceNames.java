@@ -28,6 +28,7 @@ public interface PreferenceNames {
   String UI_SETTINGS = "uiSettings";
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
+  String FILTER_SETTINGS = "filterSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
 

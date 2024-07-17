@@ -77,8 +77,6 @@ public class PreferencesService implements InitializingBean {
       bean.setPropertyValue(entry.getKey(), entry.getValue());
     }
     preferencesRepository.saveAndFlush(preferences);
-    LOG.info("Saved " + values.size() + " preferences.");
-
     notifyChangeListeners(values, oldValues);
     return true;
   }
