@@ -23,7 +23,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Locale;
 
 public class VPinStudioApp extends Application implements GameControllerInputListener {
@@ -61,6 +60,11 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
       overlayStage.getScene().getStylesheets().add(ServerFX.class.getResource("stylesheet.css").toExternalForm());
 
       PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.OVERLAY_DESIGN);
+      if (preference == null) {
+        WidgetFactory.showAlert(overlayStage, "Error", "No overlay design selected.", "Select an overlay design from the preferences.");
+        System.exit(0);
+      }
+
       String value = preference.getValue();
       if (StringUtils.isEmpty(value) || value.equalsIgnoreCase("null")) {
         value = "";
@@ -75,8 +79,10 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
 
       overlayStage.show();
     }
-    catch (IOException e) {
+    catch (Exception e) {
+      LOG.error("Failed to launch VPin Studio App: " + e.getMessage(), e);
       WidgetFactory.showAlert(overlayStage, "Error", "Failed to launch VPin Studio App: " + e.getMessage());
+      System.exit(-1);
     }
 
   }

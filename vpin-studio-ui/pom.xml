@@ -60,6 +60,7 @@
             <version>2.0.9</version>
             <classifier>natives-all</classifier>
         </dependency>
+
         <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
