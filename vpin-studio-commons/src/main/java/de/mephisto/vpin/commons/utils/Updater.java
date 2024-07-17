@@ -30,7 +30,7 @@ public class Updater {
 
   public final static String UI_ZIP = "VPin-Studio.zip";
   public final static String UI_JAR_ZIP = "vpin-studio-ui-jar.zip";
-  public final static long UI_ZIP_SIZE = 90 * 1000 * 1000;
+  public final static long UI_ZIP_SIZE = 93 * 1000 * 1000;
 
   private final static String DOWNLOAD_SUFFIX = ".bak";
 
