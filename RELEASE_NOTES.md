@@ -47,7 +47,7 @@ Unfortunately, buttons to bind it are rare on some cabinets. That's why the back
 now comes with an additional .exe file **VPin Studio App** which can be added to your VPin frontend and launched as any other game.
 This app will show the dashboard and may be extended in the future with additional features, like additional screens (?) and widgets.
 
-<img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/notifications.jpg" width="500" />
+<img src="https://github.com/syd711/vpin-studio/blob/main/documentation/dashboard/dashboard-popper-app.png?raw=true" width="600" />
 
 Checkout the video to see how to install the VPin Studio App:
 https://www.youtube.com/@vpin-studio/videos
