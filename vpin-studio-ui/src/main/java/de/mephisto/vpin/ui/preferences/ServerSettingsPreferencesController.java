@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -105,11 +106,12 @@ public class ServerSettingsPreferencesController implements Initializable {
 
     popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    FrontendType frontendType = frontend.getFrontendType();
     popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
     launchOnExitOption.setVisible(frontendType.supportMedias());
-
     shutdownBtn.setDisable(client.getSystemService().isLocal());
+    launchFrontendCheckbox.setText("Launch " + frontend.getName() +  " on maintenance exit.");
 
     Date startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));

@@ -131,4 +131,8 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
   public void tableExited(TableStatusChangedEvent event) {
 
   }
+
+  public VPinManiaClient getManiaClient() {
+    return maniaClient;
+  }
 }

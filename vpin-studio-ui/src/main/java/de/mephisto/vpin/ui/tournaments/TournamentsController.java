@@ -221,7 +221,7 @@ public class TournamentsController implements Initializable, StudioFXController 
     if (tournamentTreeModel.isPresent() && !tournamentTreeModel.get().getValue().isTournamentNode()) {
       TournamentTreeModel value = tournamentTreeModel.get().getValue();
       Tournament tournament = value.getTournament();
-      List<TableScore> highscores = maniaClient.getHighscoreClient().getHighscores(tournament.getId());
+      List<TableScore> highscores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
       highscores = highscores.stream().filter(h -> h.getVpsTableId().equals(value.getVpsTable().getId())).collect(Collectors.toList());
 
       if (highscores.isEmpty()) {

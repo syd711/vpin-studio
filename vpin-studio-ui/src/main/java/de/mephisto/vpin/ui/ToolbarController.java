@@ -214,6 +214,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
+    frontendMenuItem.setText("Restart " + frontend.getName());
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);

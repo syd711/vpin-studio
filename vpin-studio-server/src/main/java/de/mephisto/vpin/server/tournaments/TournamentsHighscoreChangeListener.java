@@ -61,7 +61,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
             // General lazy! score submission!
             TableScore createdTableScore = null;
             if (tournamentSettings.isSubmitAllScores()) {
-              createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
+              createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
               LOG.info("Submitted VPinMania score " + createdTableScore);
             }
 
@@ -75,11 +75,11 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
                 if (tournamentTable != null) {
                   if (tournament.isActive() && tournamentTable.isActive()) {
                     if (createdTableScore == null) {
-                      createdTableScore = maniaClient.getHighscoreClient().submit(newTableScore);
+                      createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
                       LOG.info("Submitted VPinMania score " + createdTableScore + " for " + tournament);
                     }
 
-                    maniaClient.getTournamentClient().addScore(tournament, createdTableScore);
+                    maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
                     LOG.info("Linked " + createdTableScore + " to " + tournament);
 
                     if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
@@ -135,7 +135,6 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     tableScore.setScoreText(newScore.getScore());
     tableScore.setScoreSource(game.getRom() != null ? game.getRom() : game.getTableName());
     tableScore.setCreationDate(newScore.getCreatedAt());
-    tableScore.setCabinetId(cabinet.getId());
     tableScore.setTableName(game.getGameDisplayName());
 
     if (tableScore.getScoreSource() == null && game.getHsFileName() != null) {
@@ -153,8 +152,6 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     if (player.getTournamentUserUuid() != null) {
       Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
       if (accountByUuid != null) {
-        tableScore.setPlayerName(accountByUuid.getDisplayName());
-        tableScore.setPlayerInitials(accountByUuid.getInitials());
         tableScore.setAccountId(accountByUuid.getId());
         return tableScore;
       }

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.players;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
@@ -20,6 +21,8 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class WidgetPlayerScoreController extends WidgetController implements Initializable {
 
@@ -106,7 +109,9 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
     tableLabel.setText(game.getGameDisplayName());
 
     positionLabel.setText("#" + position);
-    nameLabel.setText(tableScore.getPlayerName() + " [" + tableScore.getPlayerInitials() + "]");
+
+    Account account = maniaClient.getAccountClient().getAccount(tableScore.getAccountId());
+    nameLabel.setText(account.getDisplayName() + " [" + account.getInitials() + "]");
 
     scoreLabel.setFont(getScoreFont());
     scoreLabel.setText(tableScore.getScoreText());

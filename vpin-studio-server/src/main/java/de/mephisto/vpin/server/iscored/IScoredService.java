@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.tournaments.TournamentsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +38,9 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private TournamentsService tournamentsService;
 
   private NotificationSettings notificationSettings;
 
@@ -69,7 +74,10 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
             return;
           }
 
-          IScored.submitScore(gameRoom, gameRoomGame, tableScore.getPlayerName(), tableScore.getPlayerInitials(), tableScore.getScore());
+          if (tournamentsService.getManiaClient() != null) {
+            Account account = tournamentsService.getManiaClient().getAccountClient().getAccount(tableScore.getAccountId());
+            IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
+          }
         }
       }
     }
