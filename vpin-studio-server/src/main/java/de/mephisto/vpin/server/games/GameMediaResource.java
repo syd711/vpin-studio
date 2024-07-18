@@ -110,7 +110,7 @@ public class GameMediaResource {
   }
 
   @GetMapping("/assets/d/{screen}/{gameId}/{url}")
-  public ResponseEntity<InputStreamResource> getAsset(@PathVariable("screen") String screen,
+  public ResponseEntity<InputStreamResource> getMedia(@PathVariable("screen") String screen,
                                                       @PathVariable("gameId") int gameId,
                                                       @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);

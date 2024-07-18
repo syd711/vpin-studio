@@ -101,13 +101,13 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       String folder = StringUtils.substringBeforeLast(decodeUrl, "/");
       String name = StringUtils.substringAfterLast(decodeUrl, "/");
 
-      ftp.changeWorkingDirectory(folder);
+      ftp.changeWorkingDirectory(rootfolder + folder);
 
       ByteArrayOutputStream out = new ByteArrayOutputStream();
       ftp.retrieveFile(name, out);
 
       byte[] byteArray = out.toByteArray();
-      LOG.info("Read FTP file \"" + url + "\", " + byteArray.length + " bytes");
+      LOG.info("Read FTP file \"" + decodeUrl + "\", " + byteArray.length + " bytes");
       return new ByteArrayInputStream(byteArray);
     }
     catch (CopyStreamException cse) {

@@ -106,4 +106,4 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Highscores**: Fixed out-dated help text on how to setup highscore resolving. 
 - **Component Manager**: Fixed Discord server link.
 - **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.
-- **VPS Updates**: The VPS updates were broken (approx. for the last two month). The updates are now detected again, update indicators will be shown again in the table overview (if enabled).
+- **VPS Updates**: The VPS updates were broken **(approx. for the last two month)**. The updates are now detected again, update indicators will be shown again in the table overview (if enabled).
