@@ -355,7 +355,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
 
   @FXML
-  private void onPopperBtn() {
+  private void onFrontendAdminOpen() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     if (frontend.getAdminExe() != null) {
       File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());

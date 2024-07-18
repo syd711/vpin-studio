@@ -99,7 +99,10 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **VPX Monitor**: I disabled this feature for now since when enabled, this VPX process watcher hangs and I haven't found the problem yet.
 - **Table Overview / ALT Sound**: Fixed missing refresh after uploading a new ALT sound package.
 - **Table Overview / ALT Sound**: Removed "Enabled" checkbox. This was a leftover from the previous fixed where the audio setting was a boolean flag and set a numeric value. 
+- **Table Overview / ALT Color**: VPin MAME settings "Use external DMD" and "Colorize DMD" and enabled after asset uploads now.
 - **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.
 - **Table Overview / VPin MAME**: Added apply defaults button to delete existing registry entry, as resetting a table may help sometimes to fix table problems.
 - **Table Overview / VPin MAME**: Applying the MAME defaults is only possible now, when the table has existing settings / has been played once. 
 - **Table Overview / Highscores**: Fixed out-dated help text on how to setup highscore resolving. 
+- **Component Manager**: Fixed Discord server link.
+- **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.

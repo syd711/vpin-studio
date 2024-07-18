@@ -994,8 +994,12 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
+    if (StringUtils.isEmpty(sql)) {
+      return playlistGameMap;
+    }
+
     //fetch the ids of tables applicable for this playlist
-    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
+    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql);
     Map<Integer, PlaylistGame> updated = new HashMap<>();
     for (Integer gameId : sqlPlaylistIds) {
       if (playlistGameMap.containsKey(gameId)) {
@@ -1520,7 +1524,7 @@ public class PinUPConnector implements FrontendConnector {
     return result;
   }
 
-  private List<Integer> getGameIdsFromSqlPlaylist(String sql, Map<Integer, PlaylistGame> playlistGames) {
+  private List<Integer> getGameIdsFromSqlPlaylist(String sql) {
     if (StringUtils.isEmpty(sql)) {
       return Collections.emptyList();
     }
@@ -1648,7 +1652,7 @@ public class PinUPConnector implements FrontendConnector {
 
     Map<Integer, PlaylistGame> playlistGameMap = getGamesFromPlaylist(playlist.getId());
     if (sqlPlaylist) {
-      updateSQLPlaylist(sql, playlistGameMap);
+      playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
     }
     playlist.setGames(new ArrayList<>(playlistGameMap.values()));
     addPlaylistMedia(playlist);
@@ -1662,11 +1666,6 @@ public class PinUPConnector implements FrontendConnector {
     boolean emuVisible = rs.getInt("EmuVisible") == 1;
 
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-
-    //GameEmulator emulator = emulators.get(emuId);
-    //if (emulator == null || !emulator.isVpx()) {
-    //  return null;
-    //}
 
     Game game = new Game();
     game.setEmulatorId(emuId);
