@@ -41,9 +41,9 @@ public class VPSTest {
       List<VpsDiffer> diff = vpsNew.diff(vpsOld.getTables(), vpsNew.getTables());
       System.out.println(diff.size());
       assertFalse(diff.isEmpty());
-      for (VpsDiffer diffEntry : diff) {
-        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
-      }
+//      for (VpsDiffer diffEntry : diff) {
+//        System.out.println(diffEntry.getId() + ": " + diffEntry.toString());
+//      }
     }
   }
   @Test
@@ -118,10 +118,10 @@ public class VPSTest {
 //        System.out.println(table.getName());
 //      }
 
-      List<VpsAuthoredUrls> pupPackFiles = table.getPupPackFiles();
-      if (pupPackFiles != null && !pupPackFiles.isEmpty()) {
-        System.out.println(table.getName());
-      }
+//      List<VpsAuthoredUrls> pupPackFiles = table.getPupPackFiles();
+//      if (pupPackFiles != null && !pupPackFiles.isEmpty()) {
+//        System.out.println(table.getName());
+//      }
     }
   }
 

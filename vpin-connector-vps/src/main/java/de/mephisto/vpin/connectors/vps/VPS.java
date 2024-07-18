@@ -212,7 +212,6 @@ public class VPS {
     List<VpsTable> oldTables = this.tables;
 
     if (reload()) {
-
       List<VpsDiffer> diffs = this.diff(oldTables, this.tables);
       if (!diffs.isEmpty()) {
         LOG.info("VPS download detected " + diffs.size() + " changes, notifying " + listeners.size() + " listeners...");
