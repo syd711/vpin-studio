@@ -95,7 +95,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   private Label emptylabel;
 
-  private final static String ISCORED_EMPTY_TEXT = "                        No iScored subscriptoin found.\nAdd iScored subscriptions to compete with other players.";
+  private final static String ISCORED_EMPTY_TEXT = "                 No iScored subscription found.\nAdd iScored subscriptions to compete with other players.";
   private final static String OFFLINE_EMPTY_TEXT = "                        No active offline competition found.\nStart an offline competition to compete with friends and family.";
   private final static String ONLINE_EMPTY_TEXT = "                            No active Discord competition found.\nStart an online competition on your Discord server or join an existing one.";
 

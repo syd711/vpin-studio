@@ -1756,7 +1756,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void selectGameInModel(GameRepresentation game) {
-    Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame() == game).findFirst();
+    Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == game.getId()).findFirst();
     if (model.isPresent()) {
       this.tableView.getSelectionModel().clearSelection();
       this.tableView.getSelectionModel().select(model.get());

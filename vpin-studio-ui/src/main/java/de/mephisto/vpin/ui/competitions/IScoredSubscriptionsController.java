@@ -197,7 +197,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
-    tableView.setPlaceholder(new Label("            No IScored subscription found.\nClick the '+' button to create a new one."));
+    tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -368,7 +368,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
           "Go to the players section and set the default player for this cabinet!"));
     }
     else {
-      tableView.setPlaceholder(new Label("            No IScored subscription found.\nClick the '+' button to create a new one."));
+      tableView.setPlaceholder(new Label("            No iScored subscription found.\nClick the '+' button to create a new one."));
     }
 
 
