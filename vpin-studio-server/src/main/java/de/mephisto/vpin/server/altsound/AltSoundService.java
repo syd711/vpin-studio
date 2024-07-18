@@ -83,7 +83,7 @@ public class AltSoundService implements InitializingBean {
     return altSound;
   }
 
-  public boolean setAltSoundEnabled(@NonNull String rom) {
+  public boolean setAltSoundEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
       options.setSoundMode(b ? 1 : 0);
@@ -111,7 +111,7 @@ public class AltSoundService implements InitializingBean {
 
     LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
     AltSoundUtil.unpack(archive, altSoundFolder);
-    setAltSoundEnabled(rom);
+    setAltSoundEnabled(rom, true);
     clearCache();
     return JobExecutionResultFactory.empty();
   }

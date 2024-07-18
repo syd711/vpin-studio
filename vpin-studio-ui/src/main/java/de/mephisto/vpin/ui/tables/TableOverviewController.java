@@ -71,6 +71,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
+import static de.mephisto.vpin.commons.utils.WidgetFactory.hexColor;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 

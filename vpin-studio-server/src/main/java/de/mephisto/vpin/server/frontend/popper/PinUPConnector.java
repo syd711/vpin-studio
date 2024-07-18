@@ -995,7 +995,7 @@ public class PinUPConnector implements FrontendConnector {
 
   private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
     //fetch the ids of tables applicable for this playlist
-    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql);
+    List<Integer> sqlPlaylistIds = getGameIdsFromSqlPlaylist(sql, playlistGameMap);
     Map<Integer, PlaylistGame> updated = new HashMap<>();
     for (Integer gameId : sqlPlaylistIds) {
       if (playlistGameMap.containsKey(gameId)) {

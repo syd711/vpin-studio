@@ -474,7 +474,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 //      tablesSidebarDefaultBackgroundController.setSidebarController(this);
 //      titledPaneDefaultBackground.setContent(tablesRoot);
 //    }
-    catch (IOException e) {
+//    catch (IOException e) {
 //      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
 //    }
 

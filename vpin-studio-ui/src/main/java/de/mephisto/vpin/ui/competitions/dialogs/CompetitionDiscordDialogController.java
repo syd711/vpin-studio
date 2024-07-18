@@ -20,8 +20,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.NVRamList;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
