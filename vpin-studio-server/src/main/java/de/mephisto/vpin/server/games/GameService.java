@@ -766,6 +766,11 @@ public class GameService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-
+    try {
+      vpsService.update(this.getKnownGames(-1));
+    }
+    catch (Exception e) {
+      LOG.error("Error initializing GameService: " + e.getMessage(), e);
+    }
   }
 }

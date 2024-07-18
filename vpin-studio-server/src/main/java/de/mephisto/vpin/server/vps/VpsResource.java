@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +22,9 @@ public class VpsResource {
   @Autowired
   private VpsService vpsService;
 
+  @Autowired
+  private GameService gameService;
+
   @GetMapping("/vpsTables")
   public List<VpsTable> getTables() {
     return vpsService.getTables();
@@ -37,8 +42,8 @@ public class VpsResource {
 
   @GetMapping("/update")
   public boolean update() {
-    List<VpsDiffer> diffs = vpsService.update();
-    return !diffs.isEmpty();
+    List<Game> knownGames = gameService.getKnownGames(-1);
+    return vpsService.update(knownGames);
   }
 
   @GetMapping("/reload")
