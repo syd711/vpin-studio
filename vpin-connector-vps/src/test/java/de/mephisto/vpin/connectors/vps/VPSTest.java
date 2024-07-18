@@ -86,13 +86,6 @@ public class VPSTest {
   public void testUpdates() {
     VPS vps = new VPS();
     vps.reload();
-
-    vps.addChangeListener(new VpsSheetChangedListener() {
-      @Override
-      public void vpsSheetChanged(List<VpsDiffer> diff) {
-        System.out.println(diff.size());
-      }
-    });
     vps.update();
   }
 
