@@ -8,6 +8,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -29,9 +30,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
@@ -39,14 +37,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -142,17 +136,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @FXML
   private void onOpen() {
-    if (getSelection().isPresent()) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(VPS.getVpsTableUrl(getSelection().get().getId())));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
-    }
+    Studio.browse(VPS.getVpsTableUrl(getSelection().get().getId()));
   }
 
   @FXML

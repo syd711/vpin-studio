@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
@@ -37,6 +38,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -328,5 +330,58 @@ public class Studio extends Application {
       LOG.error("Failed to read version number: " + e.getMessage(), e);
     }
     return null;
+  }
+
+  public static void browse(@Nullable String url) {
+    if (!StringUtils.isEmpty(url)) {
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
+        Studio.hostServices.showDocument(url);
+      }
+      else {
+        try {
+          Runtime.getRuntime().exec(new String[]{"xdg-open", url});
+        }
+        catch (IOException e) {
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+        }
+      }
+    }
+  }
+
+  public static boolean open(@Nullable File file) {
+    if (file != null && file.exists()) {
+      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+      if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
+        try {
+          desktop.open(file);
+          return true;
+        }
+        catch (Exception e) {
+          LOG.error("Failed to open file: " + e.getMessage(), e);
+        }
+      }
+    }
+    return false;
+  }
+
+  public static boolean edit(@Nullable File file) {
+    if (file != null && file.exists()) {
+      String osName = System.getProperty("os.name");
+      if (osName.contains("Windows")) {
+        Studio.hostServices.showDocument(file.getAbsolutePath());
+      }
+      else {
+        try {
+          Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
+        }
+        catch (IOException e) {
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+        }
+      }
+    }
+    return false;
   }
 }

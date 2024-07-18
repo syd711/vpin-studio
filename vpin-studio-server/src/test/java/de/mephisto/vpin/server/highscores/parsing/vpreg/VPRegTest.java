@@ -84,17 +84,12 @@ public class VPRegTest {
   }
 
 
-//  @Test
-//  public void testReset() {
-//    File vpRegFile = new File("C:\\vPinball\\VisualPinball\\User\\VPReg.stg");
-//    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
-//    VPReg reg = new VPReg(vpRegFile, "b66_orig", null);
-//    reg.resetHighscores();
-//    ScoreParsingSummary scoreParsingSummary = reg.readHighscores();
-//    List<ScoreParsingEntry> scores = scoreParsingSummary.getScores();
-//    for (ScoreParsingEntry score : scores) {
-//      assertEquals(score.getInitials(), "");
-//      assertEquals(score.getScore(), 0);
-//    }
-//  }
+  @Test
+  public void testSingleInitialsHighscores() {
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-local.stg");
+    VPReg reg = new VPReg(vpRegFile, "Aloha", null);
+    ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
+    assertNotNull(vpRegScoreSummary);
+    assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");
+  }
 }

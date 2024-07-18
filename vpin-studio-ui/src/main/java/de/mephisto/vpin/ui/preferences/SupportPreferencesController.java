@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.event.ActionEvent;
@@ -12,9 +13,7 @@ import javafx.stage.DirectoryChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -42,38 +41,17 @@ public class SupportPreferencesController implements Initializable {
   private void onLink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(linkText));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(linkText);
   }
 
   @FXML
   private void onDiscordLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(UIDefaults.DISCORD_INVITE_LINK));
-      } catch (Exception e) {
-        LOG.error("Failed to open discord link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse(UIDefaults.DISCORD_INVITE_LINK);
   }
 
   @FXML
   private void onGithubLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("https://github.com/syd711/vpin-studio/issues"));
-      } catch (Exception e) {
-        LOG.error("Failed to open discord link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse("https://github.com/syd711/vpin-studio/issues");
   }
 
   @Override

@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -91,43 +90,29 @@ public class PinVolPreferencesController implements Initializable {
 
   @FXML
   private void onLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("http://mjrnet.org/pinscape/PinVol.html"));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse("http://mjrnet.org/pinscape/PinVol.html");
   }
 
   @FXML
   private void onOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        boolean running = client.getPinVolService().isRunning();
-        if (running) {
-          Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "PinVol Running", "The \"PinVol.exe\" is currently running. To open the UI, the process will be terminated.",
-            "The process has to be restarted afterwards.", "Kill Process");
-          if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-            client.getPinVolService().kill();
-          }
-          else {
-            return;
-          }
-        }
-
-        File file = new File("resources", "PinVol.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinVol.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open Mame Setup: " + e.getMessage(), e);
+    boolean running = client.getPinVolService().isRunning();
+    if (running) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "PinVol Running", "The \"PinVol.exe\" is currently running. To open the UI, the process will be terminated.",
+          "The process has to be restarted afterwards.", "Kill Process");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        client.getPinVolService().kill();
       }
+      else {
+        return;
+      }
+    }
+
+    File file = new File("resources", "PinVol.exe");
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find PinVol.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      Studio.open(file);
     }
   }
 }

@@ -26,7 +26,6 @@ import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 
@@ -79,7 +78,8 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       Parent builtInRoot = loader.load();
       componentUpdateController = loader.getController();
       componentInstallerPane.setCenter(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
@@ -88,7 +88,8 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       Parent builtInRoot = loader.load();
       componentSummaryController = loader.getController();
       componentSummaryPane.getChildren().add(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
@@ -121,7 +122,8 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       componentCustomValues.getChildren().add(builtInRoot);
       controller.refresh(entry);
       return controller;
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
     return null;
@@ -135,28 +137,16 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
       else {
         WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder\"" + file.getAbsolutePath() + "\" does not exist.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open Explorer: " + e.getMessage(), e);
     }
   }
 
   protected void openFile(File file) {
-    try {
-      if (file.exists()) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-          try {
-            desktop.open(file);
-          } catch (Exception e) {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to execute \"" + file.getAbsolutePath() + "\": " + e.getMessage());
-          }
-        }
-      }
-      else {
-        WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    boolean open = Studio.open(file);
+    if (!open) {
+      WidgetFactory.showAlert(Studio.stage, "Folder Not Found", "The folder \"" + file.getAbsolutePath() + "\" does not exist.");
     }
   }
 

@@ -31,6 +31,7 @@ public class TextHighscoreToRawConverter {
     adapters.add(new AlteringScoreInitialsBlocksAdapter("CanadaDry_76VPX.txt", 7, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MagicCity_67VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("WorldSeries_72VPX.txt", 6, 5));
+    adapters.add(new AlteringScoreInitialsBlocksAdapter("MountainClimbingHS.txt", 3, 5));
     adapters.add(new AlteringScoreInitialsBlocksWithOffsetAdapter("BountyHunter.txt", 1, 5, 2));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));

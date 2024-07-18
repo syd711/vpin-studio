@@ -84,13 +84,13 @@ public class AltSoundResource {
     return altSoundService.restore(game);
   }
 
-  @GetMapping("/enabled/{id}")
-  public boolean enable(@PathVariable("id") int id) {
+  @GetMapping("/mode/{id}")
+  public int getAltSoundMode(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
     if (game != null) {
-      return altSoundService.isAltSoundEnabled(game);
+      return altSoundService.getAltSoundMode(game);
     }
-    return false;
+    return -1;
   }
 
   @PostMapping("/upload")
@@ -112,7 +112,8 @@ public class AltSoundResource {
     catch (Exception e) {
       LOG.error(AssetType.ALT_SOUND.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.ALT_SOUND + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }

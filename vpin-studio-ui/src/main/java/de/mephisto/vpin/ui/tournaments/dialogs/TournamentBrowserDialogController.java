@@ -23,9 +23,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
@@ -35,9 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.util.List;
@@ -128,7 +123,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
   @FXML
   private void onSaveClick(ActionEvent e) {
-    if(this.selection.isPresent()) {
+    if (this.selection.isPresent()) {
       this.tournament = selection.get();
     }
 
@@ -153,16 +148,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
     if (this.selection.isPresent()) {
       TournamentSearchResultItem item = selection.get();
       String link = item.getWebsite();
-      if (!StringUtils.isEmpty(link)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(link));
-          } catch (Exception e) {
-            LOG.error("Failed to open website link: " + e.getMessage(), e);
-          }
-        }
-      }
+      Studio.browse(link);
     }
   }
 
@@ -172,14 +158,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       TournamentSearchResultItem item = selection.get();
       String link = item.getDiscordLink();
       if (!StringUtils.isEmpty(link)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(link));
-          } catch (Exception e) {
-            LOG.error("Failed to open discord link: " + e.getMessage(), e);
-          }
-        }
+        Studio.browse(link);
       }
     }
   }
@@ -240,7 +219,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournaments...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -264,7 +244,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
           to = searchResult.getTotal();
         }
 
-        pagingInfo.setText((from+1) + " to " + to + " of " + searchResult.getTotal());
+        pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
         pagingInfo.setVisible(searchResult.getTotal() > 0);
         previousBtn.setDisable(true);
         nextBtn.setDisable(true);
@@ -290,7 +270,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
             viewStack.getChildren().remove(loadingOverlay);
           });
         }).start();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         viewStack.getChildren().remove(loadingOverlay);
         WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
       }

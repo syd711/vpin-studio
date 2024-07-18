@@ -64,6 +64,15 @@ Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpbm\{#MyAppE
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
+Type: files; Name: "{app}\server.vbs"
+Type: files; Name: "{app}\VPin-Studio-Server.l4j.ini"
+Type: files; Name: "{app}\VPin-Studio-Server.bat"
+Type: files; Name: "{app}\*.log"
+Type: files; Name: "{app}\*.bat"
+Type: filesandordirs; Name: "{app}\win32"
+Type: filesandordirs; Name: "{app}\resources"
+Type: filesandordirs; Name: "{app}\config"
+Type: filesandordirs; Name: "{app}"
 
 [Registry]
 Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{app}\VPin-Studio-Server.bat"""; Flags: uninsdeletevalue

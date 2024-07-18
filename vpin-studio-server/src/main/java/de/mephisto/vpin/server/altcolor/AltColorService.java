@@ -6,8 +6,10 @@ import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -16,6 +18,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -32,6 +35,19 @@ import java.util.stream.Collectors;
 @Service
 public class AltColorService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(AltColorService.class);
+
+  @Autowired
+  private MameService mameService;
+
+  public boolean setAltColorEnabled(@NonNull String rom, boolean b) {
+    if (!StringUtils.isEmpty(rom)) {
+      MameOptions options = mameService.getOptions(rom);
+      options.setColorizeDmd(b);
+      options.setUseExternalDmd(b);
+      mameService.saveOptions(options);
+    }
+    return b;
+  }
 
   public AltColorTypes getAltColorType(@NonNull Game game) {
     AltColor altColor = getAltColor(game);
@@ -142,6 +158,8 @@ public class AltColorService implements InitializingBean {
     if (assetFileName != null) {
       PackageUtil.unpackTargetFile(out, new File(game.getAltColorFolder(), game.getRom() + "." + UploaderAnalysis.SERUM_SUFFIX), assetFileName);
     }
+
+    setAltColorEnabled(game.getRom(), true);
   }
 
   public JobExecutionResult installAltColor(Game game, File out) {
@@ -190,6 +208,7 @@ public class AltColorService implements InitializingBean {
       }
     }
     LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
+    setAltColorEnabled(game.getRom(), true);
     return JobExecutionResultFactory.empty();
   }
 

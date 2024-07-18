@@ -61,3 +61,10 @@ Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: de
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [UninstallDelete]
+Type: files; Name: "{app}\*.log"
+Type: files; Name: "{app}\*.exe"
+Type: files; Name: "{app}\*.bat"
+Type: filesandordirs; Name: "{app}\win32"
+Type: filesandordirs; Name: "{app}\resources"
+Type: filesandordirs; Name: "{app}\config"
+Type: filesandordirs; Name: "{app}"

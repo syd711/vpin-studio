@@ -21,21 +21,16 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -146,16 +141,7 @@ public class CompetitionsController implements Initializable, StudioFXController
   private void onDashboardOpen() {
     if (this.competition.isPresent()) {
       String dashboardUrl = competition.get().getUrl();
-      if (!StringUtils.isEmpty(dashboardUrl)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(dashboardUrl));
-          } catch (Exception e) {
-            LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
-          }
-        }
-      }
+      Studio.browse(dashboardUrl);
     }
   }
 

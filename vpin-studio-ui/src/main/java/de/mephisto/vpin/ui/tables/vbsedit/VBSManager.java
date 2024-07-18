@@ -7,11 +7,9 @@ import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.Dialogs;
-import javafx.application.HostServices;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -56,33 +54,15 @@ public class VBSManager {
           openFile(vbsFile);
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open table VPS: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open VPS file: " + e.getMessage());
     }
   }
 
   private static void openFile(File vbsFile) {
-    String osName = System.getProperty("os.name");
-    if (osName.contains("Windows")) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-        try {
-          desktop.edit(vbsFile);
-        } catch (Exception e) {
-          HostServices hostServices = Studio.getStudioHostServices();
-          hostServices.showDocument(vbsFile.getAbsolutePath());
-        }
-      }
-    }
-    else {
-      try {
-        Runtime.getRuntime().exec("xdg-open \"" + vbsFile.getAbsolutePath() + "\"");
-      } catch (IOException e) {
-        LOG.error("Failed to open vbs file: " + e.getMessage());
-        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open vbs file: " + e.getMessage());
-      }
-    }
+    Studio.edit(vbsFile);
   }
 
   private File writeVbsFile(GameRepresentation game, String content) throws IOException {

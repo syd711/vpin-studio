@@ -17,8 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
@@ -30,13 +28,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -145,16 +143,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       TournamentTreeModel treeModel = tournamentTreeModel.get().getValue();
       Tournament tournament = treeModel.getTournament();
       String link = tournament.getDiscordLink();
-      if (!StringUtils.isEmpty(link)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(link));
-          } catch (Exception e) {
-            LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
-          }
-        }
-      }
+      Studio.browse(link);
     }
   }
 
@@ -171,14 +160,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       Tournament tournament = treeModel.getTournament();
       String link = tournament.getWebsite();
       if (!StringUtils.isEmpty(link)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(link));
-          } catch (Exception e) {
-            LOG.error("Failed to open website link: " + e.getMessage(), e);
-          }
-        }
+        Studio.browse(link);
       }
     }
   }
@@ -205,14 +187,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       Tournament tournament = treeModel.getTournament();
       String dashboardUrl = tournament.getDashboardUrl();
       if (!StringUtils.isEmpty(dashboardUrl)) {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(dashboardUrl));
-          } catch (Exception e) {
-            LOG.error("Failed to open dashboard link: " + e.getMessage(), e);
-          }
-        }
+        Studio.browse(dashboardUrl);
       }
     }
   }
@@ -259,7 +234,7 @@ public class TournamentsController implements Initializable, StudioFXController 
         int position = 1;
         for (TableScore highscore : highscores) {
           GameRepresentation game = client.getGameService().getGameByVpsTable(highscore.getVpsTableId(), highscore.getVpsVersionId());
-          if(game != null ) {
+          if (game != null) {
             try {
               FXMLLoader loader = new FXMLLoader(WidgetPlayerScoreController.class.getResource("widget-highscore.fxml"));
               Pane row = loader.load();
@@ -268,13 +243,14 @@ public class TournamentsController implements Initializable, StudioFXController 
               controller.setData(game, position, highscore);
               scoreList.getChildren().add(row);
               position++;
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
               LOG.error("failed to load score component: " + e.getMessage(), e);
             }
           }
         }
 
-        if(position == 1) {
+        if (position == 1) {
           Label label = new Label("No scores found.");
           label.getStyleClass().add("default-text");
           scoreList.getChildren().add(label);
@@ -396,7 +372,8 @@ public class TournamentsController implements Initializable, StudioFXController 
               TournamentPlayerController controller = loader.getController();
               controller.setData(tournament, player);
               membersBox.getChildren().add(playerPanel);
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
               LOG.error("Failed to load tournament player list: " + e.getMessage(), e);
             }
           }
@@ -412,7 +389,8 @@ public class TournamentsController implements Initializable, StudioFXController 
       maniaController = loader.getController();
       maniaController.setTournamentsController(this);
       maniaTab.setContent(parent);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load online: " + e.getMessage(), e);
     }
   }

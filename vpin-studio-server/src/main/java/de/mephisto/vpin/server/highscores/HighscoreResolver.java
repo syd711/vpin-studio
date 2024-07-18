@@ -2,12 +2,12 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -73,7 +73,8 @@ class HighscoreResolver {
         metadata.setRaw(rawScore);
       }
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to find highscore for table {}: {}", game.getGameFileName(), e.getMessage(), e);
     }
     return metadata;
@@ -82,7 +83,16 @@ class HighscoreResolver {
   private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
-      hsFile = game.getAlternateHighscoreTextFile();
+      hsFile = game.getAlternateHighscoreTextFile(game.getTableName());
+    }
+
+    if ((hsFile == null || !hsFile.exists())) {
+      if (!StringUtils.isEmpty(game.getRom())) {
+        ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+        if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
+          hsFile = game.getAlternateHighscoreTextFile(highscoreMapping.getTextFile());
+        }
+      }
     }
 
     if (hsFile != null && hsFile.exists()) {
@@ -107,8 +117,14 @@ class HighscoreResolver {
       return null;
     }
 
+    String tableName = game.getTableName();
+    ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+    if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
+      tableName = highscoreMapping.getTableName();
+    }
+
     File vpRegFile = game.getEmulator().getVPRegFile();
-    VPReg reg = new VPReg(vpRegFile, game.getRom(), game.getTableName());
+    VPReg reg = new VPReg(vpRegFile, game.getRom(), tableName);
     if (reg.containsGame()) {
       metadata.setType(HighscoreType.VPReg);
       metadata.setFilename(vpRegFile.getCanonicalPath());
@@ -161,7 +177,8 @@ class HighscoreResolver {
       metadata.setType(HighscoreType.NVRam);
 
       return executePINemHi(nvRam);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
       metadata.setStatus(msg);
       LOG.error(msg, e);
@@ -173,7 +190,8 @@ class HighscoreResolver {
     File commandFile = systemService.getPinemhiCommandFile();
     try {
       return NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(commandFile, nvRam);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       throw e;
     }
   }

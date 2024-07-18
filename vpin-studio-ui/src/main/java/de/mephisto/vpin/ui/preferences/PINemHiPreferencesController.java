@@ -17,9 +17,7 @@ import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.List;
@@ -299,14 +297,7 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
   @FXML
   private void onLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI("http://pinemhi.com/hiscores.php"));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse("http://pinemhi.com/hiscores.php");
   }
 
   @FXML
@@ -332,21 +323,15 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
 
   @FXML
   private void onEdit() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.EDIT)) {
-      try {
-        desktop.edit(new File("resources/pinemhi", "pinemhi.ini"));
-      } catch (Exception e) {
-        LOG.error("Failed to open pinemhi.ini: " + e.getMessage(), e);
-      }
-    }
+    Studio.edit(new File("resources/pinemhi", "pinemhi.ini"));
   }
 
   @Override
   public void changed(String key, Object value) {
     try {
       Studio.client.getPINemHiService().save(settings);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save PINemHi settings: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save PINemHi settings: " + e.getMessage());
     }

@@ -84,7 +84,8 @@ public class VpsTablesSidebarController implements Initializable {
           String url = VPS.getVpsTableUrl(selection.get().getId());
           Desktop.getDesktop().browse(new URI(url));
         }
-      } catch (Exception ex) {
+      }
+      catch (Exception ex) {
         LOG.error("Failed to open link: " + ex.getMessage(), ex);
       }
     }
@@ -117,14 +118,7 @@ public class VpsTablesSidebarController implements Initializable {
   @FXML
   private void onIpdbLink() {
     if (selection.isPresent()) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(selection.get().getIpdbUrl()));
-        } catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(selection.get().getIpdbUrl());
     }
   }
 

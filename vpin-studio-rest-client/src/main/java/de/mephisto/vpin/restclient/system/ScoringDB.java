@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.system;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,21 +34,24 @@ public class ScoringDB {
     ScoringDB db = null;
     try {
       File dbFile = new File("./resources/", SCORING_DB_NAME);
-      if(!dbFile.exists()) {
+      if (!dbFile.exists()) {
         dbFile = new File("../resources/", SCORING_DB_NAME);
       }
       in = new FileInputStream(dbFile);
       db = objectMapper.readValue(in, ScoringDB.class);
       LOG.info("Loaded " + dbFile.getName() + ", last updated: " + SimpleDateFormat.getDateTimeInstance().format(new Date(dbFile.lastModified())));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       db = new ScoringDB();
       LOG.error("Failed to load scoring DB json: " + e.getMessage());
-    } finally {
+    }
+    finally {
       try {
         if (in != null) {
           in.close();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         //ignore
       }
     }
@@ -90,7 +94,8 @@ public class ScoringDB {
       }
 
       LOG.info("Written " + dbFile.getAbsolutePath() + ", (" + oldSize + " vs " + dbFile.length() + " bytes)");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error(SCORING_DB_NAME + " download failed: " + e.getMessage());
     }
   }
@@ -153,6 +158,19 @@ public class ScoringDB {
 
   public void setSupportedNvRams(List<String> supportedNvRams) {
     this.supportedNvRams = supportedNvRams;
+  }
+
+  public ScoringDBMapping getHighscoreMapping(String rom) {
+    if (StringUtils.isEmpty(rom)) {
+      return null;
+    }
+
+    for (ScoringDBMapping highscoreMapping : highscoreMappings) {
+      if (highscoreMapping.getRom().equalsIgnoreCase(rom)) {
+        return highscoreMapping;
+      }
+    }
+    return null;
   }
 
   @Override

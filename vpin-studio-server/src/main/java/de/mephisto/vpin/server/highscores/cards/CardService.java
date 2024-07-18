@@ -114,6 +114,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
           if (bufferedImage != null) {
             File highscoreCard = getCardFile(game, screenName);
             ImageUtil.write(bufferedImage, highscoreCard);
+            LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
             return true;
           }
         }

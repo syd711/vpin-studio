@@ -23,9 +23,7 @@ import javafx.scene.layout.Pane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.ResourceBundle;
@@ -97,14 +95,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
   public void onHyperlink(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(linkText));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(linkText);
   }
 
   private void updateForTabSelection(int index) {
@@ -145,7 +136,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
       FXMLLoader loader = new FXMLLoader(TabOverviewController.class.getResource("tab-overview.fxml"));
       Parent builtInRoot = loader.load();
       overviewTab.setContent(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
@@ -168,7 +160,8 @@ public class ComponentsController implements Initializable, StudioFXController, 
       FXMLLoader loader = new FXMLLoader(ComponentsController.class.getResource(file));
       Parent builtInRoot = loader.load();
       tab.setContent(builtInRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
   }

@@ -116,8 +116,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onFrontendMenu() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
       try {
         Frontend frontend = client.getFrontendService().getFrontendCached();
         File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
@@ -125,13 +123,12 @@ public class ToolbarController implements Initializable, StudioEventListener {
           WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }
         else {
-          desktop.open(file);
+          Studio.open(file);
         }
       }
       catch (Exception e) {
         LOG.error("Failed to open admin frontend: " + e.getMessage(), e);
       }
-    }
   }
 
   @FXML

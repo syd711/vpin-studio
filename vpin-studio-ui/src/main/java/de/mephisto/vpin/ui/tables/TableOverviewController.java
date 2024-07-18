@@ -46,10 +46,6 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -66,13 +62,10 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -493,15 +486,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onVps() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null && !StringUtils.isEmpty(selectedItems.getExtTableVersionId())) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(VPS.getVpsTableUrl(selectedItems.getExtTableId())));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open link: " + e.getMessage());
-        }
-      }
+      Studio.browse(VPS.getVpsTableUrl(selectedItems.getExtTableId()));
     }
   }
 
@@ -620,6 +605,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           setSelection(match.get());
+          if (assetManagerMode) {
+            onAssetView();
+          }
+
           if (uiSettings.isAutoEditTableData()) {
             Platform.runLater(() -> {
               TableDialogs.openTableDataDialog(this, match.get());
@@ -1313,13 +1302,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       HBox box = new HBox();
       List<PlaylistRepresentation> matches = new ArrayList<>();
       boolean fav = false;
+      Integer favColor = null;
+
       boolean globalFav = false;
+      Integer globalFavColor = null;
+
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
           if (!fav && playlist.isFavGame(value.getId())) {
+            favColor = playlist.getMenuColor();
             fav = true;
           }
           if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
+            globalFavColor = playlist.getMenuColor();
             globalFav = true;
           }
           matches.add(playlist);
@@ -1330,12 +1325,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       double width = 0;
       if (fav) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
+        if (favColor != null) {
+          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(favColor)));
+        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
       if (globalFav) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
+        if (globalFavColor != null) {
+          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(globalFavColor)));
+        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }

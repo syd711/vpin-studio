@@ -125,6 +125,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     LOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
     new Thread(() -> {
+      Thread.currentThread().setName("Table Exit Thread");
       LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
       try {
         Thread.sleep(EXIT_DELAY);

@@ -187,19 +187,12 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
   @FXML
   private void onVpsBtn() {
-    if (Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-      try {
-        String url = VPS.getVpsBaseUrl();
-        GameRepresentation selection = this.tablesController.getSelection();
-        if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
-          url = VPS.getVpsTableUrl(selection.getExtTableId());
-        }
-        Desktop.getDesktop().browse(new URI(url));
-      }
-      catch (Exception ex) {
-        LOG.error("Failed to open link: " + ex.getMessage(), ex);
-      }
+    String url = VPS.getVpsBaseUrl();
+    GameRepresentation selection = this.tablesController.getSelection();
+    if (selection != null && !StringUtils.isEmpty(selection.getExtTableId())) {
+      url = VPS.getVpsTableUrl(selection.getExtTableId());
     }
+    Studio.browse(url);
   }
 
   @FXML
@@ -362,24 +355,15 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 
 
   @FXML
-  private void onFrontendAdminOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
-        if (frontend.getAdminExe() != null) {
-          File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
-          if (!file.exists()) {
-            WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-          }
-          else {
-            desktop.open(file);
-          }
-        }
-
+  private void onPopperBtn() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    if (frontend.getAdminExe() != null) {
+      File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
       }
-      catch (Exception e) {
-        LOG.error("Failed to open frontend administration: " + e.getMessage(), e);
+      else {
+        Studio.open(file);
       }
     }
   }
@@ -489,7 +473,8 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
 //      tablesSidebarDefaultBackgroundController = loader.getController();
 //      tablesSidebarDefaultBackgroundController.setSidebarController(this);
 //      titledPaneDefaultBackground.setContent(tablesRoot);
-//    } catch (IOException e) {
+//    }
+    catch (IOException e) {
 //      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
 //    }
 

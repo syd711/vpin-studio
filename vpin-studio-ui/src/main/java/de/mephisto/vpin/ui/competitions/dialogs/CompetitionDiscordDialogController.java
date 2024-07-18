@@ -20,7 +20,10 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
+import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -28,9 +31,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -40,14 +40,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.ByteArrayInputStream;
-import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -157,14 +154,7 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
   private void onLinkClick(ActionEvent event) {
     Hyperlink link = (Hyperlink) event.getSource();
     String linkText = link.getText();
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (linkText != null && linkText.startsWith("http") && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(linkText));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(linkText);
   }
 
   private void refreshPreview(GameRepresentation game, String badge) {

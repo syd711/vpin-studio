@@ -288,15 +288,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onHelp() {
     String loadingHelp = "https://www.nailbuster.com/wikipinup/doku.php?id=loading_video";
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(loadingHelp));
-      }
-      catch (Exception e) {
-        LOG.error("Failed to open help link: " + e.getMessage(), e);
-      }
-    }
+    Studio.browse(loadingHelp);
   }
 
   @FXML

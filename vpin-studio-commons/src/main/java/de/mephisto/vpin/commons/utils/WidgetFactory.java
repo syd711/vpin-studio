@@ -235,7 +235,7 @@ public class WidgetFactory {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
     fontIcon.setIconColor(Paint.valueOf("#FF9933"));
-    fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
+    fontIcon.setIconLiteral("mdi2a-alpha-l-circle");
     label.setTooltip(new Tooltip("Local Favorite"));
     label.setGraphic(fontIcon);
     return label;

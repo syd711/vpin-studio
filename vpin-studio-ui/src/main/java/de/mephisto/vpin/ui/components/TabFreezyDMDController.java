@@ -16,7 +16,6 @@ import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -48,20 +47,13 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFlexDMD() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-        File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open FlexDMD UI: " + e.getMessage(), e);
-      }
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      Studio.open(file);
     }
   }
 
@@ -80,7 +72,8 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
           client.getMameService().clearCache();
           EventManager.getInstance().notifyTablesChanged();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to open DmdDeviceIni text file: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open DmdDeviceIni file: " + e.getMessage());
       }

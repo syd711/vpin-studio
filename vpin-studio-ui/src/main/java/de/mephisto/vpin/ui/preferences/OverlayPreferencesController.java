@@ -18,8 +18,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -49,17 +47,8 @@ public class OverlayPreferencesController implements Initializable {
 
   @FXML
   private void onOpenExternalPage() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
     String url = this.externalPageUrl.getText();
-    boolean open = url != null && url.startsWith(url);
-    if (open && desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(url));
-      }
-      catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-      }
-    }
+    Studio.browse(url);
   }
 
   @FXML

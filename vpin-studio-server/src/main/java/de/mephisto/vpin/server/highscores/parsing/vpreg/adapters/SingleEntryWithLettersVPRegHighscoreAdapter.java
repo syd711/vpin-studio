@@ -16,7 +16,7 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
 
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) throws IOException {
-    if ((gameFolder.hasEntry("hsa1") || gameFolder.hasEntry("HSA1")) && getHighscoreEntry(gameFolder) != null) {
+    if ((gameFolder.hasEntry("Initial1") || gameFolder.hasEntry("hsa1") || gameFolder.hasEntry("HSA1")) && getHighscoreEntry(gameFolder) != null) {
       return true;
     }
     return false;
@@ -65,6 +65,10 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
     }
     else if (gameFolder.hasEntry("hsa" + i)) {
       DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + i);
+      nameString = super.getNameString(entry);
+    }
+    else if (gameFolder.hasEntry("Initial" + i)) {
+      DocumentNode entry = (DocumentNode) gameFolder.getEntry("Initial" + i);
       nameString = super.getNameString(entry);
     }
 

@@ -1,4 +1,5 @@
 package de.mephisto.vpin.ui.tables;
+
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -143,7 +144,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         GameRepresentation gameRepresentation = this.game.get();
         client.getFrontendService().vpsLink(gameRepresentation.getId(), null, null);
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
       }
     }
@@ -193,30 +195,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(VPS.getVpsTableUrl(game.get().getExtTableId())));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-        ipdbLink.setDisable(true);
-      }
-    }
+    Studio.browse(VPS.getVpsTableUrl(game.get().getExtTableId()));
   }
 
   @FXML
   private void onTableOpen() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        VpsTableVersion value = this.tableVersionsCombo.getValue();
-        VpsUrl vpsUrl = value.getUrls().get(0);
-        desktop.browse(new URI(vpsUrl.getUrl()));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-        ipdbLink.setDisable(true);
-      }
-    }
+    VpsTableVersion value = this.tableVersionsCombo.getValue();
+    VpsUrl vpsUrl = value.getUrls().get(0);
+    Studio.browse(vpsUrl.getUrl());
   }
 
   @FXML
@@ -229,15 +215,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   @FXML
   private void onIpdbLink() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-      try {
-        desktop.browse(new URI(ipdbLink.getText()));
-      } catch (Exception e) {
-        LOG.error("Failed to open link: " + e.getMessage());
-        ipdbLink.setDisable(true);
-      }
-    }
+    Studio.browse(ipdbLink.getText());
   }
 
   @FXML
@@ -273,7 +251,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       }
       this.tableVersionsCombo.valueProperty().addListener(this);
       EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to save updated VPS data: " + e.getMessage(), e);
     }
   }
@@ -551,7 +530,8 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       Label label = (Label) section.getChildren().get(0);
       label.setText(title);
       dataRoot.getChildren().add(section);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -580,14 +560,15 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (newValue != null) {
           updatedId = newValue.getId();
         }
-        // check value of 
+        // check value of
         String extTableId = gameRepresentation.getExtTableId();
         String extVersionId = gameRepresentation.getExtTableVersionId();
         if (!StringUtils.equals(updatedId, extVersionId)) {
           client.getFrontendService().vpsLink(gameRepresentation.getId(), extTableId, updatedId);
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save VPS version: " + e.getMessage(), e);
       }
     }

@@ -86,19 +86,20 @@ public class AltSoundService implements InitializingBean {
   public boolean setAltSoundEnabled(@NonNull String rom) {
     if (!StringUtils.isEmpty(rom)) {
       MameOptions options = mameService.getOptions(rom);
-      options.setSoundMode(1);
+      options.setSoundMode(b ? 1 : 0);
       mameService.saveOptions(options);
       return true;
     }
     return false;
   }
 
-  public boolean isAltSoundEnabled(@NonNull Game game) {
+  public int getAltSoundMode(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getRom())) {
       MameOptions options = mameService.getOptions(game.getRom());
-      return options.getSoundMode() > 0;
+      int mode = options.getSoundMode();
+      return mode;
     }
-    return false;
+    return -1;
   }
 
   public JobExecutionResult installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {

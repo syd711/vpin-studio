@@ -3,8 +3,9 @@ package de.mephisto.vpin.ui.tables.vps;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
-import de.mephisto.vpin.ui.vps.VpsUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -23,8 +24,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
-import java.net.URI;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,7 +63,7 @@ public class VpsTableEntry extends HBox {
     versionBox.setPrefWidth(60);
     versionBox.setAlignment(Pos.CENTER_LEFT);
 
-    if(Features.TOURNAMENTS_ENABLED) {
+    if (Features.TOURNAMENTS_ENABLED) {
       versionBox.getChildren().add(copyBtn);
     }
     versionBox.getChildren().add(versionLabel);
@@ -72,7 +71,7 @@ public class VpsTableEntry extends HBox {
 
     Label typeLabel = new Label();
     typeLabel.setMinWidth(34);
-    if(type != null) {
+    if (type != null) {
       typeLabel.setTextAlignment(TextAlignment.CENTER);
       typeLabel.setAlignment(Pos.CENTER);
       typeLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 12px; -fx-text-fill: #FFFFFF;-fx-background-color: " + VpsUtil.getColor(type) + ";");
@@ -89,9 +88,9 @@ public class VpsTableEntry extends HBox {
     }
 
     GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
-    HBox authorBox =new HBox(6);
+    HBox authorBox = new HBox(6);
     authorBox.setAlignment(Pos.CENTER_LEFT);
-    if(gameByVpsTable != null) {
+    if (gameByVpsTable != null) {
       FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
       checkboxIcon.setIconSize(14);
       checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
@@ -104,7 +103,7 @@ public class VpsTableEntry extends HBox {
     authorBox.getChildren().add(authorLabel);
     this.getChildren().add(authorBox);
 
-    if(link != null) {
+    if (link != null) {
       String abb = VpsUtil.abbreviate(link);
       String color = VpsUtil.getColor(abb);
       Button button = new Button(abb);
@@ -113,14 +112,7 @@ public class VpsTableEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-          try {
-            desktop.browse(new URI(link));
-          } catch (Exception e) {
-            LOG.error("Failed to open link: " + e.getMessage());
-          }
-        }
+        Studio.browse(link);
       });
 
       FontIcon fontIcon = new FontIcon();

@@ -13,7 +13,6 @@ import javafx.scene.control.Button;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Arrays;
@@ -41,25 +40,18 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onMameSetup() {
-    Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-    if (desktop != null && desktop.isSupported(Desktop.Action.OPEN)) {
-      try {
-        GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-        File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-        String systemPreset = client.getSystemPreset();
-        if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
-          file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
-        }
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
+    String systemPreset = client.getSystemPreset();
+    if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
+      file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
+    }
 
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          desktop.open(file);
-        }
-      } catch (Exception e) {
-        LOG.error("Failed to open Mame Setup: " + e.getMessage());
-      }
+    if (!file.exists()) {
+      WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+    }
+    else {
+      Studio.open(file);
     }
   }
 

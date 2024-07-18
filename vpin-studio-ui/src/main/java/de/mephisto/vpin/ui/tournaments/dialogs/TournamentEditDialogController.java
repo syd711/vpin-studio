@@ -20,6 +20,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
@@ -37,10 +38,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -58,15 +55,12 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
-import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -186,33 +180,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   @FXML
   private void onDiscordOpen() {
     String discordLink = this.discordLinkText.getText();
-    if (!StringUtils.isEmpty(discordLink)) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(discordLink));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open discord link: " + e.getMessage(), e);
-        }
-      }
-    }
+    Studio.browse(discordLink);
   }
 
   @FXML
   private void onWebsiteOpen() {
     String link = this.websiteLinkText.getText();
-    if (!StringUtils.isEmpty(link)) {
-      Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
-      if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
-        try {
-          desktop.browse(new URI(link));
-        }
-        catch (Exception e) {
-          LOG.error("Failed to open discord link: " + e.getMessage(), e);
-        }
-      }
-    }
+    Studio.browse(link);
   }
 
   @FXML
