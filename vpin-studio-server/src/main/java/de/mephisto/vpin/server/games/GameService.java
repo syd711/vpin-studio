@@ -653,6 +653,9 @@ public class GameService implements InitializingBean {
     game.setAltSoundAvailable(altSoundService.isAltSoundAvailable(game));
     game.setAltColorType(altColorService.getAltColorType(game));
 
+    File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
+    game.setDefaultBackgroundAvailable(rawDefaultPicture != null && rawDefaultPicture.exists());
+
     String updates = gameDetails.getUpdates();
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);

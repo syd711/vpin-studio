@@ -78,7 +78,7 @@
                                     </Button>
                                     <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
                                        <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="18" />
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                                        </graphic>
                                        <font>
                                           <Font size="14.0" />

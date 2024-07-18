@@ -56,7 +56,7 @@ public class Game {
   private boolean altSoundAvailable;
   private AltColorTypes altColorType;
 
-  private String assets;
+  private boolean defaultBackgroundAvailable;
   private PupPack pupPack;
   private List<Integer> playlists = new ArrayList<>();
 
@@ -76,6 +76,14 @@ public class Game {
       return this.pupPack.getName();
     }
     return pupPackName;
+  }
+
+  public boolean isDefaultBackgroundAvailable() {
+    return defaultBackgroundAvailable;
+  }
+
+  public void setDefaultBackgroundAvailable(boolean defaultBackgroundAvailable) {
+    this.defaultBackgroundAvailable = defaultBackgroundAvailable;
   }
 
   public Date getDateUpdated() {
@@ -234,14 +242,6 @@ public class Game {
 
   public void setHighscoreType(HighscoreType highscoreType) {
     this.highscoreType = highscoreType;
-  }
-
-  public String getAssets() {
-    return assets;
-  }
-
-  public void setAssets(String assets) {
-    this.assets = assets;
   }
 
   public String getTableName() {

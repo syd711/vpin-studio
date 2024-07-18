@@ -208,23 +208,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
         packageInfo.setMusic(true);
         zipFile(game.getMusicFolder(), gameFolderName + "/Music/" + game.getMusicFolder().getName(), zipOut);
       }
-      else {
-        String assets = game.getAssets();
-        if (!StringUtils.isEmpty(assets)) {
-          String[] tableMusic = assets.split(",");
-          File musicFolder = game.getEmulator().getMusicFolder();
-          if (musicFolder.exists()) {
-            File[] files = musicFolder.listFiles((dir, name) -> name.endsWith(".mp3"));
-            if (findAudioMatch(files, tableMusic)) {
-              packageInfo.setMusic(true);
-              for (File file : files) {
-                zipFile(file, gameFolderName + "/Music/" + file.getName(), zipOut);
-              }
-            }
-          }
-
-        }
-      }
 
       zipPupPack(packageInfo, zipOut);
       zipPopperMedia(packageInfo, zipOut);
@@ -280,18 +263,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   private void calculateTotalSize() {
     if (game.getMusicFolder() != null && game.getMusicFolder().exists()) {
       totalSizeExpected += org.apache.commons.io.FileUtils.sizeOfDirectory(game.getMusicFolder());
-    }
-    else {
-      String assets = game.getAssets();
-      if (!StringUtils.isEmpty(assets) && game.getEmulator().getMusicFolder().exists()) {
-        String[] tableMusic = assets.split(",");
-        File[] files = game.getEmulator().getMusicFolder().listFiles((dir, name) -> name.endsWith(".mp3"));
-        if (findAudioMatch(files, tableMusic)) {
-          for (File file : files) {
-            totalSizeExpected += file.length();
-          }
-        }
-      }
     }
 
     VPinScreen[] values = VPinScreen.values();
