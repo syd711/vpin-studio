@@ -581,13 +581,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           setSelection(match.get());
+          if (assetManagerMode) {
+            onAssetView();
+          }
 
           if (uiSettings.isAutoEditTableData()) {
             Platform.runLater(() -> {
-              if (assetManagerMode) {
-                onAssetView();
-              }
-
               TableDialogs.openTableDataDialog(this, match.get());
             });
           }
