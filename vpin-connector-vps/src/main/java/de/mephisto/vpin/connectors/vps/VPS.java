@@ -21,7 +21,7 @@ public class VPS {
 
   private static final ObjectMapper objectMapper;
 
-  private boolean skipUpdates = false;
+  private final static boolean skipUpdates = false;
 
   static {
     objectMapper = new ObjectMapper();
@@ -29,7 +29,7 @@ public class VPS {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
   }
 
-  private List<VpsSheetChangedListener> listeners = new ArrayList<>();
+  private final List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
   private List<VpsTable> tables;
 
