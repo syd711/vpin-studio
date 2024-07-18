@@ -195,7 +195,6 @@ public class WidgetPlayerRankController extends WidgetController implements Init
   }
 
   public void refresh() {
-    tableStack.getChildren().add(loadingOverlay);
     new Thread(() -> {
       List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
 
@@ -203,8 +202,6 @@ public class WidgetPlayerRankController extends WidgetController implements Init
         ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);
         tableView.setItems(data);
         tableView.refresh();
-
-        tableStack.getChildren().remove(loadingOverlay);
       });
     }).start();
   }
