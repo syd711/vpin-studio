@@ -59,6 +59,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private RadioButton uploadAndImportRadio;
+
   @FXML
   private Label uploadAndImportDescription;
 

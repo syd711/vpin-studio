@@ -50,7 +50,7 @@ This app will show the dashboard and may be extended in the future with addition
 <img src="https://github.com/syd711/vpin-studio/blob/main/documentation/dashboard/dashboard-popper-app.png?raw=true" width="600" />
 
 Checkout the video to see how to install the VPin Studio App:
-https://www.youtube.com/@vpin-studio/videos
+https://www.youtube.com/watch?v=WeAqw0ojBvU&ab_channel=VPinStudio
 
 
 
@@ -64,7 +64,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 ### We have also been busy with...
 
-- **Documentation**: Indeed, we sometimes do that! The wiki has been updated (https://github.com/syd711/vpin-studio/wiki) and a lot of YouTube videos have been (re-)recorded.
+- **Documentation**: Indeed, we sometimes do that! The wiki has been updated (https://github.com/syd711/vpin-studio/wiki) and YouTube videos have been (re-)recorded.
 - **Navigation**: The navigation supports deep links now. E.g. you can jump from the **Table Overview / Highscores** section to the corresponding table in the **Highscore Cards** view (and back!).
 - **Preferences Changes (breaking)**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
@@ -76,6 +76,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Emulators**: Enabled import and delete actions for the **Future Pinball** emulator. 
 - **Table Overview / Sidebar**: Added toggling button to the sidebar for a better support of smaller screens. The status of the sidebar is persisted.
 - **Table Overview / Filter Section**: Splitted filter preferences for .ini and .pov files.
+- **Table Overview / Filter Section**: The status of the filter is saved and restored on start.
 - **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
 - **Table Overview / Status Comments**: Added "OUTDATED" as an additional comment type.
 - **Table Overview / Highscore Section**: Added highscore card preview image shown in the lower part of the section.
@@ -90,7 +91,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 
 - **Table Overview / Auto-Fill**: Added **preference dialog for the auto-fill** function. The dialog allows to select the fields that should be overwritten. The settings button for this is next to every auto-fill menu drop-down (inside the Table Data Manager and the Table Data section).
 
-- <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/auto-fill.png" width="500" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/auto-fill.png" width="500" />
 
 ### Bugfixes
 
