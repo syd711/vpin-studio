@@ -4,14 +4,18 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -37,7 +41,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TablesSidebarController implements Initializable {
+public class TablesSidebarController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesSidebarController.class);
 
   @FXML
@@ -45,9 +49,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TitledPane titledPaneMedia;
-
-  @FXML
-  private TitledPane titledPaneDefaultBackground;
+//
+//  @FXML
+//  private TitledPane titledPaneDefaultBackground;
 
   @FXML
   private TitledPane titledPaneHighscores;
@@ -59,10 +63,10 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPanePov;
 
   @FXML
-  private TitledPane titledPaneAudio;
+  private TitledPane titledPaneAltSound;
 
   @FXML
-  private TitledPane titledPaneMetadata;
+  private TitledPane titledPaneScriptDetails;
 
   @FXML
   private TitledPane titledPaneDirectB2s;
@@ -74,7 +78,7 @@ public class TablesSidebarController implements Initializable {
   private TitledPane titledPaneDMD;
 
   @FXML
-  private TitledPane titledPanePopper;
+  private TitledPane titledPaneTableData;
 
   @FXML
   private TitledPane titledPaneMame;
@@ -84,6 +88,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TitledPane titledPaneAltColor;
+
+  @FXML
+  private TitledPane titledPaneIni;
 
   @FXML
   private CheckBox mediaPreviewCheckbox;
@@ -101,6 +108,9 @@ public class TablesSidebarController implements Initializable {
   private Button altColorExplorerBtn;
 
   @FXML
+  private Button iniExplorerBtn;
+
+  @FXML
   private Button scriptBtn;
 
   @FXML
@@ -116,13 +126,16 @@ public class TablesSidebarController implements Initializable {
   private Button dmdBtn;
 
   @FXML
-  private HBox popperTitleButtonArea;
+  private Button frontendConfigBtn;
+
+  @FXML
+  private HBox frontendTitleButtonArea;
 
   @FXML
   private TablesSidebarAltSoundController tablesSidebarAudioController; //fxml magic! Not unused
 
-  @FXML
-  private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
+//  @FXML
+//  private TablesSidebarDefaultBackgroundController tablesSidebarDefaultBackgroundController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarHighscoresController tablesSidebarHighscoresController; //fxml magic! Not unused
@@ -146,7 +159,7 @@ public class TablesSidebarController implements Initializable {
   private TablesSidebarDMDController tablesSidebarDMDController; //fxml magic! Not unused
 
   @FXML
-  private TablesSidebarPopperController tablesSidebarPopperController; //fxml magic! Not unused
+  private TablesSidebarTableDetailsController tablesSidebarTableDetailsController; //fxml magic! Not unused
 
   @FXML
   private TablesSidebarPlaylistsController tablesSidebarPlaylistsController; //fxml magic! Not unused
@@ -159,6 +172,9 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private TablesSidebarAltColorController tablesSidebarAltColorController; //fxml magic! Not unused
+
+  @FXML
+  private TablesSidebarIniController tablesSidebarIniController; //fxml magic! Not unused
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -187,13 +203,13 @@ public class TablesSidebarController implements Initializable {
         if (gameRepresentation.getHighscoreType() != null) {
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
-            GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+            GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
             SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
             return;
           }
         }
 
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
       }
     }
@@ -206,7 +222,7 @@ public class TablesSidebarController implements Initializable {
   private void onTables() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
     }
@@ -219,10 +235,13 @@ public class TablesSidebarController implements Initializable {
   private void onPupPack() {
     try {
       if (this.game.isPresent()) {
-        SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-        File pupFolder = new File(systemSummary.getPinupSystemDirectory(), "PUPVideos");
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+        File pupFolder = new File(frontend.getInstallationDirectory(), "PUPVideos");
         File gamePupFolder = new File(pupFolder, game.get().getRom());
-        SystemUtil.openFolder(gamePupFolder, new File(systemSummary.getPinupSystemDirectory(), "PUPVideos"));
+        if (!gamePupFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          gamePupFolder = new File(pupFolder, game.get().getRomAlias());
+        }
+        SystemUtil.openFolder(gamePupFolder, new File(frontend.getInstallationDirectory(), "PUPVideos"));
       }
     }
     catch (Exception e) {
@@ -234,8 +253,11 @@ public class TablesSidebarController implements Initializable {
   private void onAltSound() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File altSoundFolder = new File(emulatorRepresentation.getAltSoundDirectory(), game.get().getRom());
+        if (!altSoundFolder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          altSoundFolder = new File(altSoundFolder, game.get().getRomAlias());
+        }
         SystemUtil.openFolder(altSoundFolder, new File(emulatorRepresentation.getAltSoundDirectory()));
       }
     }
@@ -250,8 +272,11 @@ public class TablesSidebarController implements Initializable {
   private void onAltColor() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         File folder = new File(emulatorRepresentation.getAltColorDirectory(), game.get().getRom());
+        if (!folder.exists() && !StringUtils.isEmpty(game.get().getRomAlias())) {
+          folder = new File(folder, game.get().getRomAlias());
+        }
         SystemUtil.openFolder(folder, new File(emulatorRepresentation.getAltColorDirectory()));
       }
     }
@@ -264,7 +289,20 @@ public class TablesSidebarController implements Initializable {
   private void onDirectB2S() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
+        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onIni() {
+    try {
+      if (this.game.isPresent()) {
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
         SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
       }
     }
@@ -279,7 +317,7 @@ public class TablesSidebarController implements Initializable {
       if (this.game.isPresent()) {
         DMDPackage dmdPackage = client.getDmdService().getDMDPackage(this.game.get().getId());
         if (dmdPackage != null) {
-          GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+          GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
           File tablesFolder = new File(emulatorRepresentation.getTablesDirectory());
           File dmdFolder = new File(tablesFolder, dmdPackage.getName());
           SystemUtil.openFolder(dmdFolder);
@@ -287,7 +325,7 @@ public class TablesSidebarController implements Initializable {
         }
       }
 
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
       SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
     }
     catch (Exception e) {
@@ -300,7 +338,7 @@ public class TablesSidebarController implements Initializable {
     try {
       if (this.game.isPresent()) {
         GameRepresentation game = this.game.get();
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(this.game.get().getEmulatorId());
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
 
         String vpxFilePath = "\"" + new File(emulatorRepresentation.getTablesDirectory(), game.getGameFileName()).getAbsolutePath() + "\"";
         String vpxExePath = new File(emulatorRepresentation.getInstallationDirectory(), "VPinballX64.exe").getAbsolutePath();
@@ -318,13 +356,15 @@ public class TablesSidebarController implements Initializable {
 
   @FXML
   private void onPopperBtn() {
-    SystemSummary systemSummary = Studio.client.getSystemService().getSystemSummary();
-    File file = new File(systemSummary.getPinupSystemDirectory(), "PinUpMenuSetup.exe");
-    if (!file.exists()) {
-      WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-    }
-    else {
-      Studio.open(file);
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    if (frontend.getAdminExe() != null) {
+      File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find admin exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+      }
+      else {
+        Studio.open(file);
+      }
     }
   }
 
@@ -334,8 +374,8 @@ public class TablesSidebarController implements Initializable {
   }
 
   @FXML
-  private void onPrefsPopper() {
-    PreferencesController.open("validators-screens");
+  private void onPrefsScreenValidators() {
+    PreferencesController.open("validators_screens");
   }
 
   @FXML
@@ -351,10 +391,11 @@ public class TablesSidebarController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableAccordion.managedProperty().bindBidirectional(tableAccordion.visibleProperty());
-    popperTitleButtonArea.managedProperty().bindBidirectional(popperTitleButtonArea.visibleProperty());
-    popperTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
+    frontendTitleButtonArea.managedProperty().bindBidirectional(frontendTitleButtonArea.visibleProperty());
+    frontendTitleButtonArea.setVisible(SystemUtil.isFolderActionSupported());
     altSoundExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     altColorExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
+    iniExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
     directb2sBtn.setVisible(SystemUtil.isFolderActionSupported());
     scriptBtn.setVisible(SystemUtil.isFolderActionSupported());
     nvramExplorerBtn.setVisible(SystemUtil.isFolderActionSupported());
@@ -363,26 +404,33 @@ public class TablesSidebarController implements Initializable {
     pupBackBtn.setVisible(SystemUtil.isFolderActionSupported());
     dmdBtn.setVisible(SystemUtil.isFolderActionSupported());
 
-    titledPaneDefaultBackground.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneHighscores.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPanePov.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneAudio.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneDirectB2s.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPanePUPPack.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneDMD.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneMame.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneVps.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneAltColor.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
-    titledPaneMetadata.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDefaultBackground.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneHighscores.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPanePov.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneAltSound.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDirectB2s.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPanePUPPack.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneDMD.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneMame.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneVps.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneAltColor.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+//    titledPaneScriptDetails.managedProperty().bindBidirectional(titledPaneDefaultBackground.visibleProperty());
+
+    client.getPreferenceService().addListener(this);
   }
 
   private void loadSidePanels() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    FrontendType frontendType = frontend.getFrontendType();
+
+    FrontendUtil.replaceName(frontendConfigBtn.getTooltip(), frontend);
+
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-altsound.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarAudioController = loader.getController();
       tablesSidebarAudioController.setSidebarController(this);
-      titledPaneAudio.setContent(tablesRoot);
+      titledPaneAltSound.setContent(tablesRoot);
     }
     catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
@@ -399,6 +447,16 @@ public class TablesSidebarController implements Initializable {
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(TablesSidebarIniController.class.getResource("scene-tables-sidebar-ini.fxml"));
+      Parent tablesRoot = loader.load();
+      tablesSidebarIniController = loader.getController();
+      titledPaneIni.setContent(tablesRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    }
+
+    try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarAltSoundController.class.getResource("scene-tables-sidebar-vps.fxml"));
       Parent tablesRoot = loader.load();
       tablesSidebarVpsController = loader.getController();
@@ -409,16 +467,16 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarDefaultBackgroundController = loader.getController();
-      tablesSidebarDefaultBackgroundController.setSidebarController(this);
-      titledPaneDefaultBackground.setContent(tablesRoot);
-    }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
-    }
+//    try {
+//      FXMLLoader loader = new FXMLLoader(TablesSidebarDefaultBackgroundController.class.getResource("scene-tables-sidebar-default-background.fxml"));
+//      Parent tablesRoot = loader.load();
+//      tablesSidebarDefaultBackgroundController = loader.getController();
+//      tablesSidebarDefaultBackgroundController.setSidebarController(this);
+//      titledPaneDefaultBackground.setContent(tablesRoot);
+//    }
+//    catch (IOException e) {
+//      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+//    }
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarHighscoresController.class.getResource("scene-tables-sidebar-highscores.fxml"));
@@ -431,26 +489,37 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarMediaController.class.getResource("scene-tables-sidebar-media.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarMediaController = loader.getController();
-      tablesSidebarMediaController.setSidebarController(this);
-      titledPaneMedia.setContent(tablesRoot);
+    if (!frontend.getSupportedScreens().isEmpty()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarMediaController.class.getResource("scene-tables-sidebar-media.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarMediaController = loader.getController();
+        tablesSidebarMediaController.setSidebarController(this);
+        titledPaneMedia.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPaneMedia);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarPopperController.class.getResource("scene-tables-sidebar-playlists.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarPlaylistsController = loader.getController();
-      tablesSidebarPlaylistsController.setSidebarController(this);
-      titledPanePlaylists.setContent(tablesRoot);
+
+    if (frontendType.supportPlaylists()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-playlists.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarPlaylistsController = loader.getController();
+        tablesSidebarPlaylistsController.setSidebarController(this);
+        titledPanePlaylists.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPanePlaylists);
     }
 
     try {
@@ -458,7 +527,7 @@ public class TablesSidebarController implements Initializable {
       Parent tablesRoot = loader.load();
       tablesSidebarMetadataController = loader.getController();
       tablesSidebarMetadataController.setSidebarController(this);
-      titledPaneMetadata.setContent(tablesRoot);
+      titledPaneScriptDetails.setContent(tablesRoot);
     }
     catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
@@ -486,15 +555,20 @@ public class TablesSidebarController implements Initializable {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
-      Parent tablesRoot = loader.load();
-      tablesSidebarPUPPackController = loader.getController();
-      tablesSidebarPUPPackController.setSidebarController(this);
-      titledPanePUPPack.setContent(tablesRoot);
+    if (frontendType.supportPupPacks()) {
+      try {
+        FXMLLoader loader = new FXMLLoader(TablesSidebarPUPPackController.class.getResource("scene-tables-sidebar-pup-pack.fxml"));
+        Parent tablesRoot = loader.load();
+        tablesSidebarPUPPackController = loader.getController();
+        tablesSidebarPUPPackController.setSidebarController(this);
+        titledPanePUPPack.setContent(tablesRoot);
+      }
+      catch (IOException e) {
+        LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+      }
     }
-    catch (IOException e) {
-      LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
+    else {
+      tableAccordion.getPanes().remove(titledPanePUPPack);
     }
 
     try {
@@ -509,15 +583,16 @@ public class TablesSidebarController implements Initializable {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(TablesSidebarPopperController.class.getResource("scene-tables-sidebar-popper.fxml"));
+      FXMLLoader loader = new FXMLLoader(TablesSidebarTableDetailsController.class.getResource("scene-tables-sidebar-tabledata.fxml"));
       Parent tablesRoot = loader.load();
-      tablesSidebarPopperController = loader.getController();
-      tablesSidebarPopperController.setSidebarController(this);
-      titledPanePopper.setContent(tablesRoot);
+      tablesSidebarTableDetailsController = loader.getController();
+      tablesSidebarTableDetailsController.setSidebarController(this);
+      titledPaneTableData.setContent(tablesRoot);
     }
     catch (IOException e) {
       LOG.error("Failed loading sidebar controller: " + e.getMessage(), e);
     }
+
 
     try {
       FXMLLoader loader = new FXMLLoader(TablesSidebarMameController.class.getResource("scene-tables-sidebar-mame.fxml"));
@@ -558,16 +633,19 @@ public class TablesSidebarController implements Initializable {
         refreshView(game);
       }
     });
-    titledPaneAudio.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+    titledPaneAltSound.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
     });
-    titledPanePUPPack.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      if (expanded) {
-        refreshView(game);
-      }
-    });
+
+    if (tablesSidebarPUPPackController != null) {
+      titledPanePUPPack.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+        if (expanded) {
+          refreshView(game);
+        }
+      });
+    }
     titledPaneDirectB2s.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
@@ -578,17 +656,17 @@ public class TablesSidebarController implements Initializable {
         refreshView(game);
       }
     });
-    titledPaneMetadata.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+    titledPaneScriptDetails.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
     });
-    titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
-      if (expanded) {
-        refreshView(game);
-      }
-    });
-    titledPanePopper.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+//    titledPaneDefaultBackground.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+//      if (expanded) {
+//        refreshView(game);
+//      }
+//    });
+    titledPaneTableData.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -599,6 +677,11 @@ public class TablesSidebarController implements Initializable {
       }
     });
     titledPaneAltColor.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
+      if (expanded) {
+        refreshView(game);
+      }
+    });
+    titledPaneIni.expandedProperty().addListener((observableValue, aBoolean, expanded) -> {
       if (expanded) {
         refreshView(game);
       }
@@ -614,14 +697,16 @@ public class TablesSidebarController implements Initializable {
       client.getPreferenceService().setPreference(PreferenceNames.PREVIEW_ENABLED, newValue);
       refreshView(game);
     });
+
+    refreshSidebarSections();
   }
 
-  public void setTablesController(TableOverviewController tablesController) {
+  public void setTableOverviewController(TableOverviewController tablesController) {
     this.tablesController = tablesController;
     loadSidePanels();
   }
 
-  public TableOverviewController getTablesController() {
+  public TableOverviewController getTableOverviewController() {
     return tablesController;
   }
 
@@ -633,50 +718,57 @@ public class TablesSidebarController implements Initializable {
 
   private void refreshView(Optional<GameRepresentation> g) {
     Platform.runLater(() -> {
-      if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
-        this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
-      }
-      else {
-        tablesSidebarMediaController.resetMedia();
+      if (titledPaneMedia != null && tablesSidebarMediaController != null) {
+        if (titledPaneMedia.isExpanded() && titledPaneMedia.isVisible()) {
+          this.tablesSidebarMediaController.setGame(g, mediaPreviewCheckbox.isSelected());
+        }
+        else {
+          tablesSidebarMediaController.resetMedia();
+        }
       }
 
-      if (titledPaneMetadata.isExpanded()) {
+      if (titledPaneScriptDetails.isExpanded() && titledPaneScriptDetails.isVisible()) {
         this.tablesSidebarMetadataController.setGame(g);
       }
-      if (titledPanePUPPack.isExpanded()) {
-        this.tablesSidebarPUPPackController.setGame(g);
+      if (titledPanePUPPack != null && tablesSidebarPUPPackController != null) {
+        if (titledPanePUPPack.isExpanded() && titledPanePUPPack.isVisible()) {
+          this.tablesSidebarPUPPackController.setGame(g);
+        }
       }
-      if (titledPaneDMD.isExpanded()) {
+      if (titledPaneDMD.isExpanded() && titledPaneDMD.isVisible()) {
         this.tablesSidebarDMDController.setGame(g);
       }
-      if (titledPaneDirectB2s.isExpanded()) {
+      if (titledPaneDirectB2s.isExpanded() && titledPaneDirectB2s.isVisible()) {
         this.tablesSidebarDirectB2SController.setGame(g);
       }
-      if (titledPaneAudio.isExpanded()) {
+      if (titledPaneAltSound.isExpanded() && titledPaneAltSound.isVisible()) {
         this.tablesSidebarAudioController.setGame(g);
       }
-      if (titledPaneHighscores.isExpanded()) {
+      if (titledPaneHighscores.isExpanded() && titledPaneHighscores.isVisible()) {
         this.tablesSidebarHighscoresController.setGame(g);
       }
-      if (titledPaneDefaultBackground.isExpanded()) {
-        this.tablesSidebarDefaultBackgroundController.setGame(g);
-      }
-      if (titledPanePov.isExpanded()) {
+//      if (titledPaneDefaultBackground.isExpanded()) {
+//        this.tablesSidebarDefaultBackgroundController.setGame(g);
+//      }
+      if (titledPanePov.isExpanded() && titledPanePov.isVisible()) {
         this.tablesSidebarPovController.setGame(g);
       }
-      if (titledPanePopper.isExpanded()) {
-        this.tablesSidebarPopperController.setGame(g);
+      if (titledPaneIni.isExpanded() && titledPaneIni.isVisible()) {
+        this.tablesSidebarIniController.setGame(g);
       }
-      if (titledPaneVps.isExpanded()) {
+      if (titledPaneTableData.isExpanded() && titledPaneTableData.isVisible()) {
+        this.tablesSidebarTableDetailsController.setGame(g);
+      }
+      if (titledPaneVps.isExpanded() && titledPaneVps.isVisible()) {
         this.tablesSidebarVpsController.setGame(g);
       }
-      if (titledPaneAltColor.isExpanded()) {
+      if (titledPaneAltColor.isExpanded() && titledPaneAltColor.isVisible()) {
         this.tablesSidebarAltColorController.setGame(g);
       }
-      if (titledPaneMame.isExpanded()) {
+      if (titledPaneMame.isExpanded() && titledPaneMame.isVisible()) {
         this.tablesSidebarMameController.setGame(g);
       }
-      if (titledPanePlaylists.isExpanded()) {
+      if (titledPanePlaylists.isExpanded() && titledPanePlaylists.isVisible()) {
         this.tablesSidebarPlaylistsController.setGame(g);
       }
     });
@@ -693,51 +785,73 @@ public class TablesSidebarController implements Initializable {
   public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
+
     if (!vpxMode) {
-      tableAccordion.getPanes().remove(titledPaneDefaultBackground);
       tableAccordion.getPanes().remove(titledPaneHighscores);
       tableAccordion.getPanes().remove(titledPanePov);
-      tableAccordion.getPanes().remove(titledPaneAudio);
+      tableAccordion.getPanes().remove(titledPaneIni);
+      tableAccordion.getPanes().remove(titledPaneAltSound);
       tableAccordion.getPanes().remove(titledPaneDirectB2s);
       tableAccordion.getPanes().remove(titledPanePUPPack);
       tableAccordion.getPanes().remove(titledPaneDMD);
       tableAccordion.getPanes().remove(titledPaneMame);
       tableAccordion.getPanes().remove(titledPaneVps);
       tableAccordion.getPanes().remove(titledPaneAltColor);
-      tableAccordion.getPanes().remove(titledPaneMetadata);
+      tableAccordion.getPanes().remove(titledPaneScriptDetails);
     }
     else {
-      if (tableAccordion.getPanes().size() == 3) {
-        tableAccordion.getPanes().add(titledPaneDirectB2s);
-        tableAccordion.getPanes().add(titledPaneDMD);
-        tableAccordion.getPanes().add(titledPanePUPPack);
-        tableAccordion.getPanes().add(titledPaneAudio);
-        tableAccordion.getPanes().add(titledPaneAltColor);
-        tableAccordion.getPanes().add(titledPanePov);
-        tableAccordion.getPanes().add(titledPaneHighscores);
-        tableAccordion.getPanes().add(titledPaneMame);
-        tableAccordion.getPanes().add(titledPaneVps);
-        tableAccordion.getPanes().add(titledPaneMetadata);
-        tableAccordion.getPanes().add(titledPaneDefaultBackground);
+      if (!tablesController.isAssetManagerMode()) {
+        refreshSidebarSections();
       }
     }
+  }
 
+  public void refreshSidebarSections() {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    int index = 0;
+    index = refreshSection(titledPaneMedia, uiSettings.isSectionAssets() && frontendType.supportMedias(), index);
+    index = refreshSection(titledPaneTableData, uiSettings.isSectionTableData(), index);
+    index = refreshSection(titledPaneDirectB2s, uiSettings.isSectionBackglass(), index);
+    index = refreshSection(titledPaneDMD, uiSettings.isSectionDMD(), index);
+    index = refreshSection(titledPanePlaylists, uiSettings.isSectionPlaylists() && frontendType.supportPlaylists(), index);
+    index = refreshSection(titledPaneAltSound, uiSettings.isSectionAltSound(), index);
+    index = refreshSection(titledPaneAltColor, uiSettings.isSectionAltColor(), index);
+    index = refreshSection(titledPanePov, uiSettings.isSectionPov(), index);
+    index = refreshSection(titledPaneIni, uiSettings.isSectionIni(), index);
+    index = refreshSection(titledPaneHighscores, uiSettings.isSectionHighscore(), index);
+    index = refreshSection(titledPaneMame, uiSettings.isSectionVPinMAME(), index);
+    index = refreshSection(titledPaneVps, uiSettings.isSectionVps(), index);
+    index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
+    index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
+
+    getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+  }
+
+  private int refreshSection(TitledPane section, boolean sectionAssets, int index) {
+    if (sectionAssets) {
+      if (!tableAccordion.getPanes().contains(section)) {
+        tableAccordion.getPanes().add(index, section);
+      }
+      index++;
+    }
+    else {
+      tableAccordion.getPanes().remove(section);
+    }
+    return index;
   }
 
   public TitledPane getTitledPanePov() {
     return titledPanePov;
   }
 
+  public TitledPane getTitledPaneIni() {
+    return titledPaneIni;
+  }
+
   public TitledPane getTitledPaneDirectB2s() {
     return titledPaneDirectB2s;
-  }
-
-  public TitledPane getTitledPanePUPPack() {
-    return titledPanePUPPack;
-  }
-
-  public TitledPane getTitledPaneDMD() {
-    return titledPaneDMD;
   }
 
   public TitledPane getTitledPaneMedia() {
@@ -748,7 +862,14 @@ public class TablesSidebarController implements Initializable {
     return titledPaneAltColor;
   }
 
-  public TitledPane getTitledPaneAltSound() {
-    return titledPaneAudio;
+  public boolean isEmpty() {
+    return tableAccordion.getPanes().isEmpty();
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.UI_SETTINGS)) {
+      refreshSidebarSections();
+    }
   }
 }

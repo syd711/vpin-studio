@@ -7,8 +7,8 @@ import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -83,8 +83,8 @@ public class MenuController implements Initializable {
 
   private int selectionIndex = 0;
 
-  private PopperScreen cardScreen;
-  private PinUPPlayerDisplay tutorialScreen;
+  private VPinScreen cardScreen;
+  private FrontendPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
   private PauseMenuItem activeSelection;
@@ -111,7 +111,7 @@ public class MenuController implements Initializable {
   }
 
   public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, VpsTable vpsTable,
-                      @Nullable PopperScreen cardScreen, @Nullable PinUPPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
+                      @Nullable VPinScreen cardScreen, @Nullable FrontendPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
     this.game = game;
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
@@ -236,9 +236,9 @@ public class MenuController implements Initializable {
     if (oldNode != null) {
       PauseMenuItem oldSelection = (PauseMenuItem) node.getUserData();
       if (activeSelection.getYouTubeUrl() != null) {
-        webView.setVisible(true);
-        WebEngine engine = webView.getEngine();
-        engine.loadContent("");
+//        webView.setVisible(true);
+//        WebEngine engine = webView.getEngine();
+//        engine.loadContent("");
       }
       else if (activeSelection.getVideoUrl() != null) {
         try {
@@ -282,6 +282,8 @@ public class MenuController implements Initializable {
       screenImageView.setVisible(true);
       screenImageView.setImage(activeSelection.getDataImage());
     }
+
+    StateMananger.getInstance().checkAutoPlay();
   }
 
   public void reset() {

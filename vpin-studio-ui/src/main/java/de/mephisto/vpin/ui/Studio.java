@@ -13,7 +13,7 @@ import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -142,14 +142,9 @@ public class Studio extends Application {
         LOG.error("Failed to initialize SevenZip (.rar support): " + e.getMessage(), e);
       }
 
-      SystemSummary systemSummary = client.getSystemService().getSystemSummary();
-      if (!systemSummary.isPopper15()) {
-        WidgetFactory.showAlert(new Stage(), "Invalid PinUP Popper version.", "Please install version 1.5 or higher to use VPin Studio.");
-        System.exit(0);
-      }
-
       Stage splash = createSplash();
 
+      // run later to let the splash render properly
       Platform.runLater(() -> {
         Studio.stage = stage;
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -173,7 +168,9 @@ public class Studio extends Application {
         }
 
         //force pre-caching, this way, the table overview does not need to execute single GET requests
-        Studio.client.getVpsService().invalidateAll();
+        new Thread(() -> {
+          Studio.client.getVpsService().invalidateAll();
+        }).start();;
 
         FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
         Parent root = null;
@@ -213,7 +210,7 @@ public class Studio extends Application {
           stage.setY((screenBounds.getHeight() / 2) - (height / 2));
         }
 
-//      ResizeHelper.addResizeListener(stage);
+        // ResizeHelper.addResizeListener(stage);
         FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
         stage.setUserData(fxResizeHelper);
 
@@ -285,7 +282,6 @@ public class Studio extends Application {
         //launch VPSMonitor
         VBSManager.getInstance();
       });
-
     }
     catch (Exception e) {
       LOG.error("Failed to load Studio: " + e.getMessage(), e);
@@ -293,16 +289,17 @@ public class Studio extends Application {
   }
 
   private static Stage createSplash() throws Exception {
+    Image image = new Image(Studio.class.getResourceAsStream("splash.png"));
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
-    Scene scene = new Scene(root, 600, 400);
+    Scene scene = new Scene(root, image.getWidth(), image.getHeight());
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.UNDECORATED);
     stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-64.png")));
     stage.setScene(scene);
-    stage.setX((screenBounds.getWidth() / 2) - (600 / 2));
-    stage.setY((screenBounds.getHeight() / 2) - (400 / 2));
+    stage.setX((screenBounds.getWidth() / 2) - (image.getWidth() / 2));
+    stage.setY((screenBounds.getHeight() / 2) - (image.getHeight() / 2));
     stage.setResizable(false);
     stage.show();
     return stage;

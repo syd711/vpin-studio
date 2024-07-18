@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.OrbitalPins;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
@@ -8,7 +9,7 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -36,15 +37,25 @@ public class PupPacksService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private JobQueue jobQueue;
 
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
+  /**
+   * Return where pinup player is installed, read it today from installation directory, 
+   * independently of the frontend, could be usefull to support standalone installation with 
+   * pinup player only
+   * @return The PupVideos folder of a Pinup Plyer installation
+   */
+  private File getPupPackFolder() {
+    return new File(systemService.getPinupInstallationFolder(), "PUPVideos");
+  }
+
   public PupPack getMenuPupPack() {
-    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupPackFolder = getPupPackFolder();
     File menuPupPackFolder = new File(pupPackFolder, "PinUpMenu");
     return loadPupPack(menuPupPackFolder);
   }
@@ -83,9 +94,14 @@ public class PupPacksService implements InitializingBean {
   }
 
   private void refresh() {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if(!frontendType.supportPupPacks()) {
+      return;
+    }
+
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
-    File pupPackFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupPackFolder = getPupPackFolder();
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
@@ -120,29 +136,12 @@ public class PupPacksService implements InitializingBean {
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    if (enable) {
-      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "");
-    }
-    else {
-      pinUPConnector.updateRom(game, game.getRom());
-      pinUPConnector.updateGamesField(game, "LaunchCustomVar", "HIDEPUP");
-    }
+    frontendService.setPupPackEnabled(game, enable);
     return true;
   }
 
   public boolean isPupPackDisabled(@Nullable Game game) {
-    if (game == null) {
-      return false;
-    }
-
-    String effectiveRom = game.getRom();
-    if (StringUtils.isEmpty(effectiveRom)) {
-      return false;
-    }
-
-    String rom = pinUPConnector.getGamesStringValue(game, "ROM");
-    String custom = pinUPConnector.getGamesStringValue(game, "LaunchCustomVar");
-    return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
+    return frontendService.isPupPackDisabled(game);
   }
 
   public void writePUPHideNext(Game game) {
@@ -169,7 +168,7 @@ public class PupPacksService implements InitializingBean {
 
   public void installPupPack(@NonNull UploadDescriptor uploadDescriptor, @NonNull UploaderAnalysis analysis, boolean async) throws IOException {
     File tempFile = new File(uploadDescriptor.getTempFilename());
-    File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+    File pupVideosFolder = getPupPackFolder();
     if (!pupVideosFolder.exists()) {
       uploadDescriptor.setError("Invalid target folder: " + pupVideosFolder.getAbsolutePath());
       return;
@@ -241,7 +240,7 @@ public class PupPacksService implements InitializingBean {
 
   public PupPack loadPupPack(String rom) {
     if (!StringUtils.isEmpty(rom)) {
-      File pupVideosFolder = new File(systemService.getPinUPSystemFolder(), "PUPVideos");
+      File pupVideosFolder = getPupPackFolder();
       if (pupVideosFolder.exists()) {
         File pupPackFolder = new File(pupVideosFolder, rom);
         if (pupPackFolder.exists()) {
@@ -259,6 +258,11 @@ public class PupPacksService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
+    FrontendType frontendType = frontendService.getFrontendType();
+    if(!frontendType.supportPupPacks()) {
+      return;
+    }
+
     new Thread(() -> {
       try {
         Thread.currentThread().setName("PUP Pack Scanner");

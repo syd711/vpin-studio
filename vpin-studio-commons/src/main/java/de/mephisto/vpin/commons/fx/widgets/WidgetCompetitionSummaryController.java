@@ -5,12 +5,12 @@ import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -249,10 +249,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         scoreLabel5.setText(score5.getScore());
       }
 
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(PopperScreen.Wheel);
+      FrontendMediaRepresentation gameMedia = game.getGameMedia();
+      FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
-        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(competition.getGameId(), PopperScreen.Wheel);
+        ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(competition.getGameId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);
         competitionWheelImage.setImage(image);
       }

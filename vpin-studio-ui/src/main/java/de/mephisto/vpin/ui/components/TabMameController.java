@@ -33,14 +33,14 @@ public class TabMameController extends AbstractComponentTab implements Initializ
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getMameDirectory());
     openFolder(folder);
   }
 
   @FXML
   private void onMameSetup() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
     String systemPreset = client.getSystemPreset();
     if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
@@ -58,7 +58,7 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   @Override
   public void postProcessing(boolean simulate) {
     if (!simulate) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
       File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
       String systemPreset = client.getSystemPreset();
       if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {

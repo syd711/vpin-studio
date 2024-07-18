@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.fx.pausemenu;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuScreensFactory;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -13,9 +13,8 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPControls;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -32,7 +31,6 @@ import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import org.apache.commons.lang3.StringUtils;
-import org.jnativehook.GlobalScreen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,10 +38,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 
 import static de.mephisto.vpin.commons.fx.pausemenu.UIDefaults.SELECTION_SCALE_DURATION;
-import static java.util.logging.Logger.getLogger;
 
 public class PauseMenu extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenu.class);
@@ -57,7 +53,7 @@ public class PauseMenu extends Application {
 
   private static Robot robot;
 
-  private static List<PopperScreenAsset> screenAssets = new ArrayList<>();
+  private static List<FrontendScreenAsset> screenAssets = new ArrayList<>();
 
   static {
     try {
@@ -81,7 +77,7 @@ public class PauseMenu extends Application {
 
   public static void loadPauseMenu() {
     Stage pauseMenuStage = new Stage();
-    pauseMenuStage.setTitle("Pause Menu");
+    pauseMenuStage.setTitle("VPin UI");
     pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
     pauseMenuStage.setAlwaysOnTop(true);
     PauseMenu.stage = pauseMenuStage;
@@ -140,11 +136,6 @@ public class PauseMenu extends Application {
 
       StateMananger.getInstance().init(loader.getController());
 
-      GlobalScreen.registerNativeHook();
-      java.util.logging.Logger logger = getLogger(GlobalScreen.class.getPackage().getName());
-      logger.setLevel(Level.OFF);
-      logger.setUseParentHandlers(false);
-
       if (!PRODUCTION_USE) {
         togglePauseMenu();
       }
@@ -188,25 +179,23 @@ public class PauseMenu extends Application {
 
         togglePauseKey(0);
 
-        //re-assign key, because they might have been changed
-        PinUPControls pinUPControls = client.getPinUPPopperService().getPinUPControls();
         //reload card settings to resolve actual target screen
         CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
         PauseMenuSettings pauseMenuSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, PauseMenuSettings.class);
 
-        StateMananger.getInstance().setControls(pinUPControls, pauseMenuSettings);
+        StateMananger.getInstance().setControls(pauseMenuSettings);
 
-        PopperScreen cardScreen = null;
+        VPinScreen cardScreen = null;
         if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-          cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+          cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
         }
 
-        PopperScreen tutorialScreen = PopperScreen.BackGlass;
+        VPinScreen tutorialScreen = VPinScreen.BackGlass;
         if (pauseMenuSettings.getVideoScreen() != null) {
           tutorialScreen = pauseMenuSettings.getVideoScreen();
         }
 
-        PinUPPlayerDisplay tutorialDisplay = client.getPinUPPopperService().getScreenDisplay(tutorialScreen);
+        FrontendPlayerDisplay tutorialDisplay = client.getFrontendService().getScreenDisplay(tutorialScreen);
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
@@ -227,7 +216,7 @@ public class PauseMenu extends Application {
               }
 
               if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getPinUPPopperService().getScreenDisplays()));
+                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getFrontendService().getScreenDisplays()));
 
                 List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
                 if (!videoTutorials.isEmpty()) {

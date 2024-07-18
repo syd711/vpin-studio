@@ -2,13 +2,13 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -24,6 +24,8 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -37,6 +39,9 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   private final static DirectB2SImageRatio DEFAULT_MEDIA_RATIO = DirectB2SImageRatio.RATIO_16X9;
 
   @Autowired
+  private SystemService systemService;
+
+  @Autowired
   private PupPacksService pupPackService;
 
   @Autowired
@@ -48,19 +53,19 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
       return;
     }
 
-    File rawDefaultPicture = game.getRawDefaultPicture();
+    File rawDefaultPicture = getRawDefaultPicture(game);
     if (!rawDefaultPicture.getParentFile().exists()) {
       rawDefaultPicture.getParentFile().mkdirs();
     }
 
-    File target = game.getRawDefaultPicture();
+    File target = getRawDefaultPicture(game);
     if (game.getDirectB2SFile().exists()) {
       try {
         DirectB2SDataExtractor data = new DirectB2SDataExtractor();
         data.extractData(game.getDirectB2SFile(), game.getEmulatorId(), "not needed", game.getId());
         DirectB2SImageExporter extractor = new DirectB2SImageExporter(data);
         extractor.extractBackground(target);
-        extractor.extractDMD(game.getDMDPicture());
+        extractor.extractDMD(getDMDPicture(game));
         return;
       }
       catch (VPinStudioException e) {
@@ -68,7 +73,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
       }
     }
 
-    GameMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.BackGlass);
+    FrontendMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.BackGlass);
     if (backGlassItem != null && backGlassItem.getFile().exists()) {
       String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {
@@ -77,7 +82,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
           return;
         }
         catch (IOException e) {
-          LOG.error("Failed to copy popper resource file as background: " + e.getMessage(), e);
+          LOG.error("Failed to copy resource file as background: " + e.getMessage(), e);
         }
       }
       else if (name.endsWith(".mp4") || name.endsWith(".m4v") || name.endsWith(".mov")) {
@@ -95,15 +100,21 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   }
 
   public void deleteDefaultPictures(@NonNull Game game) {
-    if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-      if (game.getCroppedDefaultPicture().delete()) {
-        LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
+    File croppedDefaultPicture = getCroppedDefaultPicture(game);
+    if (croppedDefaultPicture != null && croppedDefaultPicture.exists()) {
+      if (croppedDefaultPicture.delete()) {
+        LOG.info("Deleted " + croppedDefaultPicture.getAbsolutePath());
+      } else {
+        LOG.error("Failed to delete default crop asset.");
       }
     }
 
-    if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
-      if (game.getRawDefaultPicture().delete()) {
-        LOG.info("Deleted " + game.getCroppedDefaultPicture().getAbsolutePath());
+    File rawDefaultPicture = getRawDefaultPicture(game);
+    if (rawDefaultPicture != null && rawDefaultPicture.exists()) {
+      if (rawDefaultPicture.delete()) {
+        LOG.info("Deleted " + rawDefaultPicture.getAbsolutePath());
+      } else {
+        LOG.error("Failed to delete default crop asset.");
       }
     }
   }
@@ -112,22 +123,24 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   public File generateCroppedDefaultPicture(@NonNull Game game) {
     try {
       //try to use existing file first
-      if (game.getCroppedDefaultPicture() != null && game.getCroppedDefaultPicture().exists()) {
-        return game.getCroppedDefaultPicture();
+      File croppedDefaultPicture = getCroppedDefaultPicture(game);
+      if (croppedDefaultPicture != null && croppedDefaultPicture.exists()) {
+        return croppedDefaultPicture;
       }
 
-      if (game.getRawDefaultPicture() != null && !game.getRawDefaultPicture().exists()) {
+      File rawDefaultPicture = getRawDefaultPicture(game);
+      if (rawDefaultPicture != null && !rawDefaultPicture.exists()) {
         extractDefaultPicture(game);
       }
 
-      if (game.getRawDefaultPicture() != null && game.getRawDefaultPicture().exists()) {
-        File backgroundImageFile = game.getRawDefaultPicture();
+      rawDefaultPicture = getRawDefaultPicture(game);
+      if (rawDefaultPicture != null && rawDefaultPicture.exists()) {
 
-        BufferedImage image = ImageIO.read(backgroundImageFile);
+        BufferedImage image = ImageIO.read(rawDefaultPicture);
         BufferedImage crop = ImageUtil.crop(image, DEFAULT_MEDIA_RATIO.getXRatio(), DEFAULT_MEDIA_RATIO.getYRatio());
         BufferedImage resized = ImageUtil.resizeImage(crop, cardSettings.getCardResolution().toWidth());
 
-        File target = game.getCroppedDefaultPicture();
+        File target = getCroppedDefaultPicture(game);
         if (target == null) {
           return null;
         }
@@ -163,11 +176,12 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   @Nullable
   public BufferedImage generateCompetitionBackgroundImage(@NonNull Game game, int cropWidth, int cropHeight) {
     try {
-      if (game.getRawDefaultPicture() == null || !game.getRawDefaultPicture().exists()) {
+      File backgroundImageFile = getRawDefaultPicture(game);
+      if (backgroundImageFile == null || !backgroundImageFile.exists()) {
         extractDefaultPicture(game);
       }
 
-      File backgroundImageFile = game.getRawDefaultPicture();
+      backgroundImageFile = getRawDefaultPicture(game);
       if (backgroundImageFile == null || !backgroundImageFile.exists()) {
         return null;
       }
@@ -208,4 +222,46 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.HIGHSCORE_CARD_SETTINGS, null, null);
   }
+
+  //-------------------------
+
+  @Nullable
+  @JsonIgnore
+  public File getCroppedDefaultPicture(Game game) {
+    if (game.getRom() != null) {
+      File subFolder = new File(systemService.getB2SCroppedImageFolder(), game.getRom());
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), game.getRomAlias());
+      }
+      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
+    }
+    return null;
+  }
+
+  @Nullable
+  @JsonIgnore
+  public File getDMDPicture(Game game) {
+    if (game.getRom() != null) {
+      File subFolder = new File(systemService.getB2SCroppedImageFolder(), game.getRom());
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        subFolder = new File(systemService.getB2SCroppedImageFolder(), game.getRomAlias());
+      }
+      return new File(subFolder, SystemService.DMD);
+    }
+    return null;
+  }
+
+  @Nullable
+  @JsonIgnore
+  public File getRawDefaultPicture(Game game) {
+    if (game.getRom() != null) {
+      File subFolder = new File(systemService.getB2SImageExtractionFolder(), game.getRom());
+      if (!StringUtils.isEmpty(game.getRomAlias())) {
+        subFolder = new File(systemService.getB2SImageExtractionFolder(), game.getRomAlias());
+      }
+      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
+    }
+    return null;
+  }
+
 }

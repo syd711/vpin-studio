@@ -1,21 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="accordion-container" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController">
+<BorderPane fx:id="defaultBackgroundBorderPane" prefWidth="600.0" styleClass="base-component" stylesheets="@../stylesheet.css" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarPlaylistsController">
    <padding>
       <Insets left="1.0" right="1.0" />
    </padding>
-   <top>
-      <VBox fx:id="dataRoot" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
+   <center>
+      <VBox BorderPane.alignment="TOP_LEFT">
          <children>
             <VBox fx:id="errorBox" styleClass="error-container">
                <children>
@@ -38,20 +40,14 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </VBox>
-         </children>
-      </VBox>
-   </top>
-   <center>
-      <VBox fx:id="dataRoot" BorderPane.alignment="TOP_LEFT">
-         <children>
-            <VBox>
+            <VBox fx:id="dataRoot">
                <children>
                   <Label styleClass="preference-description" text="Tables can only be assigned to static playlists." />
                   <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The color assignment will be stored as menu color in PinUP Popper." />
                   <Label layoutX="10.0" layoutY="32.0" styleClass="preference-description" text="Local and Global Favorites can only be selected if the game has been played before." />
                </children>
                <VBox.margin>
-                  <Insets />
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </VBox.margin>
             </VBox>
             <ScrollPane hbarPolicy="NEVER">
@@ -59,13 +55,30 @@
                     <VBox fx:id="dataBox" spacing="1.0" />
                </content>
                <VBox.margin>
-                  <Insets top="12.0" />
+                  <Insets left="12.0" top="12.0" />
                </VBox.margin>
             </ScrollPane>
          </children>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets />
          </BorderPane.margin>
       </VBox>
    </center>
+   <top>
+      <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" text="Edit Playlist Assets" textFill="WHITE">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-edit-outline" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Edit Playlist Assets" />
+               </tooltip>
+            </Button>
+         </items>
+      </ToolBar>
+   </top>
 </BorderPane>

@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.players.WidgetPlayerScoreController;
@@ -192,8 +193,8 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   @Override
-  public void onViewActivated() {
-    maniaController.onViewActivated();
+  public void onViewActivated(NavigationOptions options) {
+    maniaController.onViewActivated(options);
     setTournament(this.tournamentTreeModel);
   }
 

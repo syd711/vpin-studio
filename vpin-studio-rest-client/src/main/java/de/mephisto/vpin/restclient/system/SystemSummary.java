@@ -5,9 +5,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import java.util.List;
 
 public class SystemSummary {
-  private String pinupSystemDirectory;
   private ArchiveType archiveType;
-  private boolean popper15;
   private String systemId;
 
   public String getSystemId() {
@@ -16,14 +14,6 @@ public class SystemSummary {
 
   public void setSystemId(String systemId) {
     this.systemId = systemId;
-  }
-
-  public boolean isPopper15() {
-    return popper15;
-  }
-
-  public void setPopper15(boolean popper15) {
-    this.popper15 = popper15;
   }
 
   public ArchiveType getArchiveType() {
@@ -42,14 +32,6 @@ public class SystemSummary {
 
   public void setScreenInfos(List<ScreenInfo> screenInfos) {
     this.screenInfos = screenInfos;
-  }
-
-  public String getPinupSystemDirectory() {
-    return pinupSystemDirectory;
-  }
-
-  public void setPinupSystemDirectory(String pinupSystemDirectory) {
-    this.pinupSystemDirectory = pinupSystemDirectory;
   }
 
   public ScreenInfo getMainScreenInfo() {

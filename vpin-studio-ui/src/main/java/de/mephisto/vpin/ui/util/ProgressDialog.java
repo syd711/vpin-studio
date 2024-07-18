@@ -4,11 +4,11 @@ import de.mephisto.vpin.ui.ProgressDialogController;
 import javafx.stage.Stage;
 
 public class ProgressDialog {
-  public static ProgressResultModel createProgressDialog(ProgressModel model) {
+  public static <T> ProgressResultModel createProgressDialog(ProgressModel<T> model) {
     return createProgressDialog(null, model);
   }
 
-  public static ProgressResultModel createProgressDialog(Stage parentStage, ProgressModel model) {
+  public static <T> ProgressResultModel createProgressDialog(Stage parentStage, ProgressModel<T> model) {
     Stage stage = null;
     if (parentStage == null) {
       stage = Dialogs.createStudioDialogStage("dialog-progress.fxml", model.getTitle());

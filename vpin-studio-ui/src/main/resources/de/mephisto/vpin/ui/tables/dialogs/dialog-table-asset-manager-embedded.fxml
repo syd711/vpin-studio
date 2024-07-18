@@ -21,7 +21,7 @@
          <children>
             <VBox maxHeight="1.7976931348623157E308">
                <children>
-                  <BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+                  <BorderPane fx:id="assetSearchBox" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
                      <top>
                         <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
                            <BorderPane.margin>
@@ -30,7 +30,7 @@
                            <top>
                               <ToolBar BorderPane.alignment="CENTER">
                                 <items>
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0" promptText="Popper Asset Search">
+                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0" promptText="Asset Search">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -297,7 +297,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Open PinUP Popper system folder for this asset type" />
+                        <Tooltip text="Open system folder for this asset type" />
                      </tooltip>
                   </Button>
                   <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

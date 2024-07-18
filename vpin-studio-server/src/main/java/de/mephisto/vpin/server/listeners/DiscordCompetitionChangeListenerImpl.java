@@ -17,7 +17,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreBackupService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -49,7 +49,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private AssetService assetService;
@@ -116,7 +116,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
         LOG.info("Resetted highscores of " + game.getGameDisplayName() + " for " + competition);
 
         if (competition.getBadge() != null && competition.isActive()) {
-          popperService.augmentWheel(game, competition.getBadge());
+          frontendStatusService.augmentWheel(game, competition.getBadge());
         }
       } catch (Exception e) {
         LOG.error("Error starting discord competition: " + e.getMessage(), e);
@@ -156,7 +156,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        runCheckedDeAugmentation(competitionService, gameService, popperService);
+        runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
 
         long serverId = competition.getDiscordServerId();
         long channelId = competition.getDiscordChannelId();
@@ -197,7 +197,7 @@ public class DiscordCompetitionChangeListenerImpl extends DefaultCompetitionChan
     if (competition.getType().equals(CompetitionType.DISCORD.name())) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        runCheckedDeAugmentation(competitionService, gameService, popperService);
+        runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
 
         long serverId = competition.getDiscordServerId();
         long channelId = competition.getDiscordChannelId();

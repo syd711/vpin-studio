@@ -3,13 +3,12 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.popper.GameMedia;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -29,6 +28,9 @@ public class Game {
 
   private String rom;
   private String romAlias;
+  private String scannedRom;
+  private String scannedAltRom;
+
   private String gameDisplayName;
   private String gameFileName;
   private String gameName;
@@ -41,7 +43,10 @@ public class Game {
   private int id;
   private int nvOffset;
   private String hsFileName;
+  private String scannedHsFileName;
+
   private GameEmulator emulator;
+  private int emulatorId;
 
   private File gameFile;
 
@@ -57,7 +62,6 @@ public class Game {
 
   private String pupPackName;
   private Long templateId;
-  private SystemService systemService;
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
@@ -65,11 +69,6 @@ public class Game {
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
-
-  }
-
-  public Game(@NonNull SystemService systemService) {
-    this.systemService = systemService;
   }
 
   public String getPupPackName() {
@@ -155,7 +154,6 @@ public class Game {
     return extTableId;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableId(String extTableId) {
     this.extTableId = extTableId;
   }
@@ -164,7 +162,6 @@ public class Game {
     return extTableVersionId;
   }
 
-  @Deprecated // stored this in Popper
   public void setExtTableVersionId(String extTableVersionId) {
     this.extTableVersionId = extTableVersionId;
   }
@@ -189,14 +186,13 @@ public class Game {
 
   @JsonIgnore
   public Image getWheelImage() {
-    GameMediaItem gameMediaItem = getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    FrontendMediaItem frontendMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     Image image = null;
-    if (gameMediaItem != null) {
+    if (frontendMediaItem != null) {
       try {
-        BufferedImage bufferedImage = ImageUtil.loadImage(gameMediaItem.getFile());
+        BufferedImage bufferedImage = ImageUtil.loadImage(frontendMediaItem.getFile());
         image = SwingFXUtils.toFXImage(bufferedImage, null);
-      }
-      catch (IOException e) {
+      } catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
@@ -264,6 +260,15 @@ public class Game {
 
   public void setEmulator(@NonNull GameEmulator emulator) {
     this.emulator = emulator;
+    this.emulatorId = emulator.getId();
+  }
+
+  public int getEmulatorId() {
+    return this.emulatorId;
+  }
+
+  public void setEmulatorId(int emuId) {
+    this.emulatorId = emuId;
   }
 
   public List<Integer> getIgnoredValidations() {
@@ -272,15 +277,6 @@ public class Game {
 
   public void setIgnoredValidations(List<Integer> ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
-  }
-
-  @JsonIgnore
-  public SystemService getSystemService() {
-    return systemService;
-  }
-
-  public void setSystemService(SystemService systemService) {
-    this.systemService = systemService;
   }
 
   @JsonIgnore
@@ -305,37 +301,40 @@ public class Game {
 
   @JsonIgnore
   @NonNull
-  public File getPinUPMediaFolder(@NonNull PopperScreen screen) {
-    File emulatorMediaFolder = this.emulator.getGameMediaFolder();
-    return new File(emulatorMediaFolder, screen.name());
+  public File getMediaFolder(@NonNull VPinScreen screen) {
+    return this.emulator.getGameMediaFolder(FilenameUtils.getBaseName(gameFileName), screen);
   }
 
   @NonNull
-  public List<File> getPinUPMedia(@NonNull PopperScreen screen) {
+  public List<File> getMediaFiles(@NonNull VPinScreen screen) {
     String baseFilename = getGameName();
-    File[] mediaFiles = getPinUPMediaFolder(screen).listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
-    if (mediaFiles != null) {
-      Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
-      Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
-      return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
+    File mediaFolder = getMediaFolder(screen);
+    //keep null check for serialization
+    if (mediaFolder != null && mediaFolder.exists()) {
+      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
+      if (mediaFiles != null) {
+        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
+        Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
+        return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
+      }
     }
     return Collections.emptyList();
   }
 
   @NonNull
-  public GameMedia getGameMedia() {
-    GameMedia gameMedia = new GameMedia();
-    PopperScreen[] screens = PopperScreen.values();
-    for (PopperScreen screen : screens) {
-      List<GameMediaItem> itemList = new ArrayList<>();
-      List<File> pinUPMedia = getPinUPMedia(screen);
-      for (File file : pinUPMedia) {
-        GameMediaItem item = new GameMediaItem(this, screen, file);
+  public FrontendMedia getGameMedia() {
+    FrontendMedia frontendMedia = new FrontendMedia();
+    VPinScreen[] screens = VPinScreen.values();
+    for (VPinScreen screen : screens) {
+      List<FrontendMediaItem> itemList = new ArrayList<>();
+      List<File> mediaFiles = getMediaFiles(screen);
+      for (File file : mediaFiles) {
+        FrontendMediaItem item = new FrontendMediaItem(this.getId(), screen, file);
         itemList.add(item);
       }
-      gameMedia.getMedia().put(screen.name(), itemList);
+      frontendMedia.getMedia().put(screen.name(), itemList);
     }
-    return gameMedia;
+    return frontendMedia;
   }
 
   @JsonIgnore
@@ -401,16 +400,16 @@ public class Game {
     return null;
   }
 
-  public int getEmulatorId() {
-    return this.emulator.getId();
-  }
-
   public boolean isPovAvailable() {
     return this.getPOVFile().exists();
   }
 
   public boolean isIniAvailable() {
     return this.getIniFile().exists();
+  }
+
+  public boolean isResAvailable() {
+    return this.getResFile().exists();
   }
 
   public void setGameFile(@NonNull File gameFile) {
@@ -433,16 +432,20 @@ public class Game {
     return this.getGameFile().exists();
   }
 
-  public boolean isDefaultBackgroundAvailable() {
-    return this.getRawDefaultPicture() != null && this.getRawDefaultPicture().exists();
-  }
-
   public String getHsFileName() {
     return hsFileName;
   }
 
   public void setHsFileName(String hsFileName) {
     this.hsFileName = hsFileName;
+  }
+
+  public String getScannedHsFileName() {
+    return scannedHsFileName;
+  }
+
+  public void setScannedHsFileName(String scannedHsFileName) {
+    this.scannedHsFileName = scannedHsFileName;
   }
 
   public String getGameDisplayName() {
@@ -475,6 +478,22 @@ public class Game {
 
   public void setRomAlias(String romAlias) {
     this.romAlias = romAlias;
+  }
+
+  public String getScannedRom() {
+    return scannedRom;
+  }
+
+  public void setScannedRom(String scannedRom) {
+    this.scannedRom = scannedRom;
+  }
+
+  public String getScannedAltRom() {
+    return scannedAltRom;
+  }
+
+  public void setScannedAltRom(String scannedAltRom) {
+    this.scannedAltRom = scannedAltRom;
   }
 
   public int getNvOffset() {
@@ -574,32 +593,6 @@ public class Game {
     return new File(getGameFile().getParentFile(), baseName + ".directb2s");
   }
 
-  @Nullable
-  @JsonIgnore
-  public File getCroppedDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
-      if (!StringUtils.isEmpty(getRomAlias())) {
-        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
-    }
-    return null;
-  }
-
-  @Nullable
-  @JsonIgnore
-  public File getDMDPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRom());
-      if (!StringUtils.isEmpty(getRomAlias())) {
-        subFolder = new File(systemService.getB2SCroppedImageFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DMD);
-    }
-    return null;
-  }
-
   @NonNull
   @JsonIgnore
   public File getNvRamFile() {
@@ -624,20 +617,6 @@ public class Game {
     }
 
     return defaultNvRam;
-  }
-
-
-  @Nullable
-  @JsonIgnore
-  public File getRawDefaultPicture() {
-    if (this.getRom() != null) {
-      File subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRom());
-      if (!StringUtils.isEmpty(this.getRomAlias())) {
-        subFolder = new File(systemService.getB2SImageExtractionFolder(), this.getRomAlias());
-      }
-      return new File(subFolder, SystemService.DEFAULT_BACKGROUND);
-    }
-    return null;
   }
 
   @Override

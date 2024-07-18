@@ -66,8 +66,6 @@ public class VPRegTest {
       assertNotNull(vpRegScoreSummary.getScores().get(0).getInitials(), "No score initials found for " + entry);
       count++;
 
-
-
       RawScoreParser parser = new RawScoreParser(vpRegScoreSummary.toRaw(), new Date(), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
       List<Score> parse = parser.parse();
       assertFalse(parse.isEmpty());

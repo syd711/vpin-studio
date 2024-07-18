@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.ScreenMode;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
@@ -61,7 +61,7 @@ public class ScreensPub {
   }
 
   @NonNull
-  public ScreenMode getScreenMode(@NonNull PopperScreen screen) {
+  public ScreenMode getScreenMode(@NonNull VPinScreen screen) {
     int id = screen.getCode();
     for (ScreenEntry entry : this.entries) {
       if (entry.getScreenNum() == id) {
@@ -75,7 +75,7 @@ public class ScreensPub {
   }
 
   @NonNull
-  public boolean isTransparent(@NonNull PopperScreen screen) {
+  public boolean isTransparent(@NonNull VPinScreen screen) {
     int id = screen.getCode();
     for (ScreenEntry entry : this.entries) {
       if (entry.getScreenNum() == id) {

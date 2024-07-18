@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--Global configuration for the DirectOutput framework.-->
+<!--Saved by DirectOutput Version 3.2.8813.40462: 2024-05-13 08-43-12-->
+<GlobalConfig>
+  <LedWizDefaultMinCommandIntervalMs>10</LedWizDefaultMinCommandIntervalMs>
+  <LedControlMinimumEffectDurationMs>60</LedControlMinimumEffectDurationMs>
+  <LedControlMinimumRGBEffectDurationMs>120</LedControlMinimumRGBEffectDurationMs>
+  <PacLedDefaultMinCommandIntervalMs>10</PacLedDefaultMinCommandIntervalMs>
+  <IniFilesPath>C:\DirectOutput64\Config</IniFilesPath>
+  <CabinetConfigFilePattern>C:\DirectOutput64\Config\cabinet.xml</CabinetConfigFilePattern>
+  <TableConfigFilePatterns />
+  <EnableLogging>true</EnableLogging>
+  <ClearLogOnSessionStart>true</ClearLogOnSessionStart>
+  <LogFilePattern>.\DirectOutput.log</LogFilePattern>
+</GlobalConfig>

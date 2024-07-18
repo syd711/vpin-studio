@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.popper.Emulator;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -19,7 +22,6 @@ public class GameEmulator {
   private File installationFolder;
   private File tablesFolder;
   private File backglassServerDirectory;
-  private final File gameMediaFolder;
   private final File mameFolder;
   private final File userFolder;
   private final File altSoundFolder;
@@ -41,6 +43,7 @@ public class GameEmulator {
   private final String mameDirectory;
   private final String userDirectory;
   private final String mediaDirectory;
+  private final MediaAccessStrategy mediaStrategy;
   private final int id;
   private final boolean visible;
   private final String vpxExeName;
@@ -48,27 +51,30 @@ public class GameEmulator {
 
   private String backglassServerFolder;
   private boolean vpxEmulator;
+  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
-  public GameEmulator(@NonNull Emulator emulator) {
+  public GameEmulator(@NonNull Emulator emulator, @NonNull MediaAccessStrategy mediaStrategy) {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
-    this.vpxExeName = emulator.getVpxExeName();
+    this.vpxExeName = emulator.getExeName();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
+    this.backglassServerFolder = StringUtils.defaultString(emulator.getDirB2S(), emulator.getDirGames());
+    this.mediaStrategy = mediaStrategy;
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
       String[] files = this.installationFolder.list(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
-          if(!name.startsWith("VPinball")) {
+          if (!name.startsWith("VPinball")) {
             return false;
           }
           return name.endsWith(".exe");
@@ -81,10 +87,11 @@ public class GameEmulator {
 
     if (emulator.getDirGames() != null) {
       this.tablesFolder = new File(emulator.getDirGames());
-      this.backglassServerDirectory = new File(emulator.getDirGames());
+    }
+    if (this.backglassServerFolder != null) {
+      this.backglassServerDirectory = new File(this.backglassServerFolder);
     }
 
-    this.gameMediaFolder = new File(emulator.getDirMedia());
     this.musicFolder = new File(installationFolder, "Music");
 
     this.mameFolder = new File(installationFolder, "VPinMAME");
@@ -110,6 +117,15 @@ public class GameEmulator {
     }
 
     this.vpxEmulator = emulator.isVisualPinball();
+    this.fpEmulator = emulator.isFuturePinball();
+  }
+
+  public boolean isFpEmulator() {
+    return fpEmulator;
+  }
+
+  public void setFpEmulator(boolean fpEmulator) {
+    this.fpEmulator = fpEmulator;
   }
 
   public List<String> getAltVPXExeNames() {
@@ -126,6 +142,12 @@ public class GameEmulator {
 
   public void setVpxEmulator(boolean vpxEmulator) {
     this.vpxEmulator = vpxEmulator;
+  }
+
+  public EmulatorType getEmulatorType() {
+    return isVpxEmulator() ? EmulatorType.VisualPinball :
+          isFpEmulator() ? EmulatorType.FuturePinball : 
+          null;
   }
 
   public String getGameFileName(@NonNull File file) {
@@ -188,6 +210,7 @@ public class GameEmulator {
     return id;
   }
 
+  @JsonIgnore
   public File getVPXExe() {
     return new File(installationFolder, vpxExeName);
   }
@@ -303,8 +326,8 @@ public class GameEmulator {
 
   @NonNull
   @JsonIgnore
-  public File getGameMediaFolder() {
-    return gameMediaFolder;
+  public File getGameMediaFolder(@NonNull String gameFileName, @NonNull VPinScreen screen) {
+    return mediaStrategy != null ? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen) : null;
   }
 
   @NonNull

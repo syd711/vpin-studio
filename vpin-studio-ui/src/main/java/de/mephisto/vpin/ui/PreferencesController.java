@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.ClientSettingsPreferencesController;
@@ -55,7 +56,40 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button backglassBtn;
 
   @FXML
+  private Button settings_clientBtn;
+
+  @FXML
   private Button mameBtn;
+
+  @FXML
+  private Button validators_screensBtn;
+
+  @FXML
+  private Button repositoriesBtn;
+
+  @FXML
+  private Button popperSettingsBtn;
+
+  @FXML
+  private Button pinballXSettingsBtn;
+
+  @FXML
+  private Button vpbmBtn;
+
+  @FXML
+  private Button overlayBtn;
+
+  @FXML
+  private Button pauseMenuBtn;
+
+  @FXML
+  private Button validators_vpxBtn;
+
+  @FXML
+  private Button highscore_cardsBtn;
+
+  @FXML
+  private Button highscoresBtn;
 
   @FXML
   private BorderPane preferencesMain;
@@ -65,6 +99,9 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private VBox tournamentGroup;
+
+  @FXML
+  private VBox frontendPreferences;
 
   @FXML
   private Button notificationsButton;
@@ -146,7 +183,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
-    load("preference-settings-client.fxml", event);
+    load("preference-settings_client.fxml", event);
   }
 
   @FXML
@@ -156,7 +193,7 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onMediaValidation(ActionEvent event) throws IOException {
-    load("preference-validators-screens.fxml", event);
+    load("preference-validators_screens.fxml", event);
   }
 
   @FXML
@@ -206,12 +243,17 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @FXML
   private void onReset(ActionEvent event) throws IOException {
-    load("preference-reset.fxml", event);
+    load("preference-frontend-reset.fxml", event);
   }
 
   @FXML
-  private void onCustomOptions(ActionEvent event) throws IOException {
-    load("preference-popper_custom_options.fxml", event);
+  private void onPopperSettings(ActionEvent event) throws IOException {
+    load("preference-popper-settings.fxml", event);
+  }
+
+  @FXML
+  private void onPinballXSettings(ActionEvent event) throws IOException {
+    load("preference-pinballx-settings.fxml", event);
   }
 
   @FXML
@@ -222,6 +264,16 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onOverlay(ActionEvent event) throws IOException {
     load("preference-overlay.fxml", event);
+  }
+
+  @FXML
+  private void onControllerSetup(ActionEvent event) throws IOException {
+    load("preference-inputs.fxml", event);
+  }
+
+  @FXML
+  private void onPauseMenu(ActionEvent event) throws IOException {
+    load("preference-pause-menu.fxml", event);
   }
 
   @FXML
@@ -263,7 +315,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
-      load("preference-" + preferenceType + ".fxml", null, preferenceType);
+      load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
     });
   }
 
@@ -320,15 +372,38 @@ public class PreferencesController implements Initializable, StudioEventListener
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    popperSettingsBtn.managedProperty().bindBidirectional(popperSettingsBtn.visibleProperty());
+    pinballXSettingsBtn.managedProperty().bindBidirectional(pinballXSettingsBtn.visibleProperty());
+    repositoriesBtn.managedProperty().bindBidirectional(repositoriesBtn.visibleProperty());
+    notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
+    vpbmBtn.managedProperty().bindBidirectional(vpbmBtn.visibleProperty());
+    overlayBtn.managedProperty().bindBidirectional(overlayBtn.visibleProperty());
+    pauseMenuBtn.managedProperty().bindBidirectional(pauseMenuBtn.visibleProperty());
+    highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
+    frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
+    validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    vpbmBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(frontendType.supportArchive());
+
+    // activation of custom options according to installed frontend
+    frontendPreferences.setVisible(frontendType.isNotStandalone());
+    popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
+    pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+    notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
+    overlayBtn.setVisible(frontendType.isNotStandalone());
+
+    pauseMenuBtn.setVisible(frontendType.supportControls());
+    highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
+    validators_screensBtn.setVisible(frontendType.isNotStandalone());
+
     initialBtn = avatarBtn;
     prefsMain = preferencesMain;
     navBox = navigationBox;
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
-
-    notificationsButton.managedProperty().bindBidirectional(notificationsButton.visibleProperty());
-    notificationsButton.setVisible(Features.NOTIFICATIONS_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

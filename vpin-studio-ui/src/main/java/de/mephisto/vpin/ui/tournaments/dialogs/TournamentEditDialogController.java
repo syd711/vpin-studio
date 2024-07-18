@@ -604,12 +604,13 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     });
 
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
+      VpsTable vpsTable = cellData.getValue().getVpsTable();
       VpsTableVersion vpsTableVersion = cellData.getValue().getVpsTableVersion();
       if (vpsTableVersion == null) {
         return new SimpleObjectProperty<>("All versions allowed.");
       }
       String customStyle = TournamentHelper.getLabelCss(tournament, cellData.getValue().getTournamentTable());
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, customStyle, true));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, customStyle, true));
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener(new ListChangeListener<TournamentTreeModel>() {

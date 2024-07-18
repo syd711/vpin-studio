@@ -1,0 +1,38 @@
+<menu>
+  <game name="Tom &amp; Jerry (Original 2018)">
+    <description>Tom &amp; Jerry (Original 2018)</description>
+    <manufacturer>Original</manufacturer>
+    <year>2018</year>
+    <type>SS</type>
+    <hidedmd>True</hidedmd>
+    <hidetopper>True</hidetopper>
+    <hidebackglass>True</hidebackglass>
+    <enabled>True</enabled>
+    <theme>Licensed Theme,Cartoon,Kids</theme>
+    <author>Retro Bash</author>
+    <version>1.0</version>
+    <dateadded>2024-06-24 16:48:52</dateadded>
+  </game>
+  <game name="Super Spin (Gottlieb 1977)">
+    <description>Super Spin (Gottlieb 1977)</description>
+    <year></year>
+    <type></type>
+    <hidedmd>True</hidedmd>
+    <hidetopper>True</hidetopper>
+    <hidebackglass>True</hidebackglass>
+    <enabled>True</enabled>
+    <dateadded>2024-06-25 21:27:35</dateadded>
+  </game>
+  <game name="Triple Strike (Williams 1975)">
+    <description>Triple Strike (Williams 1975)</description>
+    <year></year>
+    <type></type>
+    <hidedmd>True</hidedmd>
+    <hidetopper>True</hidetopper>
+    <hidebackglass>True</hidebackglass>
+    <enabled>True</enabled>
+    <author>Rawd / ckpin</author>
+    <version>4.1.4</version>
+    <dateadded>2024-06-25 22:36:49</dateadded>
+  </game>
+</menu>

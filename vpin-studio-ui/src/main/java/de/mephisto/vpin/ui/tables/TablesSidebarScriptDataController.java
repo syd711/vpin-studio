@@ -190,8 +190,10 @@ public class TablesSidebarScriptDataController implements Initializable {
   private void onTablesFolderOpen() {
     if (this.game.isPresent()) {
       try {
-        GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(game.get().getEmulatorId());
-        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.get().getEmulatorId());
+        // support of table sub folders
+        File tableFile = new File(emulatorRepresentation.getTablesDirectory(), game.get().getGameFileName());
+        SystemUtil.openFolder(tableFile.getParentFile());
       } catch (Exception e) {
         LOG.error("Failed to open Explorer: " + e.getMessage(), e);
       }

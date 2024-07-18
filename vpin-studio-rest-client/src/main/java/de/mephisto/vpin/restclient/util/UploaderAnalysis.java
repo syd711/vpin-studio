@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -135,7 +135,7 @@ public class UploaderAnalysis<T> {
     return fileNameForAssetType;
   }
 
-  public List<String> getPopperMediaFiles(PopperScreen screen) {
+  public List<String> getPopperMediaFiles(VPinScreen screen) {
     String pupPackRootDirectory = getPupPackRootDirectory();
     List<String> result = new ArrayList<>();
     for (String fileNameWithPath : fileNamesWithPath) {
@@ -300,6 +300,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive does not not contain a .directb2s file.";
       }
+      case RES: {
+        if (hasFileWithSuffix("res")) {
+          return null;
+        }
+        return "This archive does not not contain a .res file.";
+      }
       case ROM: {
         if (isRom() || hasFileWithSuffix("zip")) {
           return null;
@@ -391,6 +397,10 @@ public class UploaderAnalysis<T> {
       return AssetType.DIRECTB2S;
     }
 
+    if (hasFileWithSuffix("res")) {
+      return AssetType.RES;
+    }
+
     if (isAltSound()) {
       return AssetType.ALT_SOUND;
     }
@@ -442,8 +452,8 @@ public class UploaderAnalysis<T> {
   }
 
   private boolean isMediaPack() {
-    PopperScreen[] values = PopperScreen.values();
-    for (PopperScreen value : values) {
+    VPinScreen[] values = VPinScreen.values();
+    for (VPinScreen value : values) {
       List<String> popperMediaFiles = getPopperMediaFiles(value);
       if (!popperMediaFiles.isEmpty()) {
         return true;
@@ -563,6 +573,10 @@ public class UploaderAnalysis<T> {
     return hasFileWithSuffix("directb2s");
   }
 
+  public boolean isRes() {
+    return hasFileWithSuffix("res");
+  }
+
   private boolean hasFileWithSuffix(String s) {
     for (String fileName : fileNames) {
       String suffix = FilenameUtils.getExtension(fileName);
@@ -637,12 +651,12 @@ public class UploaderAnalysis<T> {
     return match;
   }
 
-  private static boolean isPopperMediaFile(PopperScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
-    if (screen.equals(PopperScreen.GameInfo)) {
+  private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
+    if (screen.equals(VPinScreen.GameInfo)) {
       return false;
     }
 
-    if (!screen.equals(PopperScreen.Menu) && !screen.equals(PopperScreen.DMD) && fileNameWithPath.contains("DMD/")) {
+    if (!screen.equals(VPinScreen.Menu) && !screen.equals(VPinScreen.DMD) && fileNameWithPath.contains("DMD/")) {
       return false;
     }
 
@@ -655,19 +669,19 @@ public class UploaderAnalysis<T> {
       return false;
     }
 
-    if (screen.equals(PopperScreen.AudioLaunch) && (fileNameWithPath.toLowerCase().contains("launch"))) {
+    if (screen.equals(VPinScreen.AudioLaunch) && (fileNameWithPath.toLowerCase().contains("launch"))) {
       return true;
     }
 
-    if (screen.equals(PopperScreen.Audio) && (fileNameWithPath.toLowerCase().contains("launch"))) {
+    if (screen.equals(VPinScreen.Audio) && (fileNameWithPath.toLowerCase().contains("launch"))) {
       return false;
     }
 
-    if (screen.equals(PopperScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("help") || fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
+    if (screen.equals(VPinScreen.GameHelp) && (fileNameWithPath.toLowerCase().contains("help") || fileNameWithPath.toLowerCase().contains("rule") || fileNameWithPath.toLowerCase().contains("card"))) {
       return true;
     }
 
-    if (screen.equals(PopperScreen.Menu) && (fileNameWithPath.toLowerCase().contains("fulldmd") || fileNameWithPath.toLowerCase().contains("apron"))) {
+    if (screen.equals(VPinScreen.Menu) && (fileNameWithPath.toLowerCase().contains("fulldmd") || fileNameWithPath.toLowerCase().contains("apron"))) {
       return true;
     }
 
@@ -676,7 +690,7 @@ public class UploaderAnalysis<T> {
     }
 
     //ignore DMD files from DMD bundles
-    if (screen.equals(PopperScreen.DMD)) {
+    if (screen.equals(VPinScreen.DMD)) {
       if (fileNameWithPath.indexOf("/") > fileNameWithPath.toLowerCase().indexOf(screen.name().toLowerCase())) {
         return false;
       }

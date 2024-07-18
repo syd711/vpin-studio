@@ -49,7 +49,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ComboBox fx:id="popperScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
+                  <ComboBox fx:id="cardTargetScreenCombo" prefWidth="150.0" GridPane.columnIndex="1" />
                </children>
                <opaqueInsets>
                   <Insets />
@@ -191,7 +191,7 @@
                         <Label styleClass="default-text" text="degree rotation" />
                      </children>
                   </HBox>
-                  <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="Use Popper Screen Location, Size and Rotation" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="Use Frontend Screen Location, Size and Rotation" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>

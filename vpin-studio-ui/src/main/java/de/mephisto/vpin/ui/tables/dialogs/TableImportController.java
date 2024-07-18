@@ -2,12 +2,15 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -31,6 +34,15 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableImportController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableImportController.class);
+
+  @FXML
+  private Label text1Description;
+  @FXML
+  private Label text2Description;
+  @FXML
+  private Label text3Description;
+  @FXML
+  private Label text4Description;
 
   @FXML
   private VBox tableBox;
@@ -81,35 +93,54 @@ public class TableImportController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    GameList importableTables = client.getPinUPPopperService().getImportableTables();
-    saveBtn.setDisable(importableTables.getItems().isEmpty());
+  }
 
-    if (importableTables.getItems().isEmpty()) {
-      Label label = new Label("No tables found.");
-      label.setStyle("-fx-font-size: 14px;");
-      tableBox.getChildren().add(label);
-    }
-    else {
-      CheckBox selectCheckbox = new CheckBox("Select All");
-      selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
-      selectCheckbox.setPrefHeight(50);
-      selectCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-        for (CheckBox checkBox : checkBoxes) {
-          checkBox.setSelected(newValue);
+  public void setEmulator(GameEmulatorRepresentation emulator) {
+    try {
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+      GameList importableTables = client.getFrontendService().getImportableTables(emulator.getId());
+      saveBtn.setDisable(importableTables.getItems().isEmpty());
+
+      // should always be done
+      FrontendUtil.replaceNames(text1Description, frontend, emulator.getName());
+      FrontendUtil.replaceNames(text2Description, frontend, emulator.getName());
+
+      if (importableTables.getItems().isEmpty()) {
+        Label label = new Label("No tables found for \"" + emulator.getName() + "\" that have not been imported yet.");
+        label.setStyle("-fx-font-size: 14px;");
+        tableBox.getChildren().add(label);
+
+        text3Description.setVisible(false);
+        text4Description.setVisible(false);
+      }
+      else {
+        FrontendUtil.replaceNames(text3Description, frontend, emulator.getName());
+        FrontendUtil.replaceNames(text4Description, frontend, emulator.getName());
+
+        CheckBox selectCheckbox = new CheckBox("Select All");
+        selectCheckbox.setStyle("-fx-font-size: 14px;-fx-font-weight: bold;");
+        selectCheckbox.setPrefHeight(50);
+        selectCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+          for (CheckBox checkBox : checkBoxes) {
+            checkBox.setSelected(newValue);
+          }
+        });
+        tableBox.getChildren().add(selectCheckbox);
+
+        for (GameListItem item : importableTables.getItems()) {
+          CheckBox checkBox = new CheckBox(item.getName());
+          checkBox.setUserData(item);
+          checkBox.setStyle("-fx-font-size: 14px;");
+          checkBox.setPrefHeight(30);
+          tableBox.getChildren().add(checkBox);
+          checkBoxes.add(checkBox);
         }
-      });
-      tableBox.getChildren().add(selectCheckbox);
-
-      for (GameListItem item : importableTables.getItems()) {
-        CheckBox checkBox = new CheckBox(item.getName());
-        checkBox.setUserData(item);
-        checkBox.setStyle("-fx-font-size: 14px;");
-        checkBox.setPrefHeight(30);
-        tableBox.getChildren().add(checkBox);
-        checkBoxes.add(checkBox);
       }
     }
-
+    catch (Exception e) {
+      LOG.error("Failed to init import dialog: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
+    }
   }
 
   @Override

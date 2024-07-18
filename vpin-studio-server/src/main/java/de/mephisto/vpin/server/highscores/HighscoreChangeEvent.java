@@ -1,9 +1,8 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
-import java.util.List;
 
 public class HighscoreChangeEvent {
 
@@ -16,19 +15,25 @@ public class HighscoreChangeEvent {
   @NonNull
   private final Score newScore;
 
-  private boolean initialScore;
+  private final boolean initialScore;
+  private final EventOrigin eventOrigin;
 
   private String newRaw;
 
   private boolean eventReplay;
 
-  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, @NonNull String newRaw, int scoreCount, boolean initialScore) {
+  public HighscoreChangeEvent(@NonNull Game game, @NonNull Score oldScore, @NonNull Score newScore, @NonNull String newRaw, int scoreCount, boolean initialScore, EventOrigin eventOrigin) {
     this.game = game;
     this.scoreCount = scoreCount;
     this.oldScore = oldScore;
     this.newScore = newScore;
     this.newRaw = newRaw;
     this.initialScore = initialScore;
+    this.eventOrigin = eventOrigin;
+  }
+
+  public EventOrigin getEventOrigin() {
+    return eventOrigin;
   }
 
   public String getNewRaw() {

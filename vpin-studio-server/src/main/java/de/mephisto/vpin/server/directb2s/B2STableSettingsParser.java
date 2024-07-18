@@ -82,6 +82,10 @@ public class B2STableSettingsParser extends DefaultHandler {
         settings.setHideB2SDMD(Integer.parseInt(node.getTextContent().trim()) == 1);
         break;
       }
+      case "HideB2SBackglass": {
+        settings.setHideB2SBackglass(Integer.parseInt(node.getTextContent().trim()) == 1);
+        break;
+      }
       case "HideDMD": {
         settings.setHideDMD(Integer.parseInt(node.getTextContent().trim()));
         break;

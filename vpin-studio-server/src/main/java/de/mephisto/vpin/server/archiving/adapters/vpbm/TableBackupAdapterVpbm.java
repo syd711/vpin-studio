@@ -4,14 +4,14 @@ import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,9 +72,9 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     archiveDescriptor.setSource(archiveSourceAdapter.getArchiveSource());
 
     File wheelIcon = null;
-    GameMediaItem gameMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
-    if (gameMediaItem != null) {
-      wheelIcon = gameMediaItem.getFile();
+    FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+    if (frontendMediaItem != null) {
+      wheelIcon = frontendMediaItem.getFile();
     }
 
     ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, wheelIcon);

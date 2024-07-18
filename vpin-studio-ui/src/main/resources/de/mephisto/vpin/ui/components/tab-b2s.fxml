@@ -26,7 +26,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="PinUP Popper Setup" />
+                     <Tooltip text="Open B2S server installation folder" />
                   </tooltip>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -38,7 +38,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="PinUP Popper Setup" />
+                     <Tooltip text="Register B2S Backglass Server" />
                   </tooltip>
                </Button>
                <Separator layoutX="128.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />

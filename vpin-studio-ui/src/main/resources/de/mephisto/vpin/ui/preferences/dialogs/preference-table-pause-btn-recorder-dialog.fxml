@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -10,8 +11,9 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.TablePauseBtnRecorderDialogController">
+<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.dialogs.BtnRecorderDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -24,7 +26,7 @@
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
-                  <Button mnemonicParsing="false" onAction="#onDelete" styleClass="default-button" text="Delete Bindings" />
+                  <Button mnemonicParsing="false" onAction="#onDelete" styleClass="default-button" text="Delete All Bindings" />
                   <Button fx:id="okBtn1" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSave" styleClass="submit-button" text="Save Bindings" />
                </children>
             </HBox>
@@ -36,11 +38,12 @@
          <children>
             <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Click the &quot;Bind Key&quot; button and then press the corresponding button on your cabinet." textFill="WHITE" />
             <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Note that only single key inputs are supported (no SHIFT or CTRL key combinations)." textFill="WHITE" />
-            <GridPane vgap="3.0">
+            <GridPane hgap="3.0" vgap="3.0">
                <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="482.1999816894531" minWidth="10.0" prefWidth="137.7999755859375" />
                   <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="125.80002441406253" />
-                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="314.400048828125" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" prefWidth="140.0" />
+                  <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="765.3999938964844" minWidth="10.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -48,78 +51,171 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                </rowConstraints>
                <children>
-                  <Label text="Pause Button Key:" textFill="WHITE" GridPane.rowIndex="1">
+                  <Label text="Pause Button Key:" textFill="WHITE" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel" text="Start Key:" textFill="WHITE" GridPane.rowIndex="2">
+                  <Label fx:id="usersLabel" text="Start Key:" textFill="WHITE" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="Navigate Left Key:" textFill="WHITE" GridPane.rowIndex="3">
+                  <Label fx:id="usersLabel1" layoutX="10.0" layoutY="49.0" text="Navigate Left Key:" textFill="WHITE" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="Navigate Right Key:" textFill="WHITE" GridPane.rowIndex="4">
+                  <Label fx:id="usersLabel11" layoutX="10.0" layoutY="83.0" text="Navigate Right Key:" textFill="WHITE" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeLaunch" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                  <Label fx:id="keyCodePause" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeStart" layoutX="213.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                  <Label fx:id="keyCodeStart" layoutX="213.0" layoutY="15.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeLeft" layoutX="213.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                  <Label fx:id="keyCodeLeft" layoutX="213.0" layoutY="49.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label fx:id="keyCodeRight" layoutX="213.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                  <Label fx:id="keyCodeRight" layoutX="213.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Button fx:id="bindLaunchBtn" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                  <Button fx:id="bindPauseBtn" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindStartBtn" layoutX="274.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                  <Button fx:id="bindStartBtn" layoutX="274.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindLeftBtn" layoutX="274.0" layoutY="44.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                  <Button fx:id="bindLeftBtn" layoutX="274.0" layoutY="44.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="5">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="bindRightBtn" layoutX="274.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="150.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                  <Button fx:id="bindRightBtn" layoutX="274.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="6">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="Button" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="49.0" styleClass="default-headline" text="Input" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Numeric Key Code" textFill="WHITE" GridPane.columnIndex="1">
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-headline" text="Key Code" textFill="WHITE" GridPane.columnIndex="1">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="2">
+                     <children>
+                        <Label fx:id="usersLabel111" text="Overlay Key:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="When pressed, a fullscreen overlay is shown on the playfield with data of your VPin." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label fx:id="keyCodeOverlay" layoutX="206.0" layoutY="150.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="bindOverlayBtn" layoutX="272.0" layoutY="145.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="1">
+                     <children>
+                        <Label fx:id="usersLabel1111" text="Reset Key:" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <Label>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="When pressed, the active emulator will be killed and the frontend restarts." wrapText="true" />
+                           </tooltip>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <Label fx:id="keyCodeReset" layoutX="206.0" layoutY="83.0" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Button fx:id="bindResetBtn" layoutX="272.0" layoutY="78.0" mnemonicParsing="false" onAction="#onBindClick" prefWidth="120.0" text="Bind Key" textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteResetBtn" layoutX="432.0" layoutY="44.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteOverlayBtn" layoutX="488.0" layoutY="44.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="2">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deletePauseBtn" layoutX="488.0" layoutY="78.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="3">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteStartBtn" layoutX="488.0" layoutY="112.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="4">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteLeftBtn" layoutX="488.0" layoutY="145.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="5">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+                  <Button fx:id="deleteRightBtn" layoutX="488.0" layoutY="179.0" mnemonicParsing="false" onAction="#onDeleteBinding" prefWidth="120.0" text="Delete" textFill="WHITE" GridPane.columnIndex="3" GridPane.rowIndex="6">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
                </children>
                <VBox.margin>
                   <Insets top="12.0" />

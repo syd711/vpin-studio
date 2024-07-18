@@ -2,7 +2,6 @@ package de.mephisto.vpin.connectors.vps;
 
 import de.mephisto.vpin.connectors.vps.model.*;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -18,14 +17,6 @@ public class VpsDiffer {
 
   public String getId() {
     return newTable.getId();
-  }
-
-  public String getImgUrl() {
-    return this.newTable.getTableFiles().get(0).getImgUrl();
-  }
-
-  public String getGameLink() {
-    return VPS.getVpsTableUrl(this.getId());
   }
 
   public Date getLastModified() {

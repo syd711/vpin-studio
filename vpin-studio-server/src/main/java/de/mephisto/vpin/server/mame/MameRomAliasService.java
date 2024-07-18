@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
@@ -30,7 +30,7 @@ public class MameRomAliasService implements InitializingBean {
   private Map<Integer, Map<String, String>> aliasMappingCache = new HashMap<>();
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @NonNull
   @JsonIgnore
@@ -123,7 +123,7 @@ public class MameRomAliasService implements InitializingBean {
 
   public void clearCache() {
     aliasMappingCache.clear();
-    List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       aliasMappingCache.put(gameEmulator.getId(), loadAliasMapping(gameEmulator));
     }

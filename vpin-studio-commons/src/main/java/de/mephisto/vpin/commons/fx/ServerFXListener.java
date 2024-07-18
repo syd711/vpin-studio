@@ -2,5 +2,5 @@ package de.mephisto.vpin.commons.fx;
 
 public interface ServerFXListener {
 
-  void toolkitRead();
+  void fxInitialized();
 }

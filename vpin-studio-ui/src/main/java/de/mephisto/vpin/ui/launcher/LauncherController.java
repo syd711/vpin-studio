@@ -89,8 +89,6 @@ public class LauncherController implements Initializable {
   @FXML
   private TableView<VPinConnection> tableView;
 
-  @FXML
-  private HBox installContainer;
 
   @FXML
   private Hyperlink helpBtn;

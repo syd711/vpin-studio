@@ -54,19 +54,17 @@ public class IniUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getVpxService().uploadIniFile(next, gameId, percent -> progressResultModel.setProgress(percent));
+      UploadDescriptor result = Studio.client.getIniService().uploadIniFile(next, gameId, percent -> progressResultModel.setProgress(percent));
       progressResultModel.addProcessed();
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
-      else {
-        EventManager.getInstance().notifyTableChange(gameId, null);
-      }
+      EventManager.getInstance().notifyTableChange(gameId, null);
       progressResultModel.addProcessed();
     } catch (Exception e) {
-      LOG.error("Table upload failed: " + e.getMessage(), e);
+      LOG.error("Ini upload failed: " + e.getMessage(), e);
     }
   }
 

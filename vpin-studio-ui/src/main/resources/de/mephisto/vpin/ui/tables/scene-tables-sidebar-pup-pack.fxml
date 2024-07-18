@@ -176,11 +176,26 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <CheckBox fx:id="scriptOnlyCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </CheckBox>
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                 <children>
+                                    <CheckBox fx:id="scriptOnlyCheckbox" disable="true" mnemonicParsing="false" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
+                                    <Label textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip prefWidth="300.0" text="If checked, there is a scriptonly.txt in the PUP pack folder and the PUP pack does not require additional config files." wrapText="true" />
+                                       </tooltip>
+                                    </Label>
+                                 </children>
+                              </HBox>
                               <Label layoutX="10.0" layoutY="49.0" text="Name:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -357,7 +372,6 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
             </Button>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
@@ -381,6 +395,20 @@
                   <Font size="14.0" />
                </font>
             </CheckBox>
+            <Label textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip prefWidth="300.0" text="A PUP pack can only be disabled here if the ROM name is set in the table data." wrapText="true" />
+               </tooltip>
+               <padding>
+                  <Insets left="3.0" />
+               </padding>
+            </Label>
          </items>
       </ToolBar>
    </top>

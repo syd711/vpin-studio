@@ -9,7 +9,6 @@ import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.popper.PopperMediaService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -22,8 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class UniversalUploadService {
@@ -48,7 +45,7 @@ public class UniversalUploadService {
   private AltSoundService altSoundService;
 
   @Autowired
-  private PopperMediaService popperMediaService;
+  private GameMediaService gameMediaService;
 
   @Autowired
   private PupPacksService pupPacksService;
@@ -148,7 +145,7 @@ public class UniversalUploadService {
         break;
       }
       case POPPER_MEDIA: {
-        popperMediaService.installMediaPack(uploadDescriptor, analysis);
+        gameMediaService.installMediaPack(uploadDescriptor, analysis);
         break;
       }
       case MUSIC: {

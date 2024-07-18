@@ -1,15 +1,18 @@
 package de.mephisto.vpin.ui.tables.drophandler;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
+import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController;
-import de.mephisto.vpin.ui.tables.dialogs.TableMediaUploadProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.DragEvent;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -21,23 +24,26 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
   private final static Logger LOG = LoggerFactory.getLogger(TableMediaFileDropEventHandler.class);
 
-  private final PopperScreen screen;
+  private final VPinScreen screen;
   private final List<String> suffixes;
   private TableOverviewController tablesController;
   private TableAssetManagerDialogController dialogController;
 
-  public TableMediaFileDropEventHandler(TableOverviewController tablesController, PopperScreen screen, String... suffix) {
+  public TableMediaFileDropEventHandler(TableOverviewController tablesController, VPinScreen screen, String... suffix) {
     this.tablesController = tablesController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);
   }
 
-  public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, PopperScreen screen, String... suffix) {
+  public TableMediaFileDropEventHandler(TableAssetManagerDialogController dialogController, VPinScreen screen, String... suffix) {
     this.dialogController = dialogController;
     this.screen = screen;
     this.suffixes = Arrays.asList(suffix);
@@ -80,18 +86,55 @@ public class TableMediaFileDropEventHandler implements EventHandler<DragEvent> {
 
 
     Platform.runLater(() -> {
+      FrontendMediaRepresentation medias = null;
       GameRepresentation game = null;
+      PlaylistRepresentation playlist = null;
+
       if (this.tablesController != null) {
         game = tablesController.getSelection();
+        medias = client.getGameMediaService().getGameMedia(game.getId());
       }
       else {
-        game = dialogController.getGame();
+        medias = dialogController.getFrontendMedia();
+        if (dialogController.isPlaylistMode()) {
+          playlist = dialogController.getPlaylist();
+        }
+        else {
+          game = dialogController.getGame();
+        }
       }
 
-      TableMediaUploadProgressModel model = new TableMediaUploadProgressModel(game.getId(),
-          "Popper Media Upload", draggedCopies, screen);
-      ProgressDialog.createProgressDialog(model);
+      boolean append = false;
+      if (!medias.getMediaItems(screen).isEmpty()) {
+        Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
+            "A media asset already exists.",
+            "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+        if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+        }
+        else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+          append = true;
+        }
+        else {
+          return;
+        }
+      }
 
+
+      if (playlist != null) {
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(playlist,
+            "Media Upload", draggedCopies, screen, append);
+        ProgressDialog.createProgressDialog(model);
+      }
+      else if (game != null) {
+        FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
+            "Media Upload", draggedCopies, screen, append);
+        ProgressDialog.createProgressDialog(model);
+      }
+
+
+      if (tablesController != null) {
+        tablesController.getTablesController().getAssetViewSideBarController().refreshTableMediaView();
+      }
       if (dialogController != null) {
         dialogController.refreshTableMediaView();
       }

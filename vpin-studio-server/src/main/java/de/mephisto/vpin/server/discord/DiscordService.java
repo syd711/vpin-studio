@@ -20,11 +20,8 @@ import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -35,7 +32,6 @@ import static de.mephisto.vpin.connectors.discord.Permissions.*;
 @Service
 public class DiscordService implements InitializingBean, PreferenceChangedListener, DiscordCommandResolver {
   private final static Logger LOG = LoggerFactory.getLogger(DiscordService.class);
-  public static final int MAX_VPS_ENTRIES = 24;
 
   private DiscordClient discordClient;
 
@@ -61,21 +57,24 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         if (member != null) {
           status.setBotInitials(member.getInitials());
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.warn("Failed to set BOT initials: " + e.getMessage());
       }
 
       try {
         long channelId = Long.parseLong(defaultChannelId);
         status.setValidDefaultChannel(!StringUtils.isEmpty(defaultChannelId) && this.discordClient != null && this.getChannel(Long.parseLong(guildId), channelId) != null);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         status.setValidDefaultChannel(false);
       }
 
       try {
         long categoryId = Long.parseLong(defaultCategoryId);
         status.setCategoryId(categoryId);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         //ignore
       }
     }
@@ -148,12 +147,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   public boolean hasJoinPermissions(long serverId, long channelId, long memberId) {
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
-        VIEW_CHANNEL,
-        MESSAGE_SEND,
-        MESSAGE_MANAGE,
-        MESSAGE_EMBED_LINKS,
-        MESSAGE_ATTACH_FILES,
-        MESSAGE_HISTORY);
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
     }
     return false;
   }
@@ -163,12 +162,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, channelId, memberId,
 //          MANAGE_CHANNEL,
-        VIEW_CHANNEL,
-        MESSAGE_SEND,
-        MESSAGE_MANAGE,
-        MESSAGE_EMBED_LINKS,
-        MESSAGE_ATTACH_FILES,
-        MESSAGE_HISTORY);
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
     }
     return false;
   }
@@ -178,12 +177,12 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
     if (this.discordClient != null) {
       return this.discordClient.hasPermissions(serverId, memberId,
 //          MANAGE_CHANNEL,
-        VIEW_CHANNEL,
-        MESSAGE_SEND,
-        MESSAGE_MANAGE,
-        MESSAGE_EMBED_LINKS,
-        MESSAGE_ATTACH_FILES,
-        MESSAGE_HISTORY);
+          VIEW_CHANNEL,
+          MESSAGE_SEND,
+          MESSAGE_MANAGE,
+          MESSAGE_EMBED_LINKS,
+          MESSAGE_ATTACH_FILES,
+          MESSAGE_HISTORY);
     }
     return false;
   }
@@ -292,7 +291,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         LOG.info("Discord client has been shutdown, because the token was changed.");
       }
       this.discordClient = null;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Error in JDA shutdown: " + e.getMessage());
     }
 
@@ -307,7 +307,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         this.applyDefaultDiscordSettings();
         LOG.info("Recreated Discord client.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to create discord client: " + e.getMessage() + ". Try to update your settings to create a valid client.");
       throw e;
     }
@@ -430,7 +431,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
         this.applyDefaultDiscordSettings();
         LOG.info("Re-applied discord settings.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to update discord preferences: " + e.getMessage());
     }
   }
@@ -553,7 +555,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
     for (DiscordMessage pinnedMessage : pinnedMessages) {
       if (pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.FINISHED_INDICATOR)
-        || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
+          || pinnedMessage.getRaw().contains(DiscordChannelMessageFactory.CANCEL_INDICATOR)) {
         LOG.info("Found finished or canceled message indicator for competition " + uuid);
         return false;
       }
@@ -669,7 +671,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
             if (member != null) {
               result.add(toPlayer(member));
             }
-          } catch (Exception e) {
+          }
+          catch (Exception e) {
             //ignore
           }
         }
@@ -692,7 +695,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       if (this.discordClient == null) {
         this.recreateDiscordClient();
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       status.setValid(false);
       return status;
     }
@@ -733,7 +737,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
           }
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to validate Discord settings: " + e.getMessage(), e);
       status.setValid(false);
     }
@@ -747,7 +752,8 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
       preferencesService.addChangeListener(this);
       this.recreateDiscordClient();
       this.clearCache();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to initialize Discord Service: " + e.getMessage());
     }
   }

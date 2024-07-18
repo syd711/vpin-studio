@@ -5,15 +5,16 @@ import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.MediaUtil;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -66,6 +67,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private Button deleteBtn;
+
+  @FXML
+  private Button stopBtn;
 
   @FXML
   private Label titleFontLabel;
@@ -248,10 +252,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
     String popperScreen = cardSettings.getPopperScreen();
     if (!StringUtils.isEmpty(popperScreen)) {
-      PopperScreen screen = PopperScreen.valueOfScreen(popperScreen);
-      GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-      String mediaDir = gameEmulator.getMediaDirectory();
-      File screenDir = new File(mediaDir, screen.name());
+      VPinScreen screen = VPinScreen.valueOfScreen(popperScreen);
+      File screenDir = client.getFrontendService().getMediaDirectory(-1, screen.name());
       SystemUtil.openFolder(screenDir);
     }
   }
@@ -272,8 +274,11 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onCreate(ActionEvent e) {
+    CardTemplate selection = this.templateCombo.getValue();
+    String gameName = gameRepresentation.get().getGameName();
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template will be used as default.", null);
+    String s = WidgetFactory.showInputDialog(stage, "New Template", "Enter Template Name", "Enter a meaningful name that identifies the card design.", "The values of the selected template \"" + selection.getName() + "\" will be used as default.", gameName);
     if (!StringUtils.isEmpty(s)) {
       ObservableList<CardTemplate> items = this.templateCombo.getItems();
 
@@ -283,7 +288,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         return;
       }
 
-      CardTemplate selection = this.templateCombo.getValue();
       Platform.runLater(() -> {
         selection.setName(s);
         selection.setId(null);
@@ -493,17 +497,17 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
 
-      List<PopperScreen> popperScreens = new ArrayList<>(Arrays.asList(PopperScreen.values()));
-      popperScreens.remove(PopperScreen.Audio);
-      popperScreens.remove(PopperScreen.AudioLaunch);
-      popperScreens.remove(PopperScreen.GameInfo);
-      popperScreens.remove(PopperScreen.GameHelp);
-      popperScreens.remove(PopperScreen.DMD);
-      popperScreens.remove(PopperScreen.Wheel);
-      popperScreens.remove(PopperScreen.Other2);
-      popperScreens.remove(PopperScreen.PlayField);
-      popperScreens.remove(PopperScreen.Loading);
-      screensComboBox.setItems(FXCollections.observableList(popperScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
+      List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
+      VPinScreens.remove(VPinScreen.Audio);
+      VPinScreens.remove(VPinScreen.AudioLaunch);
+      VPinScreens.remove(VPinScreen.GameInfo);
+      VPinScreens.remove(VPinScreen.GameHelp);
+      VPinScreens.remove(VPinScreen.DMD);
+      VPinScreens.remove(VPinScreen.Wheel);
+      VPinScreens.remove(VPinScreen.Other2);
+      VPinScreens.remove(VPinScreen.PlayField);
+      VPinScreens.remove(VPinScreen.Loading);
+      screensComboBox.setItems(FXCollections.observableList(VPinScreens.stream().map(p -> p.name()).collect(Collectors.toList())));
       screensComboBox.setDisable(!getCardTemplate().isOverlayMode());
 
       templateBeanBinder.bindCheckbox(grayScaleCheckbox, getCardTemplate(), "grayScale");
@@ -703,8 +707,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     previewOverlayPanel.setVisible(false);
 
     if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
-      PopperScreen overlayScreen = PopperScreen.valueOf(getCardTemplate().getOverlayScreen());
-      GameMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
+      VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
+      FrontendMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel);
         //images do not have a media player
@@ -739,7 +743,13 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+
     folderBtn.setVisible(SystemUtil.isFolderActionSupported());
+
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    FrontendUtil.replaceName(folderBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
     try {
       this.deleteBtn.setDisable(true);
       this.renameBtn.setDisable(true);

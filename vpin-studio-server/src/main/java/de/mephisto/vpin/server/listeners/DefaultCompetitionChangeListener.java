@@ -7,7 +7,7 @@ import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
@@ -46,12 +46,12 @@ abstract public class DefaultCompetitionChangeListener implements CompetitionCha
    * Checks if there are any augmented wheel icons that do not belong
    * to any competition anymore.
    */
-  protected void runCheckedDeAugmentation(CompetitionService competitionService, GameService gameService, PopperService popperService) {
+  protected void runCheckedDeAugmentation(CompetitionService competitionService, GameService gameService, FrontendStatusService frontendStatusService) {
     List<Integer> competedGameIds = competitionService.getActiveCompetitions().stream().map(Competition::getGameId).collect(Collectors.toList());
     List<Game> games = gameService.getKnownGames(-1);
     for (Game game : games) {
       if (!competedGameIds.contains(game.getId())) {
-        popperService.deAugmentWheel(game);
+        frontendStatusService.deAugmentWheel(game);
       }
     }
   }

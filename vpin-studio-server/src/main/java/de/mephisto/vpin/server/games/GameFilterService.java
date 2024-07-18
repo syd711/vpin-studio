@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,13 +22,16 @@ public class GameFilterService {
   private final static Logger LOG = LoggerFactory.getLogger(GameFilterService.class);
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private GameValidationService gameValidator;
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
 
   public List<Integer> filterGames(GameService gameService, FilterSettings filterSettings) {
@@ -62,7 +67,13 @@ public class GameFilterService {
         if (filterSettings.isWithPupPack() && game.getPupPack() == null) {
           continue;
         }
-        if (filterSettings.isWithPovIni() && !game.getPOVFile().exists() && !game.getIniFile().exists()) {
+        if (filterSettings.isWithIni() && !game.getIniFile().exists()) {
+          continue;
+        }
+        if (filterSettings.isWithPov() && !game.getPOVFile().exists()) {
+          continue;
+        }
+        if (filterSettings.isWithRes() && !game.getResFile().exists()) {
           continue;
         }
         if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
@@ -80,6 +91,9 @@ public class GameFilterService {
           continue;
         }
         if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//ERROR"))) {
+          continue;
+        }
+        if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//OUTDATED"))) {
           continue;
         }
         if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//TODO"))) {
@@ -103,13 +117,13 @@ public class GameFilterService {
           continue;
         }
 
-        TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-        boolean played = (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
+        TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+        boolean played = tableDetails == null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
         if (filterSettings.isNotPlayed() && played) {
           continue;
         }
 
-        if (filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
+        if (tableDetails != null && filterSettings.getGameStatus() != -1 && tableDetails.getStatus() != filterSettings.getGameStatus()) {
           continue;
         }
 
@@ -118,10 +132,15 @@ public class GameFilterService {
         }
       }
 
-
       result.add(game.getId());
     }
-    LOG.info("Filtering from " + knownGames.size() + " games took " + (System.currentTimeMillis() - start) + "ms");
+    LOG.info("Filtering " + result.size() + " from " + knownGames.size() + " games took " + (System.currentTimeMillis() - start) + "ms");
+    try {
+      preferencesService.savePreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save preferenes: " + e.getMessage(), e);
+    }
     return result;
   }
 }

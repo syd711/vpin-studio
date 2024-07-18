@@ -10,7 +10,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -84,7 +84,7 @@ public class MenuCustomViewController implements Initializable {
       }
     }
 
-    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+    InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
     if (imageStream == null) {
       imageStream = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }

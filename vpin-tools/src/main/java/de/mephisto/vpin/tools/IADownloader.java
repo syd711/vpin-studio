@@ -1,9 +1,7 @@
 package de.mephisto.vpin.tools;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +10,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IADownloader {
   private final static Logger LOG = LoggerFactory.getLogger(IADownloader.class);
@@ -19,31 +19,56 @@ public class IADownloader {
   private final static File ROM_FOLDER = new File("C:\\MAME\\roms\\");
 
   public static void main(String args[]) throws Exception {
-    Document doc = Jsoup.parse(new URL("https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/"), 15000);
-    Elements links = doc.select("a[href]"); // a with href
-    for (Element link : links) {
-      String target = link.attr("href");
-      if(!target.endsWith(".zip")) {
+//    String html = Jsoup.connect("https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/").get().html();
+
+    String html = FileUtils.readFileToString(new File("C:\\workspace\\vpin-studio-dev\\vpin-tools\\src\\main\\resources\\de.mephisto.vpin.tools\\test.txt"));
+    Pattern p = Pattern.compile("href=\"(.*?)\"");
+    Matcher m = p.matcher(html);
+    String url = null;
+    while (m.find()) {
+      url = m.group(1); // this variable should contain the link URL
+      System.out.println(url);
+
+      if (!url.endsWith(".zip")) {
         continue;
       }
-
-      File rom = new File(ROM_FOLDER, target);
+      File rom = new File(ROM_FOLDER, url);
       if(rom.exists()) {
         continue;
       }
 
-      download(rom, "https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/" + rom.getName());
+      download(rom, "https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/" + url);
     }
+
+//    Document doc = Jsoup.parse(new URL("https://archive.org/download/mame-chds-roms-extras-complete/MAME%200.256%20ROMs%20%28merged%29/"), 15000);
+//    Elements links = doc.select("a[href]"); // a with href
+//    int index = 0;
+//    System.out.println("Eval of " + links.size());
+//    for (Element link : links) {
+//index++;
+//String target = link.attr("href");
+//System.out.println("Found target: "  + index + ": " + target);
+//if(!target.endsWith(".zip")) {
+//  continue;
+//}
+
+//File rom = new File(ROM_FOLDER, target);
+//if(rom.exists()) {
+//  continue;
+//}
+//
+//
+//    }
   }
 
   private static void download(File rom, String downloadUrl) {
     try {
-      if(rom.exists()) {
+      if (rom.exists()) {
         rom.delete();
       }
 
       File tmp = new File(rom.getParentFile(), rom.getName() + ".bak");
-      if(tmp.exists()) {
+      if (tmp.exists()) {
         tmp.delete();
       }
 
@@ -64,7 +89,8 @@ public class IADownloader {
 
       tmp.renameTo(rom);
       LOG.info("Downloaded file " + rom.getAbsolutePath());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to execute download: " + e.getMessage(), e);
     }
   }

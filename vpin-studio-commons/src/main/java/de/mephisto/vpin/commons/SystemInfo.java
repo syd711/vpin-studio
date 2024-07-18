@@ -10,18 +10,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class SystemInfo {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
   public static String RESOURCES = "./resources/";
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
+  public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
+  public final static String STANDALONE_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
   private final static String VPX_REG_KEY = "HKEY_CURRENT_USER\\SOFTWARE\\Visual Pinball\\VP10\\RecentDir";
+  private final static String VPX_REG_KEY_2 = "HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\App Paths\\VPinballX.exe";
+
   private final static String POPPER_REG_KEY = "HKEY_LOCAL_MACHINE\\SYSTEM\\ControlSet001\\Control\\Session Manager\\Environment";
   public final static String VPIN_SERVER_REG_KEY = "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\VPin Studio Server";
-
 
   @NonNull
   public File resolvePinUPSystemInstallationFolder() {
@@ -43,44 +48,31 @@ public class SystemInfo {
     } catch (Exception e) {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);
     }
-    return new File("C:/vPinball/Visual Pinball");
+    return new File("C:/vPinball/PinUPSystem");
   }
 
-  @NonNull
-  public File resolveVisualPinballInstallationFolder(@NonNull File pinUPSystemInstallationFolder) {
-    File file = new File(pinUPSystemInstallationFolder.getParent(), "VisualPinball");
-    if (!file.exists()) {
-      file = new File(pinUPSystemInstallationFolder.getParent(), "Visual Pinball");
-    }
-
-    if (!file.exists()) {
-      LOG.info("The system info could not derive the Visual Pinball installation folder from the PinUP Popper installation, checking windows registry next.");
-      String tablesDir = readRegistry(VPX_REG_KEY, "LoadDir");
-      if (tablesDir != null) {
-        tablesDir = extractRegistryValue(tablesDir);
-        if (tablesDir == null) {
-          return file;
-        }
-        LOG.info("Resolve Visual Pinball tables folder " + tablesDir);
-        file = new File(tablesDir);
-        if (file.exists()) {
-          return file.getParentFile();
-        }
+  /** 
+   * cf https://github.com/vpinball/b2s-backglass/
+   * => b2sbackglassserverregisterapp/b2sbackglassserverregisterapp/formBackglassServerRegApp.vb
+   */
+  public File resolveBackglassServerFolder(@NonNull File visualPinballTableFolder) {
+    String b2sClsid = extractRegistryValue(readRegistry("HKEY_CLASSES_ROOT\\B2S.Server\\CLSID", null));
+    String regkey = "HKEY_CLASSES_ROOT\\WOW6432Node\\CLSID\\" + b2sClsid + "\\InprocServer32";
+    String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
+    File serverDllFile = null;
+    try {
+      serverDllFile = new File(new URL(serverDllPath).getFile());
+      if (serverDllFile.exists()) {
+        return serverDllFile.getParentFile();
       }
+    } catch (MalformedURLException ue) {
     }
-    return file;
-  }
-
-  public File resolveUserFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "User/");
-  }
-
-  public File resolveMameInstallationFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "VPinMAME/");
-  }
-
-  public File resolveVpxTablesInstallationFolder(@NonNull File visualPinballInstallationFolder) {
-    return new File(visualPinballInstallationFolder, "Tables/");
+    // check in tables folder
+    serverDllFile = new File(visualPinballTableFolder, "B2SBackglassServer.dll");
+    if (serverDllFile.exists()) {
+      return serverDllFile.getParentFile();
+    }
+    return null;
   }
 
   public String readRegistry(String location, String key) {

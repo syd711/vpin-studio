@@ -1,12 +1,15 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,6 +17,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +27,8 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDeleteController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableDeleteController.class);
@@ -35,6 +41,9 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @FXML
   private CheckBox deleteAllCheckbox;
+
+  @FXML
+  private CheckBox keepAssetsCheckbox;
 
   @FXML
   private CheckBox vpxFileCheckbox;
@@ -55,7 +64,7 @@ public class TableDeleteController implements Initializable, DialogController {
   private CheckBox povCheckbox;
 
   @FXML
-  private CheckBox popperCheckbox;
+  private CheckBox frontendCheckbox;
 
   @FXML
   private CheckBox confirmationCheckbox;
@@ -90,6 +99,9 @@ public class TableDeleteController implements Initializable, DialogController {
   @FXML
   private Label validationDescription;
 
+  @FXML
+  private VBox frontendSelectionField;
+
   private List<GameRepresentation> games;
 
   @FXML
@@ -99,7 +111,7 @@ public class TableDeleteController implements Initializable, DialogController {
     DeleteDescriptor descriptor = new DeleteDescriptor();
     descriptor.setDeleteTable(vpxFileCheckbox.isSelected());
     descriptor.setDeleteDirectB2s(directb2sCheckbox.isSelected());
-    descriptor.setDeleteFromPopper(popperCheckbox.isSelected());
+    descriptor.setDeleteFromFrontend(frontendCheckbox.isSelected());
     descriptor.setDeletePupPack(pupPackCheckbox.isSelected());
     descriptor.setDeleteDMDs(dmdCheckbox.isSelected());
     descriptor.setDeleteHighscores(highscoreCheckbox.isSelected());
@@ -111,6 +123,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setDeleteIni(iniCheckbox.isSelected());
     descriptor.setDeleteRes(resCheckbox.isSelected());
     descriptor.setDeleteVbs(vbsCheckbox.isSelected());
+    descriptor.setKeepAssets(keepAssetsCheckbox.isSelected());
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
     Platform.runLater(() -> {
@@ -128,6 +141,13 @@ public class TableDeleteController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    pupPackCheckbox.managedProperty().bindBidirectional(pupPackCheckbox.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    this.frontendSelectionField.setVisible(frontendType.isNotStandalone());
+    this.pupPackCheckbox.setVisible(frontendType.supportPupPacks());
+
     this.deleteBtn.setDisable(true);
     vpxFileCheckbox.setSelected(true);
     iniCheckbox.setSelected(true);
@@ -140,7 +160,7 @@ public class TableDeleteController implements Initializable, DialogController {
     deleteAllCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       vpxFileCheckbox.setSelected(newValue);
       directb2sCheckbox.setSelected(newValue);
-      popperCheckbox.setSelected(newValue);
+      frontendCheckbox.setSelected(newValue);
       pupPackCheckbox.setSelected(newValue);
       dmdCheckbox.setSelected(newValue);
       musicCheckbox.setSelected(newValue);
@@ -152,6 +172,13 @@ public class TableDeleteController implements Initializable, DialogController {
       iniCheckbox.setSelected(newValue);
       resCheckbox.setSelected(newValue);
       povCheckbox.setSelected(newValue);
+    });
+
+    frontendCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        keepAssetsCheckbox.setDisable(!newValue);
+      }
     });
   }
 
@@ -178,12 +205,15 @@ public class TableDeleteController implements Initializable, DialogController {
   }
 
   private void refreshArchivesCheck(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
-    for (GameRepresentation selectedGame : selectedGames) {
-      boolean hasNoArchives = Studio.client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
-      if (hasNoArchives) {
-        this.validationContainer.setVisible(true);
-        this.validationDescription.setVisible(true);
-        return;
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    if (frontend.getFrontendType().supportArchive()) {
+      for (GameRepresentation selectedGame : selectedGames) {
+        boolean hasNoArchives = client.getArchiveService().getArchiveDescriptorsForGame(selectedGame.getId()).isEmpty();
+        if (hasNoArchives) {
+          this.validationContainer.setVisible(true);
+          this.validationDescription.setVisible(true);
+          return;
+        }
       }
     }
   }

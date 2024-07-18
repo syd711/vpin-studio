@@ -3,29 +3,26 @@ package de.mephisto.vpin.server.games;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
-import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.restclient.util.MimeTypeUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.listeners.OfflineCompetitionChangeListenerImpl;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
-import de.mephisto.vpin.server.preferences.Preferences;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.MimeTypeUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -49,11 +46,13 @@ import static de.mephisto.vpin.restclient.validation.GameValidationCode.*;
 public class GameValidationService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameValidationService.class);
 
-  private static Map<Integer, PopperScreen> mediaCodeToScreen = new HashMap<>();
+  private static Map<Integer, VPinScreen> mediaCodeToScreen = new HashMap<>();
 
   private static long start = 0;
   private static long end = 0;
   private static long total = 0;
+
+  private Frontend frontend;
 
   public static void metricsStart() {
     start = System.currentTimeMillis();
@@ -72,18 +71,18 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   static {
-    mediaCodeToScreen.put(CODE_NO_AUDIO, PopperScreen.Audio);
-    mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, PopperScreen.AudioLaunch);
-    mediaCodeToScreen.put(CODE_NO_APRON, PopperScreen.Menu);
-    mediaCodeToScreen.put(CODE_NO_INFO, PopperScreen.GameInfo);
-    mediaCodeToScreen.put(CODE_NO_HELP, PopperScreen.GameHelp);
-    mediaCodeToScreen.put(CODE_NO_TOPPER, PopperScreen.Topper);
-    mediaCodeToScreen.put(CODE_NO_BACKGLASS, PopperScreen.BackGlass);
-    mediaCodeToScreen.put(CODE_NO_DMD, PopperScreen.DMD);
-    mediaCodeToScreen.put(CODE_NO_PLAYFIELD, PopperScreen.PlayField);
-    mediaCodeToScreen.put(CODE_NO_LOADING, PopperScreen.Loading);
-    mediaCodeToScreen.put(CODE_NO_OTHER2, PopperScreen.Other2);
-    mediaCodeToScreen.put(CODE_NO_WHEEL_IMAGE, PopperScreen.Wheel);
+    mediaCodeToScreen.put(CODE_NO_AUDIO, VPinScreen.Audio);
+    mediaCodeToScreen.put(CODE_NO_AUDIO_LAUNCH, VPinScreen.AudioLaunch);
+    mediaCodeToScreen.put(CODE_NO_APRON, VPinScreen.Menu);
+    mediaCodeToScreen.put(CODE_NO_INFO, VPinScreen.GameInfo);
+    mediaCodeToScreen.put(CODE_NO_HELP, VPinScreen.GameHelp);
+    mediaCodeToScreen.put(CODE_NO_TOPPER, VPinScreen.Topper);
+    mediaCodeToScreen.put(CODE_NO_BACKGLASS, VPinScreen.BackGlass);
+    mediaCodeToScreen.put(CODE_NO_DMD, VPinScreen.DMD);
+    mediaCodeToScreen.put(CODE_NO_PLAYFIELD, VPinScreen.PlayField);
+    mediaCodeToScreen.put(CODE_NO_LOADING, VPinScreen.Loading);
+    mediaCodeToScreen.put(CODE_NO_OTHER2, VPinScreen.Other2);
+    mediaCodeToScreen.put(CODE_NO_WHEEL_IMAGE, VPinScreen.Wheel);
   }
 
   @Autowired
@@ -102,7 +101,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private MameService mameService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private SystemService systemService;
@@ -116,9 +115,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
 
-  private Preferences preferences;
-  private ServerSettings serverSettings;
   private ValidationSettings validationSettings;
+  private IgnoredValidationSettings ignoredValidationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
     GameValidationService.metricsStart();
@@ -157,7 +155,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
         for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
           if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = pinUPConnector.getGame(otherGameDetails.getPupId());
+            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
             if (otherGame != null) {
               result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
               if (findFirst) {
@@ -218,14 +216,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
 
-      validationStates = validateRecordings(game);
-      if (!validationStates.isEmpty()) {
-        result.add(validationStates.get(0));
-        if (findFirst) {
-          return result;
-        }
-      }
-
       validationStates = validateAltColor(game);
       if (!validationStates.isEmpty()) {
         result.add(validationStates.get(0));
@@ -249,7 +239,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private @Nullable List<ValidationState> validateScreenAssets(@NotNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
-      if (!validScreenAssets(game, PopperScreen.Audio)) {
+      if (!validScreenAssets(game, VPinScreen.Audio)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
         if (findFirst) {
           return result;
@@ -258,7 +248,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, CODE_NO_AUDIO_LAUNCH)) {
-      if (!validScreenAssets(game, PopperScreen.AudioLaunch)) {
+      if (!validScreenAssets(game, VPinScreen.AudioLaunch)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO_LAUNCH));
         if (findFirst) {
           return result;
@@ -267,7 +257,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, CODE_NO_APRON)) {
-      if (!validScreenAssets(game, PopperScreen.Menu)) {
+      if (!validScreenAssets(game, VPinScreen.Menu)) {
         result.add(GameValidationStateFactory.create(CODE_NO_APRON));
         if (findFirst) {
           return result;
@@ -276,7 +266,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_INFO)) {
-      if (!validScreenAssets(game, PopperScreen.GameInfo)) {
+      if (!validScreenAssets(game, VPinScreen.GameInfo)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_INFO));
         if (findFirst) {
           return result;
@@ -285,7 +275,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_HELP)) {
-      if (!validScreenAssets(game, PopperScreen.GameHelp)) {
+      if (!validScreenAssets(game, VPinScreen.GameHelp)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_HELP));
         if (findFirst) {
           return result;
@@ -294,7 +284,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_TOPPER)) {
-      if (!validScreenAssets(game, PopperScreen.Topper)) {
+      if (!validScreenAssets(game, VPinScreen.Topper)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_TOPPER));
         if (findFirst) {
           return result;
@@ -303,7 +293,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_BACKGLASS)) {
-      if (!validScreenAssets(game, PopperScreen.BackGlass)) {
+      if (!validScreenAssets(game, VPinScreen.BackGlass)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_BACKGLASS));
         if (findFirst) {
           return result;
@@ -312,7 +302,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_DMD)) {
-      if (!validScreenAssets(game, PopperScreen.DMD)) {
+      if (!validScreenAssets(game, VPinScreen.DMD)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DMD));
         if (findFirst) {
           return result;
@@ -321,7 +311,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_PLAYFIELD)) {
-      if (!validScreenAssets(game, PopperScreen.PlayField)) {
+      if (!validScreenAssets(game, VPinScreen.PlayField)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_PLAYFIELD));
         if (findFirst) {
           return result;
@@ -330,7 +320,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_LOADING)) {
-      if (!validScreenAssets(game, PopperScreen.PlayField)) {
+      if (!validScreenAssets(game, VPinScreen.PlayField)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_LOADING));
         if (findFirst) {
           return result;
@@ -339,7 +329,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_OTHER2)) {
-      if (!validScreenAssets(game, PopperScreen.Other2)) {
+      if (!validScreenAssets(game, VPinScreen.Other2)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_OTHER2));
         if (findFirst) {
           return result;
@@ -348,7 +338,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     if (isValidationEnabled(game, GameValidationCode.CODE_NO_WHEEL_IMAGE)) {
-      if (!validScreenAssets(game, PopperScreen.Wheel)) {
+      if (!validScreenAssets(game, VPinScreen.Wheel)) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_WHEEL_IMAGE));
         if (findFirst) {
           return result;
@@ -358,10 +348,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return null;
   }
 
-  private boolean validScreenAssets(Game game, PopperScreen popperScreen) {
-    List<File> screenAssets = game.getPinUPMedia(popperScreen);
+  private boolean validScreenAssets(Game game, VPinScreen VPinScreen) {
+    List<File> screenAssets = game.getMediaFiles(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
     if (!screenAssets.isEmpty()) {
       if (config.getOption().equals(ValidatorOption.empty)) {
         return false;
@@ -407,38 +397,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         //no in registry, so check against defaults
         if (!options.isForceStereo()) {
           result.add(GameValidationStateFactory.create(CODE_FORCE_STEREO));
-        }
-      }
-    }
-    return result;
-  }
-
-  public List<ValidationState> validateRecordings(Game game) {
-    if (!isValidationEnabled(game, CODE_OUTDATED_RECORDING)) {
-      return Collections.emptyList();
-    }
-    Map<String, List<GameMediaItem>> media = game.getGameMedia().getMedia();
-    PopperScreen[] values = PopperScreen.values();
-    List<ValidationState> result = new ArrayList<>();
-    for (PopperScreen screen : values) {
-      //only validate playfield and backglass
-      if (!(PopperScreen.BackGlass.equals(screen) || PopperScreen.PlayField.equals(screen))) {
-        continue;
-      }
-
-      if (media.containsKey(screen.name())) {
-        List<GameMediaItem> gameMediaItems = media.get(screen.name());
-        for (GameMediaItem gameMediaItem : gameMediaItems) {
-          String name = gameMediaItem.getName();
-          Date modified = new Date(gameMediaItem.getFile().lastModified());
-          if (name.endsWith(".mp4")) {
-            if (game.getDirectB2SFile().exists() && new Date(game.getDirectB2SFile().lastModified()).after(modified)) {
-              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getDirectB2SFile().getName(), name, screen.name()));
-            }
-            if (game.getGameFile().exists() && game.getDateUpdated() != null && game.getDateUpdated().after(modified)) {
-              result.add(GameValidationStateFactory.create(CODE_OUTDATED_RECORDING, game.getGameFile().getName(), name, screen.name()));
-            }
-          }
         }
       }
     }
@@ -558,19 +516,19 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   private boolean isValidationEnabled(@NonNull Game game, int code) {
+    if (frontend.getIgnoredValidations().contains(code)) {
+      return false;
+    }
+    if (ignoredValidationSettings.isIgnored(String.valueOf(code))) {
+      return false;
+    }
+
     List<Integer> ignoredValidations = game.getIgnoredValidations();
     if (ignoredValidations == null) {
       return false;
     }
 
     if (ignoredValidations.contains(code)) {
-      return false;
-    }
-
-    String ignoredPrefValidations = preferences.getIgnoredValidations();
-    List<Integer> ignoredIds = ValidationState.toIds(ignoredPrefValidations);
-
-    if (ignoredIds.contains(code)) {
       return false;
     }
 
@@ -629,12 +587,13 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
-    boolean played = tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
+    boolean played = tableDetails == null || tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
     ScoringDB scoringDB = systemService.getScoringDatabase();
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
 
-    String rom = TableDataUtil.getEffectiveRom(tableDetails, gameDetails);
+    String rom = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomName() : null, gameDetails.getRomName());
+
     String originalRom = mameRomAliasService.getRomForAlias(game.getEmulator(), rom);
     boolean aliasedRom = false;
     if (!StringUtils.isEmpty(originalRom)) {
@@ -642,8 +601,8 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       rom = originalRom;
     }
 
-    String tableName = TableDataUtil.getEffectiveTableName(tableDetails, gameDetails);
-    String hsName = TableDataUtil.getEffectiveHighscoreFilename(tableDetails, gameDetails, serverSettings);
+    String tableName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getRomAlt() : null, gameDetails.getTableName());
+    String hsName = StringUtils.defaultIfEmpty(tableDetails != null ? tableDetails.getHsFilename() : null, gameDetails.getHsFileName());
 
     //the highscore file was found
     if (!StringUtils.isEmpty(hsName) && highscoreFiles.contains(hsName)) {
@@ -743,20 +702,20 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   @Override
   public void afterPropertiesSet() {
-    preferences = preferencesService.getPreferences();
     preferencesService.addChangeListener(this);
+    frontend = frontendService.getFrontend();
     this.preferenceChanged(PreferenceNames.SERVER_SETTINGS, null, null);
     this.preferenceChanged(PreferenceNames.VALIDATION_SETTINGS, null, null);
+    this.preferenceChanged(PreferenceNames.IGNORED_VALIDATIONS, null, null);
   }
 
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
-    if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
-      serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    if (propertyName.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
+      ignoredValidationSettings = preferencesService.getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
     }
     if (propertyName.equals(PreferenceNames.VALIDATION_SETTINGS)) {
       validationSettings = preferencesService.getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
-    preferences = preferencesService.getPreferences();
   }
 }

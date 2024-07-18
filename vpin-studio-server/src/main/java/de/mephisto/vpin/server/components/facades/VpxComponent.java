@@ -2,12 +2,8 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.githubloader.GithubRelease;
 import de.mephisto.githubloader.GithubReleaseFactory;
-import de.mephisto.githubloader.ReleaseArtifact;
-import de.mephisto.githubloader.ReleaseArtifactActionLog;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -39,7 +35,7 @@ public class VpxComponent implements ComponentFacade {
   @NotNull
   @Override
   public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
-    return gameEmulator.getTablesFolder().getParentFile();
+    return gameEmulator.getTablesFolder()!=null? gameEmulator.getTablesFolder().getParentFile(): null;
   }
 
   @Nullable

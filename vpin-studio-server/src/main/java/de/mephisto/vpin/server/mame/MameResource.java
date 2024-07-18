@@ -39,6 +39,11 @@ public class MameResource {
     return mameService.saveOptions(options);
   }
 
+  @DeleteMapping("/options/{rom}")
+  public Boolean deleteOptions(@PathVariable("rom") String rom) {
+    return mameService.deleteOptions(rom);
+  }
+
   @GetMapping("/clearcache")
   public boolean clearCache() {
     mameRomAliasService.clearCache();

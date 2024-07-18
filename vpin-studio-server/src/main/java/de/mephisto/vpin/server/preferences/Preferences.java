@@ -26,10 +26,6 @@ public class Preferences {
 
   private String systemPreset;
 
-  private String resetKey;
-
-  private String overlayKey;
-
   private String overlayDesign;
 
   private String overlayPageUrl;
@@ -56,6 +52,8 @@ public class Preferences {
 
   private String dofSettings;
 
+  private String pinballXSettings;
+
   @Column(length = 1024)
   private String highscoreTitles;
 
@@ -72,6 +70,8 @@ public class Preferences {
   private String uiSettings;
 
   private String serverSettings;
+
+  private String filterSettings;
 
   @Column(length = 1024)
   private String doNotShowAgains;
@@ -98,6 +98,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getFilterSettings() {
+    return filterSettings;
+  }
+
+  public void setFilterSettings(String filterSettings) {
+    this.filterSettings = filterSettings;
+  }
 
   public String getNotificationSettings() {
     return notificationSettings;
@@ -156,6 +164,14 @@ public class Preferences {
 
   public void setHighscoreCardSettings(String highscoreCardSettings) {
     this.highscoreCardSettings = highscoreCardSettings;
+  }
+
+  public String getPinballXSettings() {
+    return pinballXSettings;
+  }
+
+  public void setPinballXSettings(String pinballXSettings) {
+    this.pinballXSettings = pinballXSettings;
   }
 
   public String getOverlayPageUrl() {
@@ -348,22 +364,6 @@ public class Preferences {
 
   public void setShowOverlayOnStartup(String showOverlayOnStartup) {
     this.showOverlayOnStartup = showOverlayOnStartup;
-  }
-
-  public String getResetKey() {
-    return resetKey;
-  }
-
-  public void setResetKey(String resetKey) {
-    this.resetKey = resetKey;
-  }
-
-  public String getOverlayKey() {
-    return overlayKey;
-  }
-
-  public void setOverlayKey(String overlayKey) {
-    this.overlayKey = overlayKey;
   }
 
   public Asset getAvatar() {

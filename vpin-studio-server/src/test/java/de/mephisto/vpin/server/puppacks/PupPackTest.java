@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.puppacks;
 
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.puppack.ScreenEntry;
 import de.mephisto.vpin.server.puppack.ScreensPub;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ public class PupPackTest {
     List<ScreenEntry> entries = s.getEntries();
 
     assertTrue(s.exists());
-    assertNotNull(s.getScreenMode(PopperScreen.Loading));
+    assertNotNull(s.getScreenMode(VPinScreen.Loading));
     assertFalse(entries.isEmpty());
   }
 }

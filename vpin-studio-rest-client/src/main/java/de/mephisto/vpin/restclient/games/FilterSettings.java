@@ -1,6 +1,8 @@
 package de.mephisto.vpin.restclient.games;
 
-public class FilterSettings {
+import de.mephisto.vpin.restclient.JsonSettings;
+
+public class FilterSettings extends JsonSettings {
   private int emulatorId = -1;
   private boolean missingAssets;
   private boolean otherIssues;
@@ -15,11 +17,37 @@ public class FilterSettings {
   private boolean withPupPack;
   private boolean withAltSound;
   private boolean withAltColor;
-  private boolean withPovIni;
+  private boolean withPov;
+  private boolean withRes;
+  private boolean withIni;
   private boolean withNVOffset;
   private boolean withAlias;
   private int gameStatus = -1;
   private NoteType noteType;
+
+  public boolean isWithRes() {
+    return withRes;
+  }
+
+  public void setWithRes(boolean withRes) {
+    this.withRes = withRes;
+  }
+
+  public boolean isWithPov() {
+    return withPov;
+  }
+
+  public void setWithPov(boolean withPov) {
+    this.withPov = withPov;
+  }
+
+  public boolean isWithIni() {
+    return withIni;
+  }
+
+  public void setWithIni(boolean withIni) {
+    this.withIni = withIni;
+  }
 
   public NoteType getNoteType() {
     return noteType;
@@ -133,14 +161,6 @@ public class FilterSettings {
     this.withAltColor = withAltColor;
   }
 
-  public boolean isWithPovIni() {
-    return withPovIni;
-  }
-
-  public void setWithPovIni(boolean withPovIni) {
-    this.withPovIni = withPovIni;
-  }
-
   public boolean isNotPlayed() {
     return notPlayed;
   }
@@ -187,7 +207,9 @@ public class FilterSettings {
         && !this.withAltColor
         && !this.withAltSound
         && !this.withBackglass
-        && !this.withPovIni
+        && !this.withIni
+        && !this.withPov
+        && !this.withRes
         && !this.withPupPack
         && !this.withNVOffset
         && !this.withAlias

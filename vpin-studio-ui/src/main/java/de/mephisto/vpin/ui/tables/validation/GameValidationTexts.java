@@ -1,7 +1,10 @@
 package de.mephisto.vpin.ui.tables.validation;
 
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 
@@ -26,18 +29,21 @@ public class GameValidationTexts {
 
   @NonNull
   public static LocalizedValidation getValidationResult(@NonNull GameRepresentation game, ValidationState state) {
+    Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+
     String text;
     String label;
     int code = state.getCode();
     switch (code) {
       case CODE_VPX_NOT_EXISTS: {
         label = "VPX file \"" + game.getGameFileName() + "\" does not exist.";
-        text = "Fix the configuration for this table in PinUP Popper or delete it.";
+        text = FrontendUtil.replaceName("Fix the configuration for this table in [Frontend] or delete it.", frontend);
         break;
       }
       case CODE_NO_ROM: {
         label = "No ROM name could be resolved.";
-        text = "Consider setting the ROM name in the \"Script Details\" section or PinUP popper. Otherwise no highscore can be evaluated for this table.";
+        text = FrontendUtil.replaceName("Consider setting the ROM name in the \"Script Details\" section or [Frontend]" 
+          + ". Otherwise no highscore can be evaluated for this table.", frontend);
         break;
       }
       case CODE_ROM_NOT_EXISTS: {
@@ -51,8 +57,11 @@ public class GameValidationTexts {
         break;
       }
       case CODE_NO_DIRECTB2S_OR_PUPPACK: {
-        label = "No PUP pack and no directb2s file found.";
-        text = "No additional media has been found. Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";
+        label = "No directb2s file found.";
+        if(frontend.getFrontendType().supportPupPacks()) {
+          label = "No PUP pack and no directb2s file found.";
+        }
+        text = "Check the \"Virtual Pinball Spreadsheet\" section to download a \"directb2s\" file for this table.";
         break;
       }
       case CODE_NO_DIRECTB2S_AND_PUPPACK_DISABLED: {
@@ -133,11 +142,6 @@ public class GameValidationTexts {
       case CODE_FORCE_STEREO: {
         label = "Force Stereo not enabled.";
         text = "Enable \"Force Stereo\" for this table in the VPinMAME settings.";
-        break;
-      }
-      case CODE_OUTDATED_RECORDING: {
-        label = "Outdated recording found.";
-        text = "The file \"" + state.getOptions().get(0) + "\" is newer than the recording \"" + state.getOptions().get(1) + "\" of screen \"" + state.getOptions().get(2) + "\"";
         break;
       }
       case CODE_PUP_PACK_FILE_MISSING: {

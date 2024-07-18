@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
@@ -156,17 +156,17 @@ public class PupPacksResource {
     representation.setPath(pupPack.getPupPackFolder().getPath().replaceAll("\\\\", "/"));
     representation.setModificationDate(new Date(pupPack.getPupPackFolder().lastModified()));
     representation.setOptions(pupPack.getOptions());
-    representation.setScreenDMDMode(pupPack.getScreenMode(PopperScreen.DMD));
-    representation.setScreenBackglassMode(pupPack.getScreenMode(PopperScreen.BackGlass));
-    representation.setScreenTopperMode(pupPack.getScreenMode(PopperScreen.Topper));
-    representation.setScreenFullDMDMode(pupPack.getScreenMode(PopperScreen.Menu));
+    representation.setScreenDMDMode(pupPack.getScreenMode(VPinScreen.DMD));
+    representation.setScreenBackglassMode(pupPack.getScreenMode(VPinScreen.BackGlass));
+    representation.setScreenTopperMode(pupPack.getScreenMode(VPinScreen.Topper));
+    representation.setScreenFullDMDMode(pupPack.getScreenMode(VPinScreen.Menu));
     representation.setMissingResources(pupPack.getMissingResources());
     representation.setSelectedOption(pupPack.getSelectedOption());
     representation.setTxtFiles(pupPack.getTxtFiles());
     representation.setName(pupPack.getName());
-    representation.setHelpTransparency(pupPack.isTransparent(PopperScreen.GameHelp));
-    representation.setInfoTransparency(pupPack.isTransparent(PopperScreen.GameInfo));
-    representation.setOther2Transparency(pupPack.isTransparent(PopperScreen.Other2));
+    representation.setHelpTransparency(pupPack.isTransparent(VPinScreen.GameHelp));
+    representation.setInfoTransparency(pupPack.isTransparent(VPinScreen.GameInfo));
+    representation.setOther2Transparency(pupPack.isTransparent(VPinScreen.Other2));
 
     if (game != null) {
       representation.setEnabled(!pupPacksService.isPupPackDisabled(game));

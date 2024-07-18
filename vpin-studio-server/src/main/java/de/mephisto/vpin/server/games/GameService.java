@@ -5,14 +5,13 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -20,21 +19,21 @@ import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.popper.PopperService;
-import de.mephisto.vpin.server.popper.WheelAugmenter;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.roms.RomService;
 import de.mephisto.vpin.server.roms.ScanResult;
-import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -54,7 +53,7 @@ public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private RomService romService;
@@ -99,26 +98,23 @@ public class GameService implements InitializingBean {
   private PlayerService playerService;
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private MameService mameService;
-
-  @Autowired
-  private PopperService popperService;
 
   @Autowired
   private DMDService dmdService;
 
+  @Autowired
+  private DefaultPictureService defaultPictureService;
+
   @Deprecated //do not use because of lazy scanning
   public List<Game> getGames() {
     long start = System.currentTimeMillis();
-    List<Game> games = new ArrayList<>(pinUPConnector.getGames());
+    List<Game> games = new ArrayList<>(frontendService.getGames());
     LOG.info("Game fetch took " + (System.currentTimeMillis() - start) + "ms., returned " + games.size() + " tables.");
     start = System.currentTimeMillis();
 
     for (Game game : games) {
-      applyGameDetails(game, null, false, false);
+      applyGameDetails(game, false, false);
     }
     LOG.info("Game details fetch took " + (System.currentTimeMillis() - start) + "ms.");
     return games;
@@ -147,7 +143,7 @@ public class GameService implements InitializingBean {
    * Pre-reload triggered before an actual manual table reload (server service cache reset)
    */
   public boolean reload() {
-    pinUPConnector.loadEmulators();
+    frontendService.loadEmulators();
     mameRomAliasService.clearCache();
     highscoreService.refreshAvailableScores();
     return true;
@@ -170,26 +166,21 @@ public class GameService implements InitializingBean {
   public List<Game> getKnownGames(int emulatorId) {
     List<Game> games = new ArrayList<>();
     if (emulatorId == -1) {
-      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
-        games.addAll(pinUPConnector.getGamesByEmulator(gameEmulator.getId()));
+        games.addAll(frontendService.getGamesByEmulator(gameEmulator.getId()));
       }
     }
     else {
-      games.addAll(pinUPConnector.getGamesByEmulator(emulatorId));
+      games.addAll(frontendService.getGamesByEmulator(emulatorId));
     }
-    boolean killedPopper = false;
+    boolean killFrontend = false;
     for (Game game : games) {
-      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-      if (gameDetails != null) {
-        applyGameDetails(game, gameDetails, false, false);
-      }
-      else {
-        if (!killedPopper) {
-          LOG.info("New games have been found, automatically killing popper to release locks.");
-          systemService.killPopper();
-          killedPopper = true;
-        }
+      boolean newGame = applyGameDetails(game, false, false);
+      if (newGame && !killFrontend) {
+        LOG.info("New games have been found, automatically killing frontend to release locks.");
+        frontendService.killFrontend();
+        killFrontend = true;
       }
     }
     GameValidationService.metricFinished();
@@ -197,17 +188,16 @@ public class GameService implements InitializingBean {
     return games;
   }
 
-  public List<Game> getGamesByRom(@NonNull String rom) {
-    List<Game> games = this.getGames()
-        .stream()
+  public List<Game> getGamesByRom(int emulatorId, @NonNull String rom) {
+    List<Game> games = frontendService.getGamesByEmulator(emulatorId);
+    for (Game game : games) {
+      applyGameDetails(game, false, false);
+    }
+    return games.stream()
         .filter(g ->
             (!StringUtils.isEmpty(g.getRom()) && g.getRom().equalsIgnoreCase(rom)) ||
                 (!StringUtils.isEmpty(g.getTableName()) && g.getTableName().equalsIgnoreCase(rom)))
         .collect(Collectors.toList());
-    for (Game game : games) {
-      applyGameDetails(game, null, false, false);
-    }
-    return games;
   }
 
   public boolean resetGame(int gameId) {
@@ -247,10 +237,10 @@ public class GameService implements InitializingBean {
         }
 
         if (descriptor.isDeleteDirectB2s()) {
-          if (!FileUtils.delete(game.getCroppedDefaultPicture())) {
+          if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
             success = false;
           }
-          if (!FileUtils.delete(game.getRawDefaultPicture())) {
+          if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
             success = false;
           }
           if (!FileUtils.delete(game.getDirectB2SFile())) {
@@ -310,17 +300,15 @@ public class GameService implements InitializingBean {
           }
         }
 
+        //cfg files belong to MAME
         if (descriptor.isDeleteCfg()) {
           if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
             success = false;
           }
 
           if (!StringUtils.isEmpty(game.getRom())) {
-            List<Game> gamesByRom = new ArrayList<>(getGamesByRom(game.getRom()));
-            if (gamesByRom.size() == 1) {
-              if (!mameService.deleteOptions(game.getRom())) {
-                success = false;
-              }
+            if (!mameService.deleteOptions(game.getRom())) {
+              success = false;
             }
           }
         }
@@ -331,7 +319,7 @@ public class GameService implements InitializingBean {
           }
         }
 
-        if (descriptor.isDeleteFromPopper()) {
+        if (descriptor.isDeleteFromFrontend()) {
           GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
           if (byPupId != null) {
             gameDetailsRepository.delete(byPupId);
@@ -340,38 +328,45 @@ public class GameService implements InitializingBean {
           Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
           byId.ifPresent(asset -> assetRepository.delete(asset));
 
-          if (!pinUPConnector.deleteGame(gameId)) {
+          if (!frontendService.deleteGame(gameId)) {
             success = false;
           }
 
-          //only delete the popper assets, if there is no other game with the same "Game Name".
-          List<Game> allOtherTables = this.pinUPConnector.getGames().stream().filter(g -> g.getId() != game.getId()).collect(Collectors.toList());
-          List<Game> duplicateGameNameTables = allOtherTables.stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName())).collect(Collectors.toList());
+          if (!descriptor.isKeepAssets()) {
+            //only delete the assets, if there is no other game with the same "Game Name".
+            List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
+                .stream().filter(g -> g.getId() != game.getId())
+                .collect(Collectors.toList());
+            List<Game> duplicateGameNameTables = allOtherTables
+                .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
+                .collect(Collectors.toList());
 
-          if (duplicateGameNameTables.isEmpty()) {
-            PopperScreen[] values = PopperScreen.values();
-            for (PopperScreen originalScreenValue : values) {
-              List<GameMediaItem> gameMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
-              for (GameMediaItem mediaItem : gameMediaItem) {
-                File mediaFile = mediaItem.getFile();
+            if (duplicateGameNameTables.isEmpty()) {
+              LOG.info("Deleting screen assets for \"" + game.getGameDisplayName() + "\"");
+              VPinScreen[] values = VPinScreen.values();
+              for (VPinScreen originalScreenValue : values) {
+                List<FrontendMediaItem> frontendMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+                for (FrontendMediaItem mediaItem : frontendMediaItem) {
+                  File mediaFile = mediaItem.getFile();
 
-                if (originalScreenValue.equals(PopperScreen.Wheel)) {
-                  WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-                  augmenter.deAugment();
-                }
+                  if (originalScreenValue.equals(VPinScreen.Wheel)) {
+                    WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
+                    augmenter.deAugment();
+                  }
 
-                if (mediaFile.exists() && !mediaFile.delete()) {
-                  success = false;
-                  LOG.warn("Failed to delete Popper media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                  if (mediaFile.exists() && !mediaFile.delete()) {
+                    success = false;
+                    LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
+                  }
                 }
               }
             }
-          }
-          else {
-            LOG.info("Deletion of Popper assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+            else {
+              LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
+            }
           }
 
-          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from PinUP Popper.");
+          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
         }
 
         //delete the game folder if it is empty
@@ -393,15 +388,15 @@ public class GameService implements InitializingBean {
   }
 
   public List<Integer> getGameIds() {
-    return this.pinUPConnector.getGameIds();
+    return this.frontendService.getGameIds();
   }
 
   @SuppressWarnings("unused")
   @Nullable
   public synchronized Game getGame(int id) {
-    Game game = pinUPConnector.getGame(id);
+    Game game = frontendService.getGame(id);
     if (game != null) {
-      applyGameDetails(game, null, false, true);
+      applyGameDetails(game, false, true);
       return game;
     }
     return null;
@@ -410,9 +405,14 @@ public class GameService implements InitializingBean {
   /**
    * Returns the current highscore for the given game
    */
+  @Nullable
   public ScoreSummary getScores(int gameId) {
     long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
-    return highscoreService.getScoreSummary(serverId, getGame(gameId));
+    Game game = getGame(gameId);
+    if (game != null) {
+      return highscoreService.getScoreSummary(serverId, game);
+    }
+    return null;
   }
 
   /**
@@ -456,7 +456,7 @@ public class GameService implements InitializingBean {
         continue;
       }
 
-      Game rawGame = pinUPConnector.getGame(version.getGameId());
+      Game rawGame = frontendService.getGame(version.getGameId());
       if (rawGame != null && !scores.contains(version)) {
         scores.add(version);
       }
@@ -475,12 +475,12 @@ public class GameService implements InitializingBean {
   public Game scanGame(int gameId) {
     Game game = null;
     try {
-      game = pinUPConnector.getGame(gameId);
+      game = frontendService.getGame(gameId);
       if (game != null) {
-        applyGameDetails(game, null, true, true);
+        applyGameDetails(game, true, true);
         mameService.clearCacheFor(game.getRom());
         if (game.isVpxGame()) {
-          highscoreService.scanScore(game);
+          highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
         }
         return getGame(gameId);
       }
@@ -500,33 +500,23 @@ public class GameService implements InitializingBean {
   }
 
   @Nullable
-  public HighscoreMetadata scanScore(int gameId) {
+  public HighscoreMetadata scanScore(int gameId, EventOrigin eventOrigin) {
     Game game = getGame(gameId);
     if (game != null) {
-      return highscoreService.scanScore(game);
+      return highscoreService.scanScore(game, eventOrigin);
     }
     return null;
   }
 
-  @Nullable
-  public GameDetailsRepresentation getGameDetails(int gameId) {
-    GameDetailsRepresentation details = new GameDetailsRepresentation();
-    GameDetails ref = gameDetailsRepository.findByPupId(gameId);
-    details.setRomName(ref.getRomName());
-    details.setHsFileName(ref.getHsFileName());
-    details.setTableName(ref.getTableName());
-    return details;
-  }
-
   @SuppressWarnings("unused")
   public List<Game> getActiveGameInfos() {
-    List<Integer> gameIdsFromPlaylists = this.pinUPConnector.getGameIdsFromPlaylists();
-    List<Game> games = pinUPConnector.getGames();
+    List<Integer> gameIdsFromPlaylists = this.frontendService.getGameIdsFromPlaylists();
+    List<Game> games = frontendService.getGames();
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
   public Game getGameByFilename(String name) {
-    Game game = this.pinUPConnector.getGameByFilename(name);
+    Game game = this.frontendService.getGameByFilename(name);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());
@@ -535,7 +525,7 @@ public class GameService implements InitializingBean {
   }
 
   public Game getGameByName(String name) {
-    Game game = this.pinUPConnector.getGameByName(name);
+    Game game = this.frontendService.getGameByName(name);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());
@@ -543,10 +533,9 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  private synchronized void applyGameDetails(@NonNull Game game, @Nullable GameDetails gameDetails, boolean forceScan, boolean forceScoreScan) {
-    if (gameDetails == null) {
-      gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    }
+  private synchronized boolean applyGameDetails(@NonNull Game game, boolean forceScan, boolean forceScoreScan) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+    boolean newGame = (gameDetails == null);
 
     if (!game.isVpxGame()) {
       if (gameDetails == null) {
@@ -564,7 +553,7 @@ public class GameService implements InitializingBean {
       }
       game.setValidationState(validate.get(0));
       game.setNotes(gameDetails.getNotes());
-      return;
+      return newGame;
     }
 
     if (gameDetails == null || forceScan) {
@@ -572,18 +561,19 @@ public class GameService implements InitializingBean {
 
       if (gameDetails == null) {
         gameDetails = new GameDetails();
+        gameDetails.setCreatedAt(new java.util.Date());
       }
 
       //always prefer PinUP Popper ROM name over the scanned value
       String scannedRomName = scanResult.getRom();
       String scannedTableName = scanResult.getTableName();
 
-      TableDetails tableDetails = pinUPConnector.getTableDetails(game.getId());
-      if (StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+      TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+      if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
 
-      if (StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+      if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
         scannedTableName = tableDetails.getRomAlt();
       }
 
@@ -595,21 +585,26 @@ public class GameService implements InitializingBean {
       gameDetails.setPupPack(scanResult.getPupPackName());
       gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
 
-      gameDetails.setCreatedAt(new java.util.Date());
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
     }
 
-
-    //only apply legacy table name if the Popper fields are empty
+    //only apply legacy table name if the frontend fields are empty
     if (StringUtils.isEmpty(game.getTableName())) {
       game.setTableName(gameDetails.getTableName());
     }
 
     if (StringUtils.isEmpty(game.getRom())) {
       game.setRom(gameDetails.getRomName());
+    }
+
+    if (game.getDateAdded() == null) {
+      game.setDateAdded(gameDetails.getCreatedAt());
+    }
+    if (game.getDateUpdated() == null) {
+      game.setDateUpdated(gameDetails.getUpdatedAt());
     }
 
     //check alias
@@ -620,6 +615,11 @@ public class GameService implements InitializingBean {
       game.setRomAlias(aliasName);
     }
 
+    // fill scanned values
+    game.setScannedRom(gameDetails.getRomName());
+    game.setScannedHsFileName(gameDetails.getHsFileName());
+    game.setScannedAltRom(gameDetails.getTableName());
+
     game.setNvOffset(gameDetails.getNvOffset());
 
     //only apply legacy highscore name if the Popper fields are empty
@@ -627,12 +627,15 @@ public class GameService implements InitializingBean {
       game.setHsFileName(gameDetails.getHsFileName());
     }
 
-    //only apply legacy VPS data if the Popper fields are empty
+    // Only apply VPS data if the frontend does not provide them
     if (StringUtils.isEmpty(game.getExtTableId())) {
       game.setExtTableId(gameDetails.getExtTableId());
     }
     if (StringUtils.isEmpty(game.getExtTableVersionId())) {
       game.setExtTableVersionId(gameDetails.getExtTableVersionId());
+    }
+    if (StringUtils.isEmpty(game.getVersion())) {
+      game.setVersion(gameDetails.getTableVersion());
     }
 
     game.setTemplateId(gameDetails.getTemplateId());
@@ -654,7 +657,7 @@ public class GameService implements InitializingBean {
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
-    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan);
+    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
     highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
 
     //run validations at the end!!!
@@ -663,6 +666,8 @@ public class GameService implements InitializingBean {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
+
+    return newGame;
   }
 
   public List<ValidationState> validate(Game game) {
@@ -682,6 +687,26 @@ public class GameService implements InitializingBean {
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Saved \"" + game.getGameDisplayName() + "\"");
     return getGame(game.getId());
+  }
+
+  public boolean vpsLink(int gameId, String extTableId, String extTableVersionId) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    gameDetails.setExtTableId(extTableId);
+    gameDetails.setExtTableVersionId(extTableVersionId);
+    gameDetailsRepository.saveAndFlush(gameDetails);
+    LOG.info("Linked game " + gameId + " to " + extTableId);
+    return true;
+  }
+
+  public boolean fixVersion(int gameId, String version, boolean overwrite) {
+    GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
+    if (overwrite || StringUtils.isEmpty(gameDetails.getTableVersion())) {
+      gameDetails.setTableVersion(version);
+      gameDetailsRepository.saveAndFlush(gameDetails);
+      LOG.info("Version saved for " + gameId + " to " + version);
+      return true;
+    }
+    return false;
   }
 
   public void resetUpdate(int gameId, VpsDiffTypes diffType) {
@@ -735,7 +760,7 @@ public class GameService implements InitializingBean {
   public GameScoreValidation getGameScoreValidation(int id) {
     Game game = getGame(id);
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
-    TableDetails tableDetails = pinUPConnector.getTableDetails(id);
+    TableDetails tableDetails = frontendService.getTableDetails(id);
     return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
   }
 

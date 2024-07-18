@@ -174,7 +174,7 @@
                                                                   <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                                </graphic>
                                                                <tooltip>
-                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the PinUP Popper database." wrapText="true" />
+                                                                  <Tooltip prefWidth="300.0" text="Enabled if the spreadsheet version differs with the value stored in the database." wrapText="true" />
                                                                </tooltip>
                                                             </Label>
                                                          </children>
@@ -387,7 +387,7 @@
                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
                         </Tab>
-                        <Tab closable="false" text="Meta Data">
+                        <Tab fx:id="metaDataTab" closable="false" text="Meta Data">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -404,28 +404,32 @@
                                                       </Label>
                                                    </left>
                                                    <right>
-                                                      <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                         <items>
-                                                            <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                      <HBox BorderPane.alignment="CENTER_RIGHT">
+                                                         <children>
+                                                            <SplitMenuButton fx:id="autoFillBtn" mnemonicParsing="false" onAction="#onAutoFill" text="Auto-Fill" textFill="WHITE">
+                                                               <items>
+                                                                  <MenuItem mnemonicParsing="false" onAction="#onAutoFillAll" text="Auto-Fill All">
+                                                                     <graphic>
+                                                                        <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
+                                                                           <font>
+                                                                              <Font size="14.0" />
+                                                                           </font>
+                                                                        </FontIcon>
+                                                                     </graphic>
+                                                                  </MenuItem>
+                                                               </items>
+                                                               <font>
+                                                                  <Font size="14.0" />
+                                                               </font>
                                                                <graphic>
-                                                                  <FontIcon fill="WHITE" iconColor="WHITE" iconLiteral="mdi2a-auto-fix">
-                                                                     <font>
-                                                                        <Font size="14.0" />
-                                                                     </font>
-                                                                  </FontIcon>
+                                                                  <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
                                                                </graphic>
-                                                            </MenuItem>
-                                                         </items>
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                         <graphic>
-                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2a-auto-fix" iconSize="18" />
-                                                         </graphic>
-                                                         <tooltip>
-                                                            <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
-                                                         </tooltip>
-                                                      </SplitMenuButton>
+                                                               <tooltip>
+                                                                  <Tooltip prefWidth="350.0" text="Fill the table data with values read from VPS and extracted from the table script." wrapText="true" />
+                                                               </tooltip>
+                                                            </SplitMenuButton>
+                                                         </children>
+                                                      </HBox>
                                                    </right>
                                                 </BorderPane>
                                                 <GridPane hgap="3.0" vgap="3.0">
@@ -463,12 +467,7 @@
                                                             </Label>
                                                          </graphic>
                                                       </Label>
-                                                      <ComboBox fx:id="gameTypeCombo" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                      <TextField fx:id="gameTheme" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
+                                                      <ComboBox fx:id="gameTypeCombo" editable="true" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                       <Label styleClass="default-text" text="Game Theme:*" GridPane.rowIndex="2">
                                                          <font>
                                                             <Font size="14.0" />
@@ -493,11 +492,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="manufacturer" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
                                                       <Label styleClass="default-text" text="Author:*" GridPane.rowIndex="5">
                                                          <font>
                                                             <Font size="14.0" />
@@ -513,11 +507,6 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <TextField fx:id="category" GridPane.columnIndex="1" GridPane.rowIndex="6">
-                                                         <font>
-                                                            <Font size="14.0" />
-                                                         </font>
-                                                      </TextField>
                                                       <Label styleClass="default-text" text="Number of Players:*" GridPane.rowIndex="7">
                                                          <font>
                                                             <Font size="14.0" />
@@ -580,7 +569,7 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
-                                                      <Label styleClass="default-text" text="Tags:" GridPane.rowIndex="12">
+                                                      <Label styleClass="default-text" text="Tags:*" GridPane.rowIndex="12">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
@@ -590,12 +579,15 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </TextField>
-                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="224.0" GridPane.columnIndex="1" />
+                                                      <ComboBox fx:id="statusCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
                                                       <Label text="Status:" textFill="WHITE">
                                                          <font>
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Label>
+                                                      <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                                      <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                      <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="6.0" />
@@ -615,7 +607,7 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab fx:id="extrasTab" closable="false" text=" Customization ">
+                        <Tab fx:id="customizationTab" closable="false" text=" Customization ">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -741,26 +733,11 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="custom2" GridPane.columnIndex="1" GridPane.rowIndex="4">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
-                                                <TextField fx:id="custom3" GridPane.columnIndex="1" GridPane.rowIndex="5">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <Label styleClass="default-text" text="Custom 3:" GridPane.rowIndex="5">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextField fx:id="launchCustomVar" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
-                                                </TextField>
                                                 <Label styleClass="default-text" text="Custom Launch Parameters:" GridPane.rowIndex="3">
                                                    <font>
                                                       <Font size="14.0" />
@@ -777,7 +754,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="If no value is set, the PinUP Popper default will be used." />
+                                                            <Tooltip text="If no value is set, the frontend default will be used." />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -822,7 +799,7 @@
                                                             <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                          </graphic>
                                                          <tooltip>
-                                                            <Tooltip text="Launches the game at the given volume level (%based on current Popper PC Volume)" />
+                                                            <Tooltip text="Launches the game at the given volume level (%based on current PC Volume)" />
                                                          </tooltip>
                                                       </Label>
                                                    </children>
@@ -883,8 +860,12 @@
                                                       <Tooltip prefWidth="350.0" text="This field is reserved by the VPin Studio. Check the Server Settings for details." wrapText="true" />
                                                    </tooltip>
                                                 </Label>
+                                                <ComboBox fx:id="launchCustomVar" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                                <ComboBox fx:id="custom2" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                                                <ComboBox fx:id="custom3" editable="true" prefWidth="500.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                                              </children>
                                           </GridPane>
+                                          <ComboBox fx:id="gameTheme1" editable="true" prefWidth="300.0" />
                                        </children>
                                        <padding>
                                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
@@ -894,7 +875,7 @@
                               </ScrollPane>
                            </content>
                         </Tab>
-                        <Tab closable="false" text="Extras">
+                        <Tab fx:id="extrasTab" closable="false" text="Extras">
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
@@ -938,7 +919,7 @@
                                                    </font>
                                                 </Label>
                                                 <TextArea fx:id="gNotes" prefHeight="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                                <Label styleClass="default-text" text="Notes:" GridPane.rowIndex="1">
+                                                <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
@@ -1037,14 +1018,14 @@
                   <Insets left="12.0" top="12.0" />
                </BorderPane.margin>
                <center>
-                  <HBox alignment="BASELINE_RIGHT" spacing="6.0">
+                  <HBox fx:id="buttonsBar" alignment="BASELINE_RIGHT" spacing="6.0">
                      <children>
                       <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close">
                            <HBox.margin>
                               <Insets right="6.0" />
                            </HBox.margin>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
+                        <Button fx:id="openAssetMgrBtn" mnemonicParsing="false" onAction="#onAssetManager" styleClass="default-button" text="Open Asset Manager" />
                         <Button fx:id="applyBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onApplyClick" styleClass="submit-button" text="Save">
                            <HBox.margin>
                               <Insets />

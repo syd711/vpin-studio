@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -59,10 +61,17 @@ public class TableUploadController implements Initializable, DialogController {
   private RadioButton uploadAndImportRadio;
 
   @FXML
+  private Label uploadAndImportDescription;
+
+  @FXML
   private RadioButton uploadAndReplaceRadio;
+  @FXML
+  private Label uploadAndReplaceDescription;
 
   @FXML
   private RadioButton uploadAndCloneRadio;
+  @FXML
+  private Label uploadAndCloneDescription;
 
   @FXML
   private CheckBox keepNamesCheckbox;
@@ -423,6 +432,16 @@ public class TableUploadController implements Initializable, DialogController {
       assetAltSoundCheckbox.setText("ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
     }
 
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.supportPupPacks()) {
+      assetPupPackCheckbox.setSelected(false);
+      assetPupPackCheckbox.setVisible(false);
+
+      assetMediaCheckbox.setSelected(false);
+      assetMediaCheckbox.setVisible(false);
+    }
+
+
     assetsBox.setVisible(assetBackglassCheckbox.isSelected()
         || assetAltSoundCheckbox.isSelected()
         || assetAltColorCheckbox.isSelected()
@@ -440,6 +459,9 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
+    assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
+
     root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip", "rar"));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
@@ -447,6 +469,7 @@ public class TableUploadController implements Initializable, DialogController {
     }));
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     tableNameLabel.setVisible(false);
     tableTitleLabel.setVisible(false);
@@ -455,7 +478,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getPinUPPopperService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     emulatorRepresentation = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
@@ -473,7 +496,12 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
-
+    
+    FrontendUtil.replaceName(uploadAndImportRadio, frontend);
+    FrontendUtil.replaceName(uploadAndImportDescription, frontend);
+    FrontendUtil.replaceName(uploadAndReplaceDescription, frontend);
+    FrontendUtil.replaceName(uploadAndCloneDescription, frontend);
+ 
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);
@@ -600,7 +628,7 @@ public class TableUploadController implements Initializable, DialogController {
       this.uploadAndReplaceRadio.setText("Upload and Replace \"" + game.getGameDisplayName() + "\"");
       this.uploadAndCloneRadio.setText("Upload and Clone \"" + game.getGameDisplayName() + "\"");
 
-      GameEmulatorRepresentation gameEmulator = Studio.client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation gameEmulator = Studio.client.getFrontendService().getGameEmulator(game.getEmulatorId());
       emulatorCombo.setValue(gameEmulator);
     }
     else {

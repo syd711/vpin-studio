@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -55,7 +55,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
 
   @Autowired
-  private PopperService popperService;
+  private FrontendService pinupConnector;
 
   private ApplicationContext applicationContext;
 
@@ -88,23 +88,22 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
 
-    if (options.isExistInRegistry()) {
-      Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY + rom);
+    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY + 
+      (options.isExistInRegistry()? rom: MameOptions.DEFAULT_KEY));
 
-      options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
-      options.setUseSound(getBoolean(values, KEY_USE_SOUND));
-      options.setUseSamples(getBoolean(values, KEY_USE_SAMPLES));
-      options.setCompactDisplay(getBoolean(values, KEY_DMD_COMPACT));
-      options.setDoubleDisplaySize(getBoolean(values, KEY_DMD_DOUBLE_SIZE));
-      options.setUseSamples(getBoolean(values, KEY_USE_SAMPLES));
-      options.setIgnoreRomCrcError(getBoolean(values, KEY_IGNORE_ROM_ERRORS));
-      options.setCabinetMode(getBoolean(values, KEY_CABINET_MODE));
-      options.setShowDmd(getBoolean(values, KEY_SHOW_DMD));
-      options.setUseExternalDmd(getBoolean(values, KEY_USER_EXTERNAL_DMD));
-      options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
-      options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
-      options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
-    }
+    options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
+    options.setUseSound(getBoolean(values, KEY_USE_SOUND));
+    options.setUseSamples(getBoolean(values, KEY_USE_SAMPLES));
+    options.setCompactDisplay(getBoolean(values, KEY_DMD_COMPACT));
+    options.setDoubleDisplaySize(getBoolean(values, KEY_DMD_DOUBLE_SIZE));
+    options.setUseSamples(getBoolean(values, KEY_USE_SAMPLES));
+    options.setIgnoreRomCrcError(getBoolean(values, KEY_IGNORE_ROM_ERRORS));
+    options.setCabinetMode(getBoolean(values, KEY_CABINET_MODE));
+    options.setShowDmd(getBoolean(values, KEY_SHOW_DMD));
+    options.setUseExternalDmd(getBoolean(values, KEY_USER_EXTERNAL_DMD));
+    options.setColorizeDmd(getBoolean(values, KEY_COLORIZE_DMD));
+    options.setSoundMode(getInteger(values, KEY_SOUND_MODE));
+    options.setForceStereo(getBoolean(values, KEY_FORCE_STEREO));
 
     mameCache.put(options.getRom().toLowerCase(), options);
     return options;
@@ -112,11 +111,12 @@ public class MameService implements InitializingBean, ApplicationContextAware {
 
   public MameOptions saveOptions(@NonNull MameOptions options) {
     String rom = options.getRom();
-    options.setExistInRegistry(true);
 
     if (!options.isExistInRegistry()) {
       WinRegistry.createKey(MAME_REG_FOLDER_KEY + rom);
     }
+    options.setExistInRegistry(true);
+
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_SKIP_STARTUP_TEST, options.isSkipPinballStartupTest() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SOUND, options.isUseSound() ? 1 : 0);
     WinRegistry.setIntValue(MAME_REG_FOLDER_KEY + rom, KEY_USE_SAMPLES, options.isUseSamples() ? 1 : 0);
@@ -152,17 +152,17 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
 
   public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 

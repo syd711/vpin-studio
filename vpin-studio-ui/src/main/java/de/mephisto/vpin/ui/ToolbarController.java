@@ -3,11 +3,13 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -38,7 +40,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private Button updateBtn;
 
   @FXML
-  private Button popperMenuBtn;
+  private Button frontendMenuBtn;
 
   @FXML
   private MenuButton jobBtn;
@@ -47,7 +49,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuItem dofSyncEntry;
 
   @FXML
-  private MenuItem popperEntry;
+  private MenuItem frontendMenuItem;
 
   @FXML
   private ToggleButton maintenanceBtn;
@@ -108,24 +110,24 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
 
   @FXML
-  private void onPopper() {
-    client.getPinUPPopperService().restartPopper();
+  private void onFrontend() {
+    client.getFrontendService().restartFrontend();
   }
 
   @FXML
-  private void onPopperMenu() {
+  private void onFrontendMenu() {
       try {
-        String pinupSystemDirectory = client.getSystemService().getSystemSummary().getPinupSystemDirectory();
-        File file = new File(pinupSystemDirectory, "PinUpMenuSetup.exe");
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+        File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
         if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find PinUpMenuSetup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
+          WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
         }
         else {
           Studio.open(file);
         }
       }
       catch (Exception e) {
-        LOG.error("Failed to open PinUpMenuSetup.exe: " + e.getMessage(), e);
+        LOG.error("Failed to open admin frontend: " + e.getMessage(), e);
       }
   }
 
@@ -206,25 +208,36 @@ public class ToolbarController implements Initializable, StudioEventListener {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
-    popperMenuBtn.managedProperty().bindBidirectional(popperMenuBtn.visibleProperty());
+    frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
 
-    popperMenuBtn.setVisible(client.getSystemService().isLocal());
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
+    frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
+    frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 
-    Image image1 = new Image(Studio.class.getResourceAsStream("popper.png"));
-    ImageView view1 = new ImageView(image1);
-    view1.setPreserveRatio(true);
-    view1.setFitHeight(18);
-    popperEntry.setGraphic(view1);
+    FrontendUtil.replaceName(frontendMenuBtn.getTooltip(), frontend);
 
-    Image image2 = new Image(Studio.class.getResourceAsStream("popper.png"));
-    ImageView view2 = new ImageView(image2);
-    view2.setPreserveRatio(true);
-    view2.setFitHeight(18);
-    popperMenuBtn.setGraphic(view2);
+    if (frontend.getIconName() != null) {
+      Image image1 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      ImageView view1 = new ImageView(image1);
+      view1.setPreserveRatio(true);
+      view1.setFitHeight(18);
+      frontendMenuItem.setGraphic(view1);
+
+      Image image2 = new Image(Studio.class.getResourceAsStream(frontend.getIconName()));
+      ImageView view2 = new ImageView(image2);
+      view2.setPreserveRatio(true);
+      view2.setFitHeight(18);
+      frontendMenuBtn.setGraphic(view2);
+    }
+
+    if (frontend.getFrontendExe() == null) {
+      preferencesBtn.getItems().remove(frontendMenuItem);
+    }
+
 
     this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());

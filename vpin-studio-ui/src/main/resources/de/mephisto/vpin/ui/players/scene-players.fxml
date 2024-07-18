@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Tab?>
@@ -77,7 +78,7 @@
    <right>
       <VBox prefWidth="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
-            <TitledPane fx:id="highscoresTitledPane" animated="false" text="Player Highscores" textFill="WHITE">
+            <TitledPane fx:id="highscoresTitledPane" animated="false" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -102,6 +103,20 @@
                      </content>
                   </ScrollPane>
                </content>
+               <graphic>
+                  <BorderPane prefWidth="550.0">
+                     <left>
+                        <Label fx:id="playerScoreLabel" text="Player Highscores" BorderPane.alignment="CENTER" />
+                     </left>
+                     <right>
+                        <CheckBox fx:id="loadScoreList" mnemonicParsing="false" text="Load Score List" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="11.0" />
+                           </font>
+                        </CheckBox>
+                     </right>
+                  </BorderPane>
+               </graphic>
             </TitledPane>
          </children>
          <BorderPane.margin>

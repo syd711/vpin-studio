@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.pinemhi;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.system.ScoringDB;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.apache.commons.configuration2.INIConfiguration;
@@ -39,11 +39,10 @@ public class PINemHiService implements InitializingBean {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   private boolean enabled = false;
-  private INIConfiguration iniConfiguration;
-
+  
   public boolean getAutoStart() {
     return preferencesService.getPreferences().getPinemhiAutoStartEnabled();
   }
@@ -69,10 +68,10 @@ public class PINemHiService implements InitializingBean {
   }
 
   private static void startMonitor() {
-    File exe = new File("resources/pinemhi", PROCESS_NAME + ".exe");
+    File exe = new File(PINEMHI_FOLDER, PROCESS_NAME + ".exe");
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("resources/pinemhi"));
+    executor.setDir(new File(PINEMHI_FOLDER));
     executor.executeCommandAsync();
     LOG.info("Executed " + PROCESS_NAME + " command: " + String.join(" ", commands));
   }
@@ -80,13 +79,17 @@ public class PINemHiService implements InitializingBean {
   public boolean restart() {
     kill();
     startMonitor();
-    loadSettings();
     return true;
   }
 
-  public Map<String, Object> save(Map<String, Object> settings) {
+  //----------------------
+
+  public Map<String, Object> saveSettings(Map<String, Object> settings) {
     try {
-      int changeCounter = 0;
+      File ini = getPinemhiIni();
+      //int changeCounter = 0;
+      INIConfiguration iniConfiguration = loadIni(ini);
+
       Set<Map.Entry<String, Object>> entries = settings.entrySet();
       for (Map.Entry<String, Object> entry : entries) {
         String key = entry.getKey();
@@ -99,41 +102,42 @@ public class PINemHiService implements InitializingBean {
 
           SubnodeConfiguration s = iniConfiguration.getSection(section);
           if (s.containsKey(key)) {
-            changeCounter++;
+            //changeCounter++;
             s.setProperty(key, entry.getValue());
             break;
           }
         }
       }
 
-      saveIni();
+      saveIni(ini, iniConfiguration);
     }
     catch (Exception e) {
       LOG.error("Failed to save pinemhi.ini: " + e.getMessage(), e);
     }
     return settings;
   }
+  
+  private static void saveIni(File ini, INIConfiguration iniConfiguration) throws IOException, ConfigurationException {
+    try (FileWriter fileWriter = new FileWriter(ini)) {
+      iniConfiguration.write(fileWriter);
+    }
+  }
 
-  private void saveIni() throws IOException, ConfigurationException {
-    File pinEmHiIni = new File(PINEMHI_FOLDER, PINEMHI_INI);
-    FileWriter fileWriter = new FileWriter(pinEmHiIni);
-    iniConfiguration.write(fileWriter);
-    fileWriter.close();
+  private static INIConfiguration loadIni(File ini) throws IOException, ConfigurationException {
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+    iniConfiguration.setSeparatorUsedInOutput("=");
+    iniConfiguration.setSeparatorUsedInInput("=");
+
+    try (FileReader fileReader = new FileReader(ini)) {
+      iniConfiguration.read(fileReader);
+    }  
+    return iniConfiguration;
   }
 
   public Map<String, Object> loadSettings() {
     try {
-      iniConfiguration = new INIConfiguration();
-      iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-      iniConfiguration.setSeparatorUsedInOutput("=");
-      iniConfiguration.setSeparatorUsedInInput("=");
-
-      File pinEmHiIni = new File(PINEMHI_FOLDER, PINEMHI_INI);
-
-      try (FileReader fileReader = new FileReader(pinEmHiIni)) {
-        iniConfiguration.read(fileReader);
-      }
-
+      INIConfiguration iniConfiguration = loadIni(getPinemhiIni());
 
       Map<String, Object> entries = new HashMap<>();
       Set<String> sections = iniConfiguration.getSections();
@@ -159,6 +163,11 @@ public class PINemHiService implements InitializingBean {
     return Collections.emptyMap();
   }
 
+  public static final File getPinemhiIni() {
+    return new File(PINEMHI_FOLDER, PINEMHI_INI);
+  }
+
+  //----------------------
 
   private void checkForUpdates() {
     try {
@@ -169,7 +178,7 @@ public class PINemHiService implements InitializingBean {
 
       List<String> commands = Arrays.asList(PINEMHI_COMMAND, "-v");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-      executor.setDir(new File("resources/pinemhi"));
+      executor.setDir(new File(PINEMHI_FOLDER));
       executor.executeCommand();
 
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
@@ -185,7 +194,7 @@ public class PINemHiService implements InitializingBean {
             LOG.info("PINemHi is outdated (" + version + " vs. " + pinemhiVersion + "), checking for updates.");
             List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi.ini", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
             for (String resource : resources) {
-              File check = new File(SystemService.RESOURCES + "pinemhi/", resource);
+              File check = new File(PINEMHI_FOLDER, resource);
               LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
             }
@@ -206,20 +215,31 @@ public class PINemHiService implements InitializingBean {
       checkForUpdates();
     }).start();
 
-    loadSettings();
     this.enabled = getAutoStart();
     if (enabled) {
       startMonitor();
       LOG.info("Auto-started Pinemhi " + PROCESS_NAME);
     }
 
+    adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
+  }
+
+  /**
+   * Load pinhemi.ini, update the VP path with the nvRam foldr of the emulator
+   * and save
+   * @param emulator The GameEmulator to get the path
+   */
+  public static void adjustVPPathForEmulator(GameEmulator emulator, File ini, boolean forcePath) {
     try {
+      INIConfiguration iniConfiguration = loadIni(ini);
       String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
       File vp = new File(vpPath);
-      if (!vp.exists() || !vpPath.endsWith("/")) {
-        vp = new File(pinUPConnector.getDefaultGameEmulator().getNvramFolder().getAbsolutePath());
+
+      if (forcePath || !vp.exists() || !vpPath.endsWith("/")) {
+        vp = new File(emulator.getNvramFolder().getAbsolutePath());
         iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
-        saveIni();
+        
+        saveIni(ini, iniConfiguration);
         LOG.info("Changed VP path to " + vp.getAbsolutePath());
       }
     }

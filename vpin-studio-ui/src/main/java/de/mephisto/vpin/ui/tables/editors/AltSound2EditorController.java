@@ -36,6 +36,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class AltSound2EditorController implements Initializable {
@@ -294,7 +295,7 @@ public class AltSound2EditorController implements Initializable {
       Label label = new Label(entry.filename.getValue());
 
       if (entry.size.get().equals("0")) {
-        label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333; -fx-font-weight: bold;");
+        label.setStyle(ERROR_STYLE + "-fx-font-weight: bold;");
       }
       return new SimpleObjectProperty(label);
     });

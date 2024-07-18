@@ -3,12 +3,30 @@ package de.mephisto.vpin.restclient.notifications;
 import de.mephisto.vpin.restclient.JsonSettings;
 
 public class NotificationSettings extends JsonSettings {
-  private boolean startupNotification = true;
+  private boolean startupNotification = false;
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
   private boolean iScoredNotification = true;
+  private boolean discordNotification = true;
+  private boolean competitionNotification = true;
 
   private int durationSec = 5;
+
+  public boolean isCompetitionNotification() {
+    return competitionNotification;
+  }
+
+  public void setCompetitionNotification(boolean competitionNotification) {
+    this.competitionNotification = competitionNotification;
+  }
+
+  public boolean isDiscordNotification() {
+    return discordNotification;
+  }
+
+  public void setDiscordNotification(boolean discordNotification) {
+    this.discordNotification = discordNotification;
+  }
 
   public boolean isHighscoreCheckedNotification() {
     return highscoreCheckedNotification;

@@ -5,11 +5,13 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -214,242 +216,240 @@
 
                </left>
                <center>
-                  <VBox BorderPane.alignment="CENTER">
+                  <VBox fx:id="assetsBox" BorderPane.alignment="CENTER">
                      <children>
-                        <Label fx:id="tableLabel1" text="PinUP Popper Assets Search" textFill="WHITE">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets top="24.0" />
-                           </VBox.margin>
-                        </Label>
-                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
-                           <top>
-                              <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
+                        <VBox fx:id="assetSearchBox">
+                           <children>
+                              <BorderPane>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" />
+                                 </VBox.margin>
                                  <left>
-                                    <ListView fx:id="serverAssetsList" prefHeight="250.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                    <VBox alignment="BOTTOM_LEFT" BorderPane.alignment="CENTER">
+                                       <children>
+                                          <Label fx:id="assetSearchLabel" text="Assets Search" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                       </children>
+                                    </VBox>
                                  </left>
-                                 <center>
-                                    <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+                                 <right>
+                                    <ImageView fx:id="frontendImage" fitHeight="60.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER" />
+                                 </right>
+                              </BorderPane>
+                              <BorderPane fx:id="assetSearchList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity">
+                                 <top>
+                                    <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets />
+                                       </BorderPane.margin>
+                                       <left>
+                                          <ListView fx:id="serverAssetsList" prefHeight="250.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                       </left>
                                        <center>
-                                          <BorderPane fx:id="serverAssetMediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                          <BorderPane styleClass="media-container" BorderPane.alignment="CENTER">
+                                             <center>
+                                                <BorderPane fx:id="serverAssetMediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                             </center>
+                                             <bottom>
+                                                <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                                                   <children>
+                                                      <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <HBox.margin>
+                                                            <Insets bottom="3.0" />
+                                                         </HBox.margin>
+                                                      </Button>
+                                                   </children>
+                                                </HBox>
+                                             </bottom>
+                                          </BorderPane>
                                        </center>
-                                       <bottom>
-                                          <HBox alignment="CENTER" BorderPane.alignment="CENTER">
-                                             <children>
-                                                <Button fx:id="downloadBtn" mnemonicParsing="false" onAction="#onDownload" text="Download" textFill="WHITE">
+                                       <top>
+                                          <ToolBar BorderPane.alignment="CENTER">
+                                            <items>
+                                                <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </TextField>
+                                              <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cloud-download-outline" iconSize="18" />
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
                                                    </graphic>
-                                                   <HBox.margin>
-                                                      <Insets bottom="3.0" />
-                                                   </HBox.margin>
                                                 </Button>
-                                             </children>
-                                          </HBox>
-                                       </bottom>
+                                                <Button fx:id="clearCacheBtn" mnemonicParsing="false" onAction="#onClearCache" text="Rebuild Search Index" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cached" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Rebuilds the search index to fetch the latest assets." />
+                                                   </tooltip>
+                                                </Button>
+                                            </items>
+                                          </ToolBar>
+                                       </top>
                                     </BorderPane>
-                                 </center>
-                                 <top>
-                                    <ToolBar BorderPane.alignment="CENTER">
-                                      <items>
-                                          <TextField fx:id="searchField" prefHeight="30.0" prefWidth="285.0">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </TextField>
-                                        <Button mnemonicParsing="false" onAction="#onSearch" text="Search" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2s-search-web" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                      </items>
-                                    </ToolBar>
                                  </top>
+                                 <bottom>
+                                    <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
+                                       <opaqueInsets>
+                                          <Insets />
+                                       </opaqueInsets>
+                                       <BorderPane.margin>
+                                          <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
+                                       </BorderPane.margin>
+                                       <HBox />
+                                    </VBox>
+                                 </bottom>
                               </BorderPane>
-                           </top>
-                           <bottom>
-                              <VBox fx:id="helpBox" BorderPane.alignment="CENTER">
-                                 <opaqueInsets>
-                                    <Insets />
-                                 </opaqueInsets>
-                                 <BorderPane.margin>
-                                    <Insets bottom="6.0" left="12.0" right="12.0" top="6.0" />
-                                 </BorderPane.margin>
-                                 <HBox />
-                              </VBox>
-                           </bottom>
-                        </BorderPane>
-                        <Label text="Installed Assets" textFill="WHITE">
-                           <VBox.margin>
-                              <Insets bottom="6.0" top="6.0" />
-                           </VBox.margin>
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                        </Label>
-                        <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
-                           <top>
-                              <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
-                                 <BorderPane.margin>
-                                    <Insets />
-                                 </BorderPane.margin>
-                                 <left>
-                                    <ListView fx:id="assetList" prefHeight="200.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
-                                 </left>
-                                 <center>
-                                    <BorderPane BorderPane.alignment="CENTER">
-                                       <center>
-                                          <BorderPane fx:id="mediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
-                                       </center>
-                                    </BorderPane>
-                                 </center>
-                                 <top>
-                                    <ToolBar BorderPane.alignment="CENTER">
-                                       <items>
-                                          <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Open PinUP Popper system folder for this asset type" />
-                                             </tooltip>
-                                          </Button>
-                                          <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip text="Update the ROM name for this table." />
-                                             </tooltip>
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                          </Button>
-                                          <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                          <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                             </graphic>
-                                          </Button>
-                                          <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
-                                             </tooltip>
-                                          </Button>
-                                          <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
-                                             </graphic>
-                                             <tooltip>
-                                                <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
-                                             </tooltip>
-                                          </Button>
-                                       </items>
-                                    </ToolBar>
-                                 </top>
-                              </BorderPane>
-                           </top>
+                           </children>
                            <VBox.margin>
                               <Insets />
                            </VBox.margin>
-                        </BorderPane>
+                        </VBox>
+                        <VBox>
+                           <children>
+                              <Label text="Installed Assets" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets bottom="6.0" top="6.0" />
+                                 </VBox.margin>
+                              </Label>
+                              <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minWidth="-Infinity">
+                                 <top>
+                                    <BorderPane styleClass="media-list" BorderPane.alignment="CENTER">
+                                       <BorderPane.margin>
+                                          <Insets />
+                                       </BorderPane.margin>
+                                       <left>
+                                          <ListView fx:id="assetList" prefHeight="200.0" prefWidth="650.0" styleClass="pretty-list-view" BorderPane.alignment="CENTER" />
+                                       </left>
+                                       <center>
+                                          <BorderPane BorderPane.alignment="CENTER">
+                                             <center>
+                                                <BorderPane fx:id="mediaPane" maxHeight="220.0" maxWidth="220.0" prefHeight="220.0" prefWidth="220.0" styleClass="media-container" BorderPane.alignment="CENTER" />
+                                             </center>
+                                          </BorderPane>
+                                       </center>
+                                       <top>
+                                          <ToolBar BorderPane.alignment="CENTER">
+                                             <items>
+                                                <Button fx:id="folderBtn" mnemonicParsing="false" onAction="#onFolderBtn" styleClass="folder-component" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open system folder for this asset type" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Update the ROM name for this table." />
+                                                   </tooltip>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                </Button>
+                                                <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2f-fullscreen" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2m-music-note-plus" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="Adds a blank media so that the default sound is not played." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                             </items>
+                                          </ToolBar>
+                                       </top>
+                                    </BorderPane>
+                                 </top>
+                              </BorderPane>
+                           </children>
+                        </VBox>
                      </children>
                   </VBox>
                </center>
                <top>
                   <BorderPane BorderPane.alignment="CENTER_LEFT">
-                     <center>
-                        <HBox>
-                           <children>
-                              <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
-                                <columnConstraints>
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
-                                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
-                                </columnConstraints>
-                                <rowConstraints>
-                                  <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                </rowConstraints>
-                                 <children>
-                                    <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
-                                       <font>
-                                          <Font name="System Bold" size="14.0" />
-                                       </font>
-                                    </Label>
-                                    <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
-                                    <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                       <graphic>
-                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
-                                       </graphic>
-                                    </Button>
-                                 </children>
-                              </GridPane>
-                           </children>
-                        </HBox>
-                     </center>
                      <right>
                         <HBox spacing="3.0" BorderPane.alignment="CENTER">
                            <children>
@@ -478,6 +478,82 @@
                            </children>
                         </HBox>
                      </right>
+                     <left>
+                        <HBox BorderPane.alignment="CENTER">
+                           <children>
+                              <HBox fx:id="tableSelection">
+                                 <children>
+                                    <GridPane prefHeight="30.0" prefWidth="640.0" vgap="3.0">
+                                      <columnConstraints>
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="58.79998779296875" />
+                                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="881.6" minWidth="10.0" prefWidth="414.6000244140625" />
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="1045.4000305175782" minWidth="10.0" prefWidth="162.5999755859375" />
+                                      </columnConstraints>
+                                      <rowConstraints>
+                                        <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                      </rowConstraints>
+                                       <children>
+                                          <Label fx:id="tableLabel2" layoutX="186.0" layoutY="15.0" text="Table:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="tablesCombo" prefHeight="30.0" prefWidth="407.0" GridPane.columnIndex="1" />
+                                          <Button mnemonicParsing="false" onAction="#onVPSAssets" text="VPS Assets" textFill="WHITE" GridPane.columnIndex="2">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database" iconSize="18" />
+                                             </graphic>
+                                          </Button>
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                              <HBox layoutX="10.0" layoutY="10.0">
+                                 <children>
+                                    <GridPane vgap="3.0">
+                                       <columnConstraints>
+                                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="448.2000732421875" minWidth="0.0" prefWidth="67.00004882812499" />
+                                          <ColumnConstraints hgrow="SOMETIMES" />
+                                       </columnConstraints>
+                                       <rowConstraints>
+                                          <RowConstraints minHeight="30.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                       </rowConstraints>
+                                       <children>
+                                          <Label fx:id="tableLabel21" layoutX="186.0" layoutY="15.0" text="Playlist:" textFill="WHITE">
+                                             <font>
+                                                <Font name="System Bold" size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="300.0" GridPane.columnIndex="1" />
+                                       </children>
+                                    </GridPane>
+                                 </children>
+                              </HBox>
+                           </children>
+                        </HBox>
+                     </left>
+                     <center>
+                        <HBox alignment="CENTER_RIGHT" spacing="12.0" BorderPane.alignment="CENTER_RIGHT">
+                           <children>
+                              <RadioButton fx:id="playlistsRadio" mnemonicParsing="false" text="Playlists" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                              <RadioButton fx:id="tablesRadio" mnemonicParsing="false" selected="true" text="Tables" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </RadioButton>
+                           </children>
+                           <BorderPane.margin>
+                              <Insets right="24.0" />
+                           </BorderPane.margin>
+                        </HBox>
+                     </center>
                   </BorderPane>
                </top>
             </BorderPane>

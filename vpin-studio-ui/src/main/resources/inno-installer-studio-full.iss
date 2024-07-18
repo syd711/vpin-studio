@@ -23,7 +23,7 @@ AppUpdatesURL={#MyAppURL}
 DefaultDirName=C:\vPinball\VPin-Studio\
 DisableProgramGroupPage=yes
 DisableDirPage=no
-LicenseFile=..\..\..\..\vpin-studio\LICENSE
+LicenseFile=..\..\..\LICENSE
 ; Uncomment the following line to run in non administrative install mode (install for current user only.)
 ;PrivilegesRequired=lowest
 OutputDir=${project.basedir}/../Output/VPin-Studio
@@ -46,13 +46,13 @@ Name: "{app}\config"; Permissions: users-full
 Name: "{app}"; Permissions: users-full
 
 [Files]
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
-Source: "..\..\..\..\vpin-studio\Output\VPin-Studio\uninstall.bat"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\Output\VPin-Studio\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\Output\VPin-Studio\config\info.txt"; DestDir: "{app}\config"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\Output\VPin-Studio\VPin-Studio-Server.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\Output\VPin-Studio\VPin-Studio-App.exe"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
+Source: "..\..\..\Output\Vpin-Studio\win32\*"; DestDir: "{app}\win32"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\Output\Vpin-Studio\resources\*"; DestDir: "{app}\resources"; Flags: ignoreversion recursesubdirs createallsubdirs; Permissions: everyone-full
+Source: "..\..\..\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app}"; Flags: ignoreversion; Permissions: everyone-full
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]

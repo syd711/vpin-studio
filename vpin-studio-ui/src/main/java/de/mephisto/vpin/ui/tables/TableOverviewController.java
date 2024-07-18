@@ -1,21 +1,18 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -73,6 +70,7 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.hexColor;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -118,6 +116,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnINI;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnRES;
 
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnHSType;
@@ -190,6 +191,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button tableEditBtn;
 
   @FXML
+  private Separator importSeparator;
+
+  @FXML
   private Button assetManagerViewBtn;
 
   @FXML
@@ -223,7 +227,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private Button reloadBtn;
 
   @FXML
-  private ComboBox<Playlist> playlistCombo;
+  private ComboBox<PlaylistRepresentation> playlistCombo;
+
+  @FXML
+  private Separator playlistSplitter;
 
   @FXML
   private StackPane tableStack;
@@ -256,6 +263,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem povItem;
 
   @FXML
+  private MenuItem resItem;
+
+  @FXML
   private Button filterBtn;
 
   @FXML
@@ -268,7 +278,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private WaitOverlayController tablesLoadingController;
 
   private TablesController tablesController;
-  private List<Playlist> playlists;
+  private List<PlaylistRepresentation> playlists;
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -286,7 +296,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private boolean assetManagerMode = false;
   private TableOverviewContextMenu contextMenuController;
   private TableOverviewColumnSorter tableOverviewColumnSorter;
-  private List<String> ignoredValidations;
+  private IgnoredValidationSettings ignoredValidations;
 
   private List<GameRepresentation> games;
   private ObservableList<GameRepresentationModel> models;
@@ -306,68 +316,62 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onAssetView() {
+    tablesController.setSidebarVisible(true);
+
     tablesController.getTablesSideBarController().getTitledPaneMedia().setExpanded(false);
 
     assetManagerMode = !assetManagerMode;
     tablesController.getAssetViewSideBarController().setVisible(assetManagerMode);
     tablesController.getTablesSideBarController().setVisible(!assetManagerMode);
 
-    if (assetManagerMode) {
-      tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), PopperScreen.Wheel);
-      assetManagerViewBtn.getStyleClass().add("toggle-selected");
-      if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
-        assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+    Platform.runLater(() -> {
+      if (assetManagerMode) {
+        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
+        assetManagerViewBtn.getStyleClass().add("toggle-selected");
+        if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
+          assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
+        }
       }
-    }
-    else {
-      assetManagerViewBtn.getStyleClass().remove("toggle-selected");
-      assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
-    }
+      else {
+        assetManagerViewBtn.getStyleClass().remove("toggle-selected");
+        assetManagerViewBtn.getStyleClass().remove("toggle-button-selected");
+      }
 
+      refreshViewAssetColumns(assetManagerMode);
+      refreshColumns();
 
-    boolean vpxMode = emulatorCombo.getValue() == null || emulatorCombo.getValue().isVpxEmulator();
-
-    refreshViewAssetColumns(assetManagerMode);
-
-    columnVersion.setVisible(!assetManagerMode && vpxMode);
-    columnEmulator.setVisible(!assetManagerMode);
-    columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates() && vpxMode);
-    columnRom.setVisible(!assetManagerMode && vpxMode);
-    columnB2S.setVisible(!assetManagerMode && vpxMode);
-    columnPUPPack.setVisible(!assetManagerMode && vpxMode);
-    columnAltSound.setVisible(!assetManagerMode && vpxMode);
-    columnAltColor.setVisible(!assetManagerMode && vpxMode);
-    columnPOV.setVisible(!assetManagerMode && vpxMode);
-    columnINI.setVisible(!assetManagerMode && vpxMode);
-    columnHSType.setVisible(!assetManagerMode && vpxMode);
-    columnPlaylists.setVisible(!assetManagerMode);
-    columnDateAdded.setVisible(!assetManagerMode);
-
-    GameRepresentation selectedItem = getSelection();
-    tableView.getSelectionModel().clearSelection();
-    if (selectedItem != null) {
-      selectGameInModel(selectedItem);
-    }
+      GameRepresentation selectedItem = getSelection();
+      tableView.getSelectionModel().clearSelection();
+      if (selectedItem != null) {
+        selectGameInModel(selectedItem);
+      }
+    });
   }
 
   private void refreshViewAssetColumns(boolean assetManagerMode) {
-    columnPlayfield.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.PlayField.getValidationCode())));
-    columnBackglass.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.BackGlass.getValidationCode())));
-    columnLoading.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Loading.getValidationCode())));
-    columnWheel.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Wheel.getValidationCode())));
-    columnDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.DMD.getValidationCode())));
-    columnTopper.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Topper.getValidationCode())));
-    columnFullDMD.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Menu.getValidationCode())));
-    columnAudio.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Audio.getValidationCode())));
-    columnAudioLaunch.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.AudioLaunch.getValidationCode())));
-    columnInfo.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameInfo.getValidationCode())));
-    columnHelp.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.GameHelp.getValidationCode())));
-    columnOther2.setVisible(assetManagerMode && !ignoredValidations.contains(String.valueOf(PopperScreen.Other2.getValidationCode())));
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
+    columnPlayfield.setVisible(supportedScreens.contains(VPinScreen.PlayField) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.PlayField.getValidationCode())));
+    columnBackglass.setVisible(supportedScreens.contains(VPinScreen.BackGlass) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.BackGlass.getValidationCode())));
+    columnLoading.setVisible(supportedScreens.contains(VPinScreen.Loading) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Loading.getValidationCode())));
+    columnWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Wheel.getValidationCode())));
+    columnDMD.setVisible(supportedScreens.contains(VPinScreen.DMD) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.DMD.getValidationCode())));
+    columnTopper.setVisible(supportedScreens.contains(VPinScreen.Topper) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Topper.getValidationCode())));
+    columnFullDMD.setVisible(supportedScreens.contains(VPinScreen.Menu) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Menu.getValidationCode())));
+    columnAudio.setVisible(supportedScreens.contains(VPinScreen.Audio) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Audio.getValidationCode())));
+    columnAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.AudioLaunch.getValidationCode())));
+    columnInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.GameInfo.getValidationCode())));
+    columnHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.GameHelp.getValidationCode())));
+    columnOther2.setVisible(supportedScreens.contains(VPinScreen.Other2) && assetManagerMode && !ignoredValidations.isIgnored(String.valueOf(VPinScreen.Other2.getValidationCode())));
   }
 
   @FXML
   public void onAltSoundUpload() {
-    TableDialogs.openAltSoundUploadDialog(null, null);
+    List<GameRepresentation> selectedItems = getSelections();
+    int gameId = -1;
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      gameId = selectedItems.get(0).getId();
+    }
+    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
   }
 
   @FXML
@@ -429,7 +433,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onIniUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.directIniUpload(stage, selectedItems.get(0));
+      boolean b = TableDialogs.directIniUpload(stage, selectedItems.get(0));
+      if (b) {
+        tablesController.getTablesSideBarController().getTitledPaneIni().setExpanded(true);
+      }
     }
   }
 
@@ -461,9 +468,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
+  public void onResUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.directResUpload(stage, selectedItems.get(0));
+    }
+  }
+
+  @FXML
   public void onMediaEdit() {
     GameRepresentation selectedItems = getSelection();
-    TableDialogs.openTableAssetsDialog(this, selectedItems, PopperScreen.BackGlass);
+    if (selectedItems != null) {
+      TableDialogs.openTableAssetsDialog(this, selectedItems, VPinScreen.BackGlass);
+    }
   }
 
   @FXML
@@ -489,8 +506,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
-      if (Studio.client.getPinUPPopperService().isPinUPPopperRunning()) {
-        if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+      if (Studio.client.getFrontendService().isFrontendRunning()) {
+        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
           TableDialogs.openTableDataDialog(this, selectedItems);
         }
         return;
@@ -519,7 +536,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return;
       }
 
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table", "All existing VPX and Popper processes will be terminated.", null, "Do not shown again", false);
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
+          "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
+          FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
+          null, "Do not shown again", false);
+
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {
           uiSettings.setHideVPXStartInfo(true);
@@ -532,9 +555,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onStop() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+        FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getPinUPPopperService().terminatePopper();
+      client.getFrontendService().terminateFrontend();
     }
   }
 
@@ -552,8 +577,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+    if (client.getFrontendService().isFrontendRunning()) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         openUploadDialog(uploadDescriptor);
       }
       return;
@@ -599,8 +624,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onDelete() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
+    if (client.getFrontendService().isFrontendRunning()) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         deleteSelection();
       }
       return;
@@ -657,13 +682,15 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onImport() {
-    if (client.getPinUPPopperService().isPinUPPopperRunning()) {
-      if (Dialogs.openPopperRunningWarning(Studio.stage)) {
-        TableDialogs.openTableImportDialog();
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+
+    if (client.getFrontendService().isFrontendRunning()) {
+      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+        TableDialogs.openTableImportDialog(emulatorSelection);
       }
     }
     else {
-      TableDialogs.openTableImportDialog();
+      TableDialogs.openTableImportDialog(emulatorSelection);
     }
   }
 
@@ -692,7 +719,18 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onValidationSettings() {
-    PreferencesController.open("validators_vpx");
+    GameRepresentation game = getSelection();
+    if (game != null) {
+      ValidationState validationState = game.getValidationState();
+      int code = validationState.getCode();
+      if (code >= GameValidationCode.CODE_NO_AUDIO && code <= GameValidationCode.CODE_NO_WHEEL_IMAGE) {
+        PreferencesController.open("validators_screens");
+      }
+      else {
+        PreferencesController.open("validators_vpx");
+      }
+
+    }
   }
 
   @FXML
@@ -709,27 +747,33 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
-  public void reload(int id) {
-    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+  public void reload(GameRepresentation refreshedGame, boolean select) {
+    if (refreshedGame != null) {
+      if (select) {
+        tableView.getSelectionModel().getSelectedItems().removeListener(this);
+        tableView.getSelectionModel().clearSelection();
+      }
+      GameRepresentationModel model = null;
+      int index = games.indexOf(refreshedGame);
+      if (index != -1) {
+        games.remove(index);
+        games.add(index, refreshedGame);
+        // also change the model that triggers a screen refresh
+        model = new GameRepresentationModel(refreshedGame);
+        models.remove(index);
+        models.add(index, model);
 
-    GameRepresentation refreshedGame = client.getGameService().getGame(id);
-    tableView.getSelectionModel().getSelectedItems().removeListener(this);
-    tableView.getSelectionModel().clearSelection();
+      }
 
-    GameRepresentationModel model = null;
-    int index = games.indexOf(refreshedGame);
-    if (index != -1) {
-      games.remove(index);
-      games.add(index, refreshedGame);
-      // also change the model that triggers a screen refresh
-      model = new GameRepresentationModel(refreshedGame);
-      models.remove(index);
-      models.add(index, model);
+      // select the reloaded game
+      if (select) {
+        tableView.getSelectionModel().getSelectedItems().addListener(this);
+        tableView.getSelectionModel().select(model);
+      }
+
+      // force refresh the view for elements not observed by the table
+      tableView.refresh();
     }
-
-    tableView.getSelectionModel().getSelectedItems().addListener(this);
-    tableView.getSelectionModel().select(selectedItem);
-    tableView.refresh();
   }
 
   public void showScriptEditor(GameRepresentation game) {
@@ -815,7 +859,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
    * @return true if the filtered list did change and reload is required
    */
   public synchronized boolean onRefresh(FilterSettings filterSettings) {
-
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
     if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       predicateFactory.setFilterIds(null);
@@ -837,12 +880,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private void onReloadPressed(ActionEvent e) {
-    client.getPinUPPopperService().clearCache();
+    client.getFrontendService().reload();
     client.getGameService().reload();
     this.onReload();
   }
 
   public void onReload() {
+    doReload(true);
+  }
+
+  public void onSwitchFromCache() {
+    doReload(false);
+  }
+
+  public void doReload(boolean clearCache) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
@@ -864,61 +915,86 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     setBusy("Loading Tables...", true);
     new Thread(() -> {
+      try {
+        GameRepresentation selection = getSelection();
+        GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        int id = -1;
+        if (value != null) {
+          id = value.getId();
+        }
 
-      GameRepresentation selection = getSelection();
-      GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-      GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-      int id = -1;
-      if (value != null) {
-        id = value.getId();
+        if (clearCache) {
+          client.getGameService().clearCache(id);
+        }
+        List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
+
+        // as the load of tables could take some time, users may have switched to another emulators in between
+        // if this is the case, do not refresh the UI with the results
+        GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+        if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
+          return;
+        }
+
+        Platform.runLater(() -> {
+
+          setItems(_games);
+
+          if (selection != null) {
+            final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
+            if (updatedGame.isPresent()) {
+              GameRepresentation gameRepresentation = updatedGame.get();
+              //tableView.getSelectionModel().select(gameRepresentation);
+              this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+            }
+          }
+
+          if (!games.isEmpty()) {
+            this.validateBtn.setDisable(false);
+            this.deleteBtn.setDisable(false);
+            this.tableEditBtn.setDisable(false);
+          }
+          else {
+            Frontend frontend = client.getFrontendService().getFrontendCached();
+            this.validationErrorLabel.setText("No tables found");
+            this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
+                + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+          }
+
+          this.importBtn.setDisable(false);
+          this.stopBtn.setDisable(false);
+          this.textfieldSearch.setDisable(false);
+          this.reloadBtn.setDisable(false);
+          this.scanBtn.setDisable(false);
+          this.scanAllBtn.setDisable(false);
+          this.uploadTableBtn.setDisable(false);
+
+          tableView.requestFocus();
+
+          if (selectedItem == null) {
+            tableView.getSelectionModel().select(0);
+          }
+          else {
+            tableView.getSelectionModel().select(selectedItem);
+          }
+
+          for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+            reloadConsumer.accept(selection);
+          }
+          reloadConsumers.clear();
+
+          setBusy("", false);
+        });
+
+
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load tables: " + e.getMessage(), e);
+        Platform.runLater(() -> {
+          WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage());
+        });
       }
 
-      client.getGameService().clearCache(id);
-      List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
-      Platform.runLater(() -> {
-
-        setItems(_games);
-
-        if (selection != null) {
-          final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
-          if (updatedGame.isPresent()) {
-            GameRepresentation gameRepresentation = updatedGame.get();
-            //tableView.getSelectionModel().select(gameRepresentation);
-            this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
-          }
-        }
-
-        if (!games.isEmpty()) {
-          this.validateBtn.setDisable(false);
-          this.deleteBtn.setDisable(false);
-          this.tableEditBtn.setDisable(false);
-        }
-        else {
-          this.validationErrorLabel.setText("No tables found");
-          this.validationErrorText.setText("Check the emulator setup in PinUP Popper. Make sure that all(!) directories are set and reload after fixing these.");
-        }
-
-        this.importBtn.setDisable(false);
-        this.stopBtn.setDisable(false);
-        this.textfieldSearch.setDisable(false);
-        this.reloadBtn.setDisable(false);
-        this.scanBtn.setDisable(false);
-        this.scanAllBtn.setDisable(false);
-        this.uploadTableBtn.setDisable(false);
-
-        tableView.requestFocus();
-        tableView.getSelectionModel().select(selectedItem);
-        if (selectedItem == null) {
-          tableView.getSelectionModel().select(0);
-        }
-
-        for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-          reloadConsumer.accept(selection);
-        }
-        reloadConsumers.clear();
-
-        setBusy("", false);
-      });
     }).start();
   }
 
@@ -971,7 +1047,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
-    List<Playlist> pl = new ArrayList<>(playlists);
+    List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
@@ -980,12 +1056,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getPinUPPopperService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
+
+    if (selectedEmu == null) {
+      this.emulatorCombo.getSelectionModel().selectFirst();
+    }
+
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 
@@ -1011,7 +1094,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
-    });
+    }, true);
 
     configureLoadingColumn(columnEmulator, "", (value, model) -> {
       GameEmulatorRepresentation gameEmulator = model.getGameEmulator();
@@ -1026,16 +1109,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       if (showVersionUpdates && value.isUpdateAvailable()) {
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+
         FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-        Tooltip tt = new Tooltip("The table version in PinUP Popper is \"" + value.getVersion() + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n" +
-            "Update the table, correct the selected VPS table or fix the version in the \"PinUP Popper Table Settings\" section.");
+        Tooltip tt = new Tooltip("The table version in [Frontend] is \"" + value.getVersion()
+            + "\", while the linked VPS table has version \"" + value.getExtVersion() + "\".\n\n"
+            + "Update the table, correct the selected VPS table or fix the version in the \"[Frontend] Table Settings\" section.");
+        FrontendUtil.replaceName(tt, frontend);
         tt.setWrapText(true);
         tt.setMaxWidth(400);
         label.setTooltip(tt);
         label.setGraphic(updateIcon);
       }
       return label;
-    });
+    }, true);
 
     configureColumn(columnRom, (value, model) -> {
       String rom = value.getRom();
@@ -1045,7 +1132,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       Label label = new Label(rom);
       if (!value.isRomExists() && value.isRomRequired() && !ignoredValidations.contains(GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-        String color = "#FF3333";
+        String color = WidgetFactory.ERROR_COLOR;
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
       }
       else {
@@ -1053,7 +1140,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         label.setStyle(getLabelCss(value));
       }
       return label;
-    });
+    }, true);
 
     configureColumn(columnHSType, (value, model) -> {
       String hsType = value.getHighscoreType();
@@ -1064,7 +1151,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
       return label;
-    });
+    }, true);
 
     configureColumn(columnB2S, (value, model) -> {
       if (value.isDirectB2SAvailable()) {
@@ -1076,7 +1163,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
       return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates());
@@ -1094,7 +1181,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnINI, (value, model) -> {
       if (value.isIniAvailable()) {
@@ -1103,7 +1190,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         return checkboxIcon;
       }
       return null;
-    });
+    }, true);
+
+    configureColumn(columnRES, (value, model) -> {
+      if (value.isResAvailable()) {
+        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
+        Tooltip.install(checkboxIcon, new Tooltip("RES file available"));
+        return checkboxIcon;
+      }
+      return null;
+    }, true);
 
     configureColumn(columnAltSound, (value, model) -> {
       if (value.isAltSoundAvailable()) {
@@ -1115,7 +1211,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnAltColor, (value, model) -> {
       if (value.getAltColorType() != null) {
@@ -1127,7 +1223,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnPUPPack, (value, model) -> {
       if (value.isPupPackAvailable()) {
@@ -1139,7 +1235,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
       return null;
-    });
+    }, true);
 
     configureColumn(columnStatus, (value, model) -> {
       ValidationState validationState = value.getValidationState();
@@ -1173,40 +1269,46 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         else if (notes.contains("//TODO")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
         }
+        else if (notes.contains("//OUTDATED")) {
+          icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
+        }
       }
 
       btn.setGraphic(graphics);
       btn.setOnAction(event -> {
         tableView.getSelectionModel().clearSelection();
-        selectGameInModel(value);
+        tableView.getSelectionModel().select(model);
         Platform.runLater(() -> {
           TableDialogs.openNotesDialog(value);
         });
       });
 
       return btn;
-    });
+    }, true);
 
     configureColumn(columnDateAdded, (value, model) -> {
+      Label label = null;
       if (value.getDateAdded() != null) {
-        return new Label(dateAddedDateFormat.format(value.getDateAdded()));
+        label = new Label(dateAddedDateFormat.format(value.getDateAdded()));
       }
       else {
-        return new Label("-");
+        label = new Label("-");
       }
-    });
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
 
     columnPlaylists.setSortable(false);
     configureColumn(columnPlaylists, (value, model) -> {
       HBox box = new HBox();
-      List<Playlist> matches = new ArrayList<>();
+      List<PlaylistRepresentation> matches = new ArrayList<>();
       boolean fav = false;
       Integer favColor = null;
 
       boolean globalFav = false;
       Integer globalFavColor = null;
 
-      for (Playlist playlist : playlists) {
+      for (PlaylistRepresentation playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
           if (!fav && playlist.isFavGame(value.getId())) {
             favColor = playlist.getMenuColor();
@@ -1241,7 +1343,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       int count = 0;
-      for (Playlist match : matches) {
+      for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
           box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
           width += ICON_WIDTH;
@@ -1257,20 +1359,21 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
       box.setStyle("-fx-padding: 3 0 0 0;");
       return box;
-    });
+    }, true);
 
-    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, PopperScreen.PlayField));
-    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, PopperScreen.BackGlass));
-    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, PopperScreen.Loading));
-    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, PopperScreen.Wheel));
-    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, PopperScreen.DMD));
-    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, PopperScreen.Topper));
-    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, PopperScreen.Menu));
-    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, PopperScreen.Audio));
-    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, PopperScreen.AudioLaunch));
-    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, PopperScreen.GameInfo));
-    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, PopperScreen.GameHelp));
-    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, PopperScreen.Other2));
+    List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
+    configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
+    configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
+    configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
+    configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
+    configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
+    configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
+    configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
+    configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
+    configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
+    configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
+    configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
+    configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
     setItems(new ArrayList<>());
 
@@ -1332,11 +1435,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   //------------------------------
   @FunctionalInterface
-  private static interface ColumnRenderer {
-    public Node render(GameRepresentation game, GameRepresentationModel model);
+  private interface ColumnRenderer {
+    Node render(GameRepresentation game, GameRepresentationModel model);
   }
 
-  private void configureColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, ColumnRenderer renderer) {
+  private void configureColumn(TableColumn<GameRepresentationModel, GameRepresentationModel> column, ColumnRenderer renderer, boolean visible) {
+    column.setVisible(visible);
     column.setCellValueFactory(cellData -> {
       GameRepresentationModel model = cellData.getValue();
       return model;
@@ -1374,11 +1478,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
   }
 
-  private Node createAssetStatus(GameRepresentation value, PopperScreen popperScreen) {
-    GameMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(popperScreen);
+  private Node createAssetStatus(GameRepresentation value, VPinScreen VPinScreen) {
+    FrontendMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(popperScreen.getValidationCode());
-    boolean ignored = value.getIgnoredValidations().contains(popperScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
+    boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());
 
     StringBuilder tt = new StringBuilder();
     Button btn = new Button();
@@ -1445,11 +1549,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       if (!ignored) {
         if (config.getOption().equals(ValidatorOption.empty)) {
-          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
           tt.append("This asset should remain empty.\n");
         }
         else if (config.getOption().equals(ValidatorOption.optional)) {
-          fontIcon.setIconColor(Paint.valueOf(WidgetFactory.DISABLED_COLOR));
+          fontIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
           tt.append("This asset is optional.\n");
         }
         else if (config.getOption().equals(ValidatorOption.mandatory)) {
@@ -1463,17 +1567,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tooltip.setWrapText(true);
     btn.setTooltip(tooltip);
     btn.setOnAction(event -> {
-      showAssetDetails(value, popperScreen);
+      showAssetDetails(value, VPinScreen);
     });
 
     return btn;
   }
 
-  private void showAssetDetails(GameRepresentation game, PopperScreen popperScreen) {
+  private void showAssetDetails(GameRepresentation game, VPinScreen VPinScreen) {
     tableView.getSelectionModel().clearSelection();
     selectGameInModel(game);
     Platform.runLater(() -> {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, popperScreen);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, VPinScreen);
     });
   }
 
@@ -1532,7 +1636,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
   }
 
@@ -1567,7 +1671,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void updatePlaylist() {
     this.playlists = client.getPlaylistsService().getPlaylists();
-    List<Playlist> refreshedData = new ArrayList<>(this.playlists);
+    List<PlaylistRepresentation> refreshedData = new ArrayList<>(this.playlists);
     refreshedData.add(0, null);
     this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
   }
@@ -1578,9 +1682,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     altColorUploadItem.setDisable(disable);
     mediaUploadItem.setDisable(disable);
     povItem.setDisable(disable);
+    resItem.setDisable(disable);
     backglassUploadItem.setDisable(disable);
     iniUploadMenuItem.setDisable(disable);
-
 
     validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
@@ -1599,7 +1703,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       refreshView(Optional.ofNullable(gameRepresentation));
 
       if (gameRepresentation.isGameFileAvailable()) {
-        GameEmulatorRepresentation gameEmulator = client.getPinUPPopperService().getGameEmulator(gameRepresentation.getEmulatorId());
+        GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
         playBtn.getItems().clear();
 
         List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
@@ -1631,7 +1735,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private String getIconColor(GameRepresentation value) {
     if (value.isDisabled()) {
-      return "#B0ABAB";
+      return DISABLED_COLOR;
     }
     return null;
   }
@@ -1654,24 +1758,68 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void selectGameInModel(GameRepresentation game) {
     Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame() == game).findFirst();
     if (model.isPresent()) {
+      this.tableView.getSelectionModel().clearSelection();
       this.tableView.getSelectionModel().select(model.get());
+      this.tableView.scrollTo(model.get());
+    }
+  }
+
+  public void selectGameInModel(int gameId) {
+    Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == gameId).findFirst();
+    if (model.isPresent()) {
+      this.tableView.getSelectionModel().clearSelection();
+      this.tableView.getSelectionModel().select(model.get());
+      this.tableView.scrollTo(model.get());
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
+
     contextMenuController = new TableOverviewContextMenu(this);
     tableOverviewColumnSorter = new TableOverviewColumnSorter(this);
 
     deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
 
+    this.playlistSplitter.managedProperty().bindBidirectional(playlistSplitter.visibleProperty());
+    this.playlistCombo.managedProperty().bindBidirectional(this.playlistCombo.visibleProperty());
     this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
     this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
+    this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
+    this.assetManagerViewBtn.managedProperty().bindBidirectional(this.assetManagerViewBtn.visibleProperty());
+    this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
+    this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
+
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    FrontendType frontendType = frontend.getFrontendType();
+
+    FrontendUtil.replaceName(importBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(uploadTableBtn.getTooltip(), frontend);
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
+
+    if (frontendType.equals(FrontendType.Standalone)) {
+      importBtn.setVisible(false);
+      columnEmulator.setVisible(false);
+    }
+
+    if (!frontendType.supportPupPacks()) {
+      uploadTableBtn.getItems().remove(pupPackUploadItem);
+    }
+    if (!frontendType.supportMedias()) {
+      uploadTableBtn.getItems().remove(mediaUploadItem);
+      this.assetManagerBtn.setVisible(false);
+      this.assetManagerViewBtn.setVisible(false);
+    }
+    if (!frontendType.supportPlaylists()) {
+      playlistCombo.setVisible(false);
+      importSeparator.setVisible(false);
+      playlistSplitter.setVisible(false);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -1696,9 +1844,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.valueProperty().addListener(new ChangeListener<Playlist>() {
+    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
       @Override
-      public void changed(ObservableValue<? extends Playlist> observableValue, Playlist Playlist, Playlist t1) {
+      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlist, PlaylistRepresentation t1) {
         predicateFactory.setFilterPlaylist(t1);
         data.setPredicate(predicateFactory.buildPredicate());
       }
@@ -1707,23 +1855,24 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     bindTable();
     bindSearchField();
 
-    Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
-    ImageView iconPopperMedia = new ImageView(image3);
-    iconPopperMedia.setFitWidth(18);
-    iconPopperMedia.setFitHeight(18);
-    assetManagerBtn.setGraphic(iconPopperMedia);
+    if (frontendType.supportPupPacks()) {
+      Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
+      ImageView iconMedia = new ImageView(image3);
+      iconMedia.setFitWidth(18);
+      iconMedia.setFitHeight(18);
+      assetManagerBtn.setGraphic(iconMedia);
 
-    Image image4 = new Image(Studio.class.getResourceAsStream("popper-edit.png"));
-    ImageView iconPopperEdit = new ImageView(image4);
-    iconPopperEdit.setFitWidth(18);
-    iconPopperEdit.setFitHeight(18);
-    tableEditBtn.setGraphic(iconPopperEdit);
+      Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
+      ImageView view6 = new ImageView(image6);
+      view6.setFitWidth(18);
+      view6.setFitHeight(18);
+      assetManagerViewBtn.setGraphic(view6);
+    }
+    else {
+      columnPUPPack.setVisible(false);
+    }
 
-    Image image6 = new Image(Studio.class.getResourceAsStream("popper-assets.png"));
-    ImageView view6 = new ImageView(image6);
-    view6.setFitWidth(18);
-    view6.setFitHeight(18);
-    assetManagerViewBtn.setGraphic(view6);
+    columnPlaylists.setVisible(frontendType.supportPlaylists());
 
     preferencesChanged(PreferenceNames.UI_SETTINGS, null);
     preferencesChanged(PreferenceNames.SERVER_SETTINGS, null);
@@ -1748,44 +1897,58 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     columnHelp.setVisible(false);
     columnOther2.setVisible(false);
 
+    refreshColumns();
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
-    assetManagerViewBtn.setVisible(Features.ASSET_MODE);
   }
 
   private void refreshViewForEmulator() {
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     tableFilterController.setEmulator(newValue);
-    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
+    boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
 
-    this.importBtn.setVisible(vpxMode);
-    this.uploadTableBtn.setVisible(vpxMode);
-    this.deleteBtn.setVisible(vpxMode);
-    this.scanBtn.setVisible(vpxMode);
-    this.playBtn.setVisible(vpxMode);
-    this.stopBtn.setVisible(vpxMode);
+    this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
+    this.importBtn.setDisable(!vpxOrFpEmulator);
+    this.deleteBtn.setVisible(vpxOrFpEmulator);
+    this.uploadTableBtn.setVisible(vpxEmulator);
+    this.scanBtn.setVisible(vpxEmulator);
+    this.playBtn.setVisible(vpxEmulator);
+    this.stopBtn.setVisible(vpxEmulator);
 
-    deleteSeparator.setVisible(vpxMode);
+    deleteSeparator.setVisible(vpxOrFpEmulator);
 
-    columnVersion.setVisible(vpxMode && !assetManagerMode);
-    columnEmulator.setVisible(vpxMode && !assetManagerMode);
-    columnVPS.setVisible(vpxMode && !assetManagerMode);
-    columnRom.setVisible(vpxMode && !assetManagerMode);
-    columnB2S.setVisible(vpxMode && !assetManagerMode);
-    columnPUPPack.setVisible(vpxMode && !assetManagerMode);
-    columnAltSound.setVisible(vpxMode && !assetManagerMode);
-    columnAltColor.setVisible(vpxMode && !assetManagerMode);
-    columnPOV.setVisible(vpxMode && !assetManagerMode);
-    columnINI.setVisible(vpxMode && !assetManagerMode);
-    columnHSType.setVisible(vpxMode && !assetManagerMode);
+    refreshColumns();
 
     tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
+  }
+
+  private void refreshColumns() {
+    GameEmulatorRepresentation newValue = emulatorCombo.getValue();
+    boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    columnVersion.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVersion());
+    columnEmulator.setVisible(vpxMode && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
+    columnVPS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
+    columnB2S.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
+    columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
+    columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
+    columnPOV.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPov());
+    columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
+    columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
+    columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
+    columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
+    columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
     if (key.equals(PreferenceNames.UI_SETTINGS)) {
       uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      columnVPS.setVisible(!assetManagerMode && !uiSettings.isHideVPSUpdates());
+      refreshColumns();
     }
     else if (key.equals(PreferenceNames.SERVER_SETTINGS)) {
       serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -1794,8 +1957,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     }
     else if (key.equals(PreferenceNames.IGNORED_VALIDATIONS)) {
-      PreferenceEntryRepresentation preference = client.getPreferenceService().getPreference(PreferenceNames.IGNORED_VALIDATIONS);
-      ignoredValidations = preference.getCSVValue();
+      ignoredValidations = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
       refreshViewAssetColumns(assetManagerMode);
     }
   }
@@ -1814,6 +1976,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       tableView.getSelectionModel().clearSelection();
       tableView.getSelectionModel().select((selectedIndex + 1));
     }
+  }
+
+  public TablesController getTablesController() {
+    return tablesController;
+  }
+
+  public boolean isAssetManagerMode() {
+    return this.assetManagerMode;
   }
 
   public StackPane getTableStack() {
@@ -1853,7 +2023,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           refreshViewForEmulator();
           tableFilterController.applyFilter();
         });
-        onReload();
+        // just reload from cache
+        onSwitchFromCache();
       });
     }
   }
@@ -1896,7 +2067,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public void load() {
       this.vpsTable = client.getVpsService().getTableById(game.getExtTableId());
-      this.gameEmulator = client.getPinUPPopperService().getGameEmulator(game.getEmulatorId());
+      this.gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
     }
 
     @Override

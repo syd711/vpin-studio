@@ -7,7 +7,8 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.util.FXResizeHelper;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -16,6 +17,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
@@ -47,12 +49,18 @@ public class HeaderResizeableController implements Initializable {
 
   private static MouseEvent event;
 
+  private boolean dialogMode = false;
+
   @FXML
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
-      FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
+      FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
       helper.switchWindowedMode(e);
     }
+  }
+
+  private Stage getStage() {
+    return (Stage) header.getScene().getWindow();
   }
 
   @FXML
@@ -66,7 +74,8 @@ public class HeaderResizeableController implements Initializable {
       });
       future.get(2000, TimeUnit.MILLISECONDS);
       executor.shutdownNow();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       //ignore
     }
 
@@ -86,10 +95,10 @@ public class HeaderResizeableController implements Initializable {
   private void onDragDone() {
     if (titleLabel.getText() != null && !titleLabel.getText().contains("Launcher")) {
       debouncer.debounce("position", () -> {
-        int y = (int) stage.getY();
-        int x = (int) stage.getX();
-        int width = (int) stage.getWidth();
-        int height = (int) stage.getHeight();
+        int y = (int) getStage().getY();
+        int x = (int) getStage().getX();
+        int width = (int) getStage().getWidth();
+        int height = (int) getStage().getHeight();
         if (width > 0 && height > 0) {
           LocalUISettings.saveLocation(x, y, width, height);
         }
@@ -99,13 +108,13 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onMaximize() {
-    FXResizeHelper helper = (FXResizeHelper) stage.getUserData();
+    FXResizeHelper helper = (FXResizeHelper) getStage().getUserData();
     helper.switchWindowedMode(event);
   }
 
   @FXML
   private void onHideClick() {
-    stage.setIconified(true);
+    getStage().setIconified(true);
   }
 
   public void setTitle(String title) {
@@ -123,16 +132,19 @@ public class HeaderResizeableController implements Initializable {
     }
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
-    stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-    stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-    stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-    stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+    Platform.runLater(() -> {
+      getStage().xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+      getStage().yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+      getStage().widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+      getStage().heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
 
-    header.setOnMouseMoved(new EventHandler<MouseEvent>() {
-      @Override
-      public void handle(MouseEvent event) {
-        HeaderResizeableController.event = event;
-      }
+      header.setOnMouseMoved(new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent event) {
+          HeaderResizeableController.event = event;
+        }
+      });
     });
+
   }
 }

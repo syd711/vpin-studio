@@ -1,13 +1,13 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.PopperScreensManager;
+import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
-import de.mephisto.vpin.commons.fx.pausemenu.model.PopperScreenAsset;
+import de.mephisto.vpin.commons.fx.pausemenu.model.FrontendScreenAsset;
 import de.mephisto.vpin.restclient.OverlayClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.games.GameStatus;
-import de.mephisto.vpin.restclient.popper.PinUPPlayerDisplay;
+import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -61,7 +61,7 @@ public class ServerFX extends Application {
 
   private boolean overlayVisible = false;
 
-  private PopperScreenController highscoreCardController;
+  private FrontendScreenController highscoreCardController;
 
   public static ServerFX getInstance() {
     return INSTANCE;
@@ -82,7 +82,7 @@ public class ServerFX extends Application {
       latch.await();
       LOG.info("OverlayFX creation finished.");
       for (ServerFXListener listener : listeners) {
-        listener.toolkitRead();
+        listener.fxInitialized();
       }
     } catch (InterruptedException e) {
       e.printStackTrace();
@@ -152,7 +152,7 @@ public class ServerFX extends Application {
     });
   }
 
-  private static String resolveDashboard(String value) {
+  public static String resolveDashboard(String value) {
     String fxml = "scene-overlay-" + resolveDashboardResolution();
     if (!StringUtils.isEmpty(value)) {
       fxml = fxml + value;
@@ -257,7 +257,7 @@ public class ServerFX extends Application {
     });
   }
 
-  public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable PinUPPlayerDisplay display, String mimeType, File file) {
+  public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable FrontendPlayerDisplay display, String mimeType, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
       if (notificationTime > 0) {
@@ -271,7 +271,7 @@ public class ServerFX extends Application {
           }
         }
 
-        PopperScreenAsset asset = new PopperScreenAsset();
+        FrontendScreenAsset asset = new FrontendScreenAsset();
         asset.setName(file.getName());
         asset.setDisplay(display);
         asset.setRotation(rotation);
@@ -279,7 +279,7 @@ public class ServerFX extends Application {
         asset.setMimeType(mimeType);
         asset.setInputStream(new FileInputStream(file));
 
-        PopperScreensManager.getInstance().showScreen(asset);
+        FrontendScreensManager.getInstance().showScreen(asset);
       }
       else {
         LOG.info("Skipping highscore card overlay, zero time set.");

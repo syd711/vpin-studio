@@ -3,15 +3,15 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.popper.Emulator;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
-import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -27,9 +27,8 @@ import java.util.zip.ZipEntry;
 public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableInstallerAdapterVpa.class);
 
-  private final SystemService systemService;
   private final GameService gameService;
-  private final PinUPConnector pinUPConnector;
+  private final FrontendService frontendService;
   private final ArchiveDescriptor archiveDescriptor;
   private final GameEmulator emulator;
 
@@ -37,14 +36,12 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private double progress;
   private String status;
 
-  public TableInstallerAdapterVpa(@NonNull SystemService systemService,
-                                  @NonNull GameService gameService,
-                                  @NonNull PinUPConnector pinUPConnector,
+  public TableInstallerAdapterVpa(@NonNull GameService gameService,
+                                  @NonNull FrontendService frontendService,
                                   @NonNull ArchiveDescriptor archiveDescriptor,
                                   @NonNull GameEmulator emulator) {
-    this.systemService = systemService;
     this.gameService = gameService;
-    this.pinUPConnector = pinUPConnector;
+    this.frontendService = frontendService;
     this.archiveDescriptor = archiveDescriptor;
     this.emulator = emulator;
   }
@@ -82,7 +79,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
       status = "Extracting " + archiveFile.getAbsolutePath();
       unzipArchive();
-      LOG.info("Finished unzipping of " + archiveDescriptor.getFilename() + ", starting Popper import.");
+      LOG.info("Finished unzipping of " + archiveDescriptor.getFilename() + ", starting game import.");
 
       TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
@@ -93,13 +90,14 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       File gameFile = getGameFile(emulator, manifest);
       Game game = gameService.getGameByFilename(manifest.getGameFileName());
       if (game == null) {
-        LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing popper game import for " + manifest.getGameFileName());
-        int newGameId = pinUPConnector.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
+        LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing game import for " + manifest.getGameFileName());
+        int newGameId = frontendService.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));
         game = gameService.getGame(newGameId);
       }
 
-      status = "Importing Game to Popper";
-      pinUPConnector.saveTableDetails(game.getId(), manifest);
+      Frontend frontend = frontendService.getFrontend();
+      status = "Importing Game to " + frontend.getName();
+      frontendService.saveTableDetails(game.getId(), manifest);
 
       status = "Importing Highscores";
       importHighscore(game, archiveFile);
@@ -118,7 +116,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private void importHighscore(Game game, File zipFile) {
     String jsonData = VpaArchiveUtil.readVPRegJson(zipFile);
     if (jsonData != null) {
-      VPReg vpReg = new VPReg(game.getEmulator().getVPRegFile(), game.getRom(), game.getTableName());
+      VPReg vpReg = new VPReg(emulator.getVPRegFile(), game.getRom(), game.getTableName());
       vpReg.restore(jsonData);
       LOG.info("Imported VPReg.stg data.");
     }
@@ -192,11 +190,9 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
     if (Emulator.isVisualPinball(name, null, null, null)) {
       return emulator.getInstallationFolder().getParentFile();
     }
-    else if (name.startsWith("PinUPSystem")) {
-      return systemService.getPinUPSystemFolder().getParentFile();
+    else {
+      return frontendService.getFrontendInstallationFolder().getParentFile();
     }
-
-    return systemService.getPinUPSystemFolder().getParentFile();
   }
 
   private File getGameFile(GameEmulator emulator, TableDetails manifest) {

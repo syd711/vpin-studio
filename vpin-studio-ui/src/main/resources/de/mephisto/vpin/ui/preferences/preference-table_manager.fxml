@@ -21,7 +21,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label styleClass="preference-description" text="The table manager is an optional UI that can be launched as a regular game via PinUP Popper." textFill="WHITE">
+            <Label styleClass="preference-description" text="The table manager is an optional UI that can be launched as a regular game via your frontend." textFill="WHITE">
                <VBox.margin>
                   <Insets top="24.0" />
                </VBox.margin>

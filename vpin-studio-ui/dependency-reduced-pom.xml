@@ -3,7 +3,7 @@
   <parent>
     <artifactId>studio</artifactId>
     <groupId>de.mephisto.vpin</groupId>
-    <version>2.21.6</version>
+    <version>3.0.0</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>vpin-studio-ui</artifactId>
@@ -70,7 +70,7 @@
           <execution>
             <id>default-cli</id>
             <configuration>
-              <mainClass>de.mephisto.vpin.ui/de.mephisto.vpin.ui.Launcher</mainClass>
+              <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
               <launcher>app</launcher>
               <jlinkZipName>app</jlinkZipName>
               <jlinkImageName>app</jlinkImageName>
@@ -382,6 +382,7 @@
                 <argument>-tzip</argument>
                 <argument>VPin-Studio-Server.zip</argument>
                 <argument>VPin-Studio-Server.exe</argument>
+                <argument>VPin-Studio-App.exe</argument>
               </arguments>
             </configuration>
           </execution>

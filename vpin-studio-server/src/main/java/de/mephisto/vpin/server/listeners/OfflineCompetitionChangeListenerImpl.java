@@ -18,7 +18,7 @@ import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -54,7 +54,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private AssetService assetService;
@@ -86,7 +86,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
               }
               else {
                 subText += "\nThe highscore of this table has not been resetted.";
-                Optional<Highscore> hs = highscoreService.getHighscore(game, true);
+                Optional<Highscore> hs = highscoreService.getHighscore(game, true, EventOrigin.USER_INITIATED);
                 if (hs.isPresent() && !StringUtils.isEmpty(hs.get().getRaw())) {
                   String raw = hs.get().getRaw();
                   List<Score> scores = highscoreParsingService.parseScores(new Date(), raw, game.getId(), -1);
@@ -106,7 +106,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
         }
 
         if (competition.getBadge() != null && competition.isActive()) {
-          popperService.augmentWheel(game, competition.getBadge());
+          frontendStatusService.augmentWheel(game, competition.getBadge());
         }
       } catch (Exception e) {
         LOG.error("Error creating offline competition: " + e.getMessage(), e);
@@ -119,7 +119,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        runCheckedDeAugmentation(competitionService, gameService, popperService);
+        runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
 
         long serverId = competition.getDiscordServerId();
         long channelId = competition.getDiscordChannelId();
@@ -156,7 +156,7 @@ public class OfflineCompetitionChangeListenerImpl extends DefaultCompetitionChan
     if (competition.getType().equals(CompetitionType.OFFLINE.name())) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
-        runCheckedDeAugmentation(competitionService, gameService, popperService);
+        runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
 
         long serverId = competition.getDiscordServerId();
         long channelId = competition.getDiscordChannelId();

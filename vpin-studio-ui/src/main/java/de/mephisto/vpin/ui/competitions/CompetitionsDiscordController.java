@@ -9,14 +9,11 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
@@ -50,6 +47,7 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class CompetitionsDiscordController implements Initializable, StudioFXController {
@@ -409,7 +407,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       HBox hBox = new HBox(6);
       hBox.setAlignment(Pos.CENTER_LEFT);
 
-      InputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      InputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
       if (gameMediaItem == null) {
         gameMediaItem = Studio.class.getResourceAsStream("avatar-blank.png");
       }
@@ -568,7 +566,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
     validationError.setVisible(false);
     bindSearchField();
-    onViewActivated();
+    onViewActivated(null);
   }
 
   private void bindSearchField() {
@@ -597,7 +595,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     else if (value.isActive()) {
       status = "-fx-font-color: #33CC00;-fx-text-fill:#33CC00;";
@@ -656,7 +654,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {

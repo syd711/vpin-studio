@@ -48,6 +48,7 @@ import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
@@ -397,8 +398,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       treeTableView.refresh();
     }
     else {
-      treeTableView.setPlaceholder(new Label("                             No default player set!\n" +
-          "Go to the players section and select the default player of your VPin!"));
+      treeTableView.setPlaceholder(new Label("                                        No VPin Mania default player set!\n" +
+          "Go to the players section and select the default player for VPin Mania tournaments!"));
 
       tableStack.getChildren().remove(loadingOverlay);
       treeTableView.setRoot(null);
@@ -507,7 +508,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     cabinet = maniaClient.getCabinetClient().getCabinet();
 
     Platform.runLater(() -> {
@@ -630,7 +631,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
           return new SimpleObjectProperty(label);
         }
         Label label = new Label("NOT\nINSTALLED");
-        label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333;-fx-font-weight: bold;");
+        label.setStyle(ERROR_STYLE + "-fx-font-weight: bold;");
 
         if (tournament.isFinished()) {
           label.setStyle(WidgetFactory.DISABLED_COLOR);
@@ -667,13 +668,14 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     columnVPSVersion.setCellValueFactory(cellData -> {
       if (!cellData.getValue().getValue().isTournamentNode()) {
         TournamentTreeModel value = cellData.getValue().getValue();
+        VpsTable vpsTable = value.getVpsTable();
         VpsTableVersion vpsTableVersion = value.getVpsTableVersion();
         if (vpsTableVersion == null) {
           return new SimpleObjectProperty<>("All versions allowed.");
         }
 
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value.getVpsTable(), value.getVpsTableVersion());
-        return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, TournamentHelper.getLabelCss(value.getTournament(), value.getTournamentTable()), gameByVpsTable == null));
+        return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, TournamentHelper.getLabelCss(value.getTournament(), value.getTournamentTable()), gameByVpsTable == null));
       }
       return null;
     });

@@ -1,9 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -23,10 +24,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class TableFilterController extends BaseFilterController implements Initializable {
+import static de.mephisto.vpin.ui.Studio.client;
 
-  @FXML
-  private VBox filterPanel;
+public class TableFilterController extends BaseFilterController implements Initializable {
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -71,13 +71,25 @@ public class TableFilterController extends BaseFilterController implements Initi
   private CheckBox withAltColorCheckBox;
 
   @FXML
-  private CheckBox withPovIniCheckBox;
+  private CheckBox withIniCheckBox;
+
+  @FXML
+  private CheckBox withPovCheckBox;
+
+  @FXML
+  private CheckBox withResCheckBox;
 
   @FXML
   private CheckBox withAliasCheckBox;
 
   @FXML
   private VBox filterRoot;
+
+  @FXML
+  private Node notPlayedSettings;
+
+  @FXML
+  private Node statusSettings;
 
   @FXML
   private Node configurationFilters;
@@ -106,16 +118,23 @@ public class TableFilterController extends BaseFilterController implements Initi
   private void onReset() {
     GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      updateSettings(new FilterSettings());
+      this.filterSettings = new FilterSettings();
+      saveFilterSettings();
+      resetFilters();
       applyFilter();
     }
   }
 
+  private void saveFilterSettings() {
+    client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
+  }
+
   public void setTableController(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
-    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(), 
-      tableOverviewController.getTableStack(), tableOverviewController.getTableView());
+    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(),
+        tableOverviewController.getTableStack(), tableOverviewController.getTableView());
 
+    applyFilter();
   }
 
   @FXML
@@ -123,7 +142,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     super.toggleDrawer();
   }
 
-  private void updateSettings(FilterSettings filterSettings) {
+  private void resetFilters() {
     updatesDisabled = true;
     statusCombo.setValue(null);
     notesCombo.setValue(null);
@@ -140,7 +159,9 @@ public class TableFilterController extends BaseFilterController implements Initi
     withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
-    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
+    withIniCheckBox.setSelected(filterSettings.isWithIni());
+    withPovCheckBox.setSelected(filterSettings.isWithPov());
+    withResCheckBox.setSelected(filterSettings.isWithRes());
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
     withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     updatesDisabled = false;
@@ -165,17 +186,27 @@ public class TableFilterController extends BaseFilterController implements Initi
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-
     configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());
     tableAssetFilters.managedProperty().bindBidirectional(tableAssetFilters.visibleProperty());
     vpsFilters.managedProperty().bindBidirectional(vpsFilters.visibleProperty());
     configurationIssuesFilter.managedProperty().bindBidirectional(configurationIssuesFilter.visibleProperty());
+    withPupPackCheckBox.managedProperty().bindBidirectional(withPupPackCheckBox.visibleProperty());
+    missingAssetsCheckBox.managedProperty().bindBidirectional(missingAssetsCheckBox.visibleProperty());
+    notPlayedSettings.managedProperty().bindBidirectional(notPlayedSettings.visibleProperty());
+    statusSettings.managedProperty().bindBidirectional(statusSettings.visibleProperty());
 
-    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(Studio.client.getPinUPPopperService().getGameEmulators());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    withPupPackCheckBox.setVisible(frontendType.supportPupPacks());
+    statusSettings.setVisible(frontendType.equals(FrontendType.Popper));
+    notPlayedSettings.setVisible(frontendType.supportStatistics());
+    missingAssetsCheckBox.setVisible(frontendType.supportMedias());
+
+    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(client.getFrontendService().getGameEmulators());
     gameEmulators.add(0, null);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
 
-    filterSettings = new FilterSettings();
+    filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setMissingAssets(newValue);
@@ -241,9 +272,19 @@ public class TableFilterController extends BaseFilterController implements Initi
       filterSettings.setWithAltColor(newValue);
       applyFilter();
     });
-    withPovIniCheckBox.setSelected(filterSettings.isWithPovIni());
-    withPovIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithPovIni(newValue);
+    withPovCheckBox.setSelected(filterSettings.isWithPov());
+    withPovCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithPov(newValue);
+      applyFilter();
+    });
+    withResCheckBox.setSelected(filterSettings.isWithRes());
+    withResCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithRes(newValue);
+      applyFilter();
+    });
+    withIniCheckBox.setSelected(filterSettings.isWithIni());
+    withIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setWithIni(newValue);
       applyFilter();
     });
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
@@ -257,9 +298,12 @@ public class TableFilterController extends BaseFilterController implements Initi
       applyFilter();
     });
 
-    List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES_15);
+    List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES);
     statuses.add(0, null);
     statusCombo.setItems(FXCollections.observableList(statuses));
+    if (filterSettings.getGameStatus() >= 0) {
+      statusCombo.setValue(TableDataController.TABLE_STATUSES.get(filterSettings.getGameStatus()));
+    }
     statusCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
         filterSettings.setGameStatus(-1);
@@ -273,6 +317,7 @@ public class TableFilterController extends BaseFilterController implements Initi
     List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
     noteTypes.add(0, null);
     notesCombo.setItems(FXCollections.observableList(noteTypes));
+    notesCombo.setValue(filterSettings.getNoteType());
     notesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
       if (newValue == null) {
         filterSettings.setNoteType(null);

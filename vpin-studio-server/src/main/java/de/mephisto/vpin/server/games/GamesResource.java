@@ -1,7 +1,6 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameDetailsRepresentation;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
@@ -9,6 +8,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,11 +81,6 @@ public class GamesResource {
     return game;
   }
 
-  @GetMapping("/details/{id}")
-  public GameDetailsRepresentation getGameDetails(@PathVariable("id") int id) {
-    return gameService.getGameDetails(id);
-  }
-
   @GetMapping("/validations/{id}")
   public List<ValidationState> getAllValidations(@PathVariable("id") int id) {
     Game game = gameService.getGame(id);
@@ -123,7 +118,7 @@ public class GamesResource {
 
   @GetMapping("/scanscore/{id}")
   public HighscoreMetadata scanGameScore(@PathVariable("id") int pupId) {
-    return gameService.scanScore(pupId);
+    return gameService.scanScore(pupId, EventOrigin.USER_INITIATED);
   }
 
   @PostMapping("/delete")

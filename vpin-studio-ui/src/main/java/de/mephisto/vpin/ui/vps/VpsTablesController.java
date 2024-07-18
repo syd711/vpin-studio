@@ -166,7 +166,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       // and calculate installed and unmapped in the non blocking thread
       this.installed = 0;
       this.unmapped = 0;
-      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         for (VpsTable vpsTable : vpsTables) {
           GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
           if (gameByVpsTable != null) {
@@ -201,7 +201,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
         tableView.requestFocus();
       });
-    }).start();
+    }, "VPS Tables Load").start();
   }
 
   @Override
@@ -221,7 +221,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
     installedColumn.setCellValueFactory(cellData -> {
       VpsTable value = cellData.getValue();
-      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
         if (gameByVpsTable != null) {
           return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
@@ -248,7 +248,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       VpsTable value = cellData.getValue();
       String versionId = null;
       VPSChanges updates = null;
-      if (!client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
         if (gameByVpsTable != null) {
           versionId = gameByVpsTable.getExtTableVersionId();
@@ -424,7 +424,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     // run in a dedicated thread as getGameByVpsTable() can block UI
     new Thread(() -> {
       final GameRepresentation gameByVpsTable;
-      if (newSelection.isPresent() && !client.getPinUPPopperService().getVpxGameEmulators().isEmpty()) {
+      if (newSelection.isPresent() && !client.getFrontendService().getVpxGameEmulators().isEmpty()) {
         gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
       }
       else {
@@ -444,7 +444,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       filterValue = "";
     }
 
-    boolean noVPX = client.getPinUPPopperService().getVpxGameEmulators().isEmpty();
+    boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
     for (VpsTable table : tables) {
       if (installedOnlyCheckbox.isSelected() && !noVPX) {
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(table, null);

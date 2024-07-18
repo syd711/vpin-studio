@@ -100,7 +100,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="400.0" text="This user is used when new tournaments are created." wrapText="true" />
+                              <Tooltip prefWidth="400.0" text="This user is the default owner of competitions and anonymous highscores." wrapText="true" />
                            </tooltip>
                         </Label>
                      </children>

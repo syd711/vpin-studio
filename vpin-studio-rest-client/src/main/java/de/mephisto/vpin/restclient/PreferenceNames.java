@@ -18,11 +18,9 @@ public interface PreferenceNames {
 
   String IDLE_TIMEOUT = "idleTimeout";
   String AVATAR = "avatar";
-  String RESET_KEY = "resetKey";
 
   String DOF_SETTINGS = "dofSettings";
 
-  String OVERLAY_KEY = "overlayKey";
   String OVERLAY_DESIGN = "overlayDesign";
   String OVERLAY_PAGE_URL = "overlayPageUrl";
   String SHOW_OVERLAY_ON_STARTUP = "showOverlayOnStartup";
@@ -30,6 +28,9 @@ public interface PreferenceNames {
   String UI_SETTINGS = "uiSettings";
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
+  String FILTER_SETTINGS = "filterSettings";
+
+  String PINBALLX_SETTINGS = "pinballXSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";

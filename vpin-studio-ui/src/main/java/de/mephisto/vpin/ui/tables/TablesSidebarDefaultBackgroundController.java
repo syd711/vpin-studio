@@ -45,7 +45,7 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
 
   private Optional<GameRepresentation> game = Optional.empty();
 
-  private TablesSidebarController tablesSidebarController;
+  //private TablesSidebarController tablesSidebarController;
 
   // Add a public no-args constructor
   public TablesSidebarDefaultBackgroundController() {
@@ -106,26 +106,26 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
       resetBackgroundBtn.setDisable(!g.isDefaultBackgroundAvailable());
       openDefaultPictureBtn.setDisable(!g.isDefaultBackgroundAvailable());
 
+      resolutionLabel.setText("Loading...");
+
       new Thread(() -> {
-        Platform.runLater(() -> {
-          try {
-            InputStream input = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get());
-            Image image = new Image(input);
+        try (InputStream input = Studio.client.getBackglassServiceClient().getDefaultPicture(game.get())) {
+          Image image = new Image(input);
+          Platform.runLater(() -> {
             rawDefaultBackgroundImage.setVisible(true);
             rawDefaultBackgroundImage.setImage(image);
-            input.close();
-
+  
             if (image.getWidth() > 300 && g.isDefaultBackgroundAvailable()) {
               openDefaultPictureBtn.setDisable(false);
               resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
             } else {
               resolutionLabel.setText("");
             }
-          } catch (IOException e) {
-            LOG.error("Failed to load default background: " + e.getMessage(), e);
-          }
-        });
-      }).start();
+          });
+        } catch (IOException e) {
+          LOG.error("Failed to load default background: " + e.getMessage(), e);
+        }
+      }, "Default Background Loader...").start();
 
     } else {
       resolutionLabel.setText("");
@@ -133,6 +133,6 @@ public class TablesSidebarDefaultBackgroundController implements Initializable {
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
+    //this.tablesSidebarController = tablesSidebarController;
   }
 }

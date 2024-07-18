@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>2.21.6</version>
+        <version>3.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -50,6 +50,18 @@
             <version>16.02-2.01</version>
         </dependency>
         <dependency>
+            <groupId>net.java.jinput</groupId>
+            <artifactId>jinput</artifactId>
+            <version>2.0.9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.java.jinput</groupId>
+            <artifactId>jinput</artifactId>
+            <version>2.0.9</version>
+            <classifier>natives-all</classifier>
+        </dependency>
+
+        <dependency>
             <groupId>org.kordamp.ikonli</groupId>
             <artifactId>ikonli-javafx</artifactId>
             <version>12.3.1</version>
@@ -70,28 +82,6 @@
             <version>12.3.1</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-rest-client</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-assets</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-mania-rest-client</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-studio-popper-client</artifactId>
-            <version>1.0.0</version>
-            <scope>runtime</scope>
-        </dependency>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-studio-commons</artifactId>
@@ -100,16 +90,6 @@
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
             <artifactId>vpin-connector-discord</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-iscored</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-vps</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -122,11 +102,6 @@
             <groupId>org.fxmisc.richtext</groupId>
             <artifactId>richtextfx</artifactId>
             <version>0.11.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.1stleg</groupId>
-            <artifactId>jnativehook</artifactId>
-            <version>2.1.0</version>
         </dependency>
 
         <dependency>
@@ -319,7 +294,7 @@
                         <!-- Default configuration for running with: mvn clean javafx:run -->
                         <id>default-cli</id>
                         <configuration>
-                            <mainClass>de.mephisto.vpin.ui/de.mephisto.vpin.ui.Launcher</mainClass>
+                            <mainClass>de.mephisto.vpin.ui.Launcher</mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>
                             <jlinkImageName>app</jlinkImageName>
@@ -657,6 +632,7 @@
                                 <argument>-tzip</argument>
                                 <argument>VPin-Studio-Server.zip</argument>
                                 <argument>VPin-Studio-Server.exe</argument>
+                                <argument>VPin-Studio-App.exe</argument>
                             </arguments>
                         </configuration>
                     </execution>

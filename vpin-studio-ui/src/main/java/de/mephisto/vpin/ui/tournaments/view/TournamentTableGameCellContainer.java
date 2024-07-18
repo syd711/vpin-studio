@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.tournaments.TournamentHelper;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -35,7 +35,7 @@ public class TournamentTableGameCellContainer extends HBox {
 
     InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (game != null) {
-      InputStream gameItem = client.getGameMediaItem(game.getId(), PopperScreen.Wheel);
+      InputStream gameItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
       if (gameItem != null) {
         gameMediaItem = gameItem;
       }

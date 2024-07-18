@@ -18,14 +18,12 @@ public class MenuItemSelectionState extends MenuState {
   @Override
   MenuState left() {
     menuController.scrollGameBarLeft();
-    checkAutoPlay();
     return this;
   }
 
   @Override
   MenuState right() {
     menuController.scrollGameBarRight();
-    checkAutoPlay();
     return this;
   }
 
@@ -45,27 +43,5 @@ public class MenuItemSelectionState extends MenuState {
   MenuState back() {
     PauseMenu.exitPauseMenu();
     return null;
-  }
-
-  private void checkAutoPlay() {
-    boolean autoPlay = true;
-    if (autoPlay && menuController.isVisible()) {
-      PauseMenuItem item = menuController.getSelection();
-      if (item.getYouTubeUrl() != null) {
-        new Thread(() -> {
-          try {
-            Thread.sleep(UIDefaults.SELECTION_SCALE_DURATION * 2);
-          }
-          catch (InterruptedException e) {
-            //ignore
-          }
-          Platform.runLater(() -> {
-            if (menuController.isVisible()) {
-              menuController.showYouTubeVideo(item);
-            }
-          });
-        }).start();
-      }
-    }
   }
 }

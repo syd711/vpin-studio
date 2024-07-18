@@ -112,7 +112,7 @@ public class DiscordPlayersController implements Initializable {
 
       if(!StringUtils.isEmpty(value.getDuplicatePlayerName())) {
         Label label = new Label(value.getInitials());
-        String color = "#FF3333";
+        String color = WidgetFactory.ERROR_COLOR;
         label.setStyle("-fx-font-color: " + color + ";-fx-text-fill: " + color + ";-fx-font-weight: bold;");
         return new SimpleObjectProperty(label);
       }

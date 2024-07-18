@@ -3,52 +3,69 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.NotificationsPreferencesController">
-   <top>
-      <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel" BorderPane.alignment="TOP_LEFT">
-         <children>
-            <Label styleClass="preference-title" text="VPIN STUDIO PREFERENCES" textFill="WHITE" />
-            <Label styleClass="preference-subtitle" text="Notifications">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can configure the options for on-screen notifications here." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Every notification is only shown when no emulator is running." textFill="WHITE" />
-            <VBox>
-               <VBox.margin>
-                  <Insets top="12.0" />
-               </VBox.margin>
-            </VBox>
-            <HBox alignment="CENTER_LEFT" spacing="6.0">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-description" text="Show notifications for " textFill="WHITE" />
-                  <Spinner fx:id="durationSpinner" prefWidth="80.0" />
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="seconds." textFill="WHITE" />
+                  <Label styleClass="preference-title" text="VPIN STUDIO FRONTEND PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Notifications">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="You can configure the options for on-screen notifications here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="Every notification is only shown when no emulator is running." textFill="WHITE" />
+                  <VBox>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </VBox>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <Label styleClass="preference-description" text="Show notifications for " textFill="WHITE" />
+                        <Spinner fx:id="durationSpinner" prefWidth="80.0" />
+                        <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="seconds." textFill="WHITE" />
+                     </children>
+                  </HBox>
+                  <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Startup Notification" />
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
+                  <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Change" />
+                  <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
+                  <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
+                  <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="Shows a notification everytime the VPin Studio completes a highscore scan on table exit." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
+                  <VBox fx:id="discordSettings" layoutX="34.0" layoutY="399.0">
+                     <children>
+                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Post" />
+                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
+                        <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Change" />
+                        <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows a notification every time a competition starts, ends or is cancelled." textFill="WHITE" />
+                     </children>
+                  </VBox>
+                  <VBox fx:id="iScoredSettings">
+                     <children>
+                        <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Post" />
+                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to iScored." textFill="WHITE" />
+                     </children>
+                  </VBox>
                </children>
-            </HBox>
-            <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Startup Notification" />
-            <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
-            <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Changes" />
-            <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
-            <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
-            <Label layoutX="34.0" layoutY="262.0" styleClass="checkbox-description" text="Shows a notification everytime the VPin Studio completes a highscore scan on table exit." textFill="WHITE" />
-            <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
-            <VBox fx:id="iScoredSettings">
-               <children>
-                  <CheckBox fx:id="iScoredCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="iScored Posts" />
-                  <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to iScored." textFill="WHITE" />
-               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
             </VBox>
-         </children>
-         <padding>
-            <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
-         </padding>
-      </VBox>
-   </top>
+         </content>
+      </ScrollPane>
+   </center>
 </BorderPane>

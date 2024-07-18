@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.util;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
@@ -132,31 +134,36 @@ public class Dialogs {
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title);
   }
 
-  public static Stage createStudioDialogStage(Stage stage, Class clazz, String fxml, String title) {
+  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title) {
     return createStudioDialogStage(stage, clazz, fxml, title, null);
   }
 
-  public static Stage createStudioDialogStage(Stage stage, Class clazz, String fxml, String title, String stateId) {
+  public static Stage createStudioDialogStage(Stage stage, Class<?> clazz, String fxml, String title, String stateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
     return WidgetFactory.createDialogStage(fxmlLoader, stage, title, stateId);
   }
 
-  public static Stage createStudioDialogStage(Class clazz, String fxml, String title) {
+  public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title) {
     return createStudioDialogStage(clazz, fxml, title, null);
   }
 
-  public static Stage createStudioDialogStage(Class clazz, String fxml, String title, String stateId) {
+  public static Stage createStudioDialogStage(Class<?> clazz, String fxml, String title, String stateId) {
     FXMLLoader fxmlLoader = new FXMLLoader(clazz.getResource(fxml));
     return WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, stateId);
   }
 
-  public static boolean openPopperRunningWarning(Stage stage) {
+  public static boolean openFrontendRunningWarning(Stage stage) {
     boolean local = client.getSystemService().isLocal();
+    Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+
     if (!local) {
-      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
-          "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.", null, "Switch cabinet to maintenance mode");
+      ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage,
+        FrontendUtil.replaceName("[Frontend] is running.", frontend),
+        "Kill Processes", "Cancel",
+        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
+        null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplyClicked()) {
-        client.getPinUPPopperService().terminatePopper();
+        client.getFrontendService().terminateFrontend();
         if (confirmationResult.isChecked()) {
           EventManager.getInstance().notifyMaintenanceMode(true);
         }
@@ -165,11 +172,13 @@ public class Dialogs {
       return false;
     }
     else {
-      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage, "PinUP Popper/VPinballX is running.", "Kill Processes", "Cancel",
-          "PinUP Popper and/or VPinballX is running. To perform this operation, you have to close it.",
+      Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage,
+        FrontendUtil.replaceName("[Frontend] is running.", frontend),
+        "Kill Processes", "Cancel",
+        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
           null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
-        client.getPinUPPopperService().terminatePopper();
+        client.getFrontendService().terminateFrontend();
         return true;
       }
       return false;

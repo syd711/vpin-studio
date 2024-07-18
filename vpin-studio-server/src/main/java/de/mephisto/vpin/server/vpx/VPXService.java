@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -38,7 +38,7 @@ public class VPXService {
   private VPXCommandLineService vpxCommandLineService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   public POV getPOV(Game game) {
     try {
@@ -199,7 +199,7 @@ public class VPXService {
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe) {
-    systemService.killPopper();
+    frontendService.killFrontend();
 
     if (game != null) {
       return vpxCommandLineService.execute(game, "-Play", altExe);
@@ -223,7 +223,7 @@ public class VPXService {
   }
 
   public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unpack(out, pinUPConnector.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+    MusicInstallationUtil.unpack(out, frontendService.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

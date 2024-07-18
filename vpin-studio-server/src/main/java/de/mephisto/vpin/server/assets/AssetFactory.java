@@ -2,14 +2,14 @@ package de.mephisto.vpin.server.assets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.popper.GameMediaItem;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -89,7 +89,7 @@ public class AssetFactory {
       graphics.setFont(font);
       graphics.drawString(game.getRom(), xOffset, yOffset += HEADLINE_SIZE + 12);
 
-      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
         BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
@@ -170,7 +170,7 @@ public class AssetFactory {
       graphics.setFont(font);
       graphics.drawString(DateUtil.formatDuration(competition.getStartDate(), competition.getEndDate()), xOffset, yOffset += HEADLINE_SIZE + 12);
 
-      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
         BufferedImage resizedImage = ImageUtil.resizeImage(image, 190);
@@ -214,7 +214,7 @@ public class AssetFactory {
       }
 
       //wheel icon
-      GameMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         BufferedImage image = ImageUtil.loadImage(defaultMediaItem.getFile());
         BufferedImage resizedImage = ImageUtil.resizeImage(image, IMAGE_WIDTH);

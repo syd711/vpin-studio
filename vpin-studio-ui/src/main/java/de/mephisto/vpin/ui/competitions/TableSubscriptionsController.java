@@ -11,11 +11,8 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.competitions.validation.CompetitionValidationTexts;
@@ -48,6 +45,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableSubscriptionsController implements Initializable, StudioFXController {
@@ -335,7 +333,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
       hBox.setAlignment(Pos.CENTER_LEFT);
 
       Image image = new Image(Studio.class.getResourceAsStream("avatar-blank.png"));
-      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), PopperScreen.Wheel);
+      ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(value.getGameId(), VPinScreen.Wheel);
       if (gameMediaItem != null) {
         image = new Image(gameMediaItem);
       }
@@ -465,7 +463,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
     validationError.setVisible(false);
     bindSearchField();
-    onViewActivated();
+    onViewActivated(null);
   }
 
   private void bindSearchField() {
@@ -535,7 +533,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
     this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
     if (this.competitionsController != null) {
@@ -558,7 +556,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
   public static String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     return status;
   }

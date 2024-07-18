@@ -17,7 +17,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -65,9 +64,6 @@ public class TablesSidebarAltSoundController implements Initializable {
   private Label formatLabel;
 
   @FXML
-  private CheckBox enabledCheckbox;
-
-  @FXML
   private VBox dataRoot;
 
   @FXML
@@ -100,7 +96,11 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onUpload() {
-    TableDialogs.openAltSoundUploadDialog(null, null);
+    int gameId = -1;
+    if (this.game.isPresent()) {
+      gameId = this.game.get().getId();
+    }
+    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
   }
 
   @FXML
@@ -115,27 +115,18 @@ public class TablesSidebarAltSoundController implements Initializable {
   private void onAltSoundEdit() {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       if (altSound.getFormat() == null || altSound.getFormat().equals(AltSoundFormats.altsound)) {
-        tablesSidebarController.getTablesController().showAltSoundEditor(this.game.get(), altSound);
+        tablesSidebarController.getTableOverviewController().showAltSoundEditor(this.game.get(), altSound);
       }
       else if (altSound.getFormat().equals(AltSoundFormats.gsound)) {
         if (altSound.getFilesize() == -1) {
           WidgetFactory.showAlert(Studio.stage, "Invalid Configuration", "The table must be played once, so that the necessary configuration files are generated.");
           return;
         }
-        tablesSidebarController.getTablesController().showAltSound2Editor(this.game.get(), altSound);
+        tablesSidebarController.getTableOverviewController().showAltSound2Editor(this.game.get(), altSound);
       }
       else {
         WidgetFactory.showAlert(Studio.stage, "Error", "Unknown alt sound format \"" + altSound.getFormat() + "\".");
       }
-    }
-  }
-
-  @FXML
-  private void onAltSoundEnable() {
-    if (game.isPresent() && game.get().isAltSoundAvailable()) {
-      GameRepresentation g = game.get();
-      Studio.client.getAltSoundService().setAltSoundEnabled(game.get().getId(), enabledCheckbox.isSelected());
-      EventManager.getInstance().notifyTableChange(g.getId(), g.getRom());
     }
   }
 
@@ -149,9 +140,9 @@ public class TablesSidebarAltSoundController implements Initializable {
   @FXML
   private void onReload() {
     this.reloadBtn.setDisable(true);
-    tablesSidebarController.getTablesController().closeEditors();
+    tablesSidebarController.getTableOverviewController().closeEditors();
 
-    if(game.isPresent()) {
+    if (game.isPresent()) {
       Platform.runLater(() -> {
         ProgressDialog.createProgressDialog(new AltSoundRefreshProgressModel(game.get()));
         this.reloadBtn.setDisable(false);
@@ -164,7 +155,7 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (game.isPresent() && game.get().isAltSoundAvailable()) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Restore Backup?", "Revert all changes and restore the original ALT sound backup?", null, "Restore Backup");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        tablesSidebarController.getTablesController().closeEditors();
+        tablesSidebarController.getTableOverviewController().closeEditors();
         Studio.client.getAltSoundService().restoreAltSound(game.get().getId());
         EventManager.getInstance().notifyTableChange(game.get().getId(), game.get().getRom());
       }
@@ -192,7 +183,6 @@ public class TablesSidebarAltSoundController implements Initializable {
 
     altSoundBtn.setDisable(true);
     restoreBtn.setDisable(true);
-    enabledCheckbox.setVisible(false);
     dataBox.setVisible(false);
     emptyDataBox.setVisible(true);
     uploadBtn.setDisable(true);
@@ -217,12 +207,9 @@ public class TablesSidebarAltSoundController implements Initializable {
       deleteBtn.setDisable(!altSoundAvailable);
       altSoundBtn.setDisable(!altSoundAvailable);
       restoreBtn.setDisable(!altSoundAvailable);
-      enabledCheckbox.setDisable(!altSoundAvailable);
-      enabledCheckbox.setVisible(altSoundAvailable);
 
       if (altSoundAvailable) {
         altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-        enabledCheckbox.setSelected(Studio.client.getAltSoundService().getAltSoundMode(game.getId()) > 0);
 
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));

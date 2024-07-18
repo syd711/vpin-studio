@@ -8,10 +8,10 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
-import de.mephisto.vpin.restclient.popper.TableDetails;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.popper.PopperService;
+import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -36,7 +36,7 @@ public class UniversalUploadResource {
   private GameService gameService;
 
   @Autowired
-  private PopperService popperService;
+  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private PreferencesService preferenceService;
@@ -129,8 +129,8 @@ public class UniversalUploadResource {
   }
 
   private void uploadAndClone(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
-    TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
+    GameEmulator gameEmulator = frontendStatusService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    TableDetails tableDetails = frontendStatusService.getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 
     boolean autoFill = uploadDescriptor.isAutoFill();
@@ -142,20 +142,20 @@ public class UniversalUploadResource {
 
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
-    String popperFileName = target.getName();
+    String fileName = target.getName();
     if (uploadDescriptor.isFolderBasedImport()) {
       //use the parents parent so that we are back inside the tables folder
       File targetFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
       targetFolder = FileUtils.uniqueFolder(targetFolder);
       targetFolder.mkdirs();
       target = new File(targetFolder, target.getName());
-      popperFileName = targetFolder.getName() + "\\" + target.getName();
+      fileName = targetFolder.getName() + "\\" + target.getName();
 
       LOG.info("Clone of " + existingVPXFile.getName() + " is created into subfolder \"" + targetFolder.getAbsolutePath() + "\"");
     }
     else {
       target = FileUtils.uniqueFile(target);
-      popperFileName = target.getName();
+      fileName = target.getName();
     }
 
     //copy file
@@ -163,25 +163,25 @@ public class UniversalUploadResource {
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
 
 
-    int returningGameId = popperService.importVPXGame(target, true, -1, gameEmulator.getId());
+    int returningGameId = frontendStatusService.importVPXGame(target, true, -1, gameEmulator.getId());
     if (returningGameId >= 0) {
       Game importedGame = gameService.scanGame(returningGameId);
 
       //update table details after new entry creation
-      TableDetails tableDetailsClone = popperService.getTableDetails(returningGameId);
+      TableDetails tableDetailsClone = frontendStatusService.getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
-      tableDetailsClone.setGameFileName(popperFileName);
+      tableDetailsClone.setGameFileName(fileName);
       tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName())));
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
 
-      popperService.saveTableDetails(tableDetailsClone, returningGameId, false);
-      popperService.updateTableFileUpdated(returningGameId);
+      frontendStatusService.saveTableDetails(tableDetailsClone, returningGameId, false);
+      frontendStatusService.updateTableFileUpdated(returningGameId);
       LOG.info("Created database clone entry with game name \"" + tableDetailsClone.getGameName() + "\"");
 
-      //clone popper media
+      //clone media
       Game original = gameService.getGame(uploadDescriptor.getGameId());
-      LOG.info("Cloning Popper assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
-      popperService.cloneGameMedia(original, importedGame);
+      LOG.info("Cloning assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
+      frontendStatusService.cloneGameMedia(original, importedGame);
 
       //clone additional files
       FileUtils.cloneFile(original.getDirectB2SFile(), target.getName());
@@ -189,9 +189,11 @@ public class UniversalUploadResource {
       FileUtils.cloneFile(original.getIniFile(), target.getName());
       FileUtils.cloneFile(original.getResFile(), target.getName());
 
-      tableDetails = popperService.autoMatch(importedGame, true);
+      frontendStatusService.autoMatch(importedGame, true, false);
+
+      tableDetails = frontendStatusService.getTableDetails(importedGame.getId());
       if (tableDetails != null && autoFill) {
-        popperService.autoFill(importedGame, tableDetails, true, false);
+        frontendStatusService.autoFill(importedGame, tableDetails, false);
       }
       LOG.info("Cloning of \"" + importedGame.getGameDisplayName() + "\" successful.");
     }
@@ -201,16 +203,15 @@ public class UniversalUploadResource {
   }
 
   private void uploadAndReplace(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendStatusService.getGameEmulator(uploadDescriptor.getEmulatorId());
     if (gameEmulator == null) {
       throw new Exception("No emulator found for id " + uploadDescriptor.getEmulatorId() + " to replace table for.");
     }
 
-    TableDetails tableDetails = popperService.getTableDetails(uploadDescriptor.getGameId());
+    TableDetails tableDetails = frontendStatusService.getTableDetails(uploadDescriptor.getGameId());
     if (tableDetails == null) {
       throw new Exception("No table details found for the selected game to replace (ID: " + uploadDescriptor.getGameId() + ").");
     }
-
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
 
     ServerSettings serverSettings = preferenceService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -255,7 +256,7 @@ public class UniversalUploadResource {
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
 
-    //update Popper table database entry
+    //update frontend table database entry
     //if the VPX file is inside a subfolder, we have to prepend the folder name
     String name = target.getName();
     String oldName = tableDetails.getGameFileName();
@@ -269,24 +270,26 @@ public class UniversalUploadResource {
       tableDetails.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName())));
     }
 
-    popperService.saveTableDetails(tableDetails, uploadDescriptor.getGameId(), !keepExistingFilename);
-    popperService.updateTableFileUpdated(uploadDescriptor.getGameId());
+    frontendStatusService.saveTableDetails(tableDetails, uploadDescriptor.getGameId(), !keepExistingFilename);
+    frontendStatusService.updateTableFileUpdated(uploadDescriptor.getGameId());
 
     Game game = gameService.scanGame(uploadDescriptor.getGameId());
     if (game != null) {
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVPX);
       gameService.resetUpdate(game.getId(), VpsDiffTypes.tableNewVersionVPX);
 
-      tableDetails = popperService.autoMatch(game, true);
+      frontendStatusService.autoMatch(game, true, false);
+
+      tableDetails = frontendStatusService.getTableDetails(game.getId());
       if (tableDetails != null && autoFill) {
-        popperService.autoFill(game, tableDetails, true, false);
+        frontendStatusService.autoFill(game, tableDetails, false);
       }
       LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
     }
   }
 
   private void uploadAndImport(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    GameEmulator gameEmulator = popperService.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendStatusService.getGameEmulator(uploadDescriptor.getEmulatorId());
 
     File tablesFolder = gameEmulator.getTablesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
@@ -306,14 +309,17 @@ public class UniversalUploadResource {
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, targetVPXFile);
     LOG.info("Copied for import '" + temporaryVPXFile.getAbsolutePath() + "' to '" + targetVPXFile.getAbsolutePath() + "'");
 
-    int returningGameId = popperService.importVPXGame(targetVPXFile, true, -1, gameEmulator.getId());
+    int returningGameId = frontendStatusService.importVPXGame(targetVPXFile, true, -1, gameEmulator.getId());
     if (returningGameId >= 0) {
       Game game = gameService.scanGame(returningGameId);
       if (game != null) {
-        TableDetails tableDetails = popperService.autoMatch(game, true);
+        frontendStatusService.autoMatch(game, true, false);
+
+        TableDetails tableDetails = frontendStatusService.getTableDetails(game.getId());
         if (tableDetails != null && uploadDescriptor.isAutoFill()) {
-          popperService.autoFill(game, tableDetails, true, false);
+          frontendStatusService.autoFill(game, tableDetails, false);
         }
+
         uploadDescriptor.setGameId(returningGameId);
         LOG.info("Import of \"" + game.getGameDisplayName() + "\" successful.");
       }

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -56,7 +58,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createTotalGamesPlayedTile(tileList, entries);
       AlxFactory.createTotalScoresTile(tileList, entries);
       AlxFactory.createTotalHighScoresTile(tileList, entries);
-      AlxFactory.createAvgWeekTimeTile(tileList, entries, alxSummary.getStartDate());
+      Date alxStartDate = alxSummary.getStartDate()!=null? alxSummary.getStartDate(): 
+        new Date(System.currentTimeMillis() - 1 * 365 * 24 * 3600 * 1000);
+      AlxFactory.createAvgWeekTimeTile(tileList, entries, alxStartDate);
     } catch (Exception e) {
       LOG.error("Failed to initialize dashboard: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize dashboard: " + e.getMessage(), "Please submit an issue on Discord for this.");
@@ -66,7 +70,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   }
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
   }
 }

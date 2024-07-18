@@ -2,8 +2,10 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -29,7 +31,7 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getInstallationDirectory());
     openFolder(folder);
   }
@@ -41,9 +43,11 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onStop() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Stop all VPX and PinUP Popper processes?");
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, 
+      FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getPinUPPopperService().terminatePopper();
+      client.getFrontendService().terminateFrontend();
     }
   }
 
@@ -58,6 +62,9 @@ public class TabVpxController extends AbstractComponentTab implements Initializa
     super.initialize();
     playBtn.setDisable(!client.getSystemService().isLocal());
     stopBtn.setDisable(!client.getSystemService().isLocal());
+
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    FrontendUtil.replaceName(stopBtn.getTooltip(), frontend);
 
     componentUpdateController.setLocalInstallOnly(false);
   }

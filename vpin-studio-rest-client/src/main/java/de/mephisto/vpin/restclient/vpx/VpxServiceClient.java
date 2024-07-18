@@ -154,17 +154,4 @@ public class VpxServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
-
-  public UploadDescriptor uploadIniFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = getRestClient().getBaseUrl() + API + "vpx/ini/upload";
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.INI, listener);
-      ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
-      finalizeUpload(upload);
-      return exchange.getBody();
-    } catch (Exception e) {
-      LOG.error("Ini upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
 }

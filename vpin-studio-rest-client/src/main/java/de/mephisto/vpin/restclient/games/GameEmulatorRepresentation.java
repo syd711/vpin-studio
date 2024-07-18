@@ -15,14 +15,12 @@ public class GameEmulatorRepresentation {
   private String altSoundDirectory;
   private String altColorDirectory;
 
-  private String mediaDirectory;
-
   private String mameDirectory;
   private String nvramDirectory;
 
-
   private String backglassServerFolder;
   private boolean vpxEmulator;
+  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public List<String> getAltVPXExeNames() {
@@ -41,6 +39,14 @@ public class GameEmulatorRepresentation {
     this.backglassServerFolder = backglassServerFolder;
   }
 
+  public boolean isFpEmulator() {
+    return this.fpEmulator;
+  }
+
+  public void setFpEmulator(boolean fpEmulator) {
+    this.fpEmulator = fpEmulator;
+  }
+
   public boolean isVpxEmulator() {
     return vpxEmulator;
   }
@@ -55,14 +61,6 @@ public class GameEmulatorRepresentation {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public void setMediaDirectory(String mediaDirectory) {
-    this.mediaDirectory = mediaDirectory;
-  }
-
-  public String getMediaDirectory() {
-    return mediaDirectory;
   }
 
   public String getMameDirectory() {

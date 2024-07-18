@@ -49,6 +49,6 @@ public class PINemHiResource {
 
   @PostMapping("/save")
   public Map<String, Object> save(@RequestBody Map<String, Object> settings) throws Exception {
-    return piNemHiService.save(settings);
+    return piNemHiService.saveSettings(settings);
   }
 }

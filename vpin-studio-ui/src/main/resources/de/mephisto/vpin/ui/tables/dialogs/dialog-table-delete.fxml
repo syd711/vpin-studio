@@ -49,24 +49,39 @@
                                     <Font name="System Bold" size="14.0" />
                                  </font>
                               </CheckBox>
-                              <Label styleClass="checkbox-description" text="All files are kept, only the database entry in PinUP Popper will be deleted." />
                            </children>
                         </VBox>
-                        <CheckBox fx:id="popperCheckbox" mnemonicParsing="false" selected="true" text="Remove from PinUP Popper">
+                        <VBox fx:id="frontendSelectionField">
+                           <children>
+                              <CheckBox fx:id="frontendCheckbox" mnemonicParsing="false" selected="true" text="Remove from Frontend">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets top="12.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                              <Label styleClass="checkbox-description" text="This will remove the game from the frontend's database.">
+                                 <VBox.margin>
+                                    <Insets top="3.0" />
+                                 </VBox.margin></Label>
+                              <CheckBox fx:id="keepAssetsCheckbox" layoutX="10.0" layoutY="22.0" mnemonicParsing="false" text="Keep Frontend Media Assets">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <VBox.margin>
+                                    <Insets left="24.0" top="3.0" />
+                                 </VBox.margin>
+                              </CheckBox>
+                           </children>
+                        </VBox>
+                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File">
                            <font>
                               <Font size="14.0" />
                            </font>
-                           <padding>
-                              <Insets bottom="20.0" />
-                           </padding>
                            <VBox.margin>
                               <Insets top="12.0" />
                            </VBox.margin>
-                        </CheckBox>
-                        <CheckBox fx:id="vpxFileCheckbox" mnemonicParsing="false" text="Delete Game File (.vpx)">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                         </CheckBox>
                         <CheckBox fx:id="directb2sCheckbox" mnemonicParsing="false" text="Delete .directb2s File">
                            <font>

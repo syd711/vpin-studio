@@ -13,6 +13,7 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import org.apache.commons.lang3.StringUtils;
@@ -104,10 +105,10 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       }
       case BotCommand.CMD_HS: {
         if (!StringUtils.isEmpty(cmd.getParameter())) {
-          List<Game> games = gameService.getGames();
+          List<Game> games = gameService.getKnownGames(-1);
           for (Game game : games) {
             if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter()) || String.valueOf(game.getId()).equals(cmd.getParameter().trim())) {
-              HighscoreMetadata metadata = highscoreService.scanScore(game);
+              HighscoreMetadata metadata = highscoreService.scanScore(game, EventOrigin.BOT_CMD);
               if (StringUtils.isEmpty(metadata.getRaw()) && !StringUtils.isEmpty(metadata.getStatus())) {
                 return () -> "Highscore for '" + game.getGameDisplayName() + "' retrieval failed: " + metadata.getStatus();
               }
@@ -121,7 +122,7 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       }
       case BotCommand.CMD_FIND: {
         if (cmd.getParameter() != null) {
-          List<Game> games = gameService.getGames();
+          List<Game> games = gameService.getKnownGames(-1);
           List<Game> matches = new ArrayList<>();
           for (Game game : games) {
             if (game.getGameDisplayName().toLowerCase().contains(cmd.getParameter()) || String.valueOf(game.getId()).equals(cmd.getParameter().trim())) {

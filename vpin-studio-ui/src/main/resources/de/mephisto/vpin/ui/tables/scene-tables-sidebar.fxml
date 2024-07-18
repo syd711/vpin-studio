@@ -12,7 +12,6 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-
 <BorderPane maxWidth="600.0" prefWidth="600.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.TablesSidebarController">
    <center>
         <Accordion fx:id="tableAccordion" maxHeight="-Infinity" BorderPane.alignment="CENTER">
@@ -21,12 +20,12 @@
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <left>
-                                <Label text="PinUP Popper Media" BorderPane.alignment="CENTER" />
+                                <Label text="Table Media" BorderPane.alignment="CENTER" />
                             </left>
                             <right>
-                        <HBox fx:id="popperTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+                        <HBox fx:id="frontendTitleButtonArea" alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Button fx:id="popperConfigBtn" mnemonicParsing="false" onAction="#onPopperBtn" styleClass="external-component">
+                              <Button fx:id="frontendConfigBtn" mnemonicParsing="false" onAction="#onFrontendAdminOpen" styleClass="external-component">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -34,10 +33,10 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="PinUP Popper Setup" />
+                                    <Tooltip text="[Frontend] Setup" />
                                  </tooltip>
                               </Button>
-                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsPopper">
+                              <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPrefsScreenValidators">
                                  <font>
                                     <Font size="10.0" />
                                  </font>
@@ -45,7 +44,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip text="Open PinUP Popper setup" />
+                                    <Tooltip text="Open Screen Validators Settings" />
                                  </tooltip>
                               </Button>
                            </children>
@@ -64,7 +63,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPanePopper" expanded="false">
+                <TitledPane fx:id="titledPaneTableData" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
                             <right>
@@ -85,7 +84,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="PinUP Popper Table Data" BorderPane.alignment="CENTER" />
+                                <Label text="Table Data" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -180,7 +179,7 @@
                         </BorderPane>
                     </graphic>
                 </TitledPane>
-                <TitledPane fx:id="titledPaneAudio" expanded="false">
+                <TitledPane fx:id="titledPaneAltSound" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <right>
@@ -228,6 +227,32 @@
                   </BorderPane>
                </graphic>
             </TitledPane>
+                <TitledPane fx:id="titledPaneIni" expanded="false">
+               <graphic>
+                  <BorderPane prefWidth="560.0">
+                     <right>
+                        <Button fx:id="iniExplorerBtn" mnemonicParsing="false" onAction="#onIni" styleClass="folder-component" BorderPane.alignment="CENTER">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Open .ini File" />
+                           </tooltip>
+                           <font>
+                              <Font size="10.0" />
+                           </font>
+                        </Button>
+                     </right>
+                     <left>
+                        <Label text="Table .ini File" textFill="WHITE" BorderPane.alignment="CENTER">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </left>
+                  </BorderPane>
+               </graphic>
+            </TitledPane>
                 <TitledPane fx:id="titledPanePov" expanded="false">
                     <graphic>
                         <BorderPane prefWidth="560.0">
@@ -249,7 +274,7 @@
                                 </HBox>
                             </right>
                             <left>
-                                <Label text="Point Of View (POV)" BorderPane.alignment="CENTER" />
+                                <Label text="Table .pov File (Point of View)" BorderPane.alignment="CENTER" />
                             </left>
                         </BorderPane>
                     </graphic>
@@ -339,7 +364,7 @@
                   </BorderPane>
                </graphic>
             </TitledPane>
-                <TitledPane fx:id="titledPaneMetadata" expanded="false">
+                <TitledPane fx:id="titledPaneScriptDetails" expanded="false">
                <graphic>
                   <BorderPane prefWidth="560.0">
                      <left>
@@ -365,25 +390,6 @@
                   </BorderPane>
                </graphic>
             </TitledPane>
-                <TitledPane fx:id="titledPaneDefaultBackground" expanded="false" layoutX="10.0" layoutY="104.0" prefWidth="600.0">
-                    <graphic>
-                        <BorderPane prefWidth="560.0">
-                            <left>
-                                <Label text="Default Background" BorderPane.alignment="CENTER" />
-                            </left>
-                            <right>
-                                <Label BorderPane.alignment="CENTER">
-                                    <graphic>
-                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
-                                    </graphic>
-                                    <tooltip>
-                                        <Tooltip text="Used for highscore cards and competition backgrounds." />
-                                    </tooltip>
-                                </Label>
-                            </right>
-                        </BorderPane>
-                    </graphic>
-                </TitledPane>
             </panes>
         </Accordion>
    </center>

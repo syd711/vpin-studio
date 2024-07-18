@@ -12,6 +12,7 @@ open module de.mephisto.vpin.restclient {
   requires de.mephisto.vpin.connectors.iscored;
   requires spring.boot;
   requires sevenzipjbinding;
+  requires logback.classic;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;
@@ -21,7 +22,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.games.descriptors;
   exports de.mephisto.vpin.restclient.client;
   exports de.mephisto.vpin.restclient.jobs;
-  exports de.mephisto.vpin.restclient.popper;
+  exports de.mephisto.vpin.restclient.frontend;
   exports de.mephisto.vpin.restclient.mame;
   exports de.mephisto.vpin.restclient.altsound;
   exports de.mephisto.vpin.restclient.vpx;
@@ -47,4 +48,6 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.preferences;
   exports de.mephisto.vpin.restclient.vps;
   exports de.mephisto.vpin.restclient.textedit;
+  exports de.mephisto.vpin.restclient.frontend.popper;
+  exports de.mephisto.vpin.restclient.playlists;
 }

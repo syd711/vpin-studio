@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores.cards;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -139,8 +139,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   @NonNull
   private File getCardFile(@NonNull Game game, @NonNull String screenName) {
-    PopperScreen screen = PopperScreen.valueOf(screenName);
-    File mediaFolder = game.getPinUPMediaFolder(screen);
+    VPinScreen screen = VPinScreen.valueOf(screenName);
+    File mediaFolder = game.getMediaFolder(screen);
     return new File(mediaFolder, game.getGameName() + ".png");
   }
 

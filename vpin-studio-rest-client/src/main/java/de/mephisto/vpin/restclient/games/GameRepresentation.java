@@ -1,14 +1,11 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 
 import java.util.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * {
@@ -24,6 +21,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class GameRepresentation {
   private String rom;
   private String romAlias;
+  private String scannedRom;
+  private String scannedAltRom;
   private int nvOffset;
   private String gameDisplayName;
   private String gameFileName;
@@ -37,16 +36,18 @@ public class GameRepresentation {
   private int id;
   private String notes;
   private Date modified;
-  private GameMediaRepresentation gameMedia;
+  private FrontendMediaRepresentation gameMedia;
   private boolean directB2SAvailable;
   private boolean gameFileAvailable;
   private ValidationState validationState;
   private String hsFileName;
+  private String scannedHsFileName;
   private boolean romExists;
   private List<Integer> ignoredValidations;
   private String highscoreType;
   private boolean povAvailable;
   private boolean iniAvailable;
+  private boolean resAvailable;
   private boolean selected;
   private boolean romRequired;
   private String assets;
@@ -62,6 +63,14 @@ public class GameRepresentation {
   private boolean pupPackAvailable;
   private boolean vpxGame;
   private VPSChanges vpsUpdates = new VPSChanges();
+
+  public boolean isResAvailable() {
+    return resAvailable;
+  }
+
+  public void setResAvailable(boolean resAvailable) {
+    this.resAvailable = resAvailable;
+  }
 
   public String getNotes() {
     return notes;
@@ -287,11 +296,11 @@ public class GameRepresentation {
     this.tableName = tableName;
   }
 
-  public GameMediaRepresentation getGameMedia() {
+  public FrontendMediaRepresentation getGameMedia() {
     return gameMedia;
   }
 
-  public void setGameMedia(GameMediaRepresentation gameMedia) {
+  public void setGameMedia(FrontendMediaRepresentation gameMedia) {
     this.gameMedia = gameMedia;
   }
 
@@ -317,6 +326,14 @@ public class GameRepresentation {
 
   public void setHsFileName(String hsFileName) {
     this.hsFileName = hsFileName;
+  }
+
+  public String getScannedHsFileName() {
+    return scannedHsFileName;
+  }
+
+  public void setScannedHsFileName(String scannedHsFileName) {
+    this.scannedHsFileName = scannedHsFileName;
   }
 
   public ValidationState getValidationState() {
@@ -373,6 +390,22 @@ public class GameRepresentation {
 
   public void setRomAlias(String romAlias) {
     this.romAlias = romAlias;
+  }
+
+  public String getScannedRom() {
+    return scannedRom;
+  }
+
+  public void setScannedRom(String scannedRom) {
+    this.scannedRom = scannedRom;
+  }
+
+  public String getScannedAltRom() {
+    return scannedAltRom;
+  }
+
+  public void setScannedAltRom(String scannedAltRom) {
+    this.scannedAltRom = scannedAltRom;
   }
 
   public String getGameFileName() {

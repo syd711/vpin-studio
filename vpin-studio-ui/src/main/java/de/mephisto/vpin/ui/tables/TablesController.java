@@ -1,11 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.commons.fx.pausemenu.UIDefaults;
+import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -16,19 +19,26 @@ import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,24 +93,62 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @FXML
   private StackPane editorRootStack;
 
+  @FXML
+  private Button toggleSidebarBtn;
+
+  @FXML
+  private Button tableSettingsBtn;
+
   private Node sidePanelRoot;
+  private boolean sidebarVisible = true;
+
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
+    if(options != null) {
+      tableOverviewController.selectGameInModel(options.getGameId());
+    }
+  }
+
+
+  @FXML
+  private void onTableSettings() {
+    PreferencesController.open("settings_client");
+  }
+
+  @FXML
+  private void toggleSidebar() {
+    sidebarVisible = !sidebarVisible;
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    uiSettings.setSidebarVisible(sidebarVisible);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings, true);
+
+    setSidebarVisible(sidebarVisible);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setInitialController("scene-tables.fxml", this, root);
+    NavigationController.setInitialController(NavigationItem.Tables, this, root);
     EventManager.getInstance().addListener(this);
+    sidePanelRoot = root.getRight();
+
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    if (!frontendType.supportStatistics()) {
+      tabPane.getTabs().remove(tablesStatisticsTab);
+    }
+    if (!frontendType.supportArchive()) {
+      tabPane.getTabs().remove(tableRepositoryTab);
+    }
 
     try {
       FXMLLoader loader = new FXMLLoader(TableOverviewController.class.getResource("scene-tables-overview.fxml"));
       Parent tablesRoot = loader.load();
       tableOverviewController = loader.getController();
       tableOverviewController.setRootController(this);
-      tablesSideBarController.setTablesController(tableOverviewController);
+      tablesSideBarController.setTableOverviewController(tableOverviewController);
       tablesTab.setContent(tablesRoot);
     }
     catch (IOException e) {
@@ -145,8 +193,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
       refreshTabSelection(t1);
     });
 
-    sidePanelRoot = root.getRight();
-
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
@@ -156,7 +202,57 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
+
+    Platform.runLater(() -> {
+      Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+        public void handle(KeyEvent ke) {
+          if (ke.getCode() == KeyCode.F3) {
+            toggleSidebar();
+          }
+        }
+      });
+    });
+
+    sidePanelRoot.managedProperty().bindBidirectional(sidePanelRoot.visibleProperty());
   }
+
+  public void setSidebarVisible(boolean b) {
+    toggleSidebarBtn.setDisable(getTablesSideBarController().isEmpty());
+
+    if (b && sidePanelRoot.isVisible()) {
+      return;
+    }
+    if (!b && !sidePanelRoot.isVisible()) {
+      return;
+    }
+
+    sidebarVisible = b;
+    if (!sidebarVisible) {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, 612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(false);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-left");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
+    else {
+      TranslateTransition t = TransitionUtil.createTranslateByXTransition(sidePanelRoot, UIDefaults.SCROLL_OFFSET, -612);
+      t.onFinishedProperty().set(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          sidePanelRoot.setVisible(true);
+          FontIcon icon = WidgetFactory.createIcon("mdi2a-arrow-expand-right");
+          toggleSidebarBtn.setGraphic(icon);
+        }
+      });
+      t.play();
+    }
+  }
+
 
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
@@ -248,7 +344,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     else if (jobType.equals(JobType.POV_INSTALL)
         || jobType.equals(JobType.POPPER_MEDIA_INSTALL)
         || jobType.equals(JobType.DIRECTB2S_INSTALL)
-        ) {
+    ) {
       Platform.runLater(() -> {
         if (event.getGameId() > 0) {
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
@@ -263,28 +359,30 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tableChanged(int id, String rom, String gameName) {
     if (id > 0) {
-      this.tableOverviewController.reload(id);
+      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      this.tableOverviewController.reload(refreshedGame, true);
+      //this.tablesSideBarController.setGame(Optional.of(refreshedGame));
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
-        this.tableOverviewController.reload(selection.getId());
+        this.tableOverviewController.reload(selection, true);
       }
     }
 
     if (!StringUtils.isEmpty(rom)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) {
-          this.tableOverviewController.reload(g.getId());
+        if (id != g.getId()) {
+          this.tableOverviewController.reload(g, false);
         }
       }
     }
     if (!StringUtils.isEmpty(gameName)) {
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
-        if (id!=g.getId()) {
-          this.tableOverviewController.reload(g.getId());
+        if (id != g.getId()) {
+          this.tableOverviewController.reload(g, false);
         }
       }
     }

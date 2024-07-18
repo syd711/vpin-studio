@@ -32,6 +32,10 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     this.listeners.add(listener);
   }
 
+  public void removeListener(PreferenceChangeListener listener) {
+    this.listeners.remove(listener);
+  }
+
   public PreferenceEntryRepresentation getPreference(String key) {
     return getRestClient().get(API + "preferences/" + key, PreferenceEntryRepresentation.class);
   }
@@ -46,14 +50,21 @@ public class PreferencesServiceClient extends VPinStudioClientService {
   }
 
   public boolean setJsonPreference(String key, JsonSettings settings) {
+    return setJsonPreference(key, settings, false);
+  }
+
+  public boolean setJsonPreference(String key, JsonSettings settings, boolean silent) {
     try {
       Map<String, Object> data = new HashMap<>();
       data.put("data", settings.toJson());
       boolean result = getRestClient().put(API + "preferences/json/" + key, data);
       jsonSettingsCache.remove(key);
-      notifyPreferenceChange(key, settings);
+      if (!silent) {
+        notifyPreferenceChange(key, settings);
+      }
       return result;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set json preferences: " + e.getMessage(), e);
     }
     return false;
@@ -69,7 +80,8 @@ public class PreferencesServiceClient extends VPinStudioClientService {
         }
       }
       return result;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set preferences: " + e.getMessage(), e);
     }
     return false;
@@ -90,7 +102,8 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       Map<String, Object> values = new HashMap<>();
       values.put(key, value);
       return setPreferences(values);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set preference: " + e.getMessage(), e);
     }
     return false;
@@ -103,7 +116,8 @@ public class PreferencesServiceClient extends VPinStudioClientService {
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Background upload failed: " + e.getMessage(), e);
       throw e;
     }

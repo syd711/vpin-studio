@@ -32,7 +32,7 @@
                       </TilePane>
                       <BorderPane prefWidth="200.0">
                           <left>
-                              <Label fx:id="resolutionLabel" text="Label" BorderPane.alignment="CENTER_LEFT">
+                              <Label fx:id="resolutionLabel" text="" BorderPane.alignment="CENTER_LEFT">
                                   <BorderPane.margin>
                                       <Insets bottom="6.0" left="6.0" />
                                   </BorderPane.margin>

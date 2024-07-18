@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.io;
 
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.*;
 import de.mephisto.vpin.server.archiving.*;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
@@ -13,8 +13,8 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
-import de.mephisto.vpin.server.popper.GameMediaItem;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ public class IOService {
   private GameService gameService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private CardService cardService;
@@ -57,7 +57,7 @@ public class IOService {
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
-      GameEmulator emulator = pinUPConnector.getGameEmulator(installDescriptor.getEmulatorId());
+      GameEmulator emulator = frontendService.getGameEmulator(installDescriptor.getEmulatorId());
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
@@ -151,9 +151,9 @@ public class IOService {
     ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(sourceAdapter, game);
 
-    descriptor.setJob(new TableBackupJob(pinUPConnector, sourceAdapter, adapter, exportDescriptor, game.getId()));
+    descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
 
-    GameMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(PopperScreen.Wheel);
+    FrontendMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     if (mediaItem != null) {
       descriptor.setImageUrl(mediaItem.getUri());
     }

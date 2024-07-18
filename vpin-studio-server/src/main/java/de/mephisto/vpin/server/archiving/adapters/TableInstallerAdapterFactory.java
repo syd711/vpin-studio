@@ -7,7 +7,7 @@ import de.mephisto.vpin.server.archiving.adapters.vpbm.TableInstallerAdapterVpbm
 import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ public class TableInstallerAdapterFactory {
   private SystemService systemService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private VpbmService vpbmService;
@@ -33,7 +33,7 @@ public class TableInstallerAdapterFactory {
 
     switch (archiveType) {
       case VPA: {
-        return new TableInstallerAdapterVpa(systemService, gameService, pinUPConnector, archiveDescriptor, emulator);
+        return new TableInstallerAdapterVpa(gameService, frontendService, archiveDescriptor, emulator);
       }
       case VPBM: {
         return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor);

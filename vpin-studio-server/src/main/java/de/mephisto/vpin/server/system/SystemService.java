@@ -7,12 +7,12 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.keyevent.ShutdownThread;
+import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -35,7 +35,6 @@ import org.springframework.stereotype.Service;
 
 import java.awt.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.DatagramSocket;
 import java.net.ServerSocket;
@@ -58,10 +57,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public static final String DEFAULT_BACKGROUND = "background.png";
   public static final String DMD = "dmd.png";
 
-  private File pinUPSystemInstallationFolder;
+  private File pinupInstallationFolder;
+  private File pinballXInstallationFolder;
+  private File standaloneInstallationFolder;
+
   private File backupFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
+  private FrontendType frontendType = FrontendType.Popper;
 
   @Value("${system.properties}")
   private String systemProperties;
@@ -85,14 +88,21 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         }
       }
 
-
-      //PinUP Popper Folder
-      this.pinUPSystemInstallationFolder = this.resolvePinUPSystemInstallationFolder();
-      if (!store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR)) {
-        store.set(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR, pinUPSystemInstallationFolder.getAbsolutePath().replaceAll("\\\\", "/"));
+      // Determination of the installed Frontend
+      //Standalone Folder
+      if (store.containsKey(STANDALONE_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR))) {
+        this.standaloneInstallationFolder = new File(store.get(STANDALONE_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.Standalone;
       }
-      else {
-        this.pinUPSystemInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
+      //PinballX Folder
+      if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR))) {
+        this.pinballXInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.PinballX;
+      }
+      //PinUP Popper Folder
+      if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
+        this.pinupInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.Popper;
       }
 
       if (!getB2SImageExtractionFolder().exists()) {
@@ -113,55 +123,35 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
       LOG.error(msg, e);
       throw new VPinStudioException(msg, e);
     }
   }
 
-  public String getPupUpMediaFolderName(Game game) {
-    String filename = game.getGameFile().getName();
-    if (filename.endsWith(".fp")) {
-      return "Future Pinball";
-    }
-
-    if (filename.endsWith(".fx")) {
-      return "Pinball FX3";
-    }
-
-    return "Visual Pinball X";
+  public FrontendType getFrontendType() {
+    return frontendType;
   }
-
-  /**
-   * Ensures that the VPin Studio Logo is available for PinUP Popper in the T-Arc.
-   */
-  private void initVPinTableManagerIcon() {
-//    File pcWheelFolder = new File(this.getPinUPSystemFolder(), "POPMedia/PC Games/Wheel/");
-//    if (pcWheelFolder.exists()) {
-//      File wheelIcon = new File(pcWheelFolder, UIDefaults.MANAGER_TITLE + ".png");
-//      if (!wheelIcon.exists()) {
-//        try {
-//          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
-//          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
-//          resourceAsStream.close();
-//          LOG.info("Copied VPin Table Manager icon.");
-//
-//          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
-//          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
-//        } catch (Exception e) {
-//          LOG.info("Failed to copy VPin Manager wheel icon: " + e.getMessage(), e);
-//        }
-//      }
-//    }
+  public void setFrontendType(FrontendType frontendType) {
+    this.frontendType = frontendType;
   }
 
   private void logSystemInfo() {
     LOG.info("********************************* Installation Overview ***********************************************");
     LOG.info(formatPathLog("Locale", Locale.getDefault().getDisplayName()));
     LOG.info(formatPathLog("Charset", Charset.defaultCharset().displayName()));
-    LOG.info(formatPathLog("PinUP System Folder", this.getPinUPSystemFolder()));
-    LOG.info(formatPathLog("PinUP Database File", this.getPinUPDatabaseFile()));
+    LOG.info(formatPathLog("Frontend Type", this.getFrontendType().name()));
+    if (pinupInstallationFolder != null) {
+      LOG.info(formatPathLog("PinupPopper Folder", this.pinupInstallationFolder));
+    }
+    if (pinballXInstallationFolder != null) {
+      LOG.info(formatPathLog("PinballX Folder", this.pinballXInstallationFolder));
+    }
+    if (standaloneInstallationFolder != null) {
+      LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
+    }
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
@@ -227,9 +217,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public Dimension getScreenSize() {
     return Toolkit.getDefaultToolkit().getScreenSize();
   }
-
-  public File getPinUPSystemFolder() {
-    return pinUPSystemInstallationFolder;
+  
+  public File getPinupInstallationFolder() {
+    return pinupInstallationFolder;
+  }
+  public File getPinballXInstallationFolder() {
+    return pinballXInstallationFolder;
+  }
+  public File getStandaloneInstallationFolder() {
+    return standaloneInstallationFolder;
   }
 
   /**
@@ -246,8 +242,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       ds = new DatagramSocket(port);
       ds.setReuseAddress(true);
       return true;
-    } catch (IOException e) {
-    } finally {
+    }
+    catch (IOException e) {
+    }
+    finally {
       if (ds != null) {
         ds.close();
       }
@@ -255,17 +253,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (ss != null) {
         try {
           ss.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           /* should not be thrown */
         }
       }
     }
 
     return false;
-  }
-
-  public File getPinUPDatabaseFile() {
-    return new File(getPinUPSystemFolder(), "PUPDatabase.db");
   }
 
 
@@ -289,7 +284,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       String out = standardOutputFromCommand.toString();
       return out.contains("sdk") & out.contains("dotnet");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to execute .net check: " + e.getMessage(), e);
     }
     return false;
@@ -344,65 +340,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return false;
   }
 
-  public boolean isPopperMenuRunning(List<ProcessHandle> allProcesses) {
-    for (ProcessHandle p : allProcesses) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        if (cmdName.contains("PinUpMenu.exe")) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  public boolean killPopper() {
-    List<ProcessHandle> pinUpProcesses = ProcessHandle
-        .allProcesses()
-        .filter(p -> p.info().command().isPresent() &&
-            (
-                p.info().command().get().contains("PinUpMenu") ||
-                    p.info().command().get().contains("PinUpDisplay") ||
-                    p.info().command().get().contains("PinUpPlayer") ||
-                    p.info().command().get().contains("VPXStarter") ||
-                    p.info().command().get().contains("PinUpPackEditor") ||
-                    p.info().command().get().contains("VPinballX") ||
-                    p.info().command().get().startsWith("VPinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE") ||
-                    p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
-
-    if (pinUpProcesses.isEmpty()) {
-      LOG.info("No PinUP processes found, termination canceled.");
-      return false;
-    }
-
-    for (ProcessHandle pinUpProcess : pinUpProcesses) {
-      String cmd = pinUpProcess.info().command().get();
-      boolean b = pinUpProcess.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
-    }
-    return true;
-  }
-
-  public void restartPopper() {
-    killPopper();
-
-    try {
-      List<String> params = Arrays.asList("cmd", "/c", "start", "PinUpMenu.exe");
-      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(getPinUPSystemFolder());
-      executor.executeCommandAsync();
-
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("Popper restart failed: {}", standardErrorFromCommand);
-      }
-    } catch (Exception e) {
-      LOG.error("Failed to start PinUP Popper again: " + e.getMessage(), e);
-    }
-  }
 
   public File getVPinStudioMenuExe() {
     return new File("./VPin-Studio-Table-Manager.exe");
@@ -464,8 +401,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       ds = new DatagramSocket(port);
       ds.setReuseAddress(true);
       return true;
-    } catch (IOException e) {
-    } finally {
+    }
+    catch (IOException e) {
+    }
+    finally {
       if (ds != null) {
         ds.close();
       }
@@ -473,7 +412,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (ss != null) {
         try {
           ss.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           /* should not be thrown */
         }
       }
@@ -538,7 +478,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     try {
       targetFolder.mkdirs();
       FileUtils.copyFile(source, target);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to backup DB: " + e.getMessage(), e);
     }
     return target.getName();
@@ -564,12 +505,6 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }).start();
 
     initBaseFolders();
-    initVPinTableManagerIcon();
-
-    if (!getPinUPSystemFolder().exists()) {
-      throw new FileNotFoundException("Wrong PinUP Popper installation folder: " + getPinUPSystemFolder().getAbsolutePath() + ".\nPlease fix the PinUP Popper installation path in file ./resources/system.properties");
-    }
-
     logSystemInfo();
   }
 }

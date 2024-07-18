@@ -15,11 +15,13 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   private List<GameRepresentation> games;
 
   private final boolean overwrite;
+  private final boolean simulate;
   private final Iterator<GameRepresentation> gameIterator;
 
-  public TableVpsDataAutoMatchProgressModel(List<GameRepresentation> games, boolean overwrite) {
+  public TableVpsDataAutoMatchProgressModel(List<GameRepresentation> games, boolean overwrite, boolean simulate) {
     super("Auto-Matching");
     this.overwrite = overwrite;
+    this.simulate = simulate;
     this.games = games;
     this.gameIterator = games.iterator();
   }
@@ -52,7 +54,7 @@ public class TableVpsDataAutoMatchProgressModel extends ProgressModel<GameRepres
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameRepresentation game) {
     try {
-      Studio.client.getPinUPPopperService().autoMatch(game.getId(), overwrite);
+      Studio.client.getFrontendService().autoMatch(game.getId(), overwrite, simulate);
       progressResultModel.addProcessed();
     } catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);

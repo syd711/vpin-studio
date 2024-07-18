@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 
@@ -37,10 +39,16 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox vpxMonitoringCheckbox;
 
   @FXML
+  private CheckBox uploadTableBackups;
+
+  @FXML
   private Spinner<Integer> idleSpinner;
 
   @FXML
-  private CheckBox launchPopperCheckbox;
+  private CheckBox launchFrontendCheckbox;
+
+  @FXML
+  private Node launchOnExitOption;
 
   @FXML
   private Button shutdownBtn;
@@ -56,6 +64,9 @@ public class ServerSettingsPreferencesController implements Initializable {
 
   @FXML
   private ComboBox<String> mappingVpsVersionIdCombo;
+
+  @FXML
+  private VBox popperDataMappingFields;
 
   @FXML
   private void onShutdown() {
@@ -89,13 +100,18 @@ public class ServerSettingsPreferencesController implements Initializable {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     vpxMonitorSettings.managedProperty().bindBidirectional(vpxMonitorSettings.visibleProperty());
+    launchOnExitOption.managedProperty().bindBidirectional(launchOnExitOption.visibleProperty());
     vpxMonitorSettings.setVisible(Features.VPX_MONITORING);
+
+    popperDataMappingFields.managedProperty().bindBidirectional(popperDataMappingFields.visibleProperty());
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
+    launchOnExitOption.setVisible(frontendType.supportMedias());
 
     shutdownBtn.setDisable(client.getSystemService().isLocal());
 
     Date startupTime = client.getSystemService().getStartupTime();
-    int dbVersion = client.getPinUPPopperService().getVersion();
-
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
 
@@ -138,8 +154,8 @@ public class ServerSettingsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
-    launchPopperCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
-    launchPopperCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+    launchFrontendCheckbox.setSelected(serverSettings.isLaunchPopperOnExit());
+    launchFrontendCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setLaunchPopperOnExit(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
@@ -153,6 +169,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     vpxMonitoringCheckbox.setSelected(serverSettings.isUseVPXTableMonitor());
     vpxMonitoringCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setUseVPXTableMonitor(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    uploadTableBackups.setSelected(serverSettings.isBackupTableOnOverwrite());
+    uploadTableBackups.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setBackupTableOnOverwrite(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
   }

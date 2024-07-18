@@ -93,16 +93,6 @@ public class AltSoundResource {
     return -1;
   }
 
-  @GetMapping("/set/{id}/{enable}")
-  public boolean enable(@PathVariable("id") int id,
-                        @PathVariable("enable") boolean enable) {
-    Game game = gameService.getGame(id);
-    if (game != null) {
-      return altSoundService.setAltSoundEnabled(game.getRom(), enable);
-    }
-    return false;
-  }
-
   @PostMapping("/upload")
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file,
                                  @RequestParam("objectId") Integer emulatorId) {

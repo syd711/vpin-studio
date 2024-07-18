@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -135,6 +136,23 @@ public class TablesSidebarMameController implements Initializable {
   }
 
 
+  private void onDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete VPin MAME settings for table '" + this.game.get().getGameDisplayName() + "'?");
+    String rom = game.get().getRom();
+    if (StringUtils.isEmpty(rom)) {
+      return;
+    }
+
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      new Thread(() -> {
+        client.getMameService().deleteSettings(rom);
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+        });
+      }).start();
+    }
+  }
+
   @FXML
   private void onRomAliasCopy() {
     Clipboard clipboard = Clipboard.getSystemClipboard();
@@ -154,7 +172,7 @@ public class TablesSidebarMameController implements Initializable {
   @FXML
   private void onVPMAlias() {
 //    if (client.getSystemService().isLocal()) {
-//      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+//      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
 //      File folder = new File(defaultGameEmulator.getMameDirectory());
 //      File textFile = new File(folder, "VPMAlias.txt");
 //      Dialogs.editFile(textFile);
@@ -184,7 +202,7 @@ public class TablesSidebarMameController implements Initializable {
   private void onMameSetup() {
     if (this.game.isPresent()) {
       GameRepresentation g = this.game.get();
-      GameEmulatorRepresentation emulatorRepresentation = client.getPinUPPopperService().getGameEmulator(g.getEmulatorId());
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
       File file = new File(emulatorRepresentation.getMameDirectory(), "Setup64.exe");
       if (!file.exists()) {
         file = new File(emulatorRepresentation.getMameDirectory(), "Setup.exe");
@@ -200,26 +218,34 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onApplyDefaults() {
-    MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
-
-    saveDisabled = true;
-    skipPinballStartupTest.setSelected(defaultOptions.isSkipPinballStartupTest());
-    useSound.setSelected(defaultOptions.isUseSound());
-    useSamples.setSelected(defaultOptions.isUseSamples());
-    compactDisplay.setSelected(defaultOptions.isCompactDisplay());
-    doubleDisplaySize.setSelected(defaultOptions.isDoubleDisplaySize());
-    ignoreRomCrcError.setSelected(defaultOptions.isIgnoreRomCrcError());
-    cabinetMode.setSelected(defaultOptions.isCabinetMode());
-    showDmd.setSelected(defaultOptions.isShowDmd());
-    useExternalDmd.setSelected(defaultOptions.isUseExternalDmd());
-    colorizeDmd.setSelected(defaultOptions.isColorizeDmd());
-    if (defaultOptions.getSoundMode() >= 0) {
-      soundModeCombo.setValue(SOUND_MODES.get(defaultOptions.getSoundMode()));
+    if (options.isExistInRegistry()) {
+      onDelete();
     }
-    forceStereo.setSelected(defaultOptions.isForceStereo());
+    else {
+      MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
-    saveDisabled = false;
-    saveOptions();
+      options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
+      options.setUseSound(defaultOptions.isUseSound());
+      options.setUseSamples(defaultOptions.isUseSamples());
+      options.setCompactDisplay(defaultOptions.isCompactDisplay());
+      options.setDoubleDisplaySize(defaultOptions.isDoubleDisplaySize());
+      options.setIgnoreRomCrcError(defaultOptions.isIgnoreRomCrcError());
+      options.setCabinetMode(defaultOptions.isCabinetMode());
+      options.setShowDmd(defaultOptions.isShowDmd());
+      options.setUseExternalDmd(defaultOptions.isUseExternalDmd());
+      options.setColorizeDmd(defaultOptions.isColorizeDmd());
+      options.setSoundMode(defaultOptions.getSoundMode());
+      options.setForceStereo(defaultOptions.isForceStereo());
+
+      try {
+        client.getMameService().saveOptions(options);
+        EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
+      }
+      catch (Exception e) {
+        LOG.error("Failed to save mame settings: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save mame settings: " + e.getMessage());
+      }
+    }
   }
 
   @FXML
@@ -343,6 +369,9 @@ public class TablesSidebarMameController implements Initializable {
           }
         }
       }
+      else {
+        applyDefaultsBtn.setDisable(true);
+      }
     }
   }
 
@@ -359,6 +388,11 @@ public class TablesSidebarMameController implements Initializable {
     colorizeDmd.setDisable(b);
     soundModeCombo.setDisable(b);
     forceStereo.setDisable(b);
+
+    applyDefaultsBtn.setText(b ? "Override Defaults" : "Apply Defaults");
+
+    Tooltip tooltip = new Tooltip(b ? "Uses the default VPin MAME settings and applies them for the ROM of the selected game." : "Delete the VPin MAME settings for this table so that the system defaults are used.");
+    applyDefaultsBtn.setTooltip(tooltip);
   }
 
   private void saveOptions() {

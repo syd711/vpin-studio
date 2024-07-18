@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
@@ -29,7 +30,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -41,10 +41,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -60,153 +57,160 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane tablesBtn;
 
   @FXML
-  private Pane buttonList;
-
-  private static Pane staticButtonList;
+  private Pane dashboardBtn;
 
   @FXML
   private Pane systemManagerOverlay;
 
-  public static StudioFXController activeController;
-
-  private static BorderPane staticAvatarPane;
-  private static String activeScreenId = "scene-tables.fxml";
-
-  private static Map<String, Parent> viewCache = new HashMap<>();
-  private static Map<String, StudioFXController> controllerCache = new HashMap<>();
-
   @FXML
   private Pane tournamentsBtn;
 
+  @FXML
+  private Pane playersBtn;
+
+  @FXML
+  private Pane competitionsBtn;
+
+  @FXML
+  private Pane systemManagerBtn;
+
+  @FXML
+  private Pane cardsBtn;
+
+  private static BorderPane staticAvatarPane;
+
+  private static NavigationView activeNavigation;
+
+  private final static Map<NavigationItem, NavigationView> navigationItemMap = new HashMap<>();
 
   // Add a public no-args constructor
   public NavigationController() {
   }
 
   public static void refreshControllerCache() {
-    try {
-      StudioFXController studioFXController = controllerCache.get(activeScreenId);
-      loadScreen(null, studioFXController.getClass(), activeScreenId);
-      refreshAvatar();
-    } catch (IOException e) {
-      LOG.error("Refresh of navigation components cache failed: " + e.getMessage(), e);
-    }
+    navigateTo(activeNavigation.getItem());
+    refreshAvatar();
   }
 
   public static void refreshViewCache() {
-    viewCache.clear();
-  }
-
-  @FXML
-  private void onDashboardClick(MouseEvent event) throws IOException {
-    loadScreen(event, DashboardController.class, "scene-dashboard.fxml");
-  }
-
-  @FXML
-  private void onHighscoreCardsClick(MouseEvent event) throws IOException {
-    loadScreen(event, HighscoreCardsController.class, "scene-highscore-cards.fxml");
-  }
-
-  @FXML
-  private void onTablesClick(MouseEvent event) throws IOException {
-    loadScreen(event, TablesController.class, "scene-tables.fxml");
-  }
-
-  @FXML
-  private void onCompetitionsClick(MouseEvent event) throws IOException {
-    loadScreen(event, CompetitionsController.class, "scene-competitions.fxml");
-  }
-
-  @FXML
-  private void onPlayersClick(MouseEvent event) throws IOException {
-    loadScreen(event, PlayersController.class, "scene-players.fxml");
-  }
-
-  @FXML
-  private void onTournamentsClick(MouseEvent event) throws IOException {
-    loadScreen(event, TournamentsController.class, "scene-tournaments.fxml");
-  }
-
-  @FXML
-  private void onSystemClick(MouseEvent event) throws IOException {
-    loadScreen(event, ComponentsController.class, "scene-components.fxml");
-  }
-
-  public static void load(String fxml) throws IOException {
-    StudioFXController studioFXController = controllerCache.get(fxml);
-    loadScreen(null, studioFXController.getClass(), activeScreenId);
-  }
-
-  public static void setInitialController(String key, StudioFXController controller, Parent root) {
-    viewCache.put(key, root);
-    controllerCache.put(key, controller);
-  }
-
-  public static void loadScreen(MouseEvent event, Class<?> controller, String name) throws IOException {
-    if (event != null) {
-      Pane b = (Pane) event.getSource();
-      for (Node node : staticButtonList.getChildren()) {
-        Pane child = (Pane) node;
-        node.getStyleClass().remove("navigation-button-selected");
-        child.getChildren().stream().forEach(c -> c.getStyleClass().remove("navigation-button-selected"));
-      }
-      b.getStyleClass().add("navigation-button-selected");
+    Collection<NavigationView> values = navigationItemMap.values();
+    for (NavigationView value : values) {
+      value.setController(null);
     }
-    else {
+  }
 
+  public static void setInitialController(NavigationItem navigationItem, StudioFXController controller, BorderPane root) {
+    NavigationView navigationView = navigationItemMap.get(navigationItem);
+    navigationView.setRoot(root);
+    navigationView.setController(controller);
+
+    activeNavigation = navigationView;
+  }
+
+  @FXML
+  private void onDashboardClick() {
+    navigateTo(NavigationItem.Dashboard);
+  }
+
+  @FXML
+  private void onHighscoreCardsClick() {
+    navigateTo(NavigationItem.HighscoreCards);
+  }
+
+  @FXML
+  private void onTablesClick() {
+    navigateTo(NavigationItem.Tables);
+  }
+
+  @FXML
+  private void onCompetitionsClick() {
+    navigateTo(NavigationItem.Competitions);
+  }
+
+  @FXML
+  private void onPlayersClick() {
+    navigateTo(NavigationItem.Players);
+  }
+
+  @FXML
+  private void onTournamentsClick() {
+    navigateTo(NavigationItem.Tournaments);
+  }
+
+  @FXML
+  private void onSystemClick() {
+    navigateTo(NavigationItem.SystemManager);
+  }
+
+  public static void navigateTo(NavigationItem item) {
+    navigateTo(item, null);
+  }
+
+  public static void navigateTo(NavigationItem item, NavigationOptions options) {
+    NavigationView navigationView = navigationItemMap.get(item);
+    if (activeNavigation != null) {
+      activeNavigation.getNavigationButton().getStyleClass().remove("navigation-button-selected");
     }
 
-    activeScreenId = name;
+    activeNavigation = navigationView;
+
+    if (!activeNavigation.getNavigationButton().getStyleClass().contains("navigation-button-selected")) {
+      activeNavigation.getNavigationButton().getStyleClass().add("navigation-button-selected");
+    }
+
     Node lookup = Studio.stage.getScene().lookup("#main");
     BorderPane main = (BorderPane) lookup;
 
-    Parent root;
-    if (viewCache.containsKey(name)) {
-      root = viewCache.get(name);
-      activeController = controllerCache.get(name);
-      activeController.onViewActivated();
+    if (activeNavigation.getController() != null) {
+      Parent root = activeNavigation.getRoot();
+      main.setCenter(root);
+      activeNavigation.getController().onViewActivated(options);
     }
     else {
-      FXMLLoader loader = new FXMLLoader(controller.getResource(name));
-      root = loader.load();
-      activeController = loader.<StudioFXController>getController();
-
-      viewCache.put(name, root);
-      controllerCache.put(name, activeController);
+      try {
+        FXMLLoader loader = new FXMLLoader(activeNavigation.getControllerClass().getResource(activeNavigation.getFxml()));
+        Parent root = loader.load();
+        StudioFXController controller = loader.<StudioFXController>getController();
+        activeNavigation.setController(controller);
+        activeNavigation.setRoot(root);
+        main.setCenter(root);
+      }
+      catch (IOException e) {
+        LOG.info("Failed to load main view: " + e.getMessage(), e);
+      }
     }
-
-    main.setCenter(root);
   }
 
   public static void refreshAvatar() {
     PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-    if (avatarEntry!=null && !StringUtils.isEmpty(avatarEntry.getValue())) {
+    if (avatarEntry != null && !StringUtils.isEmpty(avatarEntry.getValue())) {
       image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
     }
 
     PreferenceEntryRepresentation systemNameEntry = client.getPreference(PreferenceNames.SYSTEM_NAME);
     String name = UIDefaults.VPIN_NAME;
-    if (systemNameEntry!=null && !StringUtils.isEmpty(systemNameEntry.getValue())) {
+    if (systemNameEntry != null && !StringUtils.isEmpty(systemNameEntry.getValue())) {
       name = systemNameEntry.getValue();
     }
 
     Tile avatar = TileBuilder.create()
-      .skinType(Tile.SkinType.IMAGE)
-      .prefSize(300, 300)
-      .backgroundColor(Color.TRANSPARENT)
-      .image(image)
-      .imageMask(Tile.ImageMask.ROUND)
-      .text("")
-      .textSize(Tile.TextSize.BIGGER)
-      .textAlignment(TextAlignment.CENTER)
-      .build();
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(300, 300)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .text("")
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
 
     try {
       if (staticAvatarPane.isVisible()) {
         staticAvatarPane.setCenter(avatar);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to refresh avatar tile: " + e.getMessage());
     }
 
@@ -249,11 +253,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
       if (!tournamentsBtn.isVisible()) {
-        try {
-          onTablesClick(null);
-        } catch (IOException e) {
-          //ignore
-        }
+        navigateTo(NavigationItem.Tables);
       }
     }
   }
@@ -261,20 +261,31 @@ public class NavigationController implements Initializable, StudioEventListener,
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentsBtn.managedProperty().bindBidirectional(tournamentsBtn.visibleProperty());
+    cardsBtn.managedProperty().bindBidirectional(cardsBtn.visibleProperty());
 
     staticAvatarPane = this.avatarPane;
     refreshAvatar();
 
     tablesBtn.getStyleClass().add("navigation-button-selected");
 
-    staticButtonList = this.buttonList;
     EventManager.getInstance().addListener(this);
     client.getPreferenceService().addListener(this);
 
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    cardsBtn.setVisible(frontendType.supportMedias());
+
     tournamentsBtn.setVisible(false);
-    if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null) {
+    if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
     }
+
+    navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
+    navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
+    navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
+    navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));
+    navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
+    navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
+    navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
   }
 }

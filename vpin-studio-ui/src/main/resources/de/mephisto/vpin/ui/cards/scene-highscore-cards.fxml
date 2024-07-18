@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
@@ -20,7 +21,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.cards.HighscoreCardsController">
    <center>
       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -59,7 +60,7 @@
                                           <Font size="14.0" />
                                        </font>
                                     </MenuButton>
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="250.0" promptText="Search Table...">
+                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="230.0" promptText="Search Table...">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -73,6 +74,29 @@
                                        </graphic>
                                        <tooltip>
                                           <Tooltip text="Reload all table data" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Open Table in Table Overview" />
+                                       </tooltip>
+                                    </Button>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                                    <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-cog" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Open Screen Validators Settings" />
                                        </tooltip>
                                     </Button>
                                  </items>

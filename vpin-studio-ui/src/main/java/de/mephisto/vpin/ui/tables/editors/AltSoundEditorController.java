@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
+
 public class AltSoundEditorController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundEditorController.class);
 
@@ -146,7 +148,7 @@ public class AltSoundEditorController implements Initializable {
       Label label = new Label(entry.filename.getValue());
 
       if (!entry.exists.getValue()) {
-        label.setStyle("-fx-font-color: #FF3333;-fx-text-fill:#FF3333; -fx-font-weight: bold;");
+        label.setStyle(ERROR_STYLE + "-fx-font-weight: bold;");
       }
       return new SimpleObjectProperty(label);
     });

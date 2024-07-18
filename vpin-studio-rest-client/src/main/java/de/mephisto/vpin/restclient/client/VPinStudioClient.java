@@ -20,22 +20,23 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatusServiceClient;
-import de.mephisto.vpin.restclient.games.GamesServiceClient;
-import de.mephisto.vpin.restclient.games.NVRamsServiceClient;
+import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HigscoreBackupServiceClient;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
-import de.mephisto.vpin.restclient.popper.PinUPPopperServiceClient;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
+import de.mephisto.vpin.restclient.playlists.PlaylistsServiceClient;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
@@ -74,24 +75,28 @@ public class VPinStudioClient implements OverlayClient {
   private final DMDServiceClient dmdServiceClient;
   private final DOFServiceClient dofServiceClient;
   private final GamesServiceClient gamesServiceClient;
+  private final GameMediaServiceClient gameMediaServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
   private final HighscoreCardsServiceClient highscoreCardsServiceClient;
   private final HighscoreCardTemplatesServiceClient highscoreCardTemplatesServiceClient;
   private final HigscoreBackupServiceClient higscoreBackupServiceClient;
+  private final IniServiceClient iniServiceClient;
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
-  private final PinUPPopperServiceClient pinUPPopperServiceClient;
+  private final FrontendServiceClient frontendServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
   private final PinVolServiceClient pinVolServiceClient;
+  private final ResServiceClient resServiceClient;
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
+  private final PlaylistMediaServiceClient playlistMediaServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -112,16 +117,19 @@ public class VPinStudioClient implements OverlayClient {
     this.dofServiceClient = new DOFServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
+    this.gameMediaServiceClient = new GameMediaServiceClient(this);
     this.gameStatusServiceClient = new GameStatusServiceClient(this);
     this.highscoreCardsServiceClient = new HighscoreCardsServiceClient(this);
     this.highscoreCardTemplatesServiceClient = new HighscoreCardTemplatesServiceClient(this);
     this.imageCache = new ImageCache(this);
+    this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
+    this.resServiceClient = new ResServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
-    this.pinUPPopperServiceClient = new PinUPPopperServiceClient(this);
+    this.frontendServiceClient = new FrontendServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
     this.vpxServiceClient = new VpxServiceClient(this);
@@ -130,6 +138,7 @@ public class VPinStudioClient implements OverlayClient {
     this.pinVolServiceClient = new PinVolServiceClient(this);
     this.pinemHiServiceClient = new PINemHiServiceClient(this);
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
+    this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
@@ -142,6 +151,18 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public PlaylistMediaServiceClient getPlaylistMediaService() {
+    return playlistMediaServiceClient;
+  }
+
+  public IniServiceClient getIniService() {
+    return iniServiceClient;
+  }
+
+  public ResServiceClient getResService() {
+    return resServiceClient;
   }
 
   public HighscoreCardTemplatesServiceClient getHighscoreCardTemplatesClient() {
@@ -244,6 +265,10 @@ public class VPinStudioClient implements OverlayClient {
     return gamesServiceClient;
   }
 
+  public GameMediaServiceClient getGameMediaService() {
+    return gameMediaServiceClient;
+  }
+
   public HighscoreCardsServiceClient getHighscoreCardsService() {
     return highscoreCardsServiceClient;
   }
@@ -260,8 +285,8 @@ public class VPinStudioClient implements OverlayClient {
     return playersServiceClient;
   }
 
-  public PinUPPopperServiceClient getPinUPPopperService() {
-    return pinUPPopperServiceClient;
+  public FrontendServiceClient getFrontendService() {
+    return frontendServiceClient;
   }
 
   public PreferencesServiceClient getPreferenceService() {
@@ -336,7 +361,7 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
-  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
     return getAssetService().getGameMediaItem(id, screen);
   }
 

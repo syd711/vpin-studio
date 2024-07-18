@@ -2,19 +2,15 @@ package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionSummaryController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
-import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSavingProgressModel;
 import de.mephisto.vpin.ui.competitions.dialogs.GameRoomCellContainer;
 import de.mephisto.vpin.ui.competitions.dialogs.IScoredGameCellContainer;
@@ -45,6 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredSubscriptionsController implements Initializable, StudioFXController {
@@ -105,9 +102,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   private CompetitionsController competitionsController;
   private WaitOverlayController loaderController;
 
-  private long discordBotId;
-  private DiscordBotStatus discordStatus;
-
   // Add a public no-args constructor
   public IScoredSubscriptionsController() {
   }
@@ -126,7 +120,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
             tableView.scrollTo(competitionRepresentation);
           }
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to create iScored subscription: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
@@ -161,25 +156,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
-    }
-
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    discordStatus = client.getDiscordService().getDiscordStatus(guildId);
-    if (!discordStatus.isValid()) {
-      textfieldSearch.setDisable(true);
-      addBtn.setDisable(true);
-      deleteBtn.setDisable(true);
-      reloadBtn.setDisable(true);
-      tableView.setVisible(true);
-      tableStack.getChildren().remove(loadingOverlay);
-
-      if (competitionWidget != null) {
-        competitionWidget.setVisible(false);
-      }
-
-      tableView.setItems(FXCollections.emptyObservableList());
-      tableView.refresh();
-      return;
     }
 
     new Thread(() -> {
@@ -228,7 +204,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -249,7 +226,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       CompetitionRepresentation value = cellData.getValue();
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
       VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
-      if(table == null) {
+      if (table == null) {
         return new SimpleStringProperty("No matching VPS table found.");
       }
 
@@ -275,7 +252,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       if (vpsTableVersion == null) {
         return new SimpleStringProperty("All versions allowed.");
       }
-      return new SimpleObjectProperty(new VpsVersionContainer(vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
+      return new SimpleObjectProperty(new VpsVersionContainer(vpsTable, vpsTableVersion, getLabelCss(cellData.getValue()), cellData.getValue().getGameId() == 0));
     });
 
     gameRoomColumn.setCellValueFactory(cellData -> {
@@ -300,7 +277,8 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
 
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 
@@ -347,7 +325,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     validationError.setVisible(false);
     bindSearchField();
-    onViewActivated();
+    onViewActivated(null);
   }
 
   private void bindSearchField() {
@@ -380,11 +358,19 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
       newSelection = competition.get();
     }
 
-    boolean disable = newSelection == null;
-//    boolean isOwner = newSelection != null && newSelection.getOwner().equals(String.valueOf(discordStatus.getBotId()));
-    deleteBtn.setDisable(disable);
-    reloadBtn.setDisable(this.discordBotId <= 0);
-    addBtn.setDisable(this.discordBotId <= 0);
+    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    deleteBtn.setDisable(defaultPlayer == null);
+    reloadBtn.setDisable(defaultPlayer == null);
+    addBtn.setDisable(defaultPlayer == null);
+
+    if(defaultPlayer == null) {
+      tableView.setPlaceholder(new Label("                                 No default player set!\n" +
+          "Go to the players section and set the default player for this cabinet!"));
+    }
+    else {
+      tableView.setPlaceholder(new Label("            No IScored subscription found.\nClick the '+' button to create a new one."));
+    }
+
 
     if (competition.isPresent()) {
       validationError.setVisible(newSelection.getValidationState().getCode() > 0);
@@ -410,11 +396,9 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   }
 
   @Override
-  public void onViewActivated() {
-    long guildId = client.getPreference(PreferenceNames.DISCORD_GUILD_ID).getLongValue();
-    this.discordBotId = client.getDiscordService().getDiscordStatus(guildId).getBotId();
+  public void onViewActivated(NavigationOptions options) {
     if (this.competitionsController != null) {
-      refreshView(Optional.empty());
+      onReload();
     }
   }
 
@@ -433,14 +417,17 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
   public static String getLabelCss(CompetitionRepresentation value) {
     String status = "";
     if (value.getValidationState().getCode() > 0) {
-      status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+      status = ERROR_STYLE;
     }
     else {
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
       if (gameRoom != null) {
         IScoredGame gameByVps = gameRoom.getGameByVps(value.getVpsTableId(), value.getVpsTableVersionId());
         if (gameByVps == null) {
-          status = "-fx-font-color: #FF3333;-fx-text-fill:#FF3333;";
+          status = ERROR_STYLE;
+        }
+        else if (gameByVps.isDisabled()) {
+          status = WidgetFactory.DISABLED_TEXT_STYLE;
         }
       }
     }

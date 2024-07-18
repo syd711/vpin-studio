@@ -1,9 +1,10 @@
 package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.popper.TableDetails;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -160,7 +161,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
   private Label notes;
 
   @Override
-  public void onViewActivated() {
+  public void onViewActivated(NavigationOptions options) {
 
   }
 
@@ -232,7 +233,7 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
       gameDisplayName.setText(StringUtils.isEmpty(tableDetails.getGameDisplayName()) ? "-" : tableDetails.getGameDisplayName());
       gameYear.setText(tableDetails.getGameYear() == null ? "-" : String.valueOf(tableDetails.getGameYear()));
       romName.setText(StringUtils.isEmpty(tableDetails.getRomName()) ? "-" : tableDetails.getRomName());
-      gameType.setText(tableDetails.getGameType() == null ? "-" : tableDetails.getGameType().name());
+      gameType.setText(tableDetails.getGameType() == null ? "-" : tableDetails.getGameType());
       gameVersion.setText(StringUtils.isEmpty(tableDetails.getGameVersion()) ? "-" : tableDetails.getGameVersion());
       gameTheme.setText(StringUtils.isEmpty(tableDetails.getGameTheme()) ? "-" : tableDetails.getGameTheme());
       manufacturer.setText(StringUtils.isEmpty(tableDetails.getManufacturer()) ? "-" : tableDetails.getManufacturer());

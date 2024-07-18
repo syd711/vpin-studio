@@ -24,7 +24,7 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getMameDirectory());
     openFolder(folder);
   }
@@ -59,7 +59,7 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
   @FXML
   private void onDmdDevice() {
     if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File exe = new File(folder, "DmdDevice.ini");
       super.editFile(exe);

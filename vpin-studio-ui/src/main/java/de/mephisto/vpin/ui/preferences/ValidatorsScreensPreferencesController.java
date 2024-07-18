@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.PreferencesController;
@@ -25,10 +26,11 @@ public class ValidatorsScreensPreferencesController implements Initializable {
   public static final String MEDIA = "_Media";
   @FXML
   private Parent preferenceList;
-  private List<String> ignoreList;
   private Map<String, ComboBox> optionsCombos;
   private Map<String, ComboBox> mediaCombos;
+
   private ValidationSettings validationSettings;
+  private IgnoredValidationSettings ignoredValidationSettings;
 
   @FXML
   private void onPreferenceChange(ActionEvent event) {
@@ -36,25 +38,16 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     String id = checkBox.getId();
     boolean checked = checkBox.isSelected();
     int code = getValidationCode(id);
-    if (checked) {
-      ignoreList.remove(String.valueOf(code));
-    }
-    else {
-      if (ignoreList.contains(String.valueOf(code))) {
-        return;
-      }
-      ignoreList.add(String.valueOf(code));
-    }
+
 
     ComboBox optionCombo = optionsCombos.get(id + OPTIONS);
     optionCombo.setDisable(!checked);
     ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
     mediaCombo.setDisable(!checked);
 
-    String value = StringUtils.join(ignoreList, ",");
-    Map<String, Object> prefs = new HashMap<>();
-    prefs.put(PreferenceNames.IGNORED_VALIDATIONS, value);
-    client.getPreferenceService().setPreferences(prefs);
+    ignoredValidationSettings.getIgnoredValidators().put(String.valueOf(code), !checked);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, ignoredValidationSettings);
+
     PreferencesController.markDirty(PreferenceType.validationSettings);
   }
 
@@ -78,6 +71,10 @@ public class ValidatorsScreensPreferencesController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    ignoredValidationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.IGNORED_VALIDATIONS, IgnoredValidationSettings.class);
+
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+
     Parent parent = preferenceList;
     List<CheckBox> settingsCheckboxes = new ArrayList<>();
     optionsCombos = new HashMap<>();
@@ -91,19 +88,30 @@ public class ValidatorsScreensPreferencesController implements Initializable {
     validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
 
-    ignoreList = entry.getCSVValue();
     for (CheckBox checkBox : settingsCheckboxes) {
       String id = checkBox.getId();
       int validationCode = getValidationCode(id);
-      checkBox.setSelected(!ignoreList.contains(String.valueOf(validationCode)));
 
       ComboBox optionCombo = optionsCombos.get(id + OPTIONS);
+      ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
+
+      boolean ignored = frontend.getIgnoredValidations().contains(validationCode);
+      if (ignored) {
+        checkBox.setVisible(false);
+        optionCombo.setVisible(false);
+        mediaCombo.setVisible(false);
+        continue;
+      }
+
+      checkBox.setSelected(!ignoredValidationSettings.isIgnored(String.valueOf(validationCode)));
+
+
       optionCombo.setItems(FXCollections.observableList(new ArrayList<>(Arrays.asList(ValidatorOption.values()))));
       initOption(defaultProfile, optionCombo, validationCode);
 
       optionCombo.setDisable(!checkBox.isSelected());
-      ComboBox mediaCombo = mediaCombos.get(id + MEDIA);
       mediaCombo.setDisable(!checkBox.isSelected());
+
       mediaCombo.setItems(FXCollections.observableList(new ArrayList<>(Arrays.asList(ValidatorMedia.values()))));
       initMedia(defaultProfile, mediaCombo, validationCode);
     }

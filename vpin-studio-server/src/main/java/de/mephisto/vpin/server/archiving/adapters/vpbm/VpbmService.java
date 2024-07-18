@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
@@ -40,7 +40,7 @@ public class VpbmService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   public File getArchiveFolder() {
     return new File(getArchivesFolder(), "backups/Visual Pinball X/");
@@ -76,7 +76,7 @@ public class VpbmService implements InitializingBean {
 
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
-    Game game = pinUPConnector.getGameByFilename(vpxName);
+    Game game = frontendService.getGameByFilename(vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
       File exportFile = new File(getExportFolder(), tablename);
@@ -160,7 +160,8 @@ public class VpbmService implements InitializingBean {
         LOG.error("VPBM Command Error: " + standardErrorFromCommand);
         out.setErrOut(standardErrorFromCommand.toString());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       out.setErrOut("Failed to execute VPBM: " + e.getMessage());
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
@@ -169,13 +170,11 @@ public class VpbmService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    new Thread(()-> {
-      Thread.currentThread().setName("VpbmService Thread");
-      refreshConfig();
-    }).start();
+    refreshConfig();
   }
 
   private void refreshConfig() {
+    long start = System.currentTimeMillis();
     try {
       File configFileFolder = new File(VPBM_FOLDER);
       File configJsonFile = new File(configFileFolder, "vPinBackupManager.json");
@@ -223,7 +222,7 @@ public class VpbmService implements InitializingBean {
 
       File vPinballPath = new File(config.getVpinballBasePath());
       if (!vPinballPath.exists()) {
-        File vpBase = pinUPConnector.getDefaultGameEmulator().getInstallationFolder().getParentFile();
+        File vpBase = frontendService.getDefaultGameEmulator().getInstallationFolder().getParentFile();
         config.setVpinballBasePath(vpBase.getAbsolutePath());
         LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
         dirty = true;
@@ -235,8 +234,8 @@ public class VpbmService implements InitializingBean {
       }
 
       if (!pinupSystemPath.exists()) {
-        config.getPinup().setPinupDir(systemService.getPinUPSystemFolder().getAbsolutePath());
-        LOG.info("Updated PinUPSystem path to " + systemService.getPinUPSystemFolder().getAbsolutePath());
+        config.getPinup().setPinupDir(systemService.getPinupInstallationFolder().getAbsolutePath());
+        LOG.info("Updated PinUPSystem path to " + systemService.getPinupInstallationFolder().getAbsolutePath());
         dirty = true;
       }
 
@@ -253,8 +252,9 @@ public class VpbmService implements InitializingBean {
           LOG.info("Updated internal host id to '" + hostId.trim() + "'");
         }
       }
-      LOG.info("Finished vpbm configuration check.");
-    } catch (Exception e) {
+      LOG.info("Finished VPBM configuration check, took " + (System.currentTimeMillis() - start) + "ms.");
+    }
+    catch (Exception e) {
       String msg = "Failed to run configuration check for vpbm: " + e.getMessage();
       LOG.error(msg, e);
     }

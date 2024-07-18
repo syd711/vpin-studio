@@ -142,7 +142,7 @@
     -fx-text-fill: -fx-base-2;
     -fx-font-size : 13px;
     -fx-padding: 0 8 3 4;
-    -fx-pref-width: 250;
+    -fx-pref-width: 260;
  }
 
 .preference-title {
@@ -150,7 +150,7 @@
     -fx-font-color: -fx-base-1;
     -fx-text-fill: -fx-base-1;
     -fx-font-size : 22px;
-    -fx-pref-width: 400;
+    -fx-pref-width: 450;
 }
 
 .preference-subtitle {
@@ -180,7 +180,7 @@
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: -fx-font-1;
-    -fx-pref-width: 250;
+    -fx-pref-width: 260;
     -fx-padding: 4px;
 }
 
@@ -193,7 +193,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
-    -fx-pref-width: 250;
+    -fx-pref-width: 260;
 }
 
 .preference-button-selected {
@@ -205,7 +205,7 @@
     -fx-background-radius: 4 4 4 4;
     -fx-text-fill: #fff8f8;
     -fx-cursor: hand;
-    -fx-pref-width: 250;
+    -fx-pref-width: 260;
 }
 
 .ghost-button {

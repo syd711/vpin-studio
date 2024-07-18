@@ -3,6 +3,9 @@ package de.mephisto.vpin.ui.tables.alx;
 import de.mephisto.vpin.restclient.alx.AlxBarEntry;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import eu.hansolo.tilesfx.Tile;
 import javafx.fxml.FXMLLoader;
@@ -131,8 +134,12 @@ public class AlxFactory {
     try {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
+      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Games Played", "(The total number of table launches from Popper)", String.valueOf(total)));
+      controller.refresh(new AlxTileEntry("Total Games Played", 
+        FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
+        String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);

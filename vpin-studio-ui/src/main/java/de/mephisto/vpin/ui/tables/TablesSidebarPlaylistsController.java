@@ -1,10 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.Playlist;
-import de.mephisto.vpin.restclient.popper.PlaylistGame;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,6 +55,9 @@ public class TablesSidebarPlaylistsController implements Initializable {
   @FXML
   private Hyperlink dismissLink;
 
+  @FXML
+  private Button assetManagerBtn;
+
   private Optional<GameRepresentation> game = Optional.empty();
 
   private TablesSidebarController tablesSidebarController;
@@ -76,6 +82,17 @@ public class TablesSidebarPlaylistsController implements Initializable {
 //    DismissalUtil..dismissValidation(g, options.getValidationStates().get(0));
   }
 
+  @FXML
+  private void onMediaEdit() {
+    if (this.game.isPresent()) {
+      List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
+      if (!playlists.isEmpty()) {
+        PlaylistRepresentation playlistRepresentation = playlists.get(0);
+        TableDialogs.openTableAssetsDialog(this.tablesSidebarController.getTableOverviewController(), this.game.get(), playlistRepresentation, VPinScreen.Wheel);
+      }
+    }
+  }
+
   public void setGame(Optional<GameRepresentation> game) {
     this.game = game;
     this.refreshView(game);
@@ -88,26 +105,32 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dataRoot.setVisible(true);
     errorBox.setVisible(false);
 
-    List<Playlist> playlists = client.getPlaylistsService().getPlaylists();
+    List<PlaylistRepresentation> playlists = client.getPlaylistsService().getPlaylists();
 
     emptyDataBox.setVisible(g.isEmpty());
     dataBox.setVisible(g.isPresent());
+    dataRoot.setVisible(g.isPresent());
+
+    assetManagerBtn.setDisable(g.isEmpty());
 
     this.errorBox.setVisible(false);
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      boolean locked = client.getPinUPPopperService().isPinUPPopperRunning();
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+
+      boolean locked = client.getFrontendService().isFrontendRunning();
       if (locked) {
         emptyDataBox.setVisible(false);
         dataRoot.setVisible(false);
         errorBox.setVisible(true);
         errorTitle.setText("The database is currently locked.");
-        errorText.setText("Exit PinUP Popper to modify playlists.");
+        errorText.setText("Exit [Frontend] to modify playlists.");
+        FrontendUtil.replaceName(errorText, frontend);
         return;
       }
 
-      for (Playlist playlist : playlists) {
+      for (PlaylistRepresentation playlist : playlists) {
         HBox root = new HBox();
         root.setAlignment(Pos.BASELINE_LEFT);
         root.setSpacing(3);
@@ -196,11 +219,11 @@ public class TablesSidebarPlaylistsController implements Initializable {
           public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
             try {
               if (t1) {
-                Playlist update = client.getPlaylistsService().addToPlaylist(playlist, game, fav, globalFav);
+                PlaylistRepresentation update = client.getPlaylistsService().addToPlaylist(playlist, game, fav, globalFav);
                 refreshPlaylist(update, false);
               }
               else {
-                Playlist update = client.getPlaylistsService().removeFromPlaylist(playlist, game);
+                PlaylistRepresentation update = client.getPlaylistsService().removeFromPlaylist(playlist, game);
                 refreshPlaylist(update, false);
               }
             }
@@ -216,7 +239,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           @Override
           public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
             try {
-              Playlist update = client.getPlaylistsService().setPlaylistColor(playlist, PreferenceBindingUtil.toHexString(t1));
+              PlaylistRepresentation update = client.getPlaylistsService().setPlaylistColor(playlist, PreferenceBindingUtil.toHexString(t1));
               refreshPlaylist(update, true);
             }
             catch (Exception e) {
@@ -255,8 +278,8 @@ public class TablesSidebarPlaylistsController implements Initializable {
     }
   }
 
-  private void refreshPlaylist(Playlist playlist, boolean updateAll) {
-    tablesSidebarController.getTablesController().updatePlaylist();
+  private void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
+    tablesSidebarController.getTableOverviewController().updatePlaylist();
 
     if (updateAll) {
       List<PlaylistGame> games = playlist.getGames();

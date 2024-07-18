@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.assets;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 
 /*********************************************************************************************************************
- * Assets / Popper
+ * Assets
  ********************************************************************************************************************/
 public class AssetServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
@@ -49,14 +49,14 @@ public class AssetServiceClient extends VPinStudioClientService {
   }
 
   @Nullable
-  public ByteArrayInputStream getGameMediaItem(int id, @Nullable PopperScreen screen) {
+  public ByteArrayInputStream getGameMediaItem(int id, @Nullable VPinScreen screen) {
     try {
       if (screen == null) {
         return null;
       }
 
-      String url = API + "poppermedia/" + id + "/" + screen.name();
-      if (!client.getImageCache().containsKey(url) && screen.equals(PopperScreen.Wheel)) {
+      String url = API + "media/" + id + "/" + screen.name();
+      if (!client.getImageCache().containsKey(url) && screen.equals(VPinScreen.Wheel)) {
         byte[] bytes = getRestClient().readBinary(url);
         if (bytes == null) {
           bytes = new byte[]{};
@@ -64,7 +64,7 @@ public class AssetServiceClient extends VPinStudioClientService {
         client.getImageCache().put(url, bytes);
       }
 
-      if (screen.equals(PopperScreen.Wheel)) {
+      if (screen.equals(VPinScreen.Wheel)) {
         byte[] imageBytes = client.getImageCache().get(url);
         if (imageBytes == null || imageBytes.length == 0) {
           return null;

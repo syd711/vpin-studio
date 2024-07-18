@@ -36,7 +36,7 @@ public class NotificationStage {
   public NotificationStage(Notification notification) {
     this.notification = notification;
     stage = new Stage();
-    stage.setTitle("Pause Menu");
+    stage.setTitle("VPin UI");
     stage.initStyle(StageStyle.TRANSPARENT);
     stage.setAlwaysOnTop(true);
     Scene scene = null;
@@ -65,7 +65,6 @@ public class NotificationStage {
           y = 1080;
         }
 
-        System.out.println(scaling);
         root.setTranslateY(y);
         root.setTranslateX(-(screenBounds.getWidth() / 2));
         inTransition = TransitionUtil.createTranslateByYTransition(root, 300, (int) -(screenBounds.getHeight() / 2));
@@ -121,7 +120,7 @@ public class NotificationStage {
       });
 
       inTransition.onFinishedProperty().set(event -> {
-        NotificationStageService.getInstance().setLocked(false);
+        NotificationStageService.getInstance().setMaxNotificationsLock(false);
         new Thread(() -> {
           try {
             ThreadUtils.sleep(Duration.of(notification.getDurationSec(), ChronoUnit.SECONDS));

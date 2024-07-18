@@ -63,6 +63,7 @@ public class InputDialogController implements DialogController {
 
     if(defaultValue != null) {
       this.textField.setText(defaultValue);
+      this.textField.selectAll();
       this.inputText = defaultValue;
     }
 

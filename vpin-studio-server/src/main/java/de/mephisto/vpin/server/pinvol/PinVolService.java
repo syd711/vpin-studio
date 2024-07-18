@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import org.jnativehook.keyboard.NativeKeyEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -28,8 +27,6 @@ public class PinVolService implements InitializingBean {
   private SystemService systemService;
 
   private boolean enabled = false;
-
-  private PinVolKeyManager keyManager = new PinVolKeyManager();
 
   public boolean getPinVolAutoStart() {
     return preferencesService.getPreferences().getPinVolAutoStartEnabled();
@@ -61,13 +58,6 @@ public class PinVolService implements InitializingBean {
     executor.setDir(new File("resources"));
     executor.executeCommandAsync();
     LOG.info("Executed PinVol command: " + String.join(" ", commands));
-  }
-
-  public boolean isPinVolKey(NativeKeyEvent event) {
-    if (enabled) {
-      return keyManager.isPinVolKey(event);
-    }
-    return false;
   }
 
   @Override

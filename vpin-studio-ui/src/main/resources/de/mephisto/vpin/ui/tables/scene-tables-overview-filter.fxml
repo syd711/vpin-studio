@@ -75,7 +75,7 @@
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                            </graphic>
                            <tooltip>
-                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing Popper assets." wrapText="true" />
+                              <Tooltip prefWidth="300.0" text="Includes all other validation issues that are not related to missing media assets." wrapText="true" />
                            </tooltip>
                            <HBox.margin>
                               <Insets top="19.0" />
@@ -92,7 +92,9 @@
                         </Label>
                         <CheckBox fx:id="withBackglassCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Backglass Available" />
                         <CheckBox fx:id="withPupPackCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="PUP Pack Available" />
-                        <CheckBox fx:id="withPovIniCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="INI/POV File Available" />
+                        <CheckBox fx:id="withIniCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="INI File Available" />
+                        <CheckBox fx:id="withResCheckBox" layoutX="10.0" layoutY="176.0" mnemonicParsing="false" styleClass="preference-checkbox" text="RES File Available" />
+                        <CheckBox fx:id="withPovCheckBox" layoutX="10.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="POV File Available" />
                         <CheckBox fx:id="withAltColorCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Color Available" />
                         <CheckBox fx:id="withAltSoundCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ALT Sound Available" />
                      </children>
@@ -106,7 +108,7 @@
                         </Label>
                         <CheckBox fx:id="noHighscoreSettingsCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing Highscore Settings" />
                         <CheckBox fx:id="noVpsMappingTableCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Table Entry" />
-                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Table Version Entry" />
+                        <CheckBox fx:id="noVpsMappingVersionCheckBox" layoutX="10.0" layoutY="100.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Missing VPS Version Entry" />
                         <CheckBox fx:id="withNVOffsetCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="NVOffset Set" />
                         <CheckBox fx:id="withAliasCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="ROM Alias Set" />
                         <CheckBox fx:id="noHighscoreSupportCheckBox" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscores Not Supported" />
@@ -117,16 +119,19 @@
                         <Insets top="24.0" />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="21.0" layoutY="71.0" text="Table Status" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <ComboBox fx:id="statusCombo" prefHeight="30.0">
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </ComboBox>
+                  <VBox fx:id="statusSettings">
+                     <children>
+                        <Label text="Table Status" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="6.0" />
+                           </VBox.margin>
+                        </Label>
+                        <ComboBox fx:id="statusCombo" prefHeight="30.0" />
+                     </children>
+                  </VBox>
                   <Label layoutX="10.0" layoutY="655.0" text="Comments" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
@@ -136,7 +141,7 @@
                      </VBox.margin>
                   </Label>
                   <ComboBox fx:id="notesCombo" layoutX="10.0" layoutY="681.0" prefHeight="30.0" />
-                  <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
+                  <HBox fx:id="notPlayedSettings" alignment="CENTER_LEFT" spacing="6.0" styleClass="preference-checkbox">
                      <children>
                         <CheckBox fx:id="notPlayedCheckBox" mnemonicParsing="false" text="Not Played Yet" />
                         <Label>

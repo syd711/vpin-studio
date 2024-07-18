@@ -26,7 +26,7 @@
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="PinUP Popper Setup" />
+                     <Tooltip text="Open Visual Pinball Installation Folder" />
                   </tooltip>
                </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
@@ -49,7 +49,7 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                   </graphic>
                   <tooltip>
-                     <Tooltip text="Kill all VPX and PinUP Popper processes." />
+                     <Tooltip text="Kill all VPX and [Frontend] processes." />
                   </tooltip>
                </Button>
             </items>

@@ -34,7 +34,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File folder = new File(defaultGameEmulator.getMameDirectory());
     openFolder(folder);
   }
@@ -47,7 +47,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
 
   @FXML
   private void onFlexDMD() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File file = new File(defaultGameEmulator.getMameDirectory(), "FlexDMDUI.exe");
     if (!file.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find FlexDMD UI", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -60,7 +60,7 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   @FXML
   private void onDmdDevice() {
     if (client.getSystemService().isLocal()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
+      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
       File folder = new File(defaultGameEmulator.getMameDirectory());
       File exe = new File(folder, "DmdDevice.ini");
       super.editFile(exe);
@@ -89,18 +89,21 @@ public class TabFreezyDMDController extends AbstractComponentTab implements Init
   private void refreshCustomValues() {
     clearCustomValues();
 
-    GameEmulatorRepresentation defaultGameEmulator = client.getPinUPPopperService().getDefaultGameEmulator();
-    ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
-    List<ComponentSummaryEntry> entries = freezySummary.getEntries();
-    for (ComponentSummaryEntry entry : entries) {
-      super.addCustomValue(entry);
+    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
+    if (defaultGameEmulator!=null) {
+      ComponentSummary freezySummary = client.getDmdService().getFreezySummary(defaultGameEmulator.getId());
+      List<ComponentSummaryEntry> entries = freezySummary.getEntries();
+      for (ComponentSummaryEntry entry : entries) {
+        super.addCustomValue(entry);
+      }
     }
   }
 
   @Override
   public void postProcessing(boolean simulate) {
     if (!simulate) {
-      onFlexDMD();
+      // called in TabFlexDMDController
+      //onFlexDMD();
     }
   }
 

@@ -10,7 +10,9 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.util.SystemUtil;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.commons.utils.ZipUtil;
@@ -55,7 +57,7 @@ public class SystemResource {
   private PreferencesService preferencesService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @GetMapping("/startupTime")
   public Date startupTime() {
@@ -74,7 +76,8 @@ public class SystemResource {
     try {
       Path filePath = Path.of("./vpin-studio-server.log");
       return Files.readString(filePath);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error reading log: " + e.getMessage(), e);
     }
     return "";
@@ -104,9 +107,13 @@ public class SystemResource {
 //        ZipUtil.zipFile(studioDB, studioDB.getName(), zipOut);
 //      }
 
-      File popperDB = systemService.getPinUPDatabaseFile();
-      if (popperDB.exists()) {
-        ZipUtil.zipFile(popperDB, popperDB.getName(), zipOut);
+      FrontendConnector frontendConnector = frontendService.getFrontendConnector();
+      if (frontendConnector instanceof PinUPConnector) {
+        PinUPConnector pinUPConnector = (PinUPConnector) frontendConnector;
+        File popperDB = pinUPConnector.getDatabaseFile();
+        if (popperDB.exists()) {
+          ZipUtil.zipFile(popperDB, popperDB.getName(), zipOut);
+        }
       }
 
       zipOut.close();
@@ -117,10 +124,12 @@ public class SystemResource {
       IOUtils.copy(in, out);
       response.flushBuffer();
       LOG.info("Finished exporting log files.");
-    } catch (IOException ex) {
+    }
+    catch (IOException ex) {
       LOG.info("Error writing logs: " + ex.getLocalizedMessage(), ex);
       throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "IOError writing file to output stream");
-    } finally {
+    }
+    finally {
       try {
         if (in != null) {
           in.close();
@@ -128,7 +137,8 @@ public class SystemResource {
         if (out != null) {
           out.close();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Erorr closing streams: " + e.getMessage(), e);
       }
     }
@@ -137,11 +147,9 @@ public class SystemResource {
   @GetMapping("/info")
   public SystemSummary info() {
     SystemSummary info = new SystemSummary();
-    info.setPinupSystemDirectory(systemService.getPinUPSystemFolder().getAbsolutePath());
     info.setScreenInfos(systemService.getScreenInfos());
     info.setArchiveType(systemService.getArchiveType());
     info.setSystemId(SystemUtil.getBoardSerialNumber());
-    info.setPopper15(pinUPConnector.getSqlVersion() >= PinUPConnector.DB_VERSION);
     return info;
   }
 
@@ -172,7 +180,7 @@ public class SystemResource {
   public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled, HttpServletRequest request) {
     boolean b = systemService.setMaintenanceMode(enabled);
     if (enabled) {
-      systemService.killPopper();
+      frontendService.killFrontend();
     }
     else {
       String url = request.getRequestURL().toString();
@@ -180,7 +188,7 @@ public class SystemResource {
       if (remote) {
         ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
         if (serverSettings.isLaunchPopperOnExit()) {
-          systemService.restartPopper();
+          frontendService.restartFrontend();
         }
       }
     }
@@ -243,7 +251,8 @@ public class SystemResource {
       try {
         Thread.sleep(2000);
         systemService.shutdown();
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
     }).start();
@@ -261,7 +270,8 @@ public class SystemResource {
       try {
         Thread.sleep(1000);
         systemService.shutdown();
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
     }).start();
@@ -283,7 +293,8 @@ public class SystemResource {
         return true;
       }
       return ServerInstallationUtil.install();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       return false;
     }
   }
@@ -319,7 +330,8 @@ public class SystemResource {
         String s = FileUtils.readFileToString(file, Charset.defaultCharset());
         data.setData(s);
         return data;
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to read file " + data.getPath() + ": " + e.getMessage(), e);
       }
     }

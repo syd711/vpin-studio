@@ -4,9 +4,10 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import javafx.geometry.Insets;
 import javafx.scene.control.Label;
@@ -35,7 +36,7 @@ public class IScoredGameCellContainer extends HBox {
 
     InputStream gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     if (subscription.getGameId() > 0) {
-      InputStream gameItem = client.getGameMediaItem(subscription.getGameId(), PopperScreen.Wheel);
+      InputStream gameItem = client.getGameMediaItem(subscription.getGameId(), VPinScreen.Wheel);
       if (gameItem != null) {
         gameMediaItem = gameItem;
       }
@@ -65,12 +66,17 @@ public class IScoredGameCellContainer extends HBox {
 
     String vpsTableId = subscription.getVpsTableId();
     String vpsTableVersionId = subscription.getVpsTableVersionId();
-    if(gameRoom != null) {
+    if (gameRoom != null) {
       IScoredGame gameByVps = gameRoom.getGameByVps(vpsTableId, vpsTableVersionId);
-      if(gameByVps == null) {
+      if (gameByVps == null) {
         Label error = new Label("Table not listed anymore.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");
+        column.getChildren().add(error);
+        return;
+      }
+      else if(gameByVps.isDisabled()) {
+        Label error = new Label("Disabled by iScored admin");
         column.getChildren().add(error);
         return;
       }
@@ -78,7 +84,7 @@ public class IScoredGameCellContainer extends HBox {
 
     if (subscription.getGameId() > 0) {
       ScoreSummaryRepresentation summary = Studio.client.getGameService().getGameScores(subscription.getGameId());
-      if (StringUtils.isEmpty(summary.getRaw())) {
+      if (summary == null || StringUtils.isEmpty(summary.getRaw())) {
         Label error = new Label("No valid highscore found.");
         error.setStyle("-fx-padding: 3 6 3 6;");
         error.getStyleClass().add("error-title");

@@ -46,7 +46,7 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(VpaArchiveSource.DEFAULT_ARCHIVE_SOURCE_ID, name + ".vpa");
     assertNotNull(archiveDescriptor);
 
-    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, gameEmulator);
+    TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, buildGameEmulator());
     JobExecutionResult result = adapter.installTable();
     assertNull(result.getError());
   }
@@ -54,6 +54,8 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
   private void exportTable(String tableName) {
     File vpaFile = new File(archiveService.getArchivesFolder(), FilenameUtils.getBaseName(tableName) + ".vpa");
     Game game = gameService.getGameByFilename(tableName);
+    // change the GameEmulator aand use a test one
+    game.setEmulator(buildGameEmulator());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
     JobExecutionResult msg = adapter.createBackup();
     assertNull(msg.getError());

@@ -4,11 +4,12 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameMediaRepresentation;
+import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.drophandler.TableMediaFileDropEventHandler;
@@ -20,13 +21,16 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
 import org.apache.commons.lang3.StringUtils;
@@ -321,9 +325,9 @@ public class TablesSidebarMediaController implements Initializable {
       Button source = (Button) e.getSource();
       String id = source.getId();
       String screen = id.substring(id.lastIndexOf("_") + 1);
-      PopperScreen popperScreen = PopperScreen.valueOf(screen);
+      VPinScreen vPinScreen = VPinScreen.valueOf(screen);
 
-      TableDialogs.openTableAssetsDialog(tablesSidebarController.getTablesController(), game.get(), popperScreen);
+      TableDialogs.openTableAssetsDialog(tablesSidebarController.getTableOverviewController(), game.get(), vPinScreen);
     }
   }
 
@@ -333,12 +337,10 @@ public class TablesSidebarMediaController implements Initializable {
     String id = source.getId();
     String screen = id.substring(id.indexOf("_") + 1);
 
-    GameRepresentation selection = tablesSidebarController.getTablesController().getSelection();
+    GameRepresentation selection = tablesSidebarController.getTableOverviewController().getSelection();
     if (selection != null) {
-      GameEmulatorRepresentation emulator = client.getPinUPPopperService().getGameEmulator(selection.getEmulatorId());
-      File emulatorFolder = new File(emulator.getMediaDirectory());
-      File file = new File(emulatorFolder, screen);
-      SystemUtil.openFolder(file);
+      File screendir = client.getFrontendService().getMediaDirectory(selection.getId(), screen);
+      SystemUtil.openFolder(screendir);
     }
   }
 
@@ -350,7 +352,7 @@ public class TablesSidebarMediaController implements Initializable {
 
 
     GameRepresentation gameRepresentation = game.get();
-    GameMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(PopperScreen.valueOf(screen));
+    FrontendMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(VPinScreen.valueOf(screen));
     if (defaultMediaItem != null) {
       TableDialogs.openMediaDialog(client, gameRepresentation, defaultMediaItem);
     }
@@ -362,13 +364,13 @@ public class TablesSidebarMediaController implements Initializable {
     String id = source.getId();
     String screen = id.substring(id.lastIndexOf("_") + 1);
 
-    PopperScreen popperScreen = PopperScreen.valueOf(screen);
+    VPinScreen vPinScreen = VPinScreen.valueOf(screen);
     GameRepresentation gameRepresentation = game.get();
-    GameMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(popperScreen);
+    FrontendMediaItemRepresentation defaultMediaItem = gameRepresentation.getGameMedia().getDefaultMediaItem(vPinScreen);
     if (defaultMediaItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete", "Delete \"" + defaultMediaItem.getName() + "\"?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        client.getPinUPPopperService().deleteMedia(gameRepresentation.getId(), popperScreen, defaultMediaItem.getName());
+        client.getGameMediaService().deleteMedia(gameRepresentation.getId(), vPinScreen, defaultMediaItem.getName());
         EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), null);
       }
     }
@@ -381,9 +383,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   public void refreshView(Optional<GameRepresentation> g, boolean preview) {
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
-    PopperScreen cardScreen = null;
+    VPinScreen cardScreen = null;
     if (!StringUtils.isEmpty(cardSettings.getPopperScreen())) {
-      cardScreen = PopperScreen.valueOf(cardSettings.getPopperScreen());
+      cardScreen = VPinScreen.valueOf(cardSettings.getPopperScreen());
     }
 
     btn_edit_Audio.setDisable(g.isEmpty());
@@ -399,45 +401,47 @@ public class TablesSidebarMediaController implements Initializable {
     btn_edit_PlayField.setDisable(g.isEmpty());
     btn_edit_Wheel.setDisable(g.isEmpty());
 
-    btn_view_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Topper).isEmpty());
-    btn_view_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Menu).isEmpty());
-    btn_view_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.BackGlass).isEmpty());
-    btn_view_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Loading).isEmpty());
-    btn_view_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameInfo).isEmpty());
-    btn_view_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.DMD).isEmpty());
-    btn_view_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Other2).isEmpty());
-    btn_view_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameHelp).isEmpty());
-    btn_view_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.PlayField).isEmpty());
-    btn_view_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Wheel).isEmpty());
+    btn_view_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Topper).isEmpty());
+    btn_view_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Menu).isEmpty());
+    btn_view_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.BackGlass).isEmpty());
+    btn_view_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Loading).isEmpty());
+    btn_view_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.GameInfo).isEmpty());
+    btn_view_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.DMD).isEmpty());
+    btn_view_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Other2).isEmpty());
+    btn_view_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.GameHelp).isEmpty());
+    btn_view_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.PlayField).isEmpty());
+    btn_view_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).isEmpty());
 
-    btn_delete_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Topper).isEmpty());
-    btn_delete_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Menu).isEmpty());
-    btn_delete_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.BackGlass).isEmpty());
-    btn_delete_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Loading).isEmpty());
-    btn_delete_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameInfo).isEmpty());
-    btn_delete_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.DMD).isEmpty());
-    btn_delete_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Other2).isEmpty());
-    btn_delete_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.GameHelp).isEmpty());
-    btn_delete_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.PlayField).isEmpty());
-    btn_delete_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(PopperScreen.Wheel).isEmpty());
+    btn_delete_Topper.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Topper).isEmpty());
+    btn_delete_Menu.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Menu).isEmpty());
+    btn_delete_BackGlass.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.BackGlass).isEmpty());
+    btn_delete_Loading.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Loading).isEmpty());
+    btn_delete_GameInfo.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.GameInfo).isEmpty());
+    btn_delete_DMD.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.DMD).isEmpty());
+    btn_delete_Other2.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Other2).isEmpty());
+    btn_delete_GameHelp.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.GameHelp).isEmpty());
+    btn_delete_PlayField.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.PlayField).isEmpty());
+    btn_delete_Wheel.setDisable(g.isEmpty() || g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).isEmpty());
 
     if (g.isPresent()) {
-      btn_edit_Audio.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Audio).size()));
-      btn_edit_AudioLaunch.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.AudioLaunch).size()));
-      btn_edit_Topper.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Topper).size()));
-      btn_edit_Menu.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Menu).size()));
-      btn_edit_BackGlass.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.BackGlass).size()));
-      btn_edit_Loading.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Loading).size()));
-      btn_edit_GameInfo.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.GameInfo).size()));
-      btn_edit_DMD.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.DMD).size()));
-      btn_edit_Other2.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Other2).size()));
-      btn_edit_GameHelp.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.GameHelp).size()));
-      btn_edit_PlayField.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.PlayField).size()));
-      btn_edit_Wheel.setText(String.valueOf(g.get().getGameMedia().getMediaItems(PopperScreen.Wheel).size()));
-
       GameRepresentation game = g.get();
-      GameMediaRepresentation gameMedia = game.getGameMedia();
-      refreshMedia(gameMedia, cardScreen, preview);
+      DirectB2SData directB2SData = client.getBackglassServiceClient().getDirectB2SData(game.getId());
+
+      btn_edit_Audio.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Audio).size()));
+      btn_edit_AudioLaunch.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.AudioLaunch).size()));
+      btn_edit_Topper.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Topper).size()));
+      btn_edit_Menu.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Menu).size()));
+      btn_edit_BackGlass.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.BackGlass).size()));
+      btn_edit_Loading.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Loading).size()));
+      btn_edit_GameInfo.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.GameInfo).size()));
+      btn_edit_DMD.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.DMD).size()));
+      btn_edit_Other2.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Other2).size()));
+      btn_edit_GameHelp.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.GameHelp).size()));
+      btn_edit_PlayField.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.PlayField).size()));
+      btn_edit_Wheel.setText(String.valueOf(g.get().getGameMedia().getMediaItems(VPinScreen.Wheel).size()));
+
+      FrontendMediaRepresentation gameMedia = game.getGameMedia();
+      refreshMedia(gameMedia, cardScreen, preview, directB2SData);
     }
     else {
       btn_edit_Audio.setText(" ");
@@ -457,10 +461,10 @@ public class TablesSidebarMediaController implements Initializable {
     }
   }
 
-  public void refreshMedia(GameMediaRepresentation gameMedia, PopperScreen cardScreen, boolean preview) {
+  public void refreshMedia(FrontendMediaRepresentation gameMedia, VPinScreen cardScreen, boolean preview, DirectB2SData directB2SData) {
     Platform.runLater(() -> {
-      PopperScreen[] values = PopperScreen.values();
-      for (PopperScreen screen : values) {
+      VPinScreen[] values = VPinScreen.values();
+      for (VPinScreen screen : values) {
         BorderPane mediaRoot = this.getScreenBorderPaneFor(screen);
         mediaRoot.getStyleClass().remove("highscore-screen");
         Tooltip.uninstall(mediaRoot, highscoreCardTooltip);
@@ -469,8 +473,29 @@ public class TablesSidebarMediaController implements Initializable {
           Tooltip.install(mediaRoot, highscoreCardTooltip);
         }
 
-        GameMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
+        FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(screen);
         WidgetFactory.createMediaContainer(client, mediaRoot, item, preview);
+
+        Node center = mediaRoot.getCenter();
+        if (screen.equals(VPinScreen.BackGlass) && center instanceof Label && directB2SData != null && directB2SData.isBackgroundAvailable()) {
+          VBox box = new VBox(3);
+          box.setAlignment(Pos.CENTER);
+          box.getChildren().add(center);
+          Label l = new Label("Backglass available");
+          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
+          box.getChildren().add(l);
+          mediaRoot.setCenter(box);
+        }
+
+        if (screen.equals(VPinScreen.Menu) && center instanceof Label && directB2SData != null && directB2SData.isDmdImageAvailable()) {
+          VBox box = new VBox(3);
+          box.setAlignment(Pos.CENTER);
+          box.getChildren().add(center);
+          Label l = new Label("FullDMD available");
+          l.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
+          box.getChildren().add(l);
+          mediaRoot.setCenter(box);
+        }
       }
     });
   }
@@ -479,40 +504,40 @@ public class TablesSidebarMediaController implements Initializable {
     this.tablesSidebarController = tablesSidebarController;
 
     screenAudio.setOnDragOver(new FileDragEventHandler(screenAudio, false, "mp3"));
-    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Audio, "mp3"));
+    screenAudio.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Audio, "mp3"));
 
     screenAudioLaunch.setOnDragOver(new FileDragEventHandler(screenAudioLaunch, false, "mp3"));
-    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.AudioLaunch, "mp3"));
+    screenAudioLaunch.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.AudioLaunch, "mp3"));
 
     screenTopper.setOnDragOver(new FileDragEventHandler(screenTopper, false, "mp4", "png", "jpg"));
-    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Topper, "mp4", "png", "jpg"));
+    screenTopper.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Topper, "mp4", "png", "jpg"));
 
     screenLoading.setOnDragOver(new FileDragEventHandler(screenLoading, false, "mp4"));
-    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Loading, "mp4"));
+    screenLoading.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Loading, "mp4"));
 
     screenPlayField.setOnDragOver(new FileDragEventHandler(screenPlayField, false, "mp4"));
-    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.PlayField, "mp4"));
+    screenPlayField.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.PlayField, "mp4"));
 
     screenBackGlass.setOnDragOver(new FileDragEventHandler(screenBackGlass, false, "mp4", "png", "jpg"));
-    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.BackGlass, "mp4", "png", "jpg"));
+    screenBackGlass.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.BackGlass, "mp4", "png", "jpg"));
 
     screenGameInfo.setOnDragOver(new FileDragEventHandler(screenGameInfo, false, "mp4", "png", "jpg"));
-    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameInfo, "mp4", "png", "jpg"));
+    screenGameInfo.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.GameInfo, "mp4", "png", "jpg"));
 
     screenGameHelp.setOnDragOver(new FileDragEventHandler(screenGameHelp, false, "mp4", "png", "jpg"));
-    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.GameHelp, "mp4", "png", "jpg"));
+    screenGameHelp.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.GameHelp, "mp4", "png", "jpg"));
 
     screenMenu.setOnDragOver(new FileDragEventHandler(screenMenu, false, "mp4", "png", "jpg"));
-    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Menu, "mp4", "png", "jpg"));
+    screenMenu.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Menu, "mp4", "png", "jpg"));
 
     screenDMD.setOnDragOver(new FileDragEventHandler(screenDMD, false, "mp4", "png", "jpg"));
-    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.DMD, "mp4", "png", "jpg"));
+    screenDMD.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.DMD, "mp4", "png", "jpg"));
 
     screenOther2.setOnDragOver(new FileDragEventHandler(screenOther2, false, "mp4", "png", "jpg"));
-    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Other2, "mp4", "png", "jpg"));
+    screenOther2.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Other2, "mp4", "png", "jpg"));
 
     screenWheel.setOnDragOver(new FileDragEventHandler(screenWheel, false, "png", "apng", "jpg"));
-    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTablesController(), PopperScreen.Wheel, "png", "apng", "jpg"));
+    screenWheel.setOnDragDropped(new TableMediaFileDropEventHandler(tablesSidebarController.getTableOverviewController(), VPinScreen.Wheel, "png", "apng", "jpg"));
   }
 
   public void resetMedia() {
@@ -530,7 +555,7 @@ public class TablesSidebarMediaController implements Initializable {
     disposeMediaPane(screenWheel);
   }
 
-  private BorderPane getScreenBorderPaneFor(PopperScreen value) {
+  private BorderPane getScreenBorderPaneFor(VPinScreen value) {
     BorderPane lookup = (BorderPane) mediaRootPane.lookup("#screen" + value.name());
     if (lookup == null) {
       throw new UnsupportedOperationException("No screen found for id 'screen" + value.name() + "'");
@@ -554,6 +579,9 @@ public class TablesSidebarMediaController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
+
     top_Audio.setVisible(false);
     top_AudioLaunch.setVisible(false);
     top_Topper.setVisible(false);
@@ -582,7 +610,7 @@ public class TablesSidebarMediaController implements Initializable {
     btn_Wheel.setVisible(isOpenFolderSupported);
 
 
-    Predicate showPredicate = o -> tablesSidebarController.getTablesController().getSelection() != null;
+    Predicate showPredicate = o -> tablesSidebarController.getTableOverviewController().getSelection() != null;
 
     screenAudio.hoverProperty().addListener(new VisibilityHoverListener(top_Audio, showPredicate));
     screenAudioLaunch.hoverProperty().addListener(new VisibilityHoverListener(top_AudioLaunch, showPredicate));
@@ -600,6 +628,20 @@ public class TablesSidebarMediaController implements Initializable {
     screenOther2.hoverProperty().addListener(new VisibilityHoverListener(top_Other2, showPredicate));
     screenWheel.hoverProperty().addListener(new VisibilityHoverListener(top_Wheel, showPredicate));
 
+    screenAudio.setVisible(supportedScreens.contains(VPinScreen.Audio));
+    screenAudioLaunch.setVisible(supportedScreens.contains(VPinScreen.AudioLaunch));
+    screenDMD.setVisible(supportedScreens.contains(VPinScreen.DMD));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenMenu.setVisible(supportedScreens.contains(VPinScreen.Menu));
+    screenGameInfo.setVisible(supportedScreens.contains(VPinScreen.GameInfo));
+    screenGameHelp.setVisible(supportedScreens.contains(VPinScreen.GameHelp));
+    screenLoading.setVisible(supportedScreens.contains(VPinScreen.Loading));
+    screenBackGlass.setVisible(supportedScreens.contains(VPinScreen.BackGlass));
+    screenPlayField.setVisible(supportedScreens.contains(VPinScreen.PlayField));
+    screenTopper.setVisible(supportedScreens.contains(VPinScreen.Topper));
+    screenOther2.setVisible(supportedScreens.contains(VPinScreen.Other2));
+    screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
+
     Studio.stage.focusedProperty().addListener((observable, oldValue, newValue) -> {
       try {
         List<MediaView> mediaViews = JFXHelper.getMediaPlayers(mediaRoot);
@@ -616,7 +658,8 @@ public class TablesSidebarMediaController implements Initializable {
             }
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to update focus state of media players: " + e.getMessage());
       }
     });

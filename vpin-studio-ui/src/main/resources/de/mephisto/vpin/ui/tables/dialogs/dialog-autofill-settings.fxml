@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.AutoFillSelectionController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
+            <Button fx:id="autoFillBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAutoFill" styleClass="submit-button" text="Auto-Fill">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <BorderPane prefWidth="520.0" BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <center>
+            <VBox spacing="3.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="24.0" />
+               </BorderPane.margin>
+               <children>
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Select the fields that should be written on auto-fill.">
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin></Label>
+                  <HBox spacing="46.0">
+                     <children>
+                        <VBox spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="author" mnemonicParsing="false" styleClass="default-text" text="Author" />
+                              <CheckBox fx:id="category" mnemonicParsing="false" styleClass="default-text" text="Category" />
+                              <CheckBox fx:id="designBy" mnemonicParsing="false" styleClass="default-text" text="Design By" />
+                              <CheckBox fx:id="details" mnemonicParsing="false" styleClass="default-text" text="Details" />
+                              <CheckBox fx:id="gameTheme" mnemonicParsing="false" styleClass="default-text" text="Game Theme" />
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="gameType" mnemonicParsing="false" styleClass="default-text" text="Game Type" />
+                              <CheckBox fx:id="gameVersion" mnemonicParsing="false" styleClass="default-text" text="Game Version" />
+                              <CheckBox fx:id="gameYear" mnemonicParsing="false" styleClass="default-text" text="Game Year" />
+                              <CheckBox fx:id="ipdbNumber" mnemonicParsing="false" styleClass="default-text" text="IPDB Number" />
+                              <CheckBox fx:id="manufacturer" mnemonicParsing="false" styleClass="default-text" text="Manufacturer" />
+                           </children>
+                        </VBox>
+                        <VBox layoutX="168.0" layoutY="10.0" spacing="6.0">
+                           <children>
+                              <CheckBox fx:id="notes" mnemonicParsing="false" styleClass="default-text" text="Notes" />
+                              <CheckBox fx:id="numberOfPlayers" mnemonicParsing="false" styleClass="default-text" text="Number Of Players" />
+                              <CheckBox fx:id="tags" mnemonicParsing="false" styleClass="default-text" text="Tags" />
+                              <CheckBox fx:id="url" mnemonicParsing="false" styleClass="default-text" text="URL" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </center>
+         <bottom>
+            <CheckBox fx:id="overwrite" mnemonicParsing="false" styleClass="default-text" text="Overwrite existing values" BorderPane.alignment="CENTER_LEFT" />
+         </bottom>
+      </BorderPane>
+   </center>
+</BorderPane>

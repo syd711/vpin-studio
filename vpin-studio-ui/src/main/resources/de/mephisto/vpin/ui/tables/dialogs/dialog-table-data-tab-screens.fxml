@@ -4,10 +4,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Tooltip?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -26,49 +23,50 @@
             <Font name="System Bold" size="14.0" />
          </font>
       </Label>
-      <GridPane>
-         <columnConstraints>
-            <ColumnConstraints hgrow="SOMETIMES" />
-         </columnConstraints>
-         <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-         </rowConstraints>
+      <VBox prefHeight="200.0" prefWidth="100.0" spacing="6.0">
          <children>
-            <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" text="Topper" GridPane.rowIndex="3">
+            <CheckBox fx:id="useEmuDefaultsCheckbox" mnemonicParsing="false" text="Use Emulator Defaults">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="DMD (4:1 slim)" GridPane.rowIndex="4">
+            <CheckBox fx:id="hideAllCheckbox" mnemonicParsing="false" prefHeight="20.0" prefWidth="198.0" text="Hide All">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </CheckBox>
+            <Label styleClass="default-text" text="Keep the following displays on:" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="14.0" />
+               </font>
+            </Label>
+            <CheckBox fx:id="topperCheckbox" mnemonicParsing="false" text="Topper">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </CheckBox>
+            <CheckBox fx:id="dmdCheckbox" mnemonicParsing="false" text="DMD (4:1 slim)">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="backglassCheckbox" layoutX="170.0" layoutY="45.0" mnemonicParsing="false" text="Backglass" GridPane.rowIndex="5">
+            <CheckBox fx:id="backglassCheckbox" mnemonicParsing="false" text="Backglass">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="playfieldCheckbox" layoutX="194.0" layoutY="76.0" mnemonicParsing="false" text="Playfield" GridPane.rowIndex="6">
+            <CheckBox fx:id="playfieldCheckbox" mnemonicParsing="false" text="Playfield">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.rowIndex="7">
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
                   <CheckBox fx:id="musicCheckbox" mnemonicParsing="false" text="Music">
                      <font>
@@ -85,47 +83,37 @@
                   </Label>
                </children>
             </HBox>
-            <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" text="Full DMD/Apron" GridPane.rowIndex="8">
+            <CheckBox fx:id="apronCheckbox" mnemonicParsing="false" text="Full DMD/Apron">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="wheelbarCheckbox" layoutX="245.0" layoutY="168.0" mnemonicParsing="false" text="Wheelbar" GridPane.rowIndex="9">
+            <CheckBox fx:id="wheelbarCheckbox" mnemonicParsing="false" text="Wheelbar">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="loadingCheckbox" layoutX="245.0" layoutY="198.0" mnemonicParsing="false" text="Loading" GridPane.rowIndex="10">
+            <CheckBox fx:id="loadingCheckbox" mnemonicParsing="false" text="Loading">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="otherCheckbox" layoutX="245.0" layoutY="228.0" mnemonicParsing="false" text="Other" GridPane.rowIndex="11">
+            <CheckBox fx:id="otherCheckbox" mnemonicParsing="false" text="Other">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="flyerCheckbox" layoutX="245.0" layoutY="259.0" mnemonicParsing="false" text="Flyer" GridPane.rowIndex="12">
+            <CheckBox fx:id="flyerCheckbox" mnemonicParsing="false" text="Flyer">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
-            <CheckBox fx:id="helpCheckbox" layoutX="245.0" layoutY="289.0" mnemonicParsing="false" text="Help" GridPane.rowIndex="13">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="useEmuDefaultsCheckbox" layoutX="245.0" layoutY="106.0" mnemonicParsing="false" text="Use Emulator Defaults">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </CheckBox>
-            <CheckBox fx:id="hideAllCheckbox" layoutX="245.0" layoutY="15.0" mnemonicParsing="false" prefHeight="20.0" prefWidth="198.0" text="Hide All" GridPane.rowIndex="1">
+            <CheckBox fx:id="helpCheckbox" mnemonicParsing="false" text="Help">
                <font>
                   <Font size="14.0" />
                </font>
             </CheckBox>
          </children>
-      </GridPane>
+      </VBox>
    </children>
 </VBox>

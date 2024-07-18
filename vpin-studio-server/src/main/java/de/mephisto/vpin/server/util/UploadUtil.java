@@ -21,6 +21,8 @@ public class UploadUtil {
       if (target.exists() && !target.delete()) {
         throw new UnsupportedOperationException("Failed to delete existing target file " + target.getAbsolutePath());
       }
+      // make sure directories are created
+      target.getParentFile().mkdirs();
 
       BufferedInputStream in = new BufferedInputStream(file.getInputStream());
       FileOutputStream fileOutputStream = new FileOutputStream(target);

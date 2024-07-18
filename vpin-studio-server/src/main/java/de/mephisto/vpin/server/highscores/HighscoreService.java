@@ -12,10 +12,11 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.popper.PinUPConnector;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -58,7 +59,7 @@ public class HighscoreService implements InitializingBean {
   private NVRamService nvRamService;
 
   @Autowired
-  private PinUPConnector pinUPConnector;
+  private FrontendService frontendService;
 
   @Autowired
   private ScoreFilter scoreFilter;
@@ -77,8 +78,10 @@ public class HighscoreService implements InitializingBean {
   public HighscoreFiles getHighscoreFiles(@NonNull Game game) {
     HighscoreFiles highscoreFiles = new HighscoreFiles();
 
-    VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
-    highscoreFiles.setVpRegEntries(reg.getEntries());
+    if (game.getEmulator().getVPRegFile().exists()) {
+      VPReg reg = new VPReg(game.getEmulator().getVPRegFile());
+      highscoreFiles.setVpRegEntries(reg.getEntries());
+    }
 
     File userFolder = game.getEmulator().getUserFolder();
     if (userFolder.exists()) {
@@ -259,7 +262,7 @@ public class HighscoreService implements InitializingBean {
       List<Score> scores = parseScores(highscore.getCreatedAt(), highscore.getRaw(), highscore.getGameId(), serverId);
       for (Score score : scores) {
         if (score.getPlayerInitials().equalsIgnoreCase(initials)) {
-          Game game = pinUPConnector.getGame(score.getGameId());
+          Game game = frontendService.getGame(score.getGameId());
           if (game == null) {
             deleteScores(score.getGameId(), true);
             continue;
@@ -343,14 +346,14 @@ public class HighscoreService implements InitializingBean {
 
 
   @NonNull
-  public Optional<Highscore> getHighscore(@NonNull Game game, boolean forceScan) {
+  public Optional<Highscore> getHighscore(@NonNull Game game, boolean forceScan, EventOrigin eventOrigin) {
     Optional<Highscore> highscore = Optional.empty();
     try {
       highscore = highscoreRepository.findByGameId(game.getId());
       if (forceScan) {
         if (highscore.isEmpty() && !StringUtils.isEmpty(game.getRom())) {
-          HighscoreMetadata metadata = scanScore(game);
-          return updateHighscore(game, metadata);
+          HighscoreMetadata metadata = scanScore(game, eventOrigin);
+          return updateHighscore(game, metadata, eventOrigin);
         }
       }
     }
@@ -361,12 +364,12 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public HighscoreMetadata scanScore(@NonNull Game game) {
+  public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
     if (!game.isVpxGame()) {
       throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
-    updateHighscore(game, highscoreMetadata);
+    updateHighscore(game, highscoreMetadata, eventOrigin);
     return highscoreMetadata;
   }
 
@@ -380,16 +383,15 @@ public class HighscoreService implements InitializingBean {
    * - a Highscore record is only created, when an RAW data is present
    * - for the first record Highscore, a version is created too with an empty OLD value
    * - for every newly recorded Highscore, an additional version is stored
-   * <p>
-   * <p>
    * The method must be synchronized because multiple UI threads access it after a competition creation.
    *
-   * @param game     the game to update the highscore for
-   * @param metadata the extracted metadata from the system
+   * @param game        the game to update the highscore for
+   * @param metadata    the extracted metadata from the system
+   * @param eventOrigin the initiator of the scan, important for update emitting
    * @return the highscore optional if a score could be extracted
    */
   @VisibleForTesting
-  protected synchronized Optional<Highscore> updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) {
+  protected synchronized Optional<Highscore> updateHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata, @NonNull EventOrigin eventOrigin) {
     //we don't do anything if not value is extract, this may lead to superflous system calls, but we have time
     if (StringUtils.isEmpty(metadata.getRaw())) {
       return Optional.empty();
@@ -472,7 +474,7 @@ public class HighscoreService implements InitializingBean {
 
             if (!scoreFilter.isScoreFiltered(newScore)) {
               //finally, fire the update event to notify all listeners
-              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore);
+              HighscoreChangeEvent event = new HighscoreChangeEvent(game, oldScore, newScore, newRaw, oldScores.size(), initialScore, eventOrigin);
               triggerHighscoreChange(event);
             }
           }
@@ -616,7 +618,7 @@ public class HighscoreService implements InitializingBean {
     try {
       List<File> vpRegFiles = new ArrayList<>();
       vpRegEntries.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File vpRegFile = gameEmulator.getVPRegFile();
         if (vpRegFile.exists() && !vpRegFiles.contains(vpRegFile)) {
@@ -636,7 +638,7 @@ public class HighscoreService implements InitializingBean {
   public void refreshHighscoreFiles() {
     try {
       highscoreFiles.clear();
-      List<GameEmulator> gameEmulators = pinUPConnector.getVpxGameEmulators();
+      List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
       for (GameEmulator gameEmulator : gameEmulators) {
         File[] files = gameEmulator.getUserFolder().listFiles((dir, name) -> name.endsWith(".txt"));
         if (files != null) {

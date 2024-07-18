@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.utils.media;
 
-import de.mephisto.vpin.restclient.games.GameMediaItemRepresentation;
-import de.mephisto.vpin.restclient.popper.PopperScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.scene.layout.BorderPane;
@@ -16,45 +16,51 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   private final static Logger LOG = LoggerFactory.getLogger(VideoMediaPlayer.class);
   public static final int MEDIA_SIZE = 280;
 
-  private PopperScreen screen;
+  private VPinScreen screen;
 
   private final String mimeType;
 
   private final boolean dialogRendering;
 
-  private GameMediaItemRepresentation mediaItem;
+  private FrontendMediaItemRepresentation mediaItem;
   private MediaView mediaView;
   private Media media;
 
   private double fitWidth = -1;
   private double fitHeight = -1;
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, @NonNull String mimeType) {
+  private boolean invertPlayfield;
+
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, 
+      @NonNull String mimeType, boolean invertPlayfield) {
     super(parent, url);
     this.mimeType = mimeType;
     this.dialogRendering = true;
+    this.invertPlayfield = invertPlayfield;
 
     if (screenName.equalsIgnoreCase("PlayField")) {
-      screen = PopperScreen.PlayField;
+      screen = VPinScreen.PlayField;
     }
     else if (screenName.equalsIgnoreCase("Loading")) {
-      screen = PopperScreen.Loading;
+      screen = VPinScreen.Loading;
     }
 
     this.render();
   }
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull GameMediaItemRepresentation mediaItem, @NonNull String url, @NonNull String mimeType, boolean dialogRendering) {
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
+                          @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;
     this.dialogRendering = dialogRendering;
+    this.invertPlayfield = invertPlayfield;
 
     if (mediaItem.getScreen().equalsIgnoreCase("PlayField")) {
-      screen = PopperScreen.PlayField;
+      screen = VPinScreen.PlayField;
     }
     else if (mediaItem.getScreen().equalsIgnoreCase("Loading")) {
-      screen = PopperScreen.Loading;
+      screen = VPinScreen.Loading;
     }
 
     this.render();
@@ -116,9 +122,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       prefHeight = prefHeight - 32;
     }
 
-    if (PopperScreen.PlayField.equals(screen)) {
+    if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90);
+        mediaView.setRotate(90 + (invertPlayfield? 180: 0));
         mediaView.setFitWidth(prefHeight);
         mediaView.setFitHeight(prefWidth);
 
@@ -141,7 +147,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         mediaView.setFitHeight(prefHeight);
       }
     }
-    else if (PopperScreen.Loading.equals(screen)) {
+    else if (VPinScreen.Loading.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
         mediaView.setRotate(90);
         mediaView.setFitWidth(prefHeight);
@@ -159,7 +165,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   public void scaleForDialog(String screen) {
-    if (PopperScreen.PlayField.name().equals(screen) || PopperScreen.Loading.name().equals(screen)) {
+    if (VPinScreen.PlayField.name().equals(screen) || VPinScreen.Loading.name().equals(screen)) {
       mediaView.setFitWidth(parent.getPrefWidth() - 300);
       mediaView.setFitHeight(parent.getPrefHeight() - 300);
     }

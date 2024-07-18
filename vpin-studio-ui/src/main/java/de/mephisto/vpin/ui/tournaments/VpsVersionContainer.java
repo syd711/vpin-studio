@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tournaments;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.vps.VpsUtil;
@@ -23,7 +24,7 @@ public class VpsVersionContainer extends VBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsVersionContainer.class);
   private final static int TITLE_WIDTH = 100;
 
-  public VpsVersionContainer(VpsTableVersion item, String customStyle, boolean downloadAction) {
+  public VpsVersionContainer(VpsTable vpsTable, VpsTableVersion item, String customStyle, boolean downloadAction) {
     super(3);
     setPadding(new Insets(3));
     setMinHeight(124);
@@ -75,9 +76,9 @@ public class VpsVersionContainer extends VBox {
     row = new HBox(6);
     Button button = new Button("Download Table");
 
-    if (downloadAction) {
+    if (downloadAction && vpsTable != null) {
       button.setOnAction(event -> {
-        Studio.browse(VPS.getVpsTableUrl(item.getId()));
+        Studio.browse(VPS.getVpsTableUrl(vpsTable.getId()));
       });
 
       FontIcon icon = new FontIcon("mdi2o-open-in-new");
