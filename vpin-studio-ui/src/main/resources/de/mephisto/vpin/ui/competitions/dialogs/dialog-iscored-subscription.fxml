@@ -81,7 +81,7 @@
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                              </graphic>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automaically added here." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="You can tag the iscored.info game room games with VPS urls so that they are automatically added here." wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -121,7 +121,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                              <tooltip>
-                                                <Tooltip prefWidth="300.0" text="Private tournaments can only be joined via token. Public tournaments can are searchable via the tournament browser." wrapText="true" />
+                                                <Tooltip prefWidth="300.0" text="" wrapText="true" />
                                              </tooltip>
                                           </Label>
                                        </children>
@@ -183,7 +183,7 @@
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
                                                    <tooltip>
-                                                      <Tooltip prefWidth="300.0" text="The tournament badge will be added to the wheel icon. After the tournament is finished, the original icon will be restored." wrapText="true" />
+                                                      <Tooltip prefWidth="300.0" text="The badge will be added to the wheel icon. After the competition is finished, the original icon will be restored." wrapText="true" />
                                                    </tooltip>
                                                    <GridPane.margin>
                                                       <Insets left="6.0" />
