@@ -39,12 +39,9 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private TournamentsService tournamentsService;
-
   private NotificationSettings notificationSettings;
 
-  public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore) {
+  public void submitTournamentScore(@NonNull Tournament tournament, @NonNull TournamentTable tournamentTable, @NonNull TableScore tableScore, @NonNull Account account) {
     if (!Features.ISCORED_ENABLED) {
       LOG.warn("iScored is not enabled");
       return;
@@ -74,10 +71,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
             return;
           }
 
-          if (tournamentsService.getManiaClient() != null) {
-            Account account = tournamentsService.getManiaClient().getAccountClient().getAccount(tableScore.getAccountId());
-            IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
-          }
+          IScored.submitScore(gameRoom, gameRoomGame, account.getDisplayName(), account.getInitials(), tableScore.getScore());
         }
       }
     }

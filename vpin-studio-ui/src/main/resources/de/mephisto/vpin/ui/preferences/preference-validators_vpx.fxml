@@ -21,8 +21,6 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="128.0" styleClass="preference-description" text="when the validation message is dismissed." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="Configuration Validators" />
-                  <Label layoutX="34.0" layoutY="116.0" styleClass="preference-description" text="These validators are checking the overall table setup and basic data." textFill="WHITE" />
                   <CheckBox fx:id="pref_82" layoutX="34.0" layoutY="920.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Color Files Missing" />
                   <Label styleClass="checkbox-description" text="Checks if files for ALT Color folders are missing." textFill="WHITE" />
                   <CheckBox fx:id="pref_5" layoutX="34.0" layoutY="220.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="NVOffset Check" />

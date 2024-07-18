@@ -56,49 +56,65 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
         try {
           TableScore newTableScore = createTableScore(game, newScore);
-          if (newTableScore != null) {
-
-            // General lazy! score submission!
-            TableScore createdTableScore = null;
-            if (tournamentSettings.isSubmitAllScores()) {
-              createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
-              LOG.info("Submitted VPinMania score " + createdTableScore);
+          Player player = newScore.getPlayer();
+          if (player.getTournamentUserUuid() == null) {
+            Player adminPlayer = playerService.getAdminPlayer();
+            if (adminPlayer != null) {
+              player = adminPlayer;
             }
+          }
 
-            //sync info before submitting to reset tables
-            tournamentSynchronizer.synchronize();
+          Account accountByUuid = null;
+          if (player.getTournamentUserUuid() != null) {
+            accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+            if (accountByUuid != null) {
+              newTableScore.setAccountId(accountByUuid.getId());
+            }
+            else {
+              LOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
+              return;
+            }
+          }
 
-            List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-            for (Tournament tournament : tournaments) {
-              try {
-                TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
-                if (tournamentTable != null) {
-                  if (tournament.isActive() && tournamentTable.isActive()) {
-                    if (createdTableScore == null) {
-                      createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
-                      LOG.info("Submitted VPinMania score " + createdTableScore + " for " + tournament);
-                    }
+          // General lazy! score submission!
+          TableScore createdTableScore = null;
+          if (tournamentSettings.isSubmitAllScores()) {
+            createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
+            LOG.info("Submitted VPinMania score " + createdTableScore);
+          }
 
-                    maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
-                    LOG.info("Linked " + createdTableScore + " to " + tournament);
+          //sync info before submitting to reset tables
+          tournamentSynchronizer.synchronize();
 
-                    if (tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                      iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore);
-                    }
+          List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+          for (Tournament tournament : tournaments) {
+            try {
+              TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
+              if (tournamentTable != null) {
+                if (tournament.isActive() && tournamentTable.isActive()) {
+                  if (createdTableScore == null) {
+                    createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
+                    LOG.info("Submitted VPinMania score " + createdTableScore + " for " + tournament);
                   }
-                  else {
-                    LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
+
+                  maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                  LOG.info("Linked " + createdTableScore + " to " + tournament);
+
+                  if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
                   }
                 }
-              } catch (Exception e) {
-                LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+                else {
+                  LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
+                }
               }
             }
+            catch (Exception e) {
+              LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+            }
           }
-          else {
-            LOG.info("Cancelled VPin Mania score submission.");
-          }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to submit VPin Mania highscore: " + e.getMessage(), e);
         }
       }).start();
@@ -140,25 +156,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     if (tableScore.getScoreSource() == null && game.getHsFileName() != null) {
       tableScore.setScoreSource(game.getHsFileName());
     }
-
-    Player player = newScore.getPlayer();
-    if (player.getTournamentUserUuid() == null) {
-      Player adminPlayer = playerService.getAdminPlayer();
-      if (adminPlayer != null) {
-        player = adminPlayer;
-      }
-    }
-
-    if (player.getTournamentUserUuid() != null) {
-      Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
-      if (accountByUuid != null) {
-        tableScore.setAccountId(accountByUuid.getId());
-        return tableScore;
-      }
-    }
-
-    LOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
-    return null;
+    return tableScore;
   }
 
   @Override

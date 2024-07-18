@@ -23,7 +23,7 @@ public abstract class JsonSettings {
         return t;
       }
     } catch (Exception e) {
-      LOG.warn("Error parsing settings json '" + json + "': " + e.getMessage());
+      LOG.warn("Error parsing settings json '" + json + " for class '" + clazz.getSimpleName() + "': " + e.getMessage());
     }
     return clazz.getDeclaredConstructor().newInstance();
   }
