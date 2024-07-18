@@ -24,7 +24,7 @@
                             <children>
                                 <Label fx:id="competitionLabel" text="-" textFill="WHITE">
                                     <font>
-                                        <Font name="System Bold" size="32.0" />
+                                        <Font name="System Bold" size="24.0" />
                                     </font>
                                     <VBox.margin>
                                         <Insets />
@@ -32,7 +32,7 @@
                                 </Label>
                                 <Label fx:id="durationLabel" text="-" textFill="WHITE">
                                     <font>
-                                        <Font size="20.0" />
+                                        <Font size="16.0" />
                                     </font>
                                     <VBox.margin>
                                         <Insets bottom="12.0" />
@@ -175,7 +175,7 @@
                         </BorderPane>
                             </children>
                             <HBox.margin>
-                                <Insets bottom="12.0" top="12.0" />
+                                <Insets bottom="6.0" top="6.0" />
                             </HBox.margin>
                         </VBox>
                     </children>
