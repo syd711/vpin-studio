@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.components.facades;
 
-import de.mephisto.githubloader.GithubRelease;
-import de.mephisto.githubloader.GithubReleaseFactory;
-import de.mephisto.githubloader.ReleaseArtifact;
-import de.mephisto.githubloader.ReleaseArtifactActionLog;
+import de.mephisto.vpin.connectors.github.GithubRelease;
+import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jetbrains.annotations.NotNull;

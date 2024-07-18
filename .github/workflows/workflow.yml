@@ -22,13 +22,6 @@ jobs:
       - name: Checkout VPin Studio
         uses: actions/checkout@v3
 
-      - name: Checkout github-project-downloader
-        uses: actions/checkout@v3
-        with:
-          repository: syd711/github-project-downloader
-          path: ./github-project-downloader
-          token: ${{ secrets.ACCESS_TOKEN }}
-
       - name: Checkout Popper Client Repo
         uses: actions/checkout@v3
         with:
@@ -52,10 +45,6 @@ jobs:
 
       - name: Run maven build for vpin mania rest client
         working-directory: ./vpin-mania-rest-client
-        run: mvn clean install -DskipTests
-
-      - name: Run maven build for github-project-downloader
-        working-directory: ./github-project-downloader
         run: mvn clean install -DskipTests
 
       - name: Run maven build for Assets API

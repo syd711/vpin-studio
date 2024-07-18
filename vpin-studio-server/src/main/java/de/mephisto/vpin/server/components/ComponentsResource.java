@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.components;
 
-import de.mephisto.githubloader.GithubRelease;
-import de.mephisto.githubloader.ReleaseArtifactActionLog;
+import de.mephisto.vpin.connectors.github.GithubRelease;
+import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;

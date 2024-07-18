@@ -1,0 +1,19 @@
+  ___ ___ ___   ___ _           _         
+ | _ )_  ) __| | _ \ |_  _ __ _(_)_ _  ___
+ | _ \/ /\__ \ |  _/ | || / _` | | ' \(_-<
+ |___/___|___/ |_| |_|\_,_\__, |_|_||_/__/
+                          |___/           
+
+There is now two folders for Plugins: one for x86 and one for x64 binaries.
+
+To activate DOF as a plugin:
+
+* Right-click in a blank area in the Plugins folder window
+* Click New > Shortcut in the context menu
+* Type the full path to your Direct Output folder into the box (e.g., C:\DirectOutput)
+* Click the Next button
+* Type DirectOutput for the name
+* Click the Finish button
+* Repeat the same for Plugins64
+
+Follow a similar procedure to activate other plugins like PinUp

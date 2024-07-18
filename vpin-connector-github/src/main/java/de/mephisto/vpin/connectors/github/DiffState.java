@@ -1,0 +1,5 @@
+package de.mephisto.vpin.connectors.github;
+
+public enum DiffState {
+  FILE_MATCH, SIZE_DIFF, TARGET_FOLDER_NOT_EXIST, TARGET_FILE_NOT_EXIST, TARGET_FILESIZE_SMALLER, TARGET_FILESIZE_LARGER, SKIPPED
+}
