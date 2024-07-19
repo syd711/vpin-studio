@@ -1,4 +1,5 @@
 package de.mephisto.vpin.vps;
+
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VPSChange;
@@ -35,7 +36,7 @@ public class VPSBot {
   private int totalDiffCount = 0;
   private boolean postSummary = false;
 
-  private VPS vpsDatabase; 
+  private VPS vpsDatabase;
 
   public VPSBot() throws InterruptedException {
     this.listenerAdapter = new VPSDiscordListenerAdapter(this);
@@ -45,16 +46,17 @@ public class VPSBot {
     this.vpsDatabase.reload();
 
     String token = System.getenv("VPS_BOT_TOKEN");
-    if (token!=null) {
+    if (token != null) {
       jda = JDABuilder.createDefault(token, Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
-          GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-        .setEventPassthrough(true)
-        .setStatus(OnlineStatus.ONLINE)
-        .setMemberCachePolicy(MemberCachePolicy.ALL)
-        .addEventListeners(this.listenerAdapter)
-        .build();
+              GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
+          .setEventPassthrough(true)
+          .setStatus(OnlineStatus.ONLINE)
+          .setMemberCachePolicy(MemberCachePolicy.ALL)
+          .addEventListeners(this.listenerAdapter)
+          .build();
       jda.awaitReady();
-    } else {
+    }
+    else {
       jda = null;
     }
 
@@ -62,13 +64,14 @@ public class VPSBot {
       Thread.currentThread().setName("VPS Sync Thread");
       while (true) {
         List<VpsDiffer> tableDiffs = vpsDatabase.update();
-        if (tableDiffs.size()>0) {
+        if (!tableDiffs.isEmpty()) {
           notifyChanges(tableDiffs);
         }
         try {
           LOG.info("Waiting 15 minutes");
           TimeUnit.MINUTES.sleep(15);
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           //
         }
       }
@@ -76,7 +79,6 @@ public class VPSBot {
   }
 
   public void notifyChanges(List<VpsDiffer> tableDiffs) {
-
     LOG.info("VPS Bot emitting " + tableDiffs.size() + " updates");
     new Thread(() -> {
       Thread.currentThread().setName("VPS Discord Notifier");
@@ -110,7 +112,7 @@ public class VPSBot {
               for (VPSChange change : changes.getChanges()) {
                 String string = change.toString(table);
                 string = string.substring(change.getDiffType().toString().length());
-                if(string.trim().startsWith(":")) {
+                if (string.trim().startsWith(":")) {
                   string = string.trim().substring(1).trim();
                 }
                 entries.put(change.getDiffType().toString(), string);
@@ -140,14 +142,15 @@ public class VPSBot {
             sendVpsUpdateSummary("VPS Update Summary", entries);
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to push Discord notifications for VPS updates: " + e.getMessage(), e);
       }
     }).start();
   }
 
   private void sendVpsUpdateFull(String title, Date updated, String imgUrl, String gameLink, Map<String, String> fields) {
-    if (jda==null) {
+    if (jda == null) {
       return;
     }
 
@@ -156,6 +159,7 @@ public class VPSBot {
 
     Guild guild = getGuild(serverId);
     if (guild != null) {
+      LOG.info("Emitting to server \"" + guild.getName() + "\"");
       StandardGuildMessageChannel textChannel = jda.getNewsChannelById(vpsChannelId);
       //development workaround
       if (textChannel == null) {
@@ -163,12 +167,14 @@ public class VPSBot {
       }
 
       if (textChannel != null) {
+        LOG.info("Emitting to channel \"" + textChannel.getName() + "\"");
         EmbedBuilder embed = new EmbedBuilder();
         embed.setTitle(title);
 //        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
         try {
           embed.setImage(imgUrl);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.info("Failed to attach image: '" + imgUrl + "' " + e.getMessage());
         }
         Set<Map.Entry<String, String>> entries = fields.entrySet();
@@ -195,7 +201,7 @@ public class VPSBot {
 
   public long sendVpsUpdateSummary(String title, Map<String, String> values) {
     totalDiffCount += values.size();
-    if (jda==null) {
+    if (jda == null) {
       return -1;
     }
 
