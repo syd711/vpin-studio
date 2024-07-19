@@ -105,5 +105,6 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.
 - **Table Overview / Highscores**: Fixed out-dated help text on how to setup highscore resolving. 
 - **Component Manager**: Fixed Discord server link.
+- **Backglass Manager**: Fixed "Start as EXE" flag so that the actual server default is used when unchecked. 
 - **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.
 - **VPS Updates**: The VPS updates were broken **(approx. for the last two month)**. The updates are now detected again, update indicators will be shown again in the table overview (if enabled).
