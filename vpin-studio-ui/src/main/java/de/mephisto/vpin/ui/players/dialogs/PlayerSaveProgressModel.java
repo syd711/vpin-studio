@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
+  private final Stage stage;
   private List<PlayerRepresentation> players;
   private final boolean tournamentPlayer;
   private File avatarFile;
@@ -41,8 +43,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
     super("Saving Player");
+    this.stage = stage;
     this.players = Arrays.asList(playerRepresentation);
     this.tournamentPlayer = tournamentPlayer;
     this.avatarFile = avatarFile;
@@ -87,7 +90,8 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         FutureTask<Object> futureTask = new FutureTask<>(() -> {
           try {
             avatarFile = WidgetFactory.snapshot(avatarStack);
-          } catch (IOException e) {
+          }
+          catch (IOException e) {
             LOG.error("Failed to crop avatar image: " + e.getMessage());
           }
         }, null);
@@ -109,7 +113,8 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       if (Features.TOURNAMENTS_ENABLED) {
         updateTournamentPlayer(player);
       }
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
       LOG.error("Failed to save player: " + ex.getMessage(), ex);
       progressResultModel.getResults().add(ex.getMessage());
     }
@@ -118,32 +123,30 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   private void updateTournamentPlayer(PlayerRepresentation player) throws Exception {
     //post process tournament player creation
     if (tournamentPlayer) {
-      if (player.isRegistered()) {
-        Account maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
-        if (maniaAccount != null) {
-          maniaAccount.setDisplayName(player.getName());
-          maniaAccount.setInitials(player.getInitials());
+      Account maniaAccount = null;
+      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+        maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+      }
 
-          Account update = maniaClient.getAccountClient().update(maniaAccount);
-          if (update == null) {
-            update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
-            player.setTournamentUserUuid(update.getUuid());
-            client.getPlayerService().savePlayer(player);
-          }
-          else {
-            if (this.avatarFile != null) {
-              maniaClient.getAccountClient().updateAvatar(maniaAccount, ImageIO.read(this.avatarFile), null);
-            }
-          }
+      //the user is already registered
+      if (maniaAccount != null) {
+        maniaAccount.setDisplayName(player.getName());
+        maniaAccount.setInitials(player.getInitials());
+
+        Account update = maniaClient.getAccountClient().update(maniaAccount);
+        if (update == null) {
+          update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
+          player.setTournamentUserUuid(update.getUuid());
+          client.getPlayerService().savePlayer(player);
         }
         else {
-          Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Failed to update VPin Mania account: account not found.");
-          });
+          if (this.avatarFile != null) {
+            maniaClient.getAccountClient().updateAvatar(maniaAccount, ImageIO.read(this.avatarFile), null);
+          }
         }
       }
       else {
-        Account maniaAccount = player.toManiaAccount();
+        maniaAccount = player.toManiaAccount();
         PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
         Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
         if (!StringUtils.isEmpty(avatarEntry.getValue())) {
@@ -163,7 +166,8 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           if (acc != null) {
             maniaClient.getAccountClient().deleteAccount(acc.getId());
           }
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("VPin Mania account deletion failed: " + e.getMessage(), e);
         }
         player.setTournamentUserUuid(null);

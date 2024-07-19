@@ -209,7 +209,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
   public void initialize(URL url, ResourceBundle resourceBundle) {
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
-      "Add new players or connect a Discord server."));
+        "Add new players or connect a Discord server."));
 
 
     try {
@@ -217,7 +217,8 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
       playersLoadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Players...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -225,9 +226,12 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     tournamentColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
       if (!StringUtils.isEmpty(value.getTournamentUserUuid())) {
-        Label label = new Label();
-        label.setGraphic(WidgetFactory.createCheckIcon());
-        return new SimpleObjectProperty<>(label);
+        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getTournamentUserUuid());
+        if (accountByUuid != null) {
+          Label label = new Label();
+          label.setGraphic(WidgetFactory.createCheckIcon());
+          return new SimpleObjectProperty<>(label);
+        }
       }
       return null;
     });

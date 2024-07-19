@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.competitions.CompetitionsController;
 import de.mephisto.vpin.ui.components.ComponentsController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tournaments.TournamentsController;
@@ -75,6 +76,9 @@ public class NavigationController implements Initializable, StudioEventListener,
   private Pane systemManagerBtn;
 
   @FXML
+  private Pane maniaBtn;
+
+  @FXML
   private Pane cardsBtn;
 
   private static BorderPane staticAvatarPane;
@@ -110,6 +114,11 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private void onDashboardClick() {
     navigateTo(NavigationItem.Dashboard);
+  }
+
+  @FXML
+  private void onManiaClick() {
+    navigateTo(NavigationItem.Mania);
   }
 
   @FXML
@@ -279,6 +288,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
     }
+    maniaBtn.setVisible(Features.MANIA);
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
     navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
@@ -287,5 +297,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
     navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
+    navigationItemMap.put(NavigationItem.Mania, new NavigationView(NavigationItem.SystemManager, ManiaController.class, maniaBtn, "scene-mania.fxml"));
   }
 }

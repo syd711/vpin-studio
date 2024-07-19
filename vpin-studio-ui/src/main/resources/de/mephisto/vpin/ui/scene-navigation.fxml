@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
@@ -13,7 +15,7 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox fx:id="buttonList" alignment="TOP_CENTER" spacing="12.0">
+          <VBox fx:id="buttonList" alignment="TOP_CENTER" spacing="8.0">
               <children>
                   <VBox fx:id="tablesBtn" alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
                      <children>
@@ -79,6 +81,9 @@
                               </font>
                           </Label>
                       </children>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
                   </VBox>
                   <StackPane fx:id="systemManagerStack" onMousePressed="#onSystemClick" styleClass="navigation-button">
                      <children>
@@ -106,7 +111,24 @@
                            </padding>
                         </HBox>
                      </children>
+                     <VBox.margin>
+                        <Insets bottom="12.0" />
+                     </VBox.margin>
                   </StackPane>
+                  <VBox fx:id="maniaBtn" alignment="CENTER" layoutX="28.0" layoutY="430.0" onMousePressed="#onManiaClick" styleClass="navigation-button">
+                     <children>
+                        <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@mania.png" />
+                           </image>
+                        </ImageView>
+                        <Label text="VPin Mania" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
               </children>
                <BorderPane.margin>
                   <Insets top="24.0" />

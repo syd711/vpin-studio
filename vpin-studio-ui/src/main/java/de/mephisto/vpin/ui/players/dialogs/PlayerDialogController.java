@@ -3,12 +3,11 @@ package de.mephisto.vpin.ui.players.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -91,21 +90,26 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     Platform.runLater(() -> {
-      if (Features.TOURNAMENTS_ENABLED && !StringUtils.isEmpty(this.player.getTournamentUserUuid()) && !this.tournamentPlayerCheckbox.isSelected()) {
-        Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
-        if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
-          return;
+      if (Features.TOURNAMENTS_ENABLED) {
+        if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+          if (accountByUuid != null && !this.tournamentPlayerCheckbox.isSelected()) {
+            Optional<ButtonType> result2 = WidgetFactory.showConfirmation(stage, "Tournament Player", "The player \"" + this.player.getName() + "\" is a registered tournament player and the \"Tournament Player\" checkbox is unchecked.", "This will delete the online account and all related highscores and subscribed tournaments too.");
+            if (!result2.isPresent() || !result2.get().equals(ButtonType.OK)) {
+              return;
+            }
+          }
         }
       }
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
         if (o instanceof PlayerRepresentation) {
           this.player = (PlayerRepresentation) o;
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, String.valueOf(o));
+          WidgetFactory.showAlert(stage, String.valueOf(o));
         }
       }
       else {
@@ -131,7 +135,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Image");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     this.avatarFile = fileChooser.showOpenDialog(stage);
     refreshAvatar();
@@ -148,14 +152,14 @@ public class PlayerDialogController implements Initializable, DialogController {
     if (this.avatar == null) {
       Image image = new Image(DashboardController.class.getResourceAsStream("avatar-blank.png"));
       avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .maxSize(200, 200)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
+          .skinType(Tile.SkinType.IMAGE)
+          .maxSize(200, 200)
+          .backgroundColor(Color.TRANSPARENT)
+          .image(image)
+          .imageMask(Tile.ImageMask.ROUND)
+          .textSize(Tile.TextSize.BIGGER)
+          .textAlignment(TextAlignment.CENTER)
+          .build();
       avatarPane.setCenter(avatar);
     }
 
@@ -202,8 +206,13 @@ public class PlayerDialogController implements Initializable, DialogController {
       nameField.setText(this.player.getName());
       initialsField.setText(this.player.getInitials());
       adminRoleCheckbox.setSelected(player.isAdministrative());
-      tournamentPlayerCheckbox.setSelected(cabinet != null && !StringUtils.isEmpty(player.getTournamentUserUuid()));
+
+      tournamentPlayerCheckbox.setSelected(false);
       tournamentPlayerCheckbox.setDisable(cabinet == null);
+      if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
+        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
+        this.tournamentPlayerCheckbox.setSelected(accountByUuid != null);
+      }
       refreshAvatar();
     }
     else {
@@ -254,8 +263,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
-    this.tournamentPlayerCheckbox.setSelected(!StringUtils.isEmpty(player.getTournamentUserUuid()));
-
+    this.tournamentPlayerCheckbox.setSelected(false);
     this.nameField.requestFocus();
   }
 }

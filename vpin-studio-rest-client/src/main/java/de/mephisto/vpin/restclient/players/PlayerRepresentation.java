@@ -33,11 +33,8 @@ public class PlayerRepresentation {
 
   private boolean administrative;
 
+  //the uuid of the account on mania.net
   private String tournamentUserUuid;
-
-  public boolean isRegistered() {
-    return !StringUtils.isEmpty(this.getTournamentUserUuid());
-  }
 
   @NonNull
   public Account toManiaAccount() {

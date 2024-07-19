@@ -184,7 +184,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     try {
       if (newTournamentModel != null) {
         PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-        if (defaultPlayer != null && defaultPlayer.isRegistered()) {
+        Account maniaAccount = null;
+        if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+          maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+        }
+        if (defaultPlayer != null && maniaAccount != null) {
           PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
           Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
           if (!StringUtils.isEmpty(avatarEntry.getValue())) {
@@ -226,7 +230,11 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (newTournament != null) {
         try {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          if (defaultPlayer != null && defaultPlayer.isRegistered()) {
+          Account maniaAccount = null;
+          if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+            maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+          }
+          if (defaultPlayer != null && maniaAccount != null) {
             ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(newTournament, defaultPlayer.toManiaAccount(), this.getTournamentBadge()));
             if (!progressDialog.getResults().isEmpty()) {
               Object o = progressDialog.getResults().get(0);
@@ -433,8 +441,12 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
 
   private static boolean isValidTournamentSetupAvailable() {
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    Account maniaAccount = null;
+    if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+      maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+    }
 
-    boolean validConfig = defaultPlayer != null && defaultPlayer.isRegistered();
+    boolean validConfig = defaultPlayer != null && maniaAccount != null;
     if (validConfig) {
       Account account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
       if (account == null) {
