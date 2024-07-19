@@ -68,7 +68,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Navigation**: The navigation supports deep links now. E.g. you can jump from the **Table Overview / Highscores** section to the corresponding table in the **Highscore Cards** view (and back!).
 - **Preferences Changes (breaking)**: Overall, the preference have been changed a lot with some **breaking changes**. You have to re-visit and re-apply some of them.
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
-- **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option "Hide Backglass", which is also part of the filter now.
+- **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option **Hide Backglass**, which is also part of the filter now.
 - **Table Asset Manager**: Added support for **Playlist** assets.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Data Manager / VPS matching**: The automatching to VPS has been improved and now exploit all information in game filename to better determine the VPS version. Also the table version when empty and detected during the matching process is automatically filled in. 
@@ -79,6 +79,8 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Filter Section**: The status of the filter is saved and restored on start.
 - **Table Overview / Table Deletion**: Added option to keep the media assets of a table when it is deleted. This may come in handy if you wish to re-install a table from scratch.
 - **Table Overview / Status Comments**: Added "OUTDATED" as an additional comment type.
+- **Table Overview / VPin MAME**: Added apply defaults button to delete existing registry entry, as resetting a table may help sometimes to fix table problems.
+- **Table Overview / VPin MAME**: Applying the MAME defaults is only possible now, when the table has existing settings / has been played once.
 - **Table Overview / Highscore Section**: Added highscore card preview image shown in the lower part of the section.
 - **Table Overview / Highscore Section**: The "Open Card" button has been replaced with and "Edit Card" button which jumps into the Highscore Card designer, selecting the table's card.
 - **Table Overview / Replace or Append Media**: On media upload, when a media already exists, a confirmation pops up to ask whether the media file should replace existing one or be appended to the list of media files.
@@ -101,8 +103,6 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / ALT Sound**: Removed "Enabled" checkbox. This was a leftover from the previous fixed where the audio setting was a boolean flag and set a numeric value. 
 - **Table Overview / ALT Color**: VPin MAME settings "Use external DMD" and "Colorize DMD" and enabled after asset uploads now.
 - **Table Overview / PUP Packs**: Fixed some refresh issues and added hint on how to disable a PUP pack.
-- **Table Overview / VPin MAME**: Added apply defaults button to delete existing registry entry, as resetting a table may help sometimes to fix table problems.
-- **Table Overview / VPin MAME**: Applying the MAME defaults is only possible now, when the table has existing settings / has been played once. 
 - **Table Overview / Highscores**: Fixed out-dated help text on how to setup highscore resolving. 
 - **Component Manager**: Fixed Discord server link.
 - **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.
