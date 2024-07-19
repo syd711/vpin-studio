@@ -169,7 +169,7 @@ public class VPSBot {
       if (textChannel != null) {
         LOG.info("Emitting to channel \"" + textChannel.getName() + "\"");
         EmbedBuilder embed = new EmbedBuilder();
-        embed.setTitle(title);
+        embed.setTitle(title, gameLink);
 //        embed.setDescription("**" + DateFormat.getDateInstance().format(updated) + "**");
         try {
           embed.setImage(imgUrl);
