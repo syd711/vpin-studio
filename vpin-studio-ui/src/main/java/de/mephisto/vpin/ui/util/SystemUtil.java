@@ -31,6 +31,30 @@ public class SystemUtil {
     openFolder(folder, null);
   }
 
+  public static void openFile(File file) {
+    if (file == null) {
+      return;
+    }
+
+    File folder = file.getParentFile();
+    if (isLocal()) {
+      try {
+        if (file.exists()) {
+          new ProcessBuilder("explorer.exe", "/select,", file.getAbsolutePath()).start();
+        }
+        else if(folder.exists()) {
+          new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
+        }
+      }
+      catch (IOException e) {
+        LOG.error("Failed to open file: " + e.getMessage(), e);
+      }
+    }
+    else {
+      openFolder(folder);
+    }
+  }
+
   public static void openFolder(File folder, File fallback) {
     if (folder == null) {
       return;

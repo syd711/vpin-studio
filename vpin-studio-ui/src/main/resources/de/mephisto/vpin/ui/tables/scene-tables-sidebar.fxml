@@ -259,7 +259,7 @@
                             <right>
                                 <HBox alignment="CENTER_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
                                     <children>
-                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onTables" styleClass="folder-component">
+                                        <Button fx:id="povBtn" mnemonicParsing="false" onAction="#onPov" styleClass="folder-component">
                                             <font>
                                                 <Font size="10.0" />
                                             </font>

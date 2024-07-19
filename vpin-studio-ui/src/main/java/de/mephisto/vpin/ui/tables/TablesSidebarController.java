@@ -27,14 +27,13 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.HBox;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -222,8 +221,11 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onTables() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+        GameRepresentation g = game.get();
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        File file = new File(folder, g.getGameFileName());
+        SystemUtil.openFile(file);
       }
     }
     catch (Exception e) {
@@ -289,8 +291,12 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onDirectB2S() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+        GameRepresentation g = game.get();
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        String backglassName = FilenameUtils.getBaseName(g.getGameFileName()) + ".directb2s";
+        File file = new File(folder, backglassName);
+        SystemUtil.openFile(file);
       }
     }
     catch (Exception e) {
@@ -302,8 +308,29 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   private void onIni() {
     try {
       if (this.game.isPresent()) {
-        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-        SystemUtil.openFolder(new File(emulatorRepresentation.getTablesDirectory()));
+        GameRepresentation g = game.get();
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".ini";
+        File file = new File(folder, fileName);
+        SystemUtil.openFile(file);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open Explorer: " + e.getMessage(), e);
+    }
+  }
+
+  @FXML
+  private void onPov() {
+    try {
+      if (this.game.isPresent()) {
+        GameRepresentation g = game.get();
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(g.getEmulatorId());
+        File folder = new File(emulatorRepresentation.getTablesDirectory());
+        String fileName = FilenameUtils.getBaseName(g.getGameFileName()) + ".pov";
+        File file = new File(folder, fileName);
+        SystemUtil.openFile(file);
       }
     }
     catch (Exception e) {

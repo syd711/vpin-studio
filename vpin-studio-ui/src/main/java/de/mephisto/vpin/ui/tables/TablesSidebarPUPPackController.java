@@ -344,7 +344,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         applyBtn.setDisable(true);
         if (!StringUtils.isEmpty(pupPack.getSelectedOption())) {
           optionsCombo.setValue(pupPack.getSelectedOption());
-          applyBtn.setDisable(true);
+          applyBtn.setDisable(false);
         }
 
         if (!pupPack.getScreenBackglassMode().equals(ScreenMode.off)) {
