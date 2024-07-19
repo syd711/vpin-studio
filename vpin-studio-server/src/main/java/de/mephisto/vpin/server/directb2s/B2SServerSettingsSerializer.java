@@ -67,7 +67,7 @@ public class B2SServerSettingsSerializer {
     StreamResult result = new StreamResult(writer);
     transformer.transform(source, result);
     writer.close();
-    LOG.info("Written " + povFile.getAbsolutePath());
+    LOG.info("Written B2S server settings: " + povFile.getAbsolutePath());
   }
 
 
@@ -116,6 +116,9 @@ public class B2SServerSettingsSerializer {
       case "ShowStartupError": {
         node.setTextContent(intValue(settings.isShowStartupError()));
         break;
+      }
+      default: {
+//        LOG.info("Skipped serialization of B2S server settings node: " + qName);
       }
     }
   }

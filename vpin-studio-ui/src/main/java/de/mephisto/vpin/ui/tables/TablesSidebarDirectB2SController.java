@@ -5,6 +5,8 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -141,6 +143,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private CheckBox startAsExe;
+
+  @FXML
+  private CheckBox startAsExeServer;
 
   @FXML
   private ComboBox<B2SVisibility> hideDMD;
@@ -323,7 +328,12 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     });
 
     startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      tableSettings.setStartAsEXE(newValue);
+      if(newValue) {
+        tableSettings.setStartAsEXE(newValue);
+      }
+      else {
+        tableSettings.setStartAsEXE(null);
+      }
       save();
     });
 
@@ -489,10 +499,23 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             usedLEDType.setValue(LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
             startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
             bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
-            startAsExe.selectedProperty().setValue(tableSettings.isStartAsEXE());
+
+            List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
+            if(gameEmulators.isEmpty()) {
+              LOG.error("No backglass server game emulator found!");
+              return;
+            }
+
+            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
+
+            boolean serverLaunchAsExe = serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
+            boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
+            startAsExe.setSelected(tableLaunchAsExe);
+            startAsExeServer.setSelected(serverLaunchAsExe);
           }
 
           setDisable(b2sSettings, false);
+          startAsExeServer.setDisable(true);
 
           skipGIFrames.setDisable(tableData.getIlluminations() == 0);
           skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);

@@ -166,7 +166,13 @@ public class B2STableSettingsSerializer {
         break;
       }
       case "StartAsEXE": {
-        node.setTextContent(intValue(settings.isStartAsEXE()));
+        Boolean startAsEXE = settings.getStartAsEXE();
+        if (startAsEXE != null) {
+          node.setTextContent(intValue(startAsEXE.booleanValue()));
+        }
+        else {
+          node.setTextContent("");
+        }
         break;
       }
       case "StartBackground": {

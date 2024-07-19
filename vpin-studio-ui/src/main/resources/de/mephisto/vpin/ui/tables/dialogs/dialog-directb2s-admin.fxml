@@ -257,6 +257,7 @@
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                           <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                        </rowConstraints>
                                        <children>
                                           <Label text="Grill Visibility:" textFill="WHITE" GridPane.rowIndex="1">
@@ -299,7 +300,7 @@
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
-                                          <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="14">
+                                          <Label layoutX="10.0" layoutY="284.0" text="Bring BG Form To Top:" textFill="WHITE" GridPane.rowIndex="15">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -315,7 +316,7 @@
                                           <Spinner fx:id="skipGIFrames" layoutX="173.0" layoutY="147.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                                           <Spinner fx:id="skipSolenoidFrames" layoutX="173.0" layoutY="180.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                           <Spinner fx:id="skipLEDFrames" layoutX="173.0" layoutY="214.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                                          <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                                          <CheckBox fx:id="bringBGFromTop" layoutX="173.0" layoutY="117.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="15" />
                                           <Label layoutX="10.0" layoutY="385.0" text="Glowing:" textFill="WHITE" GridPane.rowIndex="11">
                                              <font>
                                                 <Font size="14.0" />
@@ -392,6 +393,12 @@
                                              </font>
                                           </Label>
                                           <CheckBox fx:id="hideB2SBackglass" layoutX="162.0" layoutY="120.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                          <Label layoutX="10.0" layoutY="452.0" text="Start As EXE (server default):" textFill="WHITE" GridPane.rowIndex="14">
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                          </Label>
+                                          <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                                        </children>
                                     </GridPane>
                                     <VBox>

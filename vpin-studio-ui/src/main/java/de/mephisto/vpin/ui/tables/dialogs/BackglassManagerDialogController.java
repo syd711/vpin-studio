@@ -8,6 +8,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
+import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -159,6 +160,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private CheckBox startAsExe;
 
   @FXML
+  private CheckBox startAsExeServer;
+
+  @FXML
   private ComboBox<B2SGlowing> glowing;
 
   @FXML
@@ -252,6 +256,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private TablesSidebarController tablesSidebarController;
   private List<DirectB2SEntryModel> unfilteredBackglasses;
   private GameRepresentation game;
+  private DirectB2ServerSettings serverSettings;
 
   @FXML
   private void onUpload(ActionEvent e) {
@@ -442,6 +447,15 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
+    if (gameEmulators.isEmpty()) {
+      LOG.error("No backglass server game emulator found!");
+    }
+    else {
+      serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
+    }
+
+
     root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
     this.dataManagerBtn.setDisable(true);
@@ -551,7 +565,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (tableSettings == null) {
         return;
       }
-      tableSettings.setStartAsEXE(newValue);
+      if (newValue) {
+        tableSettings.setStartAsEXE(newValue);
+      }
+      else {
+        tableSettings.setStartAsEXE(null);
+      }
       save();
     });
 
@@ -915,7 +934,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       bringBGFromTop.setDisable(tmpTableSettings == null);
 
       if (tmpTableSettings != null) {
-        startAsExe.setSelected(tmpTableSettings.isStartAsEXE());
+        boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
+        boolean tableLaunchAsExe = tmpTableSettings.getStartAsEXE() != null && tmpTableSettings.getStartAsEXE();
+        startAsExe.setSelected(tableLaunchAsExe);
+        startAsExeServer.setSelected(serverLaunchAsExe);
+        startAsExeServer.setDisable(true);
+
         hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideGrill()).findFirst().orElse(null));
         hideB2SDMD.selectedProperty().setValue(tmpTableSettings.isHideB2SDMD());
         hideB2SBackglass.selectedProperty().setValue(tmpTableSettings.isHideB2SBackglass());

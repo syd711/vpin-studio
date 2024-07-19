@@ -14,7 +14,7 @@ public class DirectB2STableSettings {
   private int usedLEDType = 2;
   private boolean isGlowBulbOn = false;
   private int glowIndex = -1;
-  private boolean startAsEXE = false;
+  private Boolean startAsEXE = false;
   private boolean startBackground = false;
   private boolean formToFront = false;
 
@@ -26,11 +26,11 @@ public class DirectB2STableSettings {
     this.hideB2SBackglass = hideB2SBackglass;
   }
 
-  public boolean isStartAsEXE() {
+  public Boolean getStartAsEXE() {
     return startAsEXE;
   }
 
-  public void setStartAsEXE(boolean startAsEXE) {
+  public void setStartAsEXE(Boolean startAsEXE) {
     this.startAsEXE = startAsEXE;
   }
 
