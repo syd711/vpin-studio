@@ -30,8 +30,13 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   private Tab overviewTab;
 
   @FXML
+  private Tab tablesTab;
+
+  @FXML
   private TabPane tabPane;
+
   private TabManiaOverviewController overviewController;
+  private TabManiaTablesController tablesController;
 
   // Add a public no-args constructor
   public ManiaController() {
@@ -54,35 +59,33 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
-//    loadTab(vpxTab, "tab-vpx.fxml");
-//    loadTab(b2sTab, "tab-b2s.fxml");
-//    loadTab(mameTab, "tab-mame.fxml");
-//    loadTab(flexDMDTab, "tab-flexdmd.fxml");
-//    loadTab(freezyTab, "tab-freezy.fxml");
-//    loadTab(serumTab, "tab-serum.fxml");
-//
-//    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-//      updateForTabSelection(t1.intValue());
-//    });
-//
-//    updateForTabSelection(0);
-  }
-
-  private void loadTab(Tab tab, String file) {
     try {
-      FXMLLoader loader = new FXMLLoader(ManiaController.class.getResource(file));
+      FXMLLoader loader = new FXMLLoader(TabManiaTablesController.class.getResource("tab-tables.fxml"));
       Parent builtInRoot = loader.load();
-      tab.setContent(builtInRoot);
+      tablesController = loader.getController();
+      tablesTab.setContent(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);
+    }
+
+    updateForTabSelection(0);
+  }
+
+  private void updateForTabSelection(int index) {
+    if (index == 0) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Overview"));
+      overviewController.onViewActivated(null);
+    }
+    else if (index == 1) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Tables"));
+      tablesController.onViewActivated(null);
     }
   }
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Overview"));
-    overviewController.onViewActivated(options);
+    updateForTabSelection(tabPane.getSelectionModel().getSelectedIndex());
   }
 
   @Override

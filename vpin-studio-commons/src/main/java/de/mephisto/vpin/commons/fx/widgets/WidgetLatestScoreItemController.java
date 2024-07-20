@@ -18,6 +18,8 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
+
 public class WidgetLatestScoreItemController extends WidgetController implements Initializable {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 

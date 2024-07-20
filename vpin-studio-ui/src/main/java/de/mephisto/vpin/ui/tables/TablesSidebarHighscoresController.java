@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
-import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -37,6 +36,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TablesSidebarHighscoresController implements Initializable {
@@ -329,7 +329,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         if (!StringUtils.isEmpty(metadata.getRaw())) {
           rawTitleLabel.setVisible(true);
           rawScoreWrapper.setVisible(true);
-          rawScoreLabel.setFont(WidgetController.getScoreFontText());
+          rawScoreLabel.setFont(getScoreFontText());
           rawScoreLabel.setText(metadata.getRaw());
         }
 
@@ -355,7 +355,7 @@ public class TablesSidebarHighscoresController implements Initializable {
           formattedTitleLabel.setVisible(true);
           formattedScoreWrapper.setVisible(true);
 
-          formattedScoreLabel.setFont(WidgetController.getScoreFontText());
+          formattedScoreLabel.setFont(getScoreFontText());
           formattedScoreLabel.setText(builder.toString());
         }
       }

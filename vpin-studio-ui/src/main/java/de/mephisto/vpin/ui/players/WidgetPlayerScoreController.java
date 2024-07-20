@@ -22,6 +22,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class WidgetPlayerScoreController extends WidgetController implements Initializable {

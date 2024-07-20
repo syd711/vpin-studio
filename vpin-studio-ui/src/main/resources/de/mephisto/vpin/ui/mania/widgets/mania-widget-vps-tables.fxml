@@ -8,19 +8,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="500.0" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetLatestScoresController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="600.0" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTablesController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
     <top>
-        <Label styleClass="widget-title" text="Latest Highscores" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-            <font>
-                <Font size="14.0" />
-            </font>
-            <padding>
-                <Insets bottom="12.0" />
-            </padding>
-        </Label>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
+         <center>
+              <Label fx:id="titleLabel" styleClass="widget-title" text="Tables" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                  <font>
+                      <Font size="14.0" />
+                  </font>
+                  <padding>
+                      <Insets bottom="12.0" />
+                  </padding>
+              </Label>
+         </center>
+         <right>
+            <Label fx:id="countLabel" text="count" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT" />
+         </right>
+      </BorderPane>
     </top>
    <center>
       <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">

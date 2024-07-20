@@ -35,6 +35,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -63,6 +65,37 @@ public class WidgetFactory {
   public static final String OUTDATED_COLOR = "#FFCC66";
   public static final String OK_COLOR = "#66FF66";
   public static final String MEDIA_CONTAINER_LABEL = "-fx-font-size: 14px;-fx-text-fill: #666666;";
+
+
+  public static Font scoreFont;
+  public static Font competitionScoreFont;
+  public static Font scoreFontText;
+
+  static {
+    Font.loadFont(ServerFX.class.getResourceAsStream("MonospaceBold.ttf"), 22);
+    Font.loadFont(ServerFX.class.getResourceAsStream("digital_counter_7.ttf"), 22);
+    Font.loadFont(ServerFX.class.getResourceAsStream("impact.ttf"), 22);
+
+    String SCORE_FONT_NAME = "Digital Counter 7";
+    String SCORE_TEXT_FONT_NAME = "Monospace";
+
+    scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 36);
+    competitionScoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 28);
+
+    scoreFontText = Font.font(SCORE_TEXT_FONT_NAME, FontPosture.findByName("regular"), 16);
+  }
+
+  public static Font getCompetitionScoreFont() {
+    return competitionScoreFont;
+  }
+
+  public static Font getScoreFont() {
+    return scoreFont;
+  }
+
+  public static Font getScoreFontText() {
+    return scoreFontText;
+  }
 
   public static Label createDefaultLabel(String msg) {
     Label label = new Label(msg);

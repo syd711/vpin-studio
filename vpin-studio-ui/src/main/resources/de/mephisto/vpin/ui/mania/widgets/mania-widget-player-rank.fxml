@@ -14,7 +14,7 @@
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
     <top>
-        <Label styleClass="widget-title" text="Player Ranking" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
+        <Label styleClass="widget-title" text="Global Player Ranking" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
             <font>
                 <Font size="14.0" />
             </font>
@@ -26,9 +26,9 @@
    <center>
       <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
         <columns>
-          <TableColumn fx:id="columnRank" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
-            <TableColumn fx:id="columnPoints" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Points" />
-          <TableColumn fx:id="columnName" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+          <TableColumn fx:id="columnRank" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
+            <TableColumn fx:id="columnPoints" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Points" />
+          <TableColumn fx:id="columnName" prefWidth="500.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
             <TableColumn fx:id="columnFirst" minWidth="0.0" prefWidth="60.0" style="-fx-alignment: CENTER;">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">
@@ -52,15 +52,6 @@
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
                      <image>
                         <Image url="@../medal%20(3).png" />
-                     </image>
-                  </ImageView>
-               </graphic>
-            </TableColumn>
-            <TableColumn fx:id="columnComps" prefWidth="60.0" style="-fx-alignment: CENTER;">
-               <graphic>
-                  <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true" style="-fx-alignment: BASELINE_CENTER;">
-                     <image>
-                        <Image url="@../competitions.png" />
                      </image>
                   </ImageView>
                </graphic>

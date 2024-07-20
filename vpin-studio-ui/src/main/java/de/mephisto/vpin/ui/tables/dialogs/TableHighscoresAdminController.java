@@ -1,10 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -27,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontText;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableHighscoresAdminController implements Initializable, DialogController {
@@ -102,7 +102,7 @@ public class TableHighscoresAdminController implements Initializable, DialogCont
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.deleteBtn.setDisable(true);
     this.restoreBtn.setDisable(true);
-    scoreLabel.setFont(WidgetController.getScoreFontText());
+    scoreLabel.setFont(getScoreFontText());
 
     this.backupList.getSelectionModel().selectedItemProperty().addListener((observableValue, highscoreBackup, t1) -> {
       deleteBtn.setDisable(t1 == null);

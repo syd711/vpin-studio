@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -9,7 +10,11 @@
           <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
               <tabs>
                   <Tab fx:id="overviewTab" closable="false" text="Overview" />
+            <Tab fx:id="tablesTab" closable="false" text="Tables" />
               </tabs>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
           </TabPane>
    </center>
 </BorderPane>

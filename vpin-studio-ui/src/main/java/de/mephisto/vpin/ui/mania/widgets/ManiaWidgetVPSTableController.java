@@ -17,9 +17,7 @@ import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
 
-import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
-
-public class ManiaWidgetLatestScoreItemController extends WidgetController implements Initializable {
+public class ManiaWidgetVPSTableController extends WidgetController implements Initializable {
   private final static SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd-yyyy / hh:mm");
 
   @FXML
@@ -36,16 +34,11 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
   @FXML
   private Label nameLabel;
+  private ManiaWidgetVPSTablesController vpsTablesController;
+  private VpsTable vpsTable;
 
-  @FXML
-  private Label scoreLabel;
-
-  @FXML
-  private Label changeDateLabel;
-
-  @FXML
-  private void onScoreClick() {
-
+  // Add a public no-args constructor
+  public ManiaWidgetVPSTableController() {
   }
 
 
@@ -53,21 +46,34 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(VpsTable vpsTable, TableScoreDetails score) {
+  @FXML
+  private void onSelect() {
+    this.vpsTablesController.selectTable(this.vpsTable);
+  }
+
+  public void setData(VpsTable vpsTable) {
+    this.vpsTable = vpsTable;
     InputStream imageInput = Studio.client.getCachedUrlImage("https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
-    if (imageInput == null) {
+    if(imageInput == null) {
       imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(imageInput);
     wheelImageView.setImage(image);
 
-    tableLabel.setText(vpsTable.getDisplayName());
-    nameLabel.setText(score.getDisplayName());
+    tableLabel.setText(vpsTable.getName());
 
-    scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
+    String result = "";
+    if (vpsTable.getManufacturer() != null && vpsTable.getManufacturer().trim().length() > 0) {
+      result = result + vpsTable.getManufacturer();
+    }
 
-    String date = simpleDateFormat.format(score.getCreationDate());
-    changeDateLabel.setText("Updated: " + date);
+    if (vpsTable.getYear() > 0) {
+      result = result + " (" + vpsTable.getYear() + ")";
+    }
+    nameLabel.setText(result);
+  }
+
+  public void setTablesController(ManiaWidgetVPSTablesController vpsTablesController) {
+    this.vpsTablesController = vpsTablesController;
   }
 }

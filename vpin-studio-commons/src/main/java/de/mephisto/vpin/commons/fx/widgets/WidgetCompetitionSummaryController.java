@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
@@ -26,6 +27,8 @@ import java.io.ByteArrayInputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
+
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getCompetitionScoreFont;
 
 public class WidgetCompetitionSummaryController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(WidgetCompetitionSummaryController.class);

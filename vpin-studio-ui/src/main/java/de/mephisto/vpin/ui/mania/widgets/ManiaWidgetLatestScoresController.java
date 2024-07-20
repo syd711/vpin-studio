@@ -89,7 +89,8 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
 
               FXMLLoader loader = new FXMLLoader(ManiaWidgetLatestScoreItemController.class.getResource("mania-widget-latest-score-item.fxml"));
               Pane row = loader.load();
-              row.setPrefWidth(root.getPrefWidth() - 24);
+              row.getStyleClass().add("vps-table-button");
+              row.setPrefWidth(root.getPrefWidth() - 40);
               ManiaWidgetLatestScoreItemController controller = loader.getController();
               controller.setData(vpsTable, score);
 

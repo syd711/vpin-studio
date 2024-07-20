@@ -4,8 +4,11 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -39,65 +42,66 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class ManiaWidgetPlayerRankController extends WidgetController implements Initializable {
-  private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetPlayerRankController.class);
+public class ManiaWidgetVPSTableRankController extends WidgetController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetVPSTableRankController.class);
 
   @FXML
   private BorderPane root;
 
   @FXML
-  private TableView<RankedPlayerRepresentation> tableView;
+  private TableView<TableScoreDetails> tableView;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnRank;
+  private TableColumn<TableScoreDetails, String> columnRank;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnPoints;
+  private TableColumn<TableScoreDetails, String> columnScore;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnName;
+  private TableColumn<TableScoreDetails, String> columnName;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnFirst;
-
-  @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnSecond;
-
-  @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnThird;
+  private TableColumn<TableScoreDetails, String> columnDate;
 
   @FXML
   private StackPane tableStack;
 
+  @FXML
+  private Label titleLabel;
+
   private Parent loadingOverlay;
+  private List<TableScoreDetails> tableScores;
 
   // Add a public no-args constructor
-  public ManiaWidgetPlayerRankController() {
+  public ManiaWidgetVPSTableRankController() {
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));
+    tableView.setPlaceholder(new Label("         No scores listed here?\nBe the first and create a highscore!"));
 
     columnRank.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label("#" + value.getRank());
+      Label label = new Label("#" + (tableScores.indexOf(value)+1));
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
-    columnPoints.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+    columnScore.setCellValueFactory(cellData -> {
+      TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label(String.valueOf(value.getPoints()));
+      Label label = new Label(value.getScoreText());
+      label.setFont(getScoreFont());
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnName.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      TableScoreDetails value = cellData.getValue();
       HBox hBox = new HBox();
 
       Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
@@ -112,23 +116,15 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.setSpacing(6);
 
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(value.getName());
+      Label label = new Label(value.getDisplayName());
       label.setFont(defaultFont);
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        InputStream in = null;
-        if (!StringUtils.isEmpty(value.getAvatarUrl())) {
-          in = client.getCachedUrlImage(value.getAvatarUrl());
-        }
-        else if (value.getAvatarUuid() != null) {
-          in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
-        }
-
+        InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getAccountUUID()));
         if (in == null) {
           in = ServerFX.class.getResourceAsStream("avatar-blank.png");
         }
-
         final InputStream data = in;
         if (data != null) {
           Platform.runLater(() -> {
@@ -149,26 +145,10 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       columnName.setPrefWidth(260);
     }
 
-    columnFirst.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+    columnDate.setCellValueFactory(cellData -> {
+      TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getFirst()));
-      label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
-    });
-
-    columnSecond.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getSecond()));
-      label.setFont(defaultFont);
-      return new SimpleObjectProperty(label);
-    });
-
-    columnThird.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getThird()));
+      Label label = new Label(DateUtil.formatDateTime(value.getCreationDate()));
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
@@ -177,19 +157,21 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Ranking...");
+      ctrl.setLoadingMessage("Loading Table Ranking...");
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }
 
-  public void refresh() {
+
+  public void setData(VpsTable vpsTable) {
+    titleLabel.setText("Ranking for \"" + vpsTable.getDisplayName() + "\"");
     new Thread(() -> {
-      List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
+      tableScores = maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());
 
       Platform.runLater(() -> {
-        ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);
+        ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
         tableView.setItems(data);
         tableView.refresh();
       });
