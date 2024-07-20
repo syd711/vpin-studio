@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -53,6 +54,7 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       FXMLLoader loader = new FXMLLoader(TabManiaOverviewController.class.getResource("tab-overview.fxml"));
       Parent builtInRoot = loader.load();
       overviewController = loader.getController();
+      overviewController.setManiaController(this);
       overviewTab.setContent(builtInRoot);
     }
     catch (IOException e) {
@@ -69,15 +71,19 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
+      updateForTabSelection(t1);
+    });
+
     updateForTabSelection(0);
   }
 
-  private void updateForTabSelection(int index) {
-    if (index == 0) {
+  private void updateForTabSelection(Number index) {
+    if (index.intValue() == 0) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Overview"));
       overviewController.onViewActivated(null);
     }
-    else if (index == 1) {
+    else if (index.intValue() == 1) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Tables"));
       tablesController.onViewActivated(null);
     }
@@ -93,5 +99,10 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     if (preferenceType.equals(PreferenceType.uiSettings)) {
 
     }
+  }
+
+  public void selectVpsTable(VpsTable vpsTable) {
+    tabPane.getSelectionModel().select(1);
+    tablesController.selectVpsTable(vpsTable);
   }
 }

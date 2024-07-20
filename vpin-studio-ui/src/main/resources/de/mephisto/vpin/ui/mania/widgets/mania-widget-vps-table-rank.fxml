@@ -25,9 +25,10 @@
       <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="columnRank" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
-          <TableColumn fx:id="columnName" prefWidth="400.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-            <TableColumn fx:id="columnScore" prefWidth="250.0" style="-fx-alignment: BASELINE_CENTER;" text="Score" />
-            <TableColumn fx:id="columnDate" prefWidth="220.0" style="-fx-alignment: BASELINE_CENTER;" text="Creation Date" />
+          <TableColumn fx:id="columnName" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+            <TableColumn fx:id="columnScore" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Score" />
+            <TableColumn fx:id="columnVersion" prefWidth="250.0" style="-fx-alignment: BASELINE_CENTER;" text="Table Version" />
+            <TableColumn fx:id="columnDate" prefWidth="240.0" style="-fx-alignment: BASELINE_CENTER;" text="Creation Date" />
         </columns>
       </TableView>
    </center>

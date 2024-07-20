@@ -42,10 +42,13 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
   @FXML
   private Label changeDateLabel;
+  private ManiaWidgetLatestScoresController latestScoresController;
+  private VpsTable vpsTable;
+  private TableScoreDetails score;
 
   @FXML
   private void onScoreClick() {
-
+    latestScoresController.onScoreClick(vpsTable, score);
   }
 
 
@@ -54,7 +57,9 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
   }
 
   public void setData(VpsTable vpsTable, TableScoreDetails score) {
-    InputStream imageInput = Studio.client.getCachedUrlImage("https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
+    this.vpsTable = vpsTable;
+    this.score = score;
+    InputStream imageInput = Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
     if (imageInput == null) {
       imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
     }
@@ -69,5 +74,9 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
 
     String date = simpleDateFormat.format(score.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
+  }
+
+  public void setLatestScoresController(ManiaWidgetLatestScoresController latestScoresController) {
+    this.latestScoresController = latestScoresController;
   }
 }

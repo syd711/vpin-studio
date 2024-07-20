@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -25,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -50,6 +52,8 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   private Parent loadingOverlay;
   private ManiaWidgetVPSTableRankController tableRankController;
 
+  private final List<Predicate<VpsTable>> predicates = new ArrayList<>();
+
   // Add a public no-args constructor
   public ManiaWidgetVPSTablesController() {
   }
@@ -69,12 +73,23 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   }
 
 
-  public void setData(String selectedLetter) {
+  public void setData(String selectedLetter, @Nullable VpsTable vpsTable) {
     countLabel.setText("");
     titleLabel.setText("Tables for \"" + selectedLetter + "\"");
     if (!viewStack.getChildren().contains(loadingOverlay)) {
       viewStack.getChildren().add(loadingOverlay);
     }
+
+    this.predicates.add(new Predicate<VpsTable>() {
+      @Override
+      public boolean test(VpsTable vpsTable) {
+        Platform.runLater(() -> {
+          tableRankController.setData(vpsTable);
+        });
+        return true;
+      }
+    });
+
 
     new Thread(() -> {
       List<VpsTable> tables = getTablesForLetter(selectedLetter);
@@ -103,6 +118,11 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
             }
           }
 
+          for (Predicate<VpsTable> predicate : predicates) {
+            predicate.test(vpsTable);
+          }
+          predicates.clear();
+
         }
         catch (IOException e) {
           LOG.error("Failed to create widget: " + e.getMessage(), e);
@@ -128,7 +148,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
         continue;
       }
 
-      if(table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
+      if (table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
         continue;
       }
 

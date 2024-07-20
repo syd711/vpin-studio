@@ -68,6 +68,7 @@ public class WidgetFactory {
 
 
   public static Font scoreFont;
+  public static Font scoreFontSmall;
   public static Font competitionScoreFont;
   public static Font scoreFontText;
 
@@ -80,6 +81,7 @@ public class WidgetFactory {
     String SCORE_TEXT_FONT_NAME = "Monospace";
 
     scoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 36);
+    scoreFontSmall = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 24);
     competitionScoreFont = Font.font(SCORE_FONT_NAME, FontPosture.findByName("regular"), 28);
 
     scoreFontText = Font.font(SCORE_TEXT_FONT_NAME, FontPosture.findByName("regular"), 16);
@@ -91,6 +93,9 @@ public class WidgetFactory {
 
   public static Font getScoreFont() {
     return scoreFont;
+  }
+  public static Font getScoreFontSmall() {
+    return scoreFontSmall;
   }
 
   public static Font getScoreFontText() {

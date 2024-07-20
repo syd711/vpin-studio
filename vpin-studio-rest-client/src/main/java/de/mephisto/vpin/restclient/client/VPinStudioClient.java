@@ -43,6 +43,8 @@ import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
@@ -51,10 +53,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.*;
 import java.util.List;
 
 public class VPinStudioClient implements OverlayClient {
@@ -336,6 +335,38 @@ public class VPinStudioClient implements OverlayClient {
   }
 
   @Override
+  public InputStream getPersistentCachedUrlImage(String cache, String url) {
+    try {
+      String asset = url.substring(url.lastIndexOf("/") + 1, url.length());
+      File folder = new File("./resources/cache/" + cache + "/");
+      if (!folder.exists()) {
+        folder.mkdirs();
+      }
+      File file = new File(folder, asset);
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+
+      InputStream in = getImageCache().getCachedUrlImage(url);
+      if (in != null) {
+        FileOutputStream out = new FileOutputStream(file);
+        IOUtils.copy(in, out);
+        LOG.info("Persisted for cache '"  + cache + "': " + file.getAbsolutePath());
+        in.close();
+        out.close();
+      }
+
+      if (file.exists()) {
+        return new FileInputStream(file);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Caching error: " + e.getMessage(), e);
+    }
+    return null;
+  }
+
+  @Override
   public ScoreSummaryRepresentation getCompetitionScore(long id) {
     return getCompetitionService().getCompetitionScore(id);
   }
@@ -397,9 +428,11 @@ public class VPinStudioClient implements OverlayClient {
         out = new FileOutputStream(target);
         StreamUtils.copy(clientHttpResponse.getBody(), out);
         return target;
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         throw e;
-      } finally {
+      }
+      finally {
         out.close();
       }
     });

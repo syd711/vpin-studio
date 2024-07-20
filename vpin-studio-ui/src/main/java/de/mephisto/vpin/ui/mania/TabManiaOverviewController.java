@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetLatestScoresController;
@@ -27,6 +28,7 @@ public class TabManiaOverviewController implements Initializable, StudioFXContro
 
   private ManiaWidgetLatestScoresController latestScoresController;
   private ManiaWidgetPlayerRankController playerRankController;
+  private ManiaController maniaController;
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
@@ -40,6 +42,7 @@ public class TabManiaOverviewController implements Initializable, StudioFXContro
       FXMLLoader loader = new FXMLLoader(ManiaWidgetLatestScoresController.class.getResource("mania-widget-latest-scores.fxml"));
       BorderPane root = loader.load();
       latestScoresController = loader.getController();
+      latestScoresController.setOverviewController(this);
       root.setMaxHeight(Double.MAX_VALUE);
       widgetLatestScore.setLeft(root);
     } catch (IOException e) {
@@ -59,5 +62,14 @@ public class TabManiaOverviewController implements Initializable, StudioFXContro
     }
 
     onViewActivated(null);
+  }
+
+  public void selectVpsTable(VpsTable vpsTable) {
+    maniaController.selectVpsTable(vpsTable);
+  }
+
+  public void setManiaController(ManiaController maniaController) {
+
+    this.maniaController = maniaController;
   }
 }

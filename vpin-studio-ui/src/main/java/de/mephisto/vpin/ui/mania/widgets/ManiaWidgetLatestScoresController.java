@@ -8,6 +8,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.mania.TabManiaOverviewController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -45,6 +47,7 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
   private StackPane viewStack;
 
   private Parent loadingOverlay;
+  private TabManiaOverviewController overviewController;
 
   // Add a public no-args constructor
   public ManiaWidgetLatestScoresController() {
@@ -61,6 +64,10 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
     } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
+  }
+
+  public void onScoreClick(VpsTable vpsTable, TableScoreDetails score) {
+    overviewController.selectVpsTable(vpsTable);
   }
 
   public void refresh() {
@@ -92,6 +99,7 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
               row.getStyleClass().add("vps-table-button");
               row.setPrefWidth(root.getPrefWidth() - 40);
               ManiaWidgetLatestScoreItemController controller = loader.getController();
+              controller.setLatestScoresController(this);
               controller.setData(vpsTable, score);
 
               highscoreVBox.getChildren().add(row);
@@ -105,5 +113,10 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
         viewStack.getChildren().remove(loadingOverlay);
       });
     }).start();
+  }
+
+  public void setOverviewController(TabManiaOverviewController overviewController) {
+
+    this.overviewController = overviewController;
   }
 }

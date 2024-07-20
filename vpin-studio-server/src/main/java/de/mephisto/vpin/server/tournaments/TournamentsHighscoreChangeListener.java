@@ -76,14 +76,14 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
             }
           }
 
-          // General lazy! score submission!
+          // the user might have selected not to submit all scores, but only tournament scores
           TableScore createdTableScore = null;
           if (tournamentSettings.isSubmitAllScores()) {
             createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
             LOG.info("Submitted VPinMania score " + createdTableScore);
           }
 
-          //sync info before submitting to reset tables
+          //sync info before submitting to possible resetted tables
           tournamentSynchronizer.synchronize();
 
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
@@ -92,16 +92,11 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
               TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
               if (tournamentTable != null) {
                 if (tournament.isActive() && tournamentTable.isActive()) {
-                  if (createdTableScore == null) {
-                    createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
-                    LOG.info("Submitted VPinMania score " + createdTableScore + " for " + tournament);
-                  }
-
-                  maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                  TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
                   LOG.info("Linked " + createdTableScore + " to " + tournament);
 
                   if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
+                    iScoredService.submitTournamentScore(tournament, tournamentTable, tournamentScore, accountByUuid);
                   }
                 }
                 else {

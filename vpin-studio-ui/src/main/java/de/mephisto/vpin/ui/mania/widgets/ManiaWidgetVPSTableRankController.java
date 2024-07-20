@@ -5,10 +5,14 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -43,6 +47,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
+import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaWidgetVPSTableRankController extends WidgetController implements Initializable {
@@ -62,6 +67,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @FXML
   private TableColumn<TableScoreDetails, String> columnName;
+
+  @FXML
+  private TableColumn<TableScoreDetails, String> columnVersion;
 
   @FXML
   private TableColumn<TableScoreDetails, String> columnDate;
@@ -86,18 +94,31 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     columnRank.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label("#" + (tableScores.indexOf(value)+1));
+      Label label = new Label("#" + (tableScores.indexOf(value) + 1));
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnScore.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
-      Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label(value.getScoreText());
-      label.setFont(getScoreFont());
-      label.setFont(defaultFont);
+      label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);
+    });
+
+
+    columnVersion.setCellValueFactory(cellData -> {
+      TableScoreDetails value = cellData.getValue();
+      VpsTable tableById = Studio.client.getVpsService().getTableById(value.getVpsTableId());
+      if (tableById != null) {
+        VpsTableVersion tableVersionById = tableById.getTableVersionById(value.getVpsVersionId());
+        if (tableVersionById != null) {
+          VpsVersionContainer vpsVersionContainer = new VpsVersionContainer(tableById, tableVersionById, null, false);
+          return new SimpleObjectProperty(vpsVersionContainer);
+        }
+
+      }
+      return new SimpleObjectProperty("-not available-");
     });
 
     columnName.setCellValueFactory(cellData -> {
@@ -166,6 +187,16 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
 
   public void setData(VpsTable vpsTable) {
+    if (vpsTable == null) {
+      Platform.runLater(() -> {
+        titleLabel.setText("Ranking");
+        ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
+        tableView.setItems(data);
+        tableView.refresh();
+      });
+      return;
+    }
+
     titleLabel.setText("Ranking for \"" + vpsTable.getDisplayName() + "\"");
     new Thread(() -> {
       tableScores = maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());

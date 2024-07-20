@@ -3,22 +3,24 @@ package de.mephisto.vpin.tools;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.List;
 
 public class WheelIconConverter {
 
 
-  private WheelIconConverter() {
+  private WheelIconConverter() throws IOException {
     VPS vps = new VPS();
     vps.reload();
 
-    File folder= new File("C:\\workspace\\tarcisio-wheel-icons");
+    File folder = new File("C:\\workspace\\tarcisio-wheel-icons\\original\\");
     File[] files = folder.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
@@ -28,33 +30,39 @@ public class WheelIconConverter {
 
     for (File file : files) {
       String name = FilenameUtils.getBaseName(file.getName());
-      if(name.contains("(")) {
+      if (name.contains("(")) {
         name = name.substring(0, name.lastIndexOf("(")).trim();
       }
 
       TableMatcher matcher = new TableMatcher();
       VpsTable closest = matcher.findClosest(file.getName(), null, false, null, null, 0, vps.getTables());
-      name = name.replace(",", "");
-      if(closest == null) {
+      if (closest == null) {
         String opName = name;
         closest = findByName(vps, opName);
-        while(closest == null && opName.contains(" ")) {
+        while (closest == null && opName.contains(" ")) {
           opName = opName.substring(0, opName.lastIndexOf(" "));
           closest = findByName(vps, opName);
         }
       }
 
-      if(closest == null) {
-        String opName = name.replace("-", "");
+      if (closest == null) {
+        String opName = name;
         closest = findByName(vps, opName);
-        while(closest == null && opName.contains(" ")) {
+        while (closest == null && opName.contains(" ")) {
           opName = opName.substring(0, opName.lastIndexOf(" "));
           closest = findByName(vps, opName);
         }
       }
 
-      if(closest != null) {
-        file.renameTo(new File(file.getParentFile(), closest.getId() + ".png"));
+      if (closest != null) {
+        File target = new File(file.getParentFile().getParentFile(), closest.getId() + ".png");
+        if (target.exists()) {
+          continue;
+        }
+        FileUtils.copyFile(file, target);
+      }
+      else {
+        System.out.println(file.getName());
       }
     }
   }
@@ -62,14 +70,14 @@ public class WheelIconConverter {
   private static VpsTable findByName(VPS vps, String name) {
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
-      if(table.getName().startsWith(name)) {
+      if (table.getName().startsWith(name)) {
         return table;
       }
     }
     return null;
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     new WheelIconConverter();
   }
 
@@ -179,10 +187,10 @@ public class WheelIconConverter {
         return 5;
       }
       else if (StringUtils.containsIgnoreCase(str1, str2)) {
-        return Math.min((str1.length()-str2.length())/(0.0 + str2.length()), 1.0);
+        return Math.min((str1.length() - str2.length()) / (0.0 + str2.length()), 1.0);
       }
       else if (StringUtils.containsIgnoreCase(str2, str1)) {
-        return Math.min((str2.length()-str1.length())/(0.0 + str1.length()), 1.0);
+        return Math.min((str2.length() - str1.length()) / (0.0 + str1.length()), 1.0);
       }
       // else
 

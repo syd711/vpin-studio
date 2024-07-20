@@ -28,6 +28,10 @@ public interface OverlayClient {
 
   InputStream getCachedUrlImage(String url);
 
+  default InputStream getPersistentCachedUrlImage(String cache, String url) {
+    return null;
+  }
+
   ScoreSummaryRepresentation getCompetitionScore(long id);
 
   ByteArrayInputStream getCompetitionBackground(long gameId);

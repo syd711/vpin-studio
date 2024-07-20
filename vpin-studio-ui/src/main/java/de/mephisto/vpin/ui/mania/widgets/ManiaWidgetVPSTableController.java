@@ -53,7 +53,7 @@ public class ManiaWidgetVPSTableController extends WidgetController implements I
 
   public void setData(VpsTable vpsTable) {
     this.vpsTable = vpsTable;
-    InputStream imageInput = Studio.client.getCachedUrlImage("https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
+    InputStream imageInput = Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
     if(imageInput == null) {
       imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
     }
