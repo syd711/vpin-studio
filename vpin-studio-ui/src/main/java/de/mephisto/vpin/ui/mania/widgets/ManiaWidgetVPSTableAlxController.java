@@ -105,8 +105,23 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
       if (tableById != null) {
         VpsTableVersion tableVersionById = tableById.getTableVersionById(value.getVpsVersionId());
         if (tableVersionById != null) {
+          HBox hBox = new HBox(3);
+          hBox.setAlignment(Pos.CENTER_LEFT);
+
+          InputStream imageInput = Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + tableById.getId() + ".png");
+          if (imageInput == null) {
+            imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
+          }
+          Image image = new Image(imageInput);
+          ImageView imageView = new ImageView(image);
+          imageView.setPreserveRatio(true);
+          imageView.setFitWidth(100);
+          imageView.setFitWidth(100);
+          hBox.getChildren().add(imageView);
+
           VpsTableContainer c = new VpsTableContainer(tableById, "");
-          return new SimpleObjectProperty(c);
+          hBox.getChildren().add(c);
+          return new SimpleObjectProperty(hBox);
         }
 
       }

@@ -61,9 +61,9 @@ public class VpsTableContainer extends VBox {
     row = new HBox(6);
 
 
-    titleLabel = new Label("");
-    titleLabel.setPrefWidth(TITLE_WIDTH);
-    row.getChildren().addAll(titleLabel);
+//    titleLabel = new Label("");
+//    titleLabel.setPrefWidth(TITLE_WIDTH);
+//    row.getChildren().addAll(titleLabel);
 
 
     this.getChildren().add(row);
