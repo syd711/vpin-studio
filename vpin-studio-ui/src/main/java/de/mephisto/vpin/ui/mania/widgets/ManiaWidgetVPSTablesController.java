@@ -49,11 +49,18 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   private ManiaWidgetVPSTableRankController tableRankController;
 
   private final List<Predicate<VpsTable>> predicates = new ArrayList<>();
+  private String selectedLetter;
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTablesController() {
   }
 
+  @FXML
+  private void onReload() {
+    if (this.selectedLetter != null) {
+      setData(selectedLetter, null);
+    }
+  }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -70,6 +77,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
 
 
   public void setData(String selectedLetter, @Nullable VpsTable vpsTable) {
+    this.selectedLetter = selectedLetter;
     countLabel.setText("");
     titleLabel.setText("Tables for \"" + selectedLetter + "\"");
     if (!viewStack.getChildren().contains(loadingOverlay)) {
@@ -140,7 +148,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
     });
 
     for (VpsTable table : tables) {
-      if(table == null) {
+      if (table == null) {
         continue;
       }
 

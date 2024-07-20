@@ -53,6 +53,11 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
   public ManiaWidgetLatestScoresController() {
   }
 
+  @FXML
+  private void onReload() {
+    refresh();
+  }
+
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {

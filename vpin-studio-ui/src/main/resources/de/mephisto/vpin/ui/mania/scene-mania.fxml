@@ -18,4 +18,7 @@
             </BorderPane.margin>
         </TabPane>
     </center>
+   <padding>
+      <Insets bottom="6.0" />
+   </padding>
 </BorderPane>

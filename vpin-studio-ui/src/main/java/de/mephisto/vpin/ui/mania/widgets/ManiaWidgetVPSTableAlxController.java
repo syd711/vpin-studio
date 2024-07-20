@@ -65,9 +65,9 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
 
   @FXML
   private TableColumn<ManiaVpsTable, String> columnName;
+
   @FXML
   private TableColumn<ManiaVpsTable, String> columnVersion;
-
 
   @FXML
   private StackPane tableStack;
@@ -77,6 +77,11 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTableAlxController() {
+  }
+
+  @FXML
+  private void onReload() {
+    refresh();
   }
 
   @Override

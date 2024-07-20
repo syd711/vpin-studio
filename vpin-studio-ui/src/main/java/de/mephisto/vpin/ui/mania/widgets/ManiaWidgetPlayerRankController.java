@@ -76,6 +76,11 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   public ManiaWidgetPlayerRankController() {
   }
 
+  @FXML
+  private void onReload() {
+    refresh();
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));

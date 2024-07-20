@@ -83,9 +83,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   private Parent loadingOverlay;
   private List<TableScoreDetails> tableScores;
+  private VpsTable vpsTable;
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTableRankController() {
+  }
+
+  @FXML
+  private void onReload() {
+    this.setData(this.vpsTable);
   }
 
   @Override
@@ -188,6 +194,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
 
   public void setData(VpsTable vpsTable) {
+    this.vpsTable = vpsTable;
     if (vpsTable == null) {
       Platform.runLater(() -> {
         titleLabel.setText("Ranking");

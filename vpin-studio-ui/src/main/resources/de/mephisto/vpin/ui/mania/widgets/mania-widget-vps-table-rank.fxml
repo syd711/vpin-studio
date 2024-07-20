@@ -1,13 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" styleClass="subpanel" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTableRankController">
+<BorderPane fx:id="root" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTableRankController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
@@ -22,14 +27,39 @@
         </Label>
     </top>
    <center>
-      <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component" BorderPane.alignment="CENTER">
-        <columns>
-          <TableColumn fx:id="columnRank" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
-          <TableColumn fx:id="columnName" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
-            <TableColumn fx:id="columnScore" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Score" />
-            <TableColumn fx:id="columnVersion" prefWidth="250.0" style="-fx-alignment: BASELINE_CENTER;" text="Table Version" />
-            <TableColumn fx:id="columnDate" prefWidth="240.0" style="-fx-alignment: BASELINE_CENTER;" text="Creation Date" />
-        </columns>
-      </TableView>
+      <BorderPane BorderPane.alignment="CENTER">
+         <center>
+            <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+              <columns>
+                <TableColumn fx:id="columnRank" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
+                <TableColumn fx:id="columnName" prefWidth="320.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+                  <TableColumn fx:id="columnScore" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Score" />
+                  <TableColumn fx:id="columnVersion" prefWidth="250.0" style="-fx-alignment: BASELINE_CENTER;" text="Table Version" />
+                  <TableColumn fx:id="columnDate" prefWidth="240.0" style="-fx-alignment: BASELINE_CENTER;" text="Creation Date" />
+              </columns>
+            </TableView>
+         </center>
+         <top>
+            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+               <items>
+                  <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Reload all table data" />
+                     </tooltip>
+                  </Button>
+               </items>
+            </ToolBar>
+         </top>
+      </BorderPane>
    </center>
+   <styleClass>
+      <String fx:value="subpanel" />
+      <String fx:value="base-component" />
+   </styleClass>
 </BorderPane>
