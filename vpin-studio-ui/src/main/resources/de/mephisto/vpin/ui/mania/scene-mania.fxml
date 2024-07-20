@@ -6,15 +6,16 @@
 <?import javafx.scene.layout.BorderPane?>
 
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.ManiaController">
-   <center>
-          <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
-              <tabs>
-                  <Tab fx:id="overviewTab" closable="false" text="Overview" />
-            <Tab fx:id="tablesTab" closable="false" text="Tables" />
-              </tabs>
-         <BorderPane.margin>
-            <Insets right="12.0" />
-         </BorderPane.margin>
-          </TabPane>
-   </center>
+    <center>
+        <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
+            <tabs>
+                <Tab fx:id="overviewTab" closable="false" text="Overview" />
+                <Tab fx:id="tablesTab" closable="false" text="Table Scores" />
+            <Tab fx:id="tableAlxTab" closable="false" text="Table Statistics" />
+            </tabs>
+            <BorderPane.margin>
+                <Insets right="12.0" />
+            </BorderPane.margin>
+        </TabPane>
+    </center>
 </BorderPane>

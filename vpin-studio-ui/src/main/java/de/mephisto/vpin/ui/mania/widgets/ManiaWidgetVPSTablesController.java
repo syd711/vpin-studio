@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
-import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -27,9 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
-
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaWidgetVPSTablesController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetVPSTablesController.class);
@@ -137,13 +133,17 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
     List<VpsTable> result = new ArrayList<>();
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
     Collections.sort(tables, (o1, o2) -> {
-      if (o1.getName().isEmpty() || o2.getName().isEmpty()) {
+      if (o1 == null || o2 == null || o1.getName().isEmpty() || o2.getName().isEmpty()) {
         return 0;
       }
       return o1.getName().compareTo(o2.getName());
     });
 
     for (VpsTable table : tables) {
+      if(table == null) {
+        continue;
+      }
+
       if (table.getName().trim().isEmpty()) {
         continue;
       }

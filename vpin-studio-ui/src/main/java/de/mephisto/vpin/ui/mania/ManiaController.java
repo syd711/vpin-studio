@@ -34,10 +34,14 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   private Tab tablesTab;
 
   @FXML
+  private Tab tableAlxTab;
+
+  @FXML
   private TabPane tabPane;
 
   private TabManiaOverviewController overviewController;
-  private TabManiaTablesController tablesController;
+  private TabManiaTableScoresController tablesController;
+  private TabManiaTableAlxController tableAlxController;
 
   // Add a public no-args constructor
   public ManiaController() {
@@ -62,10 +66,20 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(TabManiaTablesController.class.getResource("tab-tables.fxml"));
+      FXMLLoader loader = new FXMLLoader(TabManiaTableScoresController.class.getResource("tab-table-scores.fxml"));
       Parent builtInRoot = loader.load();
       tablesController = loader.getController();
       tablesTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load tab: " + e.getMessage(), e);
+    }
+
+    try {
+      FXMLLoader loader = new FXMLLoader(TabManiaTableAlxController.class.getResource("tab-table-alx.fxml"));
+      Parent builtInRoot = loader.load();
+      tableAlxController = loader.getController();
+      tableAlxTab.setContent(builtInRoot);
     }
     catch (IOException e) {
       LOG.error("Failed to load tab: " + e.getMessage(), e);

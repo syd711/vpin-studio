@@ -114,7 +114,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       if (tableById != null) {
         VpsTableVersion tableVersionById = tableById.getTableVersionById(value.getVpsVersionId());
         if (tableVersionById != null) {
-          VpsVersionContainer vpsVersionContainer = new VpsVersionContainer(tableById, tableVersionById, null, false);
+          VpsVersionContainer vpsVersionContainer = new VpsVersionContainer(tableById, tableVersionById, "", false);
           return new SimpleObjectProperty(vpsVersionContainer);
         }
 

@@ -28,8 +28,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class TabManiaTablesController implements Initializable, StudioFXController {
-  private final static Logger LOG = LoggerFactory.getLogger(TabManiaTablesController.class);
+public class TabManiaTableScoresController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(TabManiaTableScoresController.class);
 
   @FXML
   private BorderPane widgetSidePanel;
