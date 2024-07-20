@@ -3,9 +3,9 @@ package de.mephisto.vpin.ui.competitions.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
+import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -134,6 +134,10 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         LocalUISettings.saveProperty(LocalUISettings.LAST_ISCORED_SELECTION, dashboardUrl);
 
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
+        if(gameRoom == null) {
+          return;
+        }
+
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
         List<IScoredGame> games = gameRoom.getGames();
