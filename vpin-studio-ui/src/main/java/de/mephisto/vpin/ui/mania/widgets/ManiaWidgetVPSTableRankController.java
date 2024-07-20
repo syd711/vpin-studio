@@ -42,6 +42,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -190,7 +191,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     if (vpsTable == null) {
       Platform.runLater(() -> {
         titleLabel.setText("Ranking");
-        ObservableList<TableScoreDetails> data = FXCollections.observableList(tableScores);
+        ObservableList<TableScoreDetails> data = FXCollections.emptyObservableList();
         tableView.setItems(data);
         tableView.refresh();
       });

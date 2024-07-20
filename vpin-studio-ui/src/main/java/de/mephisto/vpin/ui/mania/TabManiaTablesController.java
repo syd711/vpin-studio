@@ -8,10 +8,11 @@ import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTableRankController;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTablesController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Label;
+import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
@@ -41,12 +42,13 @@ public class TabManiaTablesController implements Initializable, StudioFXControll
 
   private String selectedLetter = null;
 
+  private VpsTable vpsTable;
+
   private ManiaWidgetVPSTablesController tablesController;
   private ManiaWidgetVPSTableRankController tableRankController;
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
-    tablesController.setData(selectedLetter, null);
   }
 
   @Override
@@ -57,13 +59,15 @@ public class TabManiaTablesController implements Initializable, StudioFXControll
 
     for (String letter : letters) {
       ToggleButton b = new ToggleButton(letter);
+      b.setUserData(letter);
       b.getStyleClass().add("default-text");
+      b.getStyleClass().add("custom-toggle-button");
       b.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          if(newValue) {
+          if (newValue) {
             selectedLetter = letter;
-            tablesController.setData(letter, null);
+            tablesController.setData(letter, vpsTable);
           }
         }
       });
@@ -76,7 +80,7 @@ public class TabManiaTablesController implements Initializable, StudioFXControll
       FXMLLoader loader = new FXMLLoader(ManiaWidgetVPSTablesController.class.getResource("mania-widget-vps-tables.fxml"));
       BorderPane root = loader.load();
       tablesController = loader.getController();
-      tablesController.setData(selectedLetter, null);
+      tablesController.setData(selectedLetter, vpsTable);
       root.setMaxHeight(Double.MAX_VALUE);
       widgetSidePanel.setLeft(root);
     }
@@ -99,19 +103,24 @@ public class TabManiaTablesController implements Initializable, StudioFXControll
 
     tablesController.setTableRankController(tableRankController);
 
-    ((ToggleButton)toolbar.getItems().get(0)).setSelected(true);
+    ((ToggleButton) toolbar.getItems().get(0)).setSelected(true);
     onViewActivated(null);
   }
 
   public void selectVpsTable(VpsTable table) {
+    this.vpsTable = table;
     if (table.getName().trim().isEmpty()) {
       return;
     }
 
     String letter = table.getName().trim().substring(0, 1);
     selectedLetter = letter;
-    tableRankController.setData(null);
-    tablesController.setData(letter, table);
+    ObservableList<Node> items = toolbar.getItems();
+    for (Node item : items) {
+      if (item.getUserData().equals(letter)) {
+        ((ToggleButton) item).setSelected(true);
+      }
+    }
   }
 
   private List<String> getLetters() {
