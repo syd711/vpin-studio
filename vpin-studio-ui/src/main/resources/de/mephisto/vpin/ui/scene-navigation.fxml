@@ -47,16 +47,6 @@
                         </Label>
                      </children>
                   </VBox>
-                  <VBox fx:id="tournamentsBtn" alignment="CENTER" layoutX="28.0" layoutY="274.0" onMousePressed="#onTournamentsClick" styleClass="navigation-button">
-                     <children>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="28" />
-                        <Label text="Tournaments" textFill="WHITE">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </VBox>
                   <VBox fx:id="competitionsBtn" alignment="CENTER" onMousePressed="#onCompetitionsClick" styleClass="navigation-button">
                      <children>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-outline" iconSize="28" />
@@ -115,6 +105,16 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </StackPane>
+                  <VBox fx:id="tournamentsBtn" alignment="CENTER" layoutX="28.0" layoutY="274.0" onMousePressed="#onTournamentsClick" styleClass="navigation-button">
+                     <children>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2t-trophy-variant" iconSize="28" />
+                        <Label text="Tournaments" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </VBox>
                   <VBox fx:id="maniaBtn" alignment="CENTER" layoutX="28.0" layoutY="430.0" onMousePressed="#onManiaClick" styleClass="navigation-button">
                      <children>
                         <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">

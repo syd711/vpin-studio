@@ -56,6 +56,7 @@ public class PinVolService implements InitializingBean {
     List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("resources"));
+    executor.enableLogging(true);
     executor.executeCommandAsync();
     LOG.info("Executed PinVol command: " + String.join(" ", commands));
   }

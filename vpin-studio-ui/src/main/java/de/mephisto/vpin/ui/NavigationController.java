@@ -284,11 +284,14 @@ public class NavigationController implements Initializable, StudioEventListener,
     cardsBtn.setVisible(frontendType.supportMedias());
 
     tournamentsBtn.setVisible(false);
+    maniaBtn.setVisible(false);
     if (Features.TOURNAMENTS_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
       tournamentsBtn.setVisible(settings.isEnabled());
     }
-    maniaBtn.setVisible(Features.MANIA);
+    if (Features.MANIA && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+      maniaBtn.setVisible(true);
+    }
 
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
     navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
