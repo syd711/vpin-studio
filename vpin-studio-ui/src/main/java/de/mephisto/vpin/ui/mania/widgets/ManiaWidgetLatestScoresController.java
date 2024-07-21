@@ -62,7 +62,7 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Latest Scores...");
@@ -84,7 +84,6 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
       List<TableScoreDetails> recentScores = maniaClient.getHighscoreClient().getRecentHighscores();
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
-
         try {
           if (recentScores.isEmpty()) {
             Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");

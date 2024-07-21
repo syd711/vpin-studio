@@ -64,7 +64,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading VPS Tables");
@@ -98,7 +98,6 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
       List<VpsTable> tables = getTablesForLetter(selectedLetter);
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
-
         try {
           countLabel.setText(tables.size() + " tables");
           if (tables.isEmpty()) {
