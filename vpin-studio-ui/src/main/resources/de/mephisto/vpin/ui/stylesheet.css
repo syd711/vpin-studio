@@ -365,7 +365,6 @@
 }
 
 .vps-table-button:hover {
-    -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
     -fx-font-size: 14px;
@@ -1086,6 +1085,7 @@
     -fx-text-fill: #FFFFFF;
     -fx-font-size : 14px;
 }
+
 .default-text-color {
     -fx-text-fill: #FFFFFF;
 }

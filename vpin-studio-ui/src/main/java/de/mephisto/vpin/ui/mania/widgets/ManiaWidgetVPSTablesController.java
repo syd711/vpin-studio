@@ -6,16 +6,15 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,12 +110,17 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
           else {
             for (VpsTable table : tables) {
               FXMLLoader loader = new FXMLLoader(ManiaWidgetVPSTableController.class.getResource("mania-widget-vps-table.fxml"));
-              Pane row = loader.load();
+              BorderPane row = loader.load();
+              row.setUserData(table);
               row.getStyleClass().add("vps-table-button");
               row.setPrefWidth(root.getPrefWidth() - 40);
               ManiaWidgetVPSTableController controller = loader.getController();
               controller.setTablesController(this);
               controller.setData(table);
+
+              if(table.equals(vpsTable) && !row.getStyleClass().contains("vps-table-button-selected")) {
+                row.getStyleClass().add("vps-table-button-selected");
+              }
 
               highscoreVBox.getChildren().add(row);
             }
@@ -174,6 +178,13 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   }
 
   public void selectTable(VpsTable vpsTable) {
+    ObservableList<Node> children = highscoreVBox.getChildren();
+    for (Node child : children) {
+      child.getStyleClass().remove("vps-table-button-selected");
+      if(vpsTable != null && child.getUserData().equals(vpsTable) && !child.getStyleClass().contains("vps-table-button-selected")) {
+        child.getStyleClass().add("vps-table-button-selected");
+      }
+    }
     tableRankController.setData(vpsTable);
   }
 }

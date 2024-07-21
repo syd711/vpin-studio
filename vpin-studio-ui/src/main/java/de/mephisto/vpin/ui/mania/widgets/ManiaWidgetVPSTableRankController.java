@@ -102,6 +102,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label("#" + (tableScores.indexOf(value) + 1));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
@@ -109,6 +110,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     columnScore.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
       Label label = new Label(value.getScoreText());
+      label.getStyleClass().add("default-text-color");
       label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);
     });
@@ -146,6 +148,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(value.getDisplayName());
       label.setFont(defaultFont);
+      label.getStyleClass().add("default-text-color");
       hBox.getChildren().add(label);
 
       new Thread(() -> {
@@ -177,6 +180,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
       TableScoreDetails value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(DateUtil.formatDateTime(value.getCreationDate()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });

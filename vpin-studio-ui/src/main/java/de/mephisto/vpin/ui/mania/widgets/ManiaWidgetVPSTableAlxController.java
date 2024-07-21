@@ -92,6 +92,7 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
       ManiaVpsTable value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label("#" + (vpsTables.indexOf(value) + 1));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
@@ -100,6 +101,7 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
       ManiaVpsTable value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label(String.valueOf(value.getScored()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
