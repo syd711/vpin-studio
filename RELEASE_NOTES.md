@@ -18,6 +18,21 @@ This mode does not support media management but all other basic VPX based featur
 
 You can select between the three modes (PinUP Popper, PinballX and Standalone) when installing the Studio.
 
+### VPin Mania 
+
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/mania.png" width="150" />
+
+Mentioned several times this year and announced on https://www.vpin-mania.net/, the initial version of the **VPin Mania**
+services are now live! The original plan was to launch the service as a website, but because I've always favoured 
+the Studio maintenance and because web development is more expensive, I decided to integrate the frontend as
+part of the VPin Studio.
+
+Interested in what these services have to offer? Check out the video below:
+
+https://www.youtube.com/watch?v=WeAqw0ojBvU&ab_channel=VPinStudio
+
+
 ### iScored Subscriptions
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/iscored.png" width="400" />
@@ -85,11 +100,13 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Highscore Section**: The "Open Card" button has been replaced with and "Edit Card" button which jumps into the Highscore Card designer, selecting the table's card.
 - **Table Overview / Replace or Append Media**: On media upload, when a media already exists, a confirmation pops up to ask whether the media file should replace existing one or be appended to the list of media files.
 - **Table Overview / .res File Support**: Added .res file support which includes displaying the availability of the file in a column, uploading and filtering. 
-- **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX. 
+- **Table Overview / .ini File Support**: Added .ini file support which includes a separate section for viewing/editing the existing properties of an .ini file. Note that the section only shows existing fields of the .ini. Additional entries can't be added. This way, we stay compatible with future releases of VPX.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
+  
 - **Table Overview / Validation (breaking)**: Removed the "Outdated Recordings" validators. Since the modification date of the table is changed on edit (same for the backglass), this validator was simply too fuzzy. 
 - **Table Overview / Ignored Validation (breaking)**: Changed the way ignored validators are persisted. This way, new validators can be ignored by default and for new users more exotic validators are disabled from the start.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/ini.png" width="600" />
 
 - **Table Overview / Auto-Fill**: Added **preference dialog for the auto-fill** function. The dialog allows to select the fields that should be overwritten. The settings button for this is next to every auto-fill menu drop-down (inside the Table Data Manager and the Table Data section).
 
