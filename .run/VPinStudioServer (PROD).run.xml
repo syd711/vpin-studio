@@ -1,10 +1,10 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="VPinStudioServer" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="VPinStudioServer (PROD)" type="Application" factoryName="Application">
     <option name="ALTERNATIVE_JRE_PATH" value="zulu-11" />
     <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.server.VPinStudioServer" />
     <module name="vpin-studio-server" />
-    <option name="PROGRAM_PARAMETERS" value="-Dspring.profiles.active=dev" />
+    <option name="PROGRAM_PARAMETERS" value="" />
     <option name="VM_PARAMETERS" value="-Dfile.encoding=utf8" />
     <extension name="coverage">
       <pattern>

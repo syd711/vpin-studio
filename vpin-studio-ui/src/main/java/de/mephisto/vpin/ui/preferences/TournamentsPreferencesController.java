@@ -39,8 +39,6 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class TournamentsPreferencesController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsPreferencesController.class);
 
-  public static final int DEBOUNCE_MS = 500;
-
   private final Debouncer debouncer = new Debouncer();
 
   @FXML

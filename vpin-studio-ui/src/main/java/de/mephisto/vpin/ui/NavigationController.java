@@ -264,6 +264,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       if (!tournamentsBtn.isVisible()) {
         navigateTo(NavigationItem.Tables);
       }
+      maniaBtn.setVisible(settings.isEnabled());
     }
   }
 
