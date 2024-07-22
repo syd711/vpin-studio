@@ -9,7 +9,7 @@
     <center>
         <StackPane fx:id="dashboardStack" BorderPane.alignment="TOP_CENTER">
             <BorderPane.margin>
-                <Insets bottom="12.0" />
+                <Insets />
             </BorderPane.margin>
             <children>
                 <BorderPane fx:id="widgetLatestScore">

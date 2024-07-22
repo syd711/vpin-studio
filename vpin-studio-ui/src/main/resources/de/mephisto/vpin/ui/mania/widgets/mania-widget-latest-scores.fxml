@@ -45,7 +45,7 @@
             </VBox>
          </center>
          <top>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <ToolBar prefHeight="40.0" prefWidth="200.0" styleClass="floating-toolbar" BorderPane.alignment="CENTER">
                <items>
                   <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>

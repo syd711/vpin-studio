@@ -103,12 +103,18 @@
                 <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>
-                <Insets bottom="7.0" right="12.0" />
+                <Insets bottom="7.0" />
             </padding>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
         </VBox>
     </right>
     <stylesheets>
         <URL value="@../stylesheet.css" />
         <URL value="@../richtext.css" />
     </stylesheets>
+   <padding>
+      <Insets bottom="12.0" />
+   </padding>
 </BorderPane>

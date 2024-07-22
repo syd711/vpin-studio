@@ -17,7 +17,7 @@
                     <center>
                         <BorderPane fx:id="widgetRight" BorderPane.alignment="TOP_CENTER">
                             <BorderPane.margin>
-                                <Insets left="12.0" right="12.0" />
+                                <Insets left="12.0" />
                             </BorderPane.margin>
                         </BorderPane>
                     </center>

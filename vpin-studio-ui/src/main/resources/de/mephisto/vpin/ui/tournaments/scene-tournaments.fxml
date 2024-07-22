@@ -355,4 +355,7 @@
          </BorderPane.margin>
       </VBox>
    </right>
+   <padding>
+      <Insets bottom="12.0" />
+   </padding>
 </BorderPane>

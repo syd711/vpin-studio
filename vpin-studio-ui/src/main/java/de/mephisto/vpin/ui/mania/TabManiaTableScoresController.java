@@ -80,7 +80,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
       FXMLLoader loader = new FXMLLoader(ManiaWidgetVPSTablesController.class.getResource("mania-widget-vps-tables.fxml"));
       BorderPane root = loader.load();
       tablesController = loader.getController();
-      tablesController.setData(selectedLetter, vpsTable);
       root.setMaxHeight(Double.MAX_VALUE);
       widgetSidePanel.setLeft(root);
     }

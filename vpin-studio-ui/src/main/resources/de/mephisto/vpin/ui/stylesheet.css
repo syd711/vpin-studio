@@ -1002,6 +1002,12 @@
     -fx-font-size: 14;
 }
 
+.floating-toolbar {
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 6 6 6 6;
+    -fx-background-color: #222222;
+}
+
 .context-menu {
     -fx-min-width: 160px;
     -fx-background-color: #222222;

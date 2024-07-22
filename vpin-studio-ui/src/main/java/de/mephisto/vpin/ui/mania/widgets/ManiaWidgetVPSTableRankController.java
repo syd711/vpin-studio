@@ -23,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -79,6 +80,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private StackPane tableStack;
 
   @FXML
+  private Button openBtn;
+
+  @FXML
   private Label titleLabel;
 
   private Parent loadingOverlay;
@@ -87,6 +91,14 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTableRankController() {
+  }
+
+
+  @FXML
+  private void onOpen() {
+    if (vpsTable != null) {
+      Studio.browse(VPS.getVpsTableUrl(vpsTable.getId()));
+    }
   }
 
   @FXML
@@ -198,6 +210,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
 
   public void setData(VpsTable vpsTable) {
+    openBtn.setDisable(vpsTable == null);
     this.vpsTable = vpsTable;
     if (vpsTable == null) {
       Platform.runLater(() -> {
