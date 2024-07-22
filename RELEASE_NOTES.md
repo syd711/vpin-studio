@@ -24,13 +24,15 @@ You can select between the three modes (PinUP Popper, PinballX and Standalone) w
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/mania.png" width="150" />
 
 Mentioned several times this year and announced on https://www.vpin-mania.net/, the initial version of the **VPin Mania**
-services are now live! The original plan was to launch the service as a website, but because I've always favoured 
+services are now live! The original plan was to launch the service as a website, but because I've always favored 
 the Studio maintenance and because web development is more expensive, I decided to integrate the frontend as
 part of the VPin Studio.
 
 Interested in what these services have to offer? Check out the video below:
 
 https://www.youtube.com/watch?v=WeAqw0ojBvU&ab_channel=VPinStudio
+
+or read some documentation: https://github.com/syd711/vpin-studio/wiki/Mania
 
 
 ### iScored Subscriptions
