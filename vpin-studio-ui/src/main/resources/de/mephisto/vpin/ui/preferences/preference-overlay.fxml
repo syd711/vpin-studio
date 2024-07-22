@@ -81,12 +81,12 @@
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="Recent Highscores / Player Rankings / Offline Competitions / Online Competitions" textFill="WHITE" GridPane.columnIndex="1">
+                        <RadioButton fx:id="radioA" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions / Online Competitions" textFill="WHITE" GridPane.columnIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="Recent Highscores / Player Rankings / Offline Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <RadioButton fx:id="radioB" layoutX="217.0" layoutY="45.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / Offline Competitions" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -96,7 +96,7 @@
                               <Font size="14.0" />
                            </font>
                         </RadioButton>
-                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores / Player Rankings / External Page" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <RadioButton fx:id="radioD" layoutX="217.0" layoutY="76.0" mnemonicParsing="false" text="Recent Highscores / Player Ranking / External Page" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>

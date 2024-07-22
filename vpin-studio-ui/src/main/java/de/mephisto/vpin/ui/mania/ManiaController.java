@@ -94,11 +94,15 @@ public class ManiaController implements Initializable, StudioFXController, Studi
 
   private void updateForTabSelection(Number index) {
     if (index.intValue() == 0) {
-      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Overview"));
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Player Ranking"));
       overviewController.onViewActivated(null);
     }
     else if (index.intValue() == 1) {
-      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Tables"));
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Ranking"));
+      tablesController.onViewActivated(null);
+    }
+    else if (index.intValue() == 3) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Statistics"));
       tablesController.onViewActivated(null);
     }
   }

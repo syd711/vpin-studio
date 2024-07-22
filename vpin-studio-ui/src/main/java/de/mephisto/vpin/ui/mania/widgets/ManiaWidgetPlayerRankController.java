@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
+import de.mephisto.vpin.connectors.mania.model.RankedAccount;
+import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -14,7 +14,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
@@ -26,19 +25,17 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
-import javafx.stage.Screen;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaWidgetPlayerRankController extends WidgetController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ManiaWidgetPlayerRankController.class);
@@ -47,30 +44,31 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private BorderPane root;
 
   @FXML
-  private TableView<RankedPlayerRepresentation> tableView;
+  private TableView<RankedPlayer> tableView;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnRank;
+  private TableColumn<RankedPlayer, String> columnRank;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnPoints;
+  private TableColumn<RankedPlayer, String> columnPoints;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnName;
+  private TableColumn<RankedPlayer, String> columnName;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnFirst;
+  private TableColumn<RankedPlayer, String> columnFirst;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnSecond;
+  private TableColumn<RankedPlayer, String> columnSecond;
 
   @FXML
-  private TableColumn<RankedPlayerRepresentation, String> columnThird;
+  private TableColumn<RankedPlayer, String> columnThird;
 
   @FXML
   private StackPane tableStack;
 
   private Parent loadingOverlay;
+  private List<RankedPlayer> rankedPlayers;
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
@@ -81,28 +79,35 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     refresh();
   }
 
+  @FXML
+  private void onHelp() {
+    Studio.browse("https://github.com/syd711/vpin-studio/wiki/Mania#Player-Ranking");
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));
 
     columnRank.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label("#" + value.getRank());
+      Label label = new Label("#" + (rankedPlayers.indexOf(value) + 1));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnPoints.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label(String.valueOf(value.getPoints()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnName.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       HBox hBox = new HBox();
 
       Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
@@ -117,27 +122,16 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.setSpacing(6);
 
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(value.getName());
+      Label label = new Label(value.getDisplayName());
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        InputStream in = null;
-        if (!StringUtils.isEmpty(value.getAvatarUrl())) {
-          in = client.getCachedUrlImage(value.getAvatarUrl());
-        }
-        else if (value.getAvatarUuid() != null) {
-          in = new ByteArrayInputStream(client.getAsset(AssetType.AVATAR, value.getAvatarUuid()).readAllBytes());
-        }
-
-        if (in == null) {
-          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
-        }
-
-        final InputStream data = in;
-        if (data != null) {
+        InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
+        if (in != null) {
           Platform.runLater(() -> {
-            Image i = new Image(data);
+            Image i = new Image(in);
             view.setImage(i);
             CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           });
@@ -146,40 +140,35 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       return new SimpleObjectProperty(hBox);
     });
 
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-    if (screenBounds.getWidth() < 2600) {
-      columnName.setPrefWidth(280);
-    }
-    if (screenBounds.getWidth() < 2000) {
-      columnName.setPrefWidth(260);
-    }
-
     columnFirst.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getFirst()));
+      Label label = new Label(String.valueOf(value.getPlace1()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnSecond.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getSecond()));
+      Label label = new Label(String.valueOf(value.getPlace2()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnThird.setCellValueFactory(cellData -> {
-      RankedPlayerRepresentation value = cellData.getValue();
+      RankedPlayer value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
-      Label label = new Label(String.valueOf(value.getThird()));
+      Label label = new Label(String.valueOf(value.getPlace3()));
+      label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     try {
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Ranking...");
@@ -190,14 +179,91 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   }
 
   public void refresh() {
+    this.tableView.setVisible(false);
+    if(!tableStack.getChildren().contains(loadingOverlay)) {
+      tableStack.getChildren().add(loadingOverlay);
+    }
+
     new Thread(() -> {
-      List<RankedPlayerRepresentation> rankedPlayers = client.getRankedPlayers();
+      List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
+      rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
+      Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
+        @Override
+        public int compare(RankedPlayer o1, RankedPlayer o2) {
+          return o2.points - o1.getPoints();
+        }
+      });
 
       Platform.runLater(() -> {
-        ObservableList<RankedPlayerRepresentation> data = FXCollections.observableList(rankedPlayers);
+        tableStack.getChildren().remove(loadingOverlay);
+        tableView.setVisible(true);
+
+        ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
         tableView.setItems(data);
         tableView.refresh();
       });
     }).start();
+  }
+
+
+  class RankedPlayer {
+    private final int points;
+    private final RankedAccount account;
+    private final String displayName;
+    private final String uuid;
+    private final int place1;
+    private final int place2;
+    private final int place3;
+
+    RankedPlayer(RankedAccount account) {
+      this.account = account;
+      this.points = account.getPlace1() * 4 + account.getPlace2() * 2 + account.getPlace3();
+      this.displayName = account.getDisplayName();
+      this.uuid = account.getUuid();
+      this.place1 = account.getPlace1();
+      this.place2 = account.getPlace2();
+      this.place3 = account.getPlace3();
+    }
+
+    public String getDisplayName() {
+      return displayName;
+    }
+
+    public String getUuid() {
+      return uuid;
+    }
+
+    public int getPlace1() {
+      return place1;
+    }
+
+    public int getPlace2() {
+      return place2;
+    }
+
+    public int getPlace3() {
+      return place3;
+    }
+
+    public int getPoints() {
+      return points;
+    }
+
+    public RankedAccount getAccount() {
+      return account;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      RankedPlayer that = (RankedPlayer) o;
+      return Objects.equals(uuid, that.uuid);
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hashCode(uuid);
+    }
   }
 }

@@ -9,8 +9,8 @@
     <center>
         <TabPane fx:id="tabPane" tabClosingPolicy="UNAVAILABLE" BorderPane.alignment="CENTER">
             <tabs>
-                <Tab fx:id="overviewTab" closable="false" text="Overview" />
-                <Tab fx:id="tablesTab" closable="false" text="Table Scores" />
+                <Tab fx:id="overviewTab" closable="false" text="Player Ranking" />
+                <Tab fx:id="tablesTab" closable="false" text="Table Ranking" />
             <Tab fx:id="tableAlxTab" closable="false" text="Table Statistics" />
             </tabs>
             <BorderPane.margin>
