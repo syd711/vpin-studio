@@ -23,7 +23,7 @@
         </Label>
     </top>
    <center>
-      <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+      <VBox fx:id="listRoot" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
                <content>

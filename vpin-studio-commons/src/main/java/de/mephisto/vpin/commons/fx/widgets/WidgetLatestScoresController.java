@@ -36,6 +36,9 @@ public class WidgetLatestScoresController extends WidgetController implements In
   private BorderPane root;
 
   @FXML
+  private Pane listRoot;
+
+  @FXML
   private StackPane viewStack;
 
   private Parent loadingOverlay;
@@ -48,7 +51,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay.fxml"));
+      FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Latest Scores...");
@@ -58,6 +61,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
   }
 
   public void refresh() {
+    listRoot.setVisible(false);
     if(!viewStack.getChildren().contains(loadingOverlay)) {
       viewStack.getChildren().add(loadingOverlay);
     }
@@ -106,6 +110,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         }
 
         viewStack.getChildren().remove(loadingOverlay);
+        listRoot.setVisible(true);
       });
     }).start();
   }
