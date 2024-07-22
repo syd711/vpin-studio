@@ -301,6 +301,6 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
     navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
-    navigationItemMap.put(NavigationItem.Mania, new NavigationView(NavigationItem.SystemManager, ManiaController.class, maniaBtn, "scene-mania.fxml"));
+    navigationItemMap.put(NavigationItem.Mania, new NavigationView(NavigationItem.Mania, ManiaController.class, maniaBtn, "scene-mania.fxml"));
   }
 }
