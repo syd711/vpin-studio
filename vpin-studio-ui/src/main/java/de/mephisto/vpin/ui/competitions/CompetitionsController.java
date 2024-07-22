@@ -179,7 +179,7 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (t1.intValue() == 3) {
       if (iScoredSubscriptionsTab != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         Optional<CompetitionRepresentation> selection = iScoredSubscriptionsController.getSelection();
         updateSelection(selection);
         checkTitledPanes(CompetitionType.ISCORED);
@@ -398,10 +398,10 @@ public class CompetitionsController implements Initializable, StudioFXController
     }
     else if (index == 3) {
       if (competitionRepresentation.isPresent()) {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions", competitionRepresentation.get().getName()));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions", competitionRepresentation.get().getName()));
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "IScored Subscriptions"));
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
       }
     }
     else {
