@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui.tournaments.view;
 
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.TournamentHelper;
@@ -23,6 +25,7 @@ public class TournamentCellContainer extends HBox {
 
     String badgeUrl = maniaClient.getTournamentClient().getBadgeUrl(tournament);
     this.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(badgeUrl)));
+    TournamentMember owner = maniaClient.getTournamentClient().getTournamentOwner(tournament);
 
     VBox entries = new VBox(3);
 
@@ -36,7 +39,7 @@ public class TournamentCellContainer extends HBox {
     titleLabel.setPrefWidth(TITLE_WIDTH);
     titleLabel.getStyleClass().add("default-headline");
     titleLabel.setStyle(TournamentHelper.getLabelCss(tournament));
-    Label valueLabel = new Label("TODO");
+    Label valueLabel = new Label(owner.getDisplayName());
     valueLabel.getStyleClass().add("default-text");
     valueLabel.setStyle(TournamentHelper.getLabelCss(tournament));
     row.getChildren().addAll(titleLabel, valueLabel);

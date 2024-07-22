@@ -77,6 +77,7 @@ public class IScoredGameCellContainer extends HBox {
       }
       else if(gameByVps.isDisabled()) {
         Label error = new Label("Disabled by iScored admin");
+        error.getStyleClass().add("default-text");
         column.getChildren().add(error);
         return;
       }
