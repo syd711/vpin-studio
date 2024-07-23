@@ -16,7 +16,7 @@ public class TournamentsResource {
   private TournamentsService tournamentsService;
 
   @GetMapping("/config")
-  public TournamentConfig getConfig() {
+  public TournamentConfig getConfig() throws Exception {
     return tournamentsService.getConfig();
   }
 

@@ -49,10 +49,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
 
   private VPinManiaClient maniaClient;
 
-  public TournamentConfig getConfig() {
+  public TournamentConfig getConfig() throws Exception {
     TournamentConfig config = new TournamentConfig();
-    config.setSystemId(SystemUtil.getBoardSerialNumber());
     config.setUrl(maniaHost);
+    config.setSystemId(SystemUtil.getBoardSerialNumber());
     return config;
   }
 

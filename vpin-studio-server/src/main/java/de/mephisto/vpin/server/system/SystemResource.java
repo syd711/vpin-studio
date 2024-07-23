@@ -147,9 +147,14 @@ public class SystemResource {
   @GetMapping("/info")
   public SystemSummary info() {
     SystemSummary info = new SystemSummary();
-    info.setScreenInfos(systemService.getScreenInfos());
-    info.setArchiveType(systemService.getArchiveType());
-    info.setSystemId(SystemUtil.getBoardSerialNumber());
+    try {
+      info.setScreenInfos(systemService.getScreenInfos());
+      info.setArchiveType(systemService.getArchiveType());
+      info.setSystemId(SystemUtil.getBoardSerialNumber());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read system info: " + e.getMessage());
+    }
     return info;
   }
 
