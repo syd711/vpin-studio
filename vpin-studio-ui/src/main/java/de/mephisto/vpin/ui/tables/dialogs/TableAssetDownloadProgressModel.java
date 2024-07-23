@@ -4,11 +4,10 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
-
+import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,13 +19,15 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetDownloadProgressModel.class);
 
+  private final Stage stage;
   private final VPinScreen VPinScreen;
   private final GameRepresentation game;
   private final Iterator<TableAsset> iterator;
   private final boolean append;
 
-  public TableAssetDownloadProgressModel(VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append) {
+  public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append) {
     super("Downloading " + tableAsset.getName());
+    this.stage = stage;
     this.VPinScreen = VPinScreen;
     this.game = game;
     this.iterator = Arrays.asList(tableAsset).iterator();
@@ -65,7 +66,7 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
     } catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Download Failed", "Table asset download failed: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Download Failed", "Table asset download failed: " + e.getMessage());
       });
     }
   }

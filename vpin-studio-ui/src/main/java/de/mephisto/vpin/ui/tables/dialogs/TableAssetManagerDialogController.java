@@ -82,6 +82,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button downloadBtn;
 
   @FXML
+  private Button webPreviewBtn;
+
+  @FXML
   private Button helpBtn;
 
   @FXML
@@ -224,6 +227,20 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);
     }
+  }
+
+  @FXML
+  private void onWebPreview() {
+    TableAsset tableAsset = serverAssetsList.getSelectionModel().getSelectedItem();
+    String mimeType = tableAsset.getMimeType();
+    if (mimeType == null) {
+      LOG.info("No mimetype found for asset " + tableAsset);
+      return;
+    }
+
+    String baseType = mimeType.split("/")[0];
+    String assetUrl = client.getGameMediaService().getUrl(tableAsset, this.game.getId());
+    Studio.browse(assetUrl);
   }
 
   @FXML
@@ -450,6 +467,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     downloadBtn.setVisible(true);
+    webPreviewBtn.setVisible(true);
     disposeServerAssetPreview();
     serverAssetMediaPane.setCenter(new ProgressIndicator());
 
@@ -533,7 +551,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     if (tableAsset != null) {
-      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(screen, game, tableAsset, append));
+      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append));
       refreshTableMediaView();
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
@@ -663,6 +681,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     screenWheel.setVisible(supportedScreens.contains(VPinScreen.Wheel));
 
     downloadBtn.setVisible(false);
+    webPreviewBtn.setVisible(false);
 
     this.deleteBtn.setDisable(true);
     this.renameBtn.setDisable(true);
@@ -692,6 +711,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
         disposeServerAssetPreview();
         downloadBtn.setVisible(false);
+        webPreviewBtn.setVisible(false);
 
         Label label = new Label("No asset preview activated.");
         label.setStyle("-fx-font-size: 14px;-fx-text-fill: #444444;");
