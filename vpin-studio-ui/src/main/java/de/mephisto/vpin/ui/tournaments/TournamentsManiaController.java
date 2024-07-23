@@ -185,10 +185,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       if (newTournamentModel != null) {
         PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
         Account maniaAccount = null;
-        if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+        if (defaultPlayer != null && !StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
           maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
         }
-        if (defaultPlayer != null && maniaAccount != null) {
+        if (maniaAccount != null) {
           PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
           Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
           if (!StringUtils.isEmpty(avatarEntry.getValue())) {
@@ -231,10 +231,10 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         try {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
           Account maniaAccount = null;
-          if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
+          if (defaultPlayer != null && !StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
             maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
           }
-          if (defaultPlayer != null && maniaAccount != null) {
+          if (maniaAccount != null) {
             ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentCreationProgressModel(newTournament, defaultPlayer.toManiaAccount(), this.getTournamentBadge()));
             if (!progressDialog.getResults().isEmpty()) {
               Object o = progressDialog.getResults().get(0);
@@ -266,12 +266,14 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         TournamentCreationModel selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
         if (selectedTournament != null) {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
-          Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
-          if (account != null) {
-            maniaClient.getTournamentClient().addMember(selectedTournament.getNewTournamentModel().getValue().getTournament(), account);
+          if (defaultPlayer != null) {
+            String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
+            Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
+            if (account != null) {
+              maniaClient.getTournamentClient().addMember(selectedTournament.getNewTournamentModel().getValue().getTournament(), account);
+            }
+            onReload();
           }
-          onReload();
         }
       }
       catch (Exception e) {
@@ -329,10 +331,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         help, help2);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-      String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
-      Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
-      maniaClient.getTournamentClient().removeMember(tournament, account);
-      onReload(Optional.empty());
+      if (defaultPlayer != null) {
+        String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
+        Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
+        maniaClient.getTournamentClient().removeMember(tournament, account);
+        onReload(Optional.empty());
+      }
+      else {
+        LOG.error("Can't unsubscribe, default player is not set.");
+      }
     }
   }
 
@@ -370,91 +377,101 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
   }
 
   private void onReload(Optional<TreeItem<TournamentTreeModel>> selection) {
-    tournamentTableCache.clear();
-    client.clearWheelCache();
+    try {
+      tournamentTableCache.clear();
+      client.clearWheelCache();
 
-    treeTableView.setVisible(false);
+      treeTableView.setVisible(false);
 
-    if (!tableStack.getChildren().contains(loadingOverlay)) {
-      tableStack.getChildren().add(loadingOverlay);
-    }
+      if (!tableStack.getChildren().contains(loadingOverlay)) {
+        tableStack.getChildren().add(loadingOverlay);
+      }
 
-    textfieldSearch.setDisable(true);
-    addBtn.setDisable(true);
-    createBtn.setDisable(true);
-    editBtn.setDisable(true);
-    createBtn.setDisable(true);
-    deleteBtn.setDisable(true);
-    duplicateBtn.setDisable(true);
-    finishBtn.setDisable(true);
-    reloadBtn.setDisable(true);
-    browseBtn.setDisable(true);
+      textfieldSearch.setDisable(true);
+      addBtn.setDisable(true);
+      createBtn.setDisable(true);
+      editBtn.setDisable(true);
+      createBtn.setDisable(true);
+      deleteBtn.setDisable(true);
+      duplicateBtn.setDisable(true);
+      finishBtn.setDisable(true);
+      reloadBtn.setDisable(true);
+      browseBtn.setDisable(true);
 
-    boolean validConfig = isValidTournamentSetupAvailable();
+      boolean validConfig = isValidTournamentSetupAvailable();
 
-    if (validConfig) {
-      addBtn.setDisable(false);
-      createBtn.setDisable(false);
-      browseBtn.setDisable(false);
-      textfieldSearch.setDisable(false);
-      reloadBtn.setDisable(false);
+      if (validConfig) {
+        addBtn.setDisable(false);
+        createBtn.setDisable(false);
+        browseBtn.setDisable(false);
+        textfieldSearch.setDisable(false);
+        reloadBtn.setDisable(false);
 
-      treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-          "Create a new tournament by pressing the '+' button."));
+        treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+            "Create a new tournament by pressing the '+' button."));
 
-      treeTableView.setRoot(null);
-      treeTableView.refresh();
-    }
-    else {
-      treeTableView.setPlaceholder(new Label("                                        No VPin Mania default player set!\n" +
-          "Go to the players section and select the default player for VPin Mania tournaments!"));
-
-      tableStack.getChildren().remove(loadingOverlay);
-      treeTableView.setRoot(null);
-      treeTableView.setVisible(true);
-      treeTableView.refresh();
-      return;
-    }
-
-    new Thread(() -> {
-      Platform.runLater(() -> {
-        TreeItem<TournamentTreeModel> root = loadTreeModel();
-        tableStack.getChildren().remove(loadingOverlay);
-        treeTableView.setVisible(true);
-
-        client.getTournamentsService().synchronize();
-
-        treeTableView.setRoot(root);
+        treeTableView.setRoot(null);
         treeTableView.refresh();
-        TournamentTreeModel.expandTreeView(root);
+      }
+      else {
+        treeTableView.setPlaceholder(new Label("                                        No VPin Mania default player set!\n" +
+            "Go to the players section and select the default player for VPin Mania tournaments!"));
 
-        if (selection.isPresent()) {
-          treeTableView.getSelectionModel().select(selection.get());
-        }
-        else if (!root.getChildren().isEmpty()) {
-          treeTableView.getSelectionModel().select(0);
-        }
+        tableStack.getChildren().remove(loadingOverlay);
+        treeTableView.setRoot(null);
+        treeTableView.setVisible(true);
+        treeTableView.refresh();
+        return;
+      }
+
+      new Thread(() -> {
+        Platform.runLater(() -> {
+          TreeItem<TournamentTreeModel> root = loadTreeModel();
+          tableStack.getChildren().remove(loadingOverlay);
+          treeTableView.setVisible(true);
+
+          client.getTournamentsService().synchronize();
+
+          treeTableView.setRoot(root);
+          treeTableView.refresh();
+          TournamentTreeModel.expandTreeView(root);
+
+          if (selection.isPresent()) {
+            treeTableView.getSelectionModel().select(selection.get());
+          }
+          else if (!root.getChildren().isEmpty()) {
+            treeTableView.getSelectionModel().select(0);
+          }
+        });
+      }).start();
+    }
+    catch (Exception e) {
+      LOG.error("Tournament reload failed: " + e.getMessage(), e);
+      Platform.runLater(() -> {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Tournament refresh failed: " + e.getMessage());
       });
-    }).start();
-
+    }
   }
 
   private static boolean isValidTournamentSetupAvailable() {
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    if (defaultPlayer == null) {
+      return false;
+    }
+
     Account maniaAccount = null;
     if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
       maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
     }
 
-    boolean validConfig = defaultPlayer != null && maniaAccount != null;
-    if (validConfig) {
+    if (maniaAccount != null) {
       Account account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
       if (account == null) {
-        validConfig = false;
         WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
+        return false;
       }
     }
-    return validConfig;
+    return true;
   }
 
   private void bindSearchField() {

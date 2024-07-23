@@ -18,7 +18,7 @@ This mode does not support media management but all other basic VPX based featur
 
 You can select between the three modes (PinUP Popper, PinballX and Standalone) when installing the Studio.
 
-### VPin Mania 
+### VPin Mania (Services + Tournaments)
 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/mania.png" width="150" />
@@ -30,7 +30,7 @@ part of the VPin Studio.
 
 Interested in what these services have to offer? Check out the video below:
 
-https://www.youtube.com/watch?v=WeAqw0ojBvU&ab_channel=VPinStudio
+https://www.youtube.com/watch?v=Dq3rra5Gu1I&ab_channel=VPinStudio
 
 or read some documentation: https://github.com/syd711/vpin-studio/wiki/Mania
 
@@ -46,7 +46,7 @@ The configuration for this is super easy thanks to the dashboard scan provided b
 competitions for this are setup in no time.
 
 Checkout the video for more details:
-https://www.youtube.com/@vpin-studio/videos
+https://www.youtube.com/watch?v=Dq3rra5Gu1I&ab_channel=VPinStudio
 
 
 ### Notifications
