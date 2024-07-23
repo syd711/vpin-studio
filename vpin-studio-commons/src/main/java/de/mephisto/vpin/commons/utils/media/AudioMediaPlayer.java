@@ -9,6 +9,7 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.media.Media;
@@ -43,25 +44,9 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   }
 
   private void render() {
-    fontIcon = new FontIcon();
-    fontIcon.setIconSize(48);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    fontIcon.setIconLiteral("bi-play");
 
-    VBox box = new VBox();
-    box.setSpacing(6);
-    box.setAlignment(Pos.CENTER);
-    Button playBtn = new Button();
-    playBtn.setGraphic(fontIcon);
-    box.getChildren().add(playBtn);
-
-    progressBar = new ProgressBar();
-    progressBar.setVisible(false);
-    progressBar.setMaxWidth(100);
-    progressBar.setPrefHeight(12);
-    box.getChildren().add(progressBar);
-
-    this.setCenter(box);
+    this.setCenter(new ProgressIndicator());
+    parent.setCenter(this);
 
     Media media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
@@ -87,6 +72,27 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     });
 
     mediaPlayer.setOnReady(() -> {
+
+      fontIcon = new FontIcon();
+      fontIcon.setIconSize(48);
+      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      fontIcon.setIconLiteral("bi-play");
+  
+      VBox box = new VBox();
+      box.setSpacing(6);
+      box.setAlignment(Pos.CENTER);
+      Button playBtn = new Button();
+      playBtn.setGraphic(fontIcon);
+      box.getChildren().add(playBtn);
+  
+      progressBar = new ProgressBar();
+      progressBar.setVisible(false);
+      progressBar.setMaxWidth(100);
+      progressBar.setPrefHeight(12);
+      box.getChildren().add(progressBar);
+  
+      this.setCenter(box);
+
       mediaPlayer.setAutoPlay(false);
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(false);
@@ -132,7 +138,6 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
       bindProgress(mediaPlayer, progressBar);
 
       this.setBottom(mediaView);
-      parent.setCenter(this);
     });
   }
 

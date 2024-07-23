@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils;
 import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -619,20 +620,9 @@ public class WidgetFactory {
     }
 
     if (baseType.equals("image") && !audioOnly) {
-      ImageView imageView = new ImageView();
-      imageView.setFitWidth(prefWidth - 10);
-      imageView.setFitHeight(prefHeight - 60);
-      imageView.setPreserveRatio(true);
-
-      Image image = null;
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
-      if (gameMediaItem != null) {
-        image = new Image(gameMediaItem);
-        imageView.setImage(image);
-        imageView.setUserData(mediaItem);
-
-        parent.setCenter(imageView);
-      }
+      Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
+      new ImageViewer(parent, mediaItem, image, prefWidth - 10, prefHeight - 60);
     }
     else if (baseType.equals("audio")) {
       new AudioMediaPlayer(parent, mediaItem, url);

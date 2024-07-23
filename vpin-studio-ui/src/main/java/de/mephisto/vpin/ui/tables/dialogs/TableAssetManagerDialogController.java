@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -450,7 +451,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     downloadBtn.setVisible(true);
-    serverAssetMediaPane.setCenter(new ProgressIndicator());
 
     Platform.runLater(() -> {
       String mimeType = tableAsset.getMimeType();
@@ -465,17 +465,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
       try {
         if (baseType.equals("image")) {
-          new Thread(() -> {
-            Image image = new Image(assetUrl);
-            Platform.runLater(() -> {
-              ImageView imageView = new ImageView(image);
-              imageView.setFitWidth(getServerAssetPreviewWidth());
-              imageView.setFitHeight(getServerAssetPreviewHeight());
-              imageView.setPreserveRatio(true);
-              imageView.setUserData(tableAsset);
-              serverAssetMediaPane.setCenter(imageView);
-            });
-          }).start();
+          new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, getServerAssetPreviewWidth(), getServerAssetPreviewHeight());
         }
         else if (baseType.equals("audio")) {
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
@@ -728,16 +718,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         LOG.info("Loading " + url);
 
         if (baseType.equals("image")) {
-          ImageView imageView = new ImageView();
-          imageView.setFitWidth(getLocalAssetPreviewHeight());
-          imageView.setFitHeight(getLocalAssetPreviewWidth());
-          imageView.setPreserveRatio(true);
-
-          Image image = new Image(url, true);
-          imageView.setImage(image);
-          imageView.setUserData(mediaItem);
-
-          mediaPane.setCenter(imageView);
+          new ImageViewer(mediaPane, url, mediaItem, getLocalAssetPreviewWidth(), getLocalAssetPreviewHeight());
         }
         else if (baseType.equals("audio")) {
           new AudioMediaPlayer(mediaPane, mediaItem, url);

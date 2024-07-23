@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -66,6 +67,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       return;
     }
 
+    this.setCenter(new ProgressIndicator());
+    parent.setCenter(this);
+
     media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
 
@@ -88,8 +92,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setVisible(true);
 
       this.setCenter(mediaView);
-      parent.setCenter(this);
-    });
+    });    
   }
 
   private void scaleMediaView() {
