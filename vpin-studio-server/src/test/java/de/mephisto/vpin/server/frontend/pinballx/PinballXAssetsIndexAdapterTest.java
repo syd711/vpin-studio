@@ -1,25 +1,26 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import de.mephisto.vpin.connectors.assets.TableAsset;
-import org.apache.commons.io.IOUtils;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import de.mephisto.vpin.connectors.assets.TableAsset;
 
 public class PinballXAssetsIndexAdapterTest {
 
   PinballXAssetsIndexAdapter createAdapter() {
     PinballXAssetsIndexAdapter adapter = new PinballXAssetsIndexAdapter();
     adapter.configure("ftp.gameex.com", 21, "/-PinballX-");
-    adapter.configureCredentials("xx", "xx");
+    adapter.configureCredentials("leprinco@yahoo.fr", "Oliver01");
     return adapter;
   }
 
@@ -88,14 +89,13 @@ public class PinballXAssetsIndexAdapterTest {
   public void testDownload() throws Exception {
     PinballXAssetsIndexAdapter adapter = createAdapter();
 
-    String url = "/-PinballX-/Media/Visual Pinball/Table Videos/250cc (Inder) (1992) (JPSalas) (1.1.0).f4v";
-
+    String media = "/Media/Visual Pinball/Table Videos/250cc (Inder) (1992) (JPSalas) (1.1.0).f4v";
+    String url = "/" + URLEncoder.encode(media, StandardCharsets.UTF_8);
+    
     Path tempPath = Files.createTempFile("test", "temp");
     File temp = tempPath.toFile();
     try (FileOutputStream fout = new FileOutputStream(temp)) {
-      InputStream inputStream = adapter.readAsset(url);
-      IOUtils.copy(inputStream, fout);
-
+      adapter.writeAsset(fout, url);
       assertTrue(temp.exists());
       assertEquals(11634196, Files.size(tempPath));
     }

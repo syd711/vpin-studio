@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import org.apache.commons.lang3.StringUtils;
 
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -67,8 +67,8 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
   }
 
   @Override
-  public InputStream readAsset(String url) throws Exception {
-    return delegate.readAsset(url);
+  public void writeAsset(OutputStream out, String url) throws Exception {
+    delegate.writeAsset(out, url);
   }
 
   @Override

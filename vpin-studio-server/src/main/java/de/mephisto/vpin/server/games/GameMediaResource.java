@@ -10,7 +10,6 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
-import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -19,7 +18,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -27,6 +25,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
 import java.io.*;
 import java.net.URLDecoder;
@@ -110,7 +109,7 @@ public class GameMediaResource {
   }
 
   @GetMapping("/assets/d/{screen}/{gameId}/{url}")
-  public ResponseEntity<InputStreamResource> getMedia(@PathVariable("screen") String screen,
+  public ResponseEntity<StreamingResponseBody> getMedia(@PathVariable("screen") String screen,
                                                       @PathVariable("gameId") int gameId,
                                                       @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
@@ -126,13 +125,12 @@ public class GameMediaResource {
     }
 
     TableAsset tableAsset = result.get();
-    // put the "/" back that we removed in GameMediaServiceClient.getUrl()
-    InputStream in = tableAssetsService.download("/" + url);
-    InputStreamResource inputStreamResource = new InputStreamResource(in);
     return ResponseEntity.ok()
-        .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
-        .header("X-Frame-Options", "SAMEORIGIN")
-        .body(inputStreamResource);
+      .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
+      .header("X-Frame-Options", "SAMEORIGIN")
+      .body(out -> {
+        tableAssetsService.download(out, tableAsset.getUrl());
+      });
   }
 
   @GetMapping("/{id}/{screen}/{name}")

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.connectors.assets;
 
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +12,10 @@ public interface TableAssetsAdapter {
 
   /**
    * Download the asset and write it to the stream
-   * @param url The URL of the asset
+   * @param outputStream the stream to write on
+   * @param urlString The URL of the asset
    */
-  InputStream readAsset(String url) throws Exception;
+  void writeAsset(OutputStream outputStream, String urlString) throws Exception;
 
   /**
    * Test the connection to the remote search server

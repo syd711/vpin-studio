@@ -174,6 +174,7 @@ public class PinballXIndex {
       asset.setMimeType(mimeType);
 
       // double encoding needed, first one here, second in client
+      // url must start with / not encoded !
       String url = "/" + URLEncoder.encode(folder + "/" + name, StandardCharsets.UTF_8);
       asset.setUrl(url);
       asset.setSourceId(folder);

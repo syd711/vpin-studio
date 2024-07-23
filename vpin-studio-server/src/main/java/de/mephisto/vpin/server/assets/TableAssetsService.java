@@ -5,14 +5,13 @@ import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -55,8 +54,7 @@ public class TableAssetsService {
       }
       try (FileOutputStream fileOutputStream = new FileOutputStream(target)) {
         String downloadUrl = asset.getUrl();
-        InputStream inputStream = adapter.readAsset(downloadUrl);
-        IOUtils.copy(inputStream, fileOutputStream);
+        adapter.writeAsset(fileOutputStream, downloadUrl);
         LOG.info("Downloaded file " + target.getAbsolutePath());
       }
       catch (Exception e) {
@@ -66,11 +64,16 @@ public class TableAssetsService {
     }
   }
 
-  public InputStream download(String url) throws Exception {
+  public void download(OutputStream out, String url) {
     if (adapter != null) {
-      return adapter.readAsset(url);
+      try {
+        adapter.writeAsset(out, url);
+      }
+      catch (Exception e) {
+        //do not log URL
+        LOG.error("Failed to execute download", e);
+      }
     }
-    return null;
   }
 
   public boolean testConnection() {

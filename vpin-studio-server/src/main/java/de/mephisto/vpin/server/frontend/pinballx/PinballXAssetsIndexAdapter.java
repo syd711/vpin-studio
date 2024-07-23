@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
@@ -87,9 +88,8 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
 
   //-------------------------------------
 
-
   @Override
-  public InputStream readAsset(@NonNull String url) throws Exception {
+  public void writeAsset(OutputStream out, @NonNull String url) throws Exception {
     FTPClient ftp = null;
     try {
       ftp = open(false);
@@ -102,13 +102,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       String name = StringUtils.substringAfterLast(decodeUrl, "/");
 
       ftp.changeWorkingDirectory(rootfolder + folder);
+      ftp.setFileType(FTP.BINARY_FILE_TYPE);
 
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      ftp.retrieveFile(name, out);
-
-      byte[] byteArray = out.toByteArray();
-      LOG.info("Read FTP file \"" + decodeUrl + "\", " + byteArray.length + " bytes");
-      return new ByteArrayInputStream(byteArray);
+      if (ftp.retrieveFile(name, out)) {
+        LOG.info("Read FTP file \"" + decodeUrl + "\", " + ftp.getReplyString());
+      }
+      else {
+        LOG.error("FTP download incomplete \"" + decodeUrl + "\", " + ftp.getReplyString());
+      }
     }
     catch (CopyStreamException cse) {
       LOG.error("Error while downloading asset", cse);
@@ -116,7 +117,6 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
     finally {
       close(ftp);
     }
-    return null;
   }
 
   //-----------------------------------

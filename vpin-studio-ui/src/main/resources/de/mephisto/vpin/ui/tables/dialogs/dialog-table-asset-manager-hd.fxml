@@ -511,7 +511,7 @@
                                     </GridPane>
                                  </children>
                               </HBox>
-                              <HBox layoutX="10.0" layoutY="10.0">
+                              <HBox fx:id="playlistSelection">
                                  <children>
                                     <GridPane vgap="3.0">
                                        <columnConstraints>
@@ -549,9 +549,9 @@
                                  </font>
                               </RadioButton>
                            </children>
-                           <BorderPane.margin>
+                           <padding>
                               <Insets right="24.0" />
-                           </BorderPane.margin>
+                           </padding>
                         </HBox>
                      </center>
                   </BorderPane>
