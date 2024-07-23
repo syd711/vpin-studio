@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
@@ -214,7 +214,7 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
   //-------------------------------------
 
   @Override
-  public InputStream readAsset(@NonNull String url) throws Exception {
+  public void writeAsset(OutputStream outputStream, @NonNull String url) throws Exception {
 //
 //    FTPClient ftp = null;
 //    try {
@@ -236,7 +236,6 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
 //    finally {
 //      close(ftp);
 //    }
-    return null;
   }
 
   private String[] fromScreenToFolders(VPinScreen screen) {

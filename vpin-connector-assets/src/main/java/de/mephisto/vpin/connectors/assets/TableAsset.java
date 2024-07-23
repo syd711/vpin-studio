@@ -2,8 +2,6 @@ package de.mephisto.vpin.connectors.assets;
 
 import org.apache.commons.io.FilenameUtils;
 
-import java.util.UUID;
-
 public class TableAsset {
   private String name;
   private String url;
@@ -12,7 +10,7 @@ public class TableAsset {
   private String author;
   private String screen;
   private String emulator;
-  private long length;
+  private long length = -1;
 
   public long getLength() {
     return length;

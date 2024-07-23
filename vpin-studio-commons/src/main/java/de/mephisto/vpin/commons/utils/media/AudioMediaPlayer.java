@@ -65,11 +65,9 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
     Media media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
-    mediaPlayer.setAutoPlay(false);
-    mediaPlayer.setCycleCount(-1);
-    mediaPlayer.setMute(false);
-    mediaPlayer.setOnError(() -> {
-      LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
+
+   mediaPlayer.setOnError(() -> {
+      LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
 
       if(retryCounter < 1) {
         retryCounter++;
@@ -88,49 +86,54 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
       }
     });
 
+    mediaPlayer.setOnReady(() -> {
+      mediaPlayer.setAutoPlay(false);
+      mediaPlayer.setCycleCount(-1);
+      mediaPlayer.setMute(false);
 
-    mediaView = new MediaView(mediaPlayer);
-    mediaPlayer.setOnEndOfMedia(() -> {
-      fontIcon.setIconLiteral("bi-play");
-      mediaView.getMediaPlayer().stop();
-      progressBar.setVisible(false);
-
-      progressBar.progressProperty().unbind();
-      progressBar.setProgress(0);
-      mediaView.getMediaPlayer().seek(Duration.ZERO);
-      bindProgress(mediaPlayer, progressBar);
-    });
-
-    playBtn.setOnAction(event -> {
-      String iconLiteral = fontIcon.getIconLiteral();
-      if (iconLiteral.equals("bi-play")) {
-        progressBar.setVisible(true);
-        mediaView.getMediaPlayer().setMute(false);
-        mediaView.getMediaPlayer().setCycleCount(1);
-        mediaView.getMediaPlayer().play();
-        fontIcon.setIconLiteral("bi-stop");
-
-        if(activePlayer != null && !activePlayer.equals(this)) {
-          try {
-            activePlayer.mediaView.getMediaPlayer().pause();
-            activePlayer.fontIcon.setIconLiteral("bi-play");
-          } catch (Exception e) {
-            //ignore
-          }
-        }
-        activePlayer = this;
-      }
-      else {
-        progressBar.setVisible(false);
-        mediaView.getMediaPlayer().stop();
+      mediaView = new MediaView(mediaPlayer);
+      mediaPlayer.setOnEndOfMedia(() -> {
         fontIcon.setIconLiteral("bi-play");
-      }
+        mediaView.getMediaPlayer().stop();
+        progressBar.setVisible(false);
+
+        progressBar.progressProperty().unbind();
+        progressBar.setProgress(0);
+        mediaView.getMediaPlayer().seek(Duration.ZERO);
+        bindProgress(mediaPlayer, progressBar);
+      });
+
+      playBtn.setOnAction(event -> {
+        String iconLiteral = fontIcon.getIconLiteral();
+        if (iconLiteral.equals("bi-play")) {
+          progressBar.setVisible(true);
+          mediaView.getMediaPlayer().setMute(false);
+          mediaView.getMediaPlayer().setCycleCount(1);
+          mediaView.getMediaPlayer().play();
+          fontIcon.setIconLiteral("bi-stop");
+
+          if(activePlayer != null && !activePlayer.equals(this)) {
+            try {
+              activePlayer.mediaView.getMediaPlayer().pause();
+              activePlayer.fontIcon.setIconLiteral("bi-play");
+            } catch (Exception e) {
+              //ignore
+            }
+          }
+          activePlayer = this;
+        }
+        else {
+          progressBar.setVisible(false);
+          mediaView.getMediaPlayer().stop();
+          fontIcon.setIconLiteral("bi-play");
+        }
+      });
+
+      bindProgress(mediaPlayer, progressBar);
+
+      this.setBottom(mediaView);
+      parent.setCenter(this);
     });
-
-    bindProgress(mediaPlayer, progressBar);
-
-    this.setBottom(mediaView);
-    parent.setCenter(this);
   }
 
   private void bindProgress(MediaPlayer player, ProgressBar bar) {

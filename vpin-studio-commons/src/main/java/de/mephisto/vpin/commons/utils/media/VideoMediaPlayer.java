@@ -33,33 +33,24 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, 
       @NonNull String mimeType, boolean invertPlayfield) {
-    super(parent, url);
-    this.mimeType = mimeType;
-    this.dialogRendering = true;
-    this.invertPlayfield = invertPlayfield;
-
-    if (screenName.equalsIgnoreCase("PlayField")) {
-      screen = VPinScreen.PlayField;
-    }
-    else if (screenName.equalsIgnoreCase("Loading")) {
-      screen = VPinScreen.Loading;
-    }
-
-    this.render();
+    this(parent, null, screenName, url, mimeType, invertPlayfield, true);
   }
-
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
                           @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
+    this(parent, mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield, true);
+  }
+  private VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
+                          @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;
     this.dialogRendering = dialogRendering;
     this.invertPlayfield = invertPlayfield;
 
-    if (mediaItem.getScreen().equalsIgnoreCase("PlayField")) {
+    if (screenName.equalsIgnoreCase("PlayField")) {
       screen = VPinScreen.PlayField;
     }
-    else if (mediaItem.getScreen().equalsIgnoreCase("Loading")) {
+    else if (screenName.equalsIgnoreCase("Loading")) {
       screen = VPinScreen.Loading;
     }
 
@@ -77,27 +68,28 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
     media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
-    mediaPlayer.setAutoPlay(baseType.equals("video"));
-    mediaPlayer.setCycleCount(-1);
-    mediaPlayer.setMute(true);
+
     mediaPlayer.setOnError(() -> {
-      LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + url);
+      LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
       disposeMedia();
       parent.setCenter(getErrorLabel(mediaItem));
     });
 
-    mediaView = new MediaView(mediaPlayer);
-    mediaView.setUserData(mediaItem);
-    mediaView.setPreserveRatio(true);
-    mediaView.setVisible(false);
-
     mediaPlayer.setOnReady(() -> {
+      mediaPlayer.setAutoPlay(baseType.equals("video"));
+      mediaPlayer.setCycleCount(-1);
+      mediaPlayer.setMute(true);
+
+      mediaView = new MediaView(mediaPlayer);
+      mediaView.setUserData(mediaItem);
+      mediaView.setPreserveRatio(true);
+      mediaView.setVisible(false);
       scaleMediaView();
       mediaView.setVisible(true);
-    });
 
-    this.setCenter(mediaView);
-    parent.setCenter(this);
+      this.setCenter(mediaView);
+      parent.setCenter(this);
+    });
   }
 
   private void scaleMediaView() {

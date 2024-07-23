@@ -53,9 +53,9 @@ public class VPSTest {
       VPS vpsOld = newInstance(in1);
       VPS vpsNew = newInstance(in2);
 
-      VpsDiffer diff = vpsNew.diffById(vpsOld.getTables(), vpsNew.getTables(), "O8BYvqQw98");
+      VpsDiffer diff = vpsNew.diffById(vpsOld.getTables(), vpsNew.getTables(), "Gs1n4eIo");
       VPSChanges changes = diff.getChanges();
-//      assertFalse(changes.isEmpty());
+      assertFalse(changes.isEmpty());
     }
   }
 
