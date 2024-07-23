@@ -87,6 +87,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option **Hide Backglass**, which is also part of the filter now.
 - **Table Asset Manager**: Added support for **Playlist** assets.
+- **Table Asset Manager**: Added extra button to open assets in a browser window, useful because video codecs are not supported by the Studio.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Data Manager / VPS matching**: The automatching to VPS has been improved and now exploit all information in game filename to better determine the VPS version. Also the table version when empty and detected during the matching process is automatically filled in. 
 - **Table Overview**: You can now directly access the UI settings for the table overview via a preferences button on the tab header.
