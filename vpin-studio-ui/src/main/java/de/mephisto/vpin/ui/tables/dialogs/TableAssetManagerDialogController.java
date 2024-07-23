@@ -450,6 +450,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     downloadBtn.setVisible(true);
+    disposeServerAssetPreview();
     serverAssetMediaPane.setCenter(new ProgressIndicator());
 
     Platform.runLater(() -> {
