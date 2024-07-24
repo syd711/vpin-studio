@@ -17,12 +17,15 @@ public class SystemUtil {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
         String[] split = standardOutputFromCommand.toString().trim().split("\n");
-        String serial = split[split.length-1];
-        if(!StringUtils.isEmpty(serial) ||serial.contains("filled by")) {
+        String serial = split[split.length - 1];
+        if (StringUtils.isEmpty(serial) || serial.contains("filled by")) {
           return getCpuSerialNumber();
         }
+
+        return serial;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Failed to resolve cabinet id: " + e.getMessage());
       return getCpuSerialNumber();
     }
@@ -36,13 +39,14 @@ public class SystemUtil {
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
         String[] split = standardOutputFromCommand.toString().trim().split("\n");
-        String serial = split[split.length-1];
-        if(!StringUtils.isEmpty(serial)) {
+        String serial = split[split.length - 1];
+        if (StringUtils.isEmpty(serial)) {
           throw new UnsupportedOperationException("Failed to calculate unique system id.");
         }
         return serial;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Failed to resolve cpu id: " + e.getMessage());
       throw e;
     }

@@ -110,7 +110,7 @@ public class IScored {
         return gameRoom;
       }
     } catch (Exception e) {
-      LOG.error("Failed to load iScored Game Room: " + e.getMessage(), e);
+      LOG.error("Failed to load iScored Game Room: " + e.getMessage());
     }
 
     return null;
