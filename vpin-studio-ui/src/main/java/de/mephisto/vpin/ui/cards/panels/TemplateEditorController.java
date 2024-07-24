@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.cards.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
@@ -717,11 +718,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
           mediaPlayerControl.setVisible(true);
         }
 
-        if (previewOverlayPanel.getCenter() instanceof ImageView) {
-          ImageView imageView = (ImageView) previewOverlayPanel.getCenter();
-          imageView.setPreserveRatio(false);
-          imageView.setFitWidth(cardPreview.getFitWidth());
-          imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
+        if (previewOverlayPanel.getCenter() instanceof ImageViewer) {
+          ImageViewer imageViewer = (ImageViewer) previewOverlayPanel.getCenter();
+          imageViewer.scaleForTemplate(cardPreview);
         }
 
         previewOverlayPanel.setVisible(true);

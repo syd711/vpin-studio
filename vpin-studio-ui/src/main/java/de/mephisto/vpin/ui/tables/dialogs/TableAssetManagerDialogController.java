@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -36,7 +35,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -47,7 +45,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -464,14 +461,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       LOG.info("Loading asset: " + assetUrl);
 
       try {
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+
         if (baseType.equals("image")) {
-          new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, getServerAssetPreviewWidth(), getServerAssetPreviewHeight());
+          new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
           new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
         }
         else if (baseType.equals("video")) {
-          Frontend frontend = client.getFrontendService().getFrontendCached();
           new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
         }
       }
@@ -479,22 +477,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         LOG.error("Preview failed for " + tableAsset, e);
       }
     });
-  }
-
-  private double getServerAssetPreviewWidth() {
-    return serverAssetMediaPane.getPrefWidth() - 10;
-  }
-
-  private double getServerAssetPreviewHeight() {
-    return serverAssetMediaPane.getPrefHeight() - 10;
-  }
-
-  private double getLocalAssetPreviewWidth() {
-    return mediaPane.getPrefWidth() - 10;
-  }
-
-  private double getLocalAssetPreviewHeight() {
-    return mediaPane.getPrefHeight() - 10;
   }
 
   @FXML
@@ -679,7 +661,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.serverAssetsList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableAsset>() {
       @Override
       public void changed(ObservableValue<? extends TableAsset> observable, TableAsset oldValue, TableAsset tableAsset) {
-        disposeServerAssetPreview();
+        WidgetFactory.disposeMediaPane(serverAssetMediaPane);
         downloadBtn.setVisible(false);
 
         Label label = new Label("No asset preview activated.");
@@ -693,12 +675,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     this.assetList.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<FrontendMediaItemRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends FrontendMediaItemRepresentation> observable, FrontendMediaItemRepresentation oldValue, FrontendMediaItemRepresentation mediaItem) {
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
         if (screen.equals(VPinScreen.Wheel)) {
           client.getImageCache().clearWheelCache();
         }
 
-        disposeTableMediaPreview();
+        WidgetFactory.disposeMediaPane(mediaPane);
 
         deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
@@ -718,7 +699,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         LOG.info("Loading " + url);
 
         if (baseType.equals("image")) {
-          new ImageViewer(mediaPane, url, mediaItem, getLocalAssetPreviewWidth(), getLocalAssetPreviewHeight());
+          new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
           new AudioMediaPlayer(mediaPane, mediaItem, url);
@@ -792,23 +773,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   public boolean isPlaylistMode() {
     return playlistsRadio != null && playlistsRadio.isSelected() && this.playlist != null;
-  }
-
-  private void disposeServerAssetPreview() {
-    Node center = serverAssetMediaPane.getCenter();
-    if (center instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer) center).disposeMedia();
-    }
-    serverAssetMediaPane.setCenter(null);
-  }
-
-
-  private void disposeTableMediaPreview() {
-    Node center = mediaPane.getCenter();
-    if (center instanceof AssetMediaPlayer) {
-      ((AssetMediaPlayer) center).disposeMedia();
-    }
-    mediaPane.setCenter(null);
   }
 
   @Override

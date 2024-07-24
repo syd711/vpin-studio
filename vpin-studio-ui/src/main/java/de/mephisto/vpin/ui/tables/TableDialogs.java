@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -739,7 +738,6 @@ public class TableDialogs {
         stage.close();
       }
     });
-
 
     if (assetMediaPlayer instanceof VideoMediaPlayer) {
       VideoMediaPlayer player = (VideoMediaPlayer) assetMediaPlayer;
