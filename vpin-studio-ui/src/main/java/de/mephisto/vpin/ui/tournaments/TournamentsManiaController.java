@@ -459,19 +459,15 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       return false;
     }
 
-    Account maniaAccount = null;
     if (!StringUtils.isEmpty(defaultPlayer.getTournamentUserUuid())) {
-      maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
-    }
-
-    if (maniaAccount != null) {
-      Account account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
-      if (account == null) {
+      Account maniaAccount = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+      if (maniaAccount == null) {
         WidgetFactory.showAlert(Studio.stage, "Error", "The default player's online account does not exist anymore.", "Select the player from the build-in players list and save again.");
         return false;
       }
+      return true;
     }
-    return true;
+    return false;
   }
 
   private void bindSearchField() {
