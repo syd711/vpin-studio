@@ -83,6 +83,8 @@ public class ImageViewer extends BorderPane {
  }
 
   public void disposeImage() {
-    this.imageView.setImage(null);
+    if (this.imageView != null) {
+      this.imageView.setImage(null);
+    }
   }
 }
