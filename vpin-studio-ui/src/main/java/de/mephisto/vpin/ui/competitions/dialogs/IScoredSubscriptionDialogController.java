@@ -134,7 +134,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         LocalUISettings.saveProperty(LocalUISettings.LAST_ISCORED_SELECTION, dashboardUrl);
 
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
-        if(gameRoom == null) {
+        if(gameRoom == null || gameRoom.getGames().isEmpty()) {
           return;
         }
 
