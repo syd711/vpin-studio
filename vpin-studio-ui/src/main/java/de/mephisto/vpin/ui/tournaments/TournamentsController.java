@@ -320,7 +320,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshDashboard(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if (!metaDataPane.isExpanded()) {
+    if (!dashboardPane.isExpanded()) {
       return;
     }
 
