@@ -112,7 +112,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       }
     }
     catch (CopyStreamException cse) {
-      LOG.error("Error while downloading asset", cse);
+      LOG.error("Error while downloading asset: " + cse.getMessage());
     }
     finally {
       close(ftp);

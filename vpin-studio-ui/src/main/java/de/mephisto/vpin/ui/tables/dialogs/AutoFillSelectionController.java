@@ -107,6 +107,8 @@ public class AutoFillSelectionController implements Initializable, DialogControl
 
   @FXML
   private void onCancelClick(ActionEvent e) {
+    this.tableDetails = null;
+
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
   }

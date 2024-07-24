@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.Duration;
 
 @Service
 public class PinballXFtpClient {
@@ -54,6 +55,7 @@ public class PinballXFtpClient {
   protected FTPClient open(boolean passive) throws IOException {
     FTPClient ftp = new FTPClient();
     ftp.connect(host, port);
+    ftp.setControlKeepAliveTimeout(Duration.ofMinutes(5));
     ftp.setBufferSize(1024 * 1024);
     if (passive) {
       ftp.enterLocalPassiveMode();

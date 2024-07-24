@@ -11,10 +11,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 
 public class ImageViewer extends BorderPane {
-  
+
   @NonNull
   protected final BorderPane parent;
-  
+
   private ImageView imageView;
   private Image image;
   private String url;
@@ -28,6 +28,7 @@ public class ImageViewer extends BorderPane {
 
     render(userdata, screenName, invertPlayfield, prefWidth - 10, prefHeight - 10);
   }
+
   public ImageViewer(BorderPane parent, FrontendMediaItemRepresentation mediaItem, Image image, boolean invertPlayfield) {
     this.parent = parent;
     this.image = image;
@@ -40,7 +41,7 @@ public class ImageViewer extends BorderPane {
     if (prefHeight <= 0) {
       prefHeight = ((Pane) parent.getParent()).getHeight();
     }
-  
+
     render(mediaItem, mediaItem.getScreen(), invertPlayfield, prefWidth - 10, prefHeight - 60);
   }
 
@@ -63,8 +64,8 @@ public class ImageViewer extends BorderPane {
 
         if (VPinScreen.PlayField.getSegment().equalsIgnoreCase(screenName)) {
           if (image.getWidth() > image.getHeight()) {
-            imageView.setRotate(90 + (invertPlayfield? 180: 0));
-          }      
+            imageView.setRotate(90 + (invertPlayfield ? 180 : 0));
+          }
         }
         else if (VPinScreen.Loading.getSegment().equalsIgnoreCase(screenName)) {
           if (image.getWidth() > image.getHeight()) {
@@ -80,11 +81,11 @@ public class ImageViewer extends BorderPane {
     imageView.setPreserveRatio(false);
     imageView.setFitWidth(cardPreview.getFitWidth());
     imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
- }
+  }
 
   public void disposeImage() {
-    if (this.imageView != null) {
-      this.imageView.setImage(null);
+    if (imageView != null) {
+      imageView.setImage(null);
     }
   }
 }

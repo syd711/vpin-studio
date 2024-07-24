@@ -1434,7 +1434,7 @@ public class PinUPConnector implements FrontendConnector {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT DateAdded from Games asc limit 1;");
       while (rs.next()) {
-        date = rs.getDate(1);
+        date = getDate(rs, "DateAdded");
       }
       rs.close();
       statement.close();
@@ -1688,8 +1688,8 @@ public class PinUPConnector implements FrontendConnector {
 
     String gameName = rs.getString("GameName");
     game.setGameName(gameName);
-    game.setDateAdded(rs.getDate("DateAdded"));
-    game.setDateUpdated(rs.getDate("DateUpdated"));
+    game.setDateAdded(getDate(rs, "DateAdded"));
+    game.setDateUpdated(getDate(rs, "DateUpdated"));
 
     game.setVersion(rs.getString("GAMEVER"));
 
@@ -2044,4 +2044,13 @@ public class PinUPConnector implements FrontendConnector {
     return false;
   }
 
+  private Date getDate(ResultSet set, String field) {
+    try {
+      return set.getDate(field);
+    }
+    catch (Exception e) {
+      LOG.warn("Failed to parse date from database: " + e.getMessage());
+    }
+    return new Date(new java.util.Date().getTime());
+  }
 }

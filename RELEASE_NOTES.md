@@ -18,7 +18,7 @@ This mode does not support media management but all other basic VPX based featur
 
 You can select between the three modes (PinUP Popper, PinballX and Standalone) when installing the Studio.
 
-### VPin Mania 
+### VPin Mania (Services + Tournaments)
 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/mania.png" width="150" />
@@ -30,7 +30,7 @@ part of the VPin Studio.
 
 Interested in what these services have to offer? Check out the video below:
 
-https://www.youtube.com/watch?v=WeAqw0ojBvU&ab_channel=VPinStudio
+https://www.youtube.com/watch?v=Dq3rra5Gu1I&ab_channel=VPinStudio
 
 or read some documentation: https://github.com/syd711/vpin-studio/wiki/Mania
 
@@ -46,7 +46,7 @@ The configuration for this is super easy thanks to the dashboard scan provided b
 competitions for this are setup in no time.
 
 Checkout the video for more details:
-https://www.youtube.com/@vpin-studio/videos
+https://www.youtube.com/watch?v=Dq3rra5Gu1I&ab_channel=VPinStudio
 
 
 ### Notifications
@@ -87,6 +87,7 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Backglass Manager**: The window is resizeable now and the size and position is saved.
 - **Backglass Manager / Backglass Section**: Added checkbox for the new backglass server option **Hide Backglass**, which is also part of the filter now.
 - **Table Asset Manager**: Added support for **Playlist** assets.
+- **Table Asset Manager**: Added extra button to open assets in a browser window, useful because video codecs are not supported by the Studio.
 - **Table Data Manager**: Added support for **Lookup** fields. Since you can configure custom value lists for some table fields, e.g. **manufacturer** or **game type**, these lists are now available for selection in the Table Data Manager dialog too. Only the list of **Alternate Launcher .exe** is ignored since this list is still loaded from the actual VPX installation folder.
 - **Table Data Manager / VPS matching**: The automatching to VPS has been improved and now exploit all information in game filename to better determine the VPS version. Also the table version when empty and detected during the matching process is automatically filled in. 
 - **Table Overview**: You can now directly access the UI settings for the table overview via a preferences button on the tab header.
@@ -127,3 +128,4 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Backglass Manager**: Fixed "Start as EXE" flag so that the actual server default is used when unchecked. 
 - **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.
 - **VPS Updates**: The VPS updates were broken **(approx. for the last two month)**. The updates are now detected again, update indicators will be shown again in the table overview (if enabled).
+- **Table Scans**: Fixed possible date format issue when reading games from PinUP Popper.

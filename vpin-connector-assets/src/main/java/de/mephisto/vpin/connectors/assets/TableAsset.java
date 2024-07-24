@@ -2,6 +2,8 @@ package de.mephisto.vpin.connectors.assets;
 
 import org.apache.commons.io.FilenameUtils;
 
+import java.util.Objects;
+
 public class TableAsset {
   private String name;
   private String url;
@@ -88,18 +90,13 @@ public class TableAsset {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof TableAsset)) return false;
-
-    TableAsset asset = (TableAsset) o;
-
-    if (!name.equals(asset.name)) return false;
-    return sourceId.equals(asset.sourceId);
+    if (o == null || getClass() != o.getClass()) return false;
+    TableAsset that = (TableAsset) o;
+    return Objects.equals(name, that.name) && Objects.equals(url, that.url) && Objects.equals(sourceId, that.sourceId) && Objects.equals(mimeType, that.mimeType);
   }
 
   @Override
   public int hashCode() {
-    int result = name.hashCode();
-    result = 31 * result + sourceId.hashCode();
-    return result;
+    return Objects.hash(name, url, sourceId, mimeType);
   }
 }

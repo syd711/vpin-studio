@@ -131,7 +131,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
       return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
     }
     catch (Exception e) {
-      LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
+      LOG.error("Failed to download asset: " + e.getMessage(), e);
       throw e;
     }
   }

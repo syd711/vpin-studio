@@ -137,12 +137,19 @@ public class GamesServiceClient extends VPinStudioClientService {
       GameRepresentation gameRepresentation = getRestClient().get(API + "games/" + id, GameRepresentation.class);
       if (gameRepresentation != null && !this.allGames.isEmpty()) {
         int emulatorId = gameRepresentation.getEmulatorId();
-        // get and from cache and possibly uodate the cache 
+        // get and from cache and possibly update the cache
         List<GameRepresentation> games = this.getGamesCached(emulatorId);
         int index = games.indexOf(gameRepresentation);
         if (index != -1) {
           games.remove(index);
           games.add(index, gameRepresentation);
+        }
+
+        List<GameRepresentation> all = this.getGamesCached(-1);
+        index = all.indexOf(gameRepresentation);
+        if (index != -1) {
+          all.remove(index);
+          all.add(index, gameRepresentation);
         }
       }
       return gameRepresentation;

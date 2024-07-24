@@ -375,34 +375,38 @@ public class TableDataController implements Initializable, DialogController, Aut
         LOG.info("Auto-fill table version");
         TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails);
         if (td != null) {
-          gameTypeCombo.setValue(td.getGameType());
-          gameTheme.setValue(td.getGameTheme());
-          gameYear.setText("" + td.getGameYear());
-          manufacturer.setValue(td.getManufacturer());
-          author.setText(td.getAuthor());
-          category.setValue(td.getCategory());
-          if (td.getNumberOfPlayers() != null) {
-            numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
-          }
-          if (td.getGameRating() != null) {
-            gameRating.getValueFactory().setValue(td.getGameRating());
-          }
-          IPDBNum.setText(td.getIPDBNum());
-          url.setText(td.getUrl());
-          designedBy.setText(td.getDesignedBy());
-          tags.setText(td.getTags());
-          notes.setText(td.getNotes());
-          // do not override the version
-          //gameVersion.setText(td.getGameVersion());
-          gNotes.setText(td.getgNotes());
-          gDetails.setText(td.getgDetails());
-          gLog.setText(td.getgLog());
+          refreshTableDetails(td);
         }
       }
     }
     catch (Exception e) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Auto-fill failed: " + e.getMessage());
     }
+  }
+
+  private void refreshTableDetails(TableDetails td) {
+    gameTypeCombo.setValue(td.getGameType());
+    gameTheme.setValue(td.getGameTheme());
+    gameYear.setText("" + td.getGameYear());
+    manufacturer.setValue(td.getManufacturer());
+    author.setText(td.getAuthor());
+    category.setValue(td.getCategory());
+    if (td.getNumberOfPlayers() != null) {
+      numberOfPlayers.getValueFactory().setValue(td.getNumberOfPlayers());
+    }
+    if (td.getGameRating() != null) {
+      gameRating.getValueFactory().setValue(td.getGameRating());
+    }
+    IPDBNum.setText(td.getIPDBNum());
+    url.setText(td.getUrl());
+    designedBy.setText(td.getDesignedBy());
+    tags.setText(td.getTags());
+    notes.setText(td.getNotes());
+    // do not override the version
+    //gameVersion.setText(td.getGameVersion());
+    gNotes.setText(td.getgNotes());
+    gDetails.setText(td.getgDetails());
+    gLog.setText(td.getgLog());
   }
 
   @FXML
@@ -1102,10 +1106,6 @@ public class TableDataController implements Initializable, DialogController, Aut
     openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);
     fixVersionBtn.setDisable(mappedVersion == null || StringUtils.equals(gameVersion.getText(), game.getExtVersion()));
-
-    if (this.autoFillCheckbox.isSelected()) {
-      onAutoFill();
-    }
   }
 
   /**

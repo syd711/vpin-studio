@@ -474,22 +474,24 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
     PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    AssetRepresentation asset = defaultPlayer.getAvatar();
-    ByteArrayInputStream in = client.getAsset(AssetType.AVATAR, asset.getUuid());
+    if(defaultPlayer != null) {
+      AssetRepresentation asset = defaultPlayer.getAvatar();
+      ByteArrayInputStream in = client.getAsset(AssetType.AVATAR, asset.getUuid());
 
-    Image image = new Image(in);
-    Tile avatar = TileBuilder.create()
-        .skinType(Tile.SkinType.IMAGE)
-        .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
-        .backgroundColor(Color.TRANSPARENT)
-        .image(image)
-        .imageMask(Tile.ImageMask.ROUND)
-        .text("")
-        .textSize(Tile.TextSize.BIGGER)
-        .textAlignment(TextAlignment.CENTER)
-        .build();
+      Image image = new Image(in);
+      Tile avatar = TileBuilder.create()
+          .skinType(Tile.SkinType.IMAGE)
+          .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
+          .backgroundColor(Color.TRANSPARENT)
+          .image(image)
+          .imageMask(Tile.ImageMask.ROUND)
+          .text("")
+          .textSize(Tile.TextSize.BIGGER)
+          .textAlignment(TextAlignment.CENTER)
+          .build();
 
-    avatarPane.getChildren().add(avatar);
+      avatarPane.getChildren().add(avatar);
+    }
 
     deleteTableBtn.setDisable(true);
     saveBtn.setDisable(true);

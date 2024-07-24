@@ -293,7 +293,8 @@ public class TournamentsController implements Initializable, StudioFXController 
 
       if (owner != null) {
         ownerLabel.setText(owner.getDisplayName());
-        avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid()))));
+        String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(owner.getAccountUuid());
+        avatarPane.getChildren().add(AvatarFactory.create(client.getCachedUrlImage(avatarUrl)));
       }
 
       nameLabel.setText(tournament.getDisplayName());
@@ -319,7 +320,7 @@ public class TournamentsController implements Initializable, StudioFXController 
   }
 
   private void refreshDashboard(Optional<TreeItem<TournamentTreeModel>> tournamentTreeModel) {
-    if (!metaDataPane.isExpanded()) {
+    if (!dashboardPane.isExpanded()) {
       return;
     }
 
