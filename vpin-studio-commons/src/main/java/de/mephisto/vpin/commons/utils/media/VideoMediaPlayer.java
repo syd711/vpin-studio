@@ -3,7 +3,7 @@ package de.mephisto.vpin.commons.utils.media;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import javafx.application.Platform;
+import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
@@ -37,7 +37,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
                           @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
-    this(parent, mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield, true);
+    this(parent, mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield, dialogRendering);
   }
   private VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
                           @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
@@ -66,6 +66,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       return;
     }
 
+    this.setCenter(new ProgressIndicator());
+    parent.setCenter(this);
+
     media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
 
@@ -88,8 +91,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setVisible(true);
 
       this.setCenter(mediaView);
-      parent.setCenter(this);
-    });
+    });    
   }
 
   private void scaleMediaView() {
@@ -107,6 +109,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     if (prefHeight <= 0) {
       prefHeight = ((Pane) parent.getParent()).getHeight();
     }
+        
     prefWidth = prefWidth - 12;
     prefHeight = prefHeight - 12;
 
@@ -123,15 +126,13 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
         if (!dialogRendering) {
           mediaView.setX(0);
           mediaView.setY(0);
-          Platform.runLater(() -> {
-            double ratio = (double) media.getWidth() / media.getHeight();
-            if (ratio > 1.5) {
-              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
-            }
-            else {
-              mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
-            }
-          });
+          double ratio = (double) media.getWidth() / media.getHeight();
+          if (ratio > 1.5) {
+            mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 74);
+          }
+          else {
+            mediaView.translateXProperty().set(mediaView.translateXProperty().get() - 12);
+          }
         }
       }
       else {
@@ -158,12 +159,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   public void scaleForDialog(String screen) {
     if (VPinScreen.PlayField.name().equals(screen) || VPinScreen.Loading.name().equals(screen)) {
-      mediaView.setFitWidth(parent.getPrefWidth() - 300);
-      mediaView.setFitHeight(parent.getPrefHeight() - 300);
+      //mediaView.setFitWidth(parent.getPrefWidth() - 300);
+      //mediaView.setFitHeight(parent.getPrefHeight() - 300);
     }
     else {
-      mediaView.setFitWidth(parent.getPrefWidth() - 12);
-      mediaView.setFitHeight(parent.getPrefHeight() - 50);
+      //mediaView.setFitWidth(parent.getPrefWidth() - 12);
+      //mediaView.setFitHeight(parent.getPrefHeight() - 50);
     }
   }
 

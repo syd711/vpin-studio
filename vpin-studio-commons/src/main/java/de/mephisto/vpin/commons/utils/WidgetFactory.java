@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils;
 import de.mephisto.vpin.commons.fx.*;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -562,12 +563,7 @@ public class WidgetFactory {
   }
 
   public static void createMediaContainer(VPinStudioClient client, BorderPane parent, FrontendMediaItemRepresentation mediaItem, boolean previewEnabled) {
-    if (parent.getCenter() != null) {
-      Node node = parent.getCenter();
-      if (node instanceof AssetMediaPlayer) {
-        ((AssetMediaPlayer) node).disposeMedia();
-      }
-    }
+    disposeMediaPane(parent);
 
     if (mediaItem == null) {
       createNoMediaLabel(parent);
@@ -609,36 +605,17 @@ public class WidgetFactory {
     String baseType = mimeType.split("/")[0];
     String url = client.getURL(mediaItem.getUri());
 
-    double prefWidth = parent.getPrefWidth();
-    if (prefWidth <= 0) {
-      prefWidth = ((Pane) parent.getParent()).getWidth();
-    }
-    double prefHeight = parent.getPrefHeight();
-    if (prefHeight <= 0) {
-      prefHeight = ((Pane) parent.getParent()).getHeight();
-    }
+    Frontend frontend = client.getFrontendService().getFrontendCached();
 
     if (baseType.equals("image") && !audioOnly) {
-      ImageView imageView = new ImageView();
-      imageView.setFitWidth(prefWidth - 10);
-      imageView.setFitHeight(prefHeight - 60);
-      imageView.setPreserveRatio(true);
-
-      Image image = null;
       ByteArrayInputStream gameMediaItem = client.getAssetService().getGameMediaItem(mediaItem.getGameId(), VPinScreen.valueOf(mediaItem.getScreen()));
-      if (gameMediaItem != null) {
-        image = new Image(gameMediaItem);
-        imageView.setImage(image);
-        imageView.setUserData(mediaItem);
-
-        parent.setCenter(imageView);
-      }
+      Image image = gameMediaItem != null ? new Image(gameMediaItem) : null;
+      new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
     }
     else if (baseType.equals("audio")) {
       new AudioMediaPlayer(parent, mediaItem, url);
     }
     else if (baseType.equals("video") && !audioOnly) {
-      Frontend frontend = client.getFrontendService().getFrontendCached();
       return new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
     }
     else {
@@ -721,6 +698,19 @@ public class WidgetFactory {
         setGraphic(root);
         setText(item);
       }
+    }
+  }
+
+  public static void disposeMediaPane(BorderPane parent) {
+    if (parent.getCenter() != null) {
+      Node node = parent.getCenter();
+      if (node instanceof AssetMediaPlayer) {
+        ((AssetMediaPlayer) node).disposeMedia();
+      }
+      else if (node instanceof ImageViewer) {
+        ((ImageViewer) node).disposeImage();
+      }
+      parent.setCenter(null);
     }
   }
 }

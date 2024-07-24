@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -27,7 +26,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
@@ -564,17 +562,8 @@ public class TablesSidebarMediaController implements Initializable {
   }
 
   private void disposeMediaPane(BorderPane parent) {
-    if (parent.getCenter() != null) {
-      Node node = parent.getCenter();
-      if (node instanceof AssetMediaPlayer) {
-        ((AssetMediaPlayer) node).disposeMedia();
-      }
-      else if (node instanceof ImageView) {
-        ((ImageView) node).setImage(null);
-      }
-
-      WidgetFactory.createNoMediaLabel(parent);
-    }
+    WidgetFactory.disposeMediaPane(parent);
+    WidgetFactory.createNoMediaLabel(parent);
   }
 
   @Override
