@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,6 +33,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -102,7 +106,9 @@ public class PlayerDialogController implements Initializable, DialogController {
         }
       }
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
+      Image image = avatar.getImage();
+      BufferedImage avatarImage = SwingFXUtils.fromFXImage(image, null);
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, avatarImage, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
         if (o instanceof PlayerRepresentation) {

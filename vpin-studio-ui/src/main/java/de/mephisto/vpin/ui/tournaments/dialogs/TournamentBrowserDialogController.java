@@ -35,9 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
@@ -106,6 +104,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
   @FXML
   private Label pagingInfo;
+
+  private Map<Long, TournamentSearchTableSummary> tableSummaryCache = new HashMap<>();
 
   private TournamentSearchResultItem tournament;
   private Optional<TournamentSearchResultItem> selection = Optional.empty();
@@ -181,8 +181,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
     avatarColumn.setCellValueFactory(cellData -> {
       TournamentSearchResultItem value = cellData.getValue();
-      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(value.getOwnerUuid());
-      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(maniaClient.getTournamentClient().getBadgeUrl(value)));
       Tooltip.install(imageView, new Tooltip(value.getOwnerName()));
       return new SimpleObjectProperty<>(imageView);
     });
@@ -199,8 +198,11 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
     tablesColumn.setCellValueFactory(cellData -> {
       TournamentSearchResultItem value = cellData.getValue();
-      TournamentSearchTableSummary summary = new TournamentSearchTableSummary(value);
-      return new SimpleObjectProperty(summary);
+      if(!tableSummaryCache.containsKey(value.getId())) {
+        TournamentSearchTableSummary summary = new TournamentSearchTableSummary(value);
+        tableSummaryCache.put(value.getId(), summary);
+      }
+      return new SimpleObjectProperty(tableSummaryCache.get(value.getId()));
     });
 
     tableView.getSelectionModel().getSelectedItems().addListener((ListChangeListener<TournamentSearchResultItem>) c -> {
