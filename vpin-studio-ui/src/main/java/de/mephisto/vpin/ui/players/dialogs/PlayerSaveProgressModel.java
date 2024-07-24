@@ -25,6 +25,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -39,16 +40,18 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   private List<PlayerRepresentation> players;
   private final boolean tournamentPlayer;
   private File avatarFile;
+  private final BufferedImage bufferedImage;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, BufferedImage bufferedImage, Pane avatarStack) {
     super("Saving Player");
     this.stage = stage;
     this.players = Arrays.asList(playerRepresentation);
     this.tournamentPlayer = tournamentPlayer;
     this.avatarFile = avatarFile;
+    this.bufferedImage = bufferedImage;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
   }
@@ -111,7 +114,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       progressResultModel.getResults().add(player);
 
       if (Features.TOURNAMENTS_ENABLED) {
-        updateTournamentPlayer(player);
+        updateTournamentPlayer(player, bufferedImage);
       }
     }
     catch (Exception ex) {
@@ -120,7 +123,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     }
   }
 
-  private void updateTournamentPlayer(PlayerRepresentation player) throws Exception {
+  private void updateTournamentPlayer(PlayerRepresentation player, BufferedImage bufferedImage) throws Exception {
     //post process tournament player creation
     if (tournamentPlayer) {
       Account maniaAccount = null;
@@ -138,22 +141,15 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
           player.setTournamentUserUuid(update.getUuid());
           client.getPlayerService().savePlayer(player);
+          maniaClient.getAccountClient().updateAvatar(update, bufferedImage, null);
         }
         else {
-          if (this.avatarFile != null) {
-            maniaClient.getAccountClient().updateAvatar(maniaAccount, ImageIO.read(this.avatarFile), null);
-          }
+          maniaClient.getAccountClient().updateAvatar(maniaAccount, bufferedImage, null);
         }
       }
       else {
         maniaAccount = player.toManiaAccount();
-        PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
-        Image image = new Image(DashboardController.class.getResourceAsStream("avatar-default.png"));
-        if (!StringUtils.isEmpty(avatarEntry.getValue())) {
-          image = new Image(client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue()));
-        }
-        BufferedImage avatarImage = SwingFXUtils.fromFXImage(image, null);
-        Account register = maniaClient.getAccountClient().create(maniaAccount, avatarImage, null);
+        Account register = maniaClient.getAccountClient().create(maniaAccount, bufferedImage, null);
         player.setTournamentUserUuid(register.getUuid());
         client.getPlayerService().savePlayer(player);
       }

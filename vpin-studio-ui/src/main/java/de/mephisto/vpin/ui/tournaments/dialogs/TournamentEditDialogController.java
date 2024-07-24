@@ -14,16 +14,20 @@ import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
+import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
+import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -57,6 +61,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -339,9 +344,34 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     boolean isOwner = TournamentHelper.isOwner(selectedTournament, cabinet);
     boolean editable = isOwner && !selectedTournament.isActive();
+    InputStream in = null;
+
+    PreferenceEntryRepresentation avatarEntry = client.getPreference(PreferenceNames.AVATAR);
     if (tournament.getUuid() == null) {
       editable = true;
+      in = client.getAsset(AssetType.VPIN_AVATAR, avatarEntry.getValue());
     }
+    else {
+      in = client.getCachedUrlImage(maniaClient.getTournamentClient().getBadgeUrl(tournament));
+    }
+
+    if (in == null) {
+      in = Studio.class.getResourceAsStream("avatar-default.png");
+    }
+
+    Image image = new Image(in);
+    Tile avatar = TileBuilder.create()
+        .skinType(Tile.SkinType.IMAGE)
+        .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
+        .backgroundColor(Color.TRANSPARENT)
+        .image(image)
+        .imageMask(Tile.ImageMask.ROUND)
+        .text("")
+        .textSize(Tile.TextSize.BIGGER)
+        .textAlignment(TextAlignment.CENTER)
+        .build();
+
+    avatarPane.getChildren().add(avatar);
 
     this.iscoredReloadBtn.setDisable(!isOwner);
     this.addTableBtn.setDisable(!isOwner);
@@ -473,25 +503,6 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     validationContainer.setVisible(false);
     tableView.setPlaceholder(new Label("                     No tables selected!\nUse the '+' button to add tables to this tournament."));
 
-    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    if(defaultPlayer != null) {
-      AssetRepresentation asset = defaultPlayer.getAvatar();
-      ByteArrayInputStream in = client.getAsset(AssetType.AVATAR, asset.getUuid());
-
-      Image image = new Image(in);
-      Tile avatar = TileBuilder.create()
-          .skinType(Tile.SkinType.IMAGE)
-          .prefSize(UIDefaults.DEFAULT_AVATARSIZE * 2, UIDefaults.DEFAULT_AVATARSIZE * 2)
-          .backgroundColor(Color.TRANSPARENT)
-          .image(image)
-          .imageMask(Tile.ImageMask.ROUND)
-          .text("")
-          .textSize(Tile.TextSize.BIGGER)
-          .textAlignment(TextAlignment.CENTER)
-          .build();
-
-      avatarPane.getChildren().add(avatar);
-    }
 
     deleteTableBtn.setDisable(true);
     saveBtn.setDisable(true);
