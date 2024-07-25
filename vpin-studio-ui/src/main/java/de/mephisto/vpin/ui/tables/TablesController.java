@@ -107,6 +107,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
     if(options != null) {
+      tabPane.getSelectionModel().select(0);
       tableOverviewController.selectGameInModel(options.getGameId());
     }
   }
