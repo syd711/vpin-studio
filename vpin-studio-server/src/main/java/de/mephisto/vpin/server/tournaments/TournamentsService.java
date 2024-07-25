@@ -60,7 +60,8 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
     try {
       preferencesService.savePreference(PreferenceNames.TOURNAMENTS_SETTINGS, settings);
       return getSettings();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Saving tournament settings failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving tournament settings failed: " + e.getMessage());
     }
@@ -94,7 +95,10 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
         TournamentConfig config = getConfig();
         maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
         Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-        if(cabinet != null) {
+        if (cabinet != null) {
+          TournamentSettings settings = getSettings();
+          settings.setEnabled(true);
+          preferencesService.savePreference(PreferenceNames.TOURNAMENTS_SETTINGS, settings);
           LOG.info("Cabinet is registered on VPin-Mania");
         }
         else {
@@ -111,7 +115,8 @@ public class TournamentsService implements InitializingBean, PreferenceChangedLi
         tournamentSynchronizer.synchronize();
 
         frontendStatusService.addTableStatusChangeListener(this);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         Features.TOURNAMENTS_ENABLED = false;
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);
       }

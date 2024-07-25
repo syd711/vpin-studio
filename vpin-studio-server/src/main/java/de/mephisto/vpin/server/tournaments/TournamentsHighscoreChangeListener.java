@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
 import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.iscored.IScoredService;
+import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -47,6 +48,11 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+    if(event.getEventOrigin().equals(EventOrigin.TABLE_SCAN)) {
+      LOG.info("Ignored highscore change, because of table scans are skipped.");
+      return;
+    }
+
     if (cabinet != null) {
       new Thread(() -> {
         Thread.currentThread().setName("VPin Mania Highscore ChangeListener Thread");
@@ -141,7 +147,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     TableScore tableScore = new TableScore();
     tableScore.setVpsTableId(game.getExtTableId());
     tableScore.setVpsVersionId(game.getExtTableVersionId());
-    tableScore.setScoreType(HighscoreType.valueOf(game.getHighscoreType().name()));
+    tableScore.setScoreType(game.getHighscoreType() != null ? HighscoreType.valueOf(game.getHighscoreType().name()) : null);
     tableScore.setScore(Double.valueOf(newScore.getNumericScore()).longValue());
     tableScore.setScoreText(newScore.getScore());
     tableScore.setScoreSource(game.getRom() != null ? game.getRom() : game.getTableName());

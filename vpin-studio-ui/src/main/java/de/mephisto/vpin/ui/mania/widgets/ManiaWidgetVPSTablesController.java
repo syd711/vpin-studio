@@ -201,7 +201,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
     Collections.sort(tables, (o1, o2) -> {
       if (o1 == null || o2 == null || o1.getName().isEmpty() || o2.getName().isEmpty()) {
-        return 0;
+        return -1;
       }
       return o1.getName().compareTo(o2.getName());
     });
