@@ -32,6 +32,8 @@ Interested in what these services have to offer? Check out the video below:
 
 https://www.youtube.com/watch?v=Dq3rra5Gu1I&ab_channel=VPinStudio
 
+https://www.youtube.com/watch?v=5qJF8WyGuEw&ab_channel=VPinStudio
+
 or read some documentation: https://github.com/syd711/vpin-studio/wiki/Mania
 
 
@@ -56,6 +58,9 @@ Checking if a highscore has been updated has always bothered me, so the Studio w
 You can configure the available notifications on the corresponding preferences page.
 
 <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/notifications.jpg" width="500" />
+
+See also:
+https://www.youtube.com/watch?v=9bEOrSBuKVQ&ab_channel=VPinStudio
 
 ### VPin Studio App
 
