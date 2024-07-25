@@ -6,6 +6,9 @@ import org.apache.poi.poifs.filesystem.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
   public static final String HIGH_SCORE = "HighScore";
@@ -23,6 +26,7 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
     ScoreParsingSummary summary = new ScoreParsingSummary();
     int index = 1;
     String prefix = HIGH_SCORE;
+    List<ScoreParsingEntry> entries = new ArrayList<>();
     while (gameFolder.hasEntry(prefix + index)) {
       DocumentEntry scoreEntry = (DocumentEntry) gameFolder.getEntry(prefix + index);
       String scoreString = super.getScoreEntry(scoreEntry);
@@ -30,10 +34,17 @@ public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
       ScoreParsingEntry score = new ScoreParsingEntry();
       score.setInitials("???");
       score.setScore(parseScoreString(scoreString));
-      score.setPos(index);
-      summary.getScores().add(score);
+      entries.add(score);
       index++;
     }
+
+    entries.sort((o1, o2) -> (int) (o2.getScore() - o1.getScore()));
+    index = 1;
+    for (ScoreParsingEntry entry : entries) {
+      entry.setPos(index);
+      index++;
+    }
+    summary.getScores().addAll(entries);
     return summary;
   }
 
