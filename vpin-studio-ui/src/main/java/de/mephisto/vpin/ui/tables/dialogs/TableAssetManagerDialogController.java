@@ -848,8 +848,13 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @Nullable VPinScreen screen) {
     localStage = stage;
     this.overviewController = overviewController;
+
+    // detection of change in game  
+    if (this.game != null && (game == null || this.game.getId() != game.getId())) {
+      searchField.setText("");
+    }
+
     this.game = game;
-    this.searchField.setText("");
     if (screen != null) {
       this.screen = screen;
     }
