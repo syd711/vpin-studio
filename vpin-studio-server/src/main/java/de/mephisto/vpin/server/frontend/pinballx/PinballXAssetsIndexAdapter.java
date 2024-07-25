@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import java.io.*;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
+import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.frontend.FrontendService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
@@ -14,20 +14,24 @@ import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
-import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import edu.umd.cs.findbugs.annotations.NonNull;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Service
-public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter, InitializingBean {
+public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements TableAssetsAdapter {
 
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
-  private PinballXIndex index = new PinballXIndex();
+  private PinballXIndex index;
 
   @Override
   public void invalidateMediaCache() {
@@ -48,7 +52,7 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
       if (tmp.exists() && !tmp.delete()) {
         LOG.error("Failed to delete existing tmp file " + indexFile.getName() + ".tmp");
       }
-      index.saveToFile(tmp);
+      getIndex().saveToFile(tmp);
 
       // switch files
       if (indexFile.exists() && !indexFile.delete()) {
@@ -76,14 +80,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
     EmulatorType emutype = EmulatorType.valueOf(emulatorType);
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
     LOG.info("Searching term '" + term + "'' for emulator " + emutype + " and screen  " + screen);
-    return index.match(emutype, screen, term);
+    return getIndex().match(emutype, screen, term);
   }
 
   @Override
   public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {
     EmulatorType emutype = EmulatorType.valueOf(emulatorName);
     VPinScreen screen = VPinScreen.valueOfSegment(screenSegment);
-    return index.get(emutype, screen, folder, name);
+    return getIndex().get(emutype, screen, folder, name);
   }
 
   //-------------------------------------
@@ -122,6 +126,17 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   //-----------------------------------
 
   public PinballXIndex getIndex() {
+    if (index == null) {
+      try {
+        index = new PinballXIndex();
+        File indexFile = getIndexFile();
+        LOG.info("Load pinballX Asset index from file : " + indexFile);
+        index.loadFromFile(indexFile);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to load PinballX index file: " + e.getMessage(), e);
+      }
+    }
     return index;
   }
 
@@ -132,12 +147,4 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
     }
     return new File(folder, "pinballx.index");
   }
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    File indexFile = getIndexFile();
-    LOG.info("Load pinballX Asset index from file : " + indexFile);
-    index.loadFromFile(indexFile);
-  }
-
 }

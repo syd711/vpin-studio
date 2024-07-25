@@ -106,9 +106,7 @@ public class PlayerDialogController implements Initializable, DialogController {
         }
       }
 
-      Image image = avatar.getImage();
-      BufferedImage avatarImage = SwingFXUtils.fromFXImage(image, null);
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, avatarImage, this.avatarStack));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
         if (o instanceof PlayerRepresentation) {

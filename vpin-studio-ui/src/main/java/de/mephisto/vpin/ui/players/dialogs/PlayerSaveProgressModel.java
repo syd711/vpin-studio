@@ -40,18 +40,16 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   private List<PlayerRepresentation> players;
   private final boolean tournamentPlayer;
   private File avatarFile;
-  private final BufferedImage bufferedImage;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, BufferedImage bufferedImage, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
     super("Saving Player");
     this.stage = stage;
     this.players = Arrays.asList(playerRepresentation);
     this.tournamentPlayer = tournamentPlayer;
     this.avatarFile = avatarFile;
-    this.bufferedImage = bufferedImage;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
   }
@@ -114,7 +112,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       progressResultModel.getResults().add(player);
 
       if (Features.TOURNAMENTS_ENABLED) {
-        updateTournamentPlayer(player, bufferedImage);
+        updateTournamentPlayer(player, avatarFile);
       }
     }
     catch (Exception ex) {
@@ -123,7 +121,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
     }
   }
 
-  private void updateTournamentPlayer(PlayerRepresentation player, BufferedImage bufferedImage) throws Exception {
+  private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
     //post process tournament player creation
     if (tournamentPlayer) {
       Account maniaAccount = null;
@@ -141,15 +139,14 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           update = maniaClient.getAccountClient().create(maniaAccount, this.avatarFile, null);
           player.setTournamentUserUuid(update.getUuid());
           client.getPlayerService().savePlayer(player);
-          maniaClient.getAccountClient().updateAvatar(update, bufferedImage, null);
         }
         else {
-          maniaClient.getAccountClient().updateAvatar(maniaAccount, bufferedImage, null);
+          maniaClient.getAccountClient().updateAvatar(maniaAccount, avatarFile, null);
         }
       }
       else {
         maniaAccount = player.toManiaAccount();
-        Account register = maniaClient.getAccountClient().create(maniaAccount, bufferedImage, null);
+        Account register = maniaClient.getAccountClient().create(maniaAccount, avatarFile, null);
         player.setTournamentUserUuid(register.getUuid());
         client.getPlayerService().savePlayer(player);
       }
