@@ -78,9 +78,11 @@ public class ImageViewer extends BorderPane {
   }
 
   public void scaleForTemplate(ImageView cardPreview) {
-    imageView.setPreserveRatio(false);
-    imageView.setFitWidth(cardPreview.getFitWidth());
-    imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
+    if(imageView != null) {
+      imageView.setPreserveRatio(false);
+      imageView.setFitWidth(cardPreview.getFitWidth());
+      imageView.setFitHeight(cardPreview.getFitWidth() / 16 * 9);
+    }
   }
 
   public void disposeImage() {

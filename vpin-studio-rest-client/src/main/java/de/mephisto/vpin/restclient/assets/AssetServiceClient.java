@@ -94,6 +94,7 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
+  @Nullable
   public ByteArrayInputStream getAsset(AssetType assetType, String uuid) {
     if (assetType.equals(AssetType.AVATAR) && client.getImageCache().containsKey(uuid)) {
       return new ByteArrayInputStream(client.getImageCache().get(uuid));
@@ -101,7 +102,7 @@ public class AssetServiceClient extends VPinStudioClientService {
 
     byte[] bytes = getRestClient().readBinary(API + "assets/data/" + uuid);
     if (bytes == null) {
-      throw new UnsupportedOperationException("No data found for asset with UUID " + uuid);
+      return null;
     }
 
     if (assetType.equals(AssetType.AVATAR)) {
