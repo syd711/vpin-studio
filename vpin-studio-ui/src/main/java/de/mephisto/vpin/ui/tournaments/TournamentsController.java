@@ -308,7 +308,7 @@ public class TournamentsController implements Initializable, StudioFXController 
       discordLink.setText(!StringUtils.isEmpty(tournament.getDiscordLink()) ? tournament.getDiscordLink() : "-");
       websiteLink.setText(!StringUtils.isEmpty(tournament.getWebsite()) ? tournament.getWebsite() : "-");
       dashboardLink.setText(!StringUtils.isEmpty(tournament.getDashboardUrl()) ? tournament.getDashboardUrl() : "-");
-      descriptionLabel.setText(tournament.getDescription());
+      descriptionLabel.setText(!StringUtils.isEmpty(tournament.getDescription()) ? tournament.getDescription() : "");
     }
   }
 

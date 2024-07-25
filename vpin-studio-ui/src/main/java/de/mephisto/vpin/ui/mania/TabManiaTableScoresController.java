@@ -17,16 +17,14 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class TabManiaTableScoresController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TabManiaTableScoresController.class);
@@ -125,12 +123,7 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
   private List<String> getLetters() {
     List<String> letters = new ArrayList<>();
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
-    Collections.sort(tables, (o1, o2) -> {
-      if (o1.getName().isEmpty() || o2.getName().isEmpty()) {
-        return 0;
-      }
-      return o1.getName().compareTo(o2.getName());
-    });
+    Collections.sort(tables, Comparator.comparing(o -> String.valueOf(o.getName())));
 
     for (VpsTable table : tables) {
       if (table.getName().trim().isEmpty()) {
