@@ -198,14 +198,6 @@
       </licenses>
     </dependency>
     <dependency>
-      <groupId>de.mephisto</groupId>
-      <artifactId>github-downloader</artifactId>
-      <version>1.0.0</version>
-      <licenses>
-        <!-- No license information available. -->
-      </licenses>
-    </dependency>
-    <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-assets</artifactId>
       <version>1.1.0</version>
@@ -216,6 +208,14 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
+      <version>3.0.0</version>
+      <licenses>
+        <!-- No license information available. -->
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>de.mephisto.vpin</groupId>
+      <artifactId>vpin-connector-github</artifactId>
       <version>3.0.0</version>
       <licenses>
         <!-- No license information available. -->
@@ -311,19 +311,6 @@
           <url>http://www.eclipse.org/legal/epl-v10.html</url>
           <distribution>repo</distribution>
           <file>eclipse public license - v 1.0 - epl-v10.html</file>
-        </license>
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>me.xdrop</groupId>
-      <artifactId>fuzzywuzzy</artifactId>
-      <version>1.4.0</version>
-      <licenses>
-        <license>
-          <name>GPL 2</name>
-          <url>https://www.gnu.org/licenses/old-licenses/gpl-2.0.html</url>
-          <distribution>repo</distribution>
-          <file>gpl 2 - gpl-2.0.html</file>
         </license>
       </licenses>
     </dependency>
@@ -516,6 +503,19 @@
       <licenses>
         <license>
           <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>apache-2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-text</artifactId>
+      <version>1.11.0</version>
+      <licenses>
+        <license>
+          <name>Apache-2.0</name>
           <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
           <distribution>repo</distribution>
           <file>apache-2.0 - license-2.0.txt</file>

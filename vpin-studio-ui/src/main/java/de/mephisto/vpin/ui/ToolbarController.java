@@ -66,7 +66,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   @FXML
   private ProgressIndicator jobProgress;
 
-  private String newVersion;
+  public static String newVersion;
 
   // Add a public no-args constructor
   public ToolbarController() {

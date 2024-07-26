@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.players.PlayersController;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tournaments.TournamentsController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
@@ -29,6 +30,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
@@ -118,7 +120,28 @@ public class NavigationController implements Initializable, StudioEventListener,
 
   @FXML
   private void onManiaClick() {
-    navigateTo(NavigationItem.Mania);
+    if (ToolbarController.newVersion != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Dialogs.openUpdateDialog();
+      }
+    }
+    else {
+      navigateTo(NavigationItem.Mania);
+    }
+  }
+
+  @FXML
+  private void onTournamentsClick() {
+    if (ToolbarController.newVersion != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + ToolbarController.newVersion, "You need the latest VPin Studio version to use these services.", null, "Update");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Dialogs.openUpdateDialog();
+      }
+    }
+    else {
+      navigateTo(NavigationItem.Tournaments);
+    }
   }
 
   @FXML
@@ -139,11 +162,6 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private void onPlayersClick() {
     navigateTo(NavigationItem.Players);
-  }
-
-  @FXML
-  private void onTournamentsClick() {
-    navigateTo(NavigationItem.Tournaments);
   }
 
   @FXML

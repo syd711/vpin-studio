@@ -134,3 +134,4 @@ This is a **breaking change** since you have to re-map all existing bindings fro
 - **Table Overview / Table Uploads**: The asset view mode is turned off after table asset uploads automatically.
 - **VPS Updates**: The VPS updates were broken **(approx. for the last two month)**. The updates are now detected again, update indicators will be shown again in the table overview (if enabled).
 - **Table Scans**: Fixed possible date format issue when reading games from PinUP Popper.
+- **Highscores Parsing**: Fixed order of anonymous VPReg.stg based highscore list.
