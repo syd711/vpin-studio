@@ -188,7 +188,7 @@ public class TableDialogs {
   public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file) {
     if (file != null && file.exists()) {
       String help2 = null;
-      if (game.isDirectB2SAvailable()) {
+      if (game.getDirectB2SPath() != null) {
         help2 = "The existing directb2 file of this table will be overwritten.";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
@@ -234,7 +234,7 @@ public class TableDialogs {
   public static boolean directResUpload(Stage stage, GameRepresentation game, File file) {
     if (file != null && file.exists()) {
       String help2 = null;
-      if (game.isDirectB2SAvailable()) {
+      if (game.getDirectB2SPath() != null) {
         help2 = "The existing .res file of this table will be overwritten.";
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
@@ -280,7 +280,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
-        if (game.isIniAvailable()) {
+        if (game.getIniPath() != null) {
           help2 = "The existing .ini file of this table will be overwritten.";
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
@@ -325,7 +325,7 @@ public class TableDialogs {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
-        if (game.isPovAvailable()) {
+        if (game.getPovPath() != null) {
           help2 = "The existing .pov file of this table will be overwritten.";
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);

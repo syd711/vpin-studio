@@ -57,7 +57,7 @@ public class TableOverviewColumnSorter {
         }
       }
       else if (column.equals(tableOverviewController.columnB2S)) {
-        comp = Comparator.comparing(o -> o.getGame().isDirectB2SAvailable());
+        comp = Comparator.comparing(o -> o.getGame().getDirectB2SPath() != null);
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
           comp = comp.reversed();
         }
@@ -98,13 +98,13 @@ public class TableOverviewColumnSorter {
         }
       }
       else if (column.equals(tableOverviewController.columnPOV)) {
-        comp = Comparator.comparing(o -> o.getGame().isPovAvailable());
+        comp = Comparator.comparing(o -> o.getGame().getPovPath() != null);
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
           comp = comp.reversed();
         }
       }
       else if (column.equals(tableOverviewController.columnINI)) {
-        comp = Comparator.comparing(o -> o.getGame().isIniAvailable());
+        comp = Comparator.comparing(o -> o.getGame().getIniPath() != null);
         if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
           comp = comp.reversed();
         }

@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
@@ -224,6 +225,21 @@ public class WidgetFactory {
       fontIcon.setIconColor(Paint.valueOf(color));
     }
     return fontIcon;
+  }
+
+
+  public static Label createCheckboxIcon(@Nullable String color, @NonNull String tooltip) {
+    Label label = new Label();
+    label.setTooltip(new Tooltip(tooltip));
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconLiteral("bi-check-circle");
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    if (color != null) {
+      fontIcon.setIconColor(Paint.valueOf(color));
+    }
+    label.setGraphic(fontIcon);
+    return label;
   }
 
   public static FontIcon createExclamationIcon() {
@@ -513,6 +529,16 @@ public class WidgetFactory {
     ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
     controller.hideCancel();
     controller.initDialog(stage, null, okText, msg, help1, help2, checkBoxText);
+    controller.setChecked(checked);
+    stage.showAndWait();
+    return controller.getResult();
+  }
+
+  public static ConfirmationResult showConfirmationWithCheckbox(Stage owner, String msg, String okText, String altText, String help1, String help2, String checkBoxText, boolean checked) {
+    Stage stage = createDialogStage(ConfirmationDialogWithCheckboxController.class, owner, "Information", "dialog-confirmation-with-checkbox.fxml");
+    ConfirmationDialogWithCheckboxController controller = (ConfirmationDialogWithCheckboxController) stage.getUserData();
+    controller.hideCancel();
+    controller.initDialog(stage, altText, okText, msg, help1, help2, checkBoxText);
     controller.setChecked(checked);
     stage.showAndWait();
     return controller.getResult();

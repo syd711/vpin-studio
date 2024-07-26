@@ -944,7 +944,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             if (updatedGame.isPresent()) {
               GameRepresentation gameRepresentation = updatedGame.get();
               //tableView.getSelectionModel().select(gameRepresentation);
-              this.playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+              this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
             }
           }
 
@@ -1092,6 +1092,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Label label = new Label(value.getGameDisplayName());
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
+      if(value.getGameFilePath() != null) {
+        label.setTooltip(new Tooltip(value.getGameFilePath()));
+      }
       return label;
     }, true);
 
@@ -1153,12 +1156,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }, true);
 
     configureColumn(columnB2S, (value, model) -> {
-      if (value.isDirectB2SAvailable()) {
+      if (value.getDirectB2SPath() != null) {
         if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
           return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value));
+          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
         }
       }
       return null;
@@ -1169,33 +1172,27 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     });
 
     configureColumn(columnPOV, (value, model) -> {
-      if (value.isPovAvailable()) {
+      if (value.getPovPath() != null) {
         if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
           return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
         }
         else {
-          FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
-          Tooltip.install(checkboxIcon, new Tooltip("POV file available"));
-          return checkboxIcon;
+          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
       }
       return null;
     }, true);
 
     configureColumn(columnINI, (value, model) -> {
-      if (value.isIniAvailable()) {
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
-        Tooltip.install(checkboxIcon, new Tooltip("INI file available"));
-        return checkboxIcon;
+      if (value.getIniPath() != null) {
+        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getIniPath());
       }
       return null;
     }, true);
 
     configureColumn(columnRES, (value, model) -> {
-      if (value.isResAvailable()) {
-        FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon(getIconColor(value));
-        Tooltip.install(checkboxIcon, new Tooltip("RES file available"));
-        return checkboxIcon;
+      if (value.getResPath() != null) {
+        return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getResPath());
       }
       return null;
     }, true);
@@ -1225,12 +1222,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }, true);
 
     configureColumn(columnPUPPack, (value, model) -> {
-      if (value.isPupPackAvailable()) {
+      if (value.getPupPackPath() != null) {
         if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
         }
         else {
-          return WidgetFactory.createCheckboxIcon(getIconColor(value));
+          return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
       }
       return null;
@@ -1698,10 +1695,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
     else {
       GameRepresentation gameRepresentation = c.getList().get(0).getGame();
-      playBtn.setDisable(!gameRepresentation.isGameFileAvailable());
+      playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
       refreshView(Optional.ofNullable(gameRepresentation));
 
-      if (gameRepresentation.isGameFileAvailable()) {
+      if (gameRepresentation.getGameFilePath() != null) {
         GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
         playBtn.getItems().clear();
 

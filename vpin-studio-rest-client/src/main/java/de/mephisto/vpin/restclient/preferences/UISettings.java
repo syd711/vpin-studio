@@ -24,6 +24,7 @@ public class UISettings extends JsonSettings {
 
   private boolean hideComponentWarning;
   private boolean hideVPXStartInfo;
+  private boolean hideFrontendLaunchQuestion;
 
   private boolean hideDismissConfirmations;
   private boolean hideUpdateInfo;
@@ -73,6 +74,14 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public boolean isHideFrontendLaunchQuestion() {
+    return hideFrontendLaunchQuestion;
+  }
+
+  public void setHideFrontendLaunchQuestion(boolean hideFrontendLaunchQuestion) {
+    this.hideFrontendLaunchQuestion = hideFrontendLaunchQuestion;
+  }
 
   public boolean isShowPlayerScores() {
     return showPlayerScores;

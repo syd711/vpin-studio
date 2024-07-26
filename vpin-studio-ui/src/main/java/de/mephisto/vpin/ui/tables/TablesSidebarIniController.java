@@ -100,7 +100,7 @@ public class TablesSidebarIniController implements Initializable {
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
-      boolean iniFileAvailable = game.isIniAvailable();
+      boolean iniFileAvailable = game.getIniPath() != null;
 
       dataBox.setVisible(iniFileAvailable);
       emptyDataBox.setVisible(!iniFileAvailable);

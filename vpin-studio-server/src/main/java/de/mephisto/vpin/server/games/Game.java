@@ -200,7 +200,8 @@ public class Game {
       try {
         BufferedImage bufferedImage = ImageUtil.loadImage(frontendMediaItem.getFile());
         image = SwingFXUtils.toFXImage(bufferedImage, null);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         throw new RuntimeException(e);
       }
     }
@@ -217,8 +218,11 @@ public class Game {
     this.pupPack = pupPack;
   }
 
-  public boolean isPupPackAvailable() {
-    return pupPack != null;
+  public String getPupPackPath() {
+    if(pupPack != null && pupPack.getPupPackFolder().exists()) {
+      return pupPack.getPupPackFolder().getAbsolutePath();
+    }
+    return null;
   }
 
   public long getGameFileSize() {
@@ -400,16 +404,25 @@ public class Game {
     return null;
   }
 
-  public boolean isPovAvailable() {
-    return this.getPOVFile().exists();
+  public String getPovPath() {
+    if (this.getPOVFile().exists()) {
+      return this.getPOVFile().getAbsolutePath();
+    }
+    return null;
   }
 
-  public boolean isIniAvailable() {
-    return this.getIniFile().exists();
+  public String getIniPath() {
+    if (this.getIniFile().exists()) {
+      return this.getIniFile().getAbsolutePath();
+    }
+    return null;
   }
 
-  public boolean isResAvailable() {
-    return this.getResFile().exists();
+  public String getResPath() {
+    if (this.getResFile().exists()) {
+      return this.getResFile().getAbsolutePath();
+    }
+    return null;
   }
 
   public void setGameFile(@NonNull File gameFile) {
@@ -424,12 +437,18 @@ public class Game {
     this.rom = rom;
   }
 
-  public boolean isDirectB2SAvailable() {
-    return getDirectB2SFile().exists();
+  public String getDirectB2SPath() {
+    if (getDirectB2SFile().exists()) {
+      return getDirectB2SFile().getAbsolutePath();
+    }
+    return null;
   }
 
-  public boolean isGameFileAvailable() {
-    return this.getGameFile().exists();
+  public String getGameFilePath() {
+    if (this.getGameFile().exists()) {
+      return this.getGameFile().getAbsolutePath();
+    }
+    return null;
   }
 
   public String getHsFileName() {

@@ -362,11 +362,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false);
 
-    if (!doFilter || game.get().getPupPackName() != null) {
+    if (!doFilter || game.get().getPupPackName() == null) {
       addSection(dataRoot, "PUP Pack", game.get(), VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack());
     }
 
-    if (!doFilter || !game.get().isDirectB2SAvailable()) {
+    if (!doFilter || game.get().getDirectB2SPath() == null) {
       addSection(dataRoot, "Backglasses", game.get(), VpsDiffTypes.b2s, vpsTable.getB2sFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsBackglass());
     }
 
@@ -393,7 +393,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       addSection(dataRoot, "Wheel Art", game.get(), VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsWheel());
     }
 
-    if (!doFilter || !game.get().isPovAvailable()) {
+    if (!doFilter || game.get().getPovPath() == null) {
       addSection(dataRoot, "POV", game.get(), VpsDiffTypes.pov, vpsTable.getPovFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPOV());
     }
 

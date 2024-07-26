@@ -328,7 +328,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     });
 
     startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if(newValue) {
+      if (newValue) {
         tableSettings.setStartAsEXE(newValue);
       }
       else {
@@ -401,10 +401,11 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public void refreshView(Optional<GameRepresentation> g) {
     setSaveEnabled(false);
 
-    openDefaultPictureBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
+    boolean directb2sAvailable = g.get().getDirectB2SPath() != null;
+    openDefaultPictureBtn.setDisable(!g.isPresent() || !directb2sAvailable);
     uploadBtn.setDisable(!g.isPresent());
-    dataBoxScrollPane.setVisible(g.isPresent() && g.get().isDirectB2SAvailable());
-    emptyDataBox.setVisible(!g.isPresent() || !g.get().isDirectB2SAvailable());
+    dataBoxScrollPane.setVisible(g.isPresent() && directb2sAvailable);
+    emptyDataBox.setVisible(!g.isPresent() || !directb2sAvailable);
 
     setDisable(b2sSettings, true);
 
@@ -423,9 +424,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
 
-    deleteBtn.setDisable(!g.isPresent() || !g.get().isDirectB2SAvailable());
+    deleteBtn.setDisable(!g.isPresent() || !directb2sAvailable);
 
-    if (g.isPresent() && g.get().isDirectB2SAvailable()) {
+    if (g.isPresent() && directb2sAvailable) {
       new Thread(() -> {
         Platform.runLater(() -> {
           nameLabel.setText(tableData.getName());
@@ -501,7 +502,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
 
             List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-            if(gameEmulators.isEmpty()) {
+            if (gameEmulators.isEmpty()) {
               LOG.error("No backglass server game emulator found!");
               return;
             }

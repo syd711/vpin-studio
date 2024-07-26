@@ -37,22 +37,16 @@ public class GameRepresentation {
   private String notes;
   private Date modified;
   private FrontendMediaRepresentation gameMedia;
-  private boolean directB2SAvailable;
-  private boolean gameFileAvailable;
   private ValidationState validationState;
   private String hsFileName;
   private String scannedHsFileName;
   private boolean romExists;
   private List<Integer> ignoredValidations;
   private String highscoreType;
-  private boolean povAvailable;
-  private boolean iniAvailable;
-  private boolean resAvailable;
   private boolean selected;
   private boolean romRequired;
   private String assets;
   private boolean defaultBackgroundAvailable;
-  private boolean altSoundAvailable;
   private AltColorTypes altColorType;
   private String extTableId;
   private String extTableVersionId;
@@ -60,16 +54,64 @@ public class GameRepresentation {
   private int emulatorId;
   private String pupPackName;
   private Long templateId;
-  private boolean pupPackAvailable;
   private boolean vpxGame;
+
   private VPSChanges vpsUpdates = new VPSChanges();
 
-  public boolean isResAvailable() {
-    return resAvailable;
+  private String directB2SPath;
+  private String gameFilePath;
+  private String povPath;
+  private String iniPath;
+  private String resPath;
+  private String pupPackPath;
+  private boolean altSoundAvailable;
+
+  public String getDirectB2SPath() {
+    return directB2SPath;
   }
 
-  public void setResAvailable(boolean resAvailable) {
-    this.resAvailable = resAvailable;
+  public void setDirectB2SPath(String directB2SPath) {
+    this.directB2SPath = directB2SPath;
+  }
+
+  public String getGameFilePath() {
+    return gameFilePath;
+  }
+
+  public void setGameFilePath(String gameFilePath) {
+    this.gameFilePath = gameFilePath;
+  }
+
+  public String getPovPath() {
+    return povPath;
+  }
+
+  public void setPovPath(String povPath) {
+    this.povPath = povPath;
+  }
+
+  public String getIniPath() {
+    return iniPath;
+  }
+
+  public void setIniPath(String iniPath) {
+    this.iniPath = iniPath;
+  }
+
+  public String getResPath() {
+    return resPath;
+  }
+
+  public void setResPath(String resPath) {
+    this.resPath = resPath;
+  }
+
+  public String getPupPackPath() {
+    return pupPackPath;
+  }
+
+  public void setPupPackPath(String pupPackPath) {
+    this.pupPackPath = pupPackPath;
   }
 
   public String getNotes() {
@@ -90,14 +132,6 @@ public class GameRepresentation {
 
   public String getPupPackName() {
     return pupPackName;
-  }
-
-  public boolean isPupPackAvailable() {
-    return pupPackAvailable;
-  }
-
-  public void setPupPackAvailable(boolean pupPackAvailable) {
-    this.pupPackAvailable = pupPackAvailable;
   }
 
   public void setPupPackName(String pupPackName) {
@@ -224,14 +258,6 @@ public class GameRepresentation {
     this.assets = assets;
   }
 
-  public boolean isGameFileAvailable() {
-    return gameFileAvailable;
-  }
-
-  public void setGameFileAvailable(boolean gameFileAvailable) {
-    this.gameFileAvailable = gameFileAvailable;
-  }
-
   public boolean isRomRequired() {
     return romRequired;
   }
@@ -270,22 +296,6 @@ public class GameRepresentation {
 
   public void setModified(Date modified) {
     this.modified = modified;
-  }
-
-  public boolean isPovAvailable() {
-    return povAvailable;
-  }
-
-  public void setPovAvailable(boolean povAvailable) {
-    this.povAvailable = povAvailable;
-  }
-
-  public boolean isIniAvailable() {
-    return iniAvailable;
-  }
-
-  public void setIniAvailable(boolean iniAvailable) {
-    this.iniAvailable = iniAvailable;
   }
 
   public String getTableName() {
@@ -342,14 +352,6 @@ public class GameRepresentation {
 
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
-  }
-
-  public boolean isDirectB2SAvailable() {
-    return directB2SAvailable;
-  }
-
-  public void setDirectB2SAvailable(boolean directB2SAvailable) {
-    this.directB2SAvailable = directB2SAvailable;
   }
 
   public String getRom() {

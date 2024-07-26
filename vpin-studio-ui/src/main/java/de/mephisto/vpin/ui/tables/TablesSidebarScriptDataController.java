@@ -263,9 +263,10 @@ public class TablesSidebarScriptDataController implements Initializable {
     tableInfo = null;
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
 
-    inspectBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    editBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
-    scanBtn.setDisable(g.isEmpty() || !g.get().isGameFileAvailable());
+    boolean gameFileAvailable = g.get().getGameFilePath() != null;
+    inspectBtn.setDisable(g.isEmpty() || !gameFileAvailable);
+    editBtn.setDisable(g.isEmpty() || !gameFileAvailable);
+    scanBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     viewScreenshotBtn.setDisable(g.isEmpty());
     screenshotBtn.setDisable(g.isEmpty());
     screenshotView.setImage(null);

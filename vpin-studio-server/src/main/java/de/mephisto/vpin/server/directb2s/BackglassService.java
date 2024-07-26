@@ -38,32 +38,34 @@ public class BackglassService {
   @Autowired
   private FrontendService frontendService;
 
-  /** Cache between filename and data */
-  private Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
+  /**
+   * Cache between filename and data
+   */
+  private final Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
 
-  private Map<String, B2STableSettingsParser> cacheB2STableSettingsParser = new ConcurrentHashMap<>();
-  
+  private final Map<String, B2STableSettingsParser> cacheB2STableSettingsParser = new ConcurrentHashMap<>();
+
   public DirectB2SData getDirectB2SData(int gameId) {
     Game game = gameService.getGame(gameId);
-    if (game != null && game.isDirectB2SAvailable()) {
-      
+    if (game != null && game.getDirectB2SPath() != null) {
       File directB2SFile = game.getDirectB2SFile();
       Path relativeFilePath = game.getEmulator().getTablesFolder().toPath().relativize(directB2SFile.toPath());
       return getDirectB2SData(directB2SFile, game.getEmulatorId(), relativeFilePath.toString(), game.getId());
-    } else {
+    }
+    else {
       return new DirectB2SData();
     }
   }
 
   private DirectB2SData getDirectB2SData(File directB2SFile, int emulatorId, String filename, int gameId) {
     if (cacheDirectB2SData.containsKey(directB2SFile.getPath())) {
-      return cacheDirectB2SData.get(directB2SFile.getPath()); 
+      return cacheDirectB2SData.get(directB2SFile.getPath());
     }
     DirectB2SDataExtractor extractor = new DirectB2SDataExtractor();
     DirectB2SData data = extractor.extractData(directB2SFile, emulatorId, filename, gameId);
     cacheDirectB2SData.put(directB2SFile.getPath(), data);
     return data;
-  } 
+  }
 
   private File getB2sFile(int emuId, String filename) {
     GameEmulator emulator = frontendService.getGameEmulator(emuId);
@@ -122,7 +124,8 @@ public class BackglassService {
       // destroy cache, will be recreated on first access
       cacheB2STableSettingsParser.remove(settingsXml.getPath());
       return settings;
-    } catch (VPinStudioException e) {
+    }
+    catch (VPinStudioException e) {
       LOG.error("Failed to save table settings for \"" + game.getGameDisplayName() + "\": " + e.getMessage(), e);
       throw e;
     }
@@ -134,14 +137,14 @@ public class BackglassService {
 
     File settingsXml = game.getEmulator().getB2STableSettingsXml();
     B2STableSettingsParser tableSettingsParser = cacheB2STableSettingsParser.get(settingsXml.getPath());
-    if (tableSettingsParser==null) {
+    if (tableSettingsParser == null) {
       if (settingsXml.exists() && !StringUtils.isEmpty(rom)) {
         tableSettingsParser = new B2STableSettingsParser(settingsXml);
       }
       cacheB2STableSettingsParser.put(settingsXml.getPath(), tableSettingsParser);
     }
 
-    if (tableSettingsParser!=null) {
+    if (tableSettingsParser != null) {
       DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
       if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
         entry = tableSettingsParser.getEntry(game.getRomAlias());
@@ -193,7 +196,7 @@ public class BackglassService {
       File tablesFolder = gameEmulator.getTablesFolder();
       Path tablesPath = tablesFolder.toPath();
 
-      IOFileFilter filter = new SuffixFileFilter(new String[] {"directb2s"}, IOCase.INSENSITIVE);
+      IOFileFilter filter = new SuffixFileFilter(new String[]{"directb2s"}, IOCase.INSENSITIVE);
       Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
       while (iter.hasNext()) {
         File file = iter.next();
@@ -229,7 +232,8 @@ public class BackglassService {
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
       LOG.info("Copied \"" + b2sFile.getName() + "\" to \"" + target.getAbsolutePath() + "\"");
       return true;
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);
       throw e;
     }

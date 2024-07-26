@@ -1,13 +1,16 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -49,8 +52,6 @@ public class HeaderResizeableController implements Initializable {
 
   private static MouseEvent event;
 
-  private boolean dialogMode = false;
-
   @FXML
   private void onMouseClick(MouseEvent e) {
     if (e.getClickCount() == 2) {
@@ -65,6 +66,21 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onCloseClick() {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    if (!uiSettings.isHideFrontendLaunchQuestion()) {
+      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not shown again", false);
+      if (!confirmationResult.isApplyClicked()) {
+        client.getFrontendService().restartFrontend();
+      }
+
+      if (confirmationResult.isChecked()) {
+        uiSettings.setHideFrontendLaunchQuestion(true);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      }
+    }
+
     AtomicBoolean polling = new AtomicBoolean(false);
     try {
       final ExecutorService executor = Executors.newFixedThreadPool(1);

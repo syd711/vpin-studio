@@ -154,6 +154,7 @@ public class ClientSettingsPreferencesController implements Initializable {
       uiSettings.setHideComponentWarning(false);
       uiSettings.setHideDismissConfirmations(false);
       uiSettings.setHideVPXStartInfo(false);
+      uiSettings.setHideFrontendLaunchQuestion(false);
 
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
       EventManager.getInstance().notifyPreferenceChanged(PreferenceType.uiSettings);

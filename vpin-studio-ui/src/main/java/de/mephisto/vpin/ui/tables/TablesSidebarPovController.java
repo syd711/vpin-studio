@@ -249,11 +249,12 @@ public class TablesSidebarPovController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
 
-      deleteBtn.setDisable(!game.isPovAvailable());
-      dataBox.setVisible(game.isPovAvailable());
-      emptyDataBox.setVisible(!game.isPovAvailable());
+      boolean povAvailable = game.getPovPath() != null;
+      deleteBtn.setDisable(!povAvailable);
+      dataBox.setVisible(povAvailable);
+      emptyDataBox.setVisible(!povAvailable);
 
-      if (game.isPovAvailable()) {
+      if (povAvailable) {
         pov = Studio.client.getVpxService().getPOV(game.getId());
 
         povSSAACombo.valueProperty().setValue(POVComboModel.forValue(pov.getValue(POV.SSAA)));

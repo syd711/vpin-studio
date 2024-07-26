@@ -59,7 +59,7 @@ public class WheelIconConverter {
         if (target.exists()) {
           continue;
         }
-        FileUtils.copyFile(file, target);
+//        FileUtils.copyFile(file, target);
       }
       else {
         System.out.println(file.getName());
