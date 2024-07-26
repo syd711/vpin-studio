@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.mania;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
@@ -17,7 +18,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.URL;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class TabManiaTableScoresController implements Initializable, StudioFXController {
   private final static Logger LOG = LoggerFactory.getLogger(TabManiaTableScoresController.class);
@@ -37,8 +38,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
 
   @FXML
   private ToolBar toolbar;
-
-  private String selectedLetter = null;
 
   private VpsTable vpsTable;
 
@@ -53,7 +52,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
   public void initialize(URL location, ResourceBundle resources) {
     ToggleGroup group = new ToggleGroup();
     List<String> letters = getLetters();
-    this.selectedLetter = letters.get(0);
 
     for (String letter : letters) {
       ToggleButton b = new ToggleButton(letter);
@@ -64,7 +62,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (newValue) {
-            selectedLetter = letter;
             tablesController.setData(letter, vpsTable);
           }
         }
@@ -111,7 +108,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
     }
 
     String letter = table.getName().trim().substring(0, 1);
-    selectedLetter = letter;
     ObservableList<Node> items = toolbar.getItems();
     for (Node item : items) {
       if (item.getUserData().equals(letter)) {
@@ -126,6 +122,14 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
     Collections.sort(tables, Comparator.comparing(o -> String.valueOf(o.getName())));
 
     for (VpsTable table : tables) {
+      if(table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
+        continue;
+      }
+      List<VpsTableVersion> vpx = table.getTableFiles().stream().filter(t -> table.getTableVersionById("VPX") == null).collect(Collectors.toList());
+      if(vpx.isEmpty()) {
+        continue;
+      }
+
       if (table.getName().trim().isEmpty()) {
         continue;
       }

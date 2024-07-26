@@ -121,7 +121,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                      </rowConstraints>
                      <children>
-                        <Label layoutX="10.0" layoutY="49.0" text="Tournament Player:" textFill="WHITE">
+                        <Label layoutX="10.0" layoutY="49.0" text="VPin Mania Player" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -138,7 +138,7 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                  </graphic>
                                  <tooltip>
-                                    <Tooltip prefWidth="400.0" text="If checked, a copy of this player will be registered for the online tournament service." wrapText="true" />
+                                    <Tooltip prefWidth="400.0" text="If checked, a copy of this player will be registered for the VPin Mania service." wrapText="true" />
                                  </tooltip>
                               </Label>
                            </children>

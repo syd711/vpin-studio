@@ -241,7 +241,7 @@ public class NavigationController implements Initializable, StudioEventListener,
       LOG.error("Failed to refresh avatar tile: " + e.getMessage());
     }
 
-    Studio.stage.setTitle("VPin Studio - " + name);
+    Studio.stage.setTitle("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
     if (Studio.stage != null && Studio.stage.getScene() != null) {
       Node header = Studio.stage.getScene().lookup("#header");
