@@ -150,7 +150,7 @@ public class SystemResource {
     try {
       info.setScreenInfos(systemService.getScreenInfos());
       info.setArchiveType(systemService.getArchiveType());
-      info.setSystemId(SystemUtil.getBoardSerialNumber());
+      info.setSystemId(SystemUtil.getUniqueSystemId());
     }
     catch (Exception e) {
       LOG.error("Failed to read system info: " + e.getMessage());

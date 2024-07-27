@@ -9,5 +9,6 @@
 - **Table Overview / VPS Section**: Improved layout of VPS table version list, so that the version number has more space.
 - **VPin Mania**: Added proper score formatting.
 - **Players**: Fixed avatar generation so that less white border is generated.
-- **Players**: Fixed avatar uploads for VPin Mania player registrations.
+- **Players**: Fixed avatar uploads for VPin Mania player registrations. **You have to edit and save your registered players again to fix the avatar image for them!!!**
+- **MaxOS**: Added blind fixes for editing files and browsing files.
 

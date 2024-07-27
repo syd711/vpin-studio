@@ -89,17 +89,16 @@ public class VPSTest {
     vps.update();
   }
 
-//  @Test
-//  public void testTableLoading() {
-//    VPS vps = newInstance();
-//    List<VpsTable> tables = vps.getTables();
-//    for (VpsTable table : tables) {
-//      if(table.getFeatures() == null) {
-//        System.out.println(table.getDisplayName());
-//      }
-//    }
-//    assertEquals(1909, tables.size());
-//  }
+  @Test
+  public void testTableLoading() {
+    VPS vps = newInstance();
+    VpsTable table = vps.getTableById("sx604oSu");
+    List<VpsTableVersion> tableFiles = table.getTableFiles();
+    for (VpsTableVersion tableFile : tableFiles) {
+      System.out.println(tableFile.getVersion() + "/" + tableFile.getId());
+    }
+
+  }
 
   @Test
   public void testTutorials() {

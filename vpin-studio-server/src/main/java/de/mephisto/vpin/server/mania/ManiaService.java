@@ -7,13 +7,12 @@ import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.util.SystemUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.vps.VpsService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @Service
 public class ManiaService implements InitializingBean {
@@ -41,43 +37,35 @@ public class ManiaService implements InitializingBean {
   private GameService gameService;
 
   @Autowired
-  private PlayerService playerService;
-
-  @Autowired
   private VpsService vpsService;
 
-  public boolean synchronizeHighscores(String vpsTableId) {
+  @Autowired
+  private ManiaServiceCache maniaServiceCache;
+
+  public ManiaHighscoreSyncResult synchronizeHighscores(String vpsTableId) {
+    ManiaHighscoreSyncResult result = new ManiaHighscoreSyncResult();
     VpsTable vpsTable = vpsService.getTableById(vpsTableId);
-    if(vpsTable == null) {
+    if (vpsTable == null) {
       LOG.info("Skipped highscore sync for \"" + vpsTable.getDisplayName() + "\", because invalid VPS table id " + vpsTableId);
-      return false;
+      return result;
     }
 
-    Game game = gameService.getGameByVpsTable(vpsTableId, null);
-    if (game == null) {
-      LOG.info("Skipped highscore sync for \"" + vpsTable.getDisplayName() + "\", because invalid VPS mapping");
-      return false;
-    }
+    maniaServiceCache.preCache();
 
-    //preload players
-    List<Player> buildInPlayers = playerService.getBuildInPlayers();
-    Map<String, Account> players = new HashMap<>();
-    for (Player buildInPlayer : buildInPlayers) {
-      Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(buildInPlayer.getTournamentUserUuid());
-      if (accountByUuid != null) {
-        players.put(buildInPlayer.getInitials(), accountByUuid);
-      }
+    Game game = maniaServiceCache.getGame(vpsTableId);
+    if (game == null || StringUtils.isEmpty(game.getExtTableId()) || StringUtils.isEmpty(game.getExtTableVersionId())) {
+      LOG.info("Skipped highscore sync for \"" + vpsTable.getDisplayName() + "\", no matching game found.");
+      return result;
     }
 
     LOG.info("Synchronizing mania table scores for \"" + game + "\"");
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
-    List<TableScore> submittedScores = new ArrayList<>();
     for (Score score : scoreList) {
       try {
         String playerInitials = score.getPlayerInitials();
-        if (players.containsKey(playerInitials)) {
-          Account account = players.get(playerInitials);
+        if (maniaServiceCache.containsAccountForInitials(playerInitials)) {
+          Account account = maniaServiceCache.getAccountForInitials(playerInitials);
 
           TableScore tableScore = new TableScore();
           tableScore.setScoreText(score.getScore());
@@ -87,10 +75,11 @@ public class ManiaService implements InitializingBean {
           tableScore.setTableName(game.getGameDisplayName());
           tableScore.setAccountId(account.getId());
           tableScore.setCreationDate(score.getCreatedAt());
+          tableScore.setScoreSource(game.getRom());
 
           LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
-          submittedScores.add(submitted);
+          result.getTableScores().add(submitted);
         }
       }
       catch (Exception e) {
@@ -98,9 +87,9 @@ public class ManiaService implements InitializingBean {
       }
     }
 
-    LOG.info("Highscore sync finished for \"" + vpsTable.getDisplayName() + ": " + submittedScores.size() + " scores have been submitted.");
+    LOG.info("Highscore sync finished for \"" + vpsTable.getDisplayName() + ": " + result.getTableScores().size() + " scores have been submitted.");
 
-    return true;
+    return result;
   }
 
   public VPinManiaClient getClient() {
@@ -110,8 +99,12 @@ public class ManiaService implements InitializingBean {
   public ManiaConfig getConfig() throws Exception {
     ManiaConfig config = new ManiaConfig();
     config.setUrl(maniaHost);
-    config.setSystemId(SystemUtil.getBoardSerialNumber());
+    config.setSystemId(SystemUtil.getUniqueSystemId());
     return config;
+  }
+
+  public boolean clearCache() {
+    return maniaServiceCache.clear();
   }
 
   @Override
@@ -119,6 +112,8 @@ public class ManiaService implements InitializingBean {
     if (Features.MANIA_ENABLED) {
       ManiaConfig config = getConfig();
       maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+      maniaServiceCache.setManiaService(this);
+
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       if (cabinet != null) {
         LOG.info("Cabinet is registered on VPin-Mania");

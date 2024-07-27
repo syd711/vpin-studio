@@ -42,6 +42,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
@@ -339,7 +340,18 @@ public class Studio extends Application {
       if (osName.contains("Windows")) {
         Studio.hostServices.showDocument(url);
       }
-      else {
+      else if (osName.contains("mac")) {
+        Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
+        if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
+          try {
+            desktop.browse(new URI(url));
+          }
+          catch (Exception e) {
+            LOG.error("Failed to open file: " + e.getMessage(), e);
+          }
+        }
+      }
+      else if(osName.contains("nux")) {
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
@@ -347,6 +359,8 @@ public class Studio extends Application {
           LOG.error("Error opening browser: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
+      } else {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
       }
     }
   }
@@ -373,7 +387,16 @@ public class Studio extends Application {
       if (osName.contains("Windows")) {
         Studio.hostServices.showDocument(file.getAbsolutePath());
       }
-      else {
+      else if (osName.contains("mac")) {
+        try {
+          Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-t", file.getAbsolutePath()});
+        }
+        catch (IOException e) {
+          LOG.error("Error opening browser: " + e.getMessage(), e);
+          WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+        }
+      }
+      else if(osName.contains("nux")){
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }
@@ -381,6 +404,9 @@ public class Studio extends Application {
           LOG.error("Error opening browser: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
+      }
+      else {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
       }
     }
     return false;

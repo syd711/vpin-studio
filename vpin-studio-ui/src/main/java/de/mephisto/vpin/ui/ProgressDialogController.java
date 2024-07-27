@@ -112,6 +112,7 @@ public class ProgressDialogController implements Initializable, DialogController
               });
             } catch (Exception e) {
               LOG.error("Error in Progress Dialog model: " + e.getMessage(), e);
+              model.finalizeModel(progressResultModel);
               Platform.runLater(() -> {
                 stage.close();
               });

@@ -11,6 +11,8 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
@@ -18,6 +20,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -52,6 +55,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.fx.ServerFX.client;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
@@ -106,13 +110,28 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   @FXML
   private void onScoreSync() {
     if (vpsTable != null) {
+      List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
+      List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
+      if (collect.isEmpty()) {
+        WidgetFactory.showAlert(Studio.stage, "No Accounts", "Non of your players is registered as VPin Mania account.", "The highscores are registered based on your players that have been registered as VPin Mania account.");
+        return;
+      }
+
+
       GameRepresentation gameByVpsTable = Studio.client.getGameService().getGameByVpsTable(vpsTable, null);
       if (gameByVpsTable == null) {
         WidgetFactory.showAlert(Studio.stage, "No VPS Mapping", "This table is not installed on your cabinet or has no valid VPS mapping.");
         return;
       }
 
-      ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", Arrays.asList(vpsTable)));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", Arrays.asList(vpsTable)));
+      List<Object> results = progressDialog.getResults();
+      int count = 0;
+      for (Object result : results) {
+        ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
+        count += syncResult.getTableScores().size();
+      }
+      WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
       onReload();
     }
   }

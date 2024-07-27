@@ -19,8 +19,12 @@ public class ManiaServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "mania/config", ManiaConfig.class);
   }
 
-  public boolean synchronizeHighscore(String vpsTableId) {
-    return getRestClient().get(API + "mania/scoresync/" + vpsTableId, Boolean.class);
+  public ManiaHighscoreSyncResult synchronizeHighscore(String vpsTableId) {
+    return getRestClient().get(API + "mania/scoresync/" + vpsTableId, ManiaHighscoreSyncResult.class);
+  }
+
+  public boolean clearCache() {
+    return getRestClient().get(API + "mania/clearcache", Boolean.class);
   }
 
 }

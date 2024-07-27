@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.mania;
 
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,8 +19,14 @@ public class ManiaResource {
     return maniaService.getConfig();
   }
 
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() throws Exception {
+    return maniaService.clearCache();
+  }
+
   @GetMapping("/scoresync/{vpsTableId}")
-  public boolean synchronizeHighscores(@PathVariable("vpsTableId") String vpsTableId) {
+  public ManiaHighscoreSyncResult synchronizeHighscores(@PathVariable("vpsTableId") String vpsTableId) {
     return maniaService.synchronizeHighscores(vpsTableId);
   }
 }

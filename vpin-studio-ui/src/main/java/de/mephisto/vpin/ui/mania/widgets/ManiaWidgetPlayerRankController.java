@@ -4,8 +4,16 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.RankedAccount;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -15,6 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -25,6 +34,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +44,7 @@ import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static de.mephisto.vpin.commons.fx.ServerFX.client;
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class ManiaWidgetPlayerRankController extends WidgetController implements Initializable {
@@ -72,6 +82,40 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
+  }
+
+  @FXML
+  private void onScoreSync() {
+    List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
+    List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
+    if (collect.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "No Accounts", "None of your players is registered on VPin Mania.", "The highscores are registered based on players that have marked as VPin Mania account.");
+      return;
+    }
+
+    Optional<ButtonType> b = WidgetFactory.showConfirmation(Studio.stage, "Highscore Synchronization", "This will synchronize all highscores from all tables from all your VPin-Mania players.", "Only tables with a valid Virtual Pinball Spreadsheet mapping will be synchronized.", "Start Synchronization");
+    if (b.get().equals(ButtonType.OK)) {
+      List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
+      List<VpsTable> vpsTables = new ArrayList<>();
+      for (GameRepresentation game : gamesCached) {
+        if (!StringUtils.isEmpty(game.getExtTableId())) {
+          VpsTable tableById = Studio.client.getVpsService().getTableById(game.getExtTableId());
+          if (tableById != null) {
+            vpsTables.add(tableById);
+          }
+        }
+      }
+
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
+      List<Object> results = progressDialog.getResults();
+      int count = 0;
+      for (Object result : results) {
+        ManiaHighscoreSyncResult syncResult = (ManiaHighscoreSyncResult) result;
+        count += syncResult.getTableScores().size();
+      }
+      WidgetFactory.showConfirmation(Studio.stage, "Synchronization Result", count + " highscore(s) have been submitted to vpin-mania.net.");
+      onReload();
+    }
   }
 
   @FXML
@@ -180,7 +224,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   public void refresh() {
     this.tableView.setVisible(false);
-    if(!tableStack.getChildren().contains(loadingOverlay)) {
+    if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
     }
 

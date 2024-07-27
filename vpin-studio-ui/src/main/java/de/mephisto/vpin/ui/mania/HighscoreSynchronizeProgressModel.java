@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -16,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class HighscoreSynchronizeProgressModel extends ProgressModel<VpsTable> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreSynchronizeProgressModel.class);
@@ -50,14 +52,18 @@ public class HighscoreSynchronizeProgressModel extends ProgressModel<VpsTable> {
   }
 
   @Override
+  public void finalizeModel(ProgressResultModel progressResultModel) {
+    super.finalizeModel(progressResultModel);
+    client.getManiaService().clearCache();
+  }
+
+  @Override
   public void processNext(ProgressResultModel progressResultModel, VpsTable next) {
     try {
-      client.getManiaService().synchronizeHighscore(next.getId());
+      ManiaHighscoreSyncResult result = client.getManiaService().synchronizeHighscore(next.getId());
+      progressResultModel.getResults().add(result);
     } catch (Exception e) {
       LOG.error("Failed to synchronize the highscore for \"" + next.getDisplayName() + "\": " + e.getMessage(), e);
-      Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Highscore Sync Failed", "Failed to synchronize the highscore for \"" + next.getDisplayName() + "\": " + e.getMessage());
-      });
     }
   }
 
