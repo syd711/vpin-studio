@@ -14,7 +14,6 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -33,9 +32,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.List;
@@ -94,7 +90,7 @@ public class PlayerDialogController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
     Platform.runLater(() -> {
-      if (Features.TOURNAMENTS_ENABLED) {
+      if (Features.MANIA_ENABLED) {
         if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
           Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
           if (accountByUuid != null && !this.tournamentPlayerCheckbox.isSelected()) {
@@ -160,6 +156,7 @@ public class PlayerDialogController implements Initializable, DialogController {
           .maxSize(200, 200)
           .backgroundColor(Color.TRANSPARENT)
           .image(image)
+          .backgroundImageKeepAspect(true)
           .imageMask(Tile.ImageMask.ROUND)
           .textSize(Tile.TextSize.BIGGER)
           .textAlignment(TextAlignment.CENTER)
@@ -234,9 +231,9 @@ public class PlayerDialogController implements Initializable, DialogController {
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
-    tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
+    tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
-    if (Features.TOURNAMENTS_ENABLED) {
+    if (Features.MANIA_ENABLED) {
       cabinet = maniaClient.getCabinetClient().getCabinet();
     }
 

@@ -3,29 +3,20 @@ package de.mephisto.vpin.ui.players.dialogs;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
-import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.DashboardController;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -37,7 +28,7 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
   private final Stage stage;
-  private List<PlayerRepresentation> players;
+  private final List<PlayerRepresentation> players;
   private final boolean tournamentPlayer;
   private File avatarFile;
   private final Pane avatarStack;
@@ -87,18 +78,9 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
   @Override
   public void processNext(ProgressResultModel progressResultModel, PlayerRepresentation player) {
     try {
-      if (player.getAvatar() == null && this.avatarFile == null) {
-        FutureTask<Object> futureTask = new FutureTask<>(() -> {
-          try {
-            avatarFile = WidgetFactory.snapshot(avatarStack);
-          }
-          catch (IOException e) {
-            LOG.error("Failed to crop avatar image: " + e.getMessage());
-          }
-        }, null);
-        Platform.runLater(futureTask);
-        futureTask.get();
-      }
+//      if (player.getAvatar() == null && this.avatarFile == null) {
+        generateAvatarFile();
+//      }
 
       player = client.getPlayerService().savePlayer(player);
 
@@ -111,7 +93,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
       progressResultModel.getResults().add(player);
 
-      if (Features.TOURNAMENTS_ENABLED) {
+      if (Features.MANIA_ENABLED) {
         updateTournamentPlayer(player, avatarFile);
       }
     }
@@ -119,6 +101,19 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
       LOG.error("Failed to save player: " + ex.getMessage(), ex);
       progressResultModel.getResults().add(ex.getMessage());
     }
+  }
+
+  private void generateAvatarFile() throws Exception {
+    FutureTask<Object> futureTask = new FutureTask<>(() -> {
+      try {
+        avatarFile = WidgetFactory.snapshot(avatarStack);
+      }
+      catch (IOException e) {
+        LOG.error("Failed to crop avatar image: " + e.getMessage());
+      }
+    }, null);
+    Platform.runLater(futureTask);
+    futureTask.get();
   }
 
   private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
@@ -141,10 +136,14 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
           client.getPlayerService().savePlayer(player);
         }
         else {
-          maniaClient.getAccountClient().updateAvatar(maniaAccount, avatarFile, null);
+          if (avatarFile != null) {
+            maniaClient.getAccountClient().updateAvatar(maniaAccount, avatarFile, null);
+          }
         }
       }
       else {
+        //register new account
+        generateAvatarFile();
         maniaAccount = player.toManiaAccount();
         Account register = maniaClient.getAccountClient().create(maniaAccount, avatarFile, null);
         player.setTournamentUserUuid(register.getUuid());

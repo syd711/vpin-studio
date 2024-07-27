@@ -46,6 +46,7 @@ public class AvatarFactory {
     clip.setArcHeight(UIDefaults.DEFAULT_AVATARSIZE);
     clip.setArcWidth(UIDefaults.DEFAULT_AVATARSIZE);
     clip.setStroke(Color.WHITE);
+    clip.setStrokeWidth(0);
     imageView.setClip(clip);
     return imageView;
   }

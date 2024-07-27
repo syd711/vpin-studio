@@ -144,7 +144,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
     if (selection != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Player '" + selection.getName() + "'?");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        if (Features.TOURNAMENTS_ENABLED && selection.getTournamentUserUuid() != null) {
+        if (Features.MANIA_ENABLED && selection.getTournamentUserUuid() != null) {
           Optional<ButtonType> result2 = WidgetFactory.showConfirmation(Studio.stage, "Tournament Player", "The player \"" + selection.getName() + "\" is a registered tournament player.", "This will delete the online account and all related highscores and subscribed tournaments too.");
           if (result2.isPresent() && result2.get().equals(ButtonType.OK)) {
             client.getPlayerService().deletePlayer(selection);
@@ -320,12 +320,12 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @Override
   public void preferencesChanged(String key, Object value) {
-    tournamentColumn.setVisible(Features.TOURNAMENTS_ENABLED);
+    tournamentColumn.setVisible(Features.MANIA_ENABLED);
 
     if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
 
-      if (Features.TOURNAMENTS_ENABLED) {
+      if (Features.MANIA_ENABLED) {
         tournamentColumn.setVisible(settings.isEnabled());
       }
     }
