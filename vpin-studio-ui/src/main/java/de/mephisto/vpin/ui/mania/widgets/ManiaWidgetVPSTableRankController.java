@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.application.Platform;
@@ -121,7 +122,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
     columnScore.setCellValueFactory(cellData -> {
       TableScoreDetails value = cellData.getValue();
-      Label label = new Label(value.getScoreText());
+      Label label = new Label(ScoreFormatUtil.formatScore(value.getScore()));
       label.getStyleClass().add("default-text-color");
       label.setFont(getScoreFontSmall());
       return new SimpleObjectProperty(label);

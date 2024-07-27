@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.mania.widgets;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -70,7 +71,7 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
     nameLabel.setText(score.getDisplayName());
 
     scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(score.getScore());
+    scoreLabel.setText(ScoreFormatUtil.formatScore(score.getScore()));
 
     String date = simpleDateFormat.format(score.getCreationDate());
     changeDateLabel.setText("Updated: " + date);
