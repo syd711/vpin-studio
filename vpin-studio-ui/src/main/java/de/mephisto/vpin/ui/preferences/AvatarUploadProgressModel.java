@@ -61,7 +61,7 @@ public class AvatarUploadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File f) {
     try {
       client.getPreferenceService().uploadVPinAvatar(f);
-      if (Features.TOURNAMENTS_ENABLED && maniaClient.getCabinetClient() != null) {
+      if (Features.MANIA_ENABLED && maniaClient.getCabinetClient() != null) {
         maniaClient.getCabinetClient().updateAvatar(f, null, true);
 
         BufferedImage avtr = ImageIO.read(f);

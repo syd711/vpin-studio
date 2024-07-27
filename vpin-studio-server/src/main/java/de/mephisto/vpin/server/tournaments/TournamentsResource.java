@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.tournaments;
 
-import de.mephisto.vpin.restclient.tournaments.TournamentConfig;
+import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,6 @@ public class TournamentsResource {
 
   @Autowired
   private TournamentsService tournamentsService;
-
-  @GetMapping("/config")
-  public TournamentConfig getConfig() throws Exception {
-    return tournamentsService.getConfig();
-  }
 
   @GetMapping("/synchronize")
   public boolean synchronize() {

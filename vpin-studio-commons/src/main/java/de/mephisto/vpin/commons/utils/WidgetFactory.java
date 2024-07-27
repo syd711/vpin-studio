@@ -111,7 +111,7 @@ public class WidgetFactory {
   }
 
   public static File snapshot(Pane root) throws IOException {
-    int offset = 7;
+    int offset = 14;
     SnapshotParameters snapshotParameters = new SnapshotParameters();
     Rectangle2D rectangle2D = new Rectangle2D(offset, offset, root.getWidth() - offset - offset, root.getHeight() - offset - offset);
     snapshotParameters.setViewport(rectangle2D);

@@ -403,7 +403,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     navBox = navigationBox;
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
-    tournamentGroup.setVisible(Features.TOURNAMENTS_ENABLED);
+    tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

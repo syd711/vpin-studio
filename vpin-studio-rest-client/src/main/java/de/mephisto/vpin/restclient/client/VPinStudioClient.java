@@ -29,6 +29,7 @@ import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
+import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
@@ -83,6 +84,7 @@ public class VPinStudioClient implements OverlayClient {
   private final ImageCache imageCache;
   private final JobsServiceClient jobsServiceClient;
   private final MameServiceClient mameServiceClient;
+  private final ManiaServiceClient maniaServiceClient;
   private final NVRamsServiceClient nvRamsServiceClient;
   private final PlayersServiceClient playersServiceClient;
   private final FrontendServiceClient frontendServiceClient;
@@ -124,6 +126,7 @@ public class VPinStudioClient implements OverlayClient {
     this.iniServiceClient = new IniServiceClient(this);
     this.jobsServiceClient = new JobsServiceClient(this);
     this.mameServiceClient = new MameServiceClient(this);
+    this.maniaServiceClient = new ManiaServiceClient(this);
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
@@ -141,6 +144,10 @@ public class VPinStudioClient implements OverlayClient {
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public ManiaServiceClient getManiaService() {
+    return maniaServiceClient;
   }
 
   public String getSystemPreset() {

@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.iscored.IScoredService;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -29,9 +30,6 @@ import java.util.List;
 public class TournamentsHighscoreChangeListener implements HighscoreChangeListener, PreferenceChangedListener, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentsHighscoreChangeListener.class);
 
-  private VPinManiaClient maniaClient;
-  private Cabinet cabinet;
-
   private TournamentSettings tournamentSettings;
 
   @Autowired
@@ -46,12 +44,17 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   @Autowired
   private TournamentSynchronizer tournamentSynchronizer;
 
+  @Autowired
+  private ManiaService maniaService;
+
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
     if(event.getEventOrigin().equals(EventOrigin.TABLE_SCAN)) {
       LOG.info("Ignored highscore change, because of table scans are skipped.");
       return;
     }
+    VPinManiaClient maniaClient = maniaService.getClient();
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
 
     if (cabinet != null) {
       new Thread(() -> {
@@ -123,7 +126,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   }
 
   private TournamentTable findTournamentTable(Tournament tournament, String vpsTableId, String vpsTableVersionId) {
-    List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+    List<TournamentTable> tournamentTables = maniaService.getClient().getTournamentClient().getTournamentTables(tournament.getId());
     return getApplicableTable(tournament, tournamentTables, vpsTableId, vpsTableVersionId);
   }
 
@@ -165,10 +168,6 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
   }
 
-  public void setCabinet(Cabinet cabinet) {
-    this.cabinet = cabinet;
-  }
-
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.TOURNAMENTS_SETTINGS)) {
@@ -176,13 +175,8 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     }
   }
 
-  public void setVPinManiaClient(VPinManiaClient maniaClient) {
-    this.maniaClient = maniaClient;
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
-    this.maniaClient = null;
     preferencesService.addChangeListener(this);
     preferenceChanged(PreferenceNames.TOURNAMENTS_SETTINGS, null, null);
   }

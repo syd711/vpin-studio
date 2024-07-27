@@ -4,16 +4,20 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -44,6 +48,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -84,6 +89,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private Button openBtn;
 
   @FXML
+  private Button syncBtn;
+
+  @FXML
   private Label titleLabel;
 
   private Parent loadingOverlay;
@@ -94,6 +102,20 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   public ManiaWidgetVPSTableRankController() {
   }
 
+
+  @FXML
+  private void onScoreSync() {
+    if (vpsTable != null) {
+      GameRepresentation gameByVpsTable = Studio.client.getGameService().getGameByVpsTable(vpsTable, null);
+      if (gameByVpsTable == null) {
+        WidgetFactory.showAlert(Studio.stage, "No VPS Mapping", "This table is not installed on your cabinet or has no valid VPS mapping.");
+        return;
+      }
+
+      ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", Arrays.asList(vpsTable)));
+      onReload();
+    }
+  }
 
   @FXML
   private void onOpen() {
@@ -212,6 +234,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   public void setData(VpsTable vpsTable) {
     openBtn.setDisable(vpsTable == null);
+    syncBtn.setDisable(vpsTable == null);
     this.vpsTable = vpsTable;
     if (vpsTable == null) {
       Platform.runLater(() -> {

@@ -50,4 +50,5 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.textedit;
   exports de.mephisto.vpin.restclient.frontend.popper;
   exports de.mephisto.vpin.restclient.playlists;
+  exports de.mephisto.vpin.restclient.mania;
 }

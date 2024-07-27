@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.tournaments;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +18,6 @@ public class TournamentsServiceClient extends VPinStudioClientService {
   public TournamentsServiceClient(VPinStudioClient client, PreferencesServiceClient preferencesServiceClient) {
     super(client);
     this.preferencesServiceClient = preferencesServiceClient;
-  }
-
-  public TournamentConfig getConfig() {
-    return getRestClient().get(API + "tournaments/config", TournamentConfig.class);
   }
 
   public TournamentSettings getSettings() {

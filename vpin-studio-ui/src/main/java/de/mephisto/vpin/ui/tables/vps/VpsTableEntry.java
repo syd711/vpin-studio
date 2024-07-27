@@ -63,7 +63,7 @@ public class VpsTableEntry extends HBox {
     versionBox.setPrefWidth(100);
     versionBox.setAlignment(Pos.CENTER_LEFT);
 
-    if (Features.TOURNAMENTS_ENABLED) {
+    if (Features.MANIA_ENABLED) {
       versionBox.getChildren().add(copyBtn);
     }
     versionBox.getChildren().add(versionLabel);
