@@ -60,7 +60,7 @@ public class VpsTableEntry extends HBox {
     }
 
     HBox versionBox = new HBox(3);
-    versionBox.setPrefWidth(60);
+    versionBox.setPrefWidth(100);
     versionBox.setAlignment(Pos.CENTER_LEFT);
 
     if (Features.TOURNAMENTS_ENABLED) {
@@ -98,7 +98,7 @@ public class VpsTableEntry extends HBox {
 
       authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
     }
-    authorBox.setPrefWidth(266);
+    authorBox.setPrefWidth(230);
 
     authorBox.getChildren().add(authorLabel);
     this.getChildren().add(authorBox);
