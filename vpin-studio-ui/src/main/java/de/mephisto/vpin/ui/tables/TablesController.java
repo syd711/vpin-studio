@@ -359,32 +359,30 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void tableChanged(int id, String rom, String gameName) {
+    if (!StringUtils.isEmpty(rom)) {
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
+      for (GameRepresentation g : gamesByRom) {
+        GameRepresentation game = client.getGameService().getGame(g.getId());
+        this.tableOverviewController.reload(game, false);
+      }
+    }
+
+    if (!StringUtils.isEmpty(gameName)) {
+      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
+      for (GameRepresentation g : gamesByRom) {
+        GameRepresentation game = client.getGameService().getGame(g.getId());
+        this.tableOverviewController.reload(game, false);
+      }
+    }
+
     if (id > 0) {
       GameRepresentation refreshedGame = client.getGameService().getGame(id);
       this.tableOverviewController.reload(refreshedGame, true);
-      //this.tablesSideBarController.setGame(Optional.of(refreshedGame));
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
         this.tableOverviewController.reload(selection, true);
-      }
-    }
-
-    if (!StringUtils.isEmpty(rom)) {
-      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
-      for (GameRepresentation g : gamesByRom) {
-        if (id != g.getId()) {
-          this.tableOverviewController.reload(g, false);
-        }
-      }
-    }
-    if (!StringUtils.isEmpty(gameName)) {
-      List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
-      for (GameRepresentation g : gamesByRom) {
-        if (id != g.getId()) {
-          this.tableOverviewController.reload(g, false);
-        }
       }
     }
   }

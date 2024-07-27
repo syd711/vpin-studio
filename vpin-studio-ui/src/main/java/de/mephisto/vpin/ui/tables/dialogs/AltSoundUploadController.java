@@ -79,9 +79,9 @@ public class AltSoundUploadController implements Initializable, DialogController
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
       stage.close();
+      AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
 
       Platform.runLater(() -> {
-        AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
         ProgressDialog.createProgressDialog(model);
       });
     }

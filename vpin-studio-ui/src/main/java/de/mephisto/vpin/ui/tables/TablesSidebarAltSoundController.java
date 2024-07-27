@@ -199,6 +199,10 @@ public class TablesSidebarAltSoundController implements Initializable {
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       boolean altSoundAvailable = game.isAltSoundAvailable();
+      if (altSoundAvailable) {
+        altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
+        altSoundAvailable = altSound != null && altSound.getName() != null;
+      }
 
       dataBox.setVisible(altSoundAvailable);
       emptyDataBox.setVisible(!altSoundAvailable);
@@ -209,8 +213,6 @@ public class TablesSidebarAltSoundController implements Initializable {
       restoreBtn.setDisable(!altSoundAvailable);
 
       if (altSoundAvailable) {
-        altSound = Studio.client.getAltSoundService().getAltSound(game.getId());
-
         entriesLabel.setText(String.valueOf(altSound.getEntries().size()));
         filesLabel.setText(String.valueOf(altSound.getFiles()));
 
