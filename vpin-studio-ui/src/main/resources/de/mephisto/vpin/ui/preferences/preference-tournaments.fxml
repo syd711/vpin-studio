@@ -7,6 +7,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TextArea?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -14,6 +15,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.TournamentsPreferencesController">
    <center>
@@ -78,6 +80,27 @@
                               <Insets top="12.0" />
                            </VBox.margin>
                         </Button>
+                        <Label layoutX="10.0" layoutY="64.0" styleClass="preference-subtitle" text="Account Id" />
+                        <HBox alignment="CENTER_LEFT" spacing="12.0">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="idLabel" styleClass="default-headline" text="-id-" />
+                              <Button mnemonicParsing="false" onAction="#onIdCopy">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
+                                 </graphic>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <tooltip>
+                                    <Tooltip text="Copy VPS Table Version URL" />
+                                 </tooltip>
+                              </Button>
+                           </children>
+                        </HBox>
+                        <Label layoutX="10.0" layoutY="331.0" styleClass="preference-description" text="Required for support." textFill="WHITE" />
                         <Label styleClass="preference-subtitle" text="Privacy Settings">
                            <VBox.margin>
                               <Insets top="12.0" />

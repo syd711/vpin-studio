@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.CabinetSettings;
+import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -19,9 +20,12 @@ import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -65,8 +69,21 @@ public class TournamentsPreferencesController implements Initializable, Preferen
   @FXML
   private TextArea descriptionText;
 
+  @FXML
+  private Label idLabel;
 
   private TournamentSettings settings;
+
+  @FXML
+  private void onIdCopy() {
+    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+    if(cabinet != null) {
+      Clipboard clipboard = Clipboard.getSystemClipboard();
+      ClipboardContent content = new ClipboardContent();
+      content.putString(cabinet.getUuid());
+      clipboard.setContent(content);
+    }
+  }
 
   @FXML
   private void onAccountDelete() {
@@ -111,6 +128,10 @@ public class TournamentsPreferencesController implements Initializable, Preferen
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     registrationPanel.setVisible(cabinet == null);
 
+    if (cabinet != null) {
+      idLabel.setText(cabinet.getUuid());
+    }
+
     settings = client.getTournamentsService().getSettings();
     preferencesPanel.setVisible(cabinet != null);
     registrationCheckbox.setSelected(false);
@@ -139,6 +160,9 @@ public class TournamentsPreferencesController implements Initializable, Preferen
           Cabinet registeredCabinet = maniaClient.getCabinetClient().create(newCab, bufferedImage, null);
           registrationPanel.setVisible(registeredCabinet == null);
 
+          if (registeredCabinet != null) {
+            idLabel.setText(registeredCabinet.getUuid());
+          }
 
           settings.setEnabled(true);
           settings = client.getTournamentsService().saveSettings(settings);
