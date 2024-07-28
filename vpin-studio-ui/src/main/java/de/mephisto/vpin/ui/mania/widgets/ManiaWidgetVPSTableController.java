@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -53,10 +54,7 @@ public class ManiaWidgetVPSTableController extends WidgetController implements I
 
   public void setData(VpsTable vpsTable) {
     this.vpsTable = vpsTable;
-    InputStream imageInput = Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + vpsTable.getId() + ".png");
-    if(imageInput == null) {
-      imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
-    }
+    InputStream imageInput = TarcisioWheelsDB.getWheelImage(vpsTable.getId());
     Image image = new Image(imageInput);
     wheelImageView.setImage(image);
 

@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import javafx.application.Platform;
@@ -115,10 +116,7 @@ public class ManiaWidgetVPSTableAlxController extends WidgetController implement
           HBox hBox = new HBox(3);
           hBox.setAlignment(Pos.CENTER_LEFT);
 
-          InputStream imageInput = Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + tableById.getId() + ".png");
-          if (imageInput == null) {
-            imageInput = Studio.class.getResourceAsStream("avatar-blank.png");
-          }
+          InputStream imageInput = TarcisioWheelsDB.getWheelImage(tableById.getId());
           Image image = new Image(imageInput);
           ImageView imageView = new ImageView(image);
           imageView.setPreserveRatio(true);

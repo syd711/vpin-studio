@@ -22,8 +22,13 @@
     <dependencies>
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
-            <artifactId>vpin-connector-vps</artifactId>
+            <artifactId>vpin-studio-rest-client</artifactId>
             <version>3.0.2</version>
+        </dependency>
+        <dependency>
+            <groupId>de.mephisto.vpin</groupId>
+            <artifactId>vpin-connector-vps</artifactId>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jsoup</groupId>
