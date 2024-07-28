@@ -681,6 +681,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   @Override
   public void onDialogCancel() {
     TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
+    EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 
   public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {

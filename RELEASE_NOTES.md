@@ -1,14 +1,20 @@
 ## Release Notes 3.0.1
 
-**Fixed critical bug in the unique cabinet ID generation. Some users may have to re-register their cabinet after updating.**
+**!!!Some users may have to re-register their cabinet after updating!!!**
+
+**Due to a critical bug in the unique cabinet ID generation, I have to delete some accounts (only 2x as far as I can see).**
 
 - **VPin Mania**: Added 200 more wheel icons for the VPS table statistics.
 - **VPin Mania**: Added proper score formatting.
-- **VPin Mania**: Added option to synchronize highscores. With this option you can now "push" all highscores from all your tables and players to the VPin Mania services. The action is also available for the table score view.
+- **VPin Mania**: Added option to synchronize highscores. With this option **you can now "push" all highscores from all your tables and players** to the VPin Mania services. The action is also available for the table score view.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/score-sync.png" width="400" />
 
 - **Table Overview**: Added tooltip for most of the "check" icons and the game display name showing the file location.
+- **Table Overview**: Added "Last Played" indicator. If a table display name is marked green, this indicates the table that has been played the last time on the cabinet.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/last-played.png" width="600" />
+
 - **UI**: Added confirmation dialog on exit which allows to start the frontend on exit.
 - **Highscore Card Editor**: Added resolution label for video based highscore cards.
 
