@@ -43,6 +43,10 @@ A full documentation is available in the wiki of this repository:
 
 https://github.com/syd711/vpin-studio/wiki
 
+## YouTube
+
+https://www.youtube.com/@vpin-studio/videos
+
 ## Donate 
 
 Creating and maintaing the VPin Studio takes a lot of time and resources. Please consider donating through ko-fi.com to support the development.
