@@ -6,12 +6,15 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.io.ByteOrderMark;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.FileReader;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class FreezySummarizer {
   private final static Logger LOG = LoggerFactory.getLogger(FreezySummarizer.class);
@@ -28,19 +31,26 @@ public class FreezySummarizer {
         return summary;
       }
 
+      String defaultEncoding = "UTF-8";
+      FileInputStream in = new FileInputStream(iniFile);
+      BOMInputStream bOMInputStream = new BOMInputStream(in);
+      ByteOrderMark bom = bOMInputStream.getBOM();
+      String charsetName = bom == null ? defaultEncoding : bom.getCharsetName();
+      InputStreamReader reader = new InputStreamReader(new BufferedInputStream(bOMInputStream), charsetName);
+
       INIConfiguration iniConfiguration = new INIConfiguration();
       iniConfiguration.setCommentLeadingCharsUsedInInput(";");
       iniConfiguration.setSeparatorUsedInOutput("=");
       iniConfiguration.setSeparatorUsedInInput("=");
 
-      FileReader fileReader = new FileReader(iniFile);
       try {
-        iniConfiguration.read(fileReader);
+        iniConfiguration.read(reader);
       } catch (Exception e) {
         LOG.error("Failed to read: " + iniFile.getAbsolutePath() + ": " + e.getMessage(), e);
         throw e;
       } finally {
-        fileReader.close();
+        in.close();
+        reader.close();
       }
 
       SubnodeConfiguration globalSection = iniConfiguration.getSection("global");

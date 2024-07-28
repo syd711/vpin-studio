@@ -34,7 +34,8 @@ public class FreezyTest {
 
     Set<String> sections = iniConfiguration.getSections();
 
-    System.out.println(iniConfiguration.getString("vni..key"));
+    String string = iniConfiguration.getString("vni..key");
+    assertNotNull(string);
     for (String section : sections) {
       System.out.println("Section " + section);
       SubnodeConfiguration section1 = iniConfiguration.getSection(section);
@@ -44,8 +45,6 @@ public class FreezyTest {
         System.out.println(section + ": " + next + "=" + section1.getString(next));
       }
     }
-
-//    System.out.println(iniConfiguration.getString("vni.key"));
 
   }
 }

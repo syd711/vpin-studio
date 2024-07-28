@@ -3,6 +3,7 @@
 **!!!Some users may have to re-register their cabinet after updating!!!**
 
 **Due to a critical bug in the unique cabinet ID generation, I have to delete some accounts (only 2x as far as I can see).**
+But no worries! Since the new "synchronize" feature comes with this update, none of your changes are lost and you can simply push your recent scores again.
 
 - **VPin Mania**: Added 200 more wheel icons for the VPS table statistics.
 - **VPin Mania**: Added proper score formatting.
