@@ -303,6 +303,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
 
   private GameEmulatorChangeListener gameEmulatorChangeListener;
+  private GameStatus status;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -885,6 +886,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   public void onReload() {
+    status = client.getGameStatusService().getStatus();
     doReload(true);
   }
 
@@ -1092,8 +1094,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Label label = new Label(value.getGameDisplayName());
       label.getStyleClass().add("default-text");
       label.setStyle(getLabelCss(value));
-      if(value.getGameFilePath() != null) {
-        label.setTooltip(new Tooltip(value.getGameFilePath()));
+
+      String tooltip = value.getGameFilePath();
+      if (status != null) {
+        if (status.getLastActiveId() == value.getId() || status.getGameId() == value.getId()) {
+          label.setStyle("-fx-text-fill: " + WidgetFactory.OK_COLOR + ";-fx-font-weight: bold;");
+          tooltip += "\nThis is the last played game.";
+        }
+      }
+      if (value.getGameFilePath() != null) {
+        label.setTooltip(new Tooltip(tooltip));
       }
       return label;
     }, true);
@@ -1771,6 +1781,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
 
     contextMenuController = new TableOverviewContextMenu(this);

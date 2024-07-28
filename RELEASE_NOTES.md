@@ -3,7 +3,8 @@
 **Fixed critical bug in the unique cabinet ID generation. Some users may have to re-register their cabinet after updating.**
 
 - **VPin Mania**: Added 200 more wheel icons for the VPS table statistics.
-- **VPin Mania** Added option to synchronize highscores. With this option you can now "push" all highscores from all your tables and players to the VPin Mania services. The action is also available for the table score view.
+- **VPin Mania**: Added proper score formatting.
+- **VPin Mania**: Added option to synchronize highscores. With this option you can now "push" all highscores from all your tables and players to the VPin Mania services. The action is also available for the table score view.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/mania/score-sync.png" width="400" />
 
@@ -15,7 +16,6 @@
 
 - **VPin Mania: Fixed critical bug in the unique cabinet ID generation. Some users may have to re-register their cabinet after updating.**
 - **VPin Mania Players**: Fixed avatar uploads for VPin Mania player registrations. **You have to edit and save your registered players again to fix the avatar image for them!!!**
-- **VPin Mania**: Added proper score formatting.
 - **Table Overview / Table Data Manager**: Fixed issue that only the persisted VPS selection was used for auto-fill.
 - **Table Overview / Table Data Manager**: Fixed missing game refresh after "cancel" was pressed to discard the in-memory changes.
 - **Table Overview / VPS Section**: Improved layout of VPS table version list, so that the version number has more space.
