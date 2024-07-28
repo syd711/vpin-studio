@@ -40,27 +40,26 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
   public AudioMediaPlayer(@NonNull BorderPane parent, @Nullable FrontendMediaItemRepresentation mediaItem, @NonNull String url) {
     super(parent, url);
     this.mediaItem = mediaItem;
-    this.render();
   }
 
-  private void render() {
-
+  public void render() {
     this.setCenter(new ProgressIndicator());
     parent.setCenter(this);
 
     Media media = new Media(url);
     mediaPlayer = new MediaPlayer(media);
 
-   mediaPlayer.setOnError(() -> {
+    mediaPlayer.setOnError(() -> {
       LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
 
-      if(retryCounter < 1) {
+      if (retryCounter < 1) {
         retryCounter++;
         Platform.runLater(() -> {
           super.disposeMedia();
           try {
             Thread.sleep(500);
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
           render();
@@ -72,25 +71,28 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     });
 
     mediaPlayer.setOnReady(() -> {
+      for (MediaPlayerListener listener : this.listeners) {
+        listener.onReady(media);
+      }
 
       fontIcon = new FontIcon();
       fontIcon.setIconSize(48);
       fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
       fontIcon.setIconLiteral("bi-play");
-  
+
       VBox box = new VBox();
       box.setSpacing(6);
       box.setAlignment(Pos.CENTER);
       Button playBtn = new Button();
       playBtn.setGraphic(fontIcon);
       box.getChildren().add(playBtn);
-  
+
       progressBar = new ProgressBar();
       progressBar.setVisible(false);
       progressBar.setMaxWidth(100);
       progressBar.setPrefHeight(12);
       box.getChildren().add(progressBar);
-  
+
       this.setCenter(box);
 
       mediaPlayer.setAutoPlay(false);
@@ -118,11 +120,12 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
           mediaView.getMediaPlayer().play();
           fontIcon.setIconLiteral("bi-stop");
 
-          if(activePlayer != null && !activePlayer.equals(this)) {
+          if (activePlayer != null && !activePlayer.equals(this)) {
             try {
               activePlayer.mediaView.getMediaPlayer().pause();
               activePlayer.fontIcon.setIconLiteral("bi-play");
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               //ignore
             }
           }
@@ -143,16 +146,16 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
   private void bindProgress(MediaPlayer player, ProgressBar bar) {
     binding = Bindings.createDoubleBinding(
-      () -> {
-        var currentTime = player.getCurrentTime();
-        var duration = player.getMedia().getDuration();
-        if (isValidDuration(currentTime) && isValidDuration(duration)) {
-          return currentTime.toMillis() / duration.toMillis();
-        }
-        return ProgressBar.INDETERMINATE_PROGRESS;
-      },
-      player.currentTimeProperty(),
-      player.getMedia().durationProperty());
+        () -> {
+          var currentTime = player.getCurrentTime();
+          var duration = player.getMedia().getDuration();
+          if (isValidDuration(currentTime) && isValidDuration(duration)) {
+            return currentTime.toMillis() / duration.toMillis();
+          }
+          return ProgressBar.INDETERMINATE_PROGRESS;
+        },
+        player.currentTimeProperty(),
+        player.getMedia().durationProperty());
     bar.progressProperty().bind(binding);
   }
 
@@ -162,7 +165,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
 
   @Override
   public void disposeMedia() {
-    this.setBottom(null);
     super.disposeMedia();
+    this.setBottom(null);
   }
 }

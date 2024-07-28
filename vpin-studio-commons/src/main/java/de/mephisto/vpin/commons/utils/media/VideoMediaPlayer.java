@@ -35,10 +35,12 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       @NonNull String mimeType, boolean invertPlayfield) {
     this(parent, null, screenName, url, mimeType, invertPlayfield, true);
   }
+
   public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String url,
                           @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     this(parent, mediaItem, mediaItem.getScreen(), url, mimeType, invertPlayfield, dialogRendering);
   }
+
   private VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
                           @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
@@ -53,11 +55,9 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     else if (screenName.equalsIgnoreCase("Loading")) {
       screen = VPinScreen.Loading;
     }
-
-    this.render();
   }
 
-  private void render() {
+  public void render() {
     String baseType = mimeType.split("/")[0];
     String mediaType = mimeType.split("/")[1];
 
@@ -79,6 +79,10 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     });
 
     mediaPlayer.setOnReady(() -> {
+      for (MediaPlayerListener listener : this.listeners) {
+        listener.onReady(media);
+      }
+
       mediaPlayer.setAutoPlay(baseType.equals("video"));
       mediaPlayer.setCycleCount(-1);
       mediaPlayer.setMute(true);

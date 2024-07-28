@@ -1,10 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
-import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
-import de.mephisto.vpin.commons.utils.media.ImageViewer;
-import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
+import de.mephisto.vpin.commons.utils.media.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -96,6 +93,7 @@ public class WidgetFactory {
   public static Font getScoreFont() {
     return scoreFont;
   }
+
   public static Font getScoreFontSmall() {
     return scoreFontSmall;
   }
@@ -621,6 +619,10 @@ public class WidgetFactory {
   }
 
   public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent) {
+    return addMediaItemToBorderPane(client, mediaItem, parent, null);
+  }
+
+  public static AssetMediaPlayer addMediaItemToBorderPane(VPinStudioClient client, FrontendMediaItemRepresentation mediaItem, BorderPane parent, MediaPlayerListener listener) {
     String mimeType = mediaItem.getMimeType();
     if (mimeType == null) {
       LOG.info("Failed to resolve mime type for " + mediaItem);
@@ -639,10 +641,20 @@ public class WidgetFactory {
       new ImageViewer(parent, mediaItem, image, frontend.isPlayfieldMediaInverted());
     }
     else if (baseType.equals("audio")) {
-      new AudioMediaPlayer(parent, mediaItem, url);
+      AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(parent, mediaItem, url);
+      if (listener != null) {
+        audioMediaPlayer.addListener(listener);
+      }
+      audioMediaPlayer.render();
+      return audioMediaPlayer;
     }
     else if (baseType.equals("video") && !audioOnly) {
-      return new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
+      VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(parent, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), false);
+      if (listener != null) {
+        videoMediaPlayer.addListener(listener);
+      }
+      videoMediaPlayer.render();
+      return videoMediaPlayer;
     }
     else {
       LOG.error("Invalid media mime type " + mimeType + " of asset used for media panel " + parent.getId());

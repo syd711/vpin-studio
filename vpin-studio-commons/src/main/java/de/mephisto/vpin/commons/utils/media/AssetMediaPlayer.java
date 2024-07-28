@@ -9,6 +9,7 @@ import javafx.scene.media.MediaPlayer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -25,12 +26,17 @@ abstract public class AssetMediaPlayer extends BorderPane {
   @NonNull
   protected final String url;
 
-
   protected MediaPlayer mediaPlayer;
+
+  protected final java.util.List<MediaPlayerListener> listeners = new ArrayList<>();
 
   public AssetMediaPlayer(@NonNull BorderPane parent, @NonNull String url) {
     this.parent = parent;
     this.url = url;
+  }
+
+  public void addListener(MediaPlayerListener listener) {
+    this.listeners.add(listener);
   }
 
   public MediaPlayer getMediaPlayer() {
@@ -52,6 +58,11 @@ abstract public class AssetMediaPlayer extends BorderPane {
   }
 
   public void disposeMedia() {
+    for (MediaPlayerListener listener : this.listeners) {
+      listener.onDispose();
+    }
+    this.listeners.clear();
+
     if (getMediaPlayer() != null) {
       try {
         getMediaPlayer().stop();
