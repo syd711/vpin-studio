@@ -1,4 +1,4 @@
-## Release Notes 3.0.1
+## Release Notes 3.0.2
 
 **!!!Some users may have to re-register their cabinet after updating!!!**
 
@@ -25,12 +25,14 @@ But no worries! Since the new "synchronize" feature comes with this update, none
 - **VPin Mania Players**: Fixed avatar uploads for VPin Mania player registrations. **You have to edit and save your registered players again to fix the avatar image for them!!!**
 - **Table Overview / Table Data Manager**: Fixed issue that only the persisted VPS selection was used for auto-fill.
 - **Table Overview / Table Data Manager**: Fixed missing game refresh after "cancel" was pressed to discard the in-memory changes.
+- **Table Overview / Table Data Manager**: Fixed critical error where the wrong date was saved into the Popper database and led to an error message in Popper when starting the table.
 - **Table Overview / VPS Section**: Improved layout of VPS table version list, so that the version number has more space.
 - **Table Overview / ALTSound**: Fixed refresh issue after uploading ALTSound bundles.
 - **Table Overview**: Fixed missing table refreshes when the tables have been reloaded based on their ROM name (e.g. PUP packs or ALT sound packs).
 - **Players**: Fixed avatar generation so that less white border is generated.
 - **MaxOS**: Added blind fixes for editing files and browsing files.
 - **System Manager / Freezy**: Fixed false reading of the **vni.key** setting.
+
 
 
 

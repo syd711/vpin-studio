@@ -422,8 +422,12 @@ public class PinUPConnector implements FrontendConnector {
       int index = 1;
       preparedStatement.setString(index++, extTableId);
       preparedStatement.setString(index++, extTableVersionId);
+
+      SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
-      preparedStatement.setTimestamp(index++, timestamp);
+      String ts = sdf.format(timestamp);
+      preparedStatement.setObject(index++, ts);
+
       preparedStatement.setInt(index++, gameId);
 
       preparedStatement.executeUpdate();
