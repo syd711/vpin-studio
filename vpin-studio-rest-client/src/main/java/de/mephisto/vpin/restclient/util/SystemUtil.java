@@ -5,14 +5,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
 
+  private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial");
+
   public static String getUniqueSystemId() {
-    String id = getCpuSerialNumber();
-    if(StringUtils.isEmpty(id)) {
-      id = getBoardSerialNumber();
+    String id = getBoardSerialNumber();
+    if (StringUtils.isEmpty(id)) {
+      id = getCpuSerialNumber();
     }
     return id;
   }
@@ -25,7 +28,7 @@ public class SystemUtil {
       if (standardOutputFromCommand != null) {
         String[] split = standardOutputFromCommand.toString().trim().split("\n");
         String serial = split[split.length - 1];
-        if (StringUtils.isEmpty(serial) || serial.contains("filled by") || serial.contains("Serial")) {
+        if (!isNotValid(serial)) {
           return null;
         }
 
@@ -46,7 +49,7 @@ public class SystemUtil {
       if (standardOutputFromCommand != null) {
         String[] split = standardOutputFromCommand.toString().trim().split("\n");
         String serial = split[split.length - 1];
-        if (StringUtils.isEmpty(serial) || serial.contains("filled by") || serial.contains("Serial")) {
+        if (!isNotValid(serial)) {
           return null;
         }
         return serial;
@@ -57,5 +60,17 @@ public class SystemUtil {
     }
     return null;
 
+  }
+
+  private static boolean isNotValid(String serial) {
+    if(StringUtils.isEmpty(serial)) {
+      return false;
+    }
+    for (String invalidName : INVALID_NAMES) {
+      if(serial.contains(invalidName)) {
+        return false;
+      }
+    }
+    return true;
   }
 }
