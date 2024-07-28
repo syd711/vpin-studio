@@ -486,10 +486,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new ImageViewer(serverAssetMediaPane, assetUrl, tableAsset, tableAsset.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
-          new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+          AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(serverAssetMediaPane, assetUrl);
+          audioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(serverAssetMediaPane, assetUrl, tableAsset.getScreen(), mimeType, frontend.isPlayfieldMediaInverted());
+          videoMediaPlayer.render();
         }
       }
       catch (Exception e) {
@@ -723,10 +725,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           new ImageViewer(mediaPane, url, mediaItem, mediaItem.getScreen(), frontend.isPlayfieldMediaInverted());
         }
         else if (baseType.equals("audio")) {
-          new AudioMediaPlayer(mediaPane, mediaItem, url);
+          AudioMediaPlayer audioMediaPlayer = new AudioMediaPlayer(mediaPane, mediaItem, url);
+          audioMediaPlayer.render();
         }
         else if (baseType.equals("video")) {
-          new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
+          VideoMediaPlayer videoMediaPlayer = new VideoMediaPlayer(mediaPane, mediaItem, url, mimeType, frontend.isPlayfieldMediaInverted(), true);
+          videoMediaPlayer.render();
         }
       }
     });

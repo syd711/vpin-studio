@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
@@ -147,9 +148,15 @@ public class FrontendServiceClient extends VPinStudioClientService {
     }
   }
 
-  public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails) throws Exception {
+  public TableDetails autoFillTableDetails(int gameId, TableDetails tableDetails, String vpsTableId, String vpsVersionId) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_FRONTEND + "/tabledetails/autofillsimulate/" + gameId, tableDetails, TableDetails.class);
+      if (StringUtils.isEmpty(vpsTableId)) {
+        vpsTableId = "-";
+      }
+      if (StringUtils.isEmpty(vpsVersionId)) {
+        vpsVersionId = "-";
+      }
+      return getRestClient().post(API + API_SEGMENT_FRONTEND + "/tabledetails/autofillsimulate/" + vpsTableId + "/" + vpsVersionId + "/" + gameId, tableDetails, TableDetails.class);
     }
     catch (Exception e) {
       LOG.error("Failed simulating autofilling table details: " + e.getMessage(), e);
@@ -160,7 +167,8 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public GameVpsMatch autoMatch(int gameId, boolean overwrite, boolean simulate) {
     if (simulate) {
       return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatchsimulate/" + gameId + "/" + overwrite, GameVpsMatch.class);
-    } else {
+    }
+    else {
       return getRestClient().get(API + API_SEGMENT_FRONTEND + "/tabledetails/automatch/" + gameId + "/" + overwrite, GameVpsMatch.class);
     }
   }

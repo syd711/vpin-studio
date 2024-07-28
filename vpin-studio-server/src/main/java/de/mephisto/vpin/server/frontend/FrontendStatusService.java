@@ -192,6 +192,11 @@ public class FrontendStatusService implements InitializingBean {
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
     String vpsTableId = game.getExtTableId();
     String vpsTableVersionId = game.getExtTableVersionId();
+    return autoFill(game, tableDetails, vpsTableId, vpsTableVersionId, simulate);
+  }
+
+  @NonNull
+  public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate) {
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
     AutoFillSettings autoFillSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class).getAutoFillSettings();
@@ -347,7 +352,7 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   public void fixGameVersion(int gameId, String version, boolean overwrite) {
-    // keep track of theversion  in the internal database
+    // keep track of the version  in the internal database
     if (gameService.fixVersion(gameId, version, overwrite)) {
       // update the table in the frontend
       TableDetails tableDetails = getTableDetails(gameId);

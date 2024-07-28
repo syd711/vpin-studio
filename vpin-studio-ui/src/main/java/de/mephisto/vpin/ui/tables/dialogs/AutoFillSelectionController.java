@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.TableDataAutoFillProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -72,6 +73,8 @@ public class AutoFillSelectionController implements Initializable, DialogControl
 
   private List<GameRepresentation> games;
   private TableDetails tableDetails;
+  private String vpsTableId;
+  private String vpsVersionId;
 
   @FXML
   private void onAutoFill(ActionEvent e) {
@@ -93,7 +96,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
     else {
       GameRepresentation game = this.games.get(0);
       try {
-        tableDetails = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails);
+        tableDetails = client.getFrontendService().autoFillTableDetails(game.getId(), tableDetails, vpsTableId, vpsVersionId);
       }
       catch (Exception ex) {
         LOG.error("Failed to fill table details: " + ex.getMessage(), ex);
@@ -214,9 +217,11 @@ public class AutoFillSelectionController implements Initializable, DialogControl
 
   }
 
-  public void setData(List<GameRepresentation> games, TableDetails tableDetails) {
+  public void setData(List<GameRepresentation> games, @Nullable TableDetails tableDetails, @Nullable String vpsTableId, @Nullable String vpsVersionId) {
     this.games = games;
     this.tableDetails = tableDetails;
+    this.vpsTableId = vpsTableId;
+    this.vpsVersionId = vpsVersionId;
     if (this.games.size() > 1) {
       autoFillBtn.setText("Auto-Fill All");
     }

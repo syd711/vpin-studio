@@ -300,6 +300,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private void onVpsReset() {
+    this.tableVersionsCombo.valueProperty().removeListener(this);
     game.setExtTableId(null);
     game.setExtTableVersionId(null);
     game.setExtVersion(null);
@@ -316,14 +317,19 @@ public class TableDataController implements Initializable, DialogController, Aut
     openVpsTableVersionBtn.setDisable(true);
     copyTableVersionBtn.setDisable(true);
     fixVersionBtn.setDisable(true);
+
+    this.tableVersionsCombo.valueProperty().addListener(this);
   }
 
   @FXML
   private void onAutoMatch() {
     boolean autofill = this.autoFillCheckbox.isSelected();
+    if(autofill) {
+      this.tableVersionsCombo.valueProperty().removeListener(this);
+    }
+
     GameVpsMatch vpsMatch = client.getFrontendService().autoMatch(game.getId(), true, true);
     if (vpsMatch != null) {
-
       String mappedTableId = vpsMatch.getExtTableId();
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
@@ -361,6 +367,10 @@ public class TableDataController implements Initializable, DialogController, Aut
         onAutoFill();
       }
     }
+
+    if(autofill) {
+      this.tableVersionsCombo.valueProperty().addListener(this);
+    }
   }
 
   @FXML
@@ -373,7 +383,10 @@ public class TableDataController implements Initializable, DialogController, Aut
     try {
       if (tableDetails != null) {
         LOG.info("Auto-fill table version");
-        TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails);
+        String vpsTableId = this.game.getExtTableId();
+        String vpsVersionId = this.game.getExtTableVersionId();
+
+        TableDetails td = TableDialogs.openAutoFillSettingsDialog(this.stage, Arrays.asList(this.game), tableDetails, vpsTableId, vpsVersionId);
         if (td != null) {
           refreshTableDetails(td);
         }
@@ -589,6 +602,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     TableDataController.lastTab = tabPane.getSelectionModel().getSelectedIndex();
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+
+    EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 
   @Override
@@ -1102,6 +1117,11 @@ public class TableDataController implements Initializable, DialogController, Aut
     game.setExtVersion(mappedVersion);
 
     propperRenamingController.setVpsTableVersion(newValue);
+
+    boolean autofill = this.autoFillCheckbox.isSelected();
+    if (autofill) {
+      this.onAutoFill();
+    }
 
     openVpsTableVersionBtn.setDisable(newValue == null || newValue.getUrls().isEmpty());
     copyTableVersionBtn.setDisable(newValue == null);

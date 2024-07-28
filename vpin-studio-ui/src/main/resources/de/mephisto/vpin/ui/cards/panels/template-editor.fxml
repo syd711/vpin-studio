@@ -790,6 +790,14 @@
                         </Button>
                      </children>
                   </HBox>
+                  <Label fx:id="resolutionLabel" text="Resolution">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <padding>
+                        <Insets left="6.0" />
+                     </padding>
+                  </Label>
                </items>
             </ToolBar>
          </top>

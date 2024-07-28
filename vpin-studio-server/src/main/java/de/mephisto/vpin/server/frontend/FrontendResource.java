@@ -179,10 +179,18 @@ public class FrontendResource {
     return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, false);
   }
 
-  @PostMapping("/tabledetails/autofillsimulate/{gameId}")
+  @PostMapping("/tabledetails/autofillsimulate/{vpsTableId}/{vpsVersionId}/{gameId}")
   public TableDetails autofill(@PathVariable("gameId") int gameId,
+                               @PathVariable("vpsTableId") String vpsTableId,
+                               @PathVariable("vpsVersionId") String vpsVersionId,
                                @RequestBody TableDetails tableDetails) {
-    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, true);
+    if (vpsTableId.equals("-")) {
+      vpsTableId = null;
+    }
+    if (vpsVersionId.equals("-")) {
+      vpsVersionId = null;
+    }
+    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, vpsTableId, vpsVersionId, true);
   }
 
   @PostMapping("/tabledetails/{gameId}")

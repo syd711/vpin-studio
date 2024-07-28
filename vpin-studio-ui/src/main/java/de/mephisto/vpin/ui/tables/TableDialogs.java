@@ -25,7 +25,9 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.dialogs.*;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogController;
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -505,9 +507,13 @@ public class TableDialogs {
 
 
   public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails) {
+    return openAutoFillSettingsDialog(stage, games, tableDetails, null, null);
+  }
+
+  public static TableDetails openAutoFillSettingsDialog(Stage stage, List<GameRepresentation> games, TableDetails tableDetails, @Nullable String vpsTableId, @Nullable String vpsVersionId) {
     Stage dialogStage = Dialogs.createStudioDialogStage(stage, AutoFillSelectionController.class, "dialog-autofill-settings.fxml", "Auto-Fill Settings");
     AutoFillSelectionController controller = (AutoFillSelectionController) dialogStage.getUserData();
-    controller.setData(games, tableDetails);
+    controller.setData(games, tableDetails, vpsTableId, vpsVersionId);
     dialogStage.showAndWait();
     return controller.getTableDetails();
   }
