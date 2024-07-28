@@ -30,6 +30,7 @@ But no worries! Since the new "synchronize" feature comes with this update, none
 - **Table Overview**: Fixed missing table refreshes when the tables have been reloaded based on their ROM name (e.g. PUP packs or ALT sound packs).
 - **Players**: Fixed avatar generation so that less white border is generated.
 - **MaxOS**: Added blind fixes for editing files and browsing files.
+- **System Manager / Freezy**: Fixed false reading of the **vni.key** setting.
 
 
 
