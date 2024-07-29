@@ -286,22 +286,26 @@ public class PinballXConnector extends BaseConnector {
 
   //---------------------------------------------------
 
-  @Override
-  protected TableDetails getGameFromDb(String game) {
-    return mapTableDetails.get(game);
+  public static String compose(int emuId, String game) {
+    return emuId + "@" + game;
   }
 
   @Override
-  protected void updateGameInDb(String game, TableDetails details) {
+  protected TableDetails getGameFromDb(int emuId, String game) {
+    return mapTableDetails.get(compose(emuId, game));
+  }
+
+  @Override
+  protected void updateGameInDb(int emuId, String game, TableDetails details) {
     // force gameName = gameFileName
     String gameName = FilenameUtils.getBaseName(details.getGameFileName());
     details.setGameName(gameName);
-    mapTableDetails.put(game, details);
+    mapTableDetails.put(compose(emuId, game), details);
   }
 
   @Override
-  protected void dropGameFromDb(String game) {
-    mapTableDetails.remove(game);
+  protected void dropGameFromDb(int emuId, String game) {
+    mapTableDetails.remove(compose(emuId, game));
   }
 
   @Override
@@ -310,7 +314,7 @@ public class PinballXConnector extends BaseConnector {
     File pinballXDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + emu.getName() + ".xml");
 
     PinballXTableParser parser = new PinballXTableParser();
-    parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails);
+    parser.writeGames(pinballXDb, gamesByEmu.get(emu.getId()), mapTableDetails, emu);
   }
 
   //------------------------------------------------------------
@@ -420,7 +424,7 @@ public class PinballXConnector extends BaseConnector {
       executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("PinballX restart failed: {}", standardErrorFromCommand);

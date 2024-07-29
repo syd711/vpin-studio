@@ -515,8 +515,8 @@ public class GameService implements InitializingBean {
     return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
   }
 
-  public Game getGameByFilename(String name) {
-    Game game = this.frontendService.getGameByFilename(name);
+  public Game getGameByFilename(int emuId, String name) {
+    Game game = this.frontendService.getGameByFilename(emuId, name);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());
@@ -524,8 +524,8 @@ public class GameService implements InitializingBean {
     return game;
   }
 
-  public Game getGameByName(String name) {
-    Game game = this.frontendService.getGameByName(name);
+  public Game getGameByName(int emuId, String name) {
+    Game game = this.frontendService.getGameByName(emuId, name);
     if (game != null) {
       //this will ensure that a scanned table is fetched
       game = this.getGame(game.getId());

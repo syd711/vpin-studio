@@ -7,8 +7,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.collections4.BidiMap;
-import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -36,8 +34,16 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * Map id <-> filename
    */
-  private BidiMap<Integer, String> mapFilenames = new DualHashBidiMap<>();
+  private Map<Integer, GameEntry> mapFilenames = new HashMap<>();
 
+  class GameEntry {
+    GameEntry(int emuId, String filename) {
+      this.emuId = emuId;
+      this.filename = filename;
+    }
+    int emuId;
+    String filename;
+  }
 
   @Override
   public void clearCache() {
@@ -60,18 +66,30 @@ public abstract class BaseConnector implements FrontendConnector {
 
       List<String> filenames = loadGames(emu);
       gamesByEmu.put(emu.getId(), filenames);
+
       for (String filename : filenames) {
-        int id = _filenameToId(filename);
-        mapFilenames.put(id, filename);
+        int id = filenameToId(emu.getId(), filename);
+        GameEntry e = new GameEntry(emu.getId(), filename);
+        mapFilenames.put(id, e);
       }
       LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
     }
     return loaded;
   }
 
-  protected int _filenameToId(String filename) {
-    return filename.hashCode() & Integer.MAX_VALUE;
+  protected int filenameToId(int emuId, String filename) {
+    return (emuId + "@" + filename).hashCode() & Integer.MAX_VALUE;
   }
+  private int findIdFromFilename(int emuId, String filename) {
+    for (Map.Entry<Integer, GameEntry> entry: mapFilenames.entrySet()) {
+      GameEntry e = entry.getValue();
+      if (e.emuId == emuId && StringUtils.equalsIgnoreCase(e.filename, filename)) {
+        return entry.getKey();
+      }
+    }
+    return -1;
+  }
+
 
   protected String getEmulatorExtension(String emuName) {
     String emu = emuName.replaceAll(" ", "").toLowerCase();
@@ -106,17 +124,17 @@ public abstract class BaseConnector implements FrontendConnector {
   /**
    * Get from the connector a game from DB
    */
-  protected abstract TableDetails getGameFromDb(String filename);
+  protected abstract TableDetails getGameFromDb(int emuId, String filename);
 
   /**
    * Notify the connector a game has been updated and the change should be reflected in DB
    */
-  protected abstract void updateGameInDb(String filename, TableDetails details);
+  protected abstract void updateGameInDb(int emuId, String filename, TableDetails details);
 
   /**
    * To be implemented to drop the database
    */
-  protected abstract void dropGameFromDb(String filename);
+  protected abstract void dropGameFromDb(int emuId, String filename);
 
   /**
    * To be implemented to persist modification in database
@@ -138,49 +156,48 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public Game getGame(int id) {
-    String filename = mapFilenames.get(id);
-    return filename != null ? getGameByFilename(filename) : null;
+    GameEntry e = mapFilenames.get(id);
+    return (e != null ? getGameByFilename(e.emuId, e.filename) : null);
   }
 
   @Override
-  public Game getGameByFilename(String filename) {
-    for (Integer emuId : emulators.keySet()) {
-      if (gamesByEmu.get(emuId).contains(filename)) {
+  public Game getGameByFilename(int emuId, String filename) {
 
-        Emulator emu = emulators.get(emuId);
+    if (gamesByEmu.get(emuId).contains(filename)) {
 
-        int id = mapFilenames.getKey(filename);
+      Emulator emu = emulators.get(emuId);
 
-        TableDetails details = getGameFromDb(filename);
-        String gameName = FilenameUtils.getBaseName(filename);
+      int id = findIdFromFilename(emuId, filename);
 
-        Game game = new Game();
-        game.setEmulatorId(emuId);
-        game.setId(id);
-        game.setGameName(details != null ? details.getGameName() : gameName);
-        game.setGameFileName(details != null ? details.getGameFileName() : filename);
-        game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
-        game.setDisabled(details != null ? details.getStatus() == 0 : false);
-        game.setVersion(details != null ? details.getGameVersion() : null);
+      TableDetails details = getGameFromDb(emuId, filename);
+      String gameName = FilenameUtils.getBaseName(filename);
 
-        File table = new File(emu.getDirGames(), filename);
-        game.setGameFile(table);
+      Game game = new Game();
+      game.setEmulatorId(emuId);
+      game.setId(id);
+      game.setGameName(details != null ? details.getGameName() : gameName);
+      game.setGameFileName(details != null ? details.getGameFileName() : filename);
+      game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
+      game.setDisabled(details != null ? details.getStatus() == 0 : false);
+      game.setVersion(details != null ? details.getGameVersion() : null);
 
-        game.setDateAdded(details != null ? details.getDateAdded() : null);
-        game.setDateUpdated(details != null ? details.getDateModified() : null);
-        return game;
-      }
+      File table = new File(emu.getDirGames(), filename);
+      game.setGameFile(table);
+
+      game.setDateAdded(details != null ? details.getDateAdded() : null);
+      game.setDateUpdated(details != null ? details.getDateModified() : null);
+      return game;
     }
     return null;
   }
 
   @NonNull
   @Override
-  public List<Game> getGamesByEmulator(int emulatorId) {
-    List<String> filenames = gamesByEmu.get(emulatorId);
+  public List<Game> getGamesByEmulator(int emuId) {
+    List<String> filenames = gamesByEmu.get(emuId);
     List<Game> games = new ArrayList<>(filenames.size());
     for (String filename : filenames) {
-      games.add(getGameByFilename(filename));
+      games.add(getGameByFilename(emuId, filename));
     }
     return games;
   }
@@ -193,8 +210,8 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public Game getGameByName(String gameName) {
-    return getGameByFilename(gameName);
+  public Game getGameByName(int emuId, String gameName) {
+    return getGameByFilename(emuId, gameName);
     //return getGames().stream().filter(g -> g.getGameName()==gameName).findFirst().orElse(null);
   }
 
@@ -205,31 +222,34 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public List<Integer> getGameIds(int emuId) {
-    return gamesByEmu.get(emuId).stream().map(f -> mapFilenames.getKey(f)).collect(Collectors.toList());
+    return gamesByEmu.get(emuId).stream().map(f -> findIdFromFilename(emuId, f)).collect(Collectors.toList());
   }
 
   //------------------------------------------------------------
 
   @Override
   public TableDetails getTableDetails(int id) {
-    String filename = mapFilenames.get(id);
-    return getGameFromDb(filename);
+    GameEntry e = mapFilenames.get(id);
+    return (e != null ? getGameFromDb(e.emuId, e.filename): null);
   }
 
   @Override
   public void saveTableDetails(int id, TableDetails tableDetails) {
-    String filename = mapFilenames.get(id);
+    GameEntry e = mapFilenames.get(id);
+    if (e==null) {
+      return;
+    }
 
     // detection of file renamed
-    if (!StringUtils.equalsIgnoreCase(filename, tableDetails.getGameFileName())) {
+    if (!StringUtils.equalsIgnoreCase(e.filename, tableDetails.getGameFileName())) {
       deleteGame(id, false);
 
       // update filename, but do not change the id 
-      filename = tableDetails.getGameFileName();
-      mapFilenames.put(id, filename);
-      gamesByEmu.get(tableDetails.getEmulatorId()).add(filename);
+      e.filename = tableDetails.getGameFileName();
+      mapFilenames.put(id, e);
+      gamesByEmu.get(tableDetails.getEmulatorId()).add(e.filename);
     }
-    updateGameInDb(filename, tableDetails);
+    updateGameInDb(e.emuId, e.filename, tableDetails);
     commitDb(emulators.get(tableDetails.getEmulatorId()));
   }
 
@@ -247,36 +267,30 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   private boolean deleteGame(int gameId, boolean commit) {
-    String filename = mapFilenames.remove(gameId);
-    if (filename != null) {
-      int _emuId = -1;
-      for (Integer emuId : emulators.keySet()) {
-        List<String> games = gamesByEmu.get(emuId);
-        if (games.remove(filename)) {
-          _emuId = emuId;
-          break;
-        }
+    GameEntry e = mapFilenames.remove(gameId);
+    if (e != null) {
+      List<String> games = gamesByEmu.get(e.emuId);
+      games.remove(e.filename);
+
+      dropGameFromDb(e.emuId, e.filename);
+      if (commit) {
+        commitDb(emulators.get(e.emuId));
       }
-      if (_emuId >= 0) {
-        dropGameFromDb(filename);
-        if (commit) {
-          commitDb(emulators.get(_emuId));
-        }
-        return true;
-      }
+      return true;
     }
     return false;
   }
 
   @Override
-  public void deleteGames(int emulatorId) {
-    List<String> filenames = gamesByEmu.remove(emulatorId);
+  public void deleteGames(int emuId) {
+    List<String> filenames = gamesByEmu.remove(emuId);
     for (String filename : filenames) {
-      mapFilenames.removeValue(filename);
-      dropGameFromDb(filename);
+      int id = findIdFromFilename(emuId, filename);      
+      mapFilenames.remove(id);
+      dropGameFromDb(emuId, filename);
     }
-    gamesByEmu.put(emulatorId, new ArrayList<>());
-    commitDb(emulators.get(emulatorId));
+    gamesByEmu.put(emuId, new ArrayList<>());
+    commitDb(emulators.get(emuId));
   }
 
   @Override
@@ -294,11 +308,12 @@ public abstract class BaseConnector implements FrontendConnector {
     details.setLaunchCustomVar(launchCustomVar);
     details.setStatus(1); // enable game
 
-    updateGameInDb(gameFileName, details);
+    updateGameInDb(emulatorId, gameFileName, details);
 
     // if everything is good, the game id should have been generated, so add to the cached model
-    int id = _filenameToId(gameFileName);
-    mapFilenames.put(id, gameFileName);
+    int id = filenameToId(emulatorId, gameFileName);
+    GameEntry e = new GameEntry(emulatorId, gameFileName);
+    mapFilenames.put(id, e);
     gamesByEmu.get(emulatorId).add(gameFileName);
 
     // time to persist the file

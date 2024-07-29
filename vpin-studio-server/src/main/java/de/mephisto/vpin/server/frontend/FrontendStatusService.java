@@ -502,18 +502,6 @@ public class FrontendStatusService implements InitializingBean {
       augmenter.deAugment();
     }
   }
-
-  @NonNull
-  public TableManagerSettings getArchiveManagerDescriptor() {
-    TableManagerSettings descriptor = new TableManagerSettings();
-    File file = systemService.getVPinStudioMenuExe();
-    Game game = frontendService.getGameByFilename(file.getAbsolutePath());
-    if (game != null) {
-      descriptor.setPlaylistId(frontendService.getPlayListForGame(game.getId()).getId());
-    }
-    return descriptor;
-  }
-
   public void cloneGameMedia(Game original, Game clone) {
     VPinScreen[] values = VPinScreen.values();
     for (VPinScreen originalScreenValue : values) {

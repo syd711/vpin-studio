@@ -1063,6 +1063,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
+    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
+    allVpx.setId(-1);
+    allVpx.setName("All VPX Tables");
+    allVpx.setVpxEmulator(true);
+    filtered.add(0, allVpx);
+
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
 

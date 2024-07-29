@@ -106,11 +106,6 @@ public class FrontendResource {
     return frontendService.isFrontendRunning();
   }
 
-  @GetMapping("/manager")
-  public TableManagerSettings getArchiveManagerDescriptor() {
-    return frontendStatusService.getArchiveManagerDescriptor();
-  }
-
   @GetMapping("/terminate")
   public boolean terminate() {
     return frontendStatusService.terminate();
