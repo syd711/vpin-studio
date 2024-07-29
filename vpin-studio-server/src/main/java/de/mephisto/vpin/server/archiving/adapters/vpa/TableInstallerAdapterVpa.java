@@ -88,7 +88,7 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       }
 
       File gameFile = getGameFile(emulator, manifest);
-      Game game = gameService.getGameByFilename(manifest.getGameFileName());
+      Game game = gameService.getGameByFilename(emulator.getId(), manifest.getGameFileName());
       if (game == null) {
         LOG.info("No existing game found for " + manifest.getGameDisplayName() + ", executing game import for " + manifest.getGameFileName());
         int newGameId = frontendService.importGame(emulator.getId(), manifest.getGameName(), gameFile.getName(), manifest.getGameDisplayName(), null, new Date(gameFile.lastModified()));

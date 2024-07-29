@@ -150,9 +150,9 @@ public class StandaloneConnector extends BaseConnector {
   //------------------------------------------------------------
 
   @Override
-  protected TableDetails getGameFromDb(String filename) {
+  protected TableDetails getGameFromDb(int emuId, String filename) {
     TableDetails details = new TableDetails();
-    details.setEmulatorId(VPX_EMUID);
+    details.setEmulatorId(emuId);
     details.setStatus(1);
     details.setEmulatorType(filename);
     details.setGameFileName(filename);
@@ -163,12 +163,12 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   @Override
-  protected void updateGameInDb(String filename, TableDetails details) {
+  protected void updateGameInDb(int emuId, String filename, TableDetails details) {
     // do nothing
   }
 
   @Override
-  protected void dropGameFromDb(String filename) {
+  protected void dropGameFromDb(int emuId, String filename) {
     // do nothing
   }
 
@@ -251,7 +251,7 @@ public class StandaloneConnector extends BaseConnector {
       executor.setDir(getInstallationFolder());
       executor.executeCommandAsync();
 
-      StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("VPX restart failed: {}", standardErrorFromCommand);

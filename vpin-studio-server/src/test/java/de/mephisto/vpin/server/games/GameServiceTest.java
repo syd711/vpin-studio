@@ -16,7 +16,7 @@ public class GameServiceTest extends AbstractVPinServerTest {
     List<Game> games = gameService.getKnownGames(1);
     assertFalse(games.isEmpty());
     // check the file is loaded
-    assertNotNull(gameService.getGameByFilename(EM_TABLE_NAME));
+    assertNotNull(gameService.getGameByFilename(1, EM_TABLE_NAME));
 
     // force re-scan as state is uncertain
     for (Game game : games) {

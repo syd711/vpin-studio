@@ -443,7 +443,8 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   @Nullable
-  public Game getGameByFilename(String filename) {
+  @Override
+  public Game getGameByFilename(int emulatorId, String filename) {
     Connection connect = this.connect();
     Game info = null;
     try {
@@ -452,7 +453,8 @@ public class PinUPConnector implements FrontendConnector {
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID "
-              + " where g.GameFileName = '" + gameName + "' OR g.GameFileName LIKE '%\\" + gameName + "';");
+              + " where g.EMUID = " + emulatorId
+              + " and (g.GameFileName = '" + gameName + "' OR g.GameFileName LIKE '%\\" + gameName + "');");
       while (rs.next()) {
         info = createGame(rs);
       }
@@ -496,6 +498,7 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   @NonNull
+  @Override
   public List<Game> getGamesByFilename(String filename) {
     Connection connect = this.connect();
     List<Game> result = new ArrayList<>();
@@ -523,7 +526,8 @@ public class PinUPConnector implements FrontendConnector {
   }
 
   @Nullable
-  public Game getGameByName(String gameName) {
+  @Override
+  public Game getGameByName(int emulatorId, String gameName) {
     Connection connect = this.connect();
     Game info = null;
     try {
@@ -532,7 +536,8 @@ public class PinUPConnector implements FrontendConnector {
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID"
-              + " where GameName = '" + gameName + "';");
+              + " where g.EMUID = " + emulatorId
+              + " and GameName = '" + gameName + "';");
       while (rs.next()) {
         info = createGame(rs);
       }
@@ -832,15 +837,15 @@ public class PinUPConnector implements FrontendConnector {
     return -1;
   }
 
-  // no more used
-  public boolean deleteGame(String name) {
-    Game gameByFilename = getGameByFilename(name);
-    if (gameByFilename != null) {
-      return deleteGame(gameByFilename.getId());
-    }
-    LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
-    return false;
-  }
+// no more used
+//  public boolean deleteGame(String name) {
+//    Game gameByFilename = getGameByFilename(name);
+//    if (gameByFilename != null) {
+//      return deleteGame(gameByFilename.getId());
+//    }
+//    LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
+//    return false;
+//  }
 
   @Override
   public boolean deleteGame(int id) {

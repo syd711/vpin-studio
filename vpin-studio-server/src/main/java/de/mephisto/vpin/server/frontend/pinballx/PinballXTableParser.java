@@ -75,7 +75,7 @@ public class PinballXTableParser extends DefaultHandler {
               }
             }
             games.add(gameFileName);
-            tabledetails.put(gameFileName, detail);
+            tabledetails.put(PinballXConnector.compose(emu.getId(), gameFileName), detail);
           }
         }
       }
@@ -206,12 +206,12 @@ public class PinballXTableParser extends DefaultHandler {
 
   //----------------------------------------
 
-  public void writeGames(File pinballXDb, List<String> games, Map<String, TableDetails> mapTableDetails) {
+  public void writeGames(File pinballXDb, List<String> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
 
       writer.append("<menu>\n");
       for (String filename : games) {
-        TableDetails detail = mapTableDetails.get(filename);
+        TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), filename));
         if (detail!=null) {
           writer.append("  <game name=\"").append(escapeXml(detail.getGameName())).append("\">\n");
 

@@ -36,7 +36,7 @@ public class TableInstallerAdapterFactory {
         return new TableInstallerAdapterVpa(gameService, frontendService, archiveDescriptor, emulator);
       }
       case VPBM: {
-        return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor);
+        return new TableInstallerAdapterVpbm(gameService, vpbmService, archiveDescriptor, emulator);
       }
       default: {
         throw new UnsupportedOperationException("Unkown archive type " + archiveType);

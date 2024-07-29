@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -19,6 +20,7 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
   private final GameService gameService;
   private final VpbmService vpbmService;
   private final ArchiveDescriptor archiveDescriptor;
+  private final GameEmulator emulator;
 
   private File archiveFile;
   private double progress;
@@ -26,10 +28,12 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
 
   public TableInstallerAdapterVpbm(@NonNull GameService gameService,
                                    @NonNull VpbmService vpbmService,
-                                   @NonNull ArchiveDescriptor archiveDescriptor) {
+                                   @NonNull ArchiveDescriptor archiveDescriptor,
+                                   @NonNull GameEmulator emulator) {
     this.gameService = gameService;
     this.vpbmService = vpbmService;
     this.archiveDescriptor = archiveDescriptor;
+    this.emulator = emulator;
   }
 
   @Override
@@ -74,7 +78,7 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
       }
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
-      Game game = gameService.getGameByName(baseName);
+      Game game = gameService.getGameByName(emulator.getId(), baseName);
       LOG.info("Executing final table scan for " + game.getGameDisplayName());
       gameService.scanGame(game.getId());
 

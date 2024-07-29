@@ -159,8 +159,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return setGameEmulator(getFrontendConnector().getGame(id));
   }
 
-  public Game getGameByFilename(String filename) {
-    return setGameEmulator(getFrontendConnector().getGameByFilename(filename));
+  public Game getGameByFilename(int emulatorId, String filename) {
+    return setGameEmulator(getFrontendConnector().getGameByFilename(emulatorId, filename));
   }
 
   public List<Game> getGamesByEmulator(int emulatorId) {
@@ -171,8 +171,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return setGameEmulator(getFrontendConnector().getGamesByFilename(filename));
   }
 
-  public Game getGameByName(String gameName) {
-    return setGameEmulator(getFrontendConnector().getGameByName(gameName));
+  public Game getGameByName(int emulatorId, String gameName) {
+    return setGameEmulator(getFrontendConnector().getGameByName(emulatorId, gameName));
   }
 
   public List<Game> getGames() {
@@ -213,12 +213,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
     String baseName = FilenameUtils.getBaseName(file.getName());
     String formattedBaseName = baseName;//.replaceAll(" ", "-");
-    Game gameByName = getGameByName(formattedBaseName);
+    Game gameByName = getGameByName(emuId, formattedBaseName);
     int count = 1;
     while (gameByName != null) {
       formattedBaseName = FilenameUtils.getBaseName(file.getName()) + count;
       LOG.info("Found existing gamename that exists while importing \"" + file.getName() + "\", trying again with \"" + formattedBaseName + "\"");
-      gameByName = getGameByName(formattedBaseName);
+      gameByName = getGameByName(emuId, formattedBaseName);
     }
 
     GameEmulator gameEmulator = emulators.get(emuId);
@@ -231,14 +231,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return getFrontendConnector().importGame(emulatorId, gameName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
 
-  public boolean deleteGame(String name) {
-    Game gameByFilename = getGameByFilename(name);
+/*  public boolean deleteGame(int emulatorId, String name) {
+    Game gameByFilename = getGameByFilename(emulatorId, name);
     if (gameByFilename != null) {
       return deleteGame(gameByFilename.getId());
     }
     LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
     return false;
-  }
+  }*/
 
   public boolean deleteGame(int id) {
     return getFrontendConnector().deleteGame(id);

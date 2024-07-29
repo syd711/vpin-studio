@@ -38,18 +38,18 @@ public interface FrontendConnector {
   Game getGame(int id);
 
   @Nullable
-  Game getGameByFilename(String filename);
+  Game getGameByFilename(int emuId, String filename);
 
   @NonNull
-  List<Game> getGamesByEmulator(int emulatorId);
+  List<Game> getGamesByEmulator(int emuId);
 
   @NonNull
   List<Game> getGamesByFilename(String filename);
 
   @Nullable
-  Game getGameByName(String gameName);
+  Game getGameByName(int emuId, String gameName);
 
-  int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull Date dateFileUpdated);
+  int importGame(int emuId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull Date dateFileUpdated);
 
   boolean deleteGame(int id);
 

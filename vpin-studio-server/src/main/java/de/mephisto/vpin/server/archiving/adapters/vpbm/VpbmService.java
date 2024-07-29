@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -76,7 +77,9 @@ public class VpbmService implements InitializingBean {
 
   public File export(String tablename) {
     String vpxName = FilenameUtils.getBaseName(tablename) + ".vpx";
-    Game game = frontendService.getGameByFilename(vpxName);
+    // use the default emulator, VpbmService, does not support multiple emulator
+    GameEmulator defaultEmu = frontendService.getDefaultGameEmulator();
+    Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
       File exportFile = new File(getExportFolder(), tablename);

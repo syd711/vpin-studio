@@ -49,7 +49,9 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
 
   @Test
   public void testTableInfo() {
-    Game gameByFilename = connector.getGameByFilename(EM_TABLE_NAME);
+    int emuId = 1;
+
+    Game gameByFilename = connector.getGameByFilename(emuId, EM_TABLE_NAME);
     TableDetails tableDetails = connector.getTableDetails(gameByFilename.getId());
     String uuid = UUID.randomUUID().toString();
     tableDetails.setAuthor(uuid);
@@ -60,6 +62,8 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
 
   @Test
   public void testConnector() {
+    int emuId = 1;
+
     List<Game> games = connector.getGames();
     assertFalse(games.isEmpty());
 
@@ -69,7 +73,7 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
     Game game = connector.getGame(games.get(0).getId());
     assertNotNull(game);
 
-    Game gameByFilename = connector.getGameByFilename(game.getGameFile().getName());
+    Game gameByFilename = connector.getGameByFilename(emuId, game.getGameFile().getName());
     assertNotNull(gameByFilename);
 
     assertNotEquals(connector.getGameCount(1), 0);

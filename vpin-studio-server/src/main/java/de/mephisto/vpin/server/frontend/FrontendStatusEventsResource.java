@@ -1,9 +1,12 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.games.TableStatusChangedOrigin;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,9 +94,19 @@ public class FrontendStatusEventsResource {
 
   private Game resolveGame(String table) {
     File tableFile = new File(table.trim());
-    Game game = gameService.getGameByFilename(tableFile.getName());
+
+    // derive the emulator from the table folder
+    int emuId = -1;
+    for (GameEmulator emu: frontendStatusService.getGameEmulators()) {
+      if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
+        emuId = emu.getId();
+        break;
+      }
+    }
+
+    Game game = gameService.getGameByFilename(emuId, tableFile.getName());
     if (game == null && tableFile.getParentFile() != null) {
-      game = gameService.getGameByFilename(tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+      game = gameService.getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
     }
     LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
     return game;

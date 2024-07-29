@@ -148,7 +148,8 @@ abstract public class AbstractVPinServerTest {
   }
 
   protected Competition createOfflineCompetition(String filename) {
-    Game game = gameService.getGameByFilename(filename);
+    int emuId = 1;
+    Game game = gameService.getGameByFilename(emuId, filename);
 
     Competition competition = new Competition();
     competition.setGameId(game.getId());

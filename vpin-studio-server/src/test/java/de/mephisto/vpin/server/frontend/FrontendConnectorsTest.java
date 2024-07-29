@@ -110,11 +110,11 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
       }
     }
 
-    Game twister = connector.getGameByFilename(NVRAM_TABLE_NAME);
+    Game twister = connector.getGameByFilename(vpx.getId(), NVRAM_TABLE_NAME);
     assertNotNull(twister);
     assertEquals("Twister (1996)", twister.getGameName());
 
-    Game notfound = connector.getGameByFilename("notfound.vpx");
+    Game notfound = connector.getGameByFilename(vpx.getId(), "notfound.vpx");
     assertNull(notfound);
 
     return twister.getId();
