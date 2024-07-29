@@ -379,6 +379,7 @@
                                         <include>vpbm-128.png</include>
                                         <include>scoringdb.json</include>
                                         <include>vpsdb.json</include>
+                                        <include>tesseract/**</include>
                                         <include>*.index</include>
                                     </includes>
                                     <excludes>
