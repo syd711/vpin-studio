@@ -39,7 +39,7 @@ public class TournamentCellContainer extends HBox {
     titleLabel.setPrefWidth(TITLE_WIDTH);
     titleLabel.getStyleClass().add("default-headline");
     titleLabel.setStyle(TournamentHelper.getLabelCss(tournament));
-    Label valueLabel = new Label(owner.getDisplayName());
+    Label valueLabel = new Label(owner.getDisplayName() != null ? owner.getDisplayName() : "-");
     valueLabel.getStyleClass().add("default-text");
     valueLabel.setStyle(TournamentHelper.getLabelCss(tournament));
     row.getChildren().addAll(titleLabel, valueLabel);

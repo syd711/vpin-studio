@@ -308,7 +308,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       if (!StringUtils.isEmpty(item.getWebsite())) {
         websiteLink.setText(item.getWebsite());
       }
-      if (!StringUtils.isEmpty(item.getDescription())) {
+      if (!StringUtils.isEmpty(item.getDescription()) && !item.getDescription().equals("null")) {
         descriptionText.setText(item.getDescription());
       }
 
