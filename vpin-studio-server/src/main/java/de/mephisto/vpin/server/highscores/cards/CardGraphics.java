@@ -186,7 +186,7 @@ public class CardGraphics {
 
     currentY = currentY + template.getTableFontSize() / 2;
 
-    int wheelSize = 3 * template.getScoreFontSize() + 3 * template.getRowMargin();
+    int wheelSize = template.getWheelSize();
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
