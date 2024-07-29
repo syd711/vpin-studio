@@ -813,7 +813,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         root.setMaxHeight(Double.MAX_VALUE);
 
         StackPane editorRootStack = tablesController.getEditorRootStack();
-        if (editorRootStack.getChildren().size() > 1) {
+        if (editorRootStack.getChildren().size() > 3) {
           return;
         }
 
