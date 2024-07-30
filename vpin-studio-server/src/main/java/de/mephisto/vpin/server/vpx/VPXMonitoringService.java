@@ -88,8 +88,10 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     int gameId = gameStatusService.getStatus().getGameId();
     if (gameId > 0) {
       Game game = gameService.getGame(gameId);
-      LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
-      frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_VPS);
+      if (game != null) {
+        LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
+        frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+      }
     }
   }
 
@@ -99,7 +101,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     Game game = gameService.getGameByFilename(emuId, tableName + ".vpx");
     if (game != null) {
       LOG.info(this.getClass().getSimpleName() + " notifying table start event of \"" + game.getGameDisplayName() + "\"");
-      frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_VPS);
+      frontendStatusService.notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
     }
     else {
       LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");

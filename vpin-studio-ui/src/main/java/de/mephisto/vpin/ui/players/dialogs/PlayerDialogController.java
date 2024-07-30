@@ -14,6 +14,8 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -52,6 +54,9 @@ public class PlayerDialogController implements Initializable, DialogController {
 
   @FXML
   private TextField initialsField;
+
+  @FXML
+  private TextField maniaNameField;
 
   @FXML
   private CheckBox adminRoleCheckbox;
@@ -102,7 +107,9 @@ public class PlayerDialogController implements Initializable, DialogController {
         }
       }
 
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, this.tournamentPlayerCheckbox.isSelected(), this.avatarFile, this.avatarStack));
+      boolean maniaAccount = this.tournamentPlayerCheckbox.isSelected();
+      String maniaName = this.maniaNameField.getText();
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(stage, new PlayerSaveProgressModel(stage, this.player, maniaAccount, maniaName, this.avatarFile, this.avatarStack));
       if (!progressDialog.getResults().isEmpty()) {
         Object o = progressDialog.getResults().get(0);
         if (o instanceof PlayerRepresentation) {
@@ -213,6 +220,9 @@ public class PlayerDialogController implements Initializable, DialogController {
       if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
         Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
         this.tournamentPlayerCheckbox.setSelected(accountByUuid != null);
+        if(accountByUuid != null) {
+          this.maniaNameField.setText(accountByUuid.getDisplayName());
+        }
       }
       refreshAvatar();
     }
@@ -264,6 +274,14 @@ public class PlayerDialogController implements Initializable, DialogController {
     this.adminRoleCheckbox.setSelected(player.isAdministrative());
     this.adminRoleCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> player.setAdministrative(newValue));
 
+    this.tournamentPlayerCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        maniaNameField.setDisable(!newValue);
+      }
+    });
+
+    this.maniaNameField.setDisable(true);
     this.tournamentPlayerCheckbox.setSelected(false);
     this.nameField.requestFocus();
   }
