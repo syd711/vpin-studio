@@ -416,8 +416,9 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
       }
 
       new Thread(() -> {
+        TreeItem<TournamentTreeModel> root = loadTreeModel();
+
         Platform.runLater(() -> {
-          TreeItem<TournamentTreeModel> root = loadTreeModel();
           tableStack.getChildren().remove(loadingOverlay);
           treeTableView.setVisible(true);
 

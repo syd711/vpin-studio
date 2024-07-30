@@ -192,6 +192,12 @@ public class IScored {
       conn.disconnect();
 
       LOG.info("Submitted new highscore to iscored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
+      try {
+        LOG.info("iScored returned: " + conn.getResponseCode());
+      }
+      catch (IOException e) {
+        //ignore
+      }
       return true;
     } catch (IOException e) {
       LOG.error("Failed to submit iscored highscore: " + e.getMessage(), e);
