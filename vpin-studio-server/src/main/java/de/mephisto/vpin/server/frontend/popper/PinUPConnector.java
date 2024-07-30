@@ -1167,8 +1167,6 @@ public class PinUPConnector implements FrontendConnector {
 
         // specific initialization
         if (e.isVisualPinball()) {
-          initVisualPinballXScripts(e);
-
           String exeName = SystemUtil.is64Bit(preferencesService) ? "VPinballX64.exe" : "VPinballX.exe";
 
           //parsing of the specific popper script
@@ -1198,6 +1196,11 @@ public class PinUPConnector implements FrontendConnector {
     }
     finally {
       this.disconnect(connect);
+    }
+
+    //this can not be executed within a fetch!!!
+    for (Emulator emulator : result) {
+      initVisualPinballXScripts(emulator);
     }
 
     return result;
