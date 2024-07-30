@@ -90,9 +90,11 @@ public class CardGenerationPreferencesController implements Initializable {
     cardTargetScreenCombo.setItems(screenNames);
     cardTargetScreenCombo.setValue(cardSettings.getPopperScreen() != null ? cardSettings.getPopperScreen() : "");
     cardTargetScreenCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
-      cardSettings.setPopperScreen(newValue);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
-      onScreenChange();
+      Platform.runLater(() -> {
+        cardSettings.setPopperScreen(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
+        onScreenChange();
+      });
     });
 
     resolutionChangeListener = new ResolutionChangeListener();

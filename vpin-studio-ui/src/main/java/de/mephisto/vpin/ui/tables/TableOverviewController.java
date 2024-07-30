@@ -1184,7 +1184,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }, true);
 
     configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates());
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates(), uiSettings);
     });
 
     configureColumn(columnPOV, (value, model) -> {
