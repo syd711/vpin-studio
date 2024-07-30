@@ -27,19 +27,19 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
-  private final Stage stage;
   private final List<PlayerRepresentation> players;
-  private final boolean tournamentPlayer;
+  private final boolean maniaPlayer;
+  private final String maniaName;
   private File avatarFile;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean maniaPlayer, String maniaName, File avatarFile, Pane avatarStack) {
     super("Saving Player");
-    this.stage = stage;
     this.players = Arrays.asList(playerRepresentation);
-    this.tournamentPlayer = tournamentPlayer;
+    this.maniaPlayer = maniaPlayer;
+    this.maniaName = maniaName;
     this.avatarFile = avatarFile;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
@@ -118,7 +118,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
   private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
     //post process tournament player creation
-    if (tournamentPlayer) {
+    if (maniaPlayer) {
       Account maniaAccount = null;
       if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
         maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
@@ -126,7 +126,12 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
       //the user is already registered
       if (maniaAccount != null) {
-        maniaAccount.setDisplayName(player.getName());
+        String accountName = player.getName();
+        if(!StringUtils.isEmpty(maniaName)) {
+          accountName = maniaName;
+        }
+
+        maniaAccount.setDisplayName(accountName);
         maniaAccount.setInitials(player.getInitials());
 
         Account update = maniaClient.getAccountClient().update(maniaAccount);
@@ -145,6 +150,10 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
         //register new account
         generateAvatarFile();
         maniaAccount = player.toManiaAccount();
+        String accountName = player.getName();
+        if(!StringUtils.isEmpty(maniaName)) {
+          maniaAccount.setDisplayName(maniaName);
+        }
         Account register = maniaClient.getAccountClient().create(maniaAccount, avatarFile, null);
         player.setTournamentUserUuid(register.getUuid());
         client.getPlayerService().savePlayer(player);

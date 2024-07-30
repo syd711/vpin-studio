@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>3.0.2</version>
+    <version>3.0.4</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -379,6 +379,7 @@
                                         <include>vpbm-128.png</include>
                                         <include>scoringdb.json</include>
                                         <include>vpsdb.json</include>
+                                        <include>tesseract/**</include>
                                         <include>*.index</include>
                                     </includes>
                                     <excludes>

@@ -253,7 +253,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
         if (gameByVpsTable != null) {
           versionId = gameByVpsTable.getExtTableVersionId();
           updates = gameByVpsTable.getVpsUpdates();
-          return new SimpleObjectProperty<>(new VpsTableColumn(value.getId(), versionId, updates));
+          return new SimpleObjectProperty<>(new VpsTableColumn(value.getId(), versionId, updates, null));
         }
       }
 

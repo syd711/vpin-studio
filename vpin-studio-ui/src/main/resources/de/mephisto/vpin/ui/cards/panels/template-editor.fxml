@@ -431,6 +431,9 @@
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
+                                             <HBox.margin>
+                                                <Insets top="6.0" />
+                                             </HBox.margin>
                                           </Label>
                                           <Label>
                                              <tooltip>
