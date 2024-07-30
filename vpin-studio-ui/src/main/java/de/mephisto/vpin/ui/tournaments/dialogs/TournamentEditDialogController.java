@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
+import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
@@ -15,19 +16,15 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.assets.AssetRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.ui.DashboardController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tournaments.*;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTableGameCellContainer;
 import de.mephisto.vpin.ui.tournaments.view.TournamentTreeModel;
-import de.mephisto.vpin.ui.util.AvatarFactory;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
@@ -59,7 +56,6 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
@@ -169,7 +165,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
   private Stage stage;
   private Tournament tournament;
 
-  private List<TournamentTreeModel> tableSelection = new ArrayList<>();
+  private final List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
   private Cabinet cabinet;
   private TreeItem<TournamentTreeModel> result;
@@ -415,6 +411,12 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     if (!isOwner) {
       this.saveBtn.setText("Join Tournament");
+
+      if(!StringUtils.isEmpty(tournament.getDashboardUrl())) {
+        GameRoom gameRoom = IScored.getGameRoom(tournament.getDashboardUrl());
+        iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoresEnabled());
+      }
+
     }
     else if (isOwner && tournament.getUuid() != null) {
       this.saveBtn.setText("Update Tournament");
