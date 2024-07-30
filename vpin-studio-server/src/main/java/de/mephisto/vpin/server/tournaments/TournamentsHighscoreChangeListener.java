@@ -49,10 +49,16 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
   @Override
   public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
-    if(event.getEventOrigin().equals(EventOrigin.TABLE_SCAN)) {
-      LOG.info("Ignored highscore change, because of table scans are skipped.");
+    if (event.getEventOrigin().equals(EventOrigin.TABLE_SCAN)) {
+      LOG.info("Ignored tournament highscore change, because of table scans are skipped.");
       return;
     }
+
+    if (event.getNewScore().getPlayer() == null) {
+      LOG.info("Ignored tournament highscore change, because no player set for this score.");
+      return;
+    }
+
     VPinManiaClient maniaClient = maniaService.getClient();
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
 
@@ -60,13 +66,14 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
       new Thread(() -> {
         Thread.currentThread().setName("VPin Mania Highscore ChangeListener Thread");
 
-        Game game = event.getGame();
         Score newScore = event.getNewScore();
+        Game game = event.getGame();
 
         try {
           TableScore newTableScore = createTableScore(game, newScore);
           Player player = newScore.getPlayer();
-          if (player.getTournamentUserUuid() == null) {
+          if (player == null || player.getTournamentUserUuid() == null) {
+            LOG.info("");
             Player adminPlayer = playerService.getAdminPlayer();
             if (adminPlayer != null) {
               player = adminPlayer;
