@@ -19,10 +19,10 @@ public class DMDScoreTest {
 
   @Test
   public void testSaveFrame() throws Exception {
-    Frame f = parseFrame("waiting.frame");
+    Frame f = parseFrame("_waiting.frame", 12345);
     String out = doProcess(new DMDScoreProcessorFrameDump(), f);
 
-    File file = new File(getClass().getResource("waiting.frame").toURI());
+    File file = new File(getClass().getResource("_waiting.frame").toURI());
     String expected = FileUtils.readFileToString(file, "UTF-8");
     expected = expected.replace(System.lineSeparator(), "\n");
 
@@ -31,16 +31,44 @@ public class DMDScoreTest {
 
   @Test
   public void testSaveImage() throws Exception {
-    Frame f = parseFrame("waiting.frame");
+    Frame f = parseFrame("_waiting.frame", 12345);
     doProcess(new DMDScoreProcessorImageDump(), f);
   }
 
   @Test
   public void testScanImage() throws Exception {
-    Frame f = parseFrame("waiting.frame");
+    Frame f = parseFrame("_waiting.frame", 12345);
     String txt = doProcess(new DMDScoreProcessorImageScanner(), f);
     assertEquals("WAITING FOR\nSWITCH SCANNING\n", txt);
   }
+
+  @Test
+  public void testScan2sides1() throws Exception {
+    Frame f = parseFrame("_2sides_1.frame", 12346);
+    String txt = doProcess(new DMDScoreProcessor2Sides(41), f);
+    
+    //FIXME do not recognize simple separated caracters and SCORE
+    assertEquals("797,020\n" +
+            "650,700\n\n" +
+            //------------------------
+            "HIGH pCORE #1\n" + 
+            //"L R\n" +             
+            "55,000,000\n", txt);
+  }
+
+  @Test
+  public void testScan2sides2() throws Exception {
+    Frame f = parseFrame("_2sides_2.frame", 12347);
+    String txt = doProcess(new DMDScoreProcessor2Sides(41), f);
+    assertEquals("797,020\n" +
+            "650,700\n\n" +
+            //------------------------
+            "FINAL BATTLE CHAMPION\n" + 
+            "LFS\n" +
+            "25,000,000\n", txt);
+  }
+
+  
 
   //----------------------
 
@@ -67,7 +95,7 @@ public class DMDScoreTest {
     return palette;
   }
 
-  public Frame parseFrame(String frameName) throws Exception{
+  public Frame parseFrame(String frameName, int timestamp) throws Exception{
     File f = new File(getClass().getResource(frameName).toURI());
     List<String> lines = Files.readLines(f, Charset.forName("UTF-8")); 
     
@@ -80,6 +108,7 @@ public class DMDScoreTest {
         plane[off++] = " ".equals(c)? 0 : Byte.parseByte(c);
       }
     }
-    return new Frame(FrameType.COLORED_GRAY_2, 12345, plane);
+    // timestamp relative to 2024/01/01
+    return new Frame(FrameType.COLORED_GRAY_2, timestamp, plane);
   }
 }

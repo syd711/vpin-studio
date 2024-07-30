@@ -31,6 +31,14 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
 
   private File folder;
 
+  // Resize images
+  protected int scale = 4;
+  // Add border arround to avoid text too closed to borders
+  protected int border = 4;
+  // Apply a blur effect
+  protected int radius = 1;
+  
+
   @Override
   public void onFrameStart(String gameName) {
     try {
@@ -46,13 +54,6 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
 
   @Override
   public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
-
-    // Resize our image
-    int scale = 3;
-    int border = 4;
-    // Apply a blur effect
-    int radius = 1;
-
     int W = (width + 2 * border) * scale;
     int H = (height + 2 * border) * scale;
     int size = 2 * radius + 1;
@@ -103,7 +104,7 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
     try {
       File tessExe = new File(TESSERACT_FOLDER, "tesseract.exe");
 
-      List<String> commands = Arrays.asList(tessExe.getAbsolutePath(), imgFile.getAbsolutePath(), outFile.getAbsolutePath(), "-l", "eng");
+      List<String> commands = Arrays.asList(tessExe.getAbsolutePath(), imgFile.getAbsolutePath(), outFile.getAbsolutePath(), "--psm", "6");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(folder);
       executor.executeCommand();
