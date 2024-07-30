@@ -104,6 +104,19 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   @FXML
+  private void onBackgroundReset() {
+    GameRepresentation game = tableView.getSelectionModel().getSelectedItem();
+    if (game != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Re-generate default background for \"" + game.getGameDisplayName() + "\"?",
+          "This will re-generate the existing default background.", null, "Generate Background");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        Studio.client.getAssetService().deleteGameAssets(game.getId());
+        refreshRawPreview(Optional.of(game));
+      }
+    }
+  }
+
+  @FXML
   private void onTableEdit() {
     GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();
     if (selection != null) {

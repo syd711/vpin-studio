@@ -104,8 +104,7 @@ public class CardGraphics {
     else {
       try {
         backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         LOG.info("Using default image as fallback instead of " + croppedDefaultPicture.getAbsolutePath());
         BufferedImage sImage = ImageUtil.loadImage(sourceImage);
         backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
@@ -186,7 +185,7 @@ public class CardGraphics {
 
     currentY = currentY + template.getTableFontSize() / 2;
 
-    int wheelSize = template.getWheelSize();
+    int wheelSize = 3 * template.getScoreFontSize() + 3 * template.getRowMargin();
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
@@ -198,14 +197,14 @@ public class CardGraphics {
           wheelIconFile = augmenter.getBackupWheelIcon();
         }
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, template.getMarginLeft() + template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
+        g.drawImage(wheelImage, template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
       }
     }
 
     //the wheelsize should match the height of three score entries
     int scoreX = template.getMarginLeft();
     if (template.isRenderWheelIcon()) {
-      scoreX = scoreX + template.getWheelPadding() + wheelSize + template.getWheelPadding();
+      scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
     }
     int scoreY = currentY;
 
