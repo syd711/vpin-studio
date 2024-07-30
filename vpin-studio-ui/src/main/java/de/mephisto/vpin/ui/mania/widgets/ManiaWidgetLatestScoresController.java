@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -45,6 +46,9 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
 
   @FXML
   private StackPane viewStack;
+
+  @FXML
+  private Button reloadBtn;
 
   private Parent loadingOverlay;
   private TabManiaOverviewController overviewController;
@@ -76,6 +80,7 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
   }
 
   public void refresh() {
+    this.reloadBtn.setDisable(true);
     if(!viewStack.getChildren().contains(loadingOverlay)) {
       viewStack.getChildren().add(loadingOverlay);
     }
@@ -115,6 +120,7 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
         }
 
         viewStack.getChildren().remove(loadingOverlay);
+        this.reloadBtn.setDisable(false);
       });
     }).start();
   }

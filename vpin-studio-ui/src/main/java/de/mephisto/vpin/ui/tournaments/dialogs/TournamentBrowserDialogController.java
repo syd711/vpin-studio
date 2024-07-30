@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
+import de.mephisto.vpin.connectors.mania.model.TournamentMember;
 import de.mephisto.vpin.connectors.mania.model.TournamentSearchResult;
 import de.mephisto.vpin.connectors.mania.model.TournamentSearchResultItem;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
@@ -37,8 +38,7 @@ import java.net.URL;
 import java.text.DateFormat;
 import java.util.*;
 
-import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
+import static de.mephisto.vpin.ui.Studio.*;
 
 public class TournamentBrowserDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TournamentBrowserDialogController.class);
@@ -113,6 +113,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private TournamentSearchResult searchResult;
   private int page = 0;
   private PlayerRepresentation defaultPlayer;
+  private List<PlayerRepresentation> localPlayers;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -198,7 +199,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
     tablesColumn.setCellValueFactory(cellData -> {
       TournamentSearchResultItem value = cellData.getValue();
-      if(!tableSummaryCache.containsKey(value.getId())) {
+      if (!tableSummaryCache.containsKey(value.getId())) {
         TournamentSearchTableSummary summary = new TournamentSearchTableSummary(value);
         tableSummaryCache.put(value.getId(), summary);
       }
@@ -221,12 +222,12 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournaments...");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
     defaultPlayer = client.getPlayerService().getDefaultPlayer();
+    localPlayers = client.getPlayerService().getPlayers();
 
     Platform.runLater(() -> {
       doSearch("", 0);
@@ -272,8 +273,7 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
             viewStack.getChildren().remove(loadingOverlay);
           });
         }).start();
-      }
-      catch (Exception e) {
+      } catch (Exception e) {
         viewStack.getChildren().remove(loadingOverlay);
         WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
       }
@@ -294,29 +294,49 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
 
 
     if (selection.isPresent()) {
-      TournamentSearchResultItem item = selection.get();
+      try {
+        TournamentSearchResultItem item = selection.get();
 
-      saveBtn.setDisable(defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid()));
+        boolean isOwner = defaultPlayer != null && defaultPlayer.getTournamentUserUuid() != null && defaultPlayer.getTournamentUserUuid().equals(item.getOwnerUuid());
+        List<TournamentMember> tournamentMembers = maniaClient.getTournamentClient().getTournamentMembers(selection.get().getId());
+        boolean isMember = containsLocalPlayer(tournamentMembers);
 
-      nameLabel.setText(item.getDisplayName());
-      startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
-      endLabel.setText(DateFormat.getDateTimeInstance().format(item.getEndDate()));
-      remainingLabel.setText(DateUtil.formatDuration(item.getStartDate(), item.getEndDate()));
-      if (!StringUtils.isEmpty(item.getDiscordLink())) {
-        discordLink.setText(item.getDiscordLink());
-      }
-      if (!StringUtils.isEmpty(item.getWebsite())) {
-        websiteLink.setText(item.getWebsite());
-      }
-      if (!StringUtils.isEmpty(item.getDescription()) && !item.getDescription().equals("null")) {
-        descriptionText.setText(item.getDescription());
-      }
+        saveBtn.setDisable(isOwner || isMember);
 
-      ownerLabel.setText(item.getOwnerName());
-      String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
-      ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
-      avatarPane.getChildren().add(imageView);
+        nameLabel.setText(item.getDisplayName());
+        startLabel.setText(DateFormat.getDateTimeInstance().format(item.getStartDate()));
+        endLabel.setText(DateFormat.getDateTimeInstance().format(item.getEndDate()));
+        remainingLabel.setText(DateUtil.formatDuration(item.getStartDate(), item.getEndDate()));
+        if (!StringUtils.isEmpty(item.getDiscordLink())) {
+          discordLink.setText(item.getDiscordLink());
+        }
+        if (!StringUtils.isEmpty(item.getWebsite())) {
+          websiteLink.setText(item.getWebsite());
+        }
+        if (!StringUtils.isEmpty(item.getDescription()) && !item.getDescription().equals("null")) {
+          descriptionText.setText(item.getDescription());
+        }
+
+        ownerLabel.setText(item.getOwnerName());
+        String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
+        ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
+        avatarPane.getChildren().add(imageView);
+      } catch (Exception e) {
+        LOG.error("Failed to read tournament browse data: " + e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Failed to read tournament data: " + e.getMessage());
+      }
     }
+  }
+
+  private boolean containsLocalPlayer(List<TournamentMember> tournamentMembers) {
+    for (PlayerRepresentation player : localPlayers) {
+      for (TournamentMember tournamentMember : tournamentMembers) {
+        if (tournamentMember.getAccountUuid().equals(player.getTournamentUserUuid())) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   public Tournament getTournament() {

@@ -23,10 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -76,6 +73,12 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private StackPane tableStack;
+
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
+  private Button synchronizeBtn;
 
   private Parent loadingOverlay;
   private List<RankedPlayer> rankedPlayers;
@@ -223,6 +226,8 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   }
 
   public void refresh() {
+    this.synchronizeBtn.setDisable(true);
+    this.reloadBtn.setDisable(true);
     this.tableView.setVisible(false);
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
@@ -245,6 +250,8 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
         ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
         tableView.setItems(data);
         tableView.refresh();
+        this.reloadBtn.setDisable(false);
+        this.synchronizeBtn.setDisable(false);
       });
     }).start();
   }
