@@ -20,7 +20,6 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
   private static final int DEFAULT_COLOR = 0xec843d;
 
   private String gameName;
-  private int firstTimeStamp = -1;
 
   private int width = -1;
   private int height = -1;
@@ -45,7 +44,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
     String typeString = stringFromData(frameData, true);
 
-    LOG.info("New Binary Message Received " + typeString);
+    //LOG.info("New Binary Message Received " + typeString);
   
     FrameType type = FrameType.getEnum(typeString);
   
@@ -119,13 +118,9 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       return;
     }
 
-    if (firstTimeStamp < 0) {
-      firstTimeStamp = timeStamp;
-    }
-
     if (processor != null) {
       byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-      Frame frame = new Frame(type, timeStamp - firstTimeStamp, frameBytes);
+      Frame frame = new Frame(type, timeStamp, frameBytes);
       processor.onFrameReceived(frame, palette, width, height);
     }
   }
@@ -136,7 +131,6 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         processor.onFrameStop(gameName);
       }
       this.gameName = null;
-      this.firstTimeStamp = -1;
     }
   }
 

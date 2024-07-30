@@ -30,9 +30,9 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
 
-    // Create a ARGB palette
+    // Create an ARGB palette from given palette
     int[] argbPalette = new int[palette.length];
     for (int i = 0; i < palette.length; i++) {
       argbPalette[i] = (255 << 24) | palette[i];
@@ -47,10 +47,12 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
     // save it to file
     try {
       ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", 
-        new File("c:/temp/" + gameName + "/" + frame.getTimeStamp() + ".png"));
+        new File("c:/temp/" + gameName + "/dump_" + frame.getTimeStamp() + ".png"));
     } catch (IOException e) {
       LOG.error("cannot generate image " + frame.getTimeStamp());
     }
+
+    return null;
   }
 
 }

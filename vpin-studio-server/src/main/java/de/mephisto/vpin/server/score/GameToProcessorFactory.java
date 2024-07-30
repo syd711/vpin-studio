@@ -3,7 +3,19 @@ package de.mephisto.vpin.server.score;
 public class GameToProcessorFactory {
 
   public DMDScoreProcessor getProcessor(String gameName) {
-    return getImage2SidesProcessor();
+    return new DMDScoreProcessorDelegate(
+      getFrameDumpProcessor(), 
+      _getProcessor(gameName)
+    );
+  }
+
+  public DMDScoreProcessor _getProcessor(String gameName) {
+    if (gameName.startsWith("avr_200")) {
+      return getImage2SidesProcessor();
+    }
+    else {
+      return getImageScannerProcessor();
+    }
   }
 
   /**
@@ -21,14 +33,14 @@ public class GameToProcessorFactory {
   }
 
   /**
-   * A processor that dump images using dmd palette, skiping frames shortly displayed 
+   * A processor recognize texts from images 
    */
-  public DMDScoreProcessor getImageGenProcessor() {
+  public DMDScoreProcessor getImageScannerProcessor() {
     return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessorImageScanner());
   }
 
     /**
-   * A processor that dump images using dmd palette, skiping frames shortly displayed 
+   * A processor that split images in two at given position, and process them separately 
    */
   public DMDScoreProcessor getImage2SidesProcessor() {
     return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessor2Sides(41));

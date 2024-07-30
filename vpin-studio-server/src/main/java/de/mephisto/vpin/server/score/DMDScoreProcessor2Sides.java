@@ -18,11 +18,12 @@ public class DMDScoreProcessor2Sides extends  DMDScoreProcessorImageScanner {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
 
     // Resize images
     int scale = 3;
-    int H = height * scale;
+    int border = 4;
+    int H = (height + 2 * border) * scale;
     // Blur effect
     int radius = 1;
     int size = 2 * radius + 1;
@@ -31,14 +32,16 @@ public class DMDScoreProcessor2Sides extends  DMDScoreProcessorImageScanner {
     PixelFormat<ByteBuffer> format = generateBlurPalette(size);
 
     // Apply the transformations, crop, rescale and recolor, then blur
-    byte[] left = crop(frame.getPlane(), width, height, 0, splitPosition-1, scale, (byte) size);
+    byte[] left = crop(frame.getPlane(), width, height, border, 0, splitPosition-1, 0, height, scale, (byte) size);
     left = blur(left, (splitPosition-1) * scale, H, radius);
-    File leftImg = saveImage(left, (splitPosition-1) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_left");
+    File leftImg = saveImage(left, (splitPosition - 1 + 2 * border) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_left");
     String leftTxt = extractText(leftImg);
 
-    byte[] right = crop(frame.getPlane(), width, height, splitPosition+1, width, scale, (byte) size);
+    byte[] right = crop(frame.getPlane(), width, height, border, splitPosition+1, width, 0, height, scale, (byte) size);
     right = blur(right, (width-splitPosition-1) * scale, H, radius);
-    File rightImage = saveImage(right, (width-splitPosition-1) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_right");
+    File rightImage = saveImage(right, (width - splitPosition - 1 + 2 * border) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_right");
     String rightTxt = extractText(rightImage);
+
+    return leftTxt + "\n" + rightTxt;
   }
 }

@@ -18,18 +18,18 @@ public enum FrameType {
   private final String type;
 
   FrameType(String type) {
-      this.type = type;
+    this.type = type;
   }
 
   public static FrameType getEnum(final String type) {
-      if (!type.isEmpty()) {
-          for (FrameType frameType : FrameType.values()) {
-              if (frameType.type.equals(type)) {
-                  return frameType;
-              }
-          }
+    if (!type.isEmpty()) {
+      for (FrameType frameType : FrameType.values()) {
+        if (frameType.type.equals(type)) {
+          return frameType;
+        }
       }
-      return UNKNOWN;
+    }
+    return UNKNOWN;
   }
 
   @Override

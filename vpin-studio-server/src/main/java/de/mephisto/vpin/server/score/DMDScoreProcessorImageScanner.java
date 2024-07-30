@@ -34,7 +34,9 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
   @Override
   public void onFrameStart(String gameName) {
     try {
-      this.folder = Files.createTempDirectory(gameName).toFile();
+      this.folder = //Files.createTempDirectory(gameName + "_").toFile();
+        new File("c:/temp/" + gameName);
+      this.folder.mkdirs();
       LOG.info("Use temp folder to store images : " + folder.getAbsolutePath());
     }
     catch (Exception e) {
@@ -43,27 +45,38 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
 
     // Resize our image
     int scale = 3;
-    int W = width * scale;
-    int H = height * scale;
+    int border = 4;
     // Apply a blur effect
     int radius = 1;
+
+    int W = (width + 2 * border) * scale;
+    int H = (height + 2 * border) * scale;
     int size = 2 * radius + 1;
     size *= size;
 
-    // Apply the transformations, rescale and recolor, then blur
-    byte[] pixels = rescale(frame.getPlane(), width, height, scale, (byte) size);
-    pixels = blur(pixels, W, H, radius);
-
+    // Apply the transformations, add an empty border, rescale and recolor, then blur
+    byte[] pixels = rescale(frame.getPlane(), width, height, border, scale, (byte) size);
+    if (radius > 0) {
+      pixels = blur(pixels, W, H, radius);
+    }
+  
     PixelFormat<ByteBuffer> format = generateBlurPalette(size);
 
     File img = saveImage(pixels, W, H, format, Integer.toString(frame.getTimeStamp()));
-    String txt = extractText(img);
-    //img.delete();
+    return extractText(img);
+    //FIXME img.delete(); or leave images until full folder is deleted but mind disk size 
   }
+
+  @Override
+  public void onFrameStop(String gameName) {
+    //FIXME delete folder
+  }
+
+  //--------------------
 
   protected File saveImage(byte[] pixels, int width, int height, PixelFormat<ByteBuffer> palette, String filename) {
     // generate our new image
@@ -106,7 +119,7 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
       outFile = new File(folder, "out.txt");
       if (outFile.exists()) {
         String content = Files.readString(outFile.toPath());
-        LOG.info("Text recognized\n" + content);
+        LOG.info("Text recognized from " + imgFile.getName() + " :\n" + content);
         outFile.delete();
 
         return content;
@@ -129,19 +142,22 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
     return format;
   }
 
-  protected byte[] rescale(byte[] plane, int width, int height, int scale, byte black) {
-    return crop(plane, width, height, 0, width, scale, black);
+  protected byte[] rescale(byte[] plane, int width, int height, int border, int scale, byte black) {
+    return crop(plane, width, height, border, 0, width, 0, height, scale, black);
   }
 
-  protected byte[] crop(byte[] plane, int width, int height, int xFrom, int xTo, int scale, byte black) {
-    int newWith = xTo - xFrom;
-    byte[] scaledPlane = new byte[newWith * scale * height * scale];
+  protected byte[] crop(byte[] plane, int width, int height, int border, 
+    int xFrom, int xTo, int yFrom, int yTo, int scale, byte black) {
+          
+    int newWith = xTo - xFrom + 2 * border;
+    int newHeight = yTo - yFrom + 2 * border;
+    byte[] scaledPlane = new byte[newWith * scale * newHeight * scale];
 
-    for (int y = 0; y < height; y++) {
+    for (int y = yFrom; y < yTo; y++) {
       for (int x = xFrom; x < xTo; x++) {
         for (int dy = 0; dy < scale; dy++) {
           for (int dx = 0; dx < scale; dx++) {
-            scaledPlane[ (y * scale + dy) * newWith * scale + (x - xFrom) * scale + dx] = (plane[y * width + x] == 0 ? 0: black);
+            scaledPlane[ ((y - yFrom + border) * scale + dy) * newWith * scale + (x - xFrom + border) * scale + dx] = (plane[y * width + x] == 0 ? 0: black);
           }
         }
       }

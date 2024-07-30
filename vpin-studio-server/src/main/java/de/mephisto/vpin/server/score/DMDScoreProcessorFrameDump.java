@@ -22,7 +22,7 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
   public void onFrameStart(String gameName) {
     try {
       File file = new File("c:/temp/" + gameName + "/dump.txt");
-      file.mkdirs(); 
+      file.getParentFile().mkdirs(); 
       this.writer = new BufferedWriter(new FileWriter(file));
       writer.append(gameName + "\n\n");
     } 
@@ -31,24 +31,28 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
   }
 
   @Override
-  public void onFrameReceived(Frame frame, int[] palette, int width, int height) {
-
+  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
+    StringBuilder bld = new StringBuilder();
     try {
       writer.append(frame.getType() + " / " + frame.getTimeStamp() + "\n");
+
       byte[] plane  = frame.getPlane();
       for (int j = 0; j < height; j++) {
         for (int i = 0; i < width; i++) {
           int idx = plane[j * width + i];
-          writer.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
+          bld.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
         }
-        writer.append("\n");
+        bld.append("\n");
       }
+
+      writer.append(bld);
       writer.append("\n");
       writer.flush();
     }
     catch (IOException ioe) {
       LOG.error("error while writing frame");
     }
+    return bld.toString();
   }
 
   @Override
