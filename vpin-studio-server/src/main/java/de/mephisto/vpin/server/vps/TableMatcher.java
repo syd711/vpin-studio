@@ -21,8 +21,13 @@ public class TableMatcher {
 
     final double[] minDistance = new double[]{10000};
     final VpsTable[] found = new VpsTable[1];
+
+    String romForFilter = StringUtils.isEmpty(_rom) ? _rom :
+        _rom.indexOf("_") > 0 ? StringUtils.substringBefore(_rom, "_") + "_" :
+        StringUtils.substring(_rom, 0, 5);
+
     tables.stream()
-        .filter(table -> checkRom(_rom, table, checkall))
+        .filter(table -> checkRom(romForFilter, table, checkall))
         .forEach(table -> {
           double dist = getTableDistance(table, _fileName, _tableName, _manuf, _year);
           if (dist < minDistance[0]) {
