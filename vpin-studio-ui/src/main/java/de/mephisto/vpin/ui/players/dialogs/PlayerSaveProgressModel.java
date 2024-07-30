@@ -27,19 +27,17 @@ import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(PlayerSaveProgressModel.class);
-  private final Stage stage;
   private final List<PlayerRepresentation> players;
-  private final boolean tournamentPlayer;
+  private final boolean maniaPlayer;
   private File avatarFile;
   private final Pane avatarStack;
 
   private final Iterator<PlayerRepresentation> playerIterator;
 
-  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean tournamentPlayer, File avatarFile, Pane avatarStack) {
+  public PlayerSaveProgressModel(Stage stage, PlayerRepresentation playerRepresentation, boolean maniaPlayer, File avatarFile, Pane avatarStack) {
     super("Saving Player");
-    this.stage = stage;
     this.players = Arrays.asList(playerRepresentation);
-    this.tournamentPlayer = tournamentPlayer;
+    this.maniaPlayer = maniaPlayer;
     this.avatarFile = avatarFile;
     this.avatarStack = avatarStack;
     this.playerIterator = players.iterator();
@@ -118,7 +116,7 @@ public class PlayerSaveProgressModel extends ProgressModel<PlayerRepresentation>
 
   private void updateTournamentPlayer(PlayerRepresentation player, File avatarFile) throws Exception {
     //post process tournament player creation
-    if (tournamentPlayer) {
+    if (maniaPlayer) {
       Account maniaAccount = null;
       if (!StringUtils.isEmpty(player.getTournamentUserUuid())) {
         maniaAccount = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());

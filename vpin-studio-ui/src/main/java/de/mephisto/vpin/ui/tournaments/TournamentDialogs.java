@@ -14,10 +14,10 @@ import javafx.stage.Stage;
 
 public class TournamentDialogs {
 
-  public static TournamentCreationModel openTournamentDialog(@NonNull String title, @NonNull Tournament tournament) {
+  public static TournamentCreationModel openTournamentDialog(@NonNull String title, @NonNull Tournament tournament, boolean joinMode) {
     Stage stage = Dialogs.createStudioDialogStage(TournamentEditDialogController.class, "dialog-tournament-edit.fxml", title);
     TournamentEditDialogController controller = (TournamentEditDialogController) stage.getUserData();
-    controller.setTournament(stage, tournament);
+    controller.setTournament(stage, tournament, joinMode);
     stage.showAndWait();
 
     return controller.getTournamentData();

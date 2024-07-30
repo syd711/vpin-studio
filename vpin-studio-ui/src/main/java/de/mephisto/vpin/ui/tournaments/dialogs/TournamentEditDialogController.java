@@ -8,10 +8,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
-import de.mephisto.vpin.connectors.mania.model.Cabinet;
-import de.mephisto.vpin.connectors.mania.model.Tournament;
-import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.connectors.mania.model.TournamentVisibility;
+import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -19,6 +16,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
@@ -164,6 +162,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
   private Stage stage;
   private Tournament tournament;
+  private boolean joinMode;
 
   private final List<TournamentTreeModel> tableSelection = new ArrayList<>();
   private Node loadingOverlay;
@@ -275,6 +274,22 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
       this.result = TournamentTreeModel.create(this.tournament, children);
     }
+    else if (joinMode) {
+      try {
+        PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+        if (defaultPlayer != null) {
+          String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
+          Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
+          if (account != null) {
+            maniaClient.getTournamentClient().addMember(this.tournament, account);
+          }
+        }
+      } catch (Exception ex) {
+        LOG.error("Error joining tournament: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(Studio.stage, ex.getMessage());
+      }
+    }
+
     stage.close();
   }
 
@@ -333,9 +348,10 @@ public class TournamentEditDialogController implements Initializable, DialogCont
     this.result = null;
   }
 
-  public void setTournament(Stage stage, Tournament selectedTournament) {
+  public void setTournament(Stage stage, Tournament selectedTournament, boolean joinMode) {
     this.stage = stage;
     this.tournament = selectedTournament;
+    this.joinMode = joinMode;
     this.visibilityCheckbox.setSelected(this.tournament.getVisibility().equals(TournamentVisibility.privateTournament));
 
     boolean isOwner = TournamentHelper.isOwner(selectedTournament, cabinet);
@@ -411,15 +427,14 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     if (!isOwner) {
       this.saveBtn.setText("Join Tournament");
-
-      if(!StringUtils.isEmpty(tournament.getDashboardUrl())) {
-        GameRoom gameRoom = IScored.getGameRoom(tournament.getDashboardUrl());
-        iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoresEnabled());
-      }
-
     }
     else if (isOwner && tournament.getUuid() != null) {
       this.saveBtn.setText("Update Tournament");
+    }
+
+    if (!StringUtils.isEmpty(tournament.getDashboardUrl())) {
+      GameRoom gameRoom = IScored.getGameRoom(tournament.getDashboardUrl());
+      iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoresEnabled());
     }
 
     Platform.runLater(() -> {
@@ -485,8 +500,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
               this.tableSelection.add(new TournamentTreeModel(tournament, gameRep, tournamentTable, vpsTable, vpsVersion));
               this.tableView.refresh();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
             }
@@ -641,8 +655,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournament Data...");
-    }
-    catch (IOException e) {
+    } catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }

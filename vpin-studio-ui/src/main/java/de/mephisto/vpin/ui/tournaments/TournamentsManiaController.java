@@ -139,7 +139,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         WidgetFactory.showAlert(Studio.stage, "You are the owner of tournament \"" + tournament.getDisplayName() + "\".");
       }
       else {
-        TournamentDialogs.openTournamentDialog(tournament.getDisplayName(), tournament);
+        TournamentDialogs.openTournamentDialog(tournament.getDisplayName(), tournament, true);
+        onReload();
       }
     }
   }
@@ -180,7 +181,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     newTournament.setDescription(settings.getDefaultDescription());
     newTournament.setWebsite(settings.getDefaultWebsite());
 
-    TournamentCreationModel newTournamentModel = TournamentDialogs.openTournamentDialog("Create Tournament", newTournament);
+    TournamentCreationModel newTournamentModel = TournamentDialogs.openTournamentDialog("Create Tournament", newTournament, false);
     try {
       if (newTournamentModel != null) {
         PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
@@ -226,7 +227,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     if (selection.isPresent()) {
       TournamentTreeModel model = selection.get().getValue();
       Tournament t = model.getTournament().cloneTournament();
-      TournamentCreationModel newTournament = TournamentDialogs.openTournamentDialog("Create Tournament", t);
+      TournamentCreationModel newTournament = TournamentDialogs.openTournamentDialog("Create Tournament", t, false);
       if (newTournament != null) {
         try {
           PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
@@ -263,18 +264,8 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Tournament t = TournamentDialogs.openTournamentBrowserDialog();
     if (t != null) {
       try {
-        TournamentCreationModel selectedTournament = TournamentDialogs.openTournamentDialog(t.getDisplayName(), t);
-        if (selectedTournament != null) {
-          PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-          if (defaultPlayer != null) {
-            String tournamentUserUuid = defaultPlayer.getTournamentUserUuid();
-            Account account = maniaClient.getAccountClient().getAccountByUuid(tournamentUserUuid);
-            if (account != null) {
-              maniaClient.getTournamentClient().addMember(selectedTournament.getNewTournamentModel().getValue().getTournament(), account);
-            }
-            onReload();
-          }
-        }
+        TournamentDialogs.openTournamentDialog(t.getDisplayName(), t, true);
+        onReload();
       }
       catch (Exception e) {
         LOG.error("Error browsing tournament: " + e.getMessage(), e);
@@ -288,7 +279,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
     Optional<TreeItem<TournamentTreeModel>> selection = getSelection();
     if (selection.isPresent()) {
       TournamentTreeModel tournamentTreeModel = selection.get().getValue();
-      TournamentCreationModel updatedTournament = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament());
+      TournamentCreationModel updatedTournament = TournamentDialogs.openTournamentDialog(tournamentTreeModel.getTournament().getDisplayName(), tournamentTreeModel.getTournament(), false);
       if (updatedTournament != null) {
         try {
           ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TournamentUpdateProgressModel(updatedTournament.getNewTournamentModel()));
