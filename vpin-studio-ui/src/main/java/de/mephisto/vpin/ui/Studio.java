@@ -256,6 +256,15 @@ public class Studio extends Application {
               r.setScaleY(1);
               ke.consume();
             }
+            if (ke.getCode() == KeyCode.S && ke.isAltDown() && ke.isControlDown()) {
+              Parent r = stage.getScene().getRoot();
+              scaling = 1;
+              stage.setWidth(1280);
+              stage.setHeight(900);
+              r.setScaleX(1);
+              r.setScaleY(1);
+              ke.consume();
+            }
             if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
               Parent r = stage.getScene().getRoot();
               scaling = 1;
