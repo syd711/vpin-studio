@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface TournamentTablesRepository extends JpaRepository<TournamentTableInfo, Long> {
 
-  Optional<TournamentTableInfo> findByTournamentIdAndVpsTableIdAndVpsTableVersionId(long tournamentId, String vpsTableId, String vpsVersionId);
+  List<TournamentTableInfo> findByTournamentIdAndVpsTableIdAndVpsTableVersionId(long tournamentId, String vpsTableId, String vpsVersionId);
 
   List<TournamentTableInfo> findByGameId(int gameId);
 
