@@ -81,7 +81,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   }
 
   public boolean isIscoredGameRoomUrl(String dashboardUrl) {
-    return dashboardUrl.toLowerCase().contains("iscored.info/");
+    return dashboardUrl.toLowerCase().contains("iscored.info");
   }
 
   public void submitScore(String url, Score newScore, String vpsTableId, String vpsVersionId) {

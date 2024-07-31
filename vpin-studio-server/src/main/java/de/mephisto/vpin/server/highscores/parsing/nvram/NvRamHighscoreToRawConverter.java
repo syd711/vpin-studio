@@ -74,7 +74,7 @@ public class NvRamHighscoreToRawConverter {
       String stdOut = standardOutputFromCommand.toString();
       return convertOutputToRaw(nvRamFileName, stdOut);
     } catch (Exception e) {
-      LOG.error(e.getMessage(), e);
+      LOG.error(e.getMessage());
       throw e;
     } finally {
       if (nvOffset && originalNVRamFile.delete()) {
