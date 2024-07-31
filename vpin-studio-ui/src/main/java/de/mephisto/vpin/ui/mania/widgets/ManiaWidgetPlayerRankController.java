@@ -83,6 +83,8 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private Parent loadingOverlay;
   private List<RankedPlayer> rankedPlayers;
 
+  private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
+
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
   }
@@ -123,6 +125,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
+    rankedPlayersAvatarCache.clear();
     refresh();
   }
 
@@ -175,11 +178,10 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
-        if (in != null) {
+        Image avatarImage = getAvatarImage(value);
+        if (avatarImage != null) {
           Platform.runLater(() -> {
-            Image i = new Image(in);
-            view.setImage(i);
+            view.setImage(avatarImage);
             CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           });
         }
@@ -223,6 +225,24 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
+  }
+
+  private Image getAvatarImage(RankedPlayer value) {
+    Image avatarImage = null;
+    if (rankedPlayersAvatarCache.containsKey(value.getUuid())) {
+      return rankedPlayersAvatarCache.get(value.getUuid());
+    }
+
+    InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
+    if (in != null) {
+      rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
+      avatarImage = new Image(in);
+    }
+    else {
+      avatarImage = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+    }
+    rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
+    return avatarImage;
   }
 
   public void refresh() {

@@ -5,7 +5,12 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
@@ -28,9 +33,17 @@ public class UpdateInfoDialog implements Initializable, DialogController {
   private BorderPane center;
 
   @FXML
+  private Hyperlink kofiLink;
+
+  @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
+  }
+
+  @FXML
+  private void onKofiLink() {
+    Studio.browse("https://ko-fi.com/syd711");
   }
 
   @Override
@@ -51,6 +64,12 @@ public class UpdateInfoDialog implements Initializable, DialogController {
     } catch (Exception e) {
       LOG.error("Failed to load HTML: " + e.getMessage());
     }
+
+    Image image6 = new Image(Studio.class.getResourceAsStream("ko-fi.png"));
+    ImageView view6 = new ImageView(image6);
+    view6.setPreserveRatio(true);
+    view6.setFitHeight(28);
+    kofiLink.setGraphic(view6);
   }
 
   public static String download(String downloadUrl) {
