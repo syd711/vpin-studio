@@ -401,7 +401,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   public void refreshView(Optional<GameRepresentation> g) {
     setSaveEnabled(false);
 
-    boolean directb2sAvailable = g.get().getDirectB2SPath() != null;
+    boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
     openDefaultPictureBtn.setDisable(!g.isPresent() || !directb2sAvailable);
     uploadBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && directb2sAvailable);
@@ -438,7 +438,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
           playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
           filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
           bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-          modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
+          modificationDateLabel.setText(tableData.getModificationDate() != null ? SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()) : "");
 
           hideGrill.setDisable(tableData.getGrillHeight() == 0);
 

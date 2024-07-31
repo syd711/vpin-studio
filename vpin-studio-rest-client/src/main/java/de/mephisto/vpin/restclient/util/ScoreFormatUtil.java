@@ -12,8 +12,7 @@ public class ScoreFormatUtil {
 
   private static DecimalFormatSymbols symbols;
   static {
-    symbols = DecimalFormatSymbols.getInstance(Locale.US);
-    symbols.setGroupingSeparator('.');
+    symbols = DecimalFormatSymbols.getInstance(Locale.getDefault());
   }
 
   public static String formatScore(String score) {

@@ -683,6 +683,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onImport() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+    if (emulatorSelection != null && emulatorSelection.getId() == -1) {
+      WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
+      return;
+    }
 
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {

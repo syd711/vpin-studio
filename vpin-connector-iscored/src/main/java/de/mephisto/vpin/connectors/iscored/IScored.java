@@ -170,8 +170,13 @@ public class IScored {
     BufferedInputStream in = null;
     try {
       String name = playerName;
-      if (!gameRoom.getSettings().isLongNameInputEnabled()) {
-        name = playerInitials;
+      try {
+        if (!gameRoom.getSettings().isLongNameInputEnabled()) {
+          name = playerInitials;
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error reading long names value from iScored: " + e.getMessage(), e);
       }
 
       name = URLEncoder.encode(name, StandardCharsets.UTF_8);

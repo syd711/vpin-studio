@@ -44,7 +44,10 @@ public class Settings {
 
   @JsonIgnore //do not use original name!
   public boolean isLongNameInputEnabled() {
-    return Boolean.parseBoolean(this.longNamesEnabled.toLowerCase());
+    if (this.longNamesEnabled != null && (this.longNamesEnabled.equalsIgnoreCase("true") || this.longNamesEnabled.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.longNamesEnabled.toLowerCase());
+    }
+    return false;
   }
 
   public String getPublicScoreEntryEnabled() {

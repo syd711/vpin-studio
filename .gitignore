@@ -131,3 +131,4 @@ vpin-studio-logs.zip
 /server-restart.bat
 
 /resources/cache/**
+/resources/vpin-studio.db

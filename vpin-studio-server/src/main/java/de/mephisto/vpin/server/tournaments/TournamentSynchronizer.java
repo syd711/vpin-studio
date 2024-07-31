@@ -45,7 +45,7 @@ public class TournamentSynchronizer {
   @Autowired
   private ManiaService maniaService;
 
-  public boolean synchronize(TournamentMetaData metaData) {
+  public synchronized boolean synchronize(TournamentMetaData metaData) {
     VPinManiaClient maniaClient = maniaService.getClient();
     if (maniaClient.getCabinetClient().getCabinet() != null) {
       Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
@@ -96,7 +96,7 @@ public class TournamentSynchronizer {
     return false;
   }
 
-  public boolean synchronize(Game game) {
+  public synchronized boolean synchronize(Game game) {
     VPinManiaClient maniaClient = maniaService.getClient();
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     if (cabinet != null) {
@@ -118,7 +118,7 @@ public class TournamentSynchronizer {
     return false;
   }
 
-  public boolean synchronize(List<Tournament> tournaments) {
+  public synchronized boolean synchronize(List<Tournament> tournaments) {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();

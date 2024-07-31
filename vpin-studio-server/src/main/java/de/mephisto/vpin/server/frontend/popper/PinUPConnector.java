@@ -1169,7 +1169,9 @@ public class PinUPConnector implements FrontendConnector {
 
     //this can not be executed within a fetch!!!
     for (Emulator emulator : result) {
-      initVisualPinballXScripts(emulator);
+      if (emulator.isVisualPinball()) {
+        initVisualPinballXScripts(emulator);
+      }
     }
 
     return result;

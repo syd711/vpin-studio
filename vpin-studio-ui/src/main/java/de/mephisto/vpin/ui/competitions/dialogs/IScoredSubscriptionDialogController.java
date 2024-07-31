@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
@@ -134,13 +135,14 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
         LocalUISettings.saveProperty(LocalUISettings.LAST_ISCORED_SELECTION, dashboardUrl);
 
         GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
-        if(gameRoom == null || gameRoom.getGames().isEmpty()) {
+        if (gameRoom == null || gameRoom.getGames().isEmpty()) {
           return;
         }
 
         iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
 
         List<IScoredGame> games = gameRoom.getGames();
+        List<IScoredGame> errornousGames = new ArrayList<>();
         for (IScoredGame game : games) {
           List<String> tags = game.getTags();
           Optional<String> first = tags.stream().filter(t -> VPS.isVpsTableUrl(t)).findFirst();
@@ -159,11 +161,20 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
               }
 
               VpsTable vpsTable = client.getVpsService().getTableById(tableId);
+              if (vpsTable == null) {
+                errornousGames.add(game);
+                continue;
+              }
 
               String[] split = vpsUrl.split("#");
               VpsTableVersion vpsVersion = null;
-              if (vpsTable != null && split.length > 1) {
+              if (split.length > 1) {
                 vpsVersion = vpsTable.getTableVersionById(split[1]);
+              }
+
+              if (vpsVersion == null) {
+                errornousGames.add(game);
+                continue;
               }
 
               CompetitionRepresentation sub = new CompetitionRepresentation();
@@ -172,13 +183,9 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
               sub.setName("iScored Subscription for '" + vpsTable.getName() + "'");
               sub.setBadge(badgeCombo.getValue());
               GameRepresentation gameRep = null;
-              if (vpsTable != null) {
-                gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
-                sub.setVpsTableId(vpsTable.getId());
-              }
-              if (vpsVersion != null) {
-                sub.setVpsTableVersionId(vpsVersion.getId());
-              }
+              gameRep = client.getGameService().getGameByVpsTable(vpsTable, vpsVersion);
+              sub.setVpsTableId(vpsTable.getId());
+              sub.setVpsTableVersionId(vpsVersion.getId());
               if (gameRep != null) {
                 sub.setRom(gameRep.getRom() != null ? gameRep.getRom() : gameRep.getTableName());
                 sub.setGameId(gameRep.getId());
@@ -189,16 +196,26 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
               }
 
               tableList.add(sub);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
               LOG.error("Failed to parse table list: " + e.getMessage(), e);
               WidgetFactory.showAlert(stage, "Error", "Failed to parse table list: " + e.getMessage());
             }
           }
         }
+
+        if (!errornousGames.isEmpty()) {
+          Platform.runLater(() -> {
+            WidgetFactory.showAlert(stage, "One or more VPS tagged tables could be resolved:",
+                "Revisit VPS tag of game \"" + errornousGames.get(0).getName() + "\".");
+          });
+        }
+
         saveBtn.setDisable(selection.isEmpty());
         this.tableView.setItems(FXCollections.observableList(this.tableList));
         this.tableView.refresh();
       }
+
     }
     else {
       selection.clear();
@@ -246,7 +263,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     tableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
-      if(table == null) {
+      if (table == null) {
         return new SimpleStringProperty("No matching VPS table found.");
       }
       GameRoom gameRoom = IScored.getGameRoom(value.getUrl());
@@ -256,7 +273,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     vpsTableColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
-      if(table == null) {
+      if (table == null) {
         return new SimpleStringProperty("No matching VPS table found.");
       }
       return new SimpleObjectProperty(new VpsTableContainer(table, getLabelCss(cellData.getValue())));
@@ -265,7 +282,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     vpsTableVersionColumn.setCellValueFactory(cellData -> {
       CompetitionRepresentation value = cellData.getValue();
       VpsTable table = client.getVpsService().getTableById(value.getVpsTableId());
-      if(table == null) {
+      if (table == null) {
         return new SimpleStringProperty("No matching VPS table found.");
       }
       VpsTableVersion vpsTableVersion = table.getTableVersionById(value.getVpsTableVersionId());
@@ -331,8 +348,8 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private boolean containsExisting(CompetitionRepresentation c) {
     for (CompetitionRepresentation existing : this.existingCompetitions) {
       if (existing.getUrl() != null && existing.getUrl().equals(c.getUrl())
-        && existing.getVpsTableId() != null && existing.getVpsTableId().equals(c.getVpsTableId())
-        && existing.getVpsTableVersionId() != null && existing.getVpsTableVersionId().equals(c.getVpsTableVersionId())) {
+          && existing.getVpsTableId() != null && existing.getVpsTableId().equals(c.getVpsTableId())
+          && existing.getVpsTableVersionId() != null && existing.getVpsTableVersionId().equals(c.getVpsTableVersionId())) {
         return true;
       }
     }

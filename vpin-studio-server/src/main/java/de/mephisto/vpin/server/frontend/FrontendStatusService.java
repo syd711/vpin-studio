@@ -86,6 +86,11 @@ public class FrontendStatusService implements InitializingBean {
 
   public GameList getImportTables(int emuId) {
     GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    if(emulator == null) {
+      LOG.warn("No emulator found for id " + emuId);
+      return new GameList();
+    }
+
     GameList list = new GameList();
     File vpxTablesFolder = emulator.getTablesFolder();
 
