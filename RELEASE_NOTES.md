@@ -10,3 +10,4 @@
 - **Table Imports**: Fixed error for the table import dialog when "All VPX Tables" filter has been selected.
 - **Preferences** Fixed error resetting existing configuration values back to **null**.
 - **Highscore Formatting**: Fixed number separator to be localized, e.g. "123,456,789" for US and "123.456.789" for the rest of the world ;)
+- **Tournaments**: Fixed handling of duplicated tables. The input for this is not fixed yet, but at least the backend is robust against that.
