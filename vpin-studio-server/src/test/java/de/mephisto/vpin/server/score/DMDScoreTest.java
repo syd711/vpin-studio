@@ -20,7 +20,7 @@ public class DMDScoreTest {
   @Test
   public void testSaveFrame() throws Exception {
     Frame f = parseFrame("_waiting.frame", 12345);
-    String out = doProcess(new DMDScoreProcessorFrameDump(), f);
+    String out = doProcess(new DMDScoreProcessorFrameDump(), f, "testSaveFrame");
 
     File file = new File(getClass().getResource("_waiting.frame").toURI());
     String expected = FileUtils.readFileToString(file, "UTF-8");
@@ -32,20 +32,20 @@ public class DMDScoreTest {
   @Test
   public void testSaveImage() throws Exception {
     Frame f = parseFrame("_waiting.frame", 12345);
-    doProcess(new DMDScoreProcessorImageDump(), f);
+    doProcess(new DMDScoreProcessorImageDump(), f, "testSaveImage");
   }
 
   @Test
   public void testScanImage() throws Exception {
     Frame f = parseFrame("_waiting.frame", 12345);
-    String txt = doProcess(new DMDScoreProcessorImageScanner(), f);
+    String txt = doProcess(new DMDScoreScannerCommandLine(), f, "testScanImage");
     assertEquals("WAITING FOR\nSWITCH SCANNING\n", txt);
   }
 
   @Test
   public void testScan2sides1() throws Exception {
     Frame f = parseFrame("_2sides_1.frame", 12346);
-    String txt = doProcess(new DMDScoreProcessor2Sides(41), f);
+    String txt = doProcess(new DMDScoreProcessor2Sides(41), f, "testScan2sides1");
     
     //FIXME do not recognize simple separated caracters and SCORE
     assertEquals("797,020\n" +
@@ -59,7 +59,7 @@ public class DMDScoreTest {
   @Test
   public void testScan2sides2() throws Exception {
     Frame f = parseFrame("_2sides_2.frame", 12347);
-    String txt = doProcess(new DMDScoreProcessor2Sides(41), f);
+    String txt = doProcess(new DMDScoreProcessor2Sides(41), f, "testScan2sides2");
     assertEquals("797,020\n" +
             "650,700\n\n" +
             //------------------------
@@ -68,20 +68,68 @@ public class DMDScoreTest {
             "25,000,000\n", txt);
   }
 
+  @Test
+  public void testSplit2sides2() throws Exception {
+    Frame f = parseFrame("_2sides_1.frame", 12348);
+    DMDScoreScannerBase proc = new DMDScoreScannerCommandLine();
+    DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
+    String txt = doProcess(splitter, f, "testSplit2sides2"); 
+    assertEquals("797,020\n" +
+            "650,700\n\n" +
+            //------------------------
+            "HIGH SCORE #1\n" + 
+            "LR\n" +             
+            "55,000,000\n", txt);
+  }
+
+
+  @Test
+  public void testSplit2sides2JNAInterface() throws Exception {
+
+    Frame f = parseFrame("_2sides_1.frame", 12348);
+    DMDScoreScannerTessAPI proc = new DMDScoreScannerTessAPI();
+    DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
+    String txt = doProcess(splitter, f, "testSplit2sides2 JNA Interface"); 
+    assertEquals("797,020\n" +
+            "650,700\n\n" +
+            //------------------------
+            "HIGH SCORE #1\n" + 
+            "LR\n" +             
+            "55,000,000\n", txt);
+  }
+
+  @Test
+  public void testSplitAndScan() throws Exception {
+
+    Frame f = parseFrame("_2sides_1.frame", 12348);
+    DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
+    String txt = doProcess(proc, f, "testSplitAndScan"); 
+    assertEquals("797,020\n" +
+            "650,700\n\n" +
+            //------------------------
+            "HIGH SCORE #1\n" + 
+            "LR\n" +             
+            "55,000,000\n", txt);
+  }
+
   
 
   //----------------------
 
-  private String doProcess(DMDScoreProcessor proc, Frame frame) {
+  private String doProcess(DMDScoreProcessor proc, Frame frame, String testname) {
     try {
-      DMDScoreProcessorImageScanner.TESSERACT_FOLDER = "." + DMDScoreProcessorImageScanner.TESSERACT_FOLDER;
+      DMDScoreScannerBase.TESSERACT_FOLDER = "." + DMDScoreScannerBase.TESSERACT_FOLDER;
       int[] palette = buildPalette(4);
       proc.onFrameStart(gameName);
-      return proc.onFrameReceived(frame, palette, w, h);
+      long timeStart = System.currentTimeMillis();
+      String ret = proc.onFrameReceived(frame, palette);
+      long time = System.currentTimeMillis() - timeStart;
+      System.out.println("test " + testname + " took " + time);
+      return ret;
     }
     finally {
       proc.onFrameStop(gameName);
-      DMDScoreProcessorImageScanner.TESSERACT_FOLDER = DMDScoreProcessorImageScanner.TESSERACT_FOLDER.substring(1);
+      DMDScoreScannerBase.TESSERACT_FOLDER = DMDScoreScannerBase.TESSERACT_FOLDER.substring(1);
     }
   }
 
@@ -109,6 +157,6 @@ public class DMDScoreTest {
       }
     }
     // timestamp relative to 2024/01/01
-    return new Frame(FrameType.COLORED_GRAY_2, timestamp, plane);
+    return new Frame(FrameType.COLORED_GRAY_2, "", timestamp, plane, w, h);
   }
 }

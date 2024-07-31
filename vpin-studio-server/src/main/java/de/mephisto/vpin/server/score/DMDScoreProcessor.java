@@ -4,7 +4,7 @@ public interface DMDScoreProcessor {
   
   void onFrameStart(String gameName);
 
-  String onFrameReceived(Frame frame, int[] palette, int width, int height);
+  String onFrameReceived(Frame frame, int[] palette);
 
   default void onFrameStop(String gameName) {}
 

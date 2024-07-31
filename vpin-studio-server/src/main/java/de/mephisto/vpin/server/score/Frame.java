@@ -5,34 +5,41 @@ import java.util.Arrays;
 public class Frame {
 
   private FrameType type;
+  private String name;
   private int timeStamp;
   private byte[] plane;
+  private int width;
+  private int height;
 
-  public Frame(FrameType type, int timeStamp, byte[] plane) {
+  public Frame(FrameType type, String name, int timeStamp, byte[] plane, int width, int height) {
     this.type = type;
+    this.name = name;
     this.timeStamp = timeStamp;
     this.plane = plane;
+    this.width = width;
+    this.height = height;
   }
 
   public FrameType getType() {
     return type;
   }
-  public void setType(FrameType type) {
-    this.type = type;
+
+  public String getName() {
+    return name;
   }
-  
+
   public int getTimeStamp() {
     return timeStamp;
-  }
-  public void setTimeStamp(int timeStamp) {
-    this.timeStamp = timeStamp;
   }
   
   public byte[] getPlane() {
     return plane;
   }
-  public void setPlane(byte[] plane) {
-    this.plane = plane;
+  public int getWidth() {
+    return width;
+  }
+  public int getHeight() {
+    return height;
   }
 
   public boolean equals(Object o) {
@@ -42,5 +49,4 @@ public class Frame {
     }
     return false;
   }
-
 }

@@ -30,7 +30,7 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette) {
 
     // Create an ARGB palette from given palette
     int[] argbPalette = new int[palette.length];
@@ -40,14 +40,14 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
     PixelFormat<ByteBuffer> format = PixelFormat.createByteIndexedInstance(argbPalette);
 
     // generate our new image
-    WritableImage img = new WritableImage(width, height);
+    WritableImage img = new WritableImage(frame.getWidth(), frame.getHeight());
     PixelWriter pw = img.getPixelWriter();
-    pw.setPixels(0, 0, width, height, format, frame.getPlane(), 0, width);
+    pw.setPixels(0, 0, frame.getWidth(), frame.getHeight(), format, frame.getPlane(), 0, frame.getWidth());
 
     // save it to file
     try {
       ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", 
-        new File("c:/temp/" + gameName + "/dump_" + frame.getTimeStamp() + ".png"));
+        new File("c:/temp/" + gameName + "/dump_" + frame.getTimeStamp() + frame.getName() + ".png"));
     } catch (IOException e) {
       LOG.error("cannot generate image " + frame.getTimeStamp());
     }

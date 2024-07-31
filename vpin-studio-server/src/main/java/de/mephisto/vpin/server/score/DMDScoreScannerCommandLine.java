@@ -14,7 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.server.system.SystemService;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.scene.image.PixelFormat;
 import javafx.scene.image.PixelWriter;
@@ -23,21 +22,11 @@ import javafx.scene.image.WritableImage;
 /**
  * A simple Processor that writes frames in a file
  */
-public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
+public class DMDScoreScannerCommandLine extends DMDScoreScannerBase {
 
-  private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorImageScanner.class);
+  private final static Logger LOG = LoggerFactory.getLogger(DMDScoreScannerCommandLine.class);
 
-  public static String TESSERACT_FOLDER = SystemService.RESOURCES + "tesseract";
-
-  private File folder;
-
-  // Resize images
-  protected int scale = 4;
-  // Add border arround to avoid text too closed to borders
-  protected int border = 4;
-  // Apply a blur effect
-  protected int radius = 1;
-  
+  protected File folder;
 
   @Override
   public void onFrameStart(String gameName) {
@@ -52,29 +41,19 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
     }    
   }
 
+ @Override
+  public void onFrameStop(String gameName) {
+    //FIXME delete folder
+  }
+
   @Override
-  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
-    int W = (width + 2 * border) * scale;
-    int H = (height + 2 * border) * scale;
+  protected String extractText(Frame frame, byte[] pixels, int W, int H) {
     int size = 2 * radius + 1;
     size *= size;
-
-    // Apply the transformations, add an empty border, rescale and recolor, then blur
-    byte[] pixels = rescale(frame.getPlane(), width, height, border, scale, (byte) size);
-    if (radius > 0) {
-      pixels = blur(pixels, W, H, radius);
-    }
-  
     PixelFormat<ByteBuffer> format = generateBlurPalette(size);
 
     File img = saveImage(pixels, W, H, format, Integer.toString(frame.getTimeStamp()));
     return extractText(img);
-    //FIXME img.delete(); or leave images until full folder is deleted but mind disk size 
-  }
-
-  @Override
-  public void onFrameStop(String gameName) {
-    //FIXME delete folder
   }
 
   //--------------------
@@ -141,57 +120,5 @@ public class DMDScoreProcessorImageScanner implements DMDScoreProcessor {
     }
     PixelFormat<ByteBuffer> format = PixelFormat.createByteIndexedInstance(bwPalette);
     return format;
-  }
-
-  protected byte[] rescale(byte[] plane, int width, int height, int border, int scale, byte black) {
-    return crop(plane, width, height, border, 0, width, 0, height, scale, black);
-  }
-
-  protected byte[] crop(byte[] plane, int width, int height, int border, 
-    int xFrom, int xTo, int yFrom, int yTo, int scale, byte black) {
-          
-    int newWith = xTo - xFrom + 2 * border;
-    int newHeight = yTo - yFrom + 2 * border;
-    byte[] scaledPlane = new byte[newWith * scale * newHeight * scale];
-
-    for (int y = yFrom; y < yTo; y++) {
-      for (int x = xFrom; x < xTo; x++) {
-        for (int dy = 0; dy < scale; dy++) {
-          for (int dx = 0; dx < scale; dx++) {
-            scaledPlane[ ((y - yFrom + border) * scale + dy) * newWith * scale + (x - xFrom + border) * scale + dx] = (plane[y * width + x] == 0 ? 0: black);
-          }
-        }
-      }
-    }
-    return scaledPlane;
-  }
-
-  protected byte[] blur(byte[] pixels, int width, int height, int radius) {
-    int size = radius * 2 + 1;
-    size *= size;
-    float f = 1.0f / size;
-
-    byte[] outPixels = new byte[pixels.length];
-    int index = 0;
-
-		for (int y = 0; y < height; y++) {
-			for (int x = 0; x < width; x++) {
-        float color = 0;
-
-        for (int row = -radius; row <= radius; row++) {
-					int iy = y+row;
-					if (iy < 0 || iy >= height) continue;
-
-					for (int col = -radius; col <= radius; col++) {
-            int ix = x+col;
-            if (ix < 0 || ix >= width) continue;
-
-            color += f * pixels[iy*width+ix];
-					}
-				}
-				outPixels[index++] = (byte) (color<= size ? color : size);
-			}
-		}
-    return outPixels;
   }
 }

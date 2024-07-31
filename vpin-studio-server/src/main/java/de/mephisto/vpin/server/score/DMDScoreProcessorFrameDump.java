@@ -31,15 +31,15 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette) {
     StringBuilder bld = new StringBuilder();
     try {
       writer.append(frame.getType() + " / " + frame.getTimeStamp() + "\n");
 
       byte[] plane  = frame.getPlane();
-      for (int j = 0; j < height; j++) {
-        for (int i = 0; i < width; i++) {
-          int idx = plane[j * width + i];
+      for (int j = 0; j < frame.getHeight(); j++) {
+        for (int i = 0; i < frame.getWidth(); i++) {
+          int idx = plane[j * frame.getWidth() + i];
           bld.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
         }
         bld.append("\n");

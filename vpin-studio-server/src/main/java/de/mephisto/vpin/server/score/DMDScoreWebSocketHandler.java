@@ -120,8 +120,8 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
     if (processor != null) {
       byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-      Frame frame = new Frame(type, timeStamp, frameBytes);
-      processor.onFrameReceived(frame, palette, width, height);
+      Frame frame = new Frame(type, "", timeStamp, frameBytes, width, height);
+      processor.onFrameReceived(frame, palette);
     }
   }
 

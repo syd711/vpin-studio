@@ -9,7 +9,7 @@ import javafx.scene.image.PixelFormat;
  * A Processor that split the frame in two parts and analyse them separately
  * ex: Avatar (Stern) - avr_200
  */
-public class DMDScoreProcessor2Sides extends  DMDScoreProcessorImageScanner {
+public class DMDScoreProcessor2Sides extends  DMDScoreScannerCommandLine {
 
   private int splitPosition;
 
@@ -18,8 +18,10 @@ public class DMDScoreProcessor2Sides extends  DMDScoreProcessorImageScanner {
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette, int width, int height) {
+  public String onFrameReceived(Frame frame, int[] palette) {
 
+    int width = frame.getWidth();
+    int height = frame.getHeight();
     int H = (height + 2 * border) * scale;
     int size = 2 * radius + 1;
     size *= size;
