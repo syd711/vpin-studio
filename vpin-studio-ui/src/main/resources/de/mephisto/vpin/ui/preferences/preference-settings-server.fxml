@@ -274,7 +274,7 @@
                         </CheckBox>
                         <Label styleClass="checkbox-description" text="When enabled, the VPX process will be monitored to determine the active table." textFill="WHITE" />
                         <Label styleClass="checkbox-description" text="This includes the status updates for your Discord bot and the scanning of new highscores on table launch/exit." textFill="WHITE" />
-                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through the frontend to use VPin-Studio services." textFill="WHITE" />
+                        <Label styleClass="checkbox-description" text="This way, tables must not be launched through Popper/PinballX to use VPin-Studio services." textFill="WHITE" />
                      </children>
                      <VBox.margin>
                         <Insets top="12.0" />

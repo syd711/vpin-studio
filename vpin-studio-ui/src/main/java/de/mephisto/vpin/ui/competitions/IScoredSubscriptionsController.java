@@ -132,15 +132,34 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   private void onDelete() {
-    CompetitionRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
+    List<CompetitionRepresentation> selections = new ArrayList<>(tableView.getSelectionModel().getSelectedItems());
+    if (selections.isEmpty()) {
+      return;
+    }
 
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored Subscription '" + selection.getName() + "'?",
+    if (selections.size() == 1) {
+      CompetitionRepresentation selection = selections.get(0);
+      String help = "The subscription will be deleted and none of your highscores will be pushed there anymore.";
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete iScored subscription '" + selection.getName() + "'?",
           help, null, "Delete iScored Subscription");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
+        NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
+        onReload();
+      }
+    }
+
+    if (selections.size() > 1) {
+      String help = "The selected subscriptions will be deleted and none of your highscores will be pushed there anymore.";
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete selected iScored subscriptions?",
+          help, null, "Delete iScored Subscriptions");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        tableView.getSelectionModel().clearSelection();
+        for (CompetitionRepresentation selection : selections) {
+          client.getCompetitionService().deleteCompetition(selection);
+        }
+
         NavigationController.setBreadCrumb(Arrays.asList("Competitions", "iScored Subscriptions"));
         onReload();
       }
@@ -266,6 +285,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
     tableView.setPlaceholder(new Label("                      Try iScored subscriptions!\n" +
         "Create a new subscription by pressing the '+' button."));
+    tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       refreshView(Optional.ofNullable(newSelection));
     });
@@ -363,7 +383,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
     reloadBtn.setDisable(defaultPlayer == null);
     addBtn.setDisable(defaultPlayer == null);
 
-    if(defaultPlayer == null) {
+    if (defaultPlayer == null) {
       tableView.setPlaceholder(new Label("                                 No default player set!\n" +
           "Go to the players section and set the default player for this cabinet!"));
     }

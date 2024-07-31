@@ -1143,6 +1143,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       VpsTable vpsTable = selectedEntry.get();
 
       setVpsTableIdValue(vpsTable.getId());
+      game.setExtTableId(vpsTable.getId());
 
       propperRenamingController.setVpsTable(vpsTable);
     }

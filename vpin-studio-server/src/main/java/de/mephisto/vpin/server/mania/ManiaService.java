@@ -110,16 +110,22 @@ public class ManiaService implements InitializingBean {
   @Override
   public void afterPropertiesSet() throws Exception {
     if (Features.MANIA_ENABLED) {
-      ManiaConfig config = getConfig();
-      maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
-      maniaServiceCache.setManiaService(this);
+      try {
+        ManiaConfig config = getConfig();
+        maniaClient = new VPinManiaClient(config.getUrl(), config.getSystemId());
+        maniaServiceCache.setManiaService(this);
 
-      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-      if (cabinet != null) {
-        LOG.info("Cabinet is registered on VPin-Mania");
+        Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+        if (cabinet != null) {
+          LOG.info("Cabinet is registered on VPin-Mania");
+        }
+        else {
+          LOG.info("Cabinet is not registered on VPin-Mania");
+        }
       }
-      else {
-        LOG.info("Cabinet is not registered on VPin-Mania");
+      catch (Exception e) {
+        LOG.error("Failed to init mania services: " + e.getMessage());
+        Features.MANIA_ENABLED = false;
       }
     }
   }

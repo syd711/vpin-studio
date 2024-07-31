@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
@@ -143,7 +144,8 @@ public class VpsService implements InitializingBean {
         for (Game game : collect) {
           GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
           if (gameDetails != null) {
-            String json = tableDiff.getChanges().toJson();
+            VPSChanges changes = tableDiff.getChanges();
+            String json = changes.toJson();
             LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries)");
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);

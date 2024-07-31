@@ -134,6 +134,14 @@
                                                             <Font size="14.0" />
                                                          </font>
                                                       </Button>
+                                                      <Button fx:id="resetBackgroundBtn" mnemonicParsing="false" onAction="#onBackgroundReset" text="Reset" textFill="#ff3333">
+                                                         <graphic>
+                                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                                         </graphic>
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                      </Button>
                                                    </items>
                                                 </ToolBar>
                                              </top>

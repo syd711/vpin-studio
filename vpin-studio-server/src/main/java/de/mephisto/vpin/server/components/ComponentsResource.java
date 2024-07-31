@@ -115,11 +115,14 @@ public class ComponentsResource {
     representation.setLastCheck(component.getLastCheck());
     representation.setExclusions(componentFacade.getExclusionList());
 
-    try {
-      representation.setLastModified(componentFacade.getModificationDate(frontendService.getDefaultGameEmulator()));
-      representation.setTargetFolder(componentFacade.getTargetFolder(frontendService.getDefaultGameEmulator()).getAbsolutePath());
-    } catch (Exception e) {
-      LOG.error("Error returning component data: " + e.getMessage(), e);
+    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
+    if (defaultGameEmulator != null) {
+      try {
+        representation.setLastModified(componentFacade.getModificationDate(defaultGameEmulator));
+        representation.setTargetFolder(componentFacade.getTargetFolder(defaultGameEmulator).getAbsolutePath());
+      } catch (Exception e) {
+        LOG.error("Error returning component data: " + e.getMessage(), e);
+      }
     }
     return representation;
   }

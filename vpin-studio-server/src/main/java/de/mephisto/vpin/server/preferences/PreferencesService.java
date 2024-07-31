@@ -88,8 +88,14 @@ public class PreferencesService implements InitializingBean {
   }
 
   public boolean savePreference(String key, JsonSettings value) throws Exception {
-    String json = value.toJson();
-    return savePreference(key, json);
+    if(value != null) {
+      String json = value.toJson();
+      return savePreference(key, json);
+    }
+
+    Map<String, Object> values = new HashMap<>();
+    values.put(key, value);
+    return savePreference(key, values);
   }
 
   public Asset saveAvatar(byte[] bytes, String mimeType) {

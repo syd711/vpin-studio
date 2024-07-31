@@ -683,6 +683,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   public void onImport() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+    if (emulatorSelection != null && emulatorSelection.getId() == -1) {
+      WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
+      return;
+    }
 
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
@@ -1184,7 +1188,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }, true);
 
     configureLoadingColumn(columnVPS, "Loading...", (value, model) -> {
-      return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates());
+      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+      return new VpsTableColumn(model.getGame().getExtTableId(), model.game.getExtTableVersionId(), model.game.getVpsUpdates(), uiSettings);
     });
 
     configureColumn(columnPOV, (value, model) -> {

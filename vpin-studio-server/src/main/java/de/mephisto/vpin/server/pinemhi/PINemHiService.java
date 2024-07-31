@@ -230,21 +230,23 @@ public class PINemHiService implements InitializingBean {
    * @param emulator The GameEmulator to get the path
    */
   public static void adjustVPPathForEmulator(GameEmulator emulator, File ini, boolean forcePath) {
-    try {
-      INIConfiguration iniConfiguration = loadIni(ini);
-      String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
-      File vp = new File(vpPath);
+    if (emulator != null && emulator.getNvramFolder().exists()) {
+      try {
+        INIConfiguration iniConfiguration = loadIni(ini);
+        String vpPath = (String) iniConfiguration.getSection("paths").getProperty("VP");
+        File vp = new File(vpPath);
 
-      if (forcePath || !vp.exists() || !vpPath.endsWith("/")) {
-        vp = new File(emulator.getNvramFolder().getAbsolutePath());
-        iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
-        
-        saveIni(ini, iniConfiguration);
-        LOG.info("Changed VP path to " + vp.getAbsolutePath());
+        if (forcePath || !vp.exists() || !vpPath.endsWith("/")) {
+          vp = new File(emulator.getNvramFolder().getAbsolutePath());
+          iniConfiguration.getSection("paths").setProperty("VP", vp.getAbsolutePath().replaceAll("\\\\", "/") + "/");
+          
+          saveIni(ini, iniConfiguration);
+          LOG.info("Changed VP path to " + vp.getAbsolutePath());
+        }
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
+      catch (Exception e) {
+        LOG.error("Failed to update VP path in pinemhi.ini: " + e.getMessage(), e);
+      }
     }
   }
 }

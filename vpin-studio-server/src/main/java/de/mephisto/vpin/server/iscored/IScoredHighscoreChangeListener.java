@@ -32,6 +32,11 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
     Game game = event.getGame();
     Score newScore = event.getNewScore();
 
+    if (event.getNewScore().getPlayer() == null) {
+      LOG.info("Ignored iScored highscore change, because no player set for this score.");
+      return;
+    }
+
     try {
       List<Competition> iScoredSubscriptions = competitionService.getIScoredSubscriptions();
       for (Competition iScoredSubscription : iScoredSubscriptions) {

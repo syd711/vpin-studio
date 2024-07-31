@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.SystemCommandOutput;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
 import de.mephisto.vpin.server.games.Game;
@@ -111,7 +112,7 @@ public class VpbmService implements InitializingBean {
 
 
   public Boolean update() {
-    long start = System.currentTimeMillis();
+    //long start = System.currentTimeMillis();
     LOG.info("Executing VPBM update");
     boolean result = executeVPBM(Arrays.asList("-u")) != null;
     LOG.info("Finished VPBM update, refreshing config.");
@@ -225,21 +226,27 @@ public class VpbmService implements InitializingBean {
 
       File vPinballPath = new File(config.getVpinballBasePath());
       if (!vPinballPath.exists()) {
-        File vpBase = frontendService.getDefaultGameEmulator().getInstallationFolder().getParentFile();
-        config.setVpinballBasePath(vpBase.getAbsolutePath());
-        LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
-        dirty = true;
+        GameEmulator defaultEmu = frontendService.getDefaultGameEmulator();
+        if (defaultEmu != null) {
+          File vpBase = defaultEmu.getInstallationFolder().getParentFile();
+          config.setVpinballBasePath(vpBase.getAbsolutePath());
+          LOG.info("Updated VPBM VP path to " + vpBase.getAbsolutePath());
+          dirty = true;
+        }
       }
 
-      File pinupSystemPath = new File(config.getPinup().getPinupDir());
-      if (!pinupSystemPath.exists()) {
-        pinupSystemPath = new File(config.getVpinballBasePath(), config.getPinup().getPinupDir());
-      }
+      FrontendType frontendType = frontendService.getFrontendType();
+      if (frontendType.supportPupPacks()) {
+        File pinupSystemPath = new File(config.getPinup().getPinupDir());
+        if (!pinupSystemPath.exists()) {
+          pinupSystemPath = new File(config.getVpinballBasePath(), config.getPinup().getPinupDir());
+        }
 
-      if (!pinupSystemPath.exists()) {
-        config.getPinup().setPinupDir(systemService.getPinupInstallationFolder().getAbsolutePath());
-        LOG.info("Updated PinUPSystem path to " + systemService.getPinupInstallationFolder().getAbsolutePath());
-        dirty = true;
+        if (!pinupSystemPath.exists()) {
+          config.getPinup().setPinupDir(systemService.getPinupInstallationFolder().getAbsolutePath());
+          LOG.info("Updated PinUPSystem path to " + systemService.getPinupInstallationFolder().getAbsolutePath());
+          dirty = true;
+        }
       }
 
       if (dirty || !configJsonFile.exists()) {

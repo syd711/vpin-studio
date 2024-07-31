@@ -60,8 +60,6 @@ public class TabManiaOverviewController implements Initializable, StudioFXContro
     } catch (IOException e) {
       LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
-
-    onViewActivated(null);
   }
 
   public void selectVpsTable(VpsTable vpsTable) {

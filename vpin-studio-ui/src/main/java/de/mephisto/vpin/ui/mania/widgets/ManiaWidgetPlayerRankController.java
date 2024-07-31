@@ -23,10 +23,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Parent;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -77,8 +74,16 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   @FXML
   private StackPane tableStack;
 
+  @FXML
+  private Button reloadBtn;
+
+  @FXML
+  private Button synchronizeBtn;
+
   private Parent loadingOverlay;
   private List<RankedPlayer> rankedPlayers;
+
+  private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
@@ -120,6 +125,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
+    rankedPlayersAvatarCache.clear();
     refresh();
   }
 
@@ -172,11 +178,10 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       hBox.getChildren().add(label);
 
       new Thread(() -> {
-        InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
-        if (in != null) {
+        Image avatarImage = getAvatarImage(value);
+        if (avatarImage != null) {
           Platform.runLater(() -> {
-            Image i = new Image(in);
-            view.setImage(i);
+            view.setImage(avatarImage);
             CommonImageUtil.setClippedImage(view, (int) (image.getWidth() / 2));
           });
         }
@@ -222,7 +227,27 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }
   }
 
+  private Image getAvatarImage(RankedPlayer value) {
+    Image avatarImage = null;
+    if (rankedPlayersAvatarCache.containsKey(value.getUuid())) {
+      return rankedPlayersAvatarCache.get(value.getUuid());
+    }
+
+    InputStream in = client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(value.getUuid()));
+    if (in != null) {
+      rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
+      avatarImage = new Image(in);
+    }
+    else {
+      avatarImage = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+    }
+    rankedPlayersAvatarCache.put(value.getUuid(), avatarImage);
+    return avatarImage;
+  }
+
   public void refresh() {
+    this.synchronizeBtn.setDisable(true);
+    this.reloadBtn.setDisable(true);
     this.tableView.setVisible(false);
     if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
@@ -245,6 +270,8 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
         ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
         tableView.setItems(data);
         tableView.refresh();
+        this.reloadBtn.setDisable(false);
+        this.synchronizeBtn.setDisable(false);
       });
     }).start();
   }
