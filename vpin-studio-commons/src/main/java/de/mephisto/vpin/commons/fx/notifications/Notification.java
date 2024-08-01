@@ -11,6 +11,15 @@ public class Notification {
   private String title2;
   private String title3;
   private long durationSec;
+  private boolean desktopMode;
+
+  public boolean isDesktopMode() {
+    return desktopMode;
+  }
+
+  public void setDesktopMode(boolean desktopMode) {
+    this.desktopMode = desktopMode;
+  }
 
   public long getDurationSec() {
     return durationSec;

@@ -52,8 +52,8 @@ public class NotificationStage {
       notificationController.setNotification(notification);
       scaleStage(root, screenBounds);
 
-      if (screenBounds.getWidth() > screenBounds.getHeight()) {
-        LOG.info("Window Mode: Landscape");
+      if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
+        LOG.info("Window Mode: Portrait");
         root.setRotate(-90);
         //WQHD
         double y = (screenBounds.getHeight() / 2);
@@ -75,10 +75,24 @@ public class NotificationStage {
         scene = new Scene(root, screenBounds.getWidth(), screenBounds.getHeight() / 2);
       }
       else {
-        LOG.info("Window Mode: Portrait");
-        root.setTranslateY(-500);
+        LOG.info("Window Mode: Landscape");
+        double y = 0;
         double width = root.getPrefWidth() * scaling * scaling;
         double x = screenBounds.getWidth() - width;
+
+        if (screenBounds.getWidth() < 2000) {
+          y = -380;
+          x -= 90;
+        }
+        else if (screenBounds.getWidth() < 2700) {
+          y = -460;
+          x += -140;
+        }
+        else if (screenBounds.getWidth() < 4000) {
+          y = -560;
+          x += -50;
+        }
+        root.setTranslateY(y);
         root.setTranslateX(-x);
         inTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (screenBounds.getWidth() / 2));
         outTransition = TransitionUtil.createTranslateByXTransition(root, 300, (int) -(screenBounds.getWidth() / 2));
@@ -90,7 +104,8 @@ public class NotificationStage {
 
       scene.setFill(Color.TRANSPARENT);
       stage.setScene(scene);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load launcher: " + e.getMessage(), e);
     }
   }
@@ -99,7 +114,7 @@ public class NotificationStage {
   public void move() {
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
     Transition transition = null;
-    if (screenBounds.getWidth() > screenBounds.getHeight()) {
+    if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
       transition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);
     }
     else {
@@ -124,7 +139,8 @@ public class NotificationStage {
         new Thread(() -> {
           try {
             ThreadUtils.sleep(Duration.of(notification.getDurationSec(), ChronoUnit.SECONDS));
-          } catch (InterruptedException e) {
+          }
+          catch (InterruptedException e) {
             throw new RuntimeException(e);
           }
           Platform.runLater(() -> {

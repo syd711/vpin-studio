@@ -87,18 +87,22 @@ public class NotificationStageService extends Application {
     notification1.setTitle2("This is a super long name with maybe too much text");
     notification1.setTitle3("This is a super long name with maybe too much text");
     notification1.setDurationSec(3);
+    notification1.setDesktopMode(true);
 
     Notification notification2 = new Notification();
     notification2.setTitle1("Test2");
     notification2.setDurationSec(3);
+    notification2.setDesktopMode(true);
 
     Notification notification3 = new Notification();
     notification3.setTitle1("Test3");
     notification3.setDurationSec(3);
+    notification3.setDesktopMode(true);
 
     Notification notification4 = new Notification();
     notification4.setTitle1("Test3");
     notification4.setDurationSec(3);
+    notification4.setDesktopMode(true);
 
     queueNotification(notification1);
     queueNotification(notification2);

@@ -53,6 +53,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     //no support for standalone
     if (frontendService.getFrontendType().isNotStandalone()) {
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
+        notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
         NotificationStageService.getInstance().queueNotification(notification);
       }

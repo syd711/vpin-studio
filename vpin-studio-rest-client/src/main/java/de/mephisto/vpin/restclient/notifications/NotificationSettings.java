@@ -3,6 +3,8 @@ package de.mephisto.vpin.restclient.notifications;
 import de.mephisto.vpin.restclient.JsonSettings;
 
 public class NotificationSettings extends JsonSettings {
+  private boolean desktopMode = false;
+
   private boolean startupNotification = false;
   private boolean highscoreUpdatedNotification = true;
   private boolean highscoreCheckedNotification = true;
@@ -11,6 +13,14 @@ public class NotificationSettings extends JsonSettings {
   private boolean competitionNotification = true;
 
   private int durationSec = 5;
+
+  public boolean isDesktopMode() {
+    return desktopMode;
+  }
+
+  public void setDesktopMode(boolean desktopMode) {
+    this.desktopMode = desktopMode;
+  }
 
   public boolean isCompetitionNotification() {
     return competitionNotification;
