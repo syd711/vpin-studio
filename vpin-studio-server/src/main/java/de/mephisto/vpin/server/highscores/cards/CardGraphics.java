@@ -185,7 +185,7 @@ public class CardGraphics {
 
     currentY = currentY + template.getTableFontSize() / 2;
 
-    int wheelSize = 3 * template.getScoreFontSize() + 3 * template.getRowMargin();
+    int wheelSize = template.getWheelSize();
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
@@ -197,14 +197,14 @@ public class CardGraphics {
           wheelIconFile = augmenter.getBackupWheelIcon();
         }
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
+        g.drawImage(wheelImage, template.getMarginLeft() + template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
       }
     }
 
     //the wheelsize should match the height of three score entries
     int scoreX = template.getMarginLeft();
     if (template.isRenderWheelIcon()) {
-      scoreX = template.getWheelPadding() + wheelSize + template.getWheelPadding();
+      scoreX = scoreX + template.getWheelPadding() + wheelSize + template.getWheelPadding();
     }
     int scoreY = currentY;
 

@@ -61,6 +61,7 @@ public class TableOverviewPredicateFactory {
 
         if (StringUtils.isNotEmpty(filterValue)
             && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), filterValue)
+            && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), filterValue)
             && !StringUtils.containsIgnoreCase(game.getRom(), filterValue)) {
           return false;
         }
