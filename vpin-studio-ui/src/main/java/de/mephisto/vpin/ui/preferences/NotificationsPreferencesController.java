@@ -40,6 +40,9 @@ public class NotificationsPreferencesController implements Initializable {
   private CheckBox competitionsCheckbox;
 
   @FXML
+  private CheckBox desktopCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -56,6 +59,12 @@ public class NotificationsPreferencesController implements Initializable {
       notificationSettings.setDurationSec(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     }, 300));
+
+    desktopCheckbox.setSelected(notificationSettings.isDesktopMode());
+    desktopCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      notificationSettings.setDesktopMode(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
+    });
 
     highscoresCheckbox.setSelected(notificationSettings.isHighscoreCheckedNotification());
     highscoresCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
