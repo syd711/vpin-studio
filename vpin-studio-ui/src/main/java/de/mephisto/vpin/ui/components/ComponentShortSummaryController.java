@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.components;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.ui.Studio;
@@ -56,7 +57,13 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
     }
 
     titleLabel.setText(component.getType().toString());
-    installedVersionLabel.setText(component.getInstalledVersion() != null ? component.getInstalledVersion() : "?");
+
+    if (component.getInstalledVersion() != null) {
+      installedVersionLabel.setText(component.getInstalledVersion());
+    }
+    else {
+      WidgetFactory.createHelpIcon(installedVersionLabel, "The existing installation version can't be matched against the release version read from github.\nIt will be set after the first update.");
+    }
     latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
   }
 

@@ -294,6 +294,19 @@ public class WidgetFactory {
     return label;
   }
 
+  public static void createHelpIcon(Label label, String tooltip) {
+    label.setText("");
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+    fontIcon.setIconLiteral("mdi2h-help-circle-outline");
+    Tooltip tt = new Tooltip(tooltip);
+    tt.setWrapText(true);
+    tt.setMaxWidth(350);
+    label.setTooltip(tt);
+    label.setGraphic(fontIcon);
+  }
+
   public static Label createGlobalFavoritePlaylistIcon() {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
