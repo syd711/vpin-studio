@@ -1,6 +1,7 @@
 ## Release Notes 3.0.6
 
 - **Preferences / Notifications**: Added "Desktop Mode" checkbox for notifications.
+- **Table Overview / Table Data Manager**: Optimized dialog so that it can be displayed on 1280x768 screen resolution.
 
 **Bugfixes**
 

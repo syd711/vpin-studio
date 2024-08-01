@@ -44,6 +44,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
@@ -79,6 +80,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   private final static TableStatus STATUS_WIP = new TableStatus(3, "Work In Progress");
 
   public final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public static final int MIN_HEIGHT = 712;
   public static int lastTab = 0;
 
 
@@ -200,6 +202,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Button fixVersionBtn;
 
   @FXML
+  private Button idpdBtn;
+
+  @FXML
   private SplitMenuButton autoFillBtn;
 
   @FXML
@@ -260,6 +265,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @FXML
   private VBox detailsRoot;
+
+  @FXML
+  private ScrollPane detailsScroller;
 
   @FXML
   private CheckBox autoFillCheckbox;
@@ -324,7 +332,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onAutoMatch() {
     boolean autofill = this.autoFillCheckbox.isSelected();
-    if(autofill) {
+    if (autofill) {
       this.tableVersionsCombo.valueProperty().removeListener(this);
     }
 
@@ -368,7 +376,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
 
-    if(autofill) {
+    if (autofill) {
       this.tableVersionsCombo.valueProperty().addListener(this);
     }
   }
@@ -517,6 +525,14 @@ public class TableDataController implements Initializable, DialogController, Aut
   @FXML
   private void onUrlProperty() {
     String text = this.url.getText();
+    if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
+      Studio.browse(text);
+    }
+  }
+
+  @FXML
+  private void onIdpdProperty() {
+    String text = this.IPDBNum.getText();
     if (!StringUtils.isEmpty(text) && text.startsWith("http")) {
       Studio.browse(text);
     }
@@ -685,6 +701,7 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {
+    this.stage = stage;
     this.game = game;
     this.serverSettings = overviewController.getServerSettings();
     this.uiSettings = overviewController.getUISettings();
@@ -709,7 +726,6 @@ public class TableDataController implements Initializable, DialogController, Aut
       this.vpsPanel.setVisible(false);
     }
 
-    this.stage = stage;
     this.scene = stage.getScene();
 
     this.titleLabel.setText(game.getGameDisplayName());
@@ -718,13 +734,8 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.stage.setOnShowing(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
-        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-        GraphicsDevice defaultScreenDevice = ge.getDefaultScreenDevice();
-        GraphicsConfiguration defaultConfiguration = defaultScreenDevice.getDefaultConfiguration();
-        if (defaultConfiguration.getBounds().getHeight() < 1080) {
-          BorderPane root = (BorderPane) stage.getScene().getRoot();
-          root.setPrefHeight(820);
-        }
+        BorderPane root = (BorderPane) stage.getScene().getRoot();
+        root.setPrefHeight(MIN_HEIGHT);
       }
     });
 
@@ -859,7 +870,11 @@ public class TableDataController implements Initializable, DialogController, Aut
       gameRating.getValueFactory().valueProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameRating(Integer.parseInt(String.valueOf(newValue))));
 
       IPDBNum.setText(tableDetails.getIPDBNum());
-      IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setIPDBNum(newValue));
+      idpdBtn.setVisible(tableDetails.getIPDBNum() != null && tableDetails.getIPDBNum().startsWith("http"));
+      IPDBNum.textProperty().addListener((observable, oldValue, newValue) -> {
+        tableDetails.setIPDBNum(newValue);
+        idpdBtn.setVisible(tableDetails.getIPDBNum() != null && tableDetails.getIPDBNum().startsWith("http"));
+      });
 
       url.setText(tableDetails.getUrl());
       url.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setUrl(newValue));

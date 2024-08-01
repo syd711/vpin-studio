@@ -576,9 +576,17 @@ public class TableDialogs {
   }
 
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
-    Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager");
+    Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager", "tableDataManager");
     TableDataController controller = (TableDataController) stage.getUserData();
     controller.setGame(stage, overviewController, game, tab);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(812);
+    stage.setMaxWidth(812);
+    stage.setMaxHeight(1020);
+    stage.setMinHeight(TableDataController.MIN_HEIGHT);
+
     stage.showAndWait();
   }
 

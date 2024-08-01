@@ -25,14 +25,14 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="1020.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableDataController">
    <top>
-      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/dialog-header-resizeable.fxml" />
    </top>
    <center>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-            <VBox prefHeight="710.0">
+            <VBox>
                <children>
                   <TabPane fx:id="tabPane">
                      <VBox.margin>
@@ -41,11 +41,11 @@
                      <tabs>
                         <Tab closable="false" text="Details">
                            <content>
-                              <ScrollPane hbarPolicy="NEVER">
+                              <ScrollPane fx:id="detailsScroller" hbarPolicy="NEVER">
                                  <content>
                                     <VBox fx:id="detailsRoot">
                                        <children>
-                                          <VBox>
+                                          <VBox minHeight="180.0" prefHeight="180.0">
                                              <children>
                                                 <BorderPane>
                                                    <left>
@@ -195,19 +195,19 @@
                                                          </children>
                                                       </HBox>
                               
-                                    
+                                          
                               
-                                                         </children>
+                                                               </children>
                                                    <VBox.margin>
                                                       <Insets top="12.0" />
                                                    </VBox.margin>
                                                 </GridPane>
                                              </children>
                                              <VBox.margin>
-                                                <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                                <Insets left="12.0" right="12.0" top="12.0" />
                                              </VBox.margin>
                                           </VBox>
-                                          <VBox fx:id="vpsPanel" styleClass="navigation-panel">
+                                          <VBox fx:id="vpsPanel" minHeight="260.0" prefHeight="260.0" styleClass="navigation-panel">
                                              <children>
                                                 <Label styleClass="default-title" text="Virtual Pinball Spreadsheet Entry" textFill="WHITE">
                                                    <font>
@@ -391,7 +391,7 @@
                            <content>
                               <ScrollPane hbarPolicy="NEVER">
                                  <content>
-                                    <VBox prefHeight="827.0" prefWidth="751.0">
+                                    <VBox>
                                        <children>
                                           <VBox>
                                              <children>
@@ -588,6 +588,17 @@
                                                       <ComboBox fx:id="gameTheme" editable="true" layoutX="213.0" layoutY="44.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                                                       <ComboBox fx:id="manufacturer" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                                                       <ComboBox fx:id="category" editable="true" layoutX="213.0" layoutY="78.0" prefWidth="300.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                                      <Button fx:id="idpdBtn" mnemonicParsing="false" onAction="#onIdpdProperty" styleClass="link-component" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                                                         <font>
+                                                            <Font size="14.0" />
+                                                         </font>
+                                                         <graphic>
+                                                            <FontIcon iconColor="WHITE" iconLiteral="mdi2l-link" />
+                                                         </graphic>
+                                                         <tooltip>
+                                                            <Tooltip text="https://virtual-pinball-spreadsheet.web.app/" />
+                                                         </tooltip>
+                                                      </Button>
                                                    </children>
                                                    <VBox.margin>
                                                       <Insets top="6.0" />
@@ -630,14 +641,14 @@
                                              <rowConstraints>
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                                <RowConstraints minHeight="10.0" prefHeight="12.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -899,7 +910,6 @@
                                                 <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
                                                 <RowConstraints minHeight="10.0" valignment="TOP" vgrow="SOMETIMES" />
-                                                <RowConstraints minHeight="10.0" prefHeight="30.0" valignment="TOP" vgrow="SOMETIMES" />
                                              </rowConstraints>
                                              <children>
                                                 <Label fx:id="databaseIdLabel1" layoutX="22.0" layoutY="28.0" styleClass="default-text" text="-" textFill="WHITE" GridPane.columnIndex="1">
@@ -907,7 +917,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gDetails" prefHeight="240.0" GridPane.columnIndex="1">
+                                                <TextArea fx:id="gDetails" prefHeight="170.0" GridPane.columnIndex="1">
                                                    <GridPane.margin>
                                                       <Insets />
                                                    </GridPane.margin>
@@ -917,7 +927,7 @@
                                                       <Font size="14.0" />
                                                    </font>
                                                 </Label>
-                                                <TextArea fx:id="gNotes" prefHeight="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                                <TextArea fx:id="gNotes" prefHeight="170.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                                                 <Label styleClass="default-text" text="Notes:*" GridPane.rowIndex="1">
                                                    <font>
                                                       <Font size="14.0" />
@@ -939,7 +949,7 @@
                                           </GridPane>
                                        </children>
                                        <padding>
-                                          <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                                          <Insets left="12.0" right="12.0" top="12.0" />
                                        </padding>
                                     </VBox>
                                  </content>
