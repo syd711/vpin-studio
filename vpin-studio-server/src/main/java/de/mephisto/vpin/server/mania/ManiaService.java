@@ -76,6 +76,7 @@ public class ManiaService implements InitializingBean {
           tableScore.setAccountId(account.getId());
           tableScore.setCreationDate(score.getCreatedAt());
           tableScore.setScoreSource(game.getRom());
+          tableScore.setCreationDate(score.getCreatedAt());
 
           LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
