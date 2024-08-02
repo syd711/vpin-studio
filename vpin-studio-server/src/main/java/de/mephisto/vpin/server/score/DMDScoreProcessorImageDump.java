@@ -21,12 +21,12 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorImageDump.class);
 
-  private String gameName;
+  private File gameFolder;
 
   @Override
   public void onFrameStart(String gameName) {
-    this.gameName = gameName;
-    (new File("c:/temp/" + gameName)).mkdirs(); 
+    this.gameFolder = new File("c:/temp/" + gameName);
+    gameFolder.mkdirs(); 
   }
 
   @Override
@@ -47,7 +47,7 @@ public class DMDScoreProcessorImageDump implements DMDScoreProcessor {
     // save it to file
     try {
       ImageIO.write(SwingFXUtils.fromFXImage(img, null), "png", 
-        new File("c:/temp/" + gameName + "/dump_" + frame.getTimeStamp() + frame.getName() + ".png"));
+        new File(gameFolder, "dump_" + frame.getTimeStamp() + frame.getName() + ".png"));
     } catch (IOException e) {
       LOG.error("cannot generate image " + frame.getTimeStamp());
     }

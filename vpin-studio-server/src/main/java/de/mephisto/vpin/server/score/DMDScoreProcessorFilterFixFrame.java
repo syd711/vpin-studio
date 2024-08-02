@@ -12,11 +12,11 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
   private Frame previousFrame;
   private int[] previousPalette;
 
-  public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor delegate) {
-    this(delegate, 500);
+  public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor... delegates) {
+    this(500, delegates);
   }
-  public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor delegate, int threshold) {
-    super(delegate);
+  public DMDScoreProcessorFilterFixFrame(int threshold, DMDScoreProcessor... delegates) {
+    super(delegates);
     this.threshold = threshold;
   }
 

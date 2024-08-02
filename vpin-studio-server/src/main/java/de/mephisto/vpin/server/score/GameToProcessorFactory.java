@@ -10,7 +10,7 @@ public class GameToProcessorFactory {
   }
 
   public DMDScoreProcessor _getProcessor(String gameName) {
-    if (gameName.startsWith("avr_200")) {
+    if (gameName.startsWith("___avr_200")) {
       return getImage2SidesProcessor();
     }
     else {
@@ -36,7 +36,7 @@ public class GameToProcessorFactory {
    * A processor recognize texts from images 
    */
   public DMDScoreProcessor getImageScannerProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(new DMDScoreScannerTessAPI());
+    return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessorImageDump(), new DMDScoreScannerTessAPI());
   }
 
     /**
