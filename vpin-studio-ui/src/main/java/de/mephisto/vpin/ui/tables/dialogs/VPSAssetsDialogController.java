@@ -70,12 +70,12 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     stage.close();
   }
 
-  public void setGame(GameRepresentation game) {
+  public void setGame(Stage stage, GameRepresentation game) {
     this.game = game;
 
     List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+    autoCompleteNameField = new AutoCompleteTextField(stage, this.nameField, this, collect);
 
     if (!StringUtils.isEmpty(game.getExtTableId())) {
       VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());

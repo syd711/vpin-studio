@@ -120,10 +120,6 @@ public class TournamentTableSelectorDialogController implements DialogController
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    List<VpsTable> tables = client.getVpsService().getTables();
-    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
-
     versionsCombo.setCellFactory(c -> new VpsTableVersionCell());
     versionsCombo.setButtonCell(new VpsTableVersionCell());
     versionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -156,7 +152,11 @@ public class TournamentTableSelectorDialogController implements DialogController
     Platform.runLater(() -> nameField.requestFocus());
   }
 
-  public void setTournamentTable(Tournament tournament, TournamentTable tournamentTable) {
+  public void setTournamentTable(Stage stage, Tournament tournament, TournamentTable tournamentTable) {
+    List<VpsTable> tables = client.getVpsService().getTables();
+    TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
+    autoCompleteNameField = new AutoCompleteTextField(stage, this.nameField, this, collect);
+
     this.tournament = tournament;
     this.tournamentTable = tournamentTable;
     this.customTimeCheckbox.setSelected(tournamentTable.getStartDate() != null);

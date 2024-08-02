@@ -1,17 +1,24 @@
 package de.mephisto.vpin.ui.util;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
+import org.apache.commons.beanutils.PropertyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 /**
@@ -20,8 +27,7 @@ import java.util.stream.Collectors;
  * @author Caleb Brinkman
  */
 public class AutoCompleteTextField {
-  private final AutoCompleteTextFieldChangeListener listener;
-  private final SortedSet<String> entries;
+  private final static Logger LOG = LoggerFactory.getLogger(AutoCompleteTextField.class);
   private final ContextMenu entriesPopup;
   private final TextField textField;
 
@@ -32,17 +38,38 @@ public class AutoCompleteTextField {
   /**
    * Construct a new AutoCompleteTextField.
    */
-  public AutoCompleteTextField(TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
+  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
     super();
     this.textField = textField;
-    this.listener = listener;
-    this.entries = entries;
     entriesPopup = new ContextMenu();
     entriesPopup.getStyleClass().add("context-menu");
+
+    entriesPopup.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+      public void handle(KeyEvent e) {
+        if (e.getCode() == KeyCode.ENTER && e.getTarget().getClass().getSimpleName().startsWith("MenuItemContainer")) {
+          try {
+            String value = (String) PropertyUtils.getProperty(e.getTarget(), "id");
+            defaultValue = value;
+            entriesPopup.hide();
+            entriesPopup.getItems().clear();
+            textField.setText(value);
+            listener.onChange(value);
+            Platform.runLater(() -> {
+              textField.getParent().requestFocus();
+            });
+          }
+          catch (Exception ex) {
+            LOG.error("Auto-complete error: " + ex.getMessage(), ex);
+          }
+          e.consume();
+        }
+      }
+    });
+
     textField.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observableValue, String s, String s2) {
-        if(!changedEnabled) {
+        if (!changedEnabled) {
           entriesPopup.hide();
           return;
         }
@@ -57,6 +84,7 @@ public class AutoCompleteTextField {
             populatePopup(searchResult);
             if (!entriesPopup.isShowing()) {
               entriesPopup.show(textField, Side.BOTTOM, 0, 0);
+              textField.requestFocus();
               Platform.runLater(() -> {
                 entriesPopup.requestFocus();
               });
@@ -88,7 +116,7 @@ public class AutoCompleteTextField {
     textField.focusedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(!newValue) {
+        if (!newValue) {
           setText(defaultValue);
         }
       }
@@ -97,15 +125,6 @@ public class AutoCompleteTextField {
 
   public void setChangeEnabled(boolean b) {
     this.changedEnabled = b;
-  }
-
-  /**
-   * Get the existing set of autocomplete entries.
-   *
-   * @return The existing autocomplete entries.
-   */
-  public SortedSet<String> getEntries() {
-    return entries;
   }
 
   /**
@@ -123,15 +142,16 @@ public class AutoCompleteTextField {
       Label entryLabel = new Label(result);
 
       MenuItem item = new MenuItem(result);
-      item.setOnAction(new EventHandler<ActionEvent>() {
-        @Override
-        public void handle(ActionEvent actionEvent) {
-          textField.setText(result);
-          entriesPopup.hide();
-          defaultValue = result;
-          listener.onChange(result);
-        }
-      });
+      item.setId(result);
+//      item.setOnAction(new EventHandler<ActionEvent>() {
+//        @Override
+//        public void handle(ActionEvent actionEvent) {
+//          textField.setText(result);
+//          entriesPopup.hide();
+//          defaultValue = result;
+//          listener.onChange(result);
+//        }
+//      });
       menuItems.add(item);
     }
     entriesPopup.getItems().clear();

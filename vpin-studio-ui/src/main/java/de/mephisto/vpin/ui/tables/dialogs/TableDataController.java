@@ -1070,7 +1070,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     copyTableVersionBtn.setDisable(StringUtils.isEmpty(game.getExtTableVersionId()));
     List<VpsTable> tables = client.getVpsService().getTables();
     TreeSet<String> collect = new TreeSet<>(tables.stream().map(t -> t.getDisplayName()).collect(Collectors.toSet()));
-    autoCompleteNameField = new AutoCompleteTextField(this.nameField, this, collect);
+    autoCompleteNameField = new AutoCompleteTextField(null, this.nameField, this, collect);
 
     String vpsTableId = game.getExtTableId();
     String vpsTableVersionId = game.getExtTableVersionId();

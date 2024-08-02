@@ -631,7 +631,7 @@ public class TableDialogs {
   public static void openVPSAssetsDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(VPSAssetsDialogController.class, "dialog-vps-assets.fxml", "Virtual Pinball Spreadsheet Assets");
     VPSAssetsDialogController controller = (VPSAssetsDialogController) stage.getUserData();
-    controller.setGame(game);
+    controller.setGame(stage, game);
     stage.showAndWait();
   }
 
