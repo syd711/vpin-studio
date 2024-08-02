@@ -27,7 +27,7 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
   @Override
   public void onFrameStart(String gameName) {
 
-    File tessDataFolder = new File(TESSERACT_FOLDER, "tessdata");
+    File tessDataFolder = new File(TESSERACT_FOLDER);
 
     api = TessAPI.INSTANCE;
     handle = api.TessBaseAPICreate();
@@ -56,26 +56,17 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
 
 
   @Override
-  protected String extractText(Frame frame, byte[] pixels, int W, int H) {
+  protected String extractText(Frame frame, byte[] pixels, int width, int height) {
 
     ByteBuffer buf = ByteBuffer.wrap(pixels);
 
     try {
-/*
-      api.TessBaseAPIInit3(handle, datapath, language);
-      api.TessBaseAPISetPageSegMode(handle, TessPageSegMode.PSM_AUTO);
-      Pointer utf8Text = api.TessBaseAPIRect(handle, buf, bytespp, bytespl, 0, 0, 1024, 800);
-      String result = utf8Text.getString(0);
-      api.TessDeleteText(utf8Text);
-*/
-      String content;
-  
       int bytespp = 1;
-      int bytespl = (int) Math.ceil(W);
-      api.TessBaseAPISetImage(handle, buf, W, H, bytespp, bytespl);
+      int bytespl = (int) Math.ceil(width);
+      api.TessBaseAPISetImage(handle, buf, width, height, bytespp, bytespl);
 
       Pointer textPtr = api.TessBaseAPIGetUTF8Text(handle);
-      content = textPtr.getString(0);
+      String content = textPtr.getString(0);
       api.TessDeleteText(textPtr);
 
       LOG.info("Text recognized:\n" + content);

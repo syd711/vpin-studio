@@ -1,65 +1,22 @@
 package de.mephisto.vpin.server.score;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.jna.Pointer;
-
-import net.sourceforge.tess4j.ITessAPI.TessBaseAPI;
-import net.sourceforge.tess4j.TessAPI;
 
 /**
  * A simple Processor that writes frames in a file
  */
-public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
+public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreSplitAndScan.class);
 
-  TessAPI api;
-  TessBaseAPI handle;
 
   @Override
-  public void onFrameStart(String gameName) {
-
-    File tessDataFolder = new File(TESSERACT_FOLDER, "tessdata");
-
-    api = TessAPI.INSTANCE;
-    handle = api.TessBaseAPICreate();
-  
-    String language = "eng";
-    String datapath = tessDataFolder.getAbsolutePath();
-    int psm = TessAPI.TessPageSegMode.PSM_AUTO;
-    //int ocrEngineMode = TessOcrEngineMode.OEM_DEFAULT;
-
-    //ArrayList<String> configList = new ArrayList<>();
-    //StringArray sarray = new StringArray(configList.toArray(new String[0]));
-    //PointerByReference configs = new PointerByReference();
-    //configs.setPointer(sarray);
-    //api.TessBaseAPIInit1(handle, datapath, language, ocrEngineMode, configs, configList.size());
-
-    api.TessBaseAPIInit3(handle, datapath, language);
-
-    if (psm > -1) {
-        api.TessBaseAPISetPageSegMode(handle, psm);
-    }
+  public String onFrameReceived(Frame frame, int[] palette) {
+    return splitV(frame, frame.getPlane(), frame.getWidth(), frame.getHeight());
   }
 
-  @Override
-  public void onFrameStop(String gameName) {
-    api.TessBaseAPIDelete(handle);
-    handle = null;
-    api = null;
-  }
-
-
-  protected String extractText(Frame frame, byte[] pixels, int W, int H) {
-    return splitV(frame.getPlane(), frame.getWidth(), frame.getHeight(), pixels, W, H);
-  }
-
-  private String splitV(byte[] plane, int width, int height, byte[] image, int W, int H) {
+  protected String splitV(Frame frame, byte[] plane, int width, int height) {
     StringBuilder bld = new StringBuilder();
 
     // first detect full single color vertical lines
@@ -72,7 +29,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
       if (b == 0) {
         // detection of a split
         if (previousColor > 0) {
-          String txt = splitH(plane, width, height, xStart, xStartSplit, image, W, H);
+          String txt = splitH(frame, plane, width, height, xStart, xStartSplit);
           bld.append(txt);
           // separate left from right
           bld.append("\n");
@@ -88,14 +45,13 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
       }
     }
 
-    String txt = splitH(plane, width, height, xStart, width, image, W, H);
+    String txt = splitH(frame, plane, width, height, xStart, width);
     bld.append(txt);
-
     return bld.toString();
   }
 
 
-  private String splitH(byte[] plane, int width, int height, int xFrom, int xTo, byte[] image, int W, int H) {
+  protected String splitH(Frame frame, byte[] plane, int width, int height, int xFrom, int xTo) {
     StringBuilder bld = new StringBuilder();
 
     // first detect full single color horizontal lines
@@ -106,7 +62,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
       if (x < 0) {
         // detection of a split
         if (yStart >= 0) {
-          String txt = process(plane, width, height, xFrom, xTo, yStart, y, image, W, H);
+          String txt = extractRect(frame, plane, width, height, xFrom, xTo, yStart, y);
           bld.append(txt);
           yStart = -1;
         }
@@ -117,41 +73,27 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
     }
     
     if (yStart >= 0) {
-      String txt = process(plane, width, height, xFrom, xTo, yStart, height, image, W, H);
+      String txt = extractRect(frame, plane, width, height, xFrom, xTo, yStart, height);
       bld.append(txt);
     }
 
     return bld.toString();
   }
 
-  protected String process(byte[] plane, int width, int height, int _xFrom, int _xTo, int _yFrom, int _yTo, byte[] image, int W, int H) {
-    ByteBuffer buf = ByteBuffer.wrap(image);
+  protected String extractRect(Frame frame, byte[] plane, int width, int height, int _xFrom, int _xTo, int _yFrom, int _yTo) {
 
-    String content = null;
-  
-    int xFrom = _xFrom * scale + border; 
-    int xTo = _xTo * scale + border; 
-    int yFrom = _yFrom * scale + border; 
-    int yTo = _yTo * scale + border; 
+    int W = (_xTo - _xFrom + 2 * border) * scale;
+    int H = (_yTo - _yFrom + 2 * border) * scale;
+    int size = 2 * radius + 1;
+    size *= size;
 
-    int bytespp = 1;
-    int bytespl = (int) Math.ceil(W);
+    // Apply the transformations, add an empty border, rescale and recolor, then blur
+    byte[] pixels = crop(plane, width, height, border, _xFrom, _xTo, _yFrom, _yTo, scale, (byte) size);
+    pixels = blur(pixels, W, H, radius);
 
-    //Pointer textPtr = api.TessBaseAPIRect(handle, buf, bytespp, bytespl, xFrom - 2, yFrom - 2, xTo - xFrom + 4, yFrom - yTo + 4);
-
-    api.TessBaseAPISetImage(handle, buf, W, H, bytespp, bytespl);
-    //api.TessBaseAPISetRectangle(handle,  xFrom - 2, yFrom - 2, xTo - xFrom + 4, yFrom - yTo + 4);
-    //Pointer textPtr = api.TessBaseAPIGetUTF8Text(handle);
-
-    Pointer textPtr = api.TessBaseAPIGetUTF8Text(handle);
-
-    if (textPtr != null) {
-      content = textPtr.getString(0);
-      api.TessDeleteText(textPtr);
-    }
-    LOG.info("Text recognized:\n" + content);
-    return content;
+    return extractText(frame, pixels, W, H );
   }
+
 
   protected byte getSingleColumnColor(byte[] plane, int width, int height, int x) {
     byte columnColor = -10;
@@ -176,4 +118,6 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerBase {
     } 
     return -1;
   }
+
+ 
 }

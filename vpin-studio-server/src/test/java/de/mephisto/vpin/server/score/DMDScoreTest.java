@@ -38,7 +38,7 @@ public class DMDScoreTest {
   @Test
   public void testScanImage() throws Exception {
     Frame f = parseFrame("_waiting.frame", 12345);
-    String txt = doProcess(new DMDScoreScannerCommandLine(), f, "testScanImage");
+    String txt = doProcess(new DMDScoreScannerTessAPI(), f, "testScanImage");
     assertEquals("WAITING FOR\nSWITCH SCANNING\n", txt);
   }
 
@@ -71,7 +71,7 @@ public class DMDScoreTest {
   @Test
   public void testSplit2sides2() throws Exception {
     Frame f = parseFrame("_2sides_1.frame", 12348);
-    DMDScoreScannerBase proc = new DMDScoreScannerCommandLine();
+    DMDScoreScannerBase proc = new DMDScoreScannerTessAPI();
     DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
     String txt = doProcess(splitter, f, "testSplit2sides2"); 
     assertEquals("797,020\n" +
@@ -86,7 +86,7 @@ public class DMDScoreTest {
   @Test
   public void testSplit2sides2JNAInterface() throws Exception {
 
-    Frame f = parseFrame("_2sides_1.frame", 12348);
+    Frame f = parseFrame("_2sides_1.frame", 12349);
     DMDScoreScannerTessAPI proc = new DMDScoreScannerTessAPI();
     DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
     String txt = doProcess(splitter, f, "testSplit2sides2 JNA Interface"); 
@@ -101,7 +101,8 @@ public class DMDScoreTest {
   @Test
   public void testSplitAndScan() throws Exception {
 
-    Frame f = parseFrame("_2sides_1.frame", 12348);
+    Frame f = parseFrame("_2sides_1.frame", 12350);
+
     DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
     String txt = doProcess(proc, f, "testSplitAndScan"); 
     assertEquals("797,020\n" +
@@ -111,8 +112,6 @@ public class DMDScoreTest {
             "LR\n" +             
             "55,000,000\n", txt);
   }
-
-  
 
   //----------------------
 

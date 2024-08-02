@@ -36,7 +36,7 @@ public class GameToProcessorFactory {
    * A processor recognize texts from images 
    */
   public DMDScoreProcessor getImageScannerProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(new DMDScoreScannerCommandLine());
+    return new DMDScoreProcessorFilterFixFrame(new DMDScoreScannerTessAPI());
   }
 
     /**

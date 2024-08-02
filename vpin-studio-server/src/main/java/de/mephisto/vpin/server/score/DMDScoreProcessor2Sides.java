@@ -1,15 +1,10 @@
 package de.mephisto.vpin.server.score;
 
-import java.io.File;
-import java.nio.ByteBuffer;
-
-import javafx.scene.image.PixelFormat;
-
 /**
  * A Processor that split the frame in two parts and analyse them separately
  * ex: Avatar (Stern) - avr_200
  */
-public class DMDScoreProcessor2Sides extends  DMDScoreScannerCommandLine {
+public class DMDScoreProcessor2Sides extends  DMDScoreScannerTessAPI {
 
   private int splitPosition;
 
@@ -26,18 +21,16 @@ public class DMDScoreProcessor2Sides extends  DMDScoreScannerCommandLine {
     int size = 2 * radius + 1;
     size *= size;
 
-    PixelFormat<ByteBuffer> format = generateBlurPalette(size);
-
     // Apply the transformations, crop, rescale and recolor, then blur
     byte[] left = crop(frame.getPlane(), width, height, border, 0, splitPosition-1, 0, height, scale, (byte) size);
-    left = blur(left, (splitPosition - 1 + 2 * border) * scale, H, radius);
-    File leftImg = saveImage(left, (splitPosition - 1 + 2 * border) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_left");
-    String leftTxt = extractText(leftImg);
+    int leftW = (splitPosition - 1 + 2 * border) * scale;
+    left = blur(left, leftW, H, radius);
+    String leftTxt = extractText(frame, left, leftW, H);
 
     byte[] right = crop(frame.getPlane(), width, height, border, splitPosition+1, width, 0, height, scale, (byte) size);
-    right = blur(right, (width - splitPosition - 1 + 2 * border) * scale, H, radius);
-    File rightImage = saveImage(right, (width - splitPosition - 1 + 2 * border) * scale, H, format, Integer.toString(frame.getTimeStamp()) + "_right");
-    String rightTxt = extractText(rightImage);
+    int rightW = (width - splitPosition - 1 + 2 * border) * scale;
+    right = blur(right, rightW, H, radius);
+    String rightTxt = extractText(frame, right, rightW, H);
 
     return leftTxt + "\n" + rightTxt;
   }
