@@ -349,7 +349,7 @@ public class Studio extends Application {
       if (osName.contains("Windows")) {
         Studio.hostServices.showDocument(url);
       }
-      else if (osName.contains("mac")) {
+      else if (osName.toLowerCase().contains("mac")) {
         Desktop desktop = Desktop.isDesktopSupported() ? Desktop.getDesktop() : null;
         if (desktop != null && desktop.isSupported(Desktop.Action.BROWSE)) {
           try {
@@ -360,7 +360,7 @@ public class Studio extends Application {
           }
         }
       }
-      else if(osName.contains("nux")) {
+      else if(osName.toLowerCase().contains("nux")) {
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
@@ -396,7 +396,7 @@ public class Studio extends Application {
       if (osName.contains("Windows")) {
         Studio.hostServices.showDocument(file.getAbsolutePath());
       }
-      else if (osName.contains("mac")) {
+      else if (osName.toLowerCase().contains("mac")) {
         try {
           Runtime.getRuntime().exec(new String[]{"/usr/bin/open", "-t", file.getAbsolutePath()});
         }
@@ -405,7 +405,7 @@ public class Studio extends Application {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
       }
-      else if(osName.contains("nux")){
+      else if(osName.toLowerCase().contains("nux")){
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }

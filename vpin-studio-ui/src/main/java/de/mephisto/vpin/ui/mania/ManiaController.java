@@ -39,9 +39,9 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   @FXML
   private TabPane tabPane;
 
-  private TabManiaOverviewController overviewController;
-  private TabManiaTableScoresController tablesController;
-  private TabManiaTableAlxController tableAlxController;
+  private TabManiaOverviewController overviewTabController;
+  private TabManiaTableScoresController tableScoresTabController;
+  private TabManiaTableAlxController tableAlxTabController;
 
   // Add a public no-args constructor
   public ManiaController() {
@@ -57,8 +57,8 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     try {
       FXMLLoader loader = new FXMLLoader(TabManiaOverviewController.class.getResource("tab-overview.fxml"));
       Parent builtInRoot = loader.load();
-      overviewController = loader.getController();
-      overviewController.setManiaController(this);
+      overviewTabController = loader.getController();
+      overviewTabController.setManiaController(this);
       overviewTab.setContent(builtInRoot);
     }
     catch (IOException e) {
@@ -68,7 +68,7 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     try {
       FXMLLoader loader = new FXMLLoader(TabManiaTableScoresController.class.getResource("tab-table-scores.fxml"));
       Parent builtInRoot = loader.load();
-      tablesController = loader.getController();
+      tableScoresTabController = loader.getController();
       tablesTab.setContent(builtInRoot);
     }
     catch (IOException e) {
@@ -78,7 +78,7 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     try {
       FXMLLoader loader = new FXMLLoader(TabManiaTableAlxController.class.getResource("tab-table-alx.fxml"));
       Parent builtInRoot = loader.load();
-      tableAlxController = loader.getController();
+      tableAlxTabController = loader.getController();
       tableAlxTab.setContent(builtInRoot);
     }
     catch (IOException e) {
@@ -95,15 +95,15 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   private void updateForTabSelection(Number index) {
     if (index.intValue() == 0) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Player Ranking"));
-      overviewController.onViewActivated(null);
+      overviewTabController.onViewActivated(null);
     }
     else if (index.intValue() == 1) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Ranking"));
-      tablesController.onViewActivated(null);
+      tableScoresTabController.onViewActivated(null);
     }
     else if (index.intValue() == 3) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Statistics"));
-      tablesController.onViewActivated(null);
+      tableScoresTabController.onViewActivated(null);
     }
   }
 
@@ -121,6 +121,6 @@ public class ManiaController implements Initializable, StudioFXController, Studi
 
   public void selectVpsTable(VpsTable vpsTable) {
     tabPane.getSelectionModel().select(1);
-    tablesController.selectVpsTable(vpsTable);
+    tableScoresTabController.selectVpsTable(vpsTable);
   }
 }

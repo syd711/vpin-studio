@@ -13,16 +13,14 @@ import javafx.application.Platform;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Bounds;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
@@ -750,6 +748,25 @@ public class WidgetFactory {
         setText(item);
       }
     }
+  }
+
+  public static void scrollTo(ScrollPane scrollPane, Node node) {
+    Bounds viewport = scrollPane.getViewportBounds();
+    double contentHeight = scrollPane.getContent().localToScene(scrollPane.getContent().getBoundsInLocal()).getHeight();
+    double nodeMinY = node.localToScene(node.getBoundsInLocal()).getMinY();
+    double nodeMaxY = node.localToScene(node.getBoundsInLocal()).getMaxY();
+
+    double vValueDelta = 0;
+    double vValueCurrent = scrollPane.getVvalue();
+
+    if (nodeMaxY < 0) {
+      // currently located above (remember, top left is (0,0))
+      vValueDelta = (nodeMinY - viewport.getHeight()) / contentHeight;
+    } else if (nodeMinY > viewport.getHeight()) {
+      // currently located below
+      vValueDelta = (nodeMinY + viewport.getHeight()) / contentHeight;
+    }
+    scrollPane.setVvalue(vValueCurrent + vValueDelta);
   }
 
   public static void disposeMediaPane(BorderPane parent) {

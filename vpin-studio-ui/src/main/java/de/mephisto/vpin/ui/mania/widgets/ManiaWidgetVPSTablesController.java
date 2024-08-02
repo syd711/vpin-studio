@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.mania.widgets;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
@@ -16,6 +17,7 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -27,10 +29,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -60,6 +59,9 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   @FXML
   private TextField textfieldSearch;
 
+  @FXML
+  private ScrollPane scroller;
+
 
   private Parent loadingOverlay;
   private ManiaWidgetVPSTableRankController tableRankController;
@@ -68,6 +70,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   private String selectedLetter;
   private VpsTable selectedTable;
   private final List<Pane> vpsTableItems = new ArrayList<>();
+  private Optional<Node> activeRow = Optional.empty();
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTablesController() {
@@ -133,6 +136,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
       viewStack.getChildren().add(loadingOverlay);
     }
 
+    activeRow = Optional.empty();
     this.predicates.add(new Predicate<VpsTable>() {
       @Override
       public boolean test(VpsTable vpsTable) {
@@ -142,7 +146,6 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
         return true;
       }
     });
-
     new Thread(() -> {
       vpsTableItems.clear();
 
@@ -165,6 +168,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
             controller.setData(table);
 
             if (table.equals(vpsTable) && !row.getStyleClass().contains("vps-table-button-selected")) {
+              activeRow = Optional.of(row);
               row.getStyleClass().add("vps-table-button-selected");
             }
             vpsTableItems.add(row);
@@ -192,6 +196,12 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
         }
         predicates.clear();
         viewStack.getChildren().remove(loadingOverlay);
+
+
+        highscoreVBox.layout();
+        if (activeRow.isPresent()) {
+          WidgetFactory.scrollTo(scroller, activeRow.get());
+        }
       });
     }).start();
   }
@@ -200,19 +210,8 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
     String term = this.textfieldSearch.getText();
     List<VpsTable> result = new ArrayList<>();
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
-    Collections.sort(tables, (o1, o2) -> {
-      if (o1 == null || o2 == null || o1.getName().isEmpty() || o2.getName().isEmpty()) {
-        return -1;
-      }
-      return o1.getName().compareTo(o2.getName());
-    });
-
     for (VpsTable table : tables) {
       if (table == null) {
-        continue;
-      }
-
-      if (table.getName().trim().isEmpty()) {
         continue;
       }
 
@@ -240,12 +239,18 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
   public void selectTable(VpsTable vpsTable) {
     this.selectedTable = vpsTable;
     ObservableList<Node> children = highscoreVBox.getChildren();
+    activeRow = Optional.empty();
     for (Node child : children) {
       child.getStyleClass().remove("vps-table-button-selected");
       if (vpsTable != null && child.getUserData().equals(vpsTable) && !child.getStyleClass().contains("vps-table-button-selected")) {
         child.getStyleClass().add("vps-table-button-selected");
+        activeRow = Optional.of(child);
       }
     }
     tableRankController.setData(vpsTable);
+
+    if(activeRow.isPresent()) {
+      WidgetFactory.scrollTo(scroller, activeRow.get());
+    }
   }
 }

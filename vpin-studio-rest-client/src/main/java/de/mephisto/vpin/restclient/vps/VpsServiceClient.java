@@ -3,10 +3,12 @@ package de.mephisto.vpin.restclient.vps;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /*********************************************************************************************************************
  * VPS Service
@@ -21,7 +23,10 @@ public class VpsServiceClient extends VPinStudioClientService {
   public Map<String, VpsTable> cache = new LinkedHashMap<>();
 
   public List<VpsTable> getTables() {
-    return new ArrayList<>(cache.values());
+    List<VpsTable> vpsTables = new ArrayList<>(cache.values());
+    List<VpsTable> filtered = vpsTables.stream().filter(t -> !StringUtils.isEmpty(t.getName())).collect(Collectors.toList());
+    Collections.sort(filtered, Comparator.comparing(o -> String.valueOf(o.getName().trim().toLowerCase())));
+    return filtered;
   }
 
   public VpsTable getTableById(String extTableId) {
@@ -40,14 +45,18 @@ public class VpsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "vps/find/" + rom + "/" + term, VpsTable[].class));
   }
 
-  /** Redownload the database online and load it in the database */
+  /**
+   * Redownload the database online and load it in the database
+   */
   public boolean update() {
     getRestClient().get(API + "vps/update", Boolean.class);
     invalidateAll();
     return true;
   }
 
-  /** Reload the database from the local file */
+  /**
+   * Reload the database from the local file
+   */
   public boolean reload() {
     getRestClient().get(API + "vps/reload", Boolean.class);
     invalidateAll();
@@ -61,7 +70,7 @@ public class VpsServiceClient extends VPinStudioClientService {
     }
     LOG.info("Loaded " + cache.size() + " mapped VPS tables.");
   }
- 
+
   public Date getChangeDate() {
     return getRestClient().get(API + "vps/changeDate", Date.class);
   }

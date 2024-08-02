@@ -41,13 +41,9 @@
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0">
                <children>
-                  <ScrollPane hbarPolicy="NEVER" styleClass="base-component">
+                  <ScrollPane fx:id="scroller" hbarPolicy="NEVER" styleClass="base-component">
                      <content>
-                        <BorderPane>
-                           <center>
-                                <VBox fx:id="highscoreVBox" alignment="TOP_CENTER" spacing="6.0" />
-                           </center>
-                        </BorderPane>
+                          <VBox fx:id="highscoreVBox" alignment="TOP_CENTER" spacing="6.0" />
                      </content>
                   </ScrollPane>
                </children>

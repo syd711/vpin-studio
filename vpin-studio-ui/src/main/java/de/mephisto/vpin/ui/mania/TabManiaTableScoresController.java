@@ -18,13 +18,17 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 public class TabManiaTableScoresController implements Initializable, StudioFXController {
@@ -37,12 +41,20 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
   private BorderPane widgetRight;
 
   @FXML
-  private ToolBar toolbar;
+  private HBox lettersContainer;
 
   private VpsTable vpsTable;
 
-  private ManiaWidgetVPSTablesController tablesController;
+  private ManiaWidgetVPSTablesController tablesByLetterController;
   private ManiaWidgetVPSTableRankController tableRankController;
+
+  @FXML
+  private void onTableSearch() {
+    VpsTable selection = ManiaDialogs.openVPSTableSearchDialog();
+    if(selection != null) {
+      selectVpsTable(selection);
+    }
+  }
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
@@ -62,19 +74,19 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (newValue) {
-            tablesController.setData(letter, vpsTable);
+            tablesByLetterController.setData(letter, vpsTable);
           }
         }
       });
       b.setToggleGroup(group);
-      toolbar.getItems().add(b);
+      lettersContainer.getChildren().add(b);
     }
 
 
     try {
       FXMLLoader loader = new FXMLLoader(ManiaWidgetVPSTablesController.class.getResource("mania-widget-vps-tables.fxml"));
       BorderPane root = loader.load();
-      tablesController = loader.getController();
+      tablesByLetterController = loader.getController();
       root.setMaxHeight(Double.MAX_VALUE);
       widgetSidePanel.setLeft(root);
     }
@@ -95,9 +107,9 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
       LOG.error("Failed to load mania-widget-vps-table-rank.fxml: " + e.getMessage(), e);
     }
 
-    tablesController.setTableRankController(tableRankController);
+    tablesByLetterController.setTableRankController(tableRankController);
 
-    ((ToggleButton) toolbar.getItems().get(0)).setSelected(true);
+    ((ToggleButton) lettersContainer.getChildren().get(0)).setSelected(true);
     onViewActivated(null);
   }
 
@@ -108,19 +120,19 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
     }
 
     String letter = table.getName().trim().substring(0, 1);
-    ObservableList<Node> items = toolbar.getItems();
+    ObservableList<Node> items = lettersContainer.getChildren();
     for (Node item : items) {
       if (item.getUserData().equals(letter)) {
         ((ToggleButton) item).setSelected(true);
       }
     }
+    tableRankController.setData(table);
+    tablesByLetterController.selectTable(table);
   }
 
   private List<String> getLetters() {
     List<String> letters = new ArrayList<>();
     List<VpsTable> tables = Studio.client.getVpsService().getTables();
-    Collections.sort(tables, Comparator.comparing(o -> String.valueOf(o.getName())));
-
     for (VpsTable table : tables) {
       if(table.getTableFiles() == null || table.getTableFiles().isEmpty()) {
         continue;

@@ -155,4 +155,8 @@ public class AutoCompleteTextField {
   public void setDisable(boolean b) {
     textField.setDisable(b);
   }
+
+  public void focus() {
+    textField.requestFocus();
+  }
 }
