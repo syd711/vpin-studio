@@ -52,8 +52,8 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
       if (dashboardUrl != null && dashboardUrl.contains("iscored")) {
         GameRoom gameRoom = IScored.loadGameRoom(dashboardUrl);
         if (gameRoom != null) {
-          if (!gameRoom.getSettings().isPublicScoresEnabled()) {
-            LOG.warn("Cancelling iScord score submission, public score submission is not enabled!");
+          if (!gameRoom.getSettings().isPublicScoreEnteringEnabled()) {
+            LOG.warn("Cancelling iScored score submission, public score submissions are not enabled!");
             return;
           }
 

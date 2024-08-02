@@ -9,7 +9,11 @@ public class Settings {
 
   private String publicScoreEntryEnabled;
 
+  private String publicScoresEnabled;
+
   private String adminApproval;
+
+  private String datesEnabled;
 
   private String longNamesEnabled;
 
@@ -37,9 +41,51 @@ public class Settings {
     this.gameOrder = gameOrder;
   }
 
-  @JsonIgnore
-  public boolean isPublicScoresEnabled() {
-    return Boolean.parseBoolean(this.publicScoreEntryEnabled.toLowerCase());
+  public String getDatesEnabled() {
+    return datesEnabled;
+  }
+
+  public void setDatesEnabled(String datesEnabled) {
+    this.datesEnabled = datesEnabled;
+  }
+
+  public String getPublicScoresEnabled() {
+    return publicScoresEnabled;
+  }
+
+  public void setPublicScoresEnabled(String publicScoresEnabled) {
+    this.publicScoresEnabled = publicScoresEnabled;
+  }
+
+  @JsonIgnore//do not use original name!
+  public boolean isPublicScoresReadingEnabled() {
+    if (this.publicScoresEnabled != null && (this.publicScoresEnabled.equalsIgnoreCase("true") || this.publicScoresEnabled.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.publicScoresEnabled.toLowerCase());
+    }
+    return false;
+  }
+  @JsonIgnore//do not use original name!
+  public boolean isDateFieldEnabled() {
+    if (this.datesEnabled != null && (this.datesEnabled.equalsIgnoreCase("true") || this.datesEnabled.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.datesEnabled.toLowerCase());
+    }
+    return false;
+  }
+
+  @JsonIgnore//do not use original name!
+  public boolean isPublicScoreEnteringEnabled() {
+    if (this.publicScoreEntryEnabled != null && (this.publicScoreEntryEnabled.equalsIgnoreCase("true") || this.publicScoreEntryEnabled.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.publicScoreEntryEnabled.toLowerCase());
+    }
+    return false;
+  }
+
+  @JsonIgnore//do not use original name!
+  public boolean isAdminApprovalEnabled() {
+    if (this.adminApproval != null && (this.adminApproval.equalsIgnoreCase("true") || this.adminApproval.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.adminApproval.toLowerCase());
+    }
+    return false;
   }
 
   @JsonIgnore //do not use original name!

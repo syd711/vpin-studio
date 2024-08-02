@@ -12,6 +12,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.competitions.CompetitionDialogs;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.tournaments.dialogs.IScoredGameRoomProgressModel;
@@ -90,6 +91,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   private final List<CompetitionRepresentation> selection = new ArrayList<>();
 
   private List<CompetitionRepresentation> existingCompetitions = new ArrayList<>();
+  private GameRoom gameRoom;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -105,6 +107,14 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
     stage.close();
   }
 
+  @FXML
+  private void onIScoredInfo(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    if (this.gameRoom != null) {
+      CompetitionDialogs.openIScoredInfoDialog(stage, this.gameRoom);
+    }
+  }
+
   @Override
   public void onDialogCancel() {
     selection.clear();
@@ -117,6 +127,7 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
   }
 
   private void loadIScoredGameRoomTables(boolean cached) {
+
     if (!cached) {
       IScored.invalidate();
     }
@@ -129,17 +140,18 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
 
     this.selectAllCheckbox.setSelected(true);
 
+    this.gameRoom = null;
     if (!StringUtils.isEmpty(dashboardUrl)) {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new IScoredGameRoomProgressModel(dashboardUrl));
       if (!progressDialog.getResults().isEmpty()) {
         LocalUISettings.saveProperty(LocalUISettings.LAST_ISCORED_SELECTION, dashboardUrl);
 
-        GameRoom gameRoom = (GameRoom) progressDialog.getResults().get(0);
+        gameRoom = (GameRoom) progressDialog.getResults().get(0);
         if (gameRoom == null || gameRoom.getGames().isEmpty()) {
           return;
         }
 
-        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresEnabled());
+        iscoredScoresEnabled.setSelected(gameRoom.getSettings().isPublicScoresReadingEnabled());
 
         List<IScoredGame> games = gameRoom.getGames();
         List<IScoredGame> errornousGames = new ArrayList<>();

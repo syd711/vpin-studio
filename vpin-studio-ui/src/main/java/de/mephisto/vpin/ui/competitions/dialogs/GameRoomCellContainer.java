@@ -28,7 +28,7 @@ public class GameRoomCellContainer extends HBox {
     title.setStyle("-fx-text-fill: #FFFFFF;-fx-font-size : 14px;-fx-font-weight : bold;" + customStyle);
     column.getChildren().add(title);
 
-    boolean publicScoreEnabled = gameRoom.getSettings().isPublicScoresEnabled();
+    boolean publicScoreEnabled = gameRoom.getSettings().isPublicScoreEnteringEnabled();
     HBox row = new HBox(6);
     Label titleLabel = new Label("Public Scores Enabled:");
     titleLabel.setPrefWidth(TITLE_WIDTH);

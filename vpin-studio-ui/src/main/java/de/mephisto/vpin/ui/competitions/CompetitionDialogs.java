@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.competitions;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.dialogs.*;
@@ -11,6 +12,15 @@ import javafx.stage.Stage;
 import java.util.List;
 
 public class CompetitionDialogs {
+
+  public static void openIScoredInfoDialog(Stage s, GameRoom gameRoom) {
+    FXMLLoader fxmlLoader = new FXMLLoader(IScoredInfoDialogController.class.getResource("dialog-iscored-info.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Game Room Info");
+    IScoredInfoDialogController controller = (IScoredInfoDialogController) stage.getUserData();
+    controller.setData(s, gameRoom);
+    stage.showAndWait();
+  }
+
   public static CompetitionRepresentation openDiscordJoinCompetitionDialog() {
     String title = "Join Competition";
     FXMLLoader fxmlLoader = new FXMLLoader(CompetitionOfflineDialogController.class.getResource("dialog-discord-competition-join.fxml"));

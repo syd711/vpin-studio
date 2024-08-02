@@ -104,6 +104,17 @@
                                                 <Tooltip text="Reload table with data fetched from iscored.info" />
                                              </tooltip>
                                           </Button>
+                                          <Button fx:id="iscoredReloadBtn1" layoutX="427.0" layoutY="10.0" mnemonicParsing="false" onAction="#onIScoredInfo">
+                                             <graphic>
+                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-outline" iconSize="18" />
+                                             </graphic>
+                                             <font>
+                                                <Font size="14.0" />
+                                             </font>
+                                             <tooltip>
+                                                <Tooltip text="Show Game Room summary." />
+                                             </tooltip>
+                                          </Button>
                                        </children>
                                        <VBox.margin>
                                           <Insets top="6.0" />

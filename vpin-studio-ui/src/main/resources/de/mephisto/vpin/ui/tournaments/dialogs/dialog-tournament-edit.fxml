@@ -134,7 +134,7 @@
                               </HBox>
                               <HBox spacing="6.0">
                                  <children>
-                                    <TextField fx:id="dashboardUrlField" prefWidth="410.0">
+                                    <TextField fx:id="dashboardUrlField" prefWidth="365.0">
                                        <font>
                                           <Font size="14.0" />
                                        </font>
@@ -148,6 +148,17 @@
                                        </font>
                                        <tooltip>
                                           <Tooltip text="Reload table with data fetched from iscored.info" />
+                                       </tooltip>
+                                    </Button>
+                                    <Button fx:id="iscoredDetailsBtn" mnemonicParsing="false" onAction="#onIScoredInfo">
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-outline" iconSize="18" />
+                                       </graphic>
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <tooltip>
+                                          <Tooltip text="Show Game Room summary." />
                                        </tooltip>
                                     </Button>
                                  </children>
