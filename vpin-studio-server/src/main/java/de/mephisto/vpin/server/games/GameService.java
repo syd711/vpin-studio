@@ -621,6 +621,7 @@ public class GameService implements InitializingBean {
     game.setScannedAltRom(gameDetails.getTableName());
 
     game.setNvOffset(gameDetails.getNvOffset());
+    game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
 
     //only apply legacy highscore name if the Popper fields are empty
     if (StringUtils.isEmpty(game.getHsFileName())) {
@@ -681,6 +682,7 @@ public class GameService implements InitializingBean {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     gameDetails.setTemplateId(game.getTemplateId());
     gameDetails.setNotes(game.getNotes());
+    gameDetails.setCardsDisabled(game.isCardDisabled());
     gameDetails.setIgnoredValidations(ValidationState.toIdString(game.getIgnoredValidations()));
     if (game.getVpsUpdates() != null) {
       VPSChanges vpsUpdates = game.getVpsUpdates();

@@ -44,6 +44,7 @@ public class Game {
   private int nvOffset;
   private String hsFileName;
   private String scannedHsFileName;
+  private boolean cardDisabled;
 
   private GameEmulator emulator;
   private int emulatorId;
@@ -69,6 +70,14 @@ public class Game {
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
+  }
+
+  public boolean isCardDisabled() {
+    return cardDisabled;
+  }
+
+  public void setCardDisabled(boolean cardDisabled) {
+    this.cardDisabled = cardDisabled;
   }
 
   public String getPupPackName() {

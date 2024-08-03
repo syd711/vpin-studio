@@ -30,7 +30,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,6 +42,7 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
 
+import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -370,6 +373,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       boolean defaultBackgroundAvailable = value.isDefaultBackgroundAvailable();
       if (!defaultBackgroundAvailable) {
         Label label = new Label();
+        if (value.isCardDisabled()) {
+          label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
+        }
         label.setGraphic(WidgetFactory.createAlertIcon("mdi2i-image-off-outline"));
         Tooltip tt = new Tooltip("The table does not have a default background.");
         tt.setWrapText(true);
@@ -377,7 +383,12 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         label.setTooltip(tt);
         return new SimpleObjectProperty(label);
       }
-      return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
+
+      FontIcon checkIcon = WidgetFactory.createCheckIcon();
+      if (value.isCardDisabled()) {
+        checkIcon.setIconColor(Paint.valueOf(DISABLED_COLOR));
+      }
+      return new SimpleObjectProperty(checkIcon);
     });
 
     columnDisplayName.setCellValueFactory(cellData -> {
@@ -385,6 +396,11 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       Label label = new Label(value.getGameDisplayName());
       label.setTooltip(new Tooltip(value.getGameDisplayName()));
       label.getStyleClass().add("default-text");
+      if (value.isCardDisabled()) {
+        label.setStyle("-fx-text-fill: " + DISABLED_COLOR);
+        label.setTooltip(new Tooltip("The card generation is disabled for this game."));
+      }
+
       return new SimpleObjectProperty(label);
     });
 

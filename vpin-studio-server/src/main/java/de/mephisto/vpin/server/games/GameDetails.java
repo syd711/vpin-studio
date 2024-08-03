@@ -59,6 +59,16 @@ public class GameDetails {
 
   private int nvOffset;
 
+  private Boolean cardsDisabled;
+
+  public Boolean isCardsDisabled() {
+    return cardsDisabled;
+  }
+
+  public void setCardsDisabled(Boolean cardsDisabled) {
+    this.cardsDisabled = cardsDisabled;
+  }
+
   public Long getTemplateId() {
     return templateId;
   }

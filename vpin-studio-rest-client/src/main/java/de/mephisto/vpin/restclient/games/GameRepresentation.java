@@ -55,6 +55,7 @@ public class GameRepresentation {
   private String pupPackName;
   private Long templateId;
   private boolean vpxGame;
+  private boolean cardDisabled;
 
   private VPSChanges vpsUpdates = new VPSChanges();
 
@@ -65,6 +66,14 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public boolean isCardDisabled() {
+    return cardDisabled;
+  }
+
+  public void setCardDisabled(boolean cardDisabled) {
+    this.cardDisabled = cardDisabled;
+  }
 
   public String getDirectB2SPath() {
     return directB2SPath;

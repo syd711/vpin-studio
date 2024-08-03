@@ -55,7 +55,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
       CardTemplate template = cardTemplatesService.getTemplate(templateId);
       generateCard(game, true, template);
       return getCardSampleFile();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to generate template card: " + e.getMessage(), e);
     }
     return getCardSampleFile();
@@ -71,7 +72,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     try {
       CardTemplate template = cardTemplatesService.getTemplateForGame(game);
       return generateCard(game, false, template);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to generate card: " + e.getMessage(), e);
     }
     return false;
@@ -81,7 +83,8 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
     try {
       CardTemplate template = cardTemplatesService.getTemplate(templateId);
       return generateCard(game, generateSampleCard, template);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to generate card: " + e.getMessage(), e);
     }
     return false;
@@ -110,13 +113,19 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
         String screenName = cardSettings.getPopperScreen();
         if (!StringUtils.isEmpty(screenName)) {
-          BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
-          if (bufferedImage != null) {
-            File highscoreCard = getCardFile(game, screenName);
-            ImageUtil.write(bufferedImage, highscoreCard);
-            LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
-            return true;
+          if (!game.isCardDisabled()) {
+            BufferedImage bufferedImage = new CardGraphics(directB2SService, cardSettings.getCardResolution(), template, game, summary).draw();
+            if (bufferedImage != null) {
+              File highscoreCard = getCardFile(game, screenName);
+              ImageUtil.write(bufferedImage, highscoreCard);
+              LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+              return true;
+            }
           }
+          else {
+            LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+          }
+
         }
         else {
           LOG.info("Skipped card generation, no target screen set.");
@@ -125,9 +134,10 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
         return false;
       }
       else {
-        LOG.info("Skipped card generation for " + game.getGameDisplayName() + ", no scores found.");
+        LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
     }
     return false;

@@ -1,5 +1,10 @@
 ## Release Notes 3.0.6
 
+**Breaking Change**
+- **Highscore Cards Rendering**: I've changes the attributes "Wheel Icon Size" and "Margin Left" for **non-raw/list based** highscore cards. The wheel icon size was calculated before which felt tedious.
+
+**Changes**
+- **Highscore Cards**: Added button to only generate the card for the active game selection.
 - **VPin Mania**: Added VPS table search.
 - **Preferences / Notifications**: Added "Desktop Mode" checkbox for notifications.
 - **Table Overview / Table Data Manager**: Optimized dialog so that it can be displayed for smaller screen resolutions.

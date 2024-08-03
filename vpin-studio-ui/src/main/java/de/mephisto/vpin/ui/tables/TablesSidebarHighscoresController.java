@@ -14,12 +14,11 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
-import javafx.scene.control.SplitMenuButton;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -114,6 +113,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   @FXML
   private ImageView cardImage;
 
+  @FXML
+  private CheckBox cardsEnabledCheckbox;
+
 
   private Optional<GameRepresentation> game = Optional.empty();
 
@@ -129,6 +131,22 @@ public class TablesSidebarHighscoresController implements Initializable {
     dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
     statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
     vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
+
+    cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(game.isPresent()) {
+          try {
+            game.get().setCardDisabled(!newValue);
+            client.getGameService().saveGame(game.get());
+            EventManager.getInstance().notifyTableChange(game.get().getId(), null);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to save game: " + e.getMessage());
+          }
+        }
+      }
+    });
   }
 
   @FXML
@@ -249,10 +267,15 @@ public class TablesSidebarHighscoresController implements Initializable {
     backupBtn.setDisable(true);
     restoreBtn.setText("Restore");
 
+    cardsEnabledCheckbox.setDisable(true);
+
     if (g.isPresent()) {
       GameRepresentation game = g.get();
       scanHighscoreBtn.setDisable(false);
       restoreBtn.setDisable(false);
+
+      cardsEnabledCheckbox.setDisable(false);
+      cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
 
       List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
       Long templateId = g.get().getTemplateId();

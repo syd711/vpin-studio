@@ -39,6 +39,9 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
   public ByteArrayInputStream getHighscoreCardPreview(GameRepresentation game, CardTemplate template) {
     int gameId = game.getId();
     byte[] bytes = getRestClient().readBinary(API + "cards/preview/" + gameId + "/" + template.getId());
+    if (bytes == null) {
+      bytes = new byte[]{};
+    }
     return new ByteArrayInputStream(bytes);
   }
 

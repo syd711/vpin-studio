@@ -93,13 +93,14 @@
                            <children>
                               <TextField fx:id="videoAuthorsAllowList" promptText="e.g. &quot;Kongedam&quot;">
                                  <VBox.margin>
-                                    <Insets top="3.0" />
+                                    <Insets bottom="3.0" top="3.0" />
                                  </VBox.margin>
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
                               <Label styleClass="preference-description" text="Enter the names (comma separated) of the authors you want to see videos from." textFill="WHITE" />
+                              <Label layoutX="10.0" layoutY="43.0" styleClass="preference-description" text="Note the Chrome needs to be installed on your cabinet for the video playback!" textFill="WHITE" />
                            </children>
                         </VBox>
                         <Label layoutX="10.0" layoutY="85.0" styleClass="preference-label" text="Pause Menu Style:" textFill="WHITE" GridPane.rowIndex="1">

@@ -7,6 +7,7 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,6 +23,13 @@ public class HighscoreGeneratorProgressModel extends ProgressModel<GameRepresent
     super(title);
     this.client = client;
     this.gameInfos = client.getGameService().getVpxGamesCached();
+    iterator = gameInfos.iterator();
+  }
+
+  public HighscoreGeneratorProgressModel(VPinStudioClient client, String title, GameRepresentation game) {
+    super(title);
+    this.client = client;
+    this.gameInfos = Arrays.asList(game);
     iterator = gameInfos.iterator();
   }
 
