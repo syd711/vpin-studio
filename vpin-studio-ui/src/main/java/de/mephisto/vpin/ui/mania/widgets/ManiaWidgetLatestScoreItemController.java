@@ -69,7 +69,7 @@ public class ManiaWidgetLatestScoreItemController extends WidgetController imple
     nameLabel.setText(score.getDisplayName());
 
     scoreLabel.setFont(getScoreFont());
-    scoreLabel.setText(ScoreFormatUtil.formatScore(score.getScore()));
+    scoreLabel.setText(ScoreFormatUtil.formatScore(String.valueOf(score.getScore())));
 
     String date = simpleDateFormat.format(score.getCreationDate());
     changeDateLabel.setText("Updated: " + date);

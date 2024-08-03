@@ -188,6 +188,7 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
           label.getStyleClass().add("preference-description");
         }
         else {
+          highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
           highscoreVBox.getChildren().addAll(vpsTableItems);
         }
 

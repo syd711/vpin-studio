@@ -37,11 +37,15 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   private Tab tableAlxTab;
 
   @FXML
+  private Tab tablePlayerStatsTab;
+
+  @FXML
   private TabPane tabPane;
 
   private TabManiaOverviewController overviewTabController;
   private TabManiaTableScoresController tableScoresTabController;
   private TabManiaTableAlxController tableAlxTabController;
+  private TabManiaPlayerStatsController playerStatsTabController;
 
   // Add a public no-args constructor
   public ManiaController() {
@@ -85,6 +89,17 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       LOG.error("Failed to load tab: " + e.getMessage(), e);
     }
 
+    try {
+      FXMLLoader loader = new FXMLLoader(TabManiaPlayerStatsController.class.getResource("tab-player-stats.fxml"));
+      Parent builtInRoot = loader.load();
+      playerStatsTabController = loader.getController();
+      playerStatsTabController.setManiaController(this);
+      tablePlayerStatsTab.setContent(builtInRoot);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load tab: " + e.getMessage(), e);
+    }
+
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1);
     });
@@ -101,9 +116,13 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Ranking"));
       tableScoresTabController.onViewActivated(null);
     }
-    else if (index.intValue() == 3) {
+    else if (index.intValue() == 2) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Statistics"));
-      tableScoresTabController.onViewActivated(null);
+      tableAlxTabController.onViewActivated(null);
+    }
+    else if (index.intValue() == 3) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Player Statistics"));
+      playerStatsTabController.onViewActivated(null);
     }
   }
 

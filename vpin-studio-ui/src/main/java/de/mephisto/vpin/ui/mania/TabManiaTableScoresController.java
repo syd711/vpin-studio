@@ -47,6 +47,7 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
 
   private ManiaWidgetVPSTablesController tablesByLetterController;
   private ManiaWidgetVPSTableRankController tableRankController;
+  private ToggleGroup group;
 
   @FXML
   private void onTableSearch() {
@@ -58,11 +59,14 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
+    if(group.getSelectedToggle() == null) {
+      ((ToggleButton) lettersContainer.getChildren().get(0)).setSelected(true);
+    }
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    ToggleGroup group = new ToggleGroup();
+    group = new ToggleGroup();
     List<String> letters = getLetters();
 
     for (String letter : letters) {
@@ -108,9 +112,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
     }
 
     tablesByLetterController.setTableRankController(tableRankController);
-
-    ((ToggleButton) lettersContainer.getChildren().get(0)).setSelected(true);
-    onViewActivated(null);
   }
 
   public void selectVpsTable(VpsTable table) {

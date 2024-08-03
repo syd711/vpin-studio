@@ -43,7 +43,5 @@ public class TabManiaTableAlxController implements Initializable, StudioFXContro
     } catch (IOException e) {
       LOG.error("Failed to load ManiaWidgetVPSTableAlxController widget: " + e.getMessage(), e);
     }
-
-    onViewActivated(null);
   }
 }
