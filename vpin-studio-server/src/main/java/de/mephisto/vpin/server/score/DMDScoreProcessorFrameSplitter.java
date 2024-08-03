@@ -73,6 +73,7 @@ public class DMDScoreProcessorFrameSplitter extends  DMDScoreProcessorDelegate {
           Frame frameTop = new Frame(frame.getType(), frame.getName() + "_Y" + yStart, frame.getTimeStamp(), planeTop, width, y - yStart);
           String txt = process(frameTop, palette, width, y - yStart);
           bld.append(txt);
+          bld.append("\n");
           yStart = -1;
         }
       }

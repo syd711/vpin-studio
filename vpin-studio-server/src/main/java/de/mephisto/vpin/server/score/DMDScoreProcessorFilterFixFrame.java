@@ -10,10 +10,11 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
   private int threshold;
 
   private Frame previousFrame;
+  private Frame blinkingFrame;
   private int[] previousPalette;
 
   public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor... delegates) {
-    this(500, delegates);
+    this(250, delegates);
   }
   public DMDScoreProcessorFilterFixFrame(int threshold, DMDScoreProcessor... delegates) {
     super(delegates);
@@ -22,20 +23,24 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
 
   public String onFrameReceived(Frame frame, int[] palette) {
     String ret = null;
-    if (previousFrame == null || !frame.equals(previousFrame)) {
+    if (previousFrame != null && frame.equals(previousFrame)) {
+      LOG.info("Skipping duplicate frame of type: {}", frame.getType());
+      blinkingFrame = null;
+    }
+    else {
       // consider previous plane only if it has been displayed more than threshold
       if (previousFrame != null && (frame.getTimeStamp() - previousFrame.getTimeStamp() > threshold)) {
         LOG.info("process {}, timestamp: {}, delta {}", frame.getType(), frame.getTimeStamp(), frame.getTimeStamp() - previousFrame.getTimeStamp());
         ret = super.onFrameReceived(previousFrame, previousPalette);
       }
       else {
+        //blinkingFrame = frame;
         //LOG.info("Skipping frame of type: {}", frame.getType());
+      
       }
+
       previousFrame = frame;
       previousPalette = palette;
-    }
-    else {
-      LOG.info("Skipping duplicate frame of type: {}", frame.getType());
     }
     return ret;
   }

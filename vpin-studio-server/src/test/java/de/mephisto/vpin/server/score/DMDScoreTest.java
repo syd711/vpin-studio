@@ -38,40 +38,40 @@ public class DMDScoreTest {
   @Test
   public void testScanImage() throws Exception {
     Frame f = parseFrame("_waiting.frame", 12345);
-    String txt = doProcess(new DMDScoreScannerTessAPI(), f, "testScanImage");
-    assertEquals("WAITING FOR\nSWITCH SCANNING\n", txt);
+    String txt = doProcess(new DMDScoreScannerTessAPI(false), f, "testScanImage");
+    assertEquals("WAITING FOR\nSWITCH SCANNING", txt);
   }
 
   @Test
   public void testScan2sides1() throws Exception {
     Frame f = parseFrame("_2sides_1.frame", 12346);
-    String txt = doProcess(new DMDScoreProcessor2Sides(41), f, "testScan2sides1");
-    
+    String txt = doProcess(new DMDScoreScanner2Sides(41), f, "testScan2sides1");
+
     //FIXME do not recognize simple separated caracters and SCORE
     assertEquals("797,020\n" +
-            "650,700\n\n" +
+            "650,700\n" +
             //------------------------
             "HIGH pCORE #1\n" + 
             //"L R\n" +             
-            "55,000,000\n", txt);
+            "55,000,000", txt);
   }
 
   @Test
   public void testScan2sides2() throws Exception {
     Frame f = parseFrame("_2sides_2.frame", 12347);
-    String txt = doProcess(new DMDScoreProcessor2Sides(41), f, "testScan2sides2");
+    String txt = doProcess(new DMDScoreScanner2Sides(41), f, "testScan2sides2");
     assertEquals("797,020\n" +
-            "650,700\n\n" +
+            "650,700\n" +
             //------------------------
             "FINAL BATTLE CHAMPION\n" + 
             "LFS\n" +
-            "25,000,000\n", txt);
+            "25,000,000", txt);
   }
 
   @Test
   public void testSplit2sides2() throws Exception {
     Frame f = parseFrame("_2sides_1.frame", 12348);
-    DMDScoreScannerBase proc = new DMDScoreScannerTessAPI();
+    DMDScoreScannerBase proc = new DMDScoreScannerTessAPI(true);
     DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
     String txt = doProcess(splitter, f, "testSplit2sides2"); 
     assertEquals("797,020\n" +
@@ -82,14 +82,11 @@ public class DMDScoreTest {
             "55,000,000\n", txt);
   }
 
-
   @Test
-  public void testSplit2sides2JNAInterface() throws Exception {
-
-    Frame f = parseFrame("_2sides_1.frame", 12349);
-    DMDScoreScannerTessAPI proc = new DMDScoreScannerTessAPI();
-    DMDScoreProcessorFrameSplitter splitter = new DMDScoreProcessorFrameSplitter(proc);
-    String txt = doProcess(splitter, f, "testSplit2sides2 JNA Interface"); 
+  public void testSplitAndScan() throws Exception {
+    Frame f = parseFrame("_2sides_1.frame", 12350);
+    DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
+    String txt = doProcess(proc, f, "testSplitAndScan"); 
     assertEquals("797,020\n" +
             "650,700\n\n" +
             //------------------------
@@ -99,18 +96,31 @@ public class DMDScoreTest {
   }
 
   @Test
-  public void testSplitAndScan() throws Exception {
-
-    Frame f = parseFrame("_2sides_1.frame", 12350);
-
-    DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
-    String txt = doProcess(proc, f, "testSplitAndScan"); 
+  public void testSplitAndScan2() throws Exception {
+    Frame f = parseFrame("_2sides_2.frame", 12347);
+    String txt = doProcess(new DMDScoreSplitAndScan(), f, "testScan2sides1");
     assertEquals("797,020\n" +
             "650,700\n\n" +
             //------------------------
-            "HIGH SCORE #1\n" + 
-            "LR\n" +             
-            "55,000,000\n", txt);
+            "FINAL BATTLE CHAMPION\n" + 
+            "LFS\n" +
+            "25,000,000\n", txt);
+  }
+
+
+
+
+  @Test
+  public void testFrame0() throws Exception {
+
+    Frame f = parseFrame("_frame0.frame", 12350);
+
+    DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
+    String txt = doProcess(proc, f, "testSplitAndScan"); 
+    assertEquals("oo\n\n" +
+            //------------------------
+            "oo\n" +
+            "BALL 1 CREDITS 0\n", txt);
   }
 
   //----------------------
@@ -152,7 +162,7 @@ public class DMDScoreTest {
       String line = lines.get(y);
       for (int x = 0; x < w; x++) {
         String c = line.substring(x, x+1);
-        plane[off++] = " ".equals(c)? 0 : Byte.parseByte(c);
+        plane[off++] = " ".equals(c)? 0 : "A".compareTo(c) > 0? Byte.parseByte(c) : (byte) (c.charAt(0) - 55);
       }
     }
     // timestamp relative to 2024/01/01

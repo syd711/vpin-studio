@@ -3,6 +3,9 @@ package de.mephisto.vpin.server.score;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -26,6 +29,9 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
    
   private int[] palette;
 
+  List<ByteBuffer> buffers = new ArrayList<>();
+  boolean partialMessage = false;
+
   private GameToProcessorFactory factory = new GameToProcessorFactory();
 
   private DMDScoreProcessor processor;
@@ -41,60 +47,85 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
    */
   @Override
   protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
-    ByteBuffer frameData = message.getPayload().order(ByteOrder.LITTLE_ENDIAN);
-    String typeString = stringFromData(frameData, true);
+    try {
+      if(message.isLast() == false) {     
+        LOG.info("Partial Message Received");
+        partialMessage = true;
+        buffers.add(message.getPayload());
+        return;
+      }
+      //else
+      ByteBuffer frameData = message.getPayload();
 
-    //LOG.info("New Binary Message Received " + typeString);
-  
-    FrameType type = FrameType.getEnum(typeString);
-  
-    switch (type) {
-      case GAME_NAME:
-        processGameStart(stringFromData(frameData, false));
-        break;
-      case DIMENSIONS:
-        width = frameData.getInt();
-        height = frameData.getInt();
-        LOG.info("Game dimension for {} :{} x {}", gameName, width, height);
-        break;
-      case COLORED_GRAY_2:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 2);
-        break;
-      case COLORED_GRAY_4:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 4);
-        break;
-      case COLORED_GRAY_6:
-        processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
-        break;
-      case RGB24:
-        //int[] rawImage = DmdImageUtils._toRawImageFromRgb24(planes, width, height);
-        break;
-      case GRAY_2_PLANES:
-        processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
-        break;
-      case GRAY_4_PLANES:
-        processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 4);
-        break;
-      case COLOUR:
-        int color = frameData.getInt();
-        palette = DmdImageUtils.paletteFromColor(color, 4);
-        LOG.info("Colour frame: {}", color);
-        break;
-      case CLEAR_COLOUR:
-        palette = DmdImageUtils.paletteFromColor(DEFAULT_COLOR, 4);
-        LOG.info("Clear colour frame");
-        break;
-      case PALETTE:
-        palette = paletteFromData(frameData);
-        LOG.info("Palette frame of length: {}", palette.length);
-        break;
-      case CLEAR_PALETTE:
-        palette = null;
-        LOG.info("Clear palette frame");
-        break;
-      case UNKNOWN:
-        LOG.info("Message received with unknown type {}", typeString);
-        break;
+      if (partialMessage) {
+        buffers.add(frameData);
+        frameData = concat(buffers);
+        buffers.clear();
+        partialMessage = false;
+      }
+
+      // now process the message
+      frameData.order(ByteOrder.LITTLE_ENDIAN);
+      String typeString = stringFromData(frameData, true);
+
+      //LOG.info("New Binary Message Received " + typeString);
+    
+      FrameType type = FrameType.getEnum(typeString);
+    
+      switch (type) {
+        case GAME_NAME:
+          processGameStart(stringFromData(frameData, false));
+          break;
+        case DIMENSIONS:
+          width = frameData.getInt();
+          height = frameData.getInt();
+          LOG.info("Game dimension for {} :{} x {}", gameName, width, height);
+          break;
+        case COLORED_GRAY_2:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 2);
+          break;
+        case COLORED_GRAY_4:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 4);
+          break;
+        case COLORED_GRAY_6:
+          processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
+          break;
+        case RGB24:
+          int timeStamp = frameData.getInt();
+          byte[] rgb24 = planesFromRgb24(frameData, width, height);
+          Frame frame = new Frame(type, "", timeStamp, rgb24, width, height);
+          processor.onFrameReceived(frame, palette);
+          break;
+        case GRAY_2_PLANES:
+          processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
+          break;
+        case GRAY_4_PLANES:
+          processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 4);
+          break;
+        case COLOUR:
+          int color = frameData.getInt();
+          palette = DmdImageUtils.paletteFromColor(color, 4);
+          LOG.info("Colour frame: {}", color);
+          break;
+        case CLEAR_COLOUR:
+          palette = DmdImageUtils.paletteFromColor(DEFAULT_COLOR, 4);
+          LOG.info("Clear colour frame");
+          break;
+        case PALETTE:
+          palette = paletteFromData(frameData);
+          LOG.info("Palette frame of length: {}", palette.length);
+          break;
+        case CLEAR_PALETTE:
+          palette = null;
+          LOG.info("Clear palette frame");
+          break;
+        case UNKNOWN:
+          LOG.info("Message received with unknown type {}", typeString);
+          break;
+      }
+    }
+    catch (Exception e) {
+      LOG.info("Error while processing message (message ignored), error was : " + e.getMessage());
     }
   }
 
@@ -145,6 +176,22 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     processGameStop();
   }
 
+  @Override
+	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
+    LOG.error("transport error", exception);
+  }
+  
+  @Override
+	public boolean supportsPartialMessages() {
+		return true;
+	}
+
+  private ByteBuffer concat(List<ByteBuffer> buffers) {
+    final ByteBuffer combined = ByteBuffer.allocate(buffers.stream().mapToInt(ByteBuffer::remaining).sum());
+    buffers.stream().forEach(b -> combined.put(b));
+    return combined.rewind();
+  }
+
   //----------------------------------------
 
   private String stringFromData(final ByteBuffer data, final boolean skip) {
@@ -188,4 +235,43 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     data.get(planes);
     return planes;
   }
+
+  private byte[] planesFromRgb24(ByteBuffer data, int width, int height) {
+    byte[] colors = new byte[data.remaining()];
+    data.get(colors);
+
+    List<Integer> palette = new ArrayList<>();
+
+    if (colors.length == width * height * 3) {
+      final byte[] plane = new byte[width * height];
+      for (int y = 0; y < height; y++) {
+        int yWidth = y * width;
+        for (int x = 0; x < width; x++) {
+            final int index = (yWidth + x) * 3;
+            // RGB24 is in BGR order
+            final int r = (0xFF & colors[index]);
+            final int g = (0xFF & colors[index + 1]);
+            final int b = (0xFF & colors[index + 2]);
+            int rgb = DmdImageUtils.rgb(r, g, b);
+            int position = palette.indexOf(rgb);
+            if (position < 0) {
+              position = palette.size();
+              palette.add(rgb);
+            }
+            plane[y * width + x] = (byte) position;
+        }
+      }
+      // set the discovered palette
+      this.palette = new int[palette.size()];
+      Arrays.setAll(this.palette,  i -> palette.get(i));
+      // and return the plane
+      return plane;
+    }
+    else {
+      LOG.error("Dimension does not match");
+      return null;
+    }
+  }
+
+
 }

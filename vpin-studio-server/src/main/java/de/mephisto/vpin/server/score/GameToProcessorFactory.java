@@ -29,21 +29,25 @@ public class GameToProcessorFactory {
    * A processor that dump images using dmd palette, skiping frames shortly displayed 
    */
   public DMDScoreProcessor getImageDumpProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessorImageDump());
+    return new DMDScoreProcessorFilterFixFrame(
+      new DMDScoreProcessorImageDump());
   }
 
   /**
    * A processor recognize texts from images 
    */
   public DMDScoreProcessor getImageScannerProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessorImageDump(), new DMDScoreScannerTessAPI());
+    return new DMDScoreProcessorFilterFixFrame(
+      new DMDScoreProcessorImageDump(), 
+      new DMDScoreAnalyser());
   }
 
     /**
    * A processor that split images in two at given position, and process them separately 
    */
   public DMDScoreProcessor getImage2SidesProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(new DMDScoreProcessor2Sides(41));
+    return new DMDScoreProcessorFilterFixFrame(
+      new DMDScoreScanner2Sides(41));
   }
 
 }

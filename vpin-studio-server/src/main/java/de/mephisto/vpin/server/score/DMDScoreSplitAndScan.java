@@ -10,6 +10,9 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreSplitAndScan.class);
 
+  public DMDScoreSplitAndScan() {
+    super(true);
+  }
 
   @Override
   public String onFrameReceived(Frame frame, int[] palette) {
@@ -20,22 +23,30 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     StringBuilder bld = new StringBuilder();
 
     // first detect full single color vertical lines
-    byte previousColor = -1;
+    byte previousColor = -10;
     int xStart = 0;
     int xStartSplit = -1;
     for (int x = 0; x < width; x++) {
       byte b = getSingleColumnColor(plane, width, height, x);
       // detection of a full white column
       if (b == 0) {
+        // initial empty columns, ignore
+        if (previousColor == -10) {
+          xStart = x;
+        }
         // detection of a split
-        if (previousColor > 0) {
+        else if (previousColor > 0) {
           String txt = splitH(frame, plane, width, height, xStart, xStartSplit);
           bld.append(txt);
           // separate left from right
           bld.append("\n");
           xStart = x;
+          previousColor = 0;
         }
-        previousColor = 0;
+        // intermediate blank line, do nothing
+        else {
+          previousColor = 0;
+        }
       }
       else if (b > 0 && (previousColor == 0 || previousColor == b)) {
         previousColor = b;
@@ -64,6 +75,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
         if (yStart >= 0) {
           String txt = extractRect(frame, plane, width, height, xFrom, xTo, yStart, y);
           bld.append(txt);
+          bld.append("\n");
           yStart = -1;
         }
       }

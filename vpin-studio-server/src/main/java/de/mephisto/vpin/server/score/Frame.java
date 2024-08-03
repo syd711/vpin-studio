@@ -45,8 +45,33 @@ public class Frame {
   public boolean equals(Object o) {
     if (o instanceof Frame) {
       Frame that = (Frame) o;
-      return this.type.equals(that.type) && Arrays.equals(this.plane, that.plane);
+      return this.type.equals(that.type) && samePlane(this.plane, that.plane);
     }
     return false;
+  }
+
+  private boolean samePlane(byte[] plane1, byte[] plane2) {
+    return Arrays.equals(plane1, plane2);
+  }
+
+  private boolean _samePlane(byte[] plane1, byte[] plane2) {
+    if (plane1.length != plane2.length) {
+      return false;
+    }
+    // compare skiping blinking
+    int delta = 0;
+    for (int idx = 0; idx < plane1.length; idx++) {
+      if (plane1[idx] != plane2[idx]) {
+        // first delta, capture it
+        if (delta == 0) {
+          delta = plane1[idx] - plane2[idx];
+        }
+        // compare, if same delta, image blinking, else different images
+        else if (delta != (plane1[idx] - plane2[idx])) {
+          return false;
+        }
+      }
+    }
+    return true;
   }
 }

@@ -29,7 +29,7 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
   // Resize images
   protected int scale = 4;
   // Add border arround to avoid text too closed to borders
-  protected int border = 4;
+  protected int border = 2;
   // Apply a blur effect
   protected int radius = 1;
   
