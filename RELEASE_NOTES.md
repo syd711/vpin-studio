@@ -7,6 +7,7 @@
 - **Highscore Cards**: Added button to only generate the card for the active game selection.
 - **Highscore Cards**: Added option to disable the card generation for per table. The checkbox for this is found in the highscores section. The card designer shows these tables in a grey "disabled" state.
 - **VPin Mania**: Added VPS table search.
+- **VPin Mania**: Added new tab "Player Statistics" where you can see your statistics and search for other players.
 - **Preferences / Notifications**: Added "Desktop Mode" checkbox for notifications.
 - **Table Overview / Table Data Manager**: Optimized dialog so that it can be displayed for smaller screen resolutions.
 - **iScored Integration**: Added info button which shows a summary of your game room settings.

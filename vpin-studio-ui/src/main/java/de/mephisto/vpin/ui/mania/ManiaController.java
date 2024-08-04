@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.mania;
 
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -73,6 +74,7 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       FXMLLoader loader = new FXMLLoader(TabManiaTableScoresController.class.getResource("tab-table-scores.fxml"));
       Parent builtInRoot = loader.load();
       tableScoresTabController = loader.getController();
+      tableScoresTabController.setManiaController(this);
       tablesTab.setContent(builtInRoot);
     }
     catch (IOException e) {
@@ -117,12 +119,12 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       tableScoresTabController.onViewActivated(null);
     }
     else if (index.intValue() == 2) {
-      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Statistics"));
-      tableAlxTabController.onViewActivated(null);
-    }
-    else if (index.intValue() == 3) {
       NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Player Statistics"));
       playerStatsTabController.onViewActivated(null);
+    }
+    else if (index.intValue() == 3) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPin Mania", "Table Statistics"));
+      tableAlxTabController.onViewActivated(null);
     }
   }
 
@@ -141,5 +143,11 @@ public class ManiaController implements Initializable, StudioFXController, Studi
   public void selectVpsTable(VpsTable vpsTable) {
     tabPane.getSelectionModel().select(1);
     tableScoresTabController.selectVpsTable(vpsTable);
+  }
+
+  public void selectPlayer(Account account) {
+    tabPane.getSelectionModel().select(2);
+    NavigationOptions options = new NavigationOptions(account);
+    playerStatsTabController.onViewActivated(options);
   }
 }

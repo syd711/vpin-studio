@@ -16,7 +16,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.ToolBar;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import org.jetbrains.annotations.Nullable;
@@ -47,6 +46,7 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
 
   private ManiaWidgetVPSTablesController tablesByLetterController;
   private ManiaWidgetVPSTableRankController tableRankController;
+  private ManiaController maniaController;
   private ToggleGroup group;
 
   @FXML
@@ -155,5 +155,11 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
 
     Collections.sort(letters);
     return letters;
+  }
+
+
+  public void setManiaController(ManiaController maniaController) {
+    this.maniaController = maniaController;
+    this.tableRankController.setManiaController(maniaController);
   }
 }

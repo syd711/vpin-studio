@@ -22,14 +22,14 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2v-view-list" iconSize="18"/>
                     </graphic>
                 </Tab>
-                <Tab fx:id="tableAlxTab" closable="false" text="Table Statistics">
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18"/>
-                    </graphic>
-                </Tab>
                 <Tab fx:id="tablePlayerStatsTab" closable="false" text="Player Statistics">
                     <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple-outline" iconSize="18"/>
+                    </graphic>
+                </Tab>
+                <Tab fx:id="tableAlxTab" closable="false" text="Table Statistics">
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18"/>
                     </graphic>
                 </Tab>
             </tabs>

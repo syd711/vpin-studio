@@ -15,9 +15,6 @@
                 <BorderPane fx:id="widgetLatestScore">
                     <center>
                         <BorderPane fx:id="widgetRight" BorderPane.alignment="TOP_CENTER">
-                            <BorderPane.margin>
-                                <Insets left="12.0" />
-                            </BorderPane.margin>
                         </BorderPane>
                     </center>
                 </BorderPane>

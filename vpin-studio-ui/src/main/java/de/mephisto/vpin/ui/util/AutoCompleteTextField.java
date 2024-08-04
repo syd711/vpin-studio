@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -30,17 +31,26 @@ public class AutoCompleteTextField {
   private final static Logger LOG = LoggerFactory.getLogger(AutoCompleteTextField.class);
   private final ContextMenu entriesPopup;
   private final TextField textField;
+  private final AutoCompleteMatcher matcher;
 
   private boolean changedEnabled = true;
 
   private String defaultValue;
 
+  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, AutoCompleteMatcher matcher) {
+    this(stage, textField, listener, null, matcher);
+  }
+
+  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
+    this(stage, textField, listener, entries, null);
+  }
+
   /**
    * Construct a new AutoCompleteTextField.
    */
-  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries) {
-    super();
+  public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries, AutoCompleteMatcher matcher) {
     this.textField = textField;
+    this.matcher = matcher;
     entriesPopup = new ContextMenu();
     entriesPopup.getStyleClass().add("context-menu");
 
@@ -78,9 +88,15 @@ public class AutoCompleteTextField {
           entriesPopup.hide();
         }
         else {
-          List<String> searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).collect(Collectors.toList());
-//          searchResult.addAll(entries.subSet(textField.getText(), textField.getText() + Character.MAX_VALUE));
-          if (entries.size() > 0) {
+          List<String> searchResult = null;
+          if (entries != null) {
+            searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).collect(Collectors.toList());
+          }
+          else {
+            searchResult = matcher.match(textField.getText());
+          }
+
+          if (!searchResult.isEmpty()) {
             populatePopup(searchResult);
             if (!entriesPopup.isShowing()) {
               entriesPopup.show(textField, Side.BOTTOM, 0, 0);

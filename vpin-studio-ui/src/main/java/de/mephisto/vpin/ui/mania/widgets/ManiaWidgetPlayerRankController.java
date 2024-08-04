@@ -254,25 +254,42 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }
 
     new Thread(() -> {
-      List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
-      rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
-      Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
-        @Override
-        public int compare(RankedPlayer o1, RankedPlayer o2) {
-          return o2.points - o1.getPoints();
+      try {
+        List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
+        if(rankedAccounts != null) {
+          rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
+          Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
+            @Override
+            public int compare(RankedPlayer o1, RankedPlayer o2) {
+              return o2.points - o1.getPoints();
+            }
+          });
+
+          Platform.runLater(() -> {
+            tableStack.getChildren().remove(loadingOverlay);
+            tableView.setVisible(true);
+
+            ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
+            tableView.setItems(data);
+            tableView.refresh();
+          });
         }
-      });
+        else {
+          LOG.error("Failed to load player stats.");
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to load player stats: " + e.getMessage(), e);
+      }
+      finally {
+        Platform.runLater(() -> {
+          tableStack.getChildren().remove(loadingOverlay);
+          tableView.setVisible(true);
 
-      Platform.runLater(() -> {
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
-
-        ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
-        tableView.setItems(data);
-        tableView.refresh();
-        this.reloadBtn.setDisable(false);
-        this.synchronizeBtn.setDisable(false);
-      });
+          this.reloadBtn.setDisable(false);
+          this.synchronizeBtn.setDisable(false);
+        });
+      }
     }).start();
   }
 

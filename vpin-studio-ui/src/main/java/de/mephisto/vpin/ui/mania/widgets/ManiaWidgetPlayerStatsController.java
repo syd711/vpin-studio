@@ -9,7 +9,9 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.mania.ManiaController;
+import de.mephisto.vpin.ui.mania.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
@@ -38,6 +40,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,21 +96,34 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   }
 
 
-  public void onViewActivated() {
-    PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
-    if (defaultPlayer.getTournamentUserUuid() == null) {
+  public void onViewActivated(@Nullable NavigationOptions options) {
+    if (options == null || options.getModel() == null) {
+      PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
+      if (defaultPlayer.getTournamentUserUuid() == null) {
+        return;
+      }
+      account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
+      if (account != null) {
+        refresh();
+      }
       return;
     }
-    account = maniaClient.getAccountClient().getAccountByUuid(defaultPlayer.getTournamentUserUuid());
-    refresh();
+
+    if (options.getModel() != null && options.getModel() instanceof Account) {
+      this.account = (Account) options.getModel();
+      refresh();
+    }
   }
 
   @FXML
   private void onPlayerSearch() {
+    this.account = ManiaDialogs.openAccountSearchDialog();
+    setData(this.account);
   }
 
   @FXML
   private void onReload() {
+    maniaClient.getHighscoreClient().clearTableHighscoresCache();
     this.refresh();
   }
 
@@ -212,6 +228,10 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
   public void refresh() {
     try {
+      if (account == null) {
+        return;
+      }
+
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
@@ -221,13 +241,15 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
       new Thread(() -> {
         List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+        Platform.runLater(()-> {
+          titleLabel.setText("Player Statistics for \"" + account.getDisplayName() + "\" [" + account.getInitials() + "] - (" + highscoresByAccount.size() + " scores)");
+        });
 
         List<TableScoreModel> models = highscoresByAccount.stream().map(score -> new TableScoreModel(score, account)).collect(Collectors.toList());
         Collections.sort(models, Comparator.comparing(TableScoreModel::getName));
         ObservableList<TableScoreModel> data = FXCollections.observableList(models);
 
         Platform.runLater(() -> {
-          titleLabel.setText("Player Statistics for \"" + account.getDisplayName() + "\" [" + account.getInitials() + "] - (" + highscoresByAccount.size() + " scores)");
           tableStack.getChildren().remove(loadingOverlay);
           tableView.setVisible(true);
           tableView.setItems(data);
@@ -250,7 +272,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       return;
     }
 
-    onReload();
+    refresh();
   }
 
   public void setManiaController(ManiaController maniaController) {
@@ -273,11 +295,11 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       }
 
       List<TableScoreDetails> highscoresByTable = maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());
-      Collections.sort(highscoresByTable, (o1, o2) -> (int) (o1.getScore() - o2.getScore()));
-      for(int i=0; i<highscoresByTable.size(); i++) {
+      Collections.sort(highscoresByTable, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
+      for (int i = 0; i < highscoresByTable.size(); i++) {
         TableScoreDetails tableScoreDetails = highscoresByTable.get(i);
-        if(tableScoreDetails.getAccountUUID().equals(account.getUuid())) {
-          position = i+1;
+        if (tableScoreDetails.getAccountUUID().equals(account.getUuid())) {
+          position = i + 1;
           break;
         }
       }

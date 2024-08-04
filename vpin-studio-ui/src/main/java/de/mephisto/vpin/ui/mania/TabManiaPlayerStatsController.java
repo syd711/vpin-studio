@@ -30,7 +30,7 @@ public class TabManiaPlayerStatsController implements Initializable, StudioFXCon
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
-    playerStatsWidgetController.onViewActivated();
+    playerStatsWidgetController.onViewActivated(options);
   }
 
   @Override

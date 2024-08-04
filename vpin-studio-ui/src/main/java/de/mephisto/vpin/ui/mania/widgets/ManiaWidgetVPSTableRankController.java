@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -18,6 +19,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -37,6 +39,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -96,16 +100,41 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private Button syncBtn;
 
   @FXML
+  private Button showPlayerBtn;
+
+  @FXML
   private Label titleLabel;
 
   private Parent loadingOverlay;
   private List<TableScoreDetails> tableScores;
   private VpsTable vpsTable;
 
+  private ManiaController maniaController;
+
   // Add a public no-args constructor
   public ManiaWidgetVPSTableRankController() {
   }
 
+
+  @FXML
+  private void onPlayerView() {
+    TableScoreDetails selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(selectedItem.getAccountUUID());
+      if(accountByUuid != null) {
+        maniaController.selectPlayer(accountByUuid);
+      }
+    }
+  }
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        onPlayerView();
+      }
+    }
+  }
 
   @FXML
   private void onScoreSync() {
@@ -145,6 +174,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @FXML
   private void onReload() {
+    maniaClient.getHighscoreClient().clearTableHighscoresCache();
     this.setData(this.vpsTable);
   }
 
@@ -275,5 +305,9 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         tableView.refresh();
       });
     }).start();
+  }
+
+  public void setManiaController(ManiaController maniaController) {
+    this.maniaController = maniaController;
   }
 }
