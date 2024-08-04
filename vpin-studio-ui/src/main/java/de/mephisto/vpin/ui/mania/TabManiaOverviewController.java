@@ -67,7 +67,7 @@ public class TabManiaOverviewController implements Initializable, StudioFXContro
   }
 
   public void setManiaController(ManiaController maniaController) {
-
+    playerRankController.setManiaController(maniaController);
     this.maniaController = maniaController;
   }
 }

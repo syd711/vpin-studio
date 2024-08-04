@@ -16,7 +16,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerRankController">
+<BorderPane fx:id="root" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerRankController">
     <padding>
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
@@ -35,7 +35,7 @@
          <center>
             <StackPane fx:id="tableStack">
                <children>
-                  <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                  <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                     <columns>
                       <TableColumn fx:id="columnRank" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
                         <TableColumn fx:id="columnPoints" prefWidth="100.0" style="-fx-alignment: BASELINE_CENTER;" text="Points" />
@@ -97,6 +97,15 @@
                      <tooltip>
                         <Tooltip text="Reload all table data" />
                      </tooltip>
+                  </Button>
+                  <Separator layoutX="372.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Button fx:id="showPlayerBtn" mnemonicParsing="false" onAction="#onPlayerView" text="Player Statistics" textFill="WHITE">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-account-multiple-outline" iconSize="18" />
+                     </graphic>
+                     <font>
+                        <Font size="14.0" />
+                     </font>
                   </Button>
                   <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onHelp" textFill="WHITE">

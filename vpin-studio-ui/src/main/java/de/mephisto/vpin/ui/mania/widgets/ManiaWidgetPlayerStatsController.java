@@ -12,9 +12,12 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.mania.ManiaDialogs;
+import de.mephisto.vpin.ui.mania.TableScoreLoadingProgressModel;
 import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -48,7 +51,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
 import static de.mephisto.vpin.ui.Studio.client;
@@ -235,28 +237,20 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
-      if (!tableStack.getChildren().contains(loadingOverlay)) {
-        tableStack.getChildren().add(loadingOverlay);
-      }
+      List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 
-      new Thread(() -> {
-        List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
-        Platform.runLater(()-> {
-          titleLabel.setText("Player Statistics for \"" + account.getDisplayName() + "\" [" + account.getInitials() + "] - (" + highscoresByAccount.size() + " scores)");
-        });
+      List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();
+      Collections.sort(results, Comparator.comparing(TableScoreModel::getName));
+      ObservableList<TableScoreModel> data = FXCollections.observableList(results);
 
-        List<TableScoreModel> models = highscoresByAccount.stream().map(score -> new TableScoreModel(score, account)).collect(Collectors.toList());
-        Collections.sort(models, Comparator.comparing(TableScoreModel::getName));
-        ObservableList<TableScoreModel> data = FXCollections.observableList(models);
-
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
-          tableView.setItems(data);
-          tableView.refresh();
-          this.reloadBtn.setDisable(false);
-        });
-      }).start();
+      Platform.runLater(() -> {
+        tableStack.getChildren().remove(loadingOverlay);
+        tableView.setVisible(true);
+        tableView.setItems(data);
+        tableView.refresh();
+        this.reloadBtn.setDisable(false);
+      });
     }
     catch (Exception e) {
       LOG.error("Failed to refresh player stats: " + e.getMessage(), e);
@@ -279,14 +273,14 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     this.maniaController = maniaController;
   }
 
-  class TableScoreModel {
+  public static class TableScoreModel {
     private VpsTable vpsTable;
     private VpsTableVersion vpsTableVersion;
     private String score;
     private String name = "???";
     private int position = -1;
 
-    public TableScoreModel(TableScore tableScore, Account account) {
+    public TableScoreModel(TableScore tableScore, Account account, List<TableScoreDetails> highscoresByTable) {
       this.score = String.valueOf(tableScore.getScore());
       this.vpsTable = client.getVpsService().getTableById(tableScore.getVpsTableId());
       if (vpsTable != null) {
@@ -294,8 +288,6 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
         this.vpsTableVersion = vpsTable.getTableVersionById(tableScore.getVpsVersionId());
       }
 
-      List<TableScoreDetails> highscoresByTable = maniaClient.getHighscoreClient().getHighscoresByTable(vpsTable.getId());
-      Collections.sort(highscoresByTable, (o1, o2) -> Long.compare(o2.getScore(), o1.getScore()));
       for (int i = 0; i < highscoresByTable.size(); i++) {
         TableScoreDetails tableScoreDetails = highscoresByTable.get(i);
         if (tableScoreDetails.getAccountUUID().equals(account.getUuid())) {

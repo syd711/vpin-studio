@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.RankedAccount;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -12,10 +13,13 @@ import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
+import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -26,6 +30,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
@@ -78,15 +84,40 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private Button reloadBtn;
 
   @FXML
+  private Button showPlayerBtn;
+
+  @FXML
   private Button synchronizeBtn;
 
   private Parent loadingOverlay;
   private List<RankedPlayer> rankedPlayers;
 
+
+  private ManiaController maniaController;
+
   private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
+  }
+
+  @FXML
+  private void onPlayerView() {
+    RankedPlayer selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null && selectedItem.getAccount() != null) {
+      String uuid = selectedItem.getAccount().getUuid();
+      Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(uuid);
+      maniaController.selectPlayer(accountByUuid);
+    }
+  }
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        onPlayerView();
+      }
+    }
   }
 
   @FXML
@@ -216,6 +247,15 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       return new SimpleObjectProperty(label);
     });
 
+
+    this.showPlayerBtn.setDisable(true);
+    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RankedPlayer>() {
+      @Override
+      public void changed(ObservableValue<? extends RankedPlayer> observable, RankedPlayer oldValue, RankedPlayer newValue) {
+        showPlayerBtn.setDisable(newValue == null);
+      }
+    });
+
     try {
       FXMLLoader loader = new FXMLLoader(LoadingOverlayController.class.getResource("loading-overlay-plain.fxml"));
       loadingOverlay = loader.load();
@@ -256,7 +296,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     new Thread(() -> {
       try {
         List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
-        if(rankedAccounts != null) {
+        if (rankedAccounts != null) {
           rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
           Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
             @Override
@@ -293,6 +333,9 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }).start();
   }
 
+  public void setManiaController(ManiaController maniaController) {
+    this.maniaController = maniaController;
+  }
 
   class RankedPlayer {
     private final int points;
