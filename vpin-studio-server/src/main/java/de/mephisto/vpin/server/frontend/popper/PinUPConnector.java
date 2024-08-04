@@ -1742,6 +1742,9 @@ public class PinUPConnector implements FrontendConnector {
     catch (SQLException e) {
       LOG.error("Failed to read lookups: " + e.getMessage(), e);
     }
+    finally {
+      this.disconnect(connect);
+    }
     return results;
   }
 

@@ -656,8 +656,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     }
   }
 
+
   @FXML
-  private void onGenerateClick() {
+  private void onGenerate() {
     if(this.gameRepresentation.isPresent()) {
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       String targetScreen = cardSettings.getPopperScreen();
@@ -668,6 +669,19 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
         ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Card", this.gameRepresentation.get()));
       }
     }
+  }
+
+  @FXML
+  private void onGenerateClick() {
+    Platform.runLater(() -> {
+      try {
+        client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
+        refreshPreview(this.gameRepresentation, true);
+      } catch (Exception e) {
+        LOG.error("Failed to save template: " + e.getMessage());
+        WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
+      }
+    });
   }
 
   private void refreshPreview(Optional<GameRepresentation> game, boolean regenerate) {
