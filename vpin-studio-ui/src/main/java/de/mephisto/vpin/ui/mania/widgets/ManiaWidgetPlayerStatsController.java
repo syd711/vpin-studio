@@ -238,6 +238,8 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       this.tableView.setVisible(false);
 
       List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
+      titleLabel.setText("Player Statistics for \"" + account.getDisplayName() + "\" [" + account.getInitials() + "] - (" + highscoresByAccount.size() + " scores)");
+
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 
       List<TableScoreModel> results = (List<TableScoreModel>) (List<?>) progressDialog.getResults();

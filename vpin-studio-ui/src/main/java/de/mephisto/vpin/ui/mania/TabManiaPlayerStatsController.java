@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.mania;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerStatsController;
-import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTableAlxController;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;

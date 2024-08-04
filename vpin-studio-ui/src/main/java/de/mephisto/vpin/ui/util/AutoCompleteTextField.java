@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.util;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Side;
 import javafx.scene.control.ContextMenu;
@@ -11,6 +12,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.slf4j.Logger;
@@ -31,6 +33,7 @@ public class AutoCompleteTextField {
   private final static Logger LOG = LoggerFactory.getLogger(AutoCompleteTextField.class);
   private final ContextMenu entriesPopup;
   private final TextField textField;
+  private final AutoCompleteTextFieldChangeListener listener;
   private final AutoCompleteMatcher matcher;
 
   private boolean changedEnabled = true;
@@ -50,6 +53,7 @@ public class AutoCompleteTextField {
    */
   public AutoCompleteTextField(Stage stage, TextField textField, AutoCompleteTextFieldChangeListener listener, TreeSet<String> entries, AutoCompleteMatcher matcher) {
     this.textField = textField;
+    this.listener = listener;
     this.matcher = matcher;
     entriesPopup = new ContextMenu();
     entriesPopup.getStyleClass().add("context-menu");
@@ -62,7 +66,7 @@ public class AutoCompleteTextField {
             defaultValue = value;
             entriesPopup.hide();
             entriesPopup.getItems().clear();
-            textField.setText(value);
+            textField.setText(String.valueOf(value));
             listener.onChange(value);
             Platform.runLater(() -> {
               textField.getParent().requestFocus();
@@ -88,9 +92,9 @@ public class AutoCompleteTextField {
           entriesPopup.hide();
         }
         else {
-          List<String> searchResult = null;
+          List<AutoMatchModel> searchResult = null;
           if (entries != null) {
-            searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).collect(Collectors.toList());
+            searchResult = entries.stream().filter(e -> e.toLowerCase().contains(textField.getText().toLowerCase())).map(e -> new AutoMatchModel(e, e)).collect(Collectors.toList());
           }
           else {
             searchResult = matcher.match(textField.getText());
@@ -133,7 +137,7 @@ public class AutoCompleteTextField {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (!newValue) {
-          setText(defaultValue);
+          setText(String.valueOf(defaultValue));
         }
       }
     });
@@ -148,17 +152,26 @@ public class AutoCompleteTextField {
    *
    * @param searchResult The set of matching strings.
    */
-  private void populatePopup(List<String> searchResult) {
+  private void populatePopup(List<AutoMatchModel> searchResult) {
     List<MenuItem> menuItems = new LinkedList<>();
     // If you'd like more entries, modify this line.
     int maxEntries = 10;
     int count = Math.min(searchResult.size(), maxEntries);
     for (int i = 0; i < count; i++) {
-      final String result = searchResult.get(i);
+      final String result = String.valueOf(searchResult.get(i));
       Label entryLabel = new Label(result);
 
-      MenuItem item = new MenuItem(result);
-      item.setId(result);
+      MenuItem item = new MenuItem("", entryLabel);
+      item.setId(searchResult.get(i).getId());
+      entryLabel.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+        @Override
+        public void handle(MouseEvent e) {
+          textField.setText(entryLabel.getText());
+          entriesPopup.hide();
+          defaultValue = result;
+          listener.onChange(item.getId());
+        }
+      });
 //      item.setOnAction(new EventHandler<ActionEvent>() {
 //        @Override
 //        public void handle(ActionEvent actionEvent) {

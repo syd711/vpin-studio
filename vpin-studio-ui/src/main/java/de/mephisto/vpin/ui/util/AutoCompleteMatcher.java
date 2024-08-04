@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface AutoCompleteMatcher {
 
-  List<String> match(String input);
+  List<AutoMatchModel> match(String input);
 }

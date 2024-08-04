@@ -128,7 +128,6 @@ public class TabManiaTableScoresController implements Initializable, StudioFXCon
       }
     }
     tableRankController.setData(table);
-    tablesByLetterController.selectTable(table);
   }
 
   private List<String> getLetters() {

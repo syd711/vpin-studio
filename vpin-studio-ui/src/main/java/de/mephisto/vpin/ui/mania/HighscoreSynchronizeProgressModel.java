@@ -1,23 +1,16 @@
 package de.mephisto.vpin.ui.mania;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.components.ComponentActionLogRepresentation;
-import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
-import javafx.application.Platform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class HighscoreSynchronizeProgressModel extends ProgressModel<VpsTable> {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreSynchronizeProgressModel.class);

@@ -1,21 +1,15 @@
 package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
-import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.mania.TabManiaOverviewController;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
-import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -23,7 +17,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
-import javafx.stage.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +119,6 @@ public class ManiaWidgetLatestScoresController extends WidgetController implemen
   }
 
   public void setOverviewController(TabManiaOverviewController overviewController) {
-
     this.overviewController = overviewController;
   }
 }

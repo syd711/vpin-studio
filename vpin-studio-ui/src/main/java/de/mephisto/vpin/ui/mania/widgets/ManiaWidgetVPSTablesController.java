@@ -29,7 +29,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -137,15 +140,17 @@ public class ManiaWidgetVPSTablesController extends WidgetController implements 
     }
 
     activeRow = Optional.empty();
-    this.predicates.add(new Predicate<VpsTable>() {
-      @Override
-      public boolean test(VpsTable vpsTable) {
-        Platform.runLater(() -> {
-          tableRankController.setData(vpsTable);
-        });
-        return true;
-      }
-    });
+    if(selectedTable != null) {
+      this.predicates.add(new Predicate<VpsTable>() {
+        @Override
+        public boolean test(VpsTable vpsTable) {
+          Platform.runLater(() -> {
+            tableRankController.setData(selectedTable);
+          });
+          return true;
+        }
+      });
+    }
     new Thread(() -> {
       vpsTableItems.clear();
 

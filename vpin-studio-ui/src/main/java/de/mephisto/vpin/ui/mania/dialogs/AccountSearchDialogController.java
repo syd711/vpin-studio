@@ -5,6 +5,7 @@ import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.ui.util.AutoCompleteMatcher;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import de.mephisto.vpin.ui.util.AutoMatchModel;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -17,7 +18,6 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
@@ -74,10 +74,9 @@ public class AccountSearchDialogController implements DialogController, AutoComp
 
     autoCompleteNameField = new AutoCompleteTextField(stage, this.nameField, this, null, new AutoCompleteMatcher() {
       @Override
-      public List<String> match(String input) {
+      public List<AutoMatchModel> match(String input) {
         try {
-          List<Account> accs = maniaClient.getAccountClient().searchAccounts(input);
-          return accs.stream().map(acc ->  acc.getDisplayName()).collect(Collectors.toList());
+          return maniaClient.getAccountClient().searchAccounts(input).stream().map(a -> new AutoMatchModel(a.getDisplayName(), a.getUuid())).collect(Collectors.toList());
         }
         catch (Exception e) {
           LOG.error("Account search failed: " + e.getMessage(), e);

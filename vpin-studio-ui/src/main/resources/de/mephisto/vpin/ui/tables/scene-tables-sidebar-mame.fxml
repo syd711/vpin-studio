@@ -39,6 +39,17 @@
                   <Label fx:id="errorText" layoutX="22.0" layoutY="22.0" styleClass="error-message" text="Label" wrapText="true" />
                </children>
             </VBox>
+            <VBox fx:id="noInputDataBox" layoutX="22.0" layoutY="76.0">
+               <children>
+                  <Label styleClass="preference-description" text="No registry entries found. You can override the defaults to create them." />
+               </children>
+               <opaqueInsets>
+                  <Insets />
+               </opaqueInsets>
+               <VBox.margin>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </VBox.margin>
+            </VBox>
             <VBox fx:id="invalidDataBox" layoutX="22.0" layoutY="81.0">
                <children>
                   <Label styleClass="preference-description" text="This table type does not use VPin Mame settings." />

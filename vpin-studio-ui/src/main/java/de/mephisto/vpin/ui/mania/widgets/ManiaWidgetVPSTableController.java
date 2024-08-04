@@ -1,9 +1,7 @@
 package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
-import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;

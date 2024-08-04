@@ -58,6 +58,9 @@ public class TablesSidebarMameController implements Initializable {
   private VBox invalidDataBox;
 
   @FXML
+  private VBox noInputDataBox;
+
+  @FXML
   private VBox errorBox;
 
   @FXML
@@ -222,6 +225,7 @@ public class TablesSidebarMameController implements Initializable {
       onDelete();
     }
     else {
+      noInputDataBox.setVisible(false);
       MameOptions defaultOptions = client.getMameService().getOptions(MameOptions.DEFAULT_KEY);
 
       options.setSkipPinballStartupTest(defaultOptions.isSkipPinballStartupTest());
@@ -258,11 +262,14 @@ public class TablesSidebarMameController implements Initializable {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     dataBox.managedProperty().bindBidirectional(dataBox.visibleProperty());
     emptyDataBox.managedProperty().bindBidirectional(emptyDataBox.visibleProperty());
+    noInputDataBox.managedProperty().bindBidirectional(noInputDataBox.visibleProperty());
     invalidDataBox.managedProperty().bindBidirectional(invalidDataBox.visibleProperty());
     errorBox.managedProperty().bindBidirectional(errorBox.visibleProperty());
     errorBox.setVisible(false);
     invalidDataBox.setVisible(false);
     mameBtn.setDisable(!client.getSystemService().isLocal());
+
+    noInputDataBox.setVisible(false);
 
     skipPinballStartupTest.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
     useSound.selectedProperty().addListener((observable, oldValue, newValue) -> saveOptions());
@@ -316,6 +323,7 @@ public class TablesSidebarMameController implements Initializable {
 
     this.errorBox.setVisible(false);
     this.applyDefaultsBtn.setDisable(!g.isPresent());
+    noInputDataBox.setVisible(false);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -344,6 +352,7 @@ public class TablesSidebarMameController implements Initializable {
       if (romSet) {
         options = client.getMameService().getOptions(game.getRom());
         setInputDisabled(options == null || !options.isExistInRegistry());
+        noInputDataBox.setVisible(options == null || !options.isExistInRegistry());
 
         if (options != null) {
           skipPinballStartupTest.setSelected(options.isSkipPinballStartupTest());

@@ -3,12 +3,7 @@ package de.mephisto.vpin.ui.mania;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetPlayerStatsController;
-import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -17,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
