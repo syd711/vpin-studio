@@ -69,7 +69,7 @@ public class VPS {
   }
 
   public VpsTable getTableById(String id) {
-    return this.tables.stream().filter(t -> t.getId().equals(id)).findFirst().orElse(null);
+    return this.tables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst().orElse(null);
   }
 
   public List<VpsTable> getTables() {
@@ -249,8 +249,8 @@ public class VPS {
   //----------------- DIFFS
 
   public VpsDiffer diffById(List<VpsTable> oldTables, List<VpsTable> newTables, String id) {
-    Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equals(id)).findFirst();
-    Optional<VpsTable> newTable = newTables.stream().filter(t -> t.getId().equals(id)).findFirst();
+    Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst();
+    Optional<VpsTable> newTable = newTables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst();
 
     return new VpsDiffer(newTable.orElse(null), oldTable.orElse(null));
   }
@@ -264,7 +264,7 @@ public class VPS {
     LOG.info("Differing " + oldTables.size() + " old tables against " + newTables.size() + " new tables.");
     List<VpsDiffer> diff = new ArrayList<>();
     for (VpsTable newTable : newTables) {
-      Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
+      Optional<VpsTable> oldTable = oldTables.stream().filter(t -> t.getId() != null && t.getId().equalsIgnoreCase(newTable.getId())).findFirst();
       VpsDiffer tableDiff = new VpsDiffer(newTable, oldTable.orElse(null));
       VPSChanges changes = tableDiff.getChanges();
       if (!changes.isEmpty()) {

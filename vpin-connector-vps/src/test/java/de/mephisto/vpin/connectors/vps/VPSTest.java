@@ -26,6 +26,21 @@ public class VPSTest {
     return instance;
   }
 
+  @Test
+  public void testCorruption() throws IOException {
+    VPS vps = new VPS();
+    vps.reload();
+
+    List<VpsTable> tables = vps.getTables();
+    for (VpsTable table : tables) {
+      for (VpsBackglassFile b2sFile : table.getB2sFiles()) {
+        if(b2sFile.getId() == null) {
+          System.out.println(table.getName());
+        }
+      }
+    }
+  }
+
 
   @Test
   public void testDiff() throws IOException {

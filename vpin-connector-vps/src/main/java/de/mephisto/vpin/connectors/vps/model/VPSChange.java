@@ -35,7 +35,7 @@ public class VPSChange {
     switch (diffType) {
       case altColor: {
         if (tableById.getAltColorFiles() != null) {
-          Optional<VpsAuthoredUrls> first = tableById.getAltColorFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+          Optional<VpsAuthoredUrls> first = tableById.getAltColorFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
           if (first.isPresent()) {
             return VpsDiffTypes.altColor + ":\n" + first.get();
           }
@@ -44,7 +44,7 @@ public class VPSChange {
       }
       case altSound: {
         if (tableById.getAltSoundFiles() != null) {
-          Optional<VpsAuthoredUrls> first = tableById.getAltSoundFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+          Optional<VpsAuthoredUrls> first = tableById.getAltSoundFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
           if (first.isPresent()) {
             return VpsDiffTypes.altSound + ":\n" + first.get();
           }
@@ -52,28 +52,28 @@ public class VPSChange {
         break;
       }
       case b2s: {
-        Optional<VpsBackglassFile> first = tableById.getB2sFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsBackglassFile> first = tableById.getB2sFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.b2s + ":\n" + first.get();
         }
         break;
       }
       case pov: {
-        Optional<VpsAuthoredUrls> first = tableById.getPovFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getPovFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.pov + ":\n" + first.get();
         }
         break;
       }
       case rom: {
-        Optional<VpsAuthoredUrls> first = tableById.getRomFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getRomFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.rom + ":\n" + first.get();
         }
         break;
       }
       case sound: {
-        Optional<VpsAuthoredUrls> first = tableById.getSoundFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getSoundFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.sound + ":\n" + first.get();
         }
@@ -87,14 +87,14 @@ public class VPSChange {
         break;
       }
       case wheel: {
-        Optional<VpsAuthoredUrls> first = tableById.getWheelArtFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getWheelArtFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.wheel + ":\n" + first.get();
         }
         break;
       }
       case tutorial: {
-        Optional<VpsTutorialUrls> first = tableById.getTutorialFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsTutorialUrls> first = tableById.getTutorialFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.tutorial + ":\n" + first.get();
         }
@@ -111,7 +111,7 @@ public class VPSChange {
         return null;
       }
       case topper: {
-        Optional<VpsAuthoredUrls> first = tableById.getTopperFiles().stream().filter(f -> f.getId().equals(this.getId())).findFirst();
+        Optional<VpsAuthoredUrls> first = tableById.getTopperFiles().stream().filter(f -> f.getId() != null && f.getId().equals(this.getId())).findFirst();
         if (first.isPresent()) {
           return VpsDiffTypes.topper + ":\n" + first.get();
         }

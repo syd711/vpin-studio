@@ -60,7 +60,7 @@ public class VpsDiffer {
     }
 
     for (VpsTableVersion newVersionFile : newFiles) {
-      Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t -> t.getId().equals(newVersionFile.getId())).findFirst();
+      Optional<VpsTableVersion> versionInOtherList = oldFiles.stream().filter(t ->t.getId() != null &&  t.getId().equals(newVersionFile.getId())).findFirst();
       if (versionInOtherList.isPresent()) {
         VpsTableVersion version = versionInOtherList.get();
         if (version.getVersion() == null && newVersionFile.getVersion() == null) {
