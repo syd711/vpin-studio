@@ -50,7 +50,7 @@ public class AudioMediaPlayer extends AssetMediaPlayer {
     mediaPlayer = new MediaPlayer(media);
 
     mediaPlayer.setOnError(() -> {
-      LOG.error("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
+      LOG.warn("Media player error: " + mediaPlayer.getError() + ", URL: " + mediaPlayer.getMedia().getSource());
 
       if (retryCounter < 1) {
         retryCounter++;

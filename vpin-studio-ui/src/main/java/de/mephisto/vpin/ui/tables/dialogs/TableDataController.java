@@ -624,30 +624,36 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
+    FrontendType frontendType = null;
+    try {
+      frontendType = client.getFrontendService().getFrontendType();
 
-    if (!frontendType.supportStandardFields()) {
-      tabPane.getTabs().remove(metaDataTab);
+      if (!frontendType.supportStandardFields()) {
+        tabPane.getTabs().remove(metaDataTab);
+      }
+      if (!frontendType.supportExtendedFields()) {
+        tabPane.getTabs().remove(customizationTab);
+        tabPane.getTabs().remove(extrasTab);
+      }
+
+      if (!frontendType.supportMedias()) {
+        buttonsBar.getChildren().remove(openAssetMgrBtn);
+      }
+
+      hintCustom2.setVisible(false);
+      hintCustom3.setVisible(false);
+      hintCustom4.setVisible(false);
+      hintCustom5.setVisible(false);
+      hintWebId.setVisible(false);
+
+      tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
+      tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
     }
-    if (!frontendType.supportExtendedFields()) {
-      tabPane.getTabs().remove(customizationTab);
-      tabPane.getTabs().remove(extrasTab);
+    catch (Exception e) {
+      LOG.error("Failed to initialize table data manager: " + e.getMessage(), e);
     }
 
-    if (!frontendType.supportMedias()) {
-      buttonsBar.getChildren().remove(openAssetMgrBtn);
-    }
-
-    hintCustom2.setVisible(false);
-    hintCustom3.setVisible(false);
-    hintCustom4.setVisible(false);
-    hintCustom5.setVisible(false);
-    hintWebId.setVisible(false);
-
-    tableVersionsCombo.setCellFactory(c -> new VpsTableVersionCell());
-    tableVersionsCombo.setButtonCell(new VpsTableVersionCell());
-
-    if (frontendType.supportStatistics()) {
+    if (frontendType != null && frontendType.supportStatistics()) {
       try {
         FXMLLoader loader = new FXMLLoader(TableDataTabStatisticsController.class.getResource("dialog-table-data-tab-statistics.fxml"));
         Parent builtInRoot = loader.load();

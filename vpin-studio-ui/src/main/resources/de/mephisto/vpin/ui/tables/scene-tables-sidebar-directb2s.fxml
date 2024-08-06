@@ -269,7 +269,7 @@
                               <GridPane vgap="3.0">
                                 <columnConstraints>
                                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="180.0" />
-                                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="180.0" prefWidth="320.0" />
+                                  <ColumnConstraints hgrow="SOMETIMES" prefWidth="350.0" />
                                 </columnConstraints>
                                 <rowConstraints>
                                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -433,13 +433,14 @@
                   <Font size="14.0" />
                </font>
             </Button>
-            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
-               </graphic>
+            <Separator layoutX="274.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
                <font>
                   <Font size="14.0" />
                </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+               </graphic>
             </Button>
             <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                <font>
@@ -450,6 +451,14 @@
                </graphic>
             </Button>
             <Separator layoutX="176.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="openDefaultPictureBtn" mnemonicParsing="false" onAction="#onOpenDirectB2SBackground" text="View">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2e-eye" iconSize="18" />
+               </graphic>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
             <Button fx:id="backglassManagerBtn" layoutX="100.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackglassManager" text="Backglass Manager">
                <font>
                   <Font size="14.0" />

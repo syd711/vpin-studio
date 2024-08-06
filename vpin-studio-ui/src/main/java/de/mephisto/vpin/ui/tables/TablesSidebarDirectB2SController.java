@@ -116,6 +116,9 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private Button deleteBtn;
 
   @FXML
+  private Button reloadBtn;
+
+  @FXML
   private VBox dataBox;
 
   @FXML
@@ -198,6 +201,15 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     TableDialogs.openDirectB2sManagerDialog(tablesSidebarController);
   }
 
+  @FXML
+  private void onReload() {
+    this.reloadBtn.setDisable(true);
+
+    if (game.isPresent()) {
+      client.getBackglassServiceClient().clearCache();
+      EventManager.getInstance().notifyTableChange(game.get().getId(), null);
+    }
+  }
 
   @FXML
   private void onDelete(ActionEvent e) {
@@ -404,6 +416,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
     boolean directb2sAvailable = g.isPresent() && g.get().getDirectB2SPath() != null;
     openDefaultPictureBtn.setDisable(!g.isPresent() || !directb2sAvailable);
     uploadBtn.setDisable(!g.isPresent());
+    reloadBtn.setDisable(!g.isPresent());
     dataBoxScrollPane.setVisible(g.isPresent() && directb2sAvailable);
     emptyDataBox.setVisible(!g.isPresent() || !directb2sAvailable);
 

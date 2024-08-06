@@ -44,6 +44,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.File;
@@ -55,6 +57,7 @@ import java.util.Optional;
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableDialogs {
+  private final static Logger LOG = LoggerFactory.getLogger(TableDialogs.class);
 
   public static void directAssetUpload(Stage stage, GameRepresentation game, VPinScreen screen) {
     StudioFileChooser fileChooser = new StudioFileChooser();
@@ -576,18 +579,23 @@ public class TableDialogs {
   }
 
   public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
-    Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager", "tableDataManager");
-    TableDataController controller = (TableDataController) stage.getUserData();
-    controller.setGame(stage, overviewController, game, tab);
+    try {
+      Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager", "tableDataManager");
+      TableDataController controller = (TableDataController) stage.getUserData();
+      controller.setGame(stage, overviewController, game, tab);
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(812);
-    stage.setMaxWidth(812);
-    stage.setMaxHeight(1020);
-    stage.setMinHeight(TableDataController.MIN_HEIGHT);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+      stage.setUserData(fxResizeHelper);
+      stage.setMinWidth(812);
+      stage.setMaxWidth(812);
+      stage.setMaxHeight(1020);
+      stage.setMinHeight(TableDataController.MIN_HEIGHT);
 
-    stage.showAndWait();
+      stage.showAndWait();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open table data manager: " + e.getMessage(), e);
+    }
   }
 
   public static void openTablesBackupDialog(List<GameRepresentation> games) {

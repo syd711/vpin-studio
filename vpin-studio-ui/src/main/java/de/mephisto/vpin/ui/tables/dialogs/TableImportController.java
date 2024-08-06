@@ -69,6 +69,7 @@ public class TableImportController implements Initializable, DialogController {
     Platform.runLater(() -> {
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(Studio.stage, new TableImportProgressModel(importList));
       List<Object> results = progressDialog.getResults();
+
       for (Object result : results) {
         JobExecutionResult jobResult = (JobExecutionResult) result;
         if (jobResult.isErrorneous()) {

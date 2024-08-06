@@ -891,6 +891,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public void onReload() {
     status = client.getGameStatusService().getStatus();
+    client.getGameService().clearCache();
     doReload(true);
   }
 

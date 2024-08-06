@@ -413,6 +413,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   @FXML
   private void onReload() {
+    client.getBackglassServiceClient().clearCache();
     setSaveEnabled(false);
     unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
     applyFilter();

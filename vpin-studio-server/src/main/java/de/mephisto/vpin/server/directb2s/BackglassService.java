@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -21,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.File;
 import java.io.IOException;
@@ -44,6 +46,12 @@ public class BackglassService {
   private final Map<String, DirectB2SData> cacheDirectB2SData = new ConcurrentHashMap<>();
 
   private final Map<String, B2STableSettingsParser> cacheB2STableSettingsParser = new ConcurrentHashMap<>();
+
+  public boolean clearCache() {
+    cacheB2STableSettingsParser.clear();
+    cacheDirectB2SData.clear();
+    return true;
+  }
 
   public DirectB2SData getDirectB2SData(int gameId) {
     Game game = gameService.getGame(gameId);
@@ -131,8 +139,13 @@ public class BackglassService {
     }
   }
 
+  @Nullable
   public DirectB2STableSettings getTableSettings(int gameId) {
     Game game = gameService.getGame(gameId);
+    if (game == null) {
+      return null;
+    }
+
     String rom = game.getRom();
 
     File settingsXml = game.getEmulator().getB2STableSettingsXml();
@@ -218,6 +231,9 @@ public class BackglassService {
   public boolean rename(int emuId, String filename, String newName) {
     File b2sFile = getB2sFile(emuId, filename);
     if (b2sFile.exists() && b2sFile.renameTo(new File(b2sFile.getParentFile(), newName))) {
+      if (cacheDirectB2SData.containsKey(b2sFile.getPath())) {
+        cacheDirectB2SData.remove(b2sFile.getPath());
+      }
       LOG.info("Renamed \"" + b2sFile.getName() + "\" to \"" + newName + "\"");
       return true;
     }

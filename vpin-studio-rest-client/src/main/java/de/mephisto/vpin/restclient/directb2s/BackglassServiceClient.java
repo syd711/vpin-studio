@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -45,6 +46,12 @@ public class BackglassServiceClient extends VPinStudioClientService {
 
   public DirectB2SData getDirectB2SData(int gameId) {
     return getRestClient().get(API + "directb2s/" + gameId, DirectB2SData.class);
+  }
+
+
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "directb2s/clearcache", Boolean.class);
   }
 
   public InputStream getDirectB2sBackground(DirectB2SData directB2S) throws IOException {

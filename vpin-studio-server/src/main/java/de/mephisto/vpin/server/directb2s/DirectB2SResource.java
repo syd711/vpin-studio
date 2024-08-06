@@ -56,6 +56,12 @@ public class DirectB2SResource {
     return backglassService.getDirectB2SData(gameId);
   }
 
+
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return backglassService.clearCache();
+  }
+
   @GetMapping("/background/{emuId}/{filename}")
   public ResponseEntity<Resource> getBackground(@PathVariable("emuId") int emuId, @PathVariable("filename") String filename) {
     // first decoding done by the RestService but an extra one is needed
@@ -164,6 +170,7 @@ public class DirectB2SResource {
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
+      backglassService.clearCache();
       return descriptor;
     }
     catch (Exception e) {

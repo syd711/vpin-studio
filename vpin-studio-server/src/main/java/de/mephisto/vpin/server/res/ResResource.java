@@ -32,7 +32,7 @@ public class ResResource {
   }
 
   @PostMapping("/upload")
-  public UploadDescriptor uploadDirectB2s(@RequestParam(value = "file", required = false) MultipartFile file,
+  public UploadDescriptor uploadRes(@RequestParam(value = "file", required = false) MultipartFile file,
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {

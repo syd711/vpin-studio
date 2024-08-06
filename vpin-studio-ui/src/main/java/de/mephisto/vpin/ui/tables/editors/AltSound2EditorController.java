@@ -268,7 +268,7 @@ public class AltSound2EditorController implements Initializable {
               mediaPlayer.setMute(false);
               mediaPlayer.setOnError(() -> {
                 fontIcon.setIconLiteral("bi-play");
-                LOG.error("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
+                LOG.warn("Media player error for URL {}: {}", url, mediaPlayer.getError() + ", URL: " + url);
                 mediaPlayer.stop();
                 mediaPlayer.dispose();
               });
