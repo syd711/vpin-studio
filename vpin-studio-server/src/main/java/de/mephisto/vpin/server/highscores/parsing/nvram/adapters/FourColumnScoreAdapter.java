@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,7 +47,7 @@ public class FourColumnScoreAdapter implements ScoreNvRamAdapter {
         subIndex++;
         score = s[subIndex];
       }
-      score = score.replaceAll("\\.", "");
+      score = ScoreFormatUtil.cleanScore(score);
       builder.append(score);
       builder.append("\n");
     }

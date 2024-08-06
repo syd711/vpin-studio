@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +38,7 @@ public class SinglePlayerScoreAdapter extends ScoreTextFileAdapterImpl {
     builder.append(" ");
     builder.append("???");
     builder.append("   ");
-    builder.append(score1.replaceAll("\\.", ""));
+    builder.append(ScoreFormatUtil.cleanScore(score1));
     builder.append("\n");
     return builder.toString();
   }

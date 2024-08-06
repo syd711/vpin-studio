@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class SinglePlayerScoreAdapter implements ScoreNvRamAdapter {
     builder.append(" ");
     builder.append("???");
     builder.append("   ");
-    builder.append(score1.replaceAll("\\.", ""));
+    builder.append(ScoreFormatUtil.cleanScore(score1));
     builder.append("\n");
     return builder.toString();
   }

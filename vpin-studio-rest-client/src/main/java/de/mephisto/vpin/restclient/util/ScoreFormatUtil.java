@@ -11,21 +11,28 @@ public class ScoreFormatUtil {
   private final static Logger LOG = LoggerFactory.getLogger(ScoreFormatUtil.class);
 
   private static DecimalFormatSymbols symbols;
+
   static {
     symbols = DecimalFormatSymbols.getInstance(Locale.getDefault());
   }
 
   public static String formatScore(String score) {
     try {
-      score = score.replaceAll("\\.", "").replaceAll(",", "");
+      score = cleanScore(score);
       DecimalFormat decimalFormat = new DecimalFormat("#.##", symbols);
       decimalFormat.setGroupingUsed(true);
       decimalFormat.setGroupingSize(3);
       return decimalFormat.format(Long.parseLong(score));
-    } catch (NumberFormatException e) {
-      LOG.error("Failed to read number from '" +score + "': " + e.getMessage());
+    }
+    catch (NumberFormatException e) {
+      LOG.error("Failed to read number from '" + score + "': " + e.getMessage());
       return "0";
     }
+  }
+
+
+  public static String cleanScore(String score) {
+    return score.replaceAll("\\.", "").replaceAll(",", "").replaceAll(" ", "");
   }
 
 }

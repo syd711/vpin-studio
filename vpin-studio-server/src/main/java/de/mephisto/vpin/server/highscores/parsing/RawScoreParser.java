@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing;
 
+import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.server.highscores.Score;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -139,7 +140,7 @@ public class RawScoreParser {
 
   private static double toNumericScore(String score) {
     try {
-      String cleanScore = score.trim().replaceAll("\\.", "").replaceAll(",", "");
+      String cleanScore = ScoreFormatUtil.cleanScore(score);
       return Double.parseDouble(cleanScore);
     } catch (NumberFormatException e) {
       LOG.info("Failed to parse highscore string '" + score + "', ignoring segment '" + score + "'");
