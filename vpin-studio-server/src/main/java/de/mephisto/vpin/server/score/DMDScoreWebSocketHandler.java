@@ -6,6 +6,9 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -34,7 +37,10 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
   private GameToProcessorFactory factory = new GameToProcessorFactory();
 
-  private DMDScoreProcessor processor;
+  //private BlockingQueue<Frame> blockingQueue = new LinkedBlockingDeque<>();
+  private ExecutorService executor;
+
+  private DMDScoreProcessor _processor;
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
@@ -49,7 +55,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
   protected void handleBinaryMessage(WebSocketSession session, BinaryMessage message) throws IOException {
     try {
       if(message.isLast() == false) {     
-        LOG.info("Partial Message Received");
+        //LOG.info("Partial Message Received");
         partialMessage = true;
         buffers.add(message.getPayload());
         return;
@@ -91,10 +97,12 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
           processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
           break;
         case RGB24:
-          int timeStamp = frameData.getInt();
-          byte[] rgb24 = planesFromRgb24(frameData, width, height);
-          Frame frame = new Frame(type, "", timeStamp, rgb24, width, height);
-          processor.onFrameReceived(frame, palette);
+          if (_processor != null) {
+            int timeStamp = frameData.getInt();
+            byte[] rgb24 = planesFromRgb24(frameData, width, height);
+            Frame frame = new Frame(type, "", timeStamp, rgb24, palette, width, height);
+            addFrameToQueue(frame);
+          }
           break;
         case GRAY_2_PLANES:
           processFrame(type, frameData.getInt(), palette, planesFromData(frameData), 2);
@@ -105,7 +113,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
         case COLOUR:
           int color = frameData.getInt();
           palette = DmdImageUtils.paletteFromColor(color, 4);
-          LOG.info("Colour frame: {}", color);
+          LOG.info("Colour frame: {} / {}", color, DmdImageUtils.colorToHex(color));
           break;
         case CLEAR_COLOUR:
           palette = DmdImageUtils.paletteFromColor(DEFAULT_COLOR, 4);
@@ -135,9 +143,11 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       processGameStop();
 
       this.gameName = newGameName;
-      processor = factory.getProcessor(gameName);
-      if (processor != null) {
-        processor.onFrameStart(gameName);
+      _processor = factory.getProcessor(gameName);
+      if (_processor != null) {
+        _processor.onFrameStart(gameName);
+        // start the Executor that will process Frames
+        executor = Executors.newFixedThreadPool(1);
       }
       LOG.info("Game name started : {}", gameName);
     }
@@ -149,18 +159,33 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       return;
     }
 
-    if (processor != null) {
+    if (_processor != null) {
       byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-      Frame frame = new Frame(type, "", timeStamp, frameBytes, width, height);
-      processor.onFrameReceived(frame, palette);
+      Frame frame = new Frame(type, "", timeStamp, frameBytes, palette, width, height);
+      addFrameToQueue(frame);
     }
   }
 
+  protected void addFrameToQueue(Frame frame) {
+    executor.execute(() -> {
+      _processor.onFrameReceived(frame);
+    });
+  }
+
   private void processGameStop() {
-    if (gameName != null) {
-      if (processor != null) {
-        processor.onFrameStop(gameName);
+    if (gameName != null && _processor != null) {
+      // stop executor and wait for 5min for all task to complete
+      executor.shutdown();
+      try {
+        if (!executor.awaitTermination(5, TimeUnit.MINUTES)) {
+          executor.shutdownNow();
+        } 
+      } catch (InterruptedException e) {
+        executor.shutdownNow();
       }
+      // now close the processor
+      _processor.onFrameStop(gameName);
+      _processor = null;
       this.gameName = null;
     }
   }

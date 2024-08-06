@@ -8,14 +8,16 @@ public class Frame {
   private String name;
   private int timeStamp;
   private byte[] plane;
+  private int[] palette;
   private int width;
   private int height;
 
-  public Frame(FrameType type, String name, int timeStamp, byte[] plane, int width, int height) {
+  public Frame(FrameType type, String name, int timeStamp, byte[] plane, int[] palette, int width, int height) {
     this.type = type;
     this.name = name;
     this.timeStamp = timeStamp;
     this.plane = plane;
+    this.palette = palette;
     this.width = width;
     this.height = height;
   }
@@ -35,6 +37,11 @@ public class Frame {
   public byte[] getPlane() {
     return plane;
   }
+
+  public int[] getPalette() {
+    return palette;
+  }
+
   public int getWidth() {
     return width;
   }

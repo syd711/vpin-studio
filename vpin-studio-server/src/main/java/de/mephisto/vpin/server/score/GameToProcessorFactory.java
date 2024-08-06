@@ -10,12 +10,7 @@ public class GameToProcessorFactory {
   }
 
   public DMDScoreProcessor _getProcessor(String gameName) {
-    if (gameName.startsWith("___avr_200")) {
-      return getImage2SidesProcessor();
-    }
-    else {
-      return getImageScannerProcessor();
-    }
+    return getImageScannerProcessor();
   }
 
   /**
@@ -40,14 +35,6 @@ public class GameToProcessorFactory {
     return new DMDScoreProcessorFilterFixFrame(
       new DMDScoreProcessorImageDump(), 
       new DMDScoreAnalyser());
-  }
-
-    /**
-   * A processor that split images in two at given position, and process them separately 
-   */
-  public DMDScoreProcessor getImage2SidesProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(
-      new DMDScoreScanner2Sides(41));
   }
 
 }

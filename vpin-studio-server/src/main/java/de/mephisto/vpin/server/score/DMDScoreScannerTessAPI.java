@@ -12,6 +12,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.StringArray;
 import com.sun.jna.ptr.PointerByReference;
 
+import de.mephisto.vpin.server.system.SystemService;
 import net.sourceforge.tess4j.ITessAPI.TessBaseAPI;
 import net.sourceforge.tess4j.ITessAPI.TessOcrEngineMode;
 import net.sourceforge.tess4j.ITessAPI;
@@ -22,6 +23,8 @@ import net.sourceforge.tess4j.TessAPI;
  */
 public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreScannerTessAPI.class);
+
+  public static String TESSERACT_FOLDER = SystemService.RESOURCES + "tessdata";
 
   private TessAPI api;
   private TessBaseAPI handle;
@@ -35,6 +38,7 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
 
   @Override
   public void onFrameStart(String gameName) {
+    super.onFrameStart(gameName);
 
     File tessDataFolder = new File(TESSERACT_FOLDER);
 
@@ -44,7 +48,7 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
     String language = "eng";
     String datapath = tessDataFolder.getPath();
     int oem = TessOcrEngineMode.OEM_LSTM_ONLY;
-    boolean useDictionary = true;
+    boolean useDictionary = false;
 
     PointerByReference configs = null;
     int configs_size = 0;
@@ -85,11 +89,17 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
     }
     handle = null;
     api = null;
+
+    super.onFrameStop(gameName);
   }
 
-
   @Override
-  protected String extractText(Frame frame, byte[] pixels, int width, int height) {
+  protected String extractText(Frame frame, String name, byte[] pixels, int width, int height, int size) {
+
+    File imgFile = new File(folder, 
+      StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + name + ".png");
+    saveImage(pixels, width, height, generateBlurPalette(size), imgFile);
+
     try {
       ByteBuffer buf = ByteBuffer.wrap(pixels);
       api.TessBaseAPISetImage(handle, buf, width, height, 1, width);
@@ -98,10 +108,13 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
 
       if (textPtr != null) {
         String content = StringUtils.trim(textPtr.getString(0));
+        LOG.info("Text recognized:\n" + content);
 
         api.TessDeleteText(textPtr);
 
-        LOG.info("Text recognized:\n" + content);
+        content  = postProcess(content.toUpperCase());
+        LOG.info("Text post processed:\n" + content);
+
         return content;
       }
     } 
@@ -109,5 +122,25 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
       LOG.error("Error in OCR :" + e.getMessage());
     }
     return null;
+  }
+
+  /**
+   * Apply some text transformation, post processing
+   */
+  protected String postProcess(String content) {
+    content = StringUtils.replace(content, "BALL I", "BALL 1");
+    content = StringUtils.replace(content, "BALL >", "BALL 3");
+
+    content = StringUtils.replace(content, "CREDIT? ", "CREDITS ");
+    content = StringUtils.replace(content, "CREDITS O", "CREDITS 0");
+    content = StringUtils.replace(content, "CREDITS I", "CREDITS 1");
+
+    content = StringUtils.replace(content, "HIGH CORE", "HIGH SCORE");
+    content = StringUtils.replace(content, "HIGH SCORE +", "HIGH SCORE #");
+
+    content = StringUtils.replace(content, "OO", "00");
+
+    // else
+    return content;
   }
 }

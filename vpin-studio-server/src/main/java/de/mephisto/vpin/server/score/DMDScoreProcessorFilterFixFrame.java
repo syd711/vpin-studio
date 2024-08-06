@@ -10,8 +10,7 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
   private int threshold;
 
   private Frame previousFrame;
-  private Frame blinkingFrame;
-  private int[] previousPalette;
+
 
   public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor... delegates) {
     this(250, delegates);
@@ -21,17 +20,16 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
     this.threshold = threshold;
   }
 
-  public String onFrameReceived(Frame frame, int[] palette) {
+  public String onFrameReceived(Frame frame) {
     String ret = null;
     if (previousFrame != null && frame.equals(previousFrame)) {
       LOG.info("Skipping duplicate frame of type: {}", frame.getType());
-      blinkingFrame = null;
     }
     else {
       // consider previous plane only if it has been displayed more than threshold
       if (previousFrame != null && (frame.getTimeStamp() - previousFrame.getTimeStamp() > threshold)) {
         LOG.info("process {}, timestamp: {}, delta {}", frame.getType(), frame.getTimeStamp(), frame.getTimeStamp() - previousFrame.getTimeStamp());
-        ret = super.onFrameReceived(previousFrame, previousPalette);
+        ret = super.onFrameReceived(previousFrame);
       }
       else {
         //blinkingFrame = frame;
@@ -40,8 +38,16 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
       }
 
       previousFrame = frame;
-      previousPalette = palette;
     }
     return ret;
+  }
+
+  @Override
+  public void onFrameStop(String gameName) {
+    // always process the very last frame 
+    if (previousFrame != null) {
+      super.onFrameReceived(previousFrame);
+    }
+    super.onFrameStop(gameName);
   }
 }

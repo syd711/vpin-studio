@@ -32,7 +32,7 @@ public class DMDScoreReplayTest {
   }
 
   public void replayFile(File file, DMDScoreProcessor processor, int timeFrom, int timeTo) throws Exception{
-    DMDScoreScannerBase.TESSERACT_FOLDER = "." + DMDScoreScannerBase.TESSERACT_FOLDER;
+    DMDScoreScannerTessAPI.TESSERACT_FOLDER = "." + DMDScoreScannerTessAPI.TESSERACT_FOLDER;
 
     String gameName = null;
     try (BufferedReader reader = Files.newBufferedReader(file.toPath())) {
@@ -81,8 +81,8 @@ public class DMDScoreReplayTest {
           }
           // last line of the frame
           if (nbLines == h - 1) {
-            Frame frame = new Frame(ft, "", timestamp, plane, w, h);
-            processor.onFrameReceived(frame, palette);
+            Frame frame = new Frame(ft, "", timestamp, plane, palette, w, h);
+            processor.onFrameReceived(frame);
           }
         }
         // read next frame
@@ -94,7 +94,7 @@ public class DMDScoreReplayTest {
     }
     finally {
       processor.onFrameStop(gameName);
-      DMDScoreScannerBase.TESSERACT_FOLDER = DMDScoreScannerBase.TESSERACT_FOLDER.substring(1);
+      DMDScoreScannerTessAPI.TESSERACT_FOLDER = DMDScoreScannerTessAPI.TESSERACT_FOLDER.substring(1);
     }
   }
 

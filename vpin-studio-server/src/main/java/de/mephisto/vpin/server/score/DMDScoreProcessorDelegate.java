@@ -16,10 +16,10 @@ public class DMDScoreProcessorDelegate implements DMDScoreProcessor {
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette) {
+  public String onFrameReceived(Frame frame) {
     String ret = null;
     for (DMDScoreProcessor delegate: delegates) {
-      ret = delegate.onFrameReceived(frame, palette);
+      ret = delegate.onFrameReceived(frame);
     }
     return ret;
   }

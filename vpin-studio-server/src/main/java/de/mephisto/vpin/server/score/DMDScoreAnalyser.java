@@ -18,28 +18,33 @@ public class DMDScoreAnalyser extends DMDScoreSplitAndScan {
 
   private Writer writer;
 
+  private int timestampStarted = -1;
+
   @Override
   public void onFrameStart(String gameName) {
+    super.onFrameStart(gameName);
     try {
-      File file = new File("c:/temp/" + gameName + "/recognized.txt");
+      File file = new File(folder, "recognized.txt");
       file.getParentFile().mkdirs(); 
       this.writer = new BufferedWriter(new FileWriter(file));
       writer.append(gameName + "\n\n");
     } 
     catch (IOException ioe) {
     }
-    super.onFrameStart(gameName);
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette) {
+  public String onFrameReceived(Frame frame) {
     try {
       writer.append("\n" + frame.getTimeStamp() + "\n");
+      String ret = super.onFrameReceived(frame);
+      writer.flush();
+      return ret;
     }
     catch (IOException ioe) {
       LOG.error("error while writing frame");
+      return null;
     }
-    return super.onFrameReceived(frame, palette);
   }
 
   protected String extractRect(Frame frame, byte[] plane, int width, int height, int xFrom, int xTo, int yFrom, int yTo) {

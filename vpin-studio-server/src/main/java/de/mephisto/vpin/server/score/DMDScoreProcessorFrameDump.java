@@ -31,10 +31,12 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
   }
 
   @Override
-  public String onFrameReceived(Frame frame, int[] palette) {
+  public String onFrameReceived(Frame frame) {
     StringBuilder bld = new StringBuilder();
     try {
-      writer.append(frame.getType() + " / " + frame.getTimeStamp() + "\n");
+      bld.append(frame.getType() + " / " + frame.getTimeStamp() + " / ");
+      appendPalette(bld, frame.getPalette());
+      bld.append("\n");
 
       byte[] plane  = frame.getPlane();
       for (int j = 0; j < frame.getHeight(); j++) {
@@ -53,6 +55,14 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
       LOG.error("error while writing frame");
     }
     return bld.toString();
+  }
+
+  private void appendPalette(StringBuilder bld, int[] palette) {
+    for (int i = 0; i < palette.length; i++) {
+      bld.append(i == 0 ? "[": ",");
+      bld.append(Integer.toString(palette[i]));
+    }
+    bld.append("]");
   }
 
   @Override
