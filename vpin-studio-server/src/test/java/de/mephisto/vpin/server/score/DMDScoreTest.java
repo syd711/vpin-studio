@@ -52,6 +52,7 @@ public class DMDScoreTest {
     assertEquals(2, p.getBlankIndex(parsePalette("[16760962,8405056,0,11310948]")));
     assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,0]")));
     assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,34589]")));
+    //assertEquals(1, p.getBlankIndex(parsePalette("[16760962,0,0,0]")));
   }
 
   //----------------------
@@ -127,6 +128,15 @@ public class DMDScoreTest {
   }
 
   @Test
+  public void testFrameWithShadowText() throws Exception {
+    // from Creature from Black Lagoon
+    doTestFrame("_withshadow.frame",
+            "1500,000\n" + 
+            "BALL 1 CREDITS 0"
+    );
+  }
+
+  @Test
   public void testFrameWithBorder() throws Exception {
     doTestFrame("_border_1.frame", 
             "BALL 1\nCREDITS 0"
@@ -175,7 +185,16 @@ public class DMDScoreTest {
     );
   }
 
+  @Test
+  public void testFrameWithSpace3BetweenCharacters() throws Exception {
+    // from Cactus Canyon
+    doTestFrame("_bigspace.frame",
+            "1.114.020\n" + //
+            "BALL 2 CREDITS 1"
+    );
+  }
 
+  
 
   
 
@@ -188,18 +207,22 @@ public class DMDScoreTest {
     assertEquals(expected, txt);
   }
   
-  private String doProcess(DMDScoreProcessor proc, Frame frame, String testname) {
+  private String doProcess(DMDScoreProcessor processor, Frame frame, String testname) {
+    // wrap proc to also generate the imae :
+    DMDScoreProcessorDelegate delegate = new DMDScoreProcessorDelegate(new DMDScoreProcessorImageDump(), processor);
+
     try {
       DMDScoreScannerTessAPI.TESSERACT_FOLDER = "." + DMDScoreScannerTessAPI.TESSERACT_FOLDER;
-      proc.onFrameStart(gameName);
+
+      delegate.onFrameStart(gameName);
       long timeStart = System.currentTimeMillis();
-      String ret = proc.onFrameReceived(frame);
+      String ret = delegate.onFrameReceived(frame);
       long time = System.currentTimeMillis() - timeStart;
       System.out.println("test " + testname + " took " + time);
       return ret;
     }
     finally {
-      proc.onFrameStop(gameName);
+      delegate.onFrameStop(gameName);
       DMDScoreScannerTessAPI.TESSERACT_FOLDER = DMDScoreScannerTessAPI.TESSERACT_FOLDER.substring(1);
     }
   }

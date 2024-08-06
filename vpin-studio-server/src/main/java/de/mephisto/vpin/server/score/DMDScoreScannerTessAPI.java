@@ -117,9 +117,11 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
 
   protected String extractText(Frame frame, String name, byte[] pixels, int width, int height) {
 
-    File imgFile = new File(folder, 
-      StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + name + ".png");
-    saveImage(pixels, width, height, generateBlurPalette(), imgFile);
+    if (DEV_MODE) {
+      File imgFile = new File(folder, 
+        StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + name + ".png");
+      saveImage(pixels, width, height, generateBlurPalette(), imgFile);
+    }
 
     try {
       ByteBuffer buf = ByteBuffer.wrap(pixels);

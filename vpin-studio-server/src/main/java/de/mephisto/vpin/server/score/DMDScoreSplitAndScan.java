@@ -26,8 +26,10 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     // detect images in frame and remove them
     if (removeImages(plane, W, H, xF, xT, yF, yT, blank)) {
       // for debugging purpose, dump frame post images removal, if any
-      File imgFile = new File(folder, "tmp_" + frame.getTimeStamp() + ".png"); 
-      saveImage(plane, W, H, generatePalette(frame.getPalette()), imgFile);
+      if (DEV_MODE) {
+        File imgFile = new File(folder, frame.getTimeStamp() + "_.png"); 
+        saveImage(plane, W, H, generatePalette(frame.getPalette()), imgFile);
+      }
     }
 
     // else
@@ -118,7 +120,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
         // second block has different size, 
         else if (previousFontSize != blockFontSize) {
           // new block detected
-          String txt = extractRect(frame, plane, W, H, startX, blockX, yF, previousFontSize + 1);
+          String txt = extractRect(frame, plane, W, H, startX, blockX - spaceBetweenBlock, yF, previousFontSize + 1);
           bld.append(txt);
           bld.append("\n");
 
@@ -159,7 +161,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
       previousFontSize = blockFontSize;
     }
 
-    String txt = extractRect(frame, plane, W, H, startX, xT, yF, previousFontSize + 1);
+    String txt = extractRect(frame, plane, W, H, startX, xT - spaceBetweenBlock, yF, previousFontSize + 1);
     bld.append(txt);
 
     return bld.toString();
