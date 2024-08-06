@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple Processor that writes frames in a file
  */
-public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
+public class DMDScoreProcessorFrameDump extends DMDScoreProcessorBase {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorFrameDump.class);
 
@@ -20,9 +20,9 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
 
   @Override
   public void onFrameStart(String gameName) {
+    super.onFrameStart(gameName);
     try {
-      File file = new File("c:/temp/" + gameName + "/dump.txt");
-      file.getParentFile().mkdirs(); 
+      File file = new File(folder, "dump.txt");
       this.writer = new BufferedWriter(new FileWriter(file));
       writer.append(gameName + "\n\n");
     } 
@@ -38,11 +38,13 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
       appendPalette(bld, frame.getPalette());
       bld.append("\n");
 
+      byte blank = getBlankIndex(frame.getPalette());
+
       byte[] plane  = frame.getPlane();
       for (int j = 0; j < frame.getHeight(); j++) {
         for (int i = 0; i < frame.getWidth(); i++) {
           int idx = plane[j * frame.getWidth() + i];
-          bld.append(idx == 0? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
+          bld.append(idx == blank? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
         }
         bld.append("\n");
       }
@@ -73,5 +75,6 @@ public class DMDScoreProcessorFrameDump implements DMDScoreProcessor {
     catch (IOException ioe) {
       LOG.error("error while opening writer");
     }
+    super.onFrameStop(gameName);
   }
 }

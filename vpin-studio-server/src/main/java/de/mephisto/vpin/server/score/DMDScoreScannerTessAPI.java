@@ -21,10 +21,17 @@ import net.sourceforge.tess4j.TessAPI;
 /**
  * A simple Processor that writes frames in a file
  */
-public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
+public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreScannerTessAPI.class);
 
   public static String TESSERACT_FOLDER = SystemService.RESOURCES + "tessdata";
+
+  // Resize images
+  protected int SCALE = 3;
+  // Add border arround to avoid text too closed to borders
+  protected int BORDER = 2;
+  // Apply a blur effect
+  protected int RADIUS = 1;
 
   private TessAPI api;
   private TessBaseAPI handle;
@@ -94,11 +101,25 @@ public class DMDScoreScannerTessAPI extends DMDScoreScannerBase {
   }
 
   @Override
-  protected String extractText(Frame frame, String name, byte[] pixels, int width, int height, int size) {
+  public String onFrameReceived(Frame frame) {
+    int W = (frame.getWidth() + 2 * BORDER) * SCALE;
+    int H = (frame.getHeight() + 2 * BORDER) * SCALE;
+    int size = 2 * RADIUS + 1;
+    size *= size;
+    byte idxBlank = getBlankIndex(frame.getPalette());
+
+    // Apply the transformations, add an empty border, rescale and recolor, then blur    
+    byte[] pixels = rescale(frame.getPlane(), frame.getWidth(), frame.getHeight(), BORDER, SCALE, idxBlank, (byte) size);
+    pixels = blur(pixels, W, H, RADIUS);
+  
+    return extractText(frame, "", pixels, W, H);
+  }
+
+  protected String extractText(Frame frame, String name, byte[] pixels, int width, int height) {
 
     File imgFile = new File(folder, 
       StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + name + ".png");
-    saveImage(pixels, width, height, generateBlurPalette(size), imgFile);
+    saveImage(pixels, width, height, generateBlurPalette(), imgFile);
 
     try {
       ByteBuffer buf = ByteBuffer.wrap(pixels);

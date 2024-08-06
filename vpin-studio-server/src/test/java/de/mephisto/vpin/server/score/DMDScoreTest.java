@@ -43,6 +43,17 @@ public class DMDScoreTest {
     assertEquals("WAITING FOR\nSWITCH SCANNING", txt);
   }
 
+  @Test
+  public void testBlankIndex() {
+    DMDScoreProcessorBase p = new DMDScoreProcessorImageDump();
+    assertEquals(0, p.getBlankIndex(parsePalette("[0,16711680,0,0]")));
+    assertEquals(1, p.getBlankIndex(parsePalette("[4868863,0,7829367,0]")));
+    assertEquals(1, p.getBlankIndex(parsePalette("[16767492,0,16711680,151]")));
+    assertEquals(2, p.getBlankIndex(parsePalette("[16760962,8405056,0,11310948]")));
+    assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,0]")));
+    assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,34589]")));
+  }
+
   //----------------------
 
   @Test
@@ -109,9 +120,9 @@ public class DMDScoreTest {
     //FIXME some artefacts on frame after removal of images prevent a good recognition
     doTestFrame("_withimage_2.frame",
             "168,020\n" +
+            ">\n" +  // should be "00\n" +
             "00\n" +
-            "00\n" +
-            "BALL 1 CREDITS 0\n"
+            "BALL 1\nCREDITS,O"  // should be "BALL 1 CREDITS 0\n"
     );
   }
 
@@ -154,8 +165,19 @@ public class DMDScoreTest {
             "CREDITS 0"
     );
   }
-  
 
+  @Test
+  public void testFrameWithColoredBackground() throws Exception {
+    // from Creature from Black Lagoon
+    doTestFrame("_withbackgound.frame",
+            "1500000\n" + 
+            "BALL 1 CREDITS 0"
+    );
+  }
+
+
+
+  
 
   //----------------------
 

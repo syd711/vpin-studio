@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.score;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.file.Files;
 
 import javax.imageio.ImageIO;
 
@@ -17,26 +18,23 @@ import javafx.scene.image.WritableImage;
 /**
  * A simple Processor that writes frames in a file
  */
-public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
+public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
 
-  private final static Logger LOG = LoggerFactory.getLogger(DMDScoreScannerBase.class);
+  private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorBase.class);
 
+  /** Switch to true for debugging as images are generated in C:/temp/ and folder is not deleted  */
+  protected boolean DEV_MODE = true;
+
+  /** Folder where all images are generated, essentially for debug purposes */
   protected File folder;
-
-  // Resize images
-  protected int SCALE = 3;
-  // Add border arround to avoid text too closed to borders
-  protected int BORDER = 2;
-  // Apply a blur effect
-  protected int RADIUS = 1;
-    
 
   @Override
   public void onFrameStart(String gameName) {
     try {
-      this.folder = //Files.createTempDirectory(gameName + "_").toFile();
-        new File("c:/temp/" + gameName);
-      this.folder.mkdirs();
+      this.folder = DEV_MODE ? new File("c:/temp/" + gameName) :
+        Files.createTempDirectory("vpin_" + gameName + "_").toFile();
+
+      folder.mkdirs();
       LOG.info("Use temp folder to store images : " + folder.getAbsolutePath());
     }
     catch (Exception e) {
@@ -46,25 +44,10 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
 
   @Override
   public void onFrameStop(String gameName) {
-    //FIXME delete folder
+    if (!DEV_MODE) {
+      folder.delete();
+    }
   }
- 
-  @Override
-  public String onFrameReceived(Frame frame) {
-    int W = (frame.getWidth() + 2 * BORDER) * SCALE;
-    int H = (frame.getHeight() + 2 * BORDER) * SCALE;
-    int size = 2 * RADIUS + 1;
-    size *= size;
-    byte idxBlank = getBlankIndex(frame.getPalette());
-
-    // Apply the transformations, add an empty border, rescale and recolor, then blur    
-    byte[] pixels = rescale(frame.getPlane(), frame.getWidth(), frame.getHeight(), BORDER, SCALE, idxBlank, (byte) size);
-    pixels = blur(pixels, W, H, RADIUS);
-  
-    return extractText(frame, "", pixels, W, H, size);
-  }
-
-  protected abstract String extractText(Frame frame, String name, byte[] pixels, int w, int h, int size);
 
   //--------------------
 
@@ -95,7 +78,7 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
     boolean haveImage = false;
     for (int y = yF; y < yT; y++) {
       for (int x = xF; x < xT; x++) {
-        if (checkImage(plane, new boolean[plane.length], w, xF, xT, yF, yT, x, y, (byte) -1, blank)) {
+        if (checkImage(plane, new boolean[plane.length], w, h, xF, xT, yF, yT, x, y, 0, (byte) -1, (byte) -1, blank) > THRESHOLD_IMAGE_X) {
           // remove image, call same check         
           removeImage(plane, w, xF, xT, yF, yT, x, y, blank);
           haveImage = true;
@@ -106,44 +89,56 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
     return haveImage;
   }
 
+  private static int THRESHOLD_IMAGE_X = 20;
 
-  private boolean checkImage(byte[] plane, boolean[] checked, int w, int xF, int xT, int yF, int yT, int x, int y, byte firstColor, byte blank) {
+  private int checkImage(byte[] plane, boolean[] checked, int w, int h, int xF, int xT, int yF, int yT, int x, int y, int nbX, byte firstColor, byte secondColor, byte blank) {
     byte c = plane[y * w + x];
     if (c == blank) {
-      return false;
+      return 0;
     }
     // if already checked, ignore the pixel
     if (checked[y * w + x]) {
-      return false;
+      return 0;
     }
     // flag to avoid circular loop
     checked[y * w + x] = true;
 
-    // first pixel so keep color
+    // first time we detect the color so keep color, else if of different color, it is in an image
     if (firstColor < 0) {
       firstColor = c;
     }
-    // else it is an adjacent pixel, then if of different color, it is in an image
     else if (c != firstColor) {
-      return true;
+      if (secondColor < 0) {
+        secondColor = c;
+      }
+      else if (c != secondColor) {
+        return w * h;
+      }
     }
-    // else first pixel or same color, check adjacent pixels
+    // else color already known, check adjacent pixels
+    nbX++;
+
+    if (nbX >  THRESHOLD_IMAGE_X) {
+      return nbX;
+    }
 
     // check right
-    if ((x + 1 < xT) && checkImage(plane, checked, w, xF, xT, yF, yT, x + 1, y, firstColor, blank)) {
-      return true;
+    if ((x + 1 < xT) && (nbX += checkImage(plane, checked, w, h, xF, xT, yF, yT, x + 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+      return nbX;
     }
+    if ((x > xF) && (nbX += checkImage(plane, checked, w, h, xF, xT, yF, yT, x - 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+      return nbX;
+    }
+
     // check 
-    if ((y + 1 < yT) && checkImage(plane, checked, w, xF, xT, yF, yT, x, y + 1, firstColor, blank)) {
-      return true;
+    if ((y + 1 < yT) && (nbX = checkImage(plane, checked, w, h, xF, xT, yF, yT, x, y + 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+      return nbX;
     }
-    if ((x > xF) && checkImage(plane, checked, w, xF, xT, yF, yT, x - 1, y, firstColor, blank)) {
-      return true;
+    if ((y > yF) && (nbX = checkImage(plane, checked, w, h, xF, xT, yF, yT, x, y - 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+      return nbX;
     }
-    if ((y > yF) && checkImage(plane, checked, w, xF, xT, yF, yT, x, y - 1, firstColor, blank)) {
-      return true;
-    }
-    return false;
+    // not an image
+    return 0;
   }
 
   private void removeImage(byte[] plane, int w, int xF, int xT, int yF, int yT, int x, int y, byte blank) {
@@ -191,7 +186,6 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
     }
   }
 
-
   protected byte[] blur(byte[] pixels, int width, int height, int _radius) {
     int size = _radius * 2 + 1;
     size *= size;
@@ -233,13 +227,26 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
 
   //-----------------------------------
 
-  protected byte getBlankIndex(int[] palette) {
-    for (int i = 0; i < palette.length; i++) {
-      if (palette[i] == 0) {
+  /**
+   * [20736,16777215,65280,0]
+   * [0,16711680,0,0]
+   * [4868863,0,7829367,0]
+   * [16767492,0,16711680,151]
+   * [16760962,8405056,0,11310948]
+   */
+  public byte getBlankIndex(int[] palette) {
+    boolean hasColor = false;
+    // start from end, skip trailing 0 and take the 0 index
+    for (int i = palette.length - 1; i >= 0; i--) {
+      if (palette[i] != 0) {
+        hasColor = true;
+      }
+      else if (hasColor && palette[i] == 0) {
         return (byte) i;
       }
     }
-    return -1;
+    // fallback when no 0 in palette, take first color
+    return 0;
   }
 
   protected File saveImage(byte[] pixels, int width, int height, PixelFormat<ByteBuffer> palette, File imgFile) {
@@ -267,10 +274,8 @@ public abstract class DMDScoreScannerBase implements DMDScoreProcessor {
     return format;
   }
 
-  protected PixelFormat<ByteBuffer> generateBlurPalette(int size) {
-
-    size = 255;
-
+  protected PixelFormat<ByteBuffer> generateBlurPalette() {
+    int size = 255;
     // Create the blur B&W ARGB palette using same radius
     int[] bwPalette = new int[size + 1];
     for (int colorComponent = 0; colorComponent <= size; colorComponent++) {

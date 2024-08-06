@@ -25,7 +25,6 @@ public class DMDScoreAnalyser extends DMDScoreSplitAndScan {
     super.onFrameStart(gameName);
     try {
       File file = new File(folder, "recognized.txt");
-      file.getParentFile().mkdirs(); 
       this.writer = new BufferedWriter(new FileWriter(file));
       writer.append(gameName + "\n\n");
     } 

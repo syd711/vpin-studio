@@ -227,13 +227,13 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     int newH = (yT - yF + 2 * BORDER) * SCALE;
     int size = 2 * RADIUS + 1;
     size *= size;
-    byte idxBlank = getBlankIndex(frame.getPalette());
+    byte blank = getBlankIndex(frame.getPalette());
 
     // Apply the transformations, add an empty border, rescale and recolor, then blur
-    byte[] pixels = crop(plane, W, H, BORDER, xF, xT, yF, yT, SCALE, idxBlank, (byte) size);
+    byte[] pixels = crop(plane, W, H, BORDER, xF, xT, yF, yT, SCALE, blank, (byte) size);
     pixels = blur(pixels, newW, newH, RADIUS);
 
-    return extractText(frame, "_" + xF + "x" + yF, pixels, newW, newH, size);
+    return extractText(frame, "_" + xF + "x" + yF, pixels, newW, newH);
   }
 
   //--------------------------------

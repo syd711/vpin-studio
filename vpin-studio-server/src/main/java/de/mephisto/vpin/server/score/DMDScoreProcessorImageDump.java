@@ -8,7 +8,7 @@ import javafx.scene.image.PixelFormat;
 /**
  * A Processor that dump frames in a folder as png
  */
-public class DMDScoreProcessorImageDump extends DMDScoreScannerBase {
+public class DMDScoreProcessorImageDump extends DMDScoreProcessorBase {
 
   @Override
   public String onFrameReceived(Frame frame) {
@@ -18,11 +18,6 @@ public class DMDScoreProcessorImageDump extends DMDScoreScannerBase {
     PixelFormat<ByteBuffer> format = generatePalette(frame.getPalette());
     saveImage(frame.getPlane(), frame.getWidth(), frame.getHeight(), format, imgFile);
 
-    return null;
-  }
-
-  @Override
-  protected String extractText(Frame frame, String name, byte[] pixels, int w, int h, int size) {
     return null;
   }
 
