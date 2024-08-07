@@ -23,15 +23,6 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
 
     byte blank = getBlankIndex(frame.getPalette());
 
-    // detect images in frame and remove them
-    if (removeImages(frame.getPlane(), frame.getWidth(), xF, xT, yF, yT, blank)) {
-      // for debugging purpose, dump frame post images removal, if any
-      if (DEV_MODE) {
-        File imgFile = new File(folder, frame.getTimeStamp() + "_.png"); 
-        saveImage(frame.getPlane(), frame.getWidth(), frame.getHeight(), generatePalette(frame.getPalette()), imgFile);
-      }
-    }
-
     // else
     StringBuilder bld = new StringBuilder();
 
@@ -69,14 +60,27 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     if (hasBorder(frame, xF, xT, yF, yT)) {
       return splitH(frame, xF + 1, xT - 1, yF + 1, yT - 1);
     }
+
+    byte blank = getBlankIndex(frame.getPalette());
+
+    // detect images in frame and remove them
+    if (removeImages(frame.getPlane(), frame.getWidth(), xF, xT, yF, yT, blank)) {
+      // for debugging purpose, dump frame post images removal, if any
+      if (DEV_MODE) {
+        File imgFile = new File(folder, frame.getTimeStamp() + "_.png"); 
+        saveImage(frame.getPlane(), frame.getWidth(), frame.getHeight(), generatePalette(frame.getPalette()), imgFile);
+      }
+    }
+    // then connect segments for some DMD fonts
+    //connectFontSegments(frame, xF, xT, yF, yT);
+
     // else
     StringBuilder bld = new StringBuilder();
 
     // first detect full single color horizontal lines
-    byte idxBlank = getBlankIndex(frame.getPalette());
     int yStart = -1;
     for (int y = yF; y < yT; y++) {
-      int x = getFirstColorX(frame, xF, xT, yF, yT, y, idxBlank);
+      int x = getFirstColorX(frame, xF, xT, yF, yT, y, blank);
       // detection of a full white row
       if (x < 0) {
         // detection of a split
@@ -87,8 +91,10 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
           yStart = -1;
         }
       }
-      else if (yStart < 0) {
-        yStart = y;
+      else {
+        if (yStart < 0) {
+          yStart = y;
+        }
       }
     }
     
@@ -152,6 +158,47 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
       bld.append(txt);
     }
     return bld.toString();
+  }
+
+  /**
+   * for LCD-Segment fonts like Ace Of Speed (mousn_l4), draw missing dots
+   *                  x
+   *      x x  or   
+   *                  x
+   */
+  protected void connectFontSegments(Frame frame, int xF, int xT, int yF, int yT) {
+    byte blank = getBlankIndex(frame.getPalette());
+
+    for (int y = yF + 2; y < yT - 1; y++) {
+      for (int x = xF + 2; x < xT - 1; x++) {
+        int c = frame.getColor(x, y);
+        if (c == blank) {
+          byte p;
+          // make horizontal continuity
+          if ((p = frame.getColor(x - 2, y)) != blank 
+                && frame.getColor(x - 1, y) == p && frame.getColor(x + 1, y) == p
+                && frame.getColor(x - 1, y - 1) == blank 
+                && frame.getColor(x - 1, y + 1) == blank 
+                && frame.getColor(x, y - 1) == blank 
+                && frame.getColor(x, y + 1) == blank
+                && frame.getColor(x + 1, y - 1) == blank 
+                && frame.getColor(x + 1, y + 1) == blank) {
+              frame.setColor(x, y, p);
+          }
+          // make vertical continuity
+          else if ((p = frame.getColor(x, y - 2)) != blank 
+                && frame.getColor(x, y - 1) == p && frame.getColor(x, y + 1) == p
+                && frame.getColor(x - 1, y - 1) == blank 
+                && frame.getColor(x + 1, y - 1) == blank 
+                && frame.getColor(x - 1, y) == blank 
+                && frame.getColor(x + 1, y) == blank
+                && frame.getColor(x - 1, y + 1) == blank 
+                && frame.getColor(x + 1, y + 1) == blank) {
+              frame.setColor(x, y, p);
+          }
+        }
+      }
+    }
   }
 
   private int getMaxFontSize(Frame frame, int xF, int xT, int yF, int yT, byte blank) {

@@ -61,6 +61,9 @@ public class Frame {
   public byte getColor(int x, int y) {
     return plane[y * width + x];
   }
+  public void setColor(int x, int y, byte c) {
+    plane[y * width + x] = c;
+  }
 
   //--------------------------------------------------------
     

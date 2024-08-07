@@ -7,7 +7,8 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
 
   private final static Logger LOG = LoggerFactory.getLogger(DMDScoreProcessorFilterFixFrame.class);
 
-  private int threshold;
+  /** The difference between 2 frames so that the frame is processed. If -1, consider all */
+  private int timestampThreshold;
 
   private Frame previousFrame;
 
@@ -15,9 +16,9 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
   public DMDScoreProcessorFilterFixFrame(DMDScoreProcessor... delegates) {
     this(250, delegates);
   }
-  public DMDScoreProcessorFilterFixFrame(int threshold, DMDScoreProcessor... delegates) {
+  public DMDScoreProcessorFilterFixFrame(int timestampThreshold, DMDScoreProcessor... delegates) {
     super(delegates);
-    this.threshold = threshold;
+    this.timestampThreshold = timestampThreshold;
   }
 
   public String onFrameReceived(Frame frame) {
@@ -27,7 +28,7 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
     }
     else {
       // consider previous plane only if it has been displayed more than threshold
-      if (previousFrame != null && (frame.getTimeStamp() - previousFrame.getTimeStamp() > threshold)) {
+      if (previousFrame != null && (timestampThreshold < 0 || (frame.getTimeStamp() - previousFrame.getTimeStamp() > timestampThreshold))) {
         LOG.info("process {}, timestamp: {}, delta {}", frame.getType(), frame.getTimeStamp(), frame.getTimeStamp() - previousFrame.getTimeStamp());
         ret = super.onFrameReceived(previousFrame);
       }

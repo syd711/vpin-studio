@@ -101,7 +101,7 @@ public class DMDScoreTest {
             "00\n\n" +
             //------------------------
             "00\n" +
-            "BALL 1 CREDITS 0\n"
+            "BALL 1 CREDITS 0"
     );
   }
 
@@ -111,7 +111,7 @@ public class DMDScoreTest {
             "00\n" +
             "00\n" +
             "00 TI)\n" +    // TI) is small blue <1> circle detected !
-            "BALL 1 CREDITS 0\n"
+            "BALL 1 CREDITS 0"
     );
   }
 
@@ -213,8 +213,15 @@ public class DMDScoreTest {
     );
   }
   
-
-  
+  @Test
+  public void testFrameFontWithSegments() throws Exception {
+    // from Ace of Speed (mousn_l4)
+    doTestFrame("_fontwithsegments.frame",
+            "10000\n" + 
+            "BALL 1"
+    );
+  }
+    
 
   //----------------------
 

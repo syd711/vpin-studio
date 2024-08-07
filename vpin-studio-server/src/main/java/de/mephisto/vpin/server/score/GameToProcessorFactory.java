@@ -17,24 +17,19 @@ public class GameToProcessorFactory {
    * A processor that dump all frames in dump.txt, no filtering
    */
   public DMDScoreProcessor getFrameDumpProcessor() {
-    return new DMDScoreProcessorFrameDump();    
-  }
-
-  /**
-   * A processor that dump images using dmd palette, skiping frames shortly displayed 
-   */
-  public DMDScoreProcessor getImageDumpProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(
-      new DMDScoreProcessorImageDump());
+    return new DMDScoreProcessorFilterFixFrame(-1, 
+      new DMDScoreProcessorFrameDump()
+    );
   }
 
   /**
    * A processor recognize texts from images 
    */
   public DMDScoreProcessor getImageScannerProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(
+    return new DMDScoreProcessorFilterFixFrame( 
       new DMDScoreProcessorImageDump(), 
-      new DMDScoreAnalyser());
+      new DMDScoreAnalyser()
+    );
   }
 
 }
