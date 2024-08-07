@@ -7,8 +7,17 @@ public class GithubReleaseRepresentation {
   private String name;
   private String releasesUrl;
   private String url;
+  private String releaseNotes;
   private List<String> artifacts = new ArrayList();
   private String tag;
+
+  public String getReleaseNotes() {
+    return releaseNotes;
+  }
+
+  public void setReleaseNotes(String releaseNotes) {
+    this.releaseNotes = releaseNotes;
+  }
 
   public String getReleasesUrl() {
     return this.releasesUrl;

@@ -57,7 +57,7 @@
             </ToolBar>
         </top>
         <center>
-         <ScrollPane fitToWidth="true" hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
             <content>
                   <VBox styleClass="subpanel-tabbed">
                       <children>

@@ -46,6 +46,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private TextArea textArea;
 
   @FXML
+  private TextArea releaseNotes;
+
+  @FXML
   private ComboBox<String> artifactCombo;
 
   @FXML
@@ -184,12 +187,15 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       installBtn.setTooltip(new Tooltip("The component can not be updated via remote client."));
     }
 
+    releaseNotes.setText("-");
     if (!component.getReleases().isEmpty()) {
       GithubReleaseRepresentation release = component.getReleases().get(0);
       if (releaseTag != null) {
+        releaseNotes.setText(release.getReleaseNotes() != null ? release.getReleaseNotes().trim() : "");
         releasesCombo.setValue(releaseTag);
       }
       else {
+        releaseNotes.setText(release.getReleaseNotes() != null ? release.getReleaseNotes().trim() : "");
         releasesCombo.setValue(release.getTag());
       }
 

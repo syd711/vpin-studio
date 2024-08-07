@@ -98,6 +98,7 @@ public class ComponentsResource {
     releases.stream().forEach(release -> {
       GithubReleaseRepresentation rep = new GithubReleaseRepresentation();
       rep.setName(release.getName());
+      rep.setReleaseNotes(release.getReleaseNotes());
       rep.setTag(release.getTag());
       rep.setReleasesUrl(release.getReleasesUrl());
       rep.setUrl(release.getUrl());

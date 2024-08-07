@@ -3,6 +3,7 @@ package de.mephisto.vpin.connectors.github;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +39,24 @@ public class GithubReleaseFactory {
       if (!baseUrl.endsWith("/")) {
         baseUrl += "/";
       }
+
+      String bodyUrl = baseUrl + "tag/" + githubRelease.getTag();
+
+      Document bodyDoc = Jsoup
+          .connect(bodyUrl)
+          .userAgent("Mozilla")
+          .get();
+
+      bodyDoc.outputSettings(new Document.OutputSettings().prettyPrint(false));//makes html() preserve linebreaks and spacing
+      bodyDoc.select("br").append("\\n");
+      bodyDoc.select("li").prepend("- ");
+      bodyDoc.select("p").prepend("\\n\\n");
+      bodyDoc.select("div.markdown-body").stream().forEach(e -> {
+        String s = e.html().replaceAll("\\\\n", "\n");
+        String formatted= Jsoup.clean(s, "", Whitelist.none(), new Document.OutputSettings().prettyPrint(false));
+        githubRelease.setReleaseNotes(formatted);
+      });
+
       String url = baseUrl + "expanded_assets/" + githubRelease.getTag();
 
       Document doc = Jsoup
