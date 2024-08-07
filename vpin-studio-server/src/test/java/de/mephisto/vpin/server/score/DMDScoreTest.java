@@ -216,9 +216,13 @@ public class DMDScoreTest {
   @Test
   public void testFrameFontWithSegments() throws Exception {
     // from Ace of Speed (mousn_l4)
-    doTestFrame("_fontwithsegments.frame",
-            "10000\n" + 
-            "BALL 1"
+    String frameFile = "_fontwithsegments.frame";
+    Frame f = parseFrame(frameFile);
+    DMDScoreScannerLCD proc = new DMDScoreScannerLCD();
+    String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
+    assertEquals(txt, 
+      "10000\n" + 
+       "BALL 1"
     );
   }
     
