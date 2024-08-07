@@ -46,8 +46,8 @@ public class DMDScoreAnalyser extends DMDScoreSplitAndScan {
     }
   }
 
-  protected String extractRect(Frame frame, byte[] plane, int width, int height, int xFrom, int xTo, int yFrom, int yTo) {
-    String txt = super.extractRect(frame, plane, width, height, xFrom, xTo, yFrom, yTo);
+  protected String extractText(Frame frame, int xFrom, int xTo, int yFrom, int yTo) {
+    String txt = super.extractText(frame, xFrom, xTo, yFrom, yTo);
     try {
       writer.append(xFrom + "," + yFrom + " " 
         + (xTo-xFrom) + "x" + (yTo - yFrom)

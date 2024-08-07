@@ -26,8 +26,13 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
 
   public static String TESSERACT_FOLDER = SystemService.RESOURCES + "tessdata";
 
-  // Resize images
-  protected int SCALE = 3;
+  /** The max height of images that are considered as Low Resolution */
+  protected int THRESHOLD_LOWRES = 6;
+  /** Rescale factor for low Resolution images */
+  protected int SCALE_LOWRES = 3;
+  /** Rescale factor for non low res images */
+  protected int SCALE_HIGHRES = 4;
+
   // Add border arround to avoid text too closed to borders
   protected int BORDER = 2;
   // Apply a blur effect
@@ -35,9 +40,11 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
 
   private TessAPI api;
   private TessBaseAPI handle;
-  
-  private boolean singleLine = true;;
 
+  /** Whether image is one line or a blpock */
+  private boolean singleLine = true;
+  /** disconnect usage of dictionaries */
+  boolean useDictionary = false;
 
   public DMDScoreScannerTessAPI(boolean singleLine) {
     this.singleLine = singleLine;
@@ -55,14 +62,12 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
     String language = "eng";
     String datapath = tessDataFolder.getPath();
     int oem = TessOcrEngineMode.OEM_LSTM_ONLY;
-    boolean useDictionary = false;
 
     PointerByReference configs = null;
     int configs_size = 0;
     
     if (useDictionary) {
       api.TessBaseAPIInit1(handle, datapath, language, oem, configs, configs_size);
-
     }
     else {
       // disable loading dictionaries
@@ -102,30 +107,34 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
 
   @Override
   public String onFrameReceived(Frame frame) {
-    int W = (frame.getWidth() + 2 * BORDER) * SCALE;
-    int H = (frame.getHeight() + 2 * BORDER) * SCALE;
-    int size = 2 * RADIUS + 1;
-    size *= size;
-    byte idxBlank = getBlankIndex(frame.getPalette());
-
-    // Apply the transformations, add an empty border, rescale and recolor, then blur    
-    byte[] pixels = rescale(frame.getPlane(), frame.getWidth(), frame.getHeight(), BORDER, SCALE, idxBlank, (byte) size);
-    pixels = blur(pixels, W, H, RADIUS);
-  
-    return extractText(frame, "", pixels, W, H);
+    // extract text from full frame
+    return extractText(frame, 0, frame.getWidth(), 0, frame.getHeight());
   }
 
-  protected String extractText(Frame frame, String name, byte[] pixels, int width, int height) {
+  protected String extractText(Frame frame, int xF, int xT, int yF, int yT) {
+
+    int SCALE =  (yT - yF) <= THRESHOLD_LOWRES && (xT - xF) > 8 * (yT - yF) ? SCALE_LOWRES : SCALE_HIGHRES;
+
+    int newW = (xT - xF + 2 * BORDER) * SCALE;
+    int newH = (yT - yF + 2 * BORDER) * SCALE;
+    int size = 2 * RADIUS + 1;
+    size *= size;
+    byte blank = getBlankIndex(frame.getPalette());
+
+    // Apply the transformations, add an empty border, rescale and recolor, then blur
+    byte[] pixels = crop(frame.getPlane(), frame.getWidth(), frame.getHeight(), xF, xT, yF, yT, BORDER, SCALE, blank, (byte) size);
+    pixels = blur(pixels, newW, newH, RADIUS);
 
     if (DEV_MODE) {
+      String imgName = (xF == 0 && yF == 0) ? "" : "_" + xF + "x" + yF;
       File imgFile = new File(folder, 
-        StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + name + ".png");
-      saveImage(pixels, width, height, generateBlurPalette(), imgFile);
+        StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + imgName + ".png");
+      saveImage(pixels, newW, newH, generateBlurPalette(), imgFile);
     }
 
     try {
       ByteBuffer buf = ByteBuffer.wrap(pixels);
-      api.TessBaseAPISetImage(handle, buf, width, height, 1, width);
+      api.TessBaseAPISetImage(handle, buf, newW, newH, 1, newW);
 
       Pointer textPtr = api.TessBaseAPIGetUTF8Text(handle);
 

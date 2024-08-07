@@ -40,10 +40,9 @@ public class DMDScoreProcessorFrameDump extends DMDScoreProcessorBase {
 
       byte blank = getBlankIndex(frame.getPalette());
 
-      byte[] plane  = frame.getPlane();
       for (int j = 0; j < frame.getHeight(); j++) {
         for (int i = 0; i < frame.getWidth(); i++) {
-          int idx = plane[j * frame.getWidth() + i];
+          int idx = frame.getColor(i, j);
           bld.append(idx == blank? " " : idx<=9 ? Integer.toString(idx) : Character.toString(55 + idx));
         }
         bld.append("\n");

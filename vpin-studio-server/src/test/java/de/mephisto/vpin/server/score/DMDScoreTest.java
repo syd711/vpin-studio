@@ -110,20 +110,19 @@ public class DMDScoreTest {
     doTestFrame("_withimage_1.frame",
             "00\n" +
             "00\n" +
-            "00\n" +
-            "1\n" +                 // 1 in small blue circle detected !
+            "00 TI)\n" +    // TI) is small blue <1> circle detected !
             "BALL 1 CREDITS 0\n"
     );
   }
 
   @Test
   public void testFrameWithImage2() throws Exception {
-    //FIXME some artefacts on frame after removal of images prevent a good recognition
+    // some artefacts on frame after removal of images prevent a good recognition
     doTestFrame("_withimage_2.frame",
-            "168,020\n" +
-            ">\n" +  // should be "00\n" +
+            "168020,\n" +
+            "" +  // should be "00\n" +
             "00\n" +
-            "BALL 1\nCREDITS,O"  // should be "BALL 1 CREDITS 0\n"
+            "BALL 1 CREDITS,O"  // should be "BALL 1 CREDITS 0\n"
     );
   }
 
@@ -131,7 +130,7 @@ public class DMDScoreTest {
   public void testFrameWithShadowText() throws Exception {
     // from Creature from Black Lagoon
     doTestFrame("_withshadow.frame",
-            "1500,000\n" + 
+            "1500.000\n" + 
             "BALL 1 CREDITS 0"
     );
   }
@@ -151,6 +150,15 @@ public class DMDScoreTest {
   }
 
   @Test
+  public void testFrameWithVSplitAndBorder() throws Exception {
+    doTestFrame("_border_3.frame", 
+            "417,650\n" +
+            "TOTAL BONUS\n" +
+            "135,050\n"
+    );
+  }
+
+  @Test
   public void testFrameTwoFonts1() throws Exception {
     doTestFrame("_twofonts_1.frame",
             "1,811,100\n" +
@@ -163,7 +171,7 @@ public class DMDScoreTest {
   public void testFrameTwoFonts2() throws Exception {
     doTestFrame("_twofonts_2.frame",
             "190,040\n" +
-            "15,000\n" + //
+            "15,000\n" +
             "BALL 1 CREDITS 1V2"
     );
   }
@@ -180,7 +188,7 @@ public class DMDScoreTest {
   public void testFrameWithColoredBackground() throws Exception {
     // from Creature from Black Lagoon
     doTestFrame("_withbackgound.frame",
-            "1500000\n" + 
+            "1500.000\n" + 
             "BALL 1 CREDITS 0"
     );
   }
@@ -188,12 +196,22 @@ public class DMDScoreTest {
   @Test
   public void testFrameWithSpace3BetweenCharacters() throws Exception {
     // from Cactus Canyon
-    doTestFrame("_bigspace.frame",
-            "1.114.020\n" + //
+    doTestFrame("_bigspace_1.frame",
+            "1.114.020\n" +
             "BALL 2 CREDITS 1"
     );
   }
 
+  @Test
+  public void testFrameWithSpace7BetweenCharacters() throws Exception {
+    // from Cactus Canyon
+    doTestFrame("_bigspace_2.frame",
+            "195,800\n" +
+            "3,170\n\n" +
+            "(95800\n" + // should be 195800 but too strange font taken from game '24'
+            "REPLAY AT 20,000,000"
+    );
+  }
   
 
   

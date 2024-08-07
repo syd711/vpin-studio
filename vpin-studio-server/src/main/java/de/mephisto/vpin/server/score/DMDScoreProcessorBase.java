@@ -52,21 +52,21 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
   //--------------------
 
   protected byte[] rescale(byte[] plane, int width, int height, int border, int scale, byte idxBlank, byte black) {
-    return crop(plane, width, height, border, 0, width, 0, height, scale, idxBlank, black);
+    return crop(plane, width, height, 0, width, 0, height, border, scale, idxBlank, black);
   }
 
-  protected byte[] crop(byte[] plane, int width, int height, int _border, 
-    int xF, int xT, int yF, int yT, int _scale, byte idxBlank, byte black) {
+  protected byte[] crop(byte[] plane, int width, int height, 
+    int xF, int xT, int yF, int yT, int border, int scale, byte blank, byte black) {
           
-    int newWith = xT - xF + 2 * _border;
-    int newHeight = yT - yF + 2 * _border;
-    byte[] scaledPlane = new byte[newWith * _scale * newHeight * _scale];
+    int newWith = xT - xF + 2 * border;
+    int newHeight = yT - yF + 2 * border;
+    byte[] scaledPlane = new byte[newWith * scale * newHeight * scale];
 
     for (int y = yF; y < yT; y++) {
       for (int x = xF; x < xT; x++) {
-        for (int dy = 0; dy < _scale; dy++) {
-          for (int dx = 0; dx < _scale; dx++) {
-            scaledPlane[ ((y - yF + _border) * _scale + dy) * newWith * _scale + (x - xF + _border) * _scale + dx] = (plane[y * width + x] == idxBlank ? 0 : black);
+        for (int dy = 0; dy < scale; dy++) {
+          for (int dx = 0; dx < scale; dx++) {
+            scaledPlane[ ((y - yF + border) * scale + dy) * newWith * scale + (x - xF + border) * scale + dx] = (plane[y * width + x] == blank ? 0 : black);
           }
         }
       }
@@ -74,24 +74,24 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     return scaledPlane;
   }
 
-  protected boolean removeImages(byte[] plane, int w, int h, int xF, int xT, int yF, int yT, byte blank) {
+  protected boolean removeImages(byte[] plane, int w, int xF, int xT, int yF, int yT, byte blank) {
     boolean haveImage = false;
     for (int y = yF; y < yT; y++) {
       for (int x = xF; x < xT; x++) {
-        if (checkImage(plane, new boolean[plane.length], w, h, xF, xT, yF, yT, x, y, 0, (byte) -1, (byte) -1, blank) > THRESHOLD_IMAGE_X) {
+        if (checkImage(plane, new boolean[plane.length], w, xF, xT, yF, yT, x, y, 0, (byte) -1, (byte) -1, blank) > THRESHOLD_IMAGE_X) {
           // remove image, call same check         
           removeImage(plane, w, xF, xT, yF, yT, x, y, blank);
           haveImage = true;
         }
       }
     }
-    removeSinglePixels(plane, w, h, xF, xT, yF, yT, blank);
+    removeSinglePixels(plane, w, xF, xT, yF, yT, blank);
     return haveImage;
   }
 
   private static int THRESHOLD_IMAGE_X = 20;
 
-  private int checkImage(byte[] plane, boolean[] checked, int w, int h, int xF, int xT, int yF, int yT, int x, int y, int nbX, byte firstColor, byte secondColor, byte blank) {
+  private int checkImage(byte[] plane, boolean[] checked, int w, int xF, int xT, int yF, int yT, int x, int y, int nbX, byte firstColor, byte secondColor, byte blank) {
     byte c = plane[y * w + x];
     if (c == blank) {
       return 0;
@@ -112,7 +112,7 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
         secondColor = c;
       }
       else if (c != secondColor) {
-        return w * h;
+        return plane.length;
       }
     }
     // else color already known, check adjacent pixels
@@ -123,18 +123,18 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     }
 
     // check right
-    if ((x + 1 < xT) && (nbX += checkImage(plane, checked, w, h, xF, xT, yF, yT, x + 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+    if ((x + 1 < xT) && (nbX += checkImage(plane, checked, w, xF, xT, yF, yT, x + 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
       return nbX;
     }
-    if ((x > xF) && (nbX += checkImage(plane, checked, w, h, xF, xT, yF, yT, x - 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+    if ((x > xF) && (nbX += checkImage(plane, checked, w, xF, xT, yF, yT, x - 1, y, nbX, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
       return nbX;
     }
 
     // check 
-    if ((y + 1 < yT) && (nbX = checkImage(plane, checked, w, h, xF, xT, yF, yT, x, y + 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+    if ((y + 1 < yT) && (nbX = checkImage(plane, checked, w, xF, xT, yF, yT, x, y + 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
       return nbX;
     }
-    if ((y > yF) && (nbX = checkImage(plane, checked, w, h, xF, xT, yF, yT, x, y - 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
+    if ((y > yF) && (nbX = checkImage(plane, checked, w, xF, xT, yF, yT, x, y - 1, 0, firstColor, secondColor, blank)) > THRESHOLD_IMAGE_X) {
       return nbX;
     }
     // not an image
@@ -162,7 +162,7 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     }
   }
 
-  private void removeSinglePixels(byte[] plane, int w, int h, int xF, int xT, int yF, int yT, byte blank) {
+  private void removeSinglePixels(byte[] plane, int w, int xF, int xT, int yF, int yT, byte blank) {
     for (int y = yF; y < yT; y++) {
       for (int x = xF; x < xT; x++) {
         if (plane[y * w + x] != blank) {
@@ -186,12 +186,12 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     }
   }
 
-  protected byte[] blur(byte[] pixels, int width, int height, int _radius) {
-    int size = _radius * 2 + 1;
+  protected byte[] blur(byte[] pixels, int width, int height, int radius) {
+    int size = radius * 2 + 1;
     size *= size;
     byte[] outPixels = new byte[pixels.length];
 
-    if (_radius > 0) {
+    if (radius > 0) {
       float f = 1.0f / size;
 
       int index = 0;
@@ -199,11 +199,11 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
         for (int x = 0; x < width; x++) {
           float color = 0;
 
-          for (int row = -_radius; row <= _radius; row++) {
+          for (int row = -radius; row <= radius; row++) {
             int iy = y + row;
             if (iy < 0 || iy >= height) continue;
 
-            for (int col = -_radius; col <= _radius; col++) {
+            for (int col = -radius; col <= radius; col++) {
               int ix = x + col;
               if (ix < 0 || ix >= width) continue;
 

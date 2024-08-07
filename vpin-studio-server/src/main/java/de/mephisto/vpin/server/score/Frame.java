@@ -38,8 +38,7 @@ public class Frame {
     return plane;
   }
 
-  public int[] getPalette() {
-    return palette;
+  public int[] getPalette() {return palette;
   }
 
   public int getWidth() {
@@ -56,6 +55,15 @@ public class Frame {
     }
     return false;
   }
+
+  //--------------------------------------------------------
+
+  public byte getColor(int x, int y) {
+    return plane[y * width + x];
+  }
+
+  //--------------------------------------------------------
+    
 
   private boolean samePlane(byte[] plane1, byte[] plane2) {
     return Arrays.equals(plane1, plane2);
