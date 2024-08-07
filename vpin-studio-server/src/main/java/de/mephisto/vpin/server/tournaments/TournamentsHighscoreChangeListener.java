@@ -108,11 +108,17 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
               TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
               if (tournamentTable != null) {
                 if (tournament.isActive() && tournamentTable.isActive()) {
-                  TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
-                  LOG.info("Linked " + createdTableScore + " to " + tournament);
+                  List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+                  if (tournamentScores.contains(createdTableScore)) {
+                    LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
+                  }
+                  else {
+                    TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                    LOG.info("Linked " + createdTableScore + " to " + tournament);
+                  }
 
                   if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                    iScoredService.submitTournamentScore(tournament, tournamentTable, tournamentScore, accountByUuid);
+                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
                   }
                 }
                 else {

@@ -15,6 +15,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -57,7 +58,10 @@ public class TablesSidebarScriptDataController implements Initializable {
   private Button inspectBtn;
 
   @FXML
-  private Button editBtn;
+  private SplitMenuButton editBtn;
+
+  @FXML
+  private MenuItem editInternalBtn;
 
   @FXML
   private SplitMenuButton scanBtn;
@@ -207,6 +211,11 @@ public class TablesSidebarScriptDataController implements Initializable {
   }
 
   @FXML
+  public void onEditInternal() {
+    VBSManager.getInstance().edit(this.game, true);
+  }
+
+  @FXML
   public void onScanAll() {
     boolean scanned = TableDialogs.openScanAllDialog(client.getGameService().getVpxGamesCached());
     if (scanned) {
@@ -263,7 +272,7 @@ public class TablesSidebarScriptDataController implements Initializable {
     tableInfo = null;
     openTablesFolderBtn.setVisible(Studio.client.getSystemService().isLocal());
 
-    boolean gameFileAvailable = g.get().getGameFilePath() != null;
+    boolean gameFileAvailable = g.isPresent() && g.get().getGameFilePath() != null;
     inspectBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     editBtn.setDisable(g.isEmpty() || !gameFileAvailable);
     scanBtn.setDisable(g.isEmpty() || !gameFileAvailable);

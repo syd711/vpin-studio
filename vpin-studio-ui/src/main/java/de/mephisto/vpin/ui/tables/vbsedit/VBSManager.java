@@ -34,13 +34,18 @@ public class VBSManager {
     return instance;
   }
 
+
   public void edit(Optional<GameRepresentation> game) {
+    edit(game, false);
+  }
+
+  public void edit(Optional<GameRepresentation> game, boolean embeddedEditor) {
     try {
       TextFile textFile = new TextFile(VPinFile.VBScript);
       textFile.setFileId(game.get().getId());
 
       if (game.isPresent()) {
-        if (embeddedEditing) {
+        if (embeddedEditor) {
           boolean b = Dialogs.openTextEditor(textFile, game.get().getGameFileName());
           if (b) {
             client.getMameService().clearCache();
