@@ -1,14 +1,15 @@
 package de.mephisto.vpin.server.system;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPack;
@@ -23,8 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -63,10 +62,16 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
       try {
         DirectB2SDataExtractor data = new DirectB2SDataExtractor();
         data.extractData(game.getDirectB2SFile(), game.getEmulatorId(), "not needed", game.getId());
-        DirectB2SImageExporter extractor = new DirectB2SImageExporter(data);
-        extractor.extractBackground(target);
-        extractor.extractDMD(getDMDPicture(game));
-        return;
+
+        if (data.getBackgroundBase64() != null) {
+          DirectB2SImageExporter extractor = new DirectB2SImageExporter(data);
+          extractor.extractBackground(target);
+          extractor.extractDMD(getDMDPicture(game));
+          return;
+        }
+        else {
+          LOG.warn("Backglass of \"" + game.getDirectB2SFile().getAbsolutePath() + "\" does not contain a background image.");
+        }
       }
       catch (VPinStudioException e) {
         LOG.error("Failed to extract background image: " + e.getMessage(), e);
@@ -104,7 +109,8 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     if (croppedDefaultPicture != null && croppedDefaultPicture.exists()) {
       if (croppedDefaultPicture.delete()) {
         LOG.info("Deleted " + croppedDefaultPicture.getAbsolutePath());
-      } else {
+      }
+      else {
         LOG.error("Failed to delete default crop asset.");
       }
     }
@@ -113,7 +119,8 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     if (rawDefaultPicture != null && rawDefaultPicture.exists()) {
       if (rawDefaultPicture.delete()) {
         LOG.info("Deleted " + rawDefaultPicture.getAbsolutePath());
-      } else {
+      }
+      else {
         LOG.error("Failed to delete default crop asset.");
       }
     }

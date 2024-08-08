@@ -163,7 +163,7 @@ public class Studio extends Application {
         ServerFX.client = Studio.client;
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
-        if (!unknownGameIds.isEmpty()) {
+        if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
           LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
           ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
         }
