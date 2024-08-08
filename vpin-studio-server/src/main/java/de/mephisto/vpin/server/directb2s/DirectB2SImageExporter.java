@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.server.VPinStudioException;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.IOUtils;
