@@ -12,6 +12,15 @@ public class ScanResult {
   private String someTextFile;
   private String tableName;
   private String pupPackName;
+  private boolean foundControllerStop = false;
+
+  public boolean isFoundControllerStop() {
+    return foundControllerStop;
+  }
+
+  public void setFoundControllerStop(boolean foundControllerStop) {
+    this.foundControllerStop = foundControllerStop;
+  }
 
   public String getPupPackName() {
     return pupPackName;

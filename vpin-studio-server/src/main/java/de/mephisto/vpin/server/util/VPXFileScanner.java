@@ -84,6 +84,10 @@ public class VPXFileScanner {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
     }
 
+//    if (!result.isFoundControllerStop()) {
+//      LOG.warn("No 'Controller.stop' call found for \"" + gameFile.getAbsolutePath() + "\"");
+//    }
+
     if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
       result.setHsFileName(result.getSomeTextFile());
     }
@@ -125,10 +129,13 @@ public class VPXFileScanner {
         lineSearchTableName(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
+        lineSearchControllerStop(result, line);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read rom line '" + line + "' for  " + gameFile.getAbsolutePath() + ": " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       try {
         if (reverseLineInputStream != null) {
           reverseLineInputStream.close();
@@ -137,7 +144,8 @@ public class VPXFileScanner {
         if (bufferedReader != null) {
           bufferedReader.close();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
@@ -188,6 +196,7 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchControllerStop(result, line);
     }
   }
 
@@ -202,7 +211,8 @@ public class VPXFileScanner {
       try {
         nvOffsetString = line.substring(line.indexOf("(") + 1, line.indexOf(")"));
         result.setNvOffset(Integer.parseInt(nvOffsetString));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to read NVOffset from line \"" + line + "\" and segment \"" + nvOffsetString + "\": " + e.getMessage());
       }
     }
@@ -217,6 +227,16 @@ public class VPXFileScanner {
     if (patternMatch != -1) {
       String pattern = PATTERN_TABLENAME.get(patternMatch);
       result.setTableName(extractLineValue(line, pattern));
+    }
+  }
+
+  private static void lineSearchControllerStop(@NonNull ScanResult result, @NonNull String line) {
+    if (result.isFoundControllerStop()) {
+      return;
+    }
+
+    if (line.contains("Controller.stop")) {
+      result.setFoundControllerStop(true);
     }
   }
 
