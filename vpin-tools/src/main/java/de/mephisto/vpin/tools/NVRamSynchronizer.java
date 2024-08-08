@@ -82,7 +82,7 @@ public class NVRamSynchronizer {
         //copy file anyway
         readmeLine = readMeLines.stream().filter(l -> l.contains(nvram.getKey())).findFirst().get();
         if (!readmeLine.contains("YES")) {
-          readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " | YES | DoXer |";
+          readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " | YES | gorgatron |";
         }
         File target = new File(targetFolder, nvram.getKey());
         if (target.exists()) {
