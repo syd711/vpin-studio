@@ -123,6 +123,10 @@ public class SystemServiceClient extends VPinStudioClientService {
     return getRestClient().getCached(API + "system/scoringdb", ScoringDB.class);
   }
 
+  public NVRamsInfo resetNvRams() {
+    return getRestClient().get(API + "system/resetnvrams", NVRamsInfo.class);
+  }
+
   public void setMaintenanceMode(boolean maintenanceMode) {
     final RestTemplate restTemplate = new RestTemplate();
     String url = getRestClient().getBaseUrl() + API + "system/maintenance/" + maintenanceMode;

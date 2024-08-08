@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.system.SystemSummary;
@@ -156,6 +157,12 @@ public class SystemResource {
       LOG.error("Failed to read system info: " + e.getMessage());
     }
     return info;
+  }
+
+
+  @GetMapping("/resetnvrams")
+  public NVRamsInfo resetNvRams() {
+    return systemService.resetNvRams();
   }
 
 

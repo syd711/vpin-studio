@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.commons.utils.Updater;
+import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.system.SystemService;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -30,7 +31,7 @@ public class ServerUpdatePreProcessing {
         runJvmCheck();
         runScriptCheck();
         runResourcesCheck();
-        synchronizeNVRams();
+        synchronizeNVRams(false);
         LOG.info("Finished resource updates check.");
       }
       catch (Exception e) {
@@ -45,16 +46,16 @@ public class ServerUpdatePreProcessing {
       scriptFolder.mkdirs();
 
       File emulatorLaunchScript = new File(scriptFolder, "emulator-launch.bat");
-      if(!emulatorLaunchScript.exists()) {
+      if (!emulatorLaunchScript.exists()) {
         Files.write(emulatorLaunchScript.toPath(), "curl -X POST --data-urlencode \"table=%~1\" http://localhost:8089/service/gameLaunch".getBytes());
       }
       File emulatorExitScript = new File(scriptFolder, "emulator-exit.bat");
-      if(!emulatorExitScript.exists()) {
+      if (!emulatorExitScript.exists()) {
         Files.write(emulatorExitScript.toPath(), "curl -X POST --data-urlencode \"table=%~1\" http://localhost:8089/service/gameExit".getBytes());
       }
 
       File frontendLaunchScript = new File(scriptFolder, "frontend-launch.bat");
-      if(!frontendLaunchScript.exists()) {
+      if (!frontendLaunchScript.exists()) {
         Files.write(frontendLaunchScript.toPath(), "curl -X POST --data-urlencode \"system=\" http://localhost:8089/service/frontendLaunch".getBytes());
       }
     }
@@ -101,7 +102,8 @@ public class ServerUpdatePreProcessing {
     }
   }
 
-  private static void synchronizeNVRams() {
+  public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {
+    NVRamsInfo info = new NVRamsInfo();
     try {
       File nvRamIndex = new File(SystemService.RESOURCES, "index.txt");
       Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
@@ -117,11 +119,17 @@ public class ServerUpdatePreProcessing {
       }
 
       for (String nvRam : nvRams) {
-
         File nvramFile = new File(nvramFolder, nvRam + ".nv");
+        if (nvramFile.exists() && deleteAll) {
+          if(nvramFile.delete()) {
+            LOG.info("Deleted " + nvramFile.getAbsolutePath());
+          }
+        }
+
         if (!nvramFile.exists()) {
+          info.setCount(info.getCount() + 1);
           Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/" + nvramFile.getName() + "/" + nvramFile.getName(), nvramFile, true);
-          LOG.info("Downloaded missing nvram file " + nvramFile.getAbsolutePath());
+          LOG.info("Downloaded nvram file " + nvramFile.getAbsolutePath());
         }
       }
       LOG.info("Finished NVRam synchronization, there are currently " + nvRams.size() + " resetted nvrams available.");
@@ -129,5 +137,7 @@ public class ServerUpdatePreProcessing {
     catch (IOException e) {
       LOG.error("Failed to sync nvrams: " + e.getMessage(), e);
     }
+
+    return info;
   }
 }

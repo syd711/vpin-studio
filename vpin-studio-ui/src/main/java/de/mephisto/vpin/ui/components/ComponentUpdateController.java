@@ -179,6 +179,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     if (installBtn.isDisabled()) {
       installBtn.setTooltip(new Tooltip("The component can not be updated via remote client."));
     }
+    else {
+      installBtn.setTooltip(new Tooltip(""));
+    }
 
     releaseNotes.setText("");
     if (!component.getReleases().isEmpty()) {

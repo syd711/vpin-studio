@@ -8,8 +8,10 @@ import de.mephisto.vpin.restclient.RestClient;
 import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
+import de.mephisto.vpin.server.ServerUpdatePreProcessing;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.inputs.ShutdownThread;
@@ -134,6 +136,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public FrontendType getFrontendType() {
     return frontendType;
   }
+
   public void setFrontendType(FrontendType frontendType) {
     this.frontendType = frontendType;
   }
@@ -217,13 +220,15 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   public Dimension getScreenSize() {
     return Toolkit.getDefaultToolkit().getScreenSize();
   }
-  
+
   public File getPinupInstallationFolder() {
     return pinupInstallationFolder;
   }
+
   public File getPinballXInstallationFolder() {
     return pinballXInstallationFolder;
   }
+
   public File getStandaloneInstallationFolder() {
     return standaloneInstallationFolder;
   }
@@ -483,6 +488,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       LOG.error("Failed to backup DB: " + e.getMessage(), e);
     }
     return target.getName();
+  }
+
+  public NVRamsInfo resetNvRams() {
+    return ServerUpdatePreProcessing.synchronizeNVRams(true);
   }
 
   @Override
