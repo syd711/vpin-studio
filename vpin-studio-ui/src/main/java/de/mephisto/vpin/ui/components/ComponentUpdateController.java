@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ComponentUpdateController implements Initializable, StudioEventListener, ChangeListener<String> {
+public class ComponentUpdateController implements Initializable, StudioEventListener, ChangeListener<GithubReleaseRepresentation> {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentUpdateController.class);
 
   @FXML
@@ -52,7 +52,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private ComboBox<String> artifactCombo;
 
   @FXML
-  private ComboBox<String> releasesCombo;
+  private ComboBox<GithubReleaseRepresentation> releasesCombo;
 
   private AbstractComponentTab componentTab;
   private ComponentType type;
@@ -95,9 +95,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   private void onCheck() {
     Platform.runLater(() -> {
       try {
-        String release = releasesCombo.getValue();
+        GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
-        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release, artifact);
+        ComponentCheckProgressModel model = new ComponentCheckProgressModel("Component Check for " + type, type, release.getTag(), artifact);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
         if (!resultModel.getResults().isEmpty()) {
@@ -130,12 +130,12 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     textArea.setText("");
     Platform.runLater(() -> {
       try {
-        String release = releasesCombo.getValue();
+        GithubReleaseRepresentation release = releasesCombo.getValue();
         String artifact = artifactCombo.getValue();
-        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release, artifact);
+        ComponentInstallProgressModel model = new ComponentInstallProgressModel(type, simulate, release.getTag(), artifact);
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(model);
 
-        if (resultModel.getResults().size()>0) {
+        if (resultModel.getResults().size() > 0) {
           ComponentActionLogRepresentation log = (ComponentActionLogRepresentation) resultModel.getResults().get(0);
           setText(log.toString());
         }
@@ -169,16 +169,9 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     this.localInstallOnly = localInstallOnly;
   }
 
-  public void refresh(@Nullable String releaseTag, @Nullable String artifactId) {
-    List<String> releases = new ArrayList<>();
-    List<String> releaseArtifacts = new ArrayList<>();
-
-    for (GithubReleaseRepresentation release : component.getReleases()) {
-      releases.add(release.getTag());
-    }
-
-    releasesCombo.setItems(FXCollections.observableList(releases));
-    releasesCombo.setDisable(releases.isEmpty());
+  public void refresh(@Nullable GithubReleaseRepresentation release, @Nullable String artifactId) {
+    releasesCombo.setItems(FXCollections.observableList(component.getReleases()));
+    releasesCombo.setDisable(component.getReleases().isEmpty());
 
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
@@ -187,19 +180,18 @@ public class ComponentUpdateController implements Initializable, StudioEventList
       installBtn.setTooltip(new Tooltip("The component can not be updated via remote client."));
     }
 
-    releaseNotes.setText("-");
+    releaseNotes.setText("");
     if (!component.getReleases().isEmpty()) {
-      GithubReleaseRepresentation release = component.getReleases().get(0);
-      if (releaseTag != null) {
-        releaseNotes.setText(release.getReleaseNotes() != null ? release.getReleaseNotes().trim() : "");
-        releasesCombo.setValue(releaseTag);
+      if (release != null) {
+        releasesCombo.setValue(release);
       }
       else {
-        releaseNotes.setText(release.getReleaseNotes() != null ? release.getReleaseNotes().trim() : "");
-        releasesCombo.setValue(release.getTag());
+        releasesCombo.setValue(component.getReleases().get(0));
       }
 
-      release = component.getReleases().stream().filter(r -> r.getTag().equals(releasesCombo.getValue())).findFirst().get();
+      release = releasesCombo.getValue();
+      releaseNotes.setText(release.getReleaseNotes() != null ? release.getReleaseNotes().trim() : "");
+
       List<String> artifacts = release.getArtifacts();
       artifactCombo.setItems(FXCollections.observableList(artifacts));
       String systemPreset = client.getSystemPreset();
@@ -222,7 +214,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
         artifactCombo.setValue(artifactId);
       }
 
-      artifactCombo.setDisable(releases.isEmpty());
+      artifactCombo.setDisable(component.getReleases().isEmpty());
     }
   }
 
@@ -237,7 +229,7 @@ public class ComponentUpdateController implements Initializable, StudioEventList
   }
 
   @Override
-  public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+  public void changed(ObservableValue<? extends GithubReleaseRepresentation> observable, GithubReleaseRepresentation oldValue, GithubReleaseRepresentation newValue) {
     this.releasesCombo.valueProperty().removeListener(this);
     refresh(newValue, null);
     this.releasesCombo.valueProperty().addListener(this);
