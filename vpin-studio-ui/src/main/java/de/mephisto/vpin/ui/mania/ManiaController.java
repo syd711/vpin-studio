@@ -85,6 +85,7 @@ public class ManiaController implements Initializable, StudioFXController, Studi
       FXMLLoader loader = new FXMLLoader(TabManiaTableAlxController.class.getResource("tab-table-alx.fxml"));
       Parent builtInRoot = loader.load();
       tableAlxTabController = loader.getController();
+      tableAlxTabController.setManiaController(this);
       tableAlxTab.setContent(builtInRoot);
     }
     catch (IOException e) {

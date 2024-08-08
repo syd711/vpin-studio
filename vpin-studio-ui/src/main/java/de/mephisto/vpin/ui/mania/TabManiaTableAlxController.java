@@ -26,6 +26,8 @@ public class TabManiaTableAlxController implements Initializable, StudioFXContro
 
   private ManiaWidgetVPSTableAlxController tableAlxController;
 
+  private ManiaController maniaController;
+
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
     tableAlxController.refresh();
@@ -43,5 +45,10 @@ public class TabManiaTableAlxController implements Initializable, StudioFXContro
     } catch (IOException e) {
       LOG.error("Failed to load ManiaWidgetVPSTableAlxController widget: " + e.getMessage(), e);
     }
+  }
+
+  public void setManiaController(ManiaController maniaController) {
+    this.maniaController = maniaController;
+    this.tableAlxController.setManiaController(maniaController);
   }
 }

@@ -67,7 +67,7 @@
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button fx:id="tableStatsBtn" layoutX="68.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableStats" text="Table Statistics" textFill="WHITE">
+                  <Button fx:id="tableStatsBtn" layoutX="68.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableStats" text="Table Statistic" textFill="WHITE">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18" />
                      </graphic>
