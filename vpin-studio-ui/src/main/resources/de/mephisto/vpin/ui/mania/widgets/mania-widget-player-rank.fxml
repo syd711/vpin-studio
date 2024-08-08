@@ -116,7 +116,7 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                      </graphic>
                      <tooltip>
-                        <Tooltip text="Reload all table data" />
+                        <Tooltip text="Click here to learn more about how players are ranked." />
                      </tooltip>
                   </Button>
                </items>
