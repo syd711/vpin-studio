@@ -5,33 +5,32 @@ import java.util.Arrays;
 public class Frame {
 
   private FrameType type;
-  private String name;
   private int timeStamp;
+  private int displayTime;
   private byte[] plane;
   private int[] palette;
   private int width;
   private int height;
 
-  public Frame(FrameType type, String name, int timeStamp, byte[] plane, int[] palette, int width, int height) {
+  public Frame(FrameType type, int timeStamp, byte[] plane, int[] palette, int width, int height) {
     this.type = type;
-    this.name = name;
     this.timeStamp = timeStamp;
     this.plane = plane;
     this.palette = palette;
     this.width = width;
     this.height = height;
   }
-
+  
   public FrameType getType() {
     return type;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public int getTimeStamp() {
     return timeStamp;
+  }
+
+  public int getDisplayTime() {
+    return displayTime;
   }
   
   public byte[] getPlane() {
@@ -58,6 +57,13 @@ public class Frame {
 
   //--------------------------------------------------------
 
+  /**
+   * @param timeStamp Hit when next Frame arrives so that we can calculate display time 
+   */
+  public void setTimeStampClose(int timeStampClose) {
+    this.displayTime = timeStampClose - timeStamp;
+  }
+
   public byte getColor(int x, int y) {
     return plane[y * width + x];
   }
@@ -67,7 +73,6 @@ public class Frame {
 
   //--------------------------------------------------------
     
-
   private boolean samePlane(byte[] plane1, byte[] plane2) {
     return Arrays.equals(plane1, plane2);
   }

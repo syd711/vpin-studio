@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.score;
 
 import java.io.File;
+import java.util.List;
 
 /**
  * A simple Processor that writes frames in a file
@@ -12,19 +13,17 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
   }
 
   @Override
-  public String onFrameReceived(Frame frame) {
-    return splitV(frame, 0, frame.getWidth(), 0, frame.getHeight());
+  public void onFrameReceived(Frame frame, List<FrameText> texts) {
+    splitV(frame, texts, 0, frame.getWidth(), 0, frame.getHeight());
   }
 
-  protected String splitV(Frame frame, int xF, int xT, int yF, int yT) {
+  protected void splitV(Frame frame, List<FrameText> texts, int xF, int xT, int yF, int yT) {
     if (hasBorder(frame, xF, xT, yF, yT)) {
-      return splitV(frame, xF + 1, xT - 1, yF + 1, yT - 1);
+      splitV(frame, texts, xF + 1, xT - 1, yF + 1, yT - 1);
+      return;
     }
 
     byte blank = getBlankIndex(frame.getPalette());
-
-    // else
-    StringBuilder bld = new StringBuilder();
 
     // first detect full single color vertical lines
     byte previousColor = -1;
@@ -36,10 +35,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
       if (b == blank) {
         // detection of a split
         if (previousColor >= 0 && previousColor != blank) {
-          String txt = splitH(frame, xStart, xStartSplit, yF, yT);
-          bld.append(txt);
-          // separate left f right
-          bld.append("\n");
+          splitH(frame, texts, xStart, xStartSplit, yF, yT);
           xStart = x;
         }
       }
@@ -51,14 +47,13 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
       previousColor = b;
     }
 
-    String txt = splitH(frame, xStart, xT, yF, yT);
-    bld.append(txt);
-    return bld.toString();
+    splitH(frame, texts, xStart, xT, yF, yT);
   }
 
-  protected String splitH(Frame frame, int xF, int xT, int yF, int yT) {
+  protected void splitH(Frame frame, List<FrameText> texts, int xF, int xT, int yF, int yT) {
     if (hasBorder(frame, xF, xT, yF, yT)) {
-      return splitH(frame, xF + 1, xT - 1, yF + 1, yT - 1);
+      splitH(frame, texts, xF + 1, xT - 1, yF + 1, yT - 1);
+      return;
     }
 
     byte blank = getBlankIndex(frame.getPalette());
@@ -71,11 +66,6 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
         saveImage(frame.getPlane(), frame.getWidth(), frame.getHeight(), generatePalette(frame.getPalette()), imgFile);
       }
     }
-    // then connect segments for some DMD fonts
-    //connectFontSegments(frame, xF, xT, yF, yT);
-
-    // else
-    StringBuilder bld = new StringBuilder();
 
     // first detect full single color horizontal lines
     int yStart = -1;
@@ -85,9 +75,7 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
       if (x < 0) {
         // detection of a split
         if (yStart >= 0) {
-          String txt = splitByFontSize(frame, xF, xT, yStart, y);
-          bld.append(txt);
-          bld.append("\n");
+          splitByFontSize(frame, texts, xF, xT, yStart, y);
           yStart = -1;
         }
       }
@@ -97,18 +85,13 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
         }
       }
     }
-    
-    if (yStart >= 0) {
-      String txt = splitByFontSize(frame, xF, xT, yStart, yT);
-      bld.append(txt);
-    }
 
-    return bld.toString();
+    if (yStart >= 0) {
+      splitByFontSize(frame, texts, xF, xT, yStart, yT);
+    }
   }
 
-  protected String splitByFontSize(Frame frame, int xF, int xT, int yF, int yT) {
-    StringBuilder bld = new StringBuilder();
-
+  protected void splitByFontSize(Frame frame, List<FrameText> texts, int xF, int xT, int yF, int yT) {
     byte blank = getBlankIndex(frame.getPalette());
 
     // set a minimal gap 
@@ -146,58 +129,12 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     }
 
     if (xGapF >= 0) {
-      String txt = extractText(frame, startX, xGapF, yF, getMaxFontSize(frame, startX, xGapF, yF, yT, blank) + 1);
-      bld.append(txt);
-      bld.append("\n");
+      extractText(frame, texts, startX, xGapF, yF, getMaxFontSize(frame, startX, xGapF, yF, yT, blank) + 1);
 
-      txt = extractText(frame, xGapT, endX, yF, getMaxFontSize(frame, xGapT, endX, yF, yT, blank) + 1);
-      bld.append(txt);
+      extractText(frame, texts, xGapT, endX, yF, getMaxFontSize(frame, xGapT, endX, yF, yT, blank) + 1);
     }
     else {
-      String txt = extractText(frame, startX, endX, yF, getMaxFontSize(frame, startX, endX, yF, yT, blank) + 1);
-      bld.append(txt);
-    }
-    return bld.toString();
-  }
-
-  /**
-   * for LCD-Segment fonts like Ace Of Speed (mousn_l4), draw missing dots
-   *                  x
-   *      x x  or   
-   *                  x
-   */
-  protected void connectFontSegments(Frame frame, int xF, int xT, int yF, int yT) {
-    byte blank = getBlankIndex(frame.getPalette());
-
-    for (int y = yF + 2; y < yT - 1; y++) {
-      for (int x = xF + 2; x < xT - 1; x++) {
-        int c = frame.getColor(x, y);
-        if (c == blank) {
-          byte p;
-          // make horizontal continuity
-          if ((p = frame.getColor(x - 2, y)) != blank 
-                && frame.getColor(x - 1, y) == p && frame.getColor(x + 1, y) == p
-                && frame.getColor(x - 1, y - 1) == blank 
-                && frame.getColor(x - 1, y + 1) == blank 
-                && frame.getColor(x, y - 1) == blank 
-                && frame.getColor(x, y + 1) == blank
-                && frame.getColor(x + 1, y - 1) == blank 
-                && frame.getColor(x + 1, y + 1) == blank) {
-              frame.setColor(x, y, p);
-          }
-          // make vertical continuity
-          else if ((p = frame.getColor(x, y - 2)) != blank 
-                && frame.getColor(x, y - 1) == p && frame.getColor(x, y + 1) == p
-                && frame.getColor(x - 1, y - 1) == blank 
-                && frame.getColor(x + 1, y - 1) == blank 
-                && frame.getColor(x - 1, y) == blank 
-                && frame.getColor(x + 1, y) == blank
-                && frame.getColor(x - 1, y + 1) == blank 
-                && frame.getColor(x + 1, y + 1) == blank) {
-              frame.setColor(x, y, p);
-          }
-        }
-      }
+      extractText(frame, texts, startX, endX, yF, getMaxFontSize(frame, startX, endX, yF, yT, blank) + 1);
     }
   }
 
@@ -240,129 +177,15 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
     return totalNb > 0 ? ((float) totalSize) / totalNb : 0;
   }
 
-  protected String splitByFontSize_3(Frame frame, int xF, int xT, int yF, int yT) {
-    StringBuilder bld = new StringBuilder();
-
-    byte blank = getBlankIndex(frame.getPalette());
-    int previousFontSize = -1;
-    int blockFontSize = 0;
-    int spaceBetweenBlock = 0;
-    int startX = -1;
-    int blockX = -1;
-    for (int x = xF; x < xT; x++) {
-      int size = getFontSize(frame, x, yF, yT, blank);
-      if (size < 0 && blockFontSize > 0 && spaceBetweenBlock >= 7) {
-        // detection of new block
-        if (previousFontSize <= 0) {
-          previousFontSize = blockFontSize;
-        }
-        // second block has different size, 
-        else if (previousFontSize != blockFontSize) {
-          // new block detected
-          String txt = extractText(frame, startX, blockX - spaceBetweenBlock, yF, previousFontSize + 1);
-          bld.append(txt);
-          bld.append("\n");
-
-          startX = blockX;
-          previousFontSize = blockFontSize;
-        }
-        
-        blockFontSize = 0;
-        blockX = -1;;
-        spaceBetweenBlock ++;
-      }
-      else if (size < 0) {
-        // space betwwen blocks
-        spaceBetweenBlock ++;
-
-      }
-      else {
-        blockFontSize = Math.max(size, blockFontSize);
-        spaceBetweenBlock = 0;
-        if (startX < 0) {
-          startX = x;
-        }
-        if (blockX < 0) {
-          blockX = x;
-        }
+  protected int getFontSize(Frame frame, int x, int yF, int yT, byte blank) {
+    for (int y = yT - 1; y >= yF; y--) {
+      byte color = frame.getColor(x, y);
+      if (color != blank) {
+        return y;
       }
     }
-
-    if (previousFontSize <= 0) {
-      previousFontSize = blockFontSize;
-    }
-    else if (blockFontSize > 0 && previousFontSize != blockFontSize) {
-      String txt = extractText(frame, startX, blockX, yF, previousFontSize + 1);
-      bld.append(txt);
-      bld.append("\n");
-
-      startX = blockX;
-      previousFontSize = blockFontSize;
-    }
-
-    String txt = extractText(frame, startX, xT - spaceBetweenBlock, yF, previousFontSize + 1);
-    bld.append(txt);
-
-    return bld.toString();
+    return -1;
   }
-
-
-  protected String splitByFontSize_2(Frame frame, int xF, int xT, int yF, int yT) {
-    StringBuilder bld = new StringBuilder();
-
-    byte blank = getBlankIndex(frame.getPalette());
-    float previousFontSize = -1;
-    int blockFontSize = 0;
-    int startX = -1;
-    int blockX = -1;
-    int spaceBetweenBlock = 0;
-    for (int x = xF; x < xT; x++) {
-      int size = getFontSize(frame, x, yF, yT, blank);
-      if (size < 0 && blockFontSize > 0) {
-        // blank column after a block
-
-        if (previousFontSize <= 0 || spaceBetweenBlock <= 2
-            || Math.abs((previousFontSize - blockFontSize) / previousFontSize) < 0.1) {
-          // do nothing : first block or another block with same font size
-          previousFontSize = Math.max(previousFontSize, blockFontSize);
-        }
-        else {
-          // new block detected
-          String txt = extractText(frame, startX, blockX, yF, (int) previousFontSize + 1);
-          bld.append(txt);
-          bld.append("\n");
-
-          startX = blockX;
-          previousFontSize = blockFontSize;
-        }
-
-        // start detection of new block
-        blockFontSize = 0;
-        spaceBetweenBlock = 1;
-        blockX = -1;
-      }
-      else if (size < 0) {
-        // space betwwen blocks
-        spaceBetweenBlock ++;
-
-      }
-      else {
-        blockFontSize = Math.max(size, blockFontSize);
-        if (startX < 0) {
-          startX = x;
-        }
-        if (blockX < 0) {
-          blockX = x;
-        }
-      }
-    }
-
-    String txt = extractText(frame, startX, xT, yF, (int) previousFontSize + 1);
-    bld.append(txt);
-
-    return bld.toString();
-  }
-
 
   //--------------------------------
 
@@ -409,16 +232,6 @@ public class DMDScoreSplitAndScan extends DMDScoreScannerTessAPI {
         return x;
       }
     } 
-    return -1;
-  }
-
-  protected int getFontSize(Frame frame, int x, int yF, int yT, byte blank) {
-    for (int y = yT - 1; y >= yF; y--) {
-      byte color = frame.getColor(x, y);
-      if (color != blank) {
-        return y;
-      }
-    }
     return -1;
   }
 }

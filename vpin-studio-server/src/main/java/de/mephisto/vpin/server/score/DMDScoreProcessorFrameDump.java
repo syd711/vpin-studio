@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +32,9 @@ public class DMDScoreProcessorFrameDump extends DMDScoreProcessorBase {
   }
 
   @Override
-  public String onFrameReceived(Frame frame) {
-    StringBuilder bld = new StringBuilder();
+  public void onFrameReceived(Frame frame, List<FrameText> texts) {
     try {
+      StringBuilder bld = new StringBuilder();
       bld.append(frame.getType() + " / " + frame.getTimeStamp() + " / ");
       appendPalette(bld, frame.getPalette());
       bld.append("\n");
@@ -55,7 +56,6 @@ public class DMDScoreProcessorFrameDump extends DMDScoreProcessorBase {
     catch (IOException ioe) {
       LOG.error("error while writing frame");
     }
-    return bld.toString();
   }
 
   private void appendPalette(StringBuilder bld, int[] palette) {

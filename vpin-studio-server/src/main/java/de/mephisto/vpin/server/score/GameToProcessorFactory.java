@@ -1,35 +1,39 @@
 package de.mephisto.vpin.server.score;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class GameToProcessorFactory {
 
-  public DMDScoreProcessor getProcessor(String gameName) {
-    return new DMDScoreProcessorDelegate(
-      getFrameDumpProcessor(), 
-      _getProcessor(gameName)
-    );
+  private static final String[] LCDTYPE_W5_ROMS_PREFIX = {
+    "ind250cc"
+  };
+  private static final String[] LCDTYPE_W7_ROMS_PREFIX = {
+    "mousn_"
+  };
+
+  public DMDScoreProcessor getScanner(String gameName) {
+    if (matchRom(LCDTYPE_W5_ROMS_PREFIX, gameName)) {
+      return new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_5);
+    }
+    else if (matchRom(LCDTYPE_W7_ROMS_PREFIX, gameName)) {
+      return new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_7);
+    }
+    // else
+    return new DMDScoreSplitAndScan();
   }
 
-  public DMDScoreProcessor _getProcessor(String gameName) {
-    return getImageScannerProcessor();
+  //-----------------------------------------
+
+  private boolean matchRom(String[] roms, String gameName) {
+    for (String rom: roms) {
+      if (StringUtils.startsWithIgnoreCase(gameName, rom)) {
+        return true;
+      }
+    }
+    return false;
   }
 
-  /**
-   * A processor that dump all frames in dump.txt, no filtering
-   */
-  public DMDScoreProcessor getFrameDumpProcessor() {
-    return new DMDScoreProcessorFilterFixFrame(-1, 
-      new DMDScoreProcessorFrameDump()
-    );
+  public DMDScoreProcessor getAnalyser(String gameName) {
+    return new DMDScoreAnalyserDump();
   }
-
-  /**
-   * A processor recognize texts from images 
-   */
-  public DMDScoreProcessor getImageScannerProcessor() {
-    return new DMDScoreProcessorFilterFixFrame( 
-      new DMDScoreProcessorImageDump(), 
-      new DMDScoreAnalyser()
-    );
-  }
-
 }

@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.score;
 
+import java.util.List;
+
 public class DMDScoreProcessorDelegate implements DMDScoreProcessor {
   
   private DMDScoreProcessor[] delegates;
@@ -16,12 +18,10 @@ public class DMDScoreProcessorDelegate implements DMDScoreProcessor {
   }
 
   @Override
-  public String onFrameReceived(Frame frame) {
-    String ret = null;
+  public void onFrameReceived(Frame frame, List<FrameText> texts) {
     for (DMDScoreProcessor delegate: delegates) {
-      ret = delegate.onFrameReceived(frame);
+      delegate.onFrameReceived(frame, texts);
     }
-    return ret;
   }
 
   @Override

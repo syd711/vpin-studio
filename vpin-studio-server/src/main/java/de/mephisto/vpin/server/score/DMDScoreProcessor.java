@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.score;
 
+import java.util.List;
+
 public interface DMDScoreProcessor {
   
   void onFrameStart(String gameName);
 
-  String onFrameReceived(Frame frame);
+  void onFrameReceived(Frame frame, List<FrameText> texts);
 
   default void onFrameStop(String gameName) {}
 

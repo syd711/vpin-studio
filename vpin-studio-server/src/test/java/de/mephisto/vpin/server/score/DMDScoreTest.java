@@ -2,39 +2,18 @@ package de.mephisto.vpin.server.score;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.File;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
-
-import com.google.common.io.Files;
 
 public class DMDScoreTest {
 
   private String gameName = "test";
-  private int w = 128;
-  private int h = 32;
-
-  @Test
-  public void testSaveFrame() throws Exception {
-    Frame f = parseFrame("_waiting.frame");
-    String out = doProcess(new DMDScoreProcessorFrameDump(), f, "testSaveFrame");
-
-    File file = new File(getClass().getResource("_waiting.frame").toURI());
-    String expected = FileUtils.readFileToString(file, "UTF-8");
-    expected = expected.replace(System.lineSeparator(), "\n");
-
-    assertEquals(expected, out);
-  }
-
-  @Test
-  public void testSaveImage() throws Exception {
-    Frame f = parseFrame("_waiting.frame");
-    doProcess(new DMDScoreProcessorImageDump(), f, "testSaveImage");
-  }
 
   @Test
   public void testScanImage() throws Exception {
@@ -45,13 +24,14 @@ public class DMDScoreTest {
 
   @Test
   public void testBlankIndex() {
+    DMDScoreGameReplayer replayer = new DMDScoreGameReplayer();
     DMDScoreProcessorBase p = new DMDScoreProcessorImageDump();
-    assertEquals(0, p.getBlankIndex(parsePalette("[0,16711680,0,0]")));
-    assertEquals(1, p.getBlankIndex(parsePalette("[4868863,0,7829367,0]")));
-    assertEquals(1, p.getBlankIndex(parsePalette("[16767492,0,16711680,151]")));
-    assertEquals(2, p.getBlankIndex(parsePalette("[16760962,8405056,0,11310948]")));
-    assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,0]")));
-    assertEquals(0, p.getBlankIndex(parsePalette("[20736,16777215,65280,34589]")));
+    assertEquals(0, p.getBlankIndex(replayer.parsePalette("[0,16711680,0,0]")));
+    assertEquals(1, p.getBlankIndex(replayer.parsePalette("[4868863,0,7829367,0]")));
+    assertEquals(1, p.getBlankIndex(replayer.parsePalette("[16767492,0,16711680,151]")));
+    assertEquals(2, p.getBlankIndex(replayer.parsePalette("[16760962,8405056,0,11310948]")));
+    assertEquals(0, p.getBlankIndex(replayer.parsePalette("[20736,16777215,65280,0]")));
+    assertEquals(0, p.getBlankIndex(replayer.parsePalette("[20736,16777215,65280,34589]")));
     //assertEquals(1, p.getBlankIndex(parsePalette("[16760962,0,0,0]")));
   }
 
@@ -61,7 +41,7 @@ public class DMDScoreTest {
   public void testSplitAndScan() throws Exception {
     doTestFrame("_2sides_1.frame", 
             "797,020\n" +
-            "650,700\n\n" +
+            "650,700\n" +
             //------------------------
             "HIGH SCORE #1\n" + 
             "LR\n" +             
@@ -73,11 +53,11 @@ public class DMDScoreTest {
   public void testSplitAndScan2() throws Exception {
     doTestFrame("_2sides_2.frame", 
             "797,020\n" +
-            "650,700\n\n" +
+            "650,700\n" +
             //------------------------
             "FINAL BATTLE CHAMPION\n" + 
             "LFS\n" +
-            "25,000,000\n"
+            "25,000,000"
     );
   }
 
@@ -85,11 +65,11 @@ public class DMDScoreTest {
   public void testSplitAndScanInvertedPalette() throws Exception {
     doTestFrame("_2sides_invertedpalette.frame", 
             "797,020\n" +
-            "650,700\n\n" +
+            "650,700\n" +
             //------------------------
             "FINAL BATTLE CHAMPION\n" + 
             "LFS\n" +
-            "25,000,000\n"
+            "25,000,000"
     );
   }
 
@@ -98,8 +78,7 @@ public class DMDScoreTest {
   @Test
   public void testFrame0() throws Exception {
     doTestFrame("_frame0.frame",  
-            "00\n\n" +
-            //------------------------
+            "00\n" +
             "00\n" +
             "BALL 1 CREDITS 0"
     );
@@ -154,7 +133,7 @@ public class DMDScoreTest {
     doTestFrame("_border_3.frame", 
             "417,650\n" +
             "TOTAL BONUS\n" +
-            "135,050\n"
+            "135,050"
     );
   }
 
@@ -207,7 +186,7 @@ public class DMDScoreTest {
     // from Cactus Canyon
     doTestFrame("_bigspace_2.frame",
             "195,800\n" +
-            "3,170\n\n" +
+            "3,170\n" +
             "(95800\n" + // should be 195800 but too strange font taken from game '24'
             "REPLAY AT 20,000,000"
     );
@@ -218,14 +197,25 @@ public class DMDScoreTest {
     // from Ace of Speed (mousn_l4)
     String frameFile = "_fontwithsegments.frame";
     Frame f = parseFrame(frameFile);
-    DMDScoreScannerLCD proc = new DMDScoreScannerLCD();
+    DMDScoreScannerLCD proc = new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_7);
     String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
-    assertEquals(txt, 
-      "10000\n" + 
-       "BALL 1"
-    );
+    assertEquals("10000\n" + 
+       "BALL 1", txt);
   }
-    
+
+  @Test
+  public void testFrameFontWithSmallSegments() throws Exception {
+    // from 250 cc (Inder) (ind250cc)
+    String frameFile = "_fontwithsegments_small.frame";
+    Frame f = parseFrame(frameFile);
+    DMDScoreScannerLCD proc = new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_5);
+    String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
+    assertEquals("043301\n" + 
+       "0103", txt);
+  }
+
+  
+
 
   //----------------------
 
@@ -245,10 +235,19 @@ public class DMDScoreTest {
 
       delegate.onFrameStart(gameName);
       long timeStart = System.currentTimeMillis();
-      String ret = delegate.onFrameReceived(frame);
+      List<FrameText> texts = new ArrayList<>();
+      delegate.onFrameReceived(frame, texts);
       long time = System.currentTimeMillis() - timeStart;
       System.out.println("test " + testname + " took " + time);
-      return ret;
+
+      StringBuilder bld = new StringBuilder();
+      for (FrameText text : texts) {
+        if (bld.length() > 0) {
+          bld.append("\n");
+        }
+        bld.append(text.getText());
+      }
+      return bld.toString();
     }
     finally {
       delegate.onFrameStop(gameName);
@@ -257,44 +256,11 @@ public class DMDScoreTest {
   }
 
   public Frame parseFrame(String frameName) throws Exception{
-    File f = new File(getClass().getResource(frameName).toURI());
-    List<String> lines = Files.readLines(f, Charset.forName("UTF-8")); 
-    
-    String line = lines.get(0);
-    String[] parts = StringUtils.splitByWholeSeparator(line, " / ");
-
-
-    byte[] plane = new byte[w * h];
-    int off = 0;
-    for (int y = 0; y < h; y++) {
-      line = lines.get(y + 1);
-      for (int x = 0; x < w; x++) {
-        String c = line.substring(x, x+1);
-        plane[off++] = " ".equals(c)? 0 : "A".compareTo(c) > 0? Byte.parseByte(c) : (byte) (c.charAt(0) - 55);
-      }
+    DMDScoreGameReplayer replayer = new DMDScoreGameReplayer();
+    try (BufferedReader reader = new BufferedReader(
+          new InputStreamReader(
+            getClass().getResourceAsStream(frameName), Charset.forName("UTF-8")))) {
+      return replayer.readOneFrame(reader);
     }
-
-    int[] palette = parts.length > 2 ? parsePalette(parts[2]): buildPalette(4);
-
-    // timestamp relative to 2024/01/01
-    return new Frame(FrameType.getEnum(parts[0]), "", Integer.parseInt(parts[1]), plane, palette, w, h);
-  }
-
-  private int[] parsePalette(String paletteStr) {
-    String[] colors = StringUtils.split(paletteStr, "[], ");
-    int[] palette = new int[colors.length];
-    for (int i = 0; i < colors.length; i++) {
-      palette[i] = Integer.parseInt(colors[i]);
-    }
-    return palette;
-  }
-
-  private int[] buildPalette(int size) {
-    int [] palette = new int[size];
-    for (int i = 0; i < size; i++) {
-      int colorComponent = i * 255 / size;
-      palette[i] = (255 << 24) | (colorComponent << 16) | (colorComponent << 8) | colorComponent;
-    }
-    return palette;
   }
 }

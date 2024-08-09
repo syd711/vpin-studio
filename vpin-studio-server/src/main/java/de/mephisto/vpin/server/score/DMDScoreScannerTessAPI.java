@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.score;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -106,12 +107,12 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
   }
 
   @Override
-  public String onFrameReceived(Frame frame) {
+  public void onFrameReceived(Frame frame, List<FrameText> texts) {
     // extract text from full frame
-    return extractText(frame, 0, frame.getWidth(), 0, frame.getHeight());
+    extractText(frame, texts, 0, frame.getWidth(), 0, frame.getHeight());
   }
 
-  protected String extractText(Frame frame, int xF, int xT, int yF, int yT) {
+  protected FrameText extractText(Frame frame, List<FrameText> texts, int xF, int xT, int yF, int yT) {
 
     int SCALE =  (yT - yF) <= THRESHOLD_LOWRES && (xT - xF) > 8 * (yT - yF) ? SCALE_LOWRES : SCALE_HIGHRES;
 
@@ -127,8 +128,7 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
 
     if (DEV_MODE) {
       String imgName = (xF == 0 && yF == 0) ? "" : "_" + xF + "x" + yF;
-      File imgFile = new File(folder, 
-        StringUtils.defaultIfBlank(frame.getName(), Integer.toString(frame.getTimeStamp())) + "_" + imgName + ".png");
+      File imgFile = new File(folder, frame.getTimeStamp() + "_" + imgName + ".png");
       saveImage(pixels, newW, newH, generateBlurPalette(), imgFile);
     }
 
@@ -147,7 +147,7 @@ public class DMDScoreScannerTessAPI extends DMDScoreProcessorBase {
         content  = postProcess(content.toUpperCase());
         LOG.info("Text post processed:\n" + content);
 
-        return content;
+        texts.add(new FrameText(content, xF, yF, xT - xF, yT - yF));
       }
     } 
     catch (Exception e) {

@@ -6,11 +6,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.BinaryMessage;
@@ -25,22 +21,17 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 
   private static final int DEFAULT_COLOR = 0xec843d;
 
-  private String gameName;
-
+  /** DMD dimensions */
   private int width = -1;
   private int height = -1;
-   
+
+  /**  current palette */
   private int[] palette;
 
   List<ByteBuffer> buffers = new ArrayList<>();
   boolean partialMessage = false;
 
-  private GameToProcessorFactory factory = new GameToProcessorFactory();
-
-  //private BlockingQueue<Frame> blockingQueue = new LinkedBlockingDeque<>();
-  private ExecutorService executor;
-
-  private DMDScoreProcessor _processor;
+  private DMDScoreGameProcessor _processor = new DMDScoreGameProcessor();
 
   @Override
   protected void handleTextMessage(WebSocketSession session, TextMessage message) throws IOException {
@@ -80,12 +71,12 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     
       switch (type) {
         case GAME_NAME:
-          processGameStart(stringFromData(frameData, false));
+        _processor.processGameStart(stringFromData(frameData, false));
           break;
         case DIMENSIONS:
           width = frameData.getInt();
           height = frameData.getInt();
-          LOG.info("Game dimension for {} :{} x {}", gameName, width, height);
+          LOG.info("Game dimension {} x {}", width, height);
           break;
         case COLORED_GRAY_2:
           processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 2);
@@ -97,11 +88,11 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
           processFrame(type, frameData.getInt(), paletteFromData(frameData), planesFromData(frameData), 6);
           break;
         case RGB24:
-          if (_processor != null) {
+          if (_processor.isProcessing()) {
             int timeStamp = frameData.getInt();
             byte[] rgb24 = planesFromRgb24(frameData, width, height);
-            Frame frame = new Frame(type, "", timeStamp, rgb24, palette, width, height);
-            addFrameToQueue(frame);
+            Frame frame = new Frame(type, timeStamp, rgb24, palette, width, height);
+            _processor.processFrame(frame);
           }
           break;
         case GRAY_2_PLANES:
@@ -137,21 +128,6 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
     }
   }
 
-  private void processGameStart(String newGameName) {
-    if (!StringUtils.equals(newGameName, gameName)) {
-      // new game started, close previous one
-      processGameStop();
-
-      this.gameName = newGameName;
-      _processor = factory.getProcessor(gameName);
-      if (_processor != null) {
-        _processor.onFrameStart(gameName);
-        // start the Executor that will process Frames
-        executor = Executors.newFixedThreadPool(1);
-      }
-      LOG.info("Game name started : {}", gameName);
-    }
-  }
 
   private void processFrame(FrameType type, int timeStamp, int[] palette, byte[] planes, int nbPlanes) {
     if (width < 0 || height < 0) {
@@ -159,36 +135,14 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       return;
     }
 
-    if (_processor != null) {
+    if (_processor.isProcessing()) {
       byte[] frameBytes = DmdImageUtils.toPlane(planes, nbPlanes, width, height);
-      Frame frame = new Frame(type, "", timeStamp, frameBytes, palette, width, height);
-      addFrameToQueue(frame);
+      Frame frame = new Frame(type, timeStamp, frameBytes, palette, width, height);
+      _processor.processFrame(frame);
     }
   }
 
-  protected void addFrameToQueue(Frame frame) {
-    executor.execute(() -> {
-      _processor.onFrameReceived(frame);
-    });
-  }
-
-  private void processGameStop() {
-    if (gameName != null && _processor != null) {
-      // stop executor and wait for 5min for all task to complete
-      executor.shutdown();
-      try {
-        if (!executor.awaitTermination(5, TimeUnit.MINUTES)) {
-          executor.shutdownNow();
-        } 
-      } catch (InterruptedException e) {
-        executor.shutdownNow();
-      }
-      // now close the processor
-      _processor.onFrameStop(gameName);
-      _processor = null;
-      this.gameName = null;
-    }
-  }
+  
 
   @Override
   public void afterConnectionEstablished(WebSocketSession session) {
@@ -198,7 +152,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
   @Override
   public void afterConnectionClosed(WebSocketSession session, CloseStatus status) {
     LOG.info("connection closed");
-    processGameStop();
+    _processor.processGameStop();
   }
 
   @Override
@@ -211,13 +165,13 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
 		return true;
 	}
 
+  //----------------------------------------
+
   private ByteBuffer concat(List<ByteBuffer> buffers) {
     final ByteBuffer combined = ByteBuffer.allocate(buffers.stream().mapToInt(ByteBuffer::remaining).sum());
     buffers.stream().forEach(b -> combined.put(b));
     return combined.rewind();
   }
-
-  //----------------------------------------
 
   private String stringFromData(final ByteBuffer data, final boolean skip) {
     if (data.hasRemaining()) {
@@ -297,6 +251,4 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       return null;
     }
   }
-
-
 }
