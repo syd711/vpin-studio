@@ -24,7 +24,8 @@ import java.io.File;
  * "curl -X POST --data-urlencode \"table=[GAMEFULLNAME]\" http://localhost:" + HttpServer.PORT + "/service/gameExit";
  */
 @RestController
-@RequestMapping("/service") //do not add api version AND DO NOT CHANGE "service" segment (these are already stored in popper too)
+@RequestMapping("/service")
+//do not add api version AND DO NOT CHANGE "service" segment (these are already stored in popper too)
 public class FrontendStatusEventsResource {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusEventsResource.class);
 
@@ -62,18 +63,19 @@ public class FrontendStatusEventsResource {
   public boolean gameExit(@RequestParam("table") String table) {
     LOG.info("Received game exit event for " + table.trim());
     Game game = resolveGame(table);
-    if (game == null) {
-      LOG.warn("No game found for name '" + table);
-      return false;
-    }
-
-    if (!gameStatusService.getStatus().isActive()) {
-      LOG.info("Skipped exit event, since the no game is currently running.");
-      return false;
-    }
-
     new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread");
+
+      if (game == null) {
+        LOG.warn("No game found for name '" + table);
+        return;
+      }
+
+      if (!gameStatusService.getStatus().isActive()) {
+        LOG.info("Skipped exit event, since the no game is currently running.");
+        return;
+      }
+
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
     }).start();
     return game != null;
@@ -97,7 +99,7 @@ public class FrontendStatusEventsResource {
 
     // derive the emulator from the table folder
     int emuId = -1;
-    for (GameEmulator emu: frontendStatusService.getGameEmulators()) {
+    for (GameEmulator emu : frontendStatusService.getGameEmulators()) {
       if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
         emuId = emu.getId();
         break;
