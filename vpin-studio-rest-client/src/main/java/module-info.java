@@ -33,6 +33,7 @@ open module de.mephisto.vpin.restclient {
   exports de.mephisto.vpin.restclient.competitions;
   exports de.mephisto.vpin.restclient.directb2s;
   exports de.mephisto.vpin.restclient.highscores;
+  exports de.mephisto.vpin.restclient.highscores.logging;
   exports de.mephisto.vpin.restclient.games;
   exports de.mephisto.vpin.restclient.puppacks;
   exports de.mephisto.vpin.restclient.players;

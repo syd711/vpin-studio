@@ -8,10 +8,6 @@ public class HighscoreEventLog {
 
   private List<EventLogMessage> log = new ArrayList<>();
 
-  private List<EventLogMessage> iScoredLog = new ArrayList<>();
-
-  private List<EventLogMessage> discordLog = new ArrayList<>();
-
   public int getGameId() {
     return gameId;
   }
@@ -26,21 +22,5 @@ public class HighscoreEventLog {
 
   public void setLog(List<EventLogMessage> log) {
     this.log = log;
-  }
-
-  public List<EventLogMessage> getiScoredLog() {
-    return iScoredLog;
-  }
-
-  public void setiScoredLog(List<EventLogMessage> iScoredLog) {
-    this.iScoredLog = iScoredLog;
-  }
-
-  public List<EventLogMessage> getDiscordLog() {
-    return discordLog;
-  }
-
-  public void setDiscordLog(List<EventLogMessage> discordLog) {
-    this.discordLog = discordLog;
   }
 }

@@ -14,9 +14,17 @@ public class SLOG {
 
   private static final SLOG instance = new SLOG();
 
+  public static HighscoreEventLog getLog(int gameId) {
+    if (instance.logs.containsKey(gameId)) {
+      return instance.logs.get(gameId);
+    }
+    return null;
+  }
+
   public static void initLog(int gameId) {
     instance.eventLog = new HighscoreEventLog();
     instance.eventLog.setGameId(gameId);
+    instance.logs.put(instance.eventLog.getGameId(), instance.eventLog);
   }
 
   public static void error(String message) {
@@ -43,9 +51,6 @@ public class SLOG {
   }
 
   public static void finalizeEventLog() {
-    if(instance.eventLog != null) {
-      instance.logs.put(instance.eventLog.getGameId(), instance.eventLog);
-    }
     instance.eventLog = null;
   }
 }
