@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -65,18 +66,19 @@ public class FrontendStatusEventsResource {
     Game game = resolveGame(table);
     new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread");
-
       if (game == null) {
         LOG.warn("No game found for name '" + table);
         return;
       }
 
+      SLOG.initLog(game.getId());
       if (!gameStatusService.getStatus().isActive()) {
         LOG.info("Skipped exit event, since the no game is currently running.");
         return;
       }
 
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+      SLOG.finalizeEventLog();
     }).start();
     return game != null;
   }
