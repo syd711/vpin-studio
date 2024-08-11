@@ -79,7 +79,8 @@ public class NvRamOutToRawTest {
   private File getPinemhiIni() {
     return new File("../resources/pinemhi", PINemHiService.PINEMHI_INI);
   }
-  private final File getPinemhiExe() {
+
+  private File getPinemhiExe() {
     return new File("../resources/pinemhi", PINemHiService.PINEMHI_COMMAND);
   }
 

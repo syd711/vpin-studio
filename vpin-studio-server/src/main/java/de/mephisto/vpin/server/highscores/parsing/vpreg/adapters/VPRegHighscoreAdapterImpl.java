@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
-import com.thoughtworks.xstream.core.util.Base64Encoder;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;

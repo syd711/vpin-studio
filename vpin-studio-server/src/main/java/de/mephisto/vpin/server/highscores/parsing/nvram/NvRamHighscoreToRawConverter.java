@@ -89,6 +89,8 @@ public class NvRamHighscoreToRawConverter {
     // replace french space character, displayed ÿ with "."
     stdOut = stdOut
       .replaceAll("\u00ff", ".")
+      .replaceAll("\u00a0", ".")
+      .replaceAll("\u202f", ".")
       .replaceAll("\ufffd", ".");
 
     //check for pre-formatting
