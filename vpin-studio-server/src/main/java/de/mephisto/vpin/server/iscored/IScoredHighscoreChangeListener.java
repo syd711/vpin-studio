@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.iscored;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
@@ -34,6 +35,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
     if (event.getNewScore().getPlayer() == null) {
       LOG.info("Ignored iScored highscore change, because no player set for this score.");
+      SLOG.info("Ignored iScored highscore change, because no player set for this score.");
       return;
     }
 
@@ -45,16 +47,19 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
           String url = iScoredSubscription.getUrl();
           if (iScoredService.isIscoredGameRoomUrl(url)) {
             LOG.info("Emitting iScored game score to " + url);
+            SLOG.info("Emitting iScored game score to " + url);
             iScoredService.submitScore(url, newScore, iScoredSubscription.getVpsTableId(), iScoredSubscription.getVpsTableVersionId());
           }
           else {
             LOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
+            SLOG.warn("The URL of " + iScoredSubscription + " (" + iScoredSubscription.getUrl() + ") is not a valid iScored URL.");
           }
         }
       }
     }
     catch (Exception e) {
       LOG.error("Failed emitting iScored highscore: " + e.getMessage(), e);
+      SLOG.error("Failed emitting iScored highscore: " + e.getMessage());
     }
   }
 

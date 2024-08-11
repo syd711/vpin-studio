@@ -23,4 +23,14 @@ public class HighscoreEventLog {
   public void setLog(List<EventLogMessage> log) {
     this.log = log;
   }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    for (EventLogMessage eventLogMessage : log) {
+      builder.append(eventLogMessage.toString());
+      builder.append("\n");
+    }
+    return builder.toString();
+  }
 }

@@ -1,11 +1,10 @@
 package de.mephisto.vpin.server.highscores.parsing.text;
 
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,6 +52,7 @@ public class TextHighscoreToRawConverter {
 
   public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
+      SLOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based highscores.");
       return null;
     }
 
@@ -62,17 +62,22 @@ public class TextHighscoreToRawConverter {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
+          SLOG.info("Converted score with adapter " + adapter.getClass().getSimpleName());
           return adapter.convert(file, lines);
         }
       }
       LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
+      SLOG.error("Error reading EM highscore file: " + e.getMessage());
       LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       if (fileInputStream != null) {
         try {
           fileInputStream.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }

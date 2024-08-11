@@ -71,9 +71,11 @@ public class FrontendStatusEventsResource {
         return;
       }
 
+      Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
       SLOG.initLog(game.getId());
       if (!gameStatusService.getStatus().isActive()) {
         LOG.info("Skipped exit event, since the no game is currently running.");
+        SLOG.info("Skipped event processing, since the no game is currently running.");
         return;
       }
 

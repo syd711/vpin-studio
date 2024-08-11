@@ -58,6 +58,7 @@ public class Game {
   private AltColorTypes altColorType;
 
   private boolean defaultBackgroundAvailable;
+  private boolean eventLogAvailable;
   private PupPack pupPack;
   private List<Integer> playlists = new ArrayList<>();
 
@@ -70,6 +71,14 @@ public class Game {
   private VPSChanges vpsChanges = new VPSChanges();
 
   public Game() {
+  }
+
+  public boolean isEventLogAvailable() {
+    return eventLogAvailable;
+  }
+
+  public void setEventLogAvailable(boolean eventLogAvailable) {
+    this.eventLogAvailable = eventLogAvailable;
   }
 
   public boolean isCardDisabled() {

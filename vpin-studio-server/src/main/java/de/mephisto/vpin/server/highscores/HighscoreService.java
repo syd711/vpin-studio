@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.NVRamList;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -366,6 +367,7 @@ public class HighscoreService implements InitializingBean {
   @NonNull
   public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
     if (!game.isVpxGame()) {
+      SLOG.error("Game " + game.getGameDisplayName() + " is not a VPX game.");
       throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");
     }
     HighscoreMetadata highscoreMetadata = readHighscore(game);
@@ -426,6 +428,7 @@ public class HighscoreService implements InitializingBean {
       highscoreVersionRepository.saveAndFlush(highscoreVersion);
 
       existingHighscore = Optional.of(updatedNewHighScore);
+      SLOG.info("Created new initial highscore record.");
     }
 
     Highscore newHighscore = Highscore.forGame(game, metadata);
@@ -437,11 +440,13 @@ public class HighscoreService implements InitializingBean {
 
     if (oldRaw == null || newRaw == null) {
       LOG.error("The highscore data of \"" + game.getGameDisplayName() + "\" has become invalid, no RAW data can be extracted anymore.");
+      SLOG.info("The highscore data of \"" + game.getGameDisplayName() + "\" has become invalid, no RAW data can be extracted anymore.");
       return Optional.of(oldHighscore);
     }
 
     if (oldRaw.equals(newRaw)) {
-      LOG.info("Skipped highscore change event for \"{}\" because the no score change for rom '{}' detected.", game, game.getRom());
+      LOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '{}' detected.", game, game.getRom());
+      SLOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '{}' detected.");
       return Optional.of(oldHighscore);
     }
 
@@ -456,9 +461,11 @@ public class HighscoreService implements InitializingBean {
       List<Integer> changedPositions = calculateChangedPositions(game.getGameDisplayName(), oldScores, newScores);
       if (changedPositions.isEmpty()) {
         LOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
+        SLOG.info("No highscore change of rom '" + game.getRom() + "' detected for " + game + ", skipping notification event.");
       }
       else {
         LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
+        SLOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
         if (!changedPositions.isEmpty()) {
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
@@ -470,6 +477,7 @@ public class HighscoreService implements InitializingBean {
               HighscoreVersion version = oldHighscore.toVersion(changedPosition, newRaw);
               highscoreVersionRepository.saveAndFlush(version);
               LOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
+              SLOG.info("Created highscore version for " + game + ", changed position " + changedPosition);
             }
 
             if (!scoreFilter.isScoreFiltered(newScore)) {
@@ -495,6 +503,7 @@ public class HighscoreService implements InitializingBean {
     oldHighscore.setDisplayName(newHighscore.getDisplayName());
     highscoreRepository.saveAndFlush(oldHighscore);
     LOG.info("Saved updated highscore for " + game);
+    SLOG.info("Saved updated highscore for " + game);
 
     triggerHighscoreUpdate(game, oldHighscore);
 

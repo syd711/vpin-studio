@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.frontend.FrontendStatusChangeListener;
 import de.mephisto.vpin.server.highscores.monitoring.HighscoreMonitoringService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
@@ -68,5 +69,6 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
 
   public void resetStatus() {
     status.setGameId(-1);
+    SLOG.info("Resetted game status");
   }
 }

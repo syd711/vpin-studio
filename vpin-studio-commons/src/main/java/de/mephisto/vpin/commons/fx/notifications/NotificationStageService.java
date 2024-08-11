@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -69,6 +70,7 @@ public class NotificationStageService extends Application {
     NotificationStage notificationStage = new NotificationStage(notification);
     stages.offer(notificationStage);
     LOG.info("Showing " + notification);
+    SLOG.info("Showing " + notification);
     notificationStage.getStage().setOnHiding(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {

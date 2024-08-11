@@ -38,7 +38,7 @@
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </Label>
-                        <Label fx:id="statusLabel" styleClass="default-text" text="STATUS" wrapText="true" />
+                        <Label fx:id="statusLabel" styleClass="default-text" text="-" wrapText="true" />
                         <VBox styleClass="info-container">
                            <children>
                               <Label fx:id="statusLabel1" styleClass="default-title" text="Troubleshooting Highscore Resolving" wrapText="true">
@@ -169,7 +169,7 @@
                                     <children>
                                         <ScrollPane prefHeight="350.0" styleClass="media-parent">
                                             <content>
-                                                <Label fx:id="rawScoreLabel" text="Label" textFill="WHITE">
+                                                <Label fx:id="rawScoreLabel" text="-" textFill="WHITE">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
@@ -194,7 +194,7 @@
                                         <Insets top="12.0" />
                                     </VBox.margin>
                                     <children>
-                                        <Label fx:id="formattedScoreLabel" text="Label" textFill="WHITE">
+                                        <Label fx:id="formattedScoreLabel" text="-" textFill="WHITE">
                                             <font>
                                                 <Font size="14.0" />
                                             </font>
@@ -275,17 +275,17 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
                </graphic>
             </SplitMenuButton>
-                <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" text="Card" textFill="WHITE">
-                    <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
-                    </graphic>
-                    <font>
-                        <Font size="14.0" />
-                    </font>
+            <Button fx:id="eventLogBtn" layoutX="124.0" layoutY="11.0" mnemonicParsing="false" onAction="#onEventLog" text="Event Log" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-text-clock-outline" iconSize="18" />
+               </graphic>
                <tooltip>
-                  <Tooltip text="Open Highscore Card Editor" />
+                  <Tooltip text="Open the event log window with the latest server processing information" />
                </tooltip>
-                </Button>
+            </Button>
             <Separator layoutX="253.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="backupBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onBackup" text="Backup" textFill="WHITE">
                <font>
@@ -298,14 +298,29 @@
                </font>
             </Button>
             <Separator layoutX="167.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
-                <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" text="Reset" textFill="#ff3333">
+                <Button fx:id="cardBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCard" textFill="WHITE">
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="18" />
+                    </graphic>
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+               <tooltip>
+                  <Tooltip text="Open Highscore Card Editor" />
+               </tooltip>
+                </Button>
+                <Button fx:id="resetBtn" layoutX="96.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreReset" textFill="#ff3333">
                     <graphic>
                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                     </graphic>
                     <font>
                         <Font size="14.0" />
                     </font>
+               <tooltip>
+                  <Tooltip text="Reset Highscores" />
+               </tooltip>
                 </Button>
+            <Separator layoutX="336.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
             <Button fx:id="vpSaveEditBtn" mnemonicParsing="false" onAction="#onVPSaveEdit" styleClass="external-component" text="VPSaveEdit" textFill="WHITE">
                <font>
                   <Font size="14.0" />

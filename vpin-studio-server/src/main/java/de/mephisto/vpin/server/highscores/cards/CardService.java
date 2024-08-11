@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -119,26 +120,31 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
               File highscoreCard = getCardFile(game, screenName);
               ImageUtil.write(bufferedImage, highscoreCard);
               LOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
+              SLOG.info("Written highscore card: " + highscoreCard.getAbsolutePath());
               return true;
             }
           }
           else {
             LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
+            SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", generation not enabled.");
           }
 
         }
         else {
           LOG.info("Skipped card generation, no target screen set.");
+          SLOG.info("Skipped card generation, no target screen set.");
         }
 
         return false;
       }
       else {
         LOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
+        SLOG.info("Skipped card generation for \"" + game.getGameDisplayName() + "\", no scores found.");
       }
     }
     catch (Exception e) {
       LOG.error("Failed to generate highscore card: " + e.getMessage(), e);
+      SLOG.error("Failed to generate highscore card: " + e.getMessage());
     }
     return false;
   }
