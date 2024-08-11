@@ -171,28 +171,39 @@ public class LauncherController implements Initializable {
   private void onNewConnection() {
     String host = WidgetFactory.showInputDialog(stage, "New VPin Studio Connection", "IP or Hostname", "Enter the IP address or the hostname to connect to.", null, null);
     if (!StringUtils.isEmpty(host)) {
-      refreshBtn.setDisable(true);
-      connectBtn.setDisable(true);
-      newConnectionBtn.setDisable(true);
+      boolean found = false;
+      for (VPinConnection vpinConnection : data) {
+        if (vpinConnection.getHost().equals(host)) {
+          found = true;
+          break;
+        }
+      }
 
-      stage.getScene().setCursor(Cursor.WAIT);
-      new Thread(() -> {
-        VPinConnection connection = checkConnection(host);
-        Platform.runLater(() -> {
-          stage.getScene().setCursor(Cursor.DEFAULT);
-          data.clear();
-          if (connection != null) {
-            store.set(String.valueOf(store.getEntries().size()), host);
-            data.add(connection);
-          }
-          else {
-            WidgetFactory.showAlert(stage, "No service found for '" + host + "'.", "Please check the IP or hostname and try again.");
-          }
+      if (found) {
+        WidgetFactory.showAlert(stage, "A VPin Studio Connection already exists for '" + host + "'.");
+      } else {
+        refreshBtn.setDisable(true);
+        connectBtn.setDisable(true);
+        newConnectionBtn.setDisable(true);
 
-          refreshBtn.setDisable(false);
-          newConnectionBtn.setDisable(false);
-        });
-      }).start();
+        stage.getScene().setCursor(Cursor.WAIT);
+        new Thread(() -> {
+          VPinConnection connection = checkConnection(host);
+          Platform.runLater(() -> {
+            stage.getScene().setCursor(Cursor.DEFAULT);
+            if (connection != null) {
+              store.set(String.valueOf(store.getEntries().size()), host);
+              data.add(connection);
+            }
+            else {
+              WidgetFactory.showAlert(stage, "No service found for '" + host + "'.", "Please check the IP or hostname and try again.");
+            }
+
+            refreshBtn.setDisable(false);
+            newConnectionBtn.setDisable(false);
+          });
+        }).start();
+      }
     }
   }
 

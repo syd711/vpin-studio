@@ -20,6 +20,7 @@ local
 .idea/
 /.idea/
 
+.vscode/
 /.vscode/launch.json
 vpin-studio.code-workspace
 
