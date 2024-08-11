@@ -4,6 +4,8 @@ import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
@@ -88,6 +90,11 @@ public class GamesResource {
       return Collections.emptyList();
     }
     return gameService.validate(game);
+  }
+
+  @GetMapping("/eventlog/{id}")
+  public HighscoreEventLog getEventLog(@PathVariable("id") int id) {
+    return SLOG.getLog(id);
   }
 
   @GetMapping("/scorevalidation/{id}")

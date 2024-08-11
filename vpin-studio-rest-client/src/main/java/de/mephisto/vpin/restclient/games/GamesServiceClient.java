@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
@@ -35,11 +36,11 @@ import java.util.stream.Collectors;
 public class GamesServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
 
-  private Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
+  private final Map<Integer, List<GameRepresentation>> allGames = new HashMap<>();
   /**
    * a status map to avoid multiple loads in parallel, check getGamesCached()
    */
-  private Map<Integer, Boolean> loadingFlags = new HashMap<>();
+  private final Map<Integer, Boolean> loadingFlags = new HashMap<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
@@ -130,6 +131,10 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public List<ValidationState> getValidations(int gameId) {
     return Arrays.asList(getRestClient().get(API + "games/validations/" + gameId, ValidationState[].class));
+  }
+
+  public HighscoreEventLog getEventLog(int gameId) {
+    return getRestClient().get(API + "games/eventlog/" + gameId, HighscoreEventLog.class);
   }
 
   public GameRepresentation getGame(int id) {
