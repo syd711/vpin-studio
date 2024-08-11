@@ -22,6 +22,14 @@ public class GameToProcessorFactory {
     return new DMDScoreSplitAndScan();
   }
 
+  public DMDScoreProcessor getAnalyser(String gameName) {
+    if (matchRom(LCDTYPE_W5_ROMS_PREFIX, gameName)) {
+      return new DMDScoreAnalyserLCD5();
+    }
+    // else
+    return new DMDScoreAnalyserDump();
+  }
+
   //-----------------------------------------
 
   private boolean matchRom(String[] roms, String gameName) {
@@ -31,9 +39,5 @@ public class GameToProcessorFactory {
       }
     }
     return false;
-  }
-
-  public DMDScoreProcessor getAnalyser(String gameName) {
-    return new DMDScoreAnalyserDump();
   }
 }

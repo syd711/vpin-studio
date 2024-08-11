@@ -23,7 +23,7 @@ public class DMDScoreProcessorFilterFixFrame extends DMDScoreProcessorDelegate {
   public void onFrameReceived(Frame frame, List<FrameText> texts) {
     // consider previous plane only if it has been displayed more than threshold
     if ((timestampThreshold < 0 || (frame.getDisplayTime() > timestampThreshold))) {
-      LOG.info("process {}, timestamp: {}, delta {}", frame.getType(), frame.getTimeStamp(), frame.getDisplayTime());
+      //LOG.info("process {}, timestamp: {}, delta {}", frame.getType(), frame.getTimeStamp(), frame.getDisplayTime());
       super.onFrameReceived(frame, texts);
     }
     else {

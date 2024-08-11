@@ -4,7 +4,7 @@ import java.util.List;
 
 public interface DMDScoreProcessor {
   
-  void onFrameStart(String gameName);
+  default void onFrameStart(String gameName) {}
 
   void onFrameReceived(Frame frame, List<FrameText> texts);
 

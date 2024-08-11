@@ -50,7 +50,7 @@ public class DMDScoreGameProcessor {
         if (scanner != null) {
           scanner = new DMDScoreProcessorDelegate(
             new DMDScoreProcessorFrameDump(),
-            new DMDScoreProcessorFilterFixFrame(
+            new DMDScoreProcessorFilterFixFrame(-1,
               new DMDScoreProcessorImageDump(), 
               scanner
             )
@@ -58,7 +58,7 @@ public class DMDScoreGameProcessor {
         }
       }
 
-      if (analyser != null) {
+      if (analyser == null) {
         analyser = factory.getAnalyser(gameName);
       }
 
@@ -81,7 +81,7 @@ public class DMDScoreGameProcessor {
 
   public void processFrame(Frame frame) {
     if (previousFrame != null && frame.equals(previousFrame)) {
-      LOG.info("Skipping duplicate frame {}", frame.getTimeStamp());
+      //LOG.info("Skipping duplicate frame {}", frame.getTimeStamp());
     }
     else {
       if (previousFrame != null) {
@@ -96,8 +96,8 @@ public class DMDScoreGameProcessor {
           }
         });
       }
+      previousFrame = frame;
     }
-    previousFrame = frame;
   }
 
   public void processGameStop() {
@@ -127,7 +127,9 @@ public class DMDScoreGameProcessor {
         processing = false;
 
         // now close processor and analyser
-        scanner.onFrameStop(gameName);
+        if (scanner != null) {
+          scanner.onFrameStop(gameName);
+        }
         if (analyser != null) {
           analyser.onFrameStop(gameName);
         }
