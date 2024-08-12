@@ -32,7 +32,7 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <TextArea fx:id="textArea" BorderPane.alignment="CENTER" />
+            <TextArea fx:id="textArea" editable="false" BorderPane.alignment="CENTER" />
          </center>
          <top>
             <VBox BorderPane.alignment="TOP_LEFT">
