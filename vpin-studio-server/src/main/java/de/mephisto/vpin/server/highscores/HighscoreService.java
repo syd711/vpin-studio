@@ -446,7 +446,7 @@ public class HighscoreService implements InitializingBean {
 
     if (oldRaw.equals(newRaw)) {
       LOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '{}' detected.", game, game.getRom());
-      SLOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '{}' detected.");
+      SLOG.info("Skipped highscore change event for \"" + game.getRom() + "\" because the no score change for rom '" + game.getRom() + "' detected.");
       return Optional.of(oldHighscore);
     }
 
@@ -465,7 +465,7 @@ public class HighscoreService implements InitializingBean {
       }
       else {
         LOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
-        SLOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions);
+        SLOG.info("Calculated changed positions for '" + game.getRom() + "': " + changedPositions.stream().map(String::valueOf).collect(Collectors.joining(", ")));
         if (!changedPositions.isEmpty()) {
           for (Integer changedPosition : changedPositions) {
             //so we have a highscore update, let's decide the distribution
@@ -502,8 +502,8 @@ public class HighscoreService implements InitializingBean {
     oldHighscore.setStatus(null);
     oldHighscore.setDisplayName(newHighscore.getDisplayName());
     highscoreRepository.saveAndFlush(oldHighscore);
-    LOG.info("Saved updated highscore for " + game);
-    SLOG.info("Saved updated highscore for " + game);
+    LOG.info("Saved updated highscore for " + game + " to Studio database.");
+    SLOG.info("Saved updated highscore for " + game + " to Studio database.");
 
     triggerHighscoreUpdate(game, oldHighscore);
 

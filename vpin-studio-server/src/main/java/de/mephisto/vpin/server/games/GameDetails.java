@@ -37,6 +37,8 @@ public class GameDetails {
 
   private String notes;
 
+  private String eventLog;
+
   private Long templateId;
 
   private String romName;
@@ -60,6 +62,14 @@ public class GameDetails {
   private int nvOffset;
 
   private Boolean cardsDisabled;
+
+  public String getEventLog() {
+    return eventLog;
+  }
+
+  public void setEventLog(String eventLog) {
+    this.eventLog = eventLog;
+  }
 
   public Boolean isCardsDisabled() {
     return cardsDisabled;

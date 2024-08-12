@@ -127,6 +127,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
     SLOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
     LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
+    SLOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
     try {
       Thread.sleep(EXIT_DELAY);
     }
@@ -134,6 +135,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       //ignore
     }
     LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
+    SLOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
     highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 
     if (notificationSettings.isHighscoreCheckedNotification()) {

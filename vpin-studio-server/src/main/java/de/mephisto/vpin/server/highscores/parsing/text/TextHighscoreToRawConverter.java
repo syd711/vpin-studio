@@ -62,7 +62,7 @@ public class TextHighscoreToRawConverter {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
-          SLOG.info("Converted score with adapter " + adapter.getClass().getSimpleName());
+          SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\"");
           return adapter.convert(file, lines);
         }
       }

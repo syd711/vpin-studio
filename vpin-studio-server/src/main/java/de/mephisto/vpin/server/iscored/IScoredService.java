@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.fx.notifications.NotificationFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
 import de.mephisto.vpin.connectors.iscored.IScoredGame;
+import de.mephisto.vpin.connectors.iscored.IScoredResult;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
@@ -101,8 +102,8 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
           return;
         }
 
-        boolean b = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
-        SLOG.info("iScored message sent: " + b);
+        IScoredResult result = IScored.submitScore(gameRoom, iScoredGame, playerName, newScore.getPlayerInitials(), (long) newScore.getNumericScore());
+        SLOG.info(result.toString());
         if (Features.NOTIFICATIONS_ENABLED && notificationSettings.isiScoredNotification()) {
           Game game = gameService.getGame(newScore.getGameId());
 

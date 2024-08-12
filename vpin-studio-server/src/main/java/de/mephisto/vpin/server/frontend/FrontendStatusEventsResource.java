@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -80,7 +81,10 @@ public class FrontendStatusEventsResource {
       }
 
       frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
-      SLOG.finalizeEventLog();
+      HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+      if(highscoreEventLog != null) {
+        gameService.saveEventLog(highscoreEventLog);
+      }
     }).start();
     return game != null;
   }

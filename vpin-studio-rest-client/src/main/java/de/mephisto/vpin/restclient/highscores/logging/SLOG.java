@@ -1,8 +1,5 @@
 package de.mephisto.vpin.restclient.highscores.logging;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * The global static score logger.
  * Since the server must process all score request sequentially a simple static implementation does the trick.
@@ -10,21 +7,12 @@ import java.util.Map;
 public class SLOG {
   private HighscoreEventLog eventLog;
 
-  private final Map<Integer, HighscoreEventLog> logs = new HashMap<>();
-
   private static final SLOG instance = new SLOG();
-
-  public static HighscoreEventLog getLog(int gameId) {
-    if (instance.logs.containsKey(gameId)) {
-      return instance.logs.get(gameId);
-    }
-    return null;
-  }
 
   public static void initLog(int gameId) {
     instance.eventLog = new HighscoreEventLog();
     instance.eventLog.setGameId(gameId);
-    instance.logs.put(instance.eventLog.getGameId(), instance.eventLog);
+    info("******** Event Log Start **********");
   }
 
   public static void error(String message) {
@@ -46,11 +34,16 @@ public class SLOG {
   }
 
   private void log(EventLogMessage.Severity severity, String message) {
-    EventLogMessage msg = new EventLogMessage(severity, message);
+    EventLogMessage msg = new EventLogMessage();
+    msg.setMessage(message);
+    msg.setSeverity(severity);
     eventLog.getLog().add(msg);
   }
 
-  public static void finalizeEventLog() {
+  public static HighscoreEventLog finalizeEventLog() {
+    HighscoreEventLog l = instance.eventLog;
     instance.eventLog = null;
+
+    return l;
   }
 }

@@ -69,6 +69,6 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
 
   public void resetStatus() {
     status.setGameId(-1);
-    SLOG.info("Resetted game status");
+    SLOG.info("Resetted active game status");
   }
 }

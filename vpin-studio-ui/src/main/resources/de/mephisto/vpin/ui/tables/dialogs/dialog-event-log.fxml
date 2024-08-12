@@ -7,9 +7,8 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="650.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.EventLogController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.EventLogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -23,7 +22,7 @@
             </Button>
          </children>
          <BorderPane.margin>
-            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+            <Insets bottom="12.0" left="12.0" top="12.0" />
          </BorderPane.margin>
       </HBox>
    </bottom>
@@ -33,21 +32,20 @@
             <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
          </BorderPane.margin>
          <center>
-            <VBox BorderPane.alignment="CENTER">
+            <TextArea fx:id="textArea" BorderPane.alignment="CENTER" />
+         </center>
+         <top>
+            <VBox BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets bottom="6.0" />
+               </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" layoutX="10.0" layoutY="92.0" styleClass="default-headline" text="Comments" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-                  <TextArea fx:id="textArea" prefHeight="400.0">
-                     <VBox.margin>
-                        <Insets bottom="6.0" top="6.0" />
-                     </VBox.margin>
-                  </TextArea>
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="Label" />
+                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The given log shows the complete highscore processing, " />
+                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="triggered through the frontend's table exit event." />
                </children>
             </VBox>
-         </center>
+         </top>
       </BorderPane>
    </center>
 </BorderPane>

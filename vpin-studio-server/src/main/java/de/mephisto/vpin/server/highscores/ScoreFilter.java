@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -30,16 +31,19 @@ public class ScoreFilter implements InitializingBean, PreferenceChangedListener 
   public boolean isScoreFiltered(@NonNull Score score) {
     if (StringUtils.isEmpty(score.getPlayerInitials())) {
       LOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
+      SLOG.info("Filtered highscore update \"" + score + "\": player initials are empty");
       return true;
     }
     if (playerService.getAdminPlayer() == null && score.getPlayerInitials().equalsIgnoreCase("???")) {
       LOG.info("Filtered highscore update \"" + score + "\": player initials are ???");
+      SLOG.info("Filtered highscore update \"" + score + "\": player initials are ???");
       return true;
     }
 
     if (highscoreFilterEnabled && !playerService.getBuildInPlayers().isEmpty()) {
       if (playerService.getPlayerForInitials(-1, score.getPlayerInitials()) == null) {
         LOG.info("Filtered highscore update \"" + score + "\": player initials '" + score.getPlayerInitials() + "' are not on the allow list");
+        SLOG.info("Filtered highscore update \"" + score + "\": player initials '" + score.getPlayerInitials() + "' are not on the allow list");
         return true;
       }
     }
