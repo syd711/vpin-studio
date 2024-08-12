@@ -8,8 +8,10 @@
 - **System Manager**: Added textarea that shows the release notes of the selected release.
     
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/installer.png" width="760" />
+- **Launcher**: Add validation to prevent multiple connections for the same server.
 
 
 ## Bugfixes
 
 - **Highscore Parsing**: Fixed highscore parsing for "Doctor Who" by adding "GREATEST TIME LORD" to the default list of possible score text titles.
+- **Launcher**: Fixed issue where multiple connections cannot be created.
