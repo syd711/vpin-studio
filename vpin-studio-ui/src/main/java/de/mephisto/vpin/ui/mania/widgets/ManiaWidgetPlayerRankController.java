@@ -156,6 +156,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
+    maniaClient.getAccountClient().resetRankedAccountsCache();
     rankedPlayersAvatarCache.clear();
     refresh();
   }

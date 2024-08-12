@@ -4,6 +4,7 @@
 
 - **VPin Mania / Table Statistics**: Added open button/open on double-click so that the table details are shown.
 - **Preferences / Highscore Settings**: Added "NVRam Synchronization" button to re-download all available resetted nvram files. Usually you won't need this since new nvrams are downloaded on server startup, but this way you can update them e.g. in case the volume was adjusted too. The button for this can be found on the **Highscore Settings** page.
+- **iScored**: Added "Tournament Column" info to the iScored information dialog.
 - **System Manager**: Releases are now selectable via their actual name, not the tagged version anymore. Especially VPX has more meaningful names there.
 - **System Manager**: Added textarea that shows the release notes of the selected release.
     
@@ -19,3 +20,4 @@
 - **Highscore Parsing**: Fixed number format issues for French users (hopefully).
 - **Launcher**: Fixed issue where multiple connections cannot be created.
 - **Preferences / Notifications**: Fixed mixed up settings for "Highscore Change" and "Highscore Scan Completed" preferences.
+- **VPin Mania / Player Ranks**: Fixed cache reset on manual reload. 

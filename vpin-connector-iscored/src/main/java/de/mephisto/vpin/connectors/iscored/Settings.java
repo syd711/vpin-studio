@@ -17,6 +17,8 @@ public class Settings {
 
   private String longNamesEnabled;
 
+  private String tournamentColumn;
+
   public String getLongNamesEnabled() {
     return longNamesEnabled;
   }
@@ -57,6 +59,14 @@ public class Settings {
     this.publicScoresEnabled = publicScoresEnabled;
   }
 
+  public String getTournamentColumn() {
+    return tournamentColumn;
+  }
+
+  public void setTournamentColumn(String tournamentColumn) {
+    this.tournamentColumn = tournamentColumn;
+  }
+
   @JsonIgnore//do not use original name!
   public boolean isPublicScoresReadingEnabled() {
     if (this.publicScoresEnabled != null && (this.publicScoresEnabled.equalsIgnoreCase("true") || this.publicScoresEnabled.equalsIgnoreCase("false"))) {
@@ -64,6 +74,14 @@ public class Settings {
     }
     return false;
   }
+  @JsonIgnore//do not use original name!
+  public boolean isCompetitionColumnEnabled() {
+    if (this.tournamentColumn != null && (this.tournamentColumn.equalsIgnoreCase("true") || this.tournamentColumn.equalsIgnoreCase("false"))) {
+      return Boolean.parseBoolean(this.tournamentColumn.toLowerCase());
+    }
+    return false;
+  }
+
   @JsonIgnore//do not use original name!
   public boolean isDateFieldEnabled() {
     if (this.datesEnabled != null && (this.datesEnabled.equalsIgnoreCase("true") || this.datesEnabled.equalsIgnoreCase("false"))) {
