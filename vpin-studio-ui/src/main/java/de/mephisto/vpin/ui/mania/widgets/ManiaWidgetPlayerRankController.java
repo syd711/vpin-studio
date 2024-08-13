@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -108,6 +109,31 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       String uuid = selectedItem.getAccount().getUuid();
       Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(uuid);
       maniaController.selectPlayer(accountByUuid);
+    }
+  }
+
+
+  @FXML
+  private void onDelete() {
+    List<PlayerRepresentation> players = client.getPlayerService().getPlayers();
+    List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
+    if (collect.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "No Accounts", "None of your players is registered on VPin Mania.", "The highscores are registered based on players that have marked as VPin Mania account.");
+      return;
+    }
+
+    Optional<ButtonType> result = WidgetFactory.showInformation(Studio.stage, "Delete Highscores", "Delete Highscores?", "This will delete all registered scores from all your accounts on VPin-Mania.");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      int count = 0;
+      for (PlayerRepresentation playerRepresentation : collect) {
+        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(playerRepresentation.getTournamentUserUuid());
+        if (accountByUuid != null) {
+          maniaClient.getHighscoreClient().deleteHighscores(accountByUuid.getId());
+          count++;
+        }
+      }
+      WidgetFactory.showInformation(Studio.stage, "Information", "Highscore deletion successful.", "Deleted highscores of " + count + " account(s).");
+      onReload();
     }
   }
 
