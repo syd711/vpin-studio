@@ -8,7 +8,7 @@ public class GameToProcessorFactory {
     "ind250cc"
   };
   private static final String[] LCDTYPE_W7_ROMS_PREFIX = {
-    "mousn_"
+    "mousn_", "cheetah"
   };
 
   public DMDScoreProcessor getScanner(String gameName) {
@@ -25,6 +25,9 @@ public class GameToProcessorFactory {
   public DMDScoreProcessor getAnalyser(String gameName) {
     if (matchRom(LCDTYPE_W5_ROMS_PREFIX, gameName)) {
       return new DMDScoreAnalyserLCD5();
+    }
+    else if (matchRom(LCDTYPE_W7_ROMS_PREFIX, gameName)) {
+      return new DMDScoreAnalyserLCD7();
     }
     // else
     return new DMDScoreAnalyserDump();

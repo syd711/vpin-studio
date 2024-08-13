@@ -50,7 +50,7 @@ public class DMDScoreGameProcessor {
         if (scanner != null) {
           scanner = new DMDScoreProcessorDelegate(
             new DMDScoreProcessorFrameDump(),
-            new DMDScoreProcessorFilterFixFrame(-1,
+            new DMDScoreProcessorFilterFixFrame(100,
               new DMDScoreProcessorImageDump(), 
               scanner
             )

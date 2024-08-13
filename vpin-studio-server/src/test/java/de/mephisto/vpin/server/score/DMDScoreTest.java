@@ -193,15 +193,19 @@ public class DMDScoreTest {
   }
   
   @Test
-  public void testFrameFontWithSegments() throws Exception {
-    // from Ace of Speed (mousn_l4)
-    String frameFile = "_fontwithsegments.frame";
-    Frame f = parseFrame(frameFile);
-    DMDScoreScannerLCD proc = new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_7);
-    String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
-    assertEquals("10000\n" + 
-       "BALL 1", txt);
+  public void testFrameFontWithSegments1() throws Exception {
+    doTestFrameLCD7("_fontwithsegments_1.frame",
+            "10000\n" + 
+            "BALL 1");
   }
+  @Test
+  public void testFrameFontWithSegments2() throws Exception {
+    doTestFrameLCD7("_fontwithsegments_2.frame",
+            "176100   178980\n" +
+            "176100   176100\n" +
+            "00 00");
+  }
+
 
   @Test
   public void testFrameFontWithSmallSegments() throws Exception {
@@ -222,6 +226,12 @@ public class DMDScoreTest {
   protected void doTestFrame(String frameFile, String expected) throws Exception {
     Frame f = parseFrame(frameFile);
     DMDScoreSplitAndScan proc = new DMDScoreSplitAndScan();
+    String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
+    assertEquals(expected, txt);
+  }
+  protected void doTestFrameLCD7(String frameFile, String expected) throws Exception {
+    Frame f = parseFrame(frameFile);
+    DMDScoreScannerLCD proc = new DMDScoreScannerLCD(DMDScoreScannerLCD.Type.WIDTH_7);
     String txt = doProcess(proc, f, StringUtils.substringBefore(frameFile, ".")); 
     assertEquals(expected, txt);
   }

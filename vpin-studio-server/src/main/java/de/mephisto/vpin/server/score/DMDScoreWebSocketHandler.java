@@ -124,7 +124,7 @@ public class DMDScoreWebSocketHandler extends AbstractWebSocketHandler {
       }
     }
     catch (Exception e) {
-      LOG.info("Error while processing message (message ignored), error was : " + e.getMessage());
+      LOG.info("Error while processing message (message ignored)", e);
     }
   }
 

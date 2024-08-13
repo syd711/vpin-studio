@@ -51,10 +51,16 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
 
   //--------------------
 
+  /**
+   * Get a rescaled B&W plane where non blank cell are turned in full black rescaled cell 
+   */
   protected byte[] rescale(byte[] plane, int width, int height, int border, int scale, byte idxBlank, byte black) {
     return crop(plane, width, height, 0, width, 0, height, border, scale, idxBlank, black);
   }
 
+  /**
+   * Get a rescaled B&W rectangle of plane where non blank cell are turned in full black rescaled cell 
+   */
   protected byte[] crop(byte[] plane, int width, int height, 
     int xF, int xT, int yF, int yT, int border, int scale, byte blank, byte black) {
           
@@ -74,6 +80,53 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     return scaledPlane;
   }
 
+  /**
+   * Take a B&W rescaled/crop array of pixels and apply a blur effect on it
+   */
+  protected byte[] blur(byte[] pixels, int width, int height, int radius) {
+    int size = radius * 2 + 1;
+    size *= size;
+    byte[] outPixels = new byte[pixels.length];
+
+    if (radius > 0) {
+      float f = 1.0f / size;
+
+      int index = 0;
+      for (int y = 0; y < height; y++) {
+        for (int x = 0; x < width; x++) {
+          float color = 0;
+
+          for (int row = -radius; row <= radius; row++) {
+            int iy = y + row;
+            if (iy < 0 || iy >= height) continue;
+
+            for (int col = -radius; col <= radius; col++) {
+              int ix = x + col;
+              if (ix < 0 || ix >= width) continue;
+
+              color += f * pixels[iy*width+ix];
+            }
+          }
+          double gray = 255.0 - 255.0 * (color<= size ? color : size) / size;
+          outPixels[index++] = (byte) gray;
+        }
+      }
+		}
+    else {
+      for (int index = 0; index < width * height; index++) {
+        double gray = 255.0 - 255.0 * pixels[index] / size;
+        outPixels[index] = (byte) gray;
+      }
+    }
+
+    return outPixels;
+  }
+
+  //--------------------
+
+  /**
+   * Detect and remove images of a Plane
+   */
   protected boolean removeImages(byte[] plane, int w, int xF, int xT, int yF, int yT, byte blank) {
     boolean haveImage = false;
     for (int y = yF; y < yT; y++) {
@@ -162,6 +215,9 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     }
   }
 
+  /**
+   * Remove left alone pixels 
+   */
   private void removeSinglePixels(byte[] plane, int w, int xF, int xT, int yF, int yT, byte blank) {
     for (int y = yF; y < yT; y++) {
       for (int x = xF; x < xT; x++) {
@@ -186,43 +242,76 @@ public abstract class DMDScoreProcessorBase implements DMDScoreProcessor {
     }
   }
 
-  protected byte[] blur(byte[] pixels, int width, int height, int radius) {
-    int size = radius * 2 + 1;
-    size *= size;
-    byte[] outPixels = new byte[pixels.length];
+  //--------------------------------
 
-    if (radius > 0) {
-      float f = 1.0f / size;
+  /**
+   * Return true if all pix of the rect of the frame have same pixel (can be blank)
+   */
+  protected boolean hasBorder(Frame frame, int xF, int xT, int yF, int yT) {
+    byte b = getSingleColumnColor(frame, xF, yF, yT);
+    return (b >= 0
+      && b == getSingleColumnColor(frame, xT - 1, yF, yT)
+      && b == getSingleRowColor(frame, xF, xT, yF)
+      && b == getSingleRowColor(frame, xF, xT, yT - 1));
+  }
 
-      int index = 0;
-      for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width; x++) {
-          float color = 0;
-
-          for (int row = -radius; row <= radius; row++) {
-            int iy = y + row;
-            if (iy < 0 || iy >= height) continue;
-
-            for (int col = -radius; col <= radius; col++) {
-              int ix = x + col;
-              if (ix < 0 || ix >= width) continue;
-
-              color += f * pixels[iy*width+ix];
-            }
-          }
-          double gray = 255.0 - 255.0 * (color<= size ? color : size) / size;
-          outPixels[index++] = (byte) gray;
-        }
+  /**
+   * Return the single color of a row, or -1 if two colors are detected
+   */
+  protected byte getSingleRowColor(Frame frame, int xF, int xT, int y) {
+    byte rowColor = -10;
+    for (int x = xF; x < xT; x++) {
+      byte color = frame.getColor(x, y);
+      if (rowColor==-10) {
+        rowColor = color;
       }
-		}
-    else {
-      for (int index = 0; index < width * height; index++) {
-        double gray = 255.0 - 255.0 * pixels[index] / size;
-        outPixels[index] = (byte) gray;
+      else if (color != rowColor) {
+        return -1;
       }
-    }
+    } 
+    return rowColor;
+  }
 
-    return outPixels;
+  /**
+   * Return the single color of a column, or -1 if two colors are detected
+   */
+  protected byte getSingleColumnColor(Frame frame, int x, int yF, int yT) {
+    byte columnColor = -1;
+    for (int y = yF; y < yT; y++) {
+      byte color = frame.getColor(x, y);
+      if (columnColor == -1) {
+        columnColor = color;
+      }
+      else if (color != columnColor) {
+        return -1;
+      }
+    } 
+    return columnColor;
+  }
+
+  /**
+   * Return the X of the first non blank cell of the Y row (from the given rect of the frame)
+   */
+  protected int getFirstColorX(Frame frame, int xF, int xT, int yF, int yT, int y, byte blank) {
+    for (int x = xF; x < xT; x++) {
+      byte color = frame.getColor(x, y);
+      if (color != blank) {
+        return x;
+      }
+    } 
+    return -1;
+  }
+  /**
+   * Return the Y of the first non blank cell of the X column (from the given rect of the frame)
+   */
+  protected int getFirstColorY(Frame frame, int xF, int xT, int yF, int yT, int x, byte blank) {
+    for (int y = yF; y < yT; y++) {
+      byte color = frame.getColor(x, y);
+      if (color != blank) {
+        return y;
+      }
+    } 
+    return -1;
   }
 
   //-----------------------------------

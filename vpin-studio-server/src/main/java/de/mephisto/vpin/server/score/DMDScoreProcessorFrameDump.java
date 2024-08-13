@@ -35,7 +35,7 @@ public class DMDScoreProcessorFrameDump extends DMDScoreProcessorBase {
   public void onFrameReceived(Frame frame, List<FrameText> texts) {
     try {
       StringBuilder bld = new StringBuilder();
-      bld.append(frame.getType() + " / " + frame.getTimeStamp() + " / ");
+      bld.append(frame.getType() + " / " + frame.getTimeStamp() + " / " + frame.getDisplayTime() + " / ");
       appendPalette(bld, frame.getPalette());
       bld.append("\n");
 

@@ -36,8 +36,6 @@ public class DMDScoreGameReplayer {
       if (gameName != null) {
         processor.processGameStop();
       }
-
-      DMDScoreScannerTessAPI.TESSERACT_FOLDER = DMDScoreScannerTessAPI.TESSERACT_FOLDER.substring(1);
     }
   }
 
@@ -61,7 +59,8 @@ public class DMDScoreGameReplayer {
 
         ft = FrameType.getEnum(parts[0].trim());
         timestamp =  Integer.parseInt(parts[1].trim());
-        palette = parts.length > 2 ? parsePalette(parts[2]): buildPalette(4);
+        // palette is always last element
+        palette = parts.length > 2 ? parsePalette(parts[parts.length - 1]): buildPalette(4);
         plane = new byte[w * h];
         nbLines = 0;
         continue;
