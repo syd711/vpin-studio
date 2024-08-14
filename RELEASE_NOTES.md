@@ -23,3 +23,8 @@
 - **Preferences / Notifications**: Fixed mixed up settings for "Highscore Change" and "Highscore Scan Completed" preferences.
 - **VPin Mania / Player Ranks**: Fixed cache reset on manual reload. 
 - **PinVol**: Fixed execution of UI so that the PinVol.exe is executed always from the "resources" folder.
+
+
+## Credits
+
+A big thank you here to @gorgatron who provided a bunch of new resetted nvrams!
