@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.JoinMode;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.discord.DiscordCompetitionService;
@@ -95,6 +96,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
           }
           else {
             LOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
+            SLOG.warn("Skipping Discord highscore update for " + competition.getName() + ", no or invalid competition data found.");
             competitionService.finishCompetition(competition);
           }
         }
@@ -104,11 +106,13 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
     //send the default message if no competition updates was sent
     if (!event.isInitialScore() && !event.isEventReplay()) {
       if (!StringUtils.isEmpty(raw)) {
-        LOG.info("Sending default notification for: " + game.getGameDisplayName());
+        LOG.info("Sending discord default notification for: " + game.getGameDisplayName());
+        SLOG.info("Sending discord default notification for: " + game.getGameDisplayName());
         discordService.sendDefaultHighscoreMessage(DiscordOfflineChannelMessageFactory.createHighscoreCreatedMessage(highscoreParsingService, event, raw));
       }
       else {
         LOG.warn("Skipped highscore emitting, raw score is empty.");
+        SLOG.warn("Skipped highscore emitting, raw score is empty.");
       }
     }
   }
@@ -120,6 +124,7 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
       String defaultDiscordServerId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       if (StringUtils.isEmpty(defaultDiscordServerId) && !competitionForRom.isEmpty()) {
         LOG.info("The default Discord server id is not set, but subscriptions have been created and dynamic subscriptions are enabled. You may want to configure a default server so that subscription are generated for your server too.");
+        SLOG.info("The default Discord server id is not set, but subscriptions have been created and dynamic subscriptions are enabled. You may want to configure a default server so that subscription are generated for your server too.");
       }
       else {
         boolean subscriptionUpdated = competitionForRom.stream().anyMatch(c -> c.getDiscordServerId() == Long.parseLong(defaultDiscordServerId));

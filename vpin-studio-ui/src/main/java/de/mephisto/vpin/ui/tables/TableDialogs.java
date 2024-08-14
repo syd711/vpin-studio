@@ -418,6 +418,22 @@ public class TableDialogs {
     return true;
   }
 
+
+  public static boolean openEventLogDialog(GameRepresentation game) {
+    Stage stage = Dialogs.createStudioDialogStage(EventLogController.class, "dialog-event-log.fxml", "Event Log", "eventLog");
+    EventLogController controller = (EventLogController) stage.getUserData();
+    controller.setGame(game);
+
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(600);
+    stage.setMinHeight(500);
+
+    stage.showAndWait();
+
+    return true;
+  }
+
   public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis, int gameId) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();

@@ -109,7 +109,8 @@ public class IScored {
         LOG.info("Loaded game room for user '" + userName + "', found " + gameRoom.getGames().size() + " games. (" + (System.currentTimeMillis() - start) + "ms)");
         return gameRoom;
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to load iScored Game Room: " + e.getMessage());
     }
 
@@ -131,7 +132,8 @@ public class IScored {
       conn.disconnect();
 
       return new String(out.toByteArray());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Loading game room json failed: " + e.getMessage());
     }
     return null;
@@ -148,25 +150,29 @@ public class IScored {
     return query_pairs;
   }
 
-  public static boolean submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
+  public static IScoredResult submitScore(GameRoom gameRoom, IScoredGame game, String playerName, String playerInitials, long highscore) {
+    IScoredResult result = new IScoredResult();
     List<Score> scores = game.getScores();
     for (Score score : scores) {
       if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
         try {
           long l = Long.parseLong(score.getScore());
           if (l > highscore) {
-            LOG.info("Found existing score: " + score + " and skipped submission of new score value of " + highscore);
-            return false;
+            LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+            result.setMessage("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
+            return result;
           }
-        } catch (NumberFormatException e) {
-          LOG.error("Failed to parse " + score);
-          return false;
+        }
+        catch (NumberFormatException e) {
+          LOG.error("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
+          result.setMessage("Failed to parse score value \"" + score + "\" for iScored submission: " + e.getMessage());
+          return result;
         }
       }
     }
 
 
-    LOG.info("Submitting score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
+    LOG.info("Submitting iScored score \"" + playerName + "/" + playerInitials + " [" + highscore + "]\" to game \"" + game.getName() + "\" of game room \"" + gameRoom.getName() + "\"");
     BufferedInputStream in = null;
     try {
       String name = playerName;
@@ -177,6 +183,8 @@ public class IScored {
       }
       catch (Exception e) {
         LOG.error("Error reading long names value from iScored: " + e.getMessage(), e);
+        result.setMessage("Error reading long names value from iScored: " + e.getMessage());
+        return result;
       }
 
       name = URLEncoder.encode(name, StandardCharsets.UTF_8);
@@ -196,18 +204,22 @@ public class IScored {
       out.close();
       conn.disconnect();
 
-      LOG.info("Submitted new highscore to iscored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
+      LOG.info("Submitted new highscore to iScored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
+      result.setMessage("Submitted new highscore to iScored game room \"" + gameRoom.getName() + "\": name=" + name + ", game=" + game.getId() + ", score=" + highscore);
       try {
-        LOG.info("iScored returned: " + conn.getResponseCode());
+        int responseCode = conn.getResponseCode();
+        LOG.info("iScored returned: " + responseCode);
+        result.setReturnCode(responseCode);
       }
       catch (IOException e) {
         //ignore
       }
-      return true;
-    } catch (IOException e) {
-      LOG.error("Failed to submit iscored highscore: " + e.getMessage(), e);
     }
-    return false;
+    catch (IOException e) {
+      LOG.error("Failed to submit iScored highscore: " + e.getMessage(), e);
+      result.setMessage("Failed to submit iScored highscore: " + e.getMessage());
+    }
+    return result;
   }
 
 }

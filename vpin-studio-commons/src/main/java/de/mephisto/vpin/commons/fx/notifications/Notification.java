@@ -83,7 +83,7 @@ public class Notification {
 
   @Override
   public String toString() {
-    return "Notification \"" + title1 + "]";
+    return "Notification \"" + title1 + "\" (" + title2 + ")";
   }
 }
 

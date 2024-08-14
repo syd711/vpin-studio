@@ -99,6 +99,14 @@ public class TableOverviewContextMenu {
 
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
+      MenuItem eventLogItem = new MenuItem("Event Log");
+      eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
+      eventLogItem.setDisable(!game.isEventLogAvailable());
+      eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
+      ctxMenu.getItems().add(eventLogItem);
+
+      ctxMenu.getItems().add(new SeparatorMenuItem());
+
       MenuItem scanItem = new MenuItem("Scan");
       scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
       scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());

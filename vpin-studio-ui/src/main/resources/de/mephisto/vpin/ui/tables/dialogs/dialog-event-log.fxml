@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.EventLogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
+         <children>
+          <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+               <HBox.margin>
+                  <Insets right="12.0" />
+               </HBox.margin>
+            </Button>
+         </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" top="12.0" />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+   <center>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <center>
+            <TextArea fx:id="textArea" editable="false" BorderPane.alignment="CENTER" />
+         </center>
+         <top>
+            <VBox BorderPane.alignment="TOP_LEFT">
+               <BorderPane.margin>
+                  <Insets bottom="6.0" />
+               </BorderPane.margin>
+               <children>
+                  <Label fx:id="titleLabel" styleClass="default-headline" text="Label" />
+                  <Label fx:id="titleLabel1" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The given log shows the complete highscore processing, " />
+                  <Label fx:id="titleLabel11" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="triggered through the frontend's table exit event." />
+               </children>
+            </VBox>
+         </top>
+      </BorderPane>
+   </center>
+</BorderPane>

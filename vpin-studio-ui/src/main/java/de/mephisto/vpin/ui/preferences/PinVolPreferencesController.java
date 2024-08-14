@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -10,14 +11,14 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -107,12 +108,22 @@ public class PinVolPreferencesController implements Initializable {
       }
     }
 
-    File file = new File("resources", "PinVol.exe");
+    File file = new File("./resources", "PinVol.exe");
     if (!file.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find PinVol.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
     }
     else {
-      Studio.open(file);
+      try {
+        List<String> commands = Arrays.asList("PinVol.exe");
+        SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+        executor.setDir(new File("./resources/"));
+        executor.executeCommandAsync();
+        LOG.info("Executed PinVol command: " + String.join(" ", commands));
+      }
+      catch (Exception e) {
+        LOG.error("Error opening browser: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
+      }
     }
   }
 }

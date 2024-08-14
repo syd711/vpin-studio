@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.SubscriptionInfo;
 import de.mephisto.vpin.restclient.discord.DiscordCategory;
 import de.mephisto.vpin.restclient.discord.*;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -208,6 +209,7 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
 
   public long sendMessage(long serverId, long channelId, String message) {
     if (this.discordClient != null) {
+      SLOG.info("Sending discord message to channel " + channelId);
       return this.discordClient.sendMessage(serverId, channelId, message);
     }
     return -1;

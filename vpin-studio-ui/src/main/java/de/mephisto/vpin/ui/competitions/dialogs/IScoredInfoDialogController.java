@@ -64,6 +64,8 @@ public class IScoredInfoDialogController implements DialogController, Initializa
   private CheckBox longNamesCheckbox;
   @FXML
   private CheckBox datesCheckbox;
+  @FXML
+  private CheckBox tournamentColumnCheckbox;
 
   @Override
   public void onDialogCancel() {
@@ -95,6 +97,8 @@ public class IScoredInfoDialogController implements DialogController, Initializa
       adminApprovalCheckbox.setSelected(gameRoom.getSettings().isAdminApprovalEnabled());
       longNamesCheckbox.setSelected(gameRoom.getSettings().isLongNameInputEnabled());
       datesCheckbox.setSelected(gameRoom.getSettings().isDateFieldEnabled());
+
+      tournamentColumnCheckbox.setSelected(gameRoom.getSettings().isCompetitionColumnEnabled());
 
       tableCountLabel.setText(String.valueOf(gameRoom.getGames().size()));
 

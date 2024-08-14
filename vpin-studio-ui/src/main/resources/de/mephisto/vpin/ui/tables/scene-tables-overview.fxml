@@ -368,24 +368,6 @@
                            </tooltip>
                                 </Button>
                                 <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
-                          <items>
-                            <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
-                                 <graphic>
-                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
-                                 </graphic>
-                              </MenuItem>
-                          </items>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
-                           </graphic>
-                           <tooltip>
-                              <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
-                           </tooltip>
-                        </SplitMenuButton>
                         <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
                           <items>
                             <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
@@ -427,6 +409,24 @@
                                         <Tooltip text="Kill all VPX and [Frontend] processes." />
                                     </tooltip>
                                 </Button>
+                        <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
+                          <items>
+                            <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                          </items>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-bold" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Resets the dismissed validations and revalidates the table configuration." />
+                           </tooltip>
+                        </SplitMenuButton>
                             </items>
                             <BorderPane.margin>
                                 <Insets />

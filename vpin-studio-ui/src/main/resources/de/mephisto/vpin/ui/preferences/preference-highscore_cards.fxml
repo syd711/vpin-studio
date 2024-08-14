@@ -6,6 +6,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -13,6 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.CardGenerationPreferencesController">
    <top>
@@ -191,11 +193,26 @@
                         <Label styleClass="default-text" text="degree rotation" />
                      </children>
                   </HBox>
-                  <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="Use Frontend Screen Location, Size and Rotation" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </RadioButton>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                     <children>
+                        <RadioButton fx:id="cardPosPopperRadio" mnemonicParsing="false" text="Use Frontend Screen Location, Size and Rotation" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </RadioButton>
+                        <Label fx:id="popperScreenInfo" prefHeight="40.0" prefWidth="18.0">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip prefWidth="300.0" text="Note that the custom screen values for size and positioning are ignored here." wrapText="true" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                           </graphic>
+                        </Label>
+                     </children>
+                  </HBox>
                   <VBox GridPane.columnIndex="1" GridPane.rowIndex="2">
                      <children>
                         <Label styleClass="preference-description" text="The highscore card pop-up is determined through the generator's target screen." textFill="WHITE" />

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
@@ -48,6 +49,7 @@ class HighscoreResolver {
 
       if (StringUtils.isEmpty(romName)) {
         String msg = "No rom or table name found.";
+        SLOG.info("Game " + game.getGameDisplayName() + " is not a VPX game.");
         metadata.setStatus(msg);
         return metadata;
       }
@@ -110,10 +112,12 @@ class HighscoreResolver {
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
     if (game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
+      SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
       return null;
     }
 
     if (game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
+      SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
       return null;
     }
 
@@ -136,6 +140,7 @@ class HighscoreResolver {
       }
       if (StringUtils.isEmpty(metadata.getRaw())) {
         metadata.setStatus("Found VPReg entry, but no highscore entries in it.");
+        SLOG.info("Found VPReg entry, but no highscore entries in it.");
       }
       return metadata.getRaw();
     }
@@ -171,6 +176,7 @@ class HighscoreResolver {
       List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
       if (!supportedNvRams.contains(nvRamName) || scoringDB.getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
+        SLOG.info(msg);
         metadata.setStatus(msg);
         return null;
       }
@@ -180,6 +186,7 @@ class HighscoreResolver {
     }
     catch (Exception e) {
       String msg = "Failed to parse highscore: " + e.getMessage();
+      SLOG.error(msg);
       metadata.setStatus(msg);
       LOG.error(msg, e);
     }
