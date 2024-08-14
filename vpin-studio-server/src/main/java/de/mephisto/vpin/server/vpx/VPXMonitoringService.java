@@ -55,7 +55,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
       List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
       boolean playerRunning = windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
 
-      if (playerRunning && !gameStatusService.getStatus().isActive()) {
+      if (playerRunning && !gameStatusService.isActive()) {
         int emuId = -1;
         String tableName = null;
 
@@ -75,7 +75,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
           notifyTableStartByFileName(emuId, tableName);
         }
       }
-      else if (!playerRunning) {
+      else if (!playerRunning && gameStatusService.isActive()) {
         notifyTableEnd();
       }
     }
@@ -86,12 +86,15 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
 
   private void notifyTableEnd() {
     int gameId = gameStatusService.getStatus().getGameId();
-    if (gameId > 0) {
-      Game game = gameService.getGame(gameId);
-      if (game != null) {
-        LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
-        frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
-      }
+    Game game = gameId > 0 ? gameService.getGame(gameId) : null;
+
+    if (game != null) {
+      LOG.info(this.getClass().getSimpleName() + " notifying table end event of \"" + game.getGameDisplayName() + "\"");
+      frontendStatusService.notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+    }
+    else {
+      LOG.info(this.getClass().getSimpleName() + " unregistered a VPX window, but the game could not be resolved");
+      gameStatusService.setForceActive(false);
     }
   }
 
@@ -105,6 +108,7 @@ public class VPXMonitoringService implements InitializingBean, PreferenceChanged
     }
     else {
       LOG.info(this.getClass().getSimpleName() + " registered a VPX window, but the game could not be resolved for name \"" + tableName + "\"");
+      gameStatusService.setForceActive(true);
     }
   }
 

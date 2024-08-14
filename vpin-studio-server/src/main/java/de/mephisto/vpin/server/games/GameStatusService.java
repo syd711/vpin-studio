@@ -25,6 +25,16 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
 
   private final GameStatus status = new GameStatus();
 
+  // true when VPXMonitor detect a VPX window and cannot recognize the Game 
+  private boolean forceActive;
+
+  public boolean isActive() {
+    return status.isActive() || forceActive;
+  }
+  public void setForceActive(boolean active) {
+    this.forceActive = active;
+  }
+
   public GameStatus getStatus() {
     return status;
   }
