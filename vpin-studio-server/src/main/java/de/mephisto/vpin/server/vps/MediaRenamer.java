@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +22,15 @@ public class MediaRenamer {
 
   public static void main(String[] args) throws Exception {
 
-		// adjust here !
-		Path path = //Path.of("C:/temp/Wheels/Tarcisio Style wheels");
-					Path.of("C:/temp/Wheels/Style Gris");
+	// adjust here !
+	Path path = Path.of("C:/temp/_Logo");
+				//Path.of("C:/temp/_Wheels/Style Gris");
 
-		VPS vpsDatabase = new VPS();
+	VPS vpsDatabase = new VPS();
     vpsDatabase.reload();
 
-		MediaRenamer renamer = new MediaRenamer();
-		renamer.renameAll(path, vpsDatabase);
+	MediaRenamer renamer = new MediaRenamer();
+	renamer.renameAll(path, vpsDatabase);
   }
 
   public void renameAll(Path path, VPS vpsDatabase) {
@@ -40,7 +41,7 @@ public class MediaRenamer {
 			Files.list(path)
 				.filter(p -> !Files.isDirectory(p) )
 				.forEach(p -> {
-					String filename = p.getFileName().toString();
+					String filename = FilenameUtils.getBaseName(p.getFileName().toString());
 					VpsTable table = automatcher.autoMatch(vpsDatabase, filename);
 					if (table != null) {				
 						renameToTable(p, table);
