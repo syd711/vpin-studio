@@ -42,9 +42,13 @@ public class UploadAnalysisDispatcher {
       validateArchive(tablesController, file, game);
     }
     else {
-      UploaderAnalysis analysis = new UploaderAnalysis(file);
-      dispatchBySuffix(tablesController, file, game, assetType, analysis);
+      dispatchFile(tablesController, file, game, assetType);
     }
+  }
+
+  public static void dispatchFile(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+    UploaderAnalysis analysis = new UploaderAnalysis(file);
+    dispatchBySuffix(tablesController, file, game, assetType, analysis);
   }
 
   private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {

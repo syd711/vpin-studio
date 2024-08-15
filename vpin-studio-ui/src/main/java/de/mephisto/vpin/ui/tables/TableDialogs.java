@@ -198,10 +198,10 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        Platform.runLater(() -> {
+        //Platform.runLater(() -> {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
           ProgressDialog.createProgressDialog(model);
-        });
+        //});
         return true;
       }
     }

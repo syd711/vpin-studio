@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables.vps;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -21,10 +23,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 public class VpsEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
-  public VpsEntry(String version, List<String> authors, String link, long changeDate, String update) {
+  public VpsEntry(@Nullable TablesSidebarController tablesController, GameRepresentation game, VpsDiffTypes type, 
+        String version, List<String> authors, String link, long changeDate, String update) {
     this.setAlignment(Pos.BASELINE_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
     Label versionLabel = WidgetFactory.createDefaultLabel(version);
@@ -41,7 +46,6 @@ public class VpsEntry extends HBox {
       authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
     }
 
-
     authorLabel.setPrefWidth(266);
     this.getChildren().add(authorLabel);
 
@@ -53,7 +57,7 @@ public class VpsEntry extends HBox {
     button.setPrefWidth(70);
     button.setTooltip(new Tooltip(link));
     button.setOnAction(event -> {
-      Studio.browse(link);
+      VpsInstallerUtils.installOrBrowse(tablesController, game, link, type);
     });
 
     FontIcon fontIcon = new FontIcon();

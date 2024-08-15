@@ -3,8 +3,9 @@ package de.mephisto.vpin.ui.tables.vps;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -29,12 +30,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTableEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTableEntry.class);
 
-  public VpsTableEntry(String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update) {
+  public VpsTableEntry(@Nullable TablesSidebarController tablesController, GameRepresentation game, String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update) {
     this.setAlignment(Pos.CENTER_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
 
@@ -112,7 +115,7 @@ public class VpsTableEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-        Studio.browse(link);
+        VpsInstallerUtils.installOrBrowse(tablesController, game, link, VpsDiffTypes.tableNewVPX);
       });
 
       FontIcon fontIcon = new FontIcon();

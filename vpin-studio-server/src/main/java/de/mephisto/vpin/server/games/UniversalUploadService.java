@@ -10,6 +10,7 @@ import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.vps.VpsInstaller;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -70,6 +71,10 @@ public class UniversalUploadService {
   }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
+
+    // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
+    VpsInstaller.resolveLinks(uploadDescriptor);
+
     if (!uploadDescriptor.isImporting(assetType)) {
       LOG.info("Skipped file import of type " + assetType.name() + ", because it is not marked for import.");
       return;
