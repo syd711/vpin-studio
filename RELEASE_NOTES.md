@@ -23,7 +23,7 @@
 - **Preferences / Notifications**: Fixed mixed up settings for "Highscore Change" and "Highscore Scan Completed" preferences.
 - **VPin Mania / Player Ranks**: Fixed cache reset on manual reload. 
 - **PinVol**: Fixed execution of UI so that the PinVol.exe is executed always from the "resources" folder.
-
+- **Table Repository**: Fixed Cancel button not cancelling progress when uploading ZIP file.
 
 ## Credits
 
