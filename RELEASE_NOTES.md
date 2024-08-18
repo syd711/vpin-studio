@@ -10,3 +10,6 @@
 - **Highscore**: Fixed highscores for table "King Kong" Data East.
 - **Event Log**: Improved error logging for issues regarding failed iScored highscore submissions.
 - **Table Data Manager**: Fixed issues opening the dialog with broken VPS data. 
+- **Preferences / PinemHi Settings**: Fixed NumPad key bindings.
+- **Preferences / PinemHi Settings**: Made all input spinner for the display settings editable and increased the maximum possible input values.
+- **VPin Mania / Highscore Synchronization**: Fixed superflous highscore submissions of lower highscores. Since only the highest score on a table of a player is stored, lower scores from the same player can be skipped for synchronization. This led to a wrong synchronization count.
