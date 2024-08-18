@@ -580,6 +580,8 @@ public class GameService implements InitializingBean {
         scannedTableName = tableDetails.getRomAlt();
       }
 
+      gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
+      gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
       gameDetails.setRomName(scannedRomName);
       gameDetails.setTableName(scannedTableName);
       gameDetails.setNvOffset(scanResult.getNvOffset());
@@ -622,6 +624,8 @@ public class GameService implements InitializingBean {
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
+    game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
+    game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
 
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
@@ -22,6 +23,7 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
+import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -229,6 +231,22 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         result.add(validationStates.get(0));
         if (findFirst) {
           return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_SCRIPT_CONTROLLER_STOP_MISSING)) {
+      HighscoreType highscoreType = game.getHighscoreType();
+      if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
+        File romFile = game.getRomFile();
+        File nvRamFile = game.getNvRamFile();
+        if (romFile != null && romFile.exists() && !nvRamFile.exists()) {
+          if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
+            result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
+            if (findFirst) {
+              return result;
+            }
+          }
         }
       }
     }

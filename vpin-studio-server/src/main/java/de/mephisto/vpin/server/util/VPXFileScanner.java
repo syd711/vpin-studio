@@ -45,7 +45,7 @@ public class VPXFileScanner {
   private static final Pattern HS_FILENAME_PATTERN = Pattern.compile(".*HSFileName.*=.*\".*\".*");
   private static final Pattern TXT_FILENAME_PATTERN = Pattern.compile(".*\".*\\.txt\".*");
 
-  private VPXFileScanner() {
+  VPXFileScanner() {
     //force scan method
   }
 
@@ -55,6 +55,9 @@ public class VPXFileScanner {
 
     String l = null;
     String script = VPXUtil.readScript(gameFile);
+
+    result.setFoundControllerStop(script.toLowerCase().contains("controller.stop"));
+    result.setFoundTableExit(script.toLowerCase().contains("table1_exit"));
 
     List<String> allLines = new ArrayList<>();
     script = script.replaceAll("\r", "\n");
@@ -84,9 +87,9 @@ public class VPXFileScanner {
       LOG.info("Finished scan of table " + gameFile.getAbsolutePath() + ", no ROM found" + "', took " + (System.currentTimeMillis() - start) + " ms for " + allLines.size() + " lines.");
     }
 
-//    if (!result.isFoundControllerStop()) {
+    if (!result.isFoundControllerStop()) {
 //      LOG.warn("No 'Controller.stop' call found for \"" + gameFile.getAbsolutePath() + "\"");
-//    }
+    }
 
     if (!StringUtils.isEmpty(result.getSomeTextFile()) && StringUtils.isEmpty(result.getHsFileName())) {
       result.setHsFileName(result.getSomeTextFile());
@@ -129,7 +132,6 @@ public class VPXFileScanner {
         lineSearchTableName(result, line);
         lineSearchNvOffset(result, line);
         lineSearchHsFileName(result, line);
-        lineSearchControllerStop(result, line);
       }
     }
     catch (Exception e) {
@@ -196,7 +198,6 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
-      lineSearchControllerStop(result, line);
     }
   }
 
@@ -235,7 +236,8 @@ public class VPXFileScanner {
       return;
     }
 
-    if (line.contains("Controller.stop")) {
+    //for some reason there are 2x variants with upper and lower case
+    if (line.toLowerCase().contains("controller.stop")) {
       result.setFoundControllerStop(true);
     }
   }
