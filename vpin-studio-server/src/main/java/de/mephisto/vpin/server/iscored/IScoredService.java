@@ -118,7 +118,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
         LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "'");
         SLOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "', check is tagged with the correct URL.");
         List<IScoredGame> games = gameRoom.getGames();
-        SLOG.info("Game Room Info:");
+        SLOG.info("Game Room Games:");
         for (IScoredGame game : games) {
           SLOG.info(" - " + game.getName() + "[" + String.join(", ", game.getTags()) + "] (matches VPS ids: " + game.matches(vpsTableId, vpsVersionId) + ")");
         }
