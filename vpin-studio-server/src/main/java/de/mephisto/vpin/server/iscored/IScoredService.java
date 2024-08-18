@@ -20,13 +20,14 @@ import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.tournaments.TournamentsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class IScoredService implements PreferenceChangedListener, InitializingBean {
@@ -114,8 +115,13 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
         }
       }
       else {
-        LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "'");
-        SLOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "'");
+        LOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "'");
+        SLOG.warn("Failed to get iScored game from game room (" + url + ") for VPS id '" + vpsTableId + "' and VPS version id '" + vpsVersionId + "', check is tagged with the correct URL.");
+        List<IScoredGame> games = gameRoom.getGames();
+        SLOG.info("Game Room Info:");
+        for (IScoredGame game : games) {
+          SLOG.info(" - " + game.getName() + "[" + String.join(", ", game.getTags()) + "] (matches VPS ids: " + game.matches(vpsTableId, vpsVersionId) + ")");
+        }
       }
     }
     else {
