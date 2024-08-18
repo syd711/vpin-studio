@@ -1,8 +1,9 @@
-## Release Notes 3.1.1
+## Release Notes 3.2.0
 
 ## Changes
 
-- **Table Validators**: Added additional "Script Validators" section for the table validator preferences. The new "Controller.stop" validator checks if a ROM based table with no nvram file, has a table exit routine without a "Controller.stop" call (quite special). Calling this routine there is required for the serialization of the nvram file which contains the tables highscores. Note that this validator requires a new table scan to be triggered. 
+- **Table Validators**: Added additional "Script Validators" section for the table validator preferences. The new "Controller.stop" validator checks if a ROM based table with no nvram file, has a table exit routine without a "Controller.stop" call (quite special). Calling this routine there is required for the serialization of the nvram file which contains the tables highscores. Note that this validator requires a new table scan to be triggered.
+- **VPS Tables**: Added combo box to filter all VPS entry by their format. The VPX table format is used as default. Note that even though the table format is used to filter tables, the table version list will still show all other available formats.
 
 ## Bugfixes
 
