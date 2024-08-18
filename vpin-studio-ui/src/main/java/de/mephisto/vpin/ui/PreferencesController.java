@@ -62,6 +62,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button mameBtn;
 
   @FXML
+  private Button vpuBtn;
+
+  @FXML
   private Button validators_screensBtn;
 
   @FXML
@@ -298,6 +301,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onVpu(ActionEvent event) throws IOException {
+    load("preference-vpu.fxml", event);
+  }
+
+  @FXML
   private void onServiceInfo(ActionEvent event) throws IOException {
     load("preference-settings-server.fxml", event);
   }
@@ -382,6 +390,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     highscore_cardsBtn.managedProperty().bindBidirectional(highscore_cardsBtn.visibleProperty());
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
+    vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -404,6 +413,8 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
+
+    vpuBtn.setVisible(Features.VP_UNIVERSE);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

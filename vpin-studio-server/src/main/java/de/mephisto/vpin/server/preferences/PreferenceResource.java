@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +81,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.FILTER_SETTINGS: {
           return preferencesService.getJsonPreference(key, FilterSettings.class);
+        }
+        case PreferenceNames.VPU_SETTINGS: {
+          return preferencesService.getJsonPreference(key, VPUSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");
