@@ -50,13 +50,16 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class VpsTablesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
 
-  private final static List<String> EMULATOR_TYPES = Arrays.asList("VPX", "VP9", "FP", "FX", "FX2", "FX3");
   private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
 
   static {
-    for (String emulatorType : EMULATOR_TYPES) {
-      TABLE_FORMATS.add(new VpsTableFormat(emulatorType, emulatorType + " Tables"));
-    }
+
+    TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
+    TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
+    TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX", "Pinball FX"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX2", "Pinball FX2"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
   }
 
 
