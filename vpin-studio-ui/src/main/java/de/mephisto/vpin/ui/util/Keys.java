@@ -102,16 +102,16 @@ public class Keys {
         return "*";
       }
       else if (value.equals(KeyEvent.getKeyText(KeyEvent.VK_DIVIDE))) {
-        return "/";
+        return "NumPad /";
       }
       else if (value.equals(KeyEvent.getKeyText(KeyEvent.VK_ADD))) {
-        return "+";
+        return "NumPad +";
       }
       else if (value.equals(KeyEvent.getKeyText(KeyEvent.VK_SUBTRACT))) {
-        return "+";
+        return "NumPad -";
       }
       else if (value.equals(KeyEvent.getKeyText(KeyEvent.VK_MULTIPLY))) {
-        return "+";
+        return "NumPad *";
       }
       else if (value.equals(KeyEvent.getKeyText(KeyEvent.VK_SLASH))) {
         return "/";
