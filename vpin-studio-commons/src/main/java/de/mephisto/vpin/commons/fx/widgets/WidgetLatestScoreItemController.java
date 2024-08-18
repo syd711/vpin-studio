@@ -13,6 +13,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
@@ -58,7 +59,7 @@ public class WidgetLatestScoreItemController extends WidgetController implements
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
     InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
-    if(gameMediaItem == null) {
+    if (gameMediaItem == null) {
       gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(gameMediaItem);
@@ -87,10 +88,13 @@ public class WidgetLatestScoreItemController extends WidgetController implements
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(game.getId()));
-    BackgroundImage myBI = new BackgroundImage(backgroundImage,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-    root.setBackground(new Background(myBI));
+    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(game.getId());
+    if (competitionBackground != null) {
+      Image backgroundImage = new Image(competitionBackground);
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      root.setBackground(new Background(myBI));
+    }
   }
 }
