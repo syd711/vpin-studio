@@ -37,7 +37,7 @@ public class VpsInstallerUtils {
 
     List<VpsInstallLink> installLinks = client.getVpsService().getInstallLinks(link);
 
-    if (installLinks.size() == 0) {
+    if (installLinks.isEmpty()) {
       LOG.info("no link to install or repository not supported or error while getting them, follow the link");
       Studio.browse(link);
     }
