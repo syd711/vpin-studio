@@ -14,3 +14,4 @@
 - **Preferences / PinemHi Settings**: Fixed NumPad key bindings.
 - **Preferences / PinemHi Settings**: Made all input spinner for the display settings editable and increased the maximum possible input values.
 - **VPin Mania / Highscore Synchronization**: Fixed superflous highscore submissions of lower highscores. Since only the highest score on a table of a player is stored, lower scores from the same player can be skipped for synchronization. This led to a wrong synchronization count.
+- **Table Details**: Fixed database lock issue which may have caused issues when saving table details. 
