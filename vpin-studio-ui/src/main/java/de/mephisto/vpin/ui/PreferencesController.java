@@ -65,6 +65,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button vpuBtn;
 
   @FXML
+  private Button vpfBtn;
+
+  @FXML
   private Button validators_screensBtn;
 
   @FXML
@@ -306,6 +309,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onVpf(ActionEvent event) throws IOException {
+    load("preference-vpf.fxml", event);
+  }
+
+  @FXML
   private void onServiceInfo(ActionEvent event) throws IOException {
     load("preference-settings-server.fxml", event);
   }
@@ -391,6 +399,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     frontendPreferences.managedProperty().bindBidirectional(frontendPreferences.visibleProperty());
     validators_screensBtn.managedProperty().bindBidirectional(validators_screensBtn.visibleProperty());
     vpuBtn.managedProperty().bindBidirectional(vpuBtn.visibleProperty());
+    vpfBtn.managedProperty().bindBidirectional(vpfBtn.visibleProperty());
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
@@ -415,6 +424,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
+    vpfBtn.setVisible(Features.VP_UNIVERSE);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());
