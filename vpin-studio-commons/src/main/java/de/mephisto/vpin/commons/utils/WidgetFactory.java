@@ -55,6 +55,8 @@ public class WidgetFactory {
 
   public static final String DISABLED_TEXT_STYLE = "-fx-font-color: #B0ABAB;-fx-text-fill:#B0ABAB;";
   public static final String DISABLED_COLOR = "#B0ABAB";
+  public static final String LOCAL_FAVS_COLOR = "#ffcc00";
+  public static final String GLOBAL_FAVS_COLOR = "#cc6600";
   public static final String ERROR_COLOR = "#FF3333";
   public static final String ERROR_STYLE = "-fx-font-color: " + ERROR_COLOR + ";-fx-text-fill:" + ERROR_COLOR + ";";
   public static final String UPDATE_COLOR = "#CCFF66";
@@ -285,9 +287,20 @@ public class WidgetFactory {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
-    fontIcon.setIconLiteral("mdi2a-alpha-l-circle");
+    fontIcon.setIconColor(Paint.valueOf(WidgetFactory.LOCAL_FAVS_COLOR));
+    fontIcon.setIconLiteral("mdi2s-star");
     label.setTooltip(new Tooltip("Local Favorite"));
+    label.setGraphic(fontIcon);
+    return label;
+  }
+
+  public static Label createGlobalFavoritePlaylistIcon() {
+    Label label = new Label();
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(24);
+    fontIcon.setIconColor(Paint.valueOf(WidgetFactory.GLOBAL_FAVS_COLOR));
+    fontIcon.setIconLiteral("mdi2s-star");
+    label.setTooltip(new Tooltip("Global Favorite"));
     label.setGraphic(fontIcon);
     return label;
   }
@@ -305,17 +318,6 @@ public class WidgetFactory {
     label.setGraphic(fontIcon);
   }
 
-  public static Label createGlobalFavoritePlaylistIcon() {
-    Label label = new Label();
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf("#FF9933"));
-    fontIcon.setIconLiteral("mdi2a-alpha-g-circle");
-    label.setTooltip(new Tooltip("Global Favorite"));
-    label.setGraphic(fontIcon);
-    return label;
-  }
-
   public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
@@ -323,15 +325,25 @@ public class WidgetFactory {
     fontIcon.setIconColor(Paint.valueOf(hexColor(playlist.getMenuColor())));
     fontIcon.setIconLiteral("mdi2v-view-list");
 
-    if (playlist.getName().contains("Visual Pinball X")) {
+    if (playlist.getId() == -1) {
+      fontIcon.setIconLiteral("mdi2s-star");
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.LOCAL_FAVS_COLOR));
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getId() == -2) {
+      fontIcon.setIconLiteral("mdi2s-star");
+      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.GLOBAL_FAVS_COLOR));
+      label.setTooltip(new Tooltip(playlist.getName()));
+    }
+    else if (playlist.getName().contains("Visual Pinball X")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
       label.setTooltip(new Tooltip(playlist.getName()));
     }
-    if (playlist.getName().contains("VPX")) {
+    else if (playlist.getName().contains("VPX")) {
       fontIcon.setIconLiteral("mdi2a-alpha-x-circle");
       label.setTooltip(new Tooltip(playlist.getName()));
     }
-    if (playlist.getName().contains("Future")) {
+    else if (playlist.getName().contains("Future")) {
       fontIcon.setIconLiteral("mdi2a-alpha-f-circle");
       label.setTooltip(new Tooltip(playlist.getName()));
     }
