@@ -372,7 +372,7 @@ public class PinUPConnector implements FrontendConnector {
         stmtBuilder.append("'CUSTOM5' = ?, ");
         params.add(tableDetails.getCustom5());
 
-        importGameExtraValues(id, tableDetails.getgLog(), tableDetails.getgNotes(), tableDetails.getgPlayLog(), tableDetails.getgDetails());
+        importGameExtraValues(connect, id, tableDetails.getgLog(), tableDetails.getgNotes(), tableDetails.getgPlayLog(), tableDetails.getgDetails());
       }
 
       stmtBuilder.append("DateUpdated=? WHERE GameID=?");
@@ -405,7 +405,6 @@ public class PinUPConnector implements FrontendConnector {
 
   @Override
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
-
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     Connection connect = this.connect();
@@ -1748,8 +1747,7 @@ public class PinUPConnector implements FrontendConnector {
     return results;
   }
 
-  private void importGameExtraValues(int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
-    Connection connect = this.connect();
+  private void importGameExtraValues(Connection connect, int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
     try {
       PreparedStatement preparedStatement = connect.prepareStatement("insert or replace into GamesExtra (GameID, gLOG, gNotes, gPlayLog, gDetails) values (?,?,?,?,?)");
       preparedStatement.setInt(1, gameId);
@@ -1762,8 +1760,6 @@ public class PinUPConnector implements FrontendConnector {
     }
     catch (Exception e) {
       LOG.error("Failed to update game extra for " + gameId + ": " + e.getMessage(), e);
-    } finally {
-      this.disconnect(connect);
     }
   }
 

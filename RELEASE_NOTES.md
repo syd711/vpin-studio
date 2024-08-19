@@ -1,17 +1,18 @@
-## Release Notes 3.0.9
+## Release Notes 3.2.0
 
 ## Changes
 
-- **VPin Mania / Table Statistics**: Added open button/open on double-click so that the table details are shown.
-- **Preferences / Highscore Settings**: Added "NVRam Synchronization" button to re-download all available resetted nvram files. Usually you won't need this since new nvrams are downloaded on server startup, but this way you can update them e.g. in case the volume was adjusted too.
-- **System Manager**: Releases are now selectable via their actual name, not the tagged version anymore. Especially VPX has more meaningful names there.
-- **System Manager**: Added textarea that shows the release notes of the selected release.
-    
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/installer.png" width="760" />
-- **Launcher**: Add validation to prevent multiple connections for the same server.
-
+- **Table Validators**: Added additional "Script Validators" section for the table validator preferences. The new "Controller.stop" validator checks if a ROM based table with no nvram file, has a table exit routine without a "Controller.stop" call (quite special). Calling this routine there is required for the serialization of the nvram file which contains the tables highscores. Note that this validator requires a new table scan to be triggered. So far I've found "Checkpoint" and the older "X-Files" table affected by this.
+- **VPS Tables Overview**: Added combo box to filter all VPS entries by their table format. The VPX table format is used as default. 
+- **Table Statistics**: Added emulator combo box so that all statistics dashboards can be filtered by the available emulators.
+- **Table Overview / Playlists**: Added global and local favorites to the list of available playlists in the playlists combo box.
 
 ## Bugfixes
 
-- **Highscore Parsing**: Fixed highscore parsing for "Doctor Who" by adding "GREATEST TIME LORD" to the default list of possible score text titles.
-- **Launcher**: Fixed issue where multiple connections cannot be created.
+- **Highscore**: Fixed highscores for table "King Kong" Data East.
+- **Event Log**: Improved error logging for issues regarding failed iScored highscore submissions.
+- **Table Data Manager**: Fixed issues opening the dialog with broken VPS data. 
+- **Preferences / PinemHi Settings**: Fixed NumPad key bindings.
+- **Preferences / PinemHi Settings**: Made all input spinner for the display settings editable and increased the maximum possible input values.
+- **VPin Mania / Highscore Synchronization**: Fixed superflous highscore submissions of lower highscores. Since only the highest score on a table of a player is stored, lower scores from the same player can be skipped for synchronization. This led to a wrong synchronization count.
+- **Table Details**: Fixed database lock issue which may have caused issues when saving table details. 

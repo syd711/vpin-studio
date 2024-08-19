@@ -70,7 +70,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
     //always hide the overlay on any key press
     if (overlayVisible) {
-      onToggleOverlayEvent();
+      onToggleOverlayEvent(name);
       return;
     }
 
@@ -86,7 +86,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
         }
 
         if (frontendIsRunning) {
-          onToggleOverlayEvent();
+          onToggleOverlayEvent(name);
           return;
         }
       }
@@ -107,10 +107,11 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
 
-  private void onToggleOverlayEvent() {
+  private void onToggleOverlayEvent(String eventName) {
+    LOG.info("Toggling overlay for key event '" + eventName + "'");
     this.overlayVisible = !overlayVisible;
     Platform.runLater(() -> {
-      LOG.info("Toggle pause menu show, was visible: " + !overlayVisible);
+      LOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
       ServerFX.getInstance().showOverlay(overlayVisible);
     });
   }

@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationItem;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -111,6 +112,9 @@ public class TablesSidebarHighscoresController implements Initializable {
   private Button vpSaveEditBtn;
 
   @FXML
+  private Button eventLogBtn;
+
+  @FXML
   private ImageView cardImage;
 
   @FXML
@@ -126,27 +130,11 @@ public class TablesSidebarHighscoresController implements Initializable {
   public TablesSidebarHighscoresController() {
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
-    statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
-    vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
-
-    cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(game.isPresent()) {
-          try {
-            game.get().setCardDisabled(!newValue);
-            client.getGameService().saveGame(game.get());
-            EventManager.getInstance().notifyTableChange(game.get().getId(), null);
-          }
-          catch (Exception e) {
-            LOG.error("Failed to save game: " + e.getMessage());
-          }
-        }
-      }
-    });
+  @FXML
+  private void onEventLog() {
+    if (this.game.isPresent()) {
+      TableDialogs.openEventLogDialog(this.game.get());
+    }
   }
 
   @FXML
@@ -268,6 +256,7 @@ public class TablesSidebarHighscoresController implements Initializable {
     restoreBtn.setText("Restore");
 
     cardsEnabledCheckbox.setDisable(true);
+    eventLogBtn.setDisable(true);
 
     if (g.isPresent()) {
       GameRepresentation game = g.get();
@@ -276,6 +265,10 @@ public class TablesSidebarHighscoresController implements Initializable {
 
       cardsEnabledCheckbox.setDisable(false);
       cardsEnabledCheckbox.setSelected(!game.isCardDisabled());
+
+
+      HighscoreEventLog eventLog = client.getGameService().getEventLog(game.getId());
+      eventLogBtn.setDisable(eventLog == null);
 
       List<CardTemplate> templates = client.getHighscoreCardTemplatesClient().getTemplates();
       Long templateId = g.get().getTemplateId();
@@ -399,5 +392,30 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    dataPane.managedProperty().bindBidirectional(dataPane.visibleProperty());
+    statusPane.managedProperty().bindBidirectional(statusPane.visibleProperty());
+    vpSaveEditBtn.setVisible(client.getSystemService().isLocal());
+
+    eventLogBtn.setDisable(true);
+
+    cardsEnabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (game.isPresent()) {
+          try {
+            game.get().setCardDisabled(!newValue);
+            client.getGameService().saveGame(game.get());
+            EventManager.getInstance().notifyTableChange(game.get().getId(), null);
+          }
+          catch (Exception e) {
+            LOG.error("Failed to save game: " + e.getMessage());
+          }
+        }
+      }
+    });
   }
 }

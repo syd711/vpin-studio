@@ -174,7 +174,10 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public ByteArrayInputStream getCompetitionBackground(long gameId) {
     Asset asset = assetService.getCompetitionBackground(gameId);
-    return new ByteArrayInputStream(asset.getData());
+    if(asset != null) {
+      return new ByteArrayInputStream(asset.getData());
+    }
+    return null;
   }
 
   @Override

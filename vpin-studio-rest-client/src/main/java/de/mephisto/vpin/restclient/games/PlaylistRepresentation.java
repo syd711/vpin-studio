@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class PlaylistRepresentation {
   private int id;
@@ -83,16 +84,14 @@ public class PlaylistRepresentation {
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
-    if (!(o instanceof PlaylistRepresentation)) return false;
-
-    PlaylistRepresentation playlist = (PlaylistRepresentation) o;
-
-    return id == playlist.id;
+    if (o == null || getClass() != o.getClass()) return false;
+    PlaylistRepresentation that = (PlaylistRepresentation) o;
+    return id == that.id && sqlPlayList == that.sqlPlayList && Objects.equals(menuColor, that.menuColor) && Objects.equals(name, that.name) && Objects.equals(playListSQL, that.playListSQL) && Objects.equals(mediaName, that.mediaName) && Objects.equals(games, that.games) && Objects.equals(playlistMedia, that.playlistMedia);
   }
 
   @Override
   public int hashCode() {
-    return id;
+    return Objects.hash(id, menuColor, name, playListSQL, mediaName, sqlPlayList, games, playlistMedia);
   }
 
   @Override

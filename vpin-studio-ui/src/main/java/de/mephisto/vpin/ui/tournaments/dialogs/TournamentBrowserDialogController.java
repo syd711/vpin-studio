@@ -222,7 +222,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Tournaments...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -237,7 +238,10 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
   private void doSearch(String t1, int page) {
     Platform.runLater(() -> {
       try {
-        viewStack.getChildren().add(loadingOverlay);
+        if (!viewStack.getChildren().contains(loadingOverlay)) {
+          viewStack.getChildren().add(loadingOverlay);
+        }
+
         searchResult = maniaClient.getTournamentClient().search(t1, page, UIDefaults.TOURNAMENT_BROWSER_PAGE_SIZE);
         List<TournamentSearchResultItem> results = searchResult.getResults();
 
@@ -273,9 +277,11 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
             viewStack.getChildren().remove(loadingOverlay);
           });
         }).start();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         viewStack.getChildren().remove(loadingOverlay);
-        WidgetFactory.showAlert(Studio.stage, "Error", "Search failed: " + e.getMessage());
+        LOG.error("Tournament search failed: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Tournament search failed: " + e.getMessage());
       }
     });
   }
@@ -321,7 +327,8 @@ public class TournamentBrowserDialogController implements Initializable, DialogC
         String avatarUrl = maniaClient.getAccountClient().getAvatarUrl(item.getOwnerUuid());
         ImageView imageView = AvatarFactory.create(client.getCachedUrlImage(avatarUrl));
         avatarPane.getChildren().add(imageView);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to read tournament browse data: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Error", "Failed to read tournament data: " + e.getMessage());
       }

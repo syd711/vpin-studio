@@ -10,13 +10,19 @@ public class EventLogMessage {
     INFO, WARN, ERROR
   }
 
-  private final Date date;
-  private final String message;
-  private final Severity severity;
+  private Date date = new Date();
+  private String message;
+  private Severity severity;
 
-  public EventLogMessage(Severity severity, String message) {
-    this.date = new Date();
+  public void setDate(Date date) {
+    this.date = date;
+  }
+
+  public void setMessage(String message) {
     this.message = message;
+  }
+
+  public void setSeverity(Severity severity) {
     this.severity = severity;
   }
 
@@ -47,6 +53,6 @@ public class EventLogMessage {
 
   @Override
   public String toString() {
-    return DateUtil.formatTimeString(this.date) + " [" + this.severity.name() + "] " + message;
+    return DateUtil.formatDateTime(this.date) + " [" + this.severity.name() + "] " + message;
   }
 }

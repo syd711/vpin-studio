@@ -37,7 +37,8 @@ public class PinVolService implements InitializingBean {
       this.enabled = !enabled;
       preferencesService.savePreference(PreferenceNames.PINVOL_AUTOSTART_ENABLED, enabled);
       return enabled;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to set PinVol autostart flag: " + e.getMessage(), e);
     }
     return false;
@@ -52,13 +53,17 @@ public class PinVolService implements InitializingBean {
   }
 
   private static void startPinVol() {
-    File exe = new File("resources", "PinVol.exe");
-    List<String> commands = Arrays.asList("start", "/min", exe.getAbsolutePath());
-    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
-    executor.setDir(new File("resources"));
-    executor.enableLogging(true);
-    executor.executeCommandAsync();
-    LOG.info("Executed PinVol command: " + String.join(" ", commands));
+    try {
+      de.mephisto.vpin.commons.utils.FileUtils.writeBatch("./resources/PinVol.bat", "cd resources\nstart /min PinVol.exe\nexit\n");
+      List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
+      SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+      executor.setDir(new File("./resources"));
+      executor.executeCommandAsync();
+      LOG.info("Executed PinVol command: " + String.join(" ", commands));
+    }
+    catch (Exception e) {
+      LOG.error("Failed to launch PinVol.exe: " + e.getMessage(), e);
+    }
   }
 
   @Override

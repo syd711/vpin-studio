@@ -26,7 +26,7 @@ public class VpsServiceClient extends VPinStudioClientService {
 
   public List<VpsTable> getTables() {
     List<VpsTable> vpsTables = new ArrayList<>(cache.values());
-    List<VpsTable> filtered = vpsTables.stream().filter(t -> !StringUtils.isEmpty(t.getName())).collect(Collectors.toList());
+    List<VpsTable> filtered = vpsTables.stream().filter(t -> t != null && !StringUtils.isEmpty(t.getName())).collect(Collectors.toList());
     Collections.sort(filtered, Comparator.comparing(o -> String.valueOf(o.getName().trim().toLowerCase())));
     return filtered;
   }

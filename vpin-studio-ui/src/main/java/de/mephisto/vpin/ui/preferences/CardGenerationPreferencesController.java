@@ -50,6 +50,9 @@ public class CardGenerationPreferencesController implements Initializable {
   private Label validationError;
 
   @FXML
+  private Label popperScreenInfo;
+
+  @FXML
   private Spinner<Integer> highscoreCardDuration;
 
   @FXML
@@ -75,6 +78,7 @@ public class CardGenerationPreferencesController implements Initializable {
     transparencyHelp.setVisible(false);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
+    popperScreenInfo.setVisible(frontendType.equals(FrontendType.Popper));
 
     ObservableList<String> screenNames = FXCollections.observableList(new ArrayList<>());
     if (frontendType.supportPupPacks()) {

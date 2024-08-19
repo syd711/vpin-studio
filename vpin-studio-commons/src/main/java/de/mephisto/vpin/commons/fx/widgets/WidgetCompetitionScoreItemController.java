@@ -11,6 +11,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ResourceBundle;
@@ -49,7 +51,7 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
 
   public void setData(int gameId, ScoreRepresentation score) {
     PlayerRepresentation player = score.getPlayer();
-    if(player != null && player.getAvatarUrl() != null) {
+    if (player != null && player.getAvatarUrl() != null) {
       Image image = new Image(player.getAvatarUrl());
       avatarImageView.setImage(image);
     }
@@ -70,10 +72,13 @@ public class WidgetCompetitionScoreItemController extends WidgetController imple
     String date = simpleDateFormat.format(score.getCreatedAt());
     changeDateLabel.setText("Updated: " + date);
 
-    Image backgroundImage = new Image(ServerFX.client.getCompetitionBackground(gameId));
-    BackgroundImage myBI = new BackgroundImage(backgroundImage,
-        BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-        BackgroundSize.DEFAULT);
-    root.setBackground(new Background(myBI));
+    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(gameId);
+    if (competitionBackground != null) {
+      Image backgroundImage = new Image(competitionBackground);
+      BackgroundImage myBI = new BackgroundImage(backgroundImage,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      root.setBackground(new Background(myBI));
+    }
   }
 }

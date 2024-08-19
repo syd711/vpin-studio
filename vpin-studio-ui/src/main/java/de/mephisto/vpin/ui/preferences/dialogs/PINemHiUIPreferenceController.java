@@ -73,6 +73,8 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
   private final static String SETTING_ON_BETWEEN_ROTATION = "on_between_rotation";
   private final int SPINNER_DELAY = 500;
 
+  private final static int MAX_SCREEN_WIDTH = 3840 * 3;
+
   @FXML
   private Button cancelBtn;
 
@@ -215,7 +217,7 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
 
           settings.setValues(values);
 
-          if(StringUtils.isEmpty(special)) {
+          if (StringUtils.isEmpty(special)) {
             special = "regular";
           }
 
@@ -340,15 +342,17 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
       screenInfoComboBox.setDisable(t1);
     });
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X));
     x.setValueFactory(factory);
+    x.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y));
     y.setValueFactory(factory);
+    y.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y, value1);
@@ -362,22 +366,25 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     });
 
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X_START));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X_START));
     xStart.setValueFactory(factory);
+    xStart.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X_START, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X_START, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X_END));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X_END));
     xEnd.setValueFactory(factory);
+    xEnd.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X_END, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X_END, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y_VALUE));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y_VALUE));
     yValue.setValueFactory(factory);
+    yValue.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y_VALUE, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y_VALUE, value1);
@@ -390,22 +397,25 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
       screenInfoComboBox.setDisable(t1);
     });
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y_START));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y_START));
     yStart.setValueFactory(factory);
+    yStart.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y_START, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y_START, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y_END));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y_END));
     yEnd.setValueFactory(factory);
+    yEnd.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y_END, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y_END, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X_VALUE));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X_VALUE));
     xValue.setValueFactory(factory);
+    xValue.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X_VALUE, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X_VALUE, value1);
@@ -424,29 +434,33 @@ public class PINemHiUIPreferenceController implements Initializable, DialogContr
     onBetweenRotation.selectedProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_ON_BETWEEN_ROTATION, t1));
 
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X_POS));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X_POS));
     xPos.setValueFactory(factory);
+    xPos.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X_POS, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X_POS, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y_POS));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y_POS));
     yPos.setValueFactory(factory);
+    yPos.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y_POS, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y_POS, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_X_SIZE));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_X_SIZE));
     xSize.setValueFactory(factory);
+    xSize.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_X_SIZE, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_X_SIZE, value1);
     }, SPINNER_DELAY));
 
-    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3840, settings.getInt(SETTING_Y_SIZE));
+    factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, MAX_SCREEN_WIDTH, settings.getInt(SETTING_Y_SIZE));
     ySize.setValueFactory(factory);
+    ySize.setEditable(true);
     factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(SETTING_Y_SIZE, () -> {
       int value1 = Integer.parseInt(String.valueOf(t1));
       settings.set(SETTING_Y_SIZE, value1);

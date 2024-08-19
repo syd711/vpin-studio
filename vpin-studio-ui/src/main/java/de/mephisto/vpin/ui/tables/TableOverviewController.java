@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -1054,6 +1055,32 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
     List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
+
+    List<PlaylistGame> localFavs = new ArrayList<>();
+    List<PlaylistGame> globalFavs = new ArrayList<>();
+    for (PlaylistRepresentation playlistRepresentation : pl) {
+      List<PlaylistGame> games1 = playlistRepresentation.getGames();
+      for (PlaylistGame playlistGame : games1) {
+        if (playlistGame.isFav()) {
+          localFavs.add(playlistGame);
+        }
+        if (playlistGame.isGlobalFav()) {
+          globalFavs.add(playlistGame);
+        }
+      }
+    }
+    PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
+    favsPlaylist.setGames(localFavs);
+    favsPlaylist.setId(-1);
+    favsPlaylist.setName("Local Favorites");
+
+    PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
+    globalFavsPlaylist.setGames(globalFavs);
+    globalFavsPlaylist.setId(-2);
+    globalFavsPlaylist.setName("Global Favorites");
+
+    pl.add(0, globalFavsPlaylist);
+    pl.add(0, favsPlaylist);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
@@ -1321,19 +1348,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       HBox box = new HBox();
       List<PlaylistRepresentation> matches = new ArrayList<>();
       boolean fav = false;
-      Integer favColor = null;
-
       boolean globalFav = false;
-      Integer globalFavColor = null;
 
       for (PlaylistRepresentation playlist : playlists) {
         if (playlist.containsGame(value.getId())) {
           if (!fav && playlist.isFavGame(value.getId())) {
-            favColor = playlist.getMenuColor();
             fav = true;
           }
           if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
-            globalFavColor = playlist.getMenuColor();
             globalFav = true;
           }
           matches.add(playlist);
@@ -1344,18 +1366,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       double width = 0;
       if (fav) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
-        if (favColor != null) {
-          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(favColor)));
-        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
       if (globalFav) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
-        if (globalFavColor != null) {
-          ((FontIcon) label.getGraphic()).setIconColor(Paint.valueOf(hexColor(globalFavColor)));
-        }
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -61,9 +62,14 @@ public class ManiaService implements InitializingBean {
     LOG.info("Synchronizing mania table scores for \"" + game + "\"");
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
+    List<String> submittedInitials = new ArrayList<>();
     for (Score score : scoreList) {
       try {
         String playerInitials = score.getPlayerInitials();
+        //we only synchronize the highest score of each table
+        if (submittedInitials.contains(playerInitials)) {
+          continue;
+        }
         if (maniaServiceCache.containsAccountForInitials(playerInitials)) {
           Account account = maniaServiceCache.getAccountForInitials(playerInitials);
 
@@ -81,6 +87,8 @@ public class ManiaService implements InitializingBean {
           LOG.info("Found score match to synchronize for " + playerInitials + ": " + score);
           TableScore submitted = maniaClient.getHighscoreClient().submitOrUpdate(tableScore);
           result.getTableScores().add(submitted);
+
+          submittedInitials.add(playerInitials);
         }
       }
       catch (Exception e) {

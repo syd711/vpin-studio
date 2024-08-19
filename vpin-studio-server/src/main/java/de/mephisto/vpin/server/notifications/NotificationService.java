@@ -97,7 +97,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       String guildId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_GUILD_ID);
       String defaultChannelId = (String) preferencesService.getPreferenceValue(PreferenceNames.DISCORD_CHANNEL_ID);
       if (!StringUtils.isEmpty(guildId) && !StringUtils.isEmpty(defaultChannelId)) {
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Scores has been published on Discord!");
+        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Scores have been published on Discord!");
         showNotification(notification);
       }
     }
