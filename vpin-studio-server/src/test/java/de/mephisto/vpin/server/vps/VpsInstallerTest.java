@@ -1,16 +1,20 @@
 package de.mephisto.vpin.server.vps;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
+import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
 
 public class VpsInstallerTest {
 
@@ -19,7 +23,20 @@ public class VpsInstallerTest {
 
     String url = "https://www.vpforums.org/index.php?app=downloads&showfile=16563";
 
-    List<VpsInstallLink> links = VpsInstaller.getInstallLinks(url);
+    VPFSettings settings = new VPFSettings();
+    settings.setLogin("change me");
+    settings.setPassword("change me");
+    VpsInstaller installer = new VpsInstallerFromVPF(settings);
+
+    // check login fails for wrong password
+    assertNotNull(installer.login());
+
+    //FIXME change here
+    settings.setLogin("leprinco");
+    settings.setPassword("Oliver01");
+
+    List<VpsInstallLink> links = installer.getInstallLinks(url);
+
     assertEquals(3, links.size());
     VpsInstallLink link = links.get(0);
     assertEquals("1-2-3 - Davadruix's DMD.png", link.getName());
@@ -28,16 +45,31 @@ public class VpsInstallerTest {
 
     File f = new File("c:/temp/" + link.getName());
     try (FileOutputStream fout = new FileOutputStream(f)) {
-      VpsInstaller.downloadLink(fout, url, 0);
+      installer.downloadLink(fout, url, 0);
+      assertTrue(Files.size(f.toPath()) > 0);
     } 
-    //f.delete();
+    finally {
+      f.delete();
+    }
   }
 
   @Test
   public void testInstallVPU() throws IOException {
     String url = "https://vpuniverse.com/files/file/9442-vikings-static-wheel";
 
-    List<VpsInstallLink> links = VpsInstaller.getInstallLinks(url);
+    VPUSettings settings = new VPUSettings();
+    settings.setLogin("change me");
+    settings.setPassword("change me");
+    VpsInstaller installer = new VpsInstallerFromVPU(settings);
+
+    // check login fails for wrong password
+    assertNotNull(installer.login());
+
+    //FIXME change here
+    settings.setLogin("leprinco");
+    settings.setPassword("vpuniverse is very cool");
+
+    List<VpsInstallLink> links = installer.getInstallLinks(url);
     assertEquals(2, links.size());
 
     VpsInstallLink link = links.get(0);
@@ -47,8 +79,11 @@ public class VpsInstallerTest {
 
     File f = new File("c:/temp/" + link.getName());
     try (FileOutputStream fout = new FileOutputStream(f)) {
-      VpsInstaller.downloadLink(fout, url, 0);
+      installer.downloadLink(fout, url, 0);
+      assertTrue(Files.size(f.toPath()) > 0);
     }
-    //f.delete();
+    finally {
+      f.delete();
+    }
   }
 }

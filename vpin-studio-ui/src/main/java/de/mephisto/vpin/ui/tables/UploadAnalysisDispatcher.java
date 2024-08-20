@@ -77,6 +77,8 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openTableUploadDialog(tablesController.getTableOverviewController(), game, TableUploadType.uploadAndImport, analysis);
         return;
       }
+      default: {
+      }
     }
 
     if (game == null) {

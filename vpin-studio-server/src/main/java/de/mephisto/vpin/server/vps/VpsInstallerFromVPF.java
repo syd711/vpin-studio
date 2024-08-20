@@ -10,105 +10,146 @@ import java.util.function.Supplier;
 import org.apache.commons.lang3.StringUtils;
 import org.htmlunit.Page;
 import org.htmlunit.UnexpectedPage;
+import org.htmlunit.WebClient;
 import org.htmlunit.WebWindow;
 import org.htmlunit.html.DomElement;
 import org.htmlunit.html.DomNode;
 import org.htmlunit.html.HtmlAnchor;
-import org.htmlunit.html.HtmlDivision;
 import org.htmlunit.html.HtmlElement;
 import org.htmlunit.html.HtmlForm;
-import org.htmlunit.html.HtmlLink;
 import org.htmlunit.html.HtmlPage;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
+import de.mephisto.vpin.restclient.vpf.VPFSettings;
 
 public class VpsInstallerFromVPF implements VpsInstaller {
+
+  private VPFSettings settings;
+
+  public VpsInstallerFromVPF(VPFSettings settings) {
+    this.settings = settings;
+  }
+
+  @Override
+  public String login() throws IOException {
+    try (final WebClient webClient = new WebClient()) {
+      webClient.getOptions().setThrowExceptionOnScriptError(false);
+      webClient.getOptions().setJavaScriptEnabled(false);
+
+      return doLogin(webClient);
+    }
+  }
+
+  private String doLogin(final WebClient webClient) throws IOException {
+    // don't even try to authenticate if settings are not set
+    if (StringUtils.isBlank(settings.getLogin())) {
+      return "Login cannot be empty";
+    }
+
+    // Perfom VPF authentication
+    HtmlPage loginPage = webClient.getPage("https://www.vpforums.org/index.php?app=core&module=global&section=login");
+    HtmlForm loginForm = loginPage.getForms().stream()
+      .filter(f -> StringUtils.equalsIgnoreCase(f.getId(), "login"))
+      .findFirst().orElseThrow();
+    loginForm.getInputByName("ips_username").setValue(settings.getLogin());
+    loginForm.getInputByName("ips_password").setValue(settings.getPassword());
+    DomElement submitBtn = loginPage.querySelector("input.input_submit");
+    HtmlPage homePage = submitBtn.click();
+
+    // check authentication happens correctly
+    String title = homePage.getTitleText();
+    if (StringUtils.containsIgnoreCase(title, "sign in")) {
+      DomNode node = homePage.querySelector("p.message.error");
+      return node != null ? node.getTextContent().trim() : "Cannot login";
+    }
+    // login successful, no error
+    return null;
+  }
 
   @Override
   public void browse(String link, BiConsumer<VpsInstallLink, Supplier<InputStream>> consumer) throws IOException {
 
-    try (final org.htmlunit.WebClient webClient = new org.htmlunit.WebClient()) {
+    try (final WebClient webClient = new WebClient()) {
       webClient.getOptions().setThrowExceptionOnScriptError(false);
       webClient.getOptions().setJavaScriptEnabled(false);
 
-      // Perfom VPF authentication
-      HtmlPage loginPage = webClient.getPage("https://www.vpforums.org/index.php?app=core&module=global&section=login");
-      HtmlForm loginForm = loginPage.getForms().stream()
-        .filter(f -> StringUtils.equalsIgnoreCase(f.getId(), "login"))
-        .findFirst().orElseThrow();
-      loginForm.getInputByName("ips_username").setValue("leprinco");
-      loginForm.getInputByName("ips_password").setValue("Oliver01");
-      DomElement submitBtn = loginPage.querySelector("input.input_submit");
-      submitBtn.click();
-      
-      // Access the page of the link and click on the download button
-      HtmlPage downloadPage = webClient.getPage(link);
-      HtmlLink linkBtn = downloadPage.querySelector("a.download_button");
-      
-      Page page = linkBtn.click();
-      if (page instanceof UnexpectedPage) {
-        // some link goes though direct download
-        VpsInstallLink l = new VpsInstallLink();
-        //FIXME tmp to try
-        l.setName("FIXME TMP");
-        l.setOrder(0);
-        l.setSize("### GB");
-        l.setUrl(linkBtn.getHrefAttribute());
+      if (doLogin(webClient) == null) {
+        // Access the page of the link and click on the download button
+        HtmlPage downloadPage = webClient.getPage(link);
+        HtmlAnchor linkBtn = downloadPage.querySelector("a.download_button");
+        
+        Page page = linkBtn.click();
+        if (page instanceof UnexpectedPage) {
 
-        Supplier<InputStream> inputStreamSupplier = () -> {
-          try {
-            UnexpectedPage enclosedPage = (UnexpectedPage) page;
-            return enclosedPage.getInputStream();
-          } catch (IOException ioe) {
-            return null;
+          UnexpectedPage enclosedPage = (UnexpectedPage) page;
+          String attname = enclosedPage.getWebResponse().getResponseHeaderValue("content-disposition");
+          attname = StringUtils.substringBetween(attname, "\"", "\"");
+
+          String contentLength = enclosedPage.getWebResponse().getResponseHeaderValue("content-length");
+          Double size = Double.parseDouble(contentLength) / 1024;
+          String unit = "KB";
+          if (size > 1024) {
+            size /= 1024;
+            unit = "MB";
           }
-        };
-        consumer.accept(l, inputStreamSupplier);
-        return;
-      }
-      // else go through agreement page 
-      HtmlPage agreePage = (HtmlPage) page;      
-      DomElement agreeBtn = agreePage.querySelector("a#agree_disclaimer");
-      HtmlPage linksPage = agreeBtn.click();
 
-      // display files
-      List<DomNode> files = linksPage.querySelectorAll("#files li");
-      int order = 0;
-      for (DomNode file : files) {
-        Iterator<HtmlElement> children = file.getHtmlElementDescendants().iterator();
+          // some link goes though direct download
+          VpsInstallLink l = new VpsInstallLink();
+          l.setName(attname);
+          l.setOrder(0);
+          l.setSize(size + unit);
+          l.setUrl(linkBtn.getHrefAttribute());
 
-        String size = nextChild(children, linksPage).getTextContent().trim();
+          Supplier<InputStream> inputStreamSupplier = () -> {
+            try {
+              return enclosedPage.getInputStream();
+            } catch (IOException ioe) {
+              return null;
+            }
+          };
+          consumer.accept(l, inputStreamSupplier);
+          return;
+        }
+        // else go through agreement page 
+        HtmlPage agreePage = (HtmlPage) page;      
+        HtmlAnchor agreeBtn = agreePage.querySelector("a#agree_disclaimer");
+        if (agreeBtn != null) {
+          agreePage = agreeBtn.click();
+        }
 
-        HtmlAnchor a = (HtmlAnchor) nextChild(children);
-        String url = a != null? a.getHrefAttribute() : null;
+        // display files
+        HtmlPage linksPage = agreePage;
+        List<DomNode> files = linksPage.querySelectorAll("#files li");
+        int order = 0;
+        for (DomNode file : files) {
+          Iterator<HtmlElement> children = file.getHtmlElementDescendants().iterator();
 
-        String name = nextChild(children, linksPage).getTextContent().trim();
+          String size = nextChild(children, linksPage).getTextContent().trim();
 
-        VpsInstallLink l = new VpsInstallLink();
-        l.setName(name);
-        l.setOrder(order++);
-        l.setSize(size);
-        l.setUrl(url);
+          HtmlAnchor a = (HtmlAnchor) nextChild(children);
+          String url = a != null? a.getHrefAttribute() : null;
 
-        Supplier<InputStream> inputStreamSupplier = a == null ? null : () -> {
-          try {
-            a.click();
-            WebWindow window = linksPage.getEnclosingWindow();
-            UnexpectedPage enclosedPage = (UnexpectedPage) window.getEnclosedPage();
-            return enclosedPage.getInputStream();
-          } catch (IOException ioe) {
-            return null;
-          }
-        };
-        consumer.accept(l, inputStreamSupplier);
+          String name = nextChild(children, linksPage).getTextContent().trim();
+
+          VpsInstallLink l = new VpsInstallLink();
+          l.setName(name);
+          l.setOrder(order++);
+          l.setSize(size);
+          l.setUrl(url);
+
+          Supplier<InputStream> inputStreamSupplier = a == null ? null : () -> {
+            try {
+              a.click();
+              WebWindow window = linksPage.getEnclosingWindow();
+              UnexpectedPage enclosedPage = (UnexpectedPage) window.getEnclosedPage();
+              return enclosedPage.getInputStream();
+            } catch (IOException ioe) {
+              return null;
+            }
+          };
+          consumer.accept(l, inputStreamSupplier);
+        }
       }
     }
-  }
-
-  private HtmlElement nextChild(Iterator<HtmlElement> children) {
-    return children.hasNext()? children.next(): null;
-  }
-  private HtmlElement nextChild(Iterator<HtmlElement> children, HtmlPage page) {
-    return children.hasNext()? children.next(): new HtmlDivision("div", page, null);
   }
 }

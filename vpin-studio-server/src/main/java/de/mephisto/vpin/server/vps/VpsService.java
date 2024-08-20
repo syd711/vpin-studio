@@ -5,11 +5,16 @@ import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
+import de.mephisto.vpin.restclient.vpf.VPFSettings;
+import de.mephisto.vpin.restclient.vpu.VPUSettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameDetails;
 import de.mephisto.vpin.server.games.GameDetailsRepository;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +24,9 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,9 +35,11 @@ import java.util.stream.Collectors;
 public class VpsService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(VpsService.class);
 
-
   @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   @Autowired
   private GameDetailsRepository gameDetailsRepository;
@@ -156,5 +166,56 @@ public class VpsService implements InitializingBean {
         LOG.error("Failed to update game details for VPS changes: " + e.getMessage(), e);
       }
     }
+  }
+
+  //----------------------------------------------------------------
+  // Installation of Assets from external sources
+
+  public String checkLogin(String link) {
+    try {
+      VpsInstaller installer = getInstaller(link);
+      return installer != null ? installer.login() : "Source not supported";
+    }
+    catch (IOException ioe) {
+      LOG.error("Check login for " + link + " failed, " + ioe.getMessage());
+      return "Error while authenticating, please try again";
+    }
+  }
+
+  public List<VpsInstallLink> getInstallLinks(String link) {
+    try {
+      VpsInstaller installer = getInstaller(link);
+      if (installer != null) {
+        LOG.info("Get all links for {}:", link);
+        List<VpsInstallLink> links = installer.getInstallLinks(link);
+        for (VpsInstallLink l : links) {
+          LOG.info("link " + l.getOrder() + ", " + l.getName() + " (" + l.getSize() +")");
+        }
+        return links;
+      }
+    }
+    catch (IOException ioe) {
+      LOG.error("Couldn't get links for " + link + ", " + ioe.getMessage());
+    }
+    return new ArrayList<>();
+  }
+
+  public void downloadLink(FileOutputStream fout, String link, int order) throws IOException {
+    VpsInstaller installer = getInstaller(link);
+    if (installer != null) {
+      installer.downloadLink(fout, link, order);
+    }
+  }
+
+  private VpsInstaller getInstaller(String link) {
+    if (link.contains("vpuniverse.com")) {
+      VPUSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
+      return new VpsInstallerFromVPU(settings);
+    }
+    else if (link.contains("vpforums.org")) {
+      VPFSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
+      return new VpsInstallerFromVPF(settings);
+    }
+    return null;
   }
 }

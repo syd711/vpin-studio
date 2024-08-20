@@ -5,23 +5,29 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.vps.VpsInstaller;
+import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 @Service
 public class UniversalUploadService {
@@ -51,6 +57,9 @@ public class UniversalUploadService {
   @Autowired
   private PupPacksService pupPacksService;
 
+  @Autowired
+  private VpsService vpsService;
+
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -73,7 +82,7 @@ public class UniversalUploadService {
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
 
     // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
-    VpsInstaller.resolveLinks(uploadDescriptor);
+    resolveLinks(uploadDescriptor);
 
     if (!uploadDescriptor.isImporting(assetType)) {
       LOG.info("Skipped file import of type " + assetType.name() + ", because it is not marked for import.");
@@ -176,6 +185,30 @@ public class UniversalUploadService {
       default: {
         throw new UnsupportedOperationException("No matching archive handler found for " + assetType);
       }
+    }
+  }
+
+  public void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
+    // detection that it is a file hosted on a remote source
+    String originalFilename = uploadDescriptor.getOriginalUploadFileName();
+    if (originalFilename.endsWith(VpsInstallLink.VPS_INSTALL_LINK_PREFIX)) {
+
+      originalFilename = StringUtils.substring(originalFilename, 0, - VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+      uploadDescriptor.setOriginalUploadFileName(originalFilename);
+
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      try (InputStream in = new FileInputStream(tempFile)) {
+        String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        String link  = StringUtils.substringBeforeLast(content, "@");
+        String order  = StringUtils.substringAfterLast(content, "@");
+
+        String tempFilename = StringUtils.substring(uploadDescriptor.getTempFilename(), 0, - VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+        uploadDescriptor.setTempFilename(tempFilename);
+        try (FileOutputStream fout = new FileOutputStream(tempFilename)) {
+          vpsService.downloadLink(fout, link, Integer.parseInt(order));
+        }
+      }
+      tempFile.delete();
     }
   }
 

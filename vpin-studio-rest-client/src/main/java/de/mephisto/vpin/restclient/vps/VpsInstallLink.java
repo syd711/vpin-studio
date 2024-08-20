@@ -2,7 +2,7 @@ package de.mephisto.vpin.restclient.vps;
 
 public class VpsInstallLink {
 
-  public static final String VPS_INSTALL_LINK_PREFIX = "vpslnk - ";
+  public static final String VPS_INSTALL_LINK_PREFIX = "_vpslnk";
 
   private int order;
   private String name;

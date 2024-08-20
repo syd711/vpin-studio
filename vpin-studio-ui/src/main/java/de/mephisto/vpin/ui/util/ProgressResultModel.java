@@ -6,6 +6,7 @@ import javafx.scene.control.ProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProgressResultModel {
   private int processed;
@@ -54,6 +55,11 @@ public class ProgressResultModel {
 
   public List<Object> getResults() {
     return results;
+  }
+
+  @SuppressWarnings("unchecked")
+  public <T> List<T> getTypedResults() {
+    return results.stream().map(o -> (T) o).collect(Collectors.toList());
   }
 
   public void addSkipped() {

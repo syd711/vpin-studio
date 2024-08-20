@@ -1,84 +1,61 @@
 package de.mephisto.vpin.server.vps;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 
-import org.apache.commons.lang3.StringUtils;
+import org.htmlunit.html.HtmlDivision;
+import org.htmlunit.html.HtmlElement;
+import org.htmlunit.html.HtmlPage;
 import org.springframework.util.StreamUtils;
 
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
-
 
 public interface VpsInstaller {
 
+  /**
+   * @return the login error message or null if successful
+   */
+  String login() throws IOException;
+
   void browse(String link, BiConsumer<VpsInstallLink, Supplier<InputStream>> consumer) throws IOException;
 
-
-  public static VpsInstaller getInstaller(String link) {
-    if (link.contains("vpuniverse.com")) {
-      return new VpsInstallerFromVPU();
-    }
-    else if (link.contains("vpforums.")) {
-      return new VpsInstallerFromVPF();
-    }
-    return null;
-  }
-
-  public static List<VpsInstallLink> getInstallLinks(String link) {
+  default List<VpsInstallLink> getInstallLinks(String url) throws IOException {
     List<VpsInstallLink> links = new ArrayList<>();
-    try {
-      VpsInstaller installer = getInstaller(link);
-      if (installer != null) {
-        installer.browse(link, (l, s) -> {
-          System.out.println(l.getName() + " (" + l.getSize() +") : " + l.getUrl());
-          links.add(l);
-        });
-      }
-    }
-    catch (IOException ioe) {
-    }
+    browse(url, (l, s) -> {
+      links.add(l);
+    });
     return links;
   }
 
-  public static void resolveLinks(UploadDescriptor uploadDescriptor) throws IOException {
-    // detection that it is a file hosted on a remote source
-    String originalFilename = uploadDescriptor.getOriginalUploadFileName();
-    if (originalFilename.contains(VpsInstallLink.VPS_INSTALL_LINK_PREFIX)) {
-
-      InputStream in = uploadDescriptor.getFile().getInputStream();
-      String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-      String link  = StringUtils.substringBeforeLast(content, "@");
-      String order  = StringUtils.substringAfterLast(content, "@");
-
-      try (FileOutputStream fout = new FileOutputStream(uploadDescriptor.getTempFilename())) {
-        downloadLink(fout, link, Integer.parseInt(order));
+  default void downloadLink(OutputStream out, String link, int order) throws IOException {
+    IOException[] exception = new IOException[1];
+    // browse and download 
+    browse(link, (l, s) -> {
+      // identify the chosen file and get associated InputStream
+      if (l.getOrder() == order) {
+        try (InputStream downloadedContent = s.get()) {
+            StreamUtils.copy(downloadedContent, out);
+        }
+        catch (IOException ioe) {
+          exception[0] = ioe;
+        }
       }
+    });
+    if (exception[0] != null) {
+      throw exception[0];
     }
   }
 
-  public static void downloadLink(OutputStream out, String link, int order) throws IOException {
-    // browse again and do 
-    VpsInstaller installer = getInstaller(link);
-    if (installer != null) {
-      installer.browse(link, (l, s) -> {
-        // identify the chosen file and get associated InputStream
-        if (l.getOrder() == order) {
-          try (InputStream downloadedContent = s.get()) {
-              StreamUtils.copy(downloadedContent, out);
-          }
-          catch (IOException ioe) {
-            // cannot get file
-          }
-        }
-      });
-    }
+  default HtmlElement nextChild(Iterator<HtmlElement> children) {
+    return children.hasNext()? children.next(): null;
+  }
+  default HtmlElement nextChild(Iterator<HtmlElement> children, HtmlPage page) {
+    return children.hasNext()? children.next(): new HtmlDivision("div", page, null);
   }
 }
