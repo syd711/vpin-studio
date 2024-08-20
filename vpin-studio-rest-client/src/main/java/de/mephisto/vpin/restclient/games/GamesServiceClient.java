@@ -149,13 +149,6 @@ public class GamesServiceClient extends VPinStudioClientService {
           games.remove(index);
           games.add(index, gameRepresentation);
         }
-
-        List<GameRepresentation> all = this.getGamesCached(-1);
-        index = all.indexOf(gameRepresentation);
-        if (index != -1) {
-          all.remove(index);
-          all.add(index, gameRepresentation);
-        }
       }
       return gameRepresentation;
     }
@@ -288,6 +281,16 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getGamesCached(int emulatorId) {
+    if (emulatorId == -1) {
+      List<GameRepresentation> games = new ArrayList<>();
+      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+      for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+        games.addAll(getGamesCached(gameEmulator.getId()));
+      }
+      return games;
+    }
+
+    // else
     if (!allGames.containsKey(emulatorId)) {
       Object lock = getLock(emulatorId);
       synchronized (lock) {
