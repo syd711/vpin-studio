@@ -1,9 +1,11 @@
 package de.mephisto.vpin.restclient.highscores.logging;
 
+import de.mephisto.vpin.restclient.JsonSettings;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class HighscoreEventLog {
+public class HighscoreEventLog extends JsonSettings {
   private int gameId;
 
   private List<EventLogMessage> log = new ArrayList<>();
@@ -22,5 +24,15 @@ public class HighscoreEventLog {
 
   public void setLog(List<EventLogMessage> log) {
     this.log = log;
+  }
+
+  @Override
+  public String toString() {
+    StringBuilder builder = new StringBuilder();
+    for (EventLogMessage eventLogMessage : log) {
+      builder.append(eventLogMessage.toString());
+      builder.append("\n");
+    }
+    return builder.toString();
   }
 }

@@ -94,7 +94,7 @@ public class GamesResource {
 
   @GetMapping("/eventlog/{id}")
   public HighscoreEventLog getEventLog(@PathVariable("id") int id) {
-    return SLOG.getLog(id);
+    return gameService.getEventLog(id);
   }
 
   @GetMapping("/scorevalidation/{id}")

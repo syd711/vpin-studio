@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.server.discord.DiscordService;
@@ -123,24 +124,24 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
   public void tableExited(TableStatusChangedEvent event) {
     Game game = event.getGame();
     LOG.info("Executing table exit commands for '" + game + "'");
+    SLOG.info("Executing table exit commands for '" + game + "'");
     discordService.setActivity(null);
-    new Thread(() -> {
-      Thread.currentThread().setName("Table Exit Thread");
-      LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
-      try {
-        Thread.sleep(EXIT_DELAY);
-      }
-      catch (InterruptedException e) {
-        //ignore
-      }
-      LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
-      highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
+    LOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
+    SLOG.info("Starting " + EXIT_DELAY + "ms update delay before updating highscores.");
+    try {
+      Thread.sleep(EXIT_DELAY);
+    }
+    catch (InterruptedException e) {
+      //ignore
+    }
+    LOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
+    SLOG.info("Finished " + EXIT_DELAY + "ms update delay, updating highscores.");
+    highscoreService.scanScore(game, EventOrigin.TABLE_EXIT_EVENT);
 
-      if (notificationSettings.isHighscoreCheckedNotification()) {
-        Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Highscore scan finished!");
-        notificationService.showNotification(notification);
-      }
-    }).start();
+    if (notificationSettings.isHighscoreCheckedNotification()) {
+      Notification notification = NotificationFactory.createNotification(game.getWheelImage(), game.getGameDisplayName(), "Highscore scan finished!");
+      notificationService.showNotification(notification);
+    }
   }
 
   @Override

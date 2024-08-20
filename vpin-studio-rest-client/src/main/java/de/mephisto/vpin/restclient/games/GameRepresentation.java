@@ -56,6 +56,7 @@ public class GameRepresentation {
   private Long templateId;
   private boolean vpxGame;
   private boolean cardDisabled;
+  private boolean eventLogAvailable;
 
   private VPSChanges vpsUpdates = new VPSChanges();
 
@@ -66,6 +67,14 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public boolean isEventLogAvailable() {
+    return eventLogAvailable;
+  }
+
+  public void setEventLogAvailable(boolean eventLogAvailable) {
+    this.eventLogAvailable = eventLogAvailable;
+  }
 
   public boolean isCardDisabled() {
     return cardDisabled;

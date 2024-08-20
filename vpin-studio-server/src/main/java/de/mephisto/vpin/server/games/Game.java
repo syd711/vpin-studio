@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
+import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -58,6 +59,7 @@ public class Game {
   private AltColorTypes altColorType;
 
   private boolean defaultBackgroundAvailable;
+  private boolean eventLogAvailable;
   private PupPack pupPack;
   private List<Integer> playlists = new ArrayList<>();
 
@@ -69,7 +71,18 @@ public class Game {
   private String notes;
   private VPSChanges vpsChanges = new VPSChanges();
 
+  private boolean foundControllerStop = false;
+  private boolean foundTableExit = false;
+
   public Game() {
+  }
+
+  public boolean isEventLogAvailable() {
+    return eventLogAvailable;
+  }
+
+  public void setEventLogAvailable(boolean eventLogAvailable) {
+    this.eventLogAvailable = eventLogAvailable;
   }
 
   public boolean isCardDisabled() {
@@ -199,6 +212,22 @@ public class Game {
     if (vpsChanges != null) {
       this.vpsChanges = vpsChanges;
     }
+  }
+
+  public boolean isFoundControllerStop() {
+    return foundControllerStop;
+  }
+
+  public void setFoundControllerStop(boolean foundControllerStop) {
+    this.foundControllerStop = foundControllerStop;
+  }
+
+  public boolean isFoundTableExit() {
+    return foundTableExit;
+  }
+
+  public void setFoundTableExit(boolean foundTableExit) {
+    this.foundTableExit = foundTableExit;
   }
 
   @JsonIgnore

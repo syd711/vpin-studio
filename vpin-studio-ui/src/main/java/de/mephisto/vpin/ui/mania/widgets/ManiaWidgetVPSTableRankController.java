@@ -23,6 +23,8 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -116,7 +118,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     TableScoreDetails selectedItem = tableView.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(selectedItem.getAccountUUID());
-      if(accountByUuid != null) {
+      if (accountByUuid != null) {
         maniaController.selectPlayer(accountByUuid);
       }
     }
@@ -133,15 +135,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @FXML
   private void onScoreSync() {
+    List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
+    List<PlayerRepresentation> collect = players.stream().filter(p -> StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
+    if (collect.isEmpty()) {
+      WidgetFactory.showAlert(Studio.stage, "No Accounts", "None of your players is registered on VPin Mania.", "The highscores are registered based on players that have marked as VPin Mania account.");
+      return;
+    }
+
+
     if (vpsTable != null) {
-      List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
-      List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
-      if (collect.isEmpty()) {
-        WidgetFactory.showAlert(Studio.stage, "No Accounts", "Non of your players is registered as VPin Mania account.", "The highscores are registered based on your players that have been registered as VPin Mania account.");
-        return;
-      }
-
-
       GameRepresentation gameByVpsTable = Studio.client.getGameService().getGameByVpsTable(vpsTable, null);
       if (gameByVpsTable == null) {
         WidgetFactory.showAlert(Studio.stage, "No VPS Mapping", "This table is not installed on your cabinet or has no valid VPS mapping.");
@@ -175,6 +177,8 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    syncBtn.setDisable(true);
+    showPlayerBtn.setDisable(true);
     tableView.setPlaceholder(new Label("         No scores listed here?\nBe the first and create a highscore!"));
 
     columnRank.setCellValueFactory(cellData -> {
@@ -273,12 +277,20 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
+
+    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<TableScoreDetails>() {
+      @Override
+      public void changed(ObservableValue<? extends TableScoreDetails> observable, TableScoreDetails oldValue, TableScoreDetails newValue) {
+        showPlayerBtn.setDisable(newValue == null);
+      }
+    });
   }
 
 
   public void setData(VpsTable vpsTable) {
     openBtn.setDisable(vpsTable == null);
     syncBtn.setDisable(vpsTable == null);
+    showPlayerBtn.setDisable(true);
     this.vpsTable = vpsTable;
     if (vpsTable == null) {
       Platform.runLater(() -> {

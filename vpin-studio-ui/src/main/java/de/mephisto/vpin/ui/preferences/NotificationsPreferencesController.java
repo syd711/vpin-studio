@@ -66,15 +66,15 @@ public class NotificationsPreferencesController implements Initializable {
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
 
-    highscoresCheckbox.setSelected(notificationSettings.isHighscoreCheckedNotification());
+    highscoresCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
     highscoresCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      notificationSettings.setHighscoreCheckedNotification(t1);
+      notificationSettings.setHighscoreUpdatedNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
 
-    highscoresCheckedCheckbox.setSelected(notificationSettings.isHighscoreUpdatedNotification());
+    highscoresCheckedCheckbox.setSelected(notificationSettings.isHighscoreCheckedNotification());
     highscoresCheckedCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      notificationSettings.setHighscoreUpdatedNotification(t1);
+      notificationSettings.setHighscoreCheckedNotification(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, notificationSettings);
     });
 

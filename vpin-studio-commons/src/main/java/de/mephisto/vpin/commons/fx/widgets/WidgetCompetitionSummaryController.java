@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -108,11 +109,11 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
-      "    -fx-border-style: solid solid solid solid;\n" +
-      "    -fx-border-color: #111111;\n" +
-      "    -fx-background-color: #111111;\n" +
-      "    -fx-background-radius: 6;" +
-      "    -fx-border-width: 1;");
+        "    -fx-border-style: solid solid solid solid;\n" +
+        "    -fx-border-color: #111111;\n" +
+        "    -fx-background-color: #111111;\n" +
+        "    -fx-background-radius: 6;" +
+        "    -fx-border-width: 1;");
 
     emptylabel = new Label("");
     emptylabel.getStyleClass().add("preference-description");
@@ -264,11 +265,14 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
       }
     }
 
-    Image image = new Image(ServerFX.client.getCompetitionBackground(competition.getGameId()));
-    BackgroundImage myBI = new BackgroundImage(image,
-      BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
-      BackgroundSize.DEFAULT);
-    topBox.setBackground(new Background(myBI));
+    InputStream competitionBackground = ServerFX.client.getCompetitionBackground(competition.getGameId());
+    if (competitionBackground != null) {
+      Image image = new Image(competitionBackground);
+      BackgroundImage myBI = new BackgroundImage(image,
+          BackgroundRepeat.NO_REPEAT, BackgroundRepeat.NO_REPEAT, BackgroundPosition.DEFAULT,
+          BackgroundSize.DEFAULT);
+      topBox.setBackground(new Background(myBI));
+    }
   }
 
   private String formatScoreText(ScoreRepresentation score) {

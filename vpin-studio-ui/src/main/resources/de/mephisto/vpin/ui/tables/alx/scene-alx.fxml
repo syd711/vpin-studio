@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -31,6 +33,9 @@
                            <content>
                               <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
                         </ScrollPane>
                      </children>
                   </VBox>
@@ -57,7 +62,7 @@
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
                      <children>
-                        <Label styleClass="default-title" text="Record Scores" />
+                        <Label styleClass="default-title" text="Recorded Scores" />
                         <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio by table)">
                            <VBox.margin>
                               <Insets bottom="12.0" />
@@ -79,11 +84,18 @@
                      </HBox.margin>
                   </VBox>
                </children>
+               <padding>
+                  <Insets left="12.0" top="12.0" />
+               </padding>
             </HBox>
          </content>
       </ScrollPane>
    </center>
-   <padding>
-      <Insets left="12.0" top="12.0" />
-   </padding>
+   <top>
+      <ToolBar BorderPane.alignment="CENTER">
+        <items>
+            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+        </items>
+      </ToolBar>
+   </top>
 </BorderPane>

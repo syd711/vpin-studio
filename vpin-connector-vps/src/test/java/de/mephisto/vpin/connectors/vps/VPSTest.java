@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -107,11 +108,24 @@ public class VPSTest {
   @Test
   public void testTableLoading() {
     VPS vps = newInstance();
-    VpsTable table = vps.getTableById("sx604oSu");
-    List<VpsTableVersion> tableFiles = table.getTableFiles();
-    for (VpsTableVersion tableFile : tableFiles) {
-      System.out.println(tableFile.getVersion() + "/" + tableFile.getId());
+    vps.reload();
+
+    List<String> emus = new ArrayList<>();
+    List<VpsTable> tables = vps.getTables();
+    for (VpsTable table : tables) {
+      List<VpsTableVersion> tableFiles = table.getTableFiles();
+      for (VpsTableVersion tableFile : tableFiles) {
+        String tableFormat = tableFile.getTableFormat();
+        if(!emus.contains(tableFormat)) {
+          emus.add(tableFormat);
+        }
+      }
     }
+
+    for (String emu : emus) {
+      System.out.println(emu);
+    }
+
 
   }
 

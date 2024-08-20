@@ -37,6 +37,8 @@ public class GameDetails {
 
   private String notes;
 
+  private String eventLog;
+
   private Long templateId;
 
   private String romName;
@@ -60,6 +62,38 @@ public class GameDetails {
   private int nvOffset;
 
   private Boolean cardsDisabled;
+
+  private Boolean foundControllerStop = true;
+
+  private Boolean foundTableExit = true;
+
+  public Boolean getFoundControllerStop() {
+    return foundControllerStop;
+  }
+
+  public void setFoundControllerStop(Boolean foundControllerStop) {
+    this.foundControllerStop = foundControllerStop;
+  }
+
+  public Boolean getFoundTableExit() {
+    return foundTableExit;
+  }
+
+  public void setFoundTableExit(Boolean foundTableExit) {
+    this.foundTableExit = foundTableExit;
+  }
+
+  public Boolean getCardsDisabled() {
+    return cardsDisabled;
+  }
+
+  public String getEventLog() {
+    return eventLog;
+  }
+
+  public void setEventLog(String eventLog) {
+    this.eventLog = eventLog;
+  }
 
   public Boolean isCardsDisabled() {
     return cardsDisabled;

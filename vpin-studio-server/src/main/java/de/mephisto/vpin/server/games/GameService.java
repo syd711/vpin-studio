@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -12,6 +13,8 @@ import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -577,6 +580,8 @@ public class GameService implements InitializingBean {
         scannedTableName = tableDetails.getRomAlt();
       }
 
+      gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
+      gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
       gameDetails.setRomName(scannedRomName);
       gameDetails.setTableName(scannedTableName);
       gameDetails.setNvOffset(scanResult.getNvOffset());
@@ -619,9 +624,13 @@ public class GameService implements InitializingBean {
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
+    game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
+    game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
 
     game.setNvOffset(gameDetails.getNvOffset());
     game.setCardDisabled(gameDetails.isCardsDisabled() != null && gameDetails.isCardsDisabled());
+
+    game.setEventLogAvailable(gameDetails.getEventLog() != null);
 
     //only apply legacy highscore name if the Popper fields are empty
     if (StringUtils.isEmpty(game.getHsFileName())) {
@@ -694,6 +703,18 @@ public class GameService implements InitializingBean {
     return getGame(game.getId());
   }
 
+  public synchronized void saveEventLog(HighscoreEventLog log) {
+    try {
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(log.getGameId());
+      gameDetails.setEventLog(log.toJson());
+      gameDetailsRepository.saveAndFlush(gameDetails);
+      LOG.info("Saved event log for " + log.getGameId());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save event log: " + e.getMessage(), e);
+    }
+  }
+
   public boolean vpsLink(int gameId, String extTableId, String extTableVersionId) {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(gameId);
     gameDetails.setExtTableId(extTableId);
@@ -760,6 +781,21 @@ public class GameService implements InitializingBean {
       return highscoreService.getHighscoreFiles(game);
     }
     return new HighscoreFiles();
+  }
+
+  public HighscoreEventLog getEventLog(int id) {
+    try {
+      Game game = getGame(id);
+      GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
+      String log = gameDetails.getEventLog();
+      if (log != null) {
+        return HighscoreEventLog.fromJson(HighscoreEventLog.class, log);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read event log: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   public GameScoreValidation getGameScoreValidation(int id) {

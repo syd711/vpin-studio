@@ -50,7 +50,8 @@ public class VpsInstallerUtils {
       ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new VpsInstallerProgressModel(link));
       List<VpsInstallLink> installLinks = resultModel.getTypedResults();
 
-      if (installLinks.size() == 0) {
+      if (installLinks.isEmpty()
+      ) {
         LOG.info("no link to install or repository not supported or error while getting them, follow the link");
       }
       else {

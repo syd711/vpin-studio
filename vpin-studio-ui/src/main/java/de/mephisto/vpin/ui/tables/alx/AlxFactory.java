@@ -148,6 +148,8 @@ public class AlxFactory {
 
 
   public static void createRecordedScores(Pane root, List<TableAlxEntry> entries) {
+    root.getChildren().removeAll(root.getChildren());
+
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
     Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getScores));
     Collections.reverse(statEntries);
@@ -185,6 +187,8 @@ public class AlxFactory {
   }
 
   public static void createLongestPlayed(Pane root, List<TableAlxEntry> entries) {
+    root.getChildren().removeAll(root.getChildren());
+
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
     Collections.sort(statEntries, Comparator.comparingInt(TableAlxEntry::getTimePlayedSecs));
     Collections.reverse(statEntries);
@@ -223,6 +227,8 @@ public class AlxFactory {
   }
 
   public static void createMostPlayed(Pane root, List<TableAlxEntry> entries) {
+    root.getChildren().removeAll(root.getChildren());
+
     List<TableAlxEntry> mostPlayedEntries = new ArrayList<>(entries);
     Collections.sort(mostPlayedEntries, Comparator.comparingInt(TableAlxEntry::getNumberOfPlays));
     Collections.reverse(mostPlayedEntries);
