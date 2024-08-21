@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
@@ -408,4 +409,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void tablesChanged() {
     preferencesChanged(PreferenceType.uiSettings);
   }
+
+  @Override
+  public void tableUploaded(UploadDescriptor uploadeDescription) {
+    tableOverviewController.refreshUploadResult(uploadeDescription);
+  }
+
 }

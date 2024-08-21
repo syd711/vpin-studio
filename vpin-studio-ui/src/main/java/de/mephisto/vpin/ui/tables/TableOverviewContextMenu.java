@@ -130,7 +130,7 @@ public class TableOverviewContextMenu {
 
       MenuItem b2sItem = new MenuItem("Open Backglass Manager");
       b2sItem.setGraphic(iconBackglassManager);
-      b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager());
+      b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
       ctxMenu.getItems().add(b2sItem);
 
       ctxMenu.getItems().add(new SeparatorMenuItem());

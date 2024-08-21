@@ -26,6 +26,13 @@ public abstract class BaseLoadingModel<T extends BaseLoadingModel<?>> extends Ob
     set((T) this);
   }
 
+  public void reload() {
+    loadRequested = false;
+    loaded = false;
+    // force reload process
+    isLoaded();
+  }
+
   /** Invoked from Executor thread */
   protected void doLoad() throws Exception {
     load();

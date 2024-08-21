@@ -3,7 +3,6 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
@@ -22,10 +21,10 @@ import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
@@ -34,17 +33,16 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -60,6 +58,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+
+import javax.annotation.Nullable;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -178,6 +178,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private Button renameBtn;
 
   @FXML
+  private Button uploadBtn;
+
+  @FXML
   private Button deleteBtn;
 
   @FXML
@@ -247,6 +250,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
    */
   private BackglassManagerFilterController backglassFilterController;
 
+  private BackglassManagerDragDropHandler dndHandler;
+
 //-------------
 
   private DirectB2SData tableData;
@@ -263,15 +268,21 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       TableDialogs.directBackglassUpload(stage, game);
+      // when done, force refresh
+      refreshBackglass();
     }
   }
 
   @FXML
   private void onBackglassReload(ActionEvent e) {
+    refreshBackglass();
+  }
+
+  public void refreshBackglass() {
     try {
       DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
       if (selectedItem != null) {
-        selectedItem.load();
+        selectedItem.reload();
         refresh(selectedItem.backglass);
       }
     }
@@ -461,6 +472,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     this.dataManagerBtn.setDisable(true);
     this.renameBtn.setDisable(true);
+    this.uploadBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.reloadBackglassBtn.setDisable(true);
@@ -615,29 +627,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
       Platform.runLater(() -> {
         this.directb2sList.setItems(FXCollections.observableList(unfilteredBackglasses));
+
       });
     }).start();
 
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      setSaveEnabled(false);
-      this.deleteBtn.setDisable(newValue == null);
-      this.reloadBackglassBtn.setDisable(newValue == null);
-      this.glowing.setDisable(newValue == null);
-      this.startAsExe.setDisable(newValue == null);
-      this.dataManagerBtn.setDisable(newValue == null);
-      this.duplicateBtn.setDisable(newValue == null);
-      this.hideB2SDMD.setDisable(newValue == null);
-      this.hideB2SBackglass.setDisable(newValue == null);
-      this.hideGrill.setDisable(newValue == null);
-      this.hideDMD.setDisable(newValue == null);
-      this.startBackground.setDisable(newValue == null);
-      this.bringBGFromTop.setDisable(newValue == null);
-      this.skipGIFrames.setDisable(newValue == null);
-      this.skipLampFrames.setDisable(newValue == null);
-      this.skipLampFrames.setDisable(newValue == null);
-      this.skipSolenoidFrames.setDisable(newValue == null);
-      this.bulbsLabel.setDisable(newValue == null);
-      this.usedLEDType.setDisable(newValue == null);
+      refresh(null);
 
       Platform.runLater(() -> {
         if (newValue != null) {
@@ -645,6 +640,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         }
       });
     });
+
+    // add the overlay for drag and drop
+    this.dndHandler = new BackglassManagerDragDropHandler(this, directb2sList, tableStack);
 
     if (this.directb2sList.getItems().isEmpty()) {
       this.directb2sList.getSelectionModel().clearSelection();
@@ -806,6 +804,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.dataManagerBtn.setDisable(true);
 
     this.renameBtn.setDisable(newValue == null);
+    this.uploadBtn.setDisable(newValue == null);
     this.duplicateBtn.setDisable(newValue == null);
     this.deleteBtn.setDisable(newValue == null);
     this.reloadBackglassBtn.setDisable(newValue == null);
@@ -832,11 +831,27 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     fullDmdLabel.setText("");
     gameLabel.setText("-");
     gameFilenameLabel.setText("-");
+
+    glowing.setDisable(newValue == null);
+    startAsExe.setDisable(newValue == null);
+    dataManagerBtn.setDisable(newValue == null);
+    hideB2SDMD.setDisable(newValue == null);
+    hideB2SBackglass.setDisable(newValue == null);
+    hideGrill.setDisable(newValue == null);
+    hideDMD.setDisable(newValue == null);
+    startBackground.setDisable(newValue == null);
+    bringBGFromTop.setDisable(newValue == null);
+    skipGIFrames.setDisable(newValue == null);
+    skipLampFrames.setDisable(newValue == null);
+    skipSolenoidFrames.setDisable(newValue == null);
+    skipLEDFrames.setDisable(newValue == null);
+    bulbsLabel.setDisable(newValue == null);
+    usedLEDType.setDisable(newValue == null);
+
     game = null;
 
-
-    DirectB2STableSettings tmpTableSettings;
     if (newValue != null) {
+      DirectB2STableSettings tmpTableSettings;
       try {
         this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
       }
@@ -960,13 +975,42 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
       setSaveEnabled(true);
     }
-    else {
-      tmpTableSettings = null;
-    }
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
     this.tablesSidebarController = tablesSidebarController;
+  }
+
+  public void selectGame(@Nullable GameRepresentation game) {
+    // try to select first backglass of the game, do the selection by name
+    if (game != null) {
+      String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
+
+      // at calling time, the list may not have been populated so register a listener in that case
+      if (unfilteredBackglasses != null) {
+        selectGame(gameBaseName);
+      }
+      else {
+        ChangeListener<ObservableList<DirectB2SEntryModel>> listener = new ChangeListener<ObservableList<DirectB2SEntryModel>>() {
+          @Override
+          public void changed(ObservableValue<? extends ObservableList<DirectB2SEntryModel>> observable,
+              ObservableList<DirectB2SEntryModel> oldValue, ObservableList<DirectB2SEntryModel> newValue) {
+            selectGame(gameBaseName);
+            directb2sList.itemsProperty().removeListener(this);
+          }
+        };
+        this.directb2sList.itemsProperty().addListener(listener);
+      }
+    }
+  }
+  private void selectGame(String gameBaseName) {
+    for (DirectB2SEntryModel backglass : unfilteredBackglasses) {
+      if (StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameBaseName)) {
+        directb2sList.scrollTo(backglass);
+        directb2sList.getSelectionModel().select(backglass);
+        break;
+      }
+    }
   }
 
   private void save() {
@@ -1004,6 +1048,10 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.saveEnabled = b;
   }
 
+  public GameRepresentation getGame() {
+    return game;  
+  }
+
   //------------------------------------------------
 
 
@@ -1032,6 +1080,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       this.backglass = backglass;
     }
 
+    @Override
     public void load() {
       this.backglassData = client.getBackglassServiceClient().getDirectB2SData(backglass);
       if (backglassData != null) {
@@ -1048,6 +1097,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           catch (IOException ioe) {
             LOG.error("Cannot download DMD image for game " + backglassData.getGameId(), ioe);
           }
+        } else {
+          this.hasDmd = false;
         }
 
         this.nbScores = backglassData.getScores();
@@ -1065,6 +1116,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
     }
 
+    @Override
     public void loaded() {
       if (!match()) {
         // self removal on load in case item is filtered
