@@ -27,7 +27,8 @@ public class VpsInstallerUtils {
 
   public static void installTable(@Nullable TablesSidebarController tablesController, @Nullable GameRepresentation game, 
     String link, String tableId, String versionId, String version) {
-    if (installOrBrowse(tablesController, game, link, VpsDiffTypes.tableNewVersionVPX)) {
+
+      if (installOrBrowse(tablesController, game, link, VpsDiffTypes.tableNewVersionVPX)) {
       if (game != null) {
         // If table has been installed, auto link it to VPS entry and force fix version
         try {

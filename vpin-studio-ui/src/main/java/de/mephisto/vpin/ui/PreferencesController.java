@@ -424,7 +424,7 @@ public class PreferencesController implements Initializable, StudioEventListener
     tournamentGroup.setVisible(Features.MANIA_ENABLED);
 
     vpuBtn.setVisible(Features.VP_UNIVERSE);
-    vpfBtn.setVisible(Features.VP_UNIVERSE);
+    vpfBtn.setVisible(Features.VP_FORUMS);
 
     avatarBtn.getStyleClass().add("preference-button-selected");
     versionLink.setText("VPin Studio Version " + Studio.getVersion());

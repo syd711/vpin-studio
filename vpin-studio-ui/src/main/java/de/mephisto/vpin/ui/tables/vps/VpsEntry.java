@@ -1,8 +1,10 @@
 package de.mephisto.vpin.ui.tables.vps;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.geometry.Pos;
@@ -57,7 +59,12 @@ public class VpsEntry extends HBox {
     button.setPrefWidth(70);
     button.setTooltip(new Tooltip(link));
     button.setOnAction(event -> {
-      VpsInstallerUtils.installOrBrowse(tablesController, game, link, type);
+      if (Features.AUTO_INSTALLER) {
+        VpsInstallerUtils.installOrBrowse(tablesController, game, link, type);
+      }
+      else {
+        Studio.browse(link);
+      }
     });
 
     FontIcon fontIcon = new FontIcon();

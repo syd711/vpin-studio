@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.vps;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
@@ -208,11 +209,11 @@ public class VpsService implements InitializingBean {
   }
 
   private VpsInstaller getInstaller(String link) {
-    if (link.contains("vpuniverse.com")) {
+    if (Features.VP_UNIVERSE && link.contains("vpuniverse.com")) {
       VPUSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPU_SETTINGS, VPUSettings.class);
       return new VpsInstallerFromVPU(settings);
     }
-    else if (link.contains("vpforums.org")) {
+    else if (Features.VP_FORUMS && link.contains("vpforums.org")) {
       VPFSettings settings = preferencesService.getJsonPreference(PreferenceNames.VPF_SETTINGS, VPFSettings.class);
       return new VpsInstallerFromVPF(settings);
     }

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.event.ActionEvent;
@@ -85,23 +86,26 @@ public class VpsTableEntry extends HBox {
       authorLabel.setText(String.join(", ", authors));
       authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
     }
+    // As getGameByVpsTable() use the cache, may be long if not initialized 
+    // so code below runs in a non blocking thread
+    new Thread(() -> {
+      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
+      if (gameByVpsTable != null) {
+        // show all installed versions when no game is selected (case of VPS Tab), 
+        // or only the selected one in sidebar
+        if (game == null || game.getId() == gameByVpsTable.getId()) {
+          //FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
+          //checkboxIcon.setIconSize(14);
+          //checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
+          //authorBox.getChildren().add(checkboxIcon);
+          authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+        }
+      }
+    }).start();
 
-    GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
     HBox authorBox = new HBox(6);
     authorBox.setAlignment(Pos.CENTER_LEFT);
-    if (gameByVpsTable != null) {
-      // show all installed versions when no game is selected (case of VPS Tab), 
-      // or only the selected one in sidebar
-      if (game == null || game.getId() == gameByVpsTable.getId()) {
-        //FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
-        //checkboxIcon.setIconSize(14);
-        //checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
-        //authorBox.getChildren().add(checkboxIcon);
-        authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
-      }
-    }
     authorBox.setPrefWidth(230);
-
     authorBox.getChildren().add(authorLabel);
     this.getChildren().add(authorBox);
 
@@ -114,7 +118,12 @@ public class VpsTableEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-        VpsInstallerUtils.installTable(tablesController, game, link, tableId, versionId, version);
+        if (Features.AUTO_INSTALLER) {
+          VpsInstallerUtils.installTable(tablesController, game, link, tableId, versionId, version);
+        } 
+        else {
+          Studio.browse(link);
+        }
       });
 
       FontIcon fontIcon = new FontIcon();
