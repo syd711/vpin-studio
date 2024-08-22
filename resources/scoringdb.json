@@ -25,6 +25,12 @@
       "rom": "MountainClimbingHS",
       "tableName": "",
       "textFile": "MountainClimbingHS.txt"
+    },
+    {
+      "scannedRom": "LMEMDOFTables",
+      "rom": "AMH",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [

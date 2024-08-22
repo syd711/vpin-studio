@@ -29,18 +29,22 @@ public class RomService {
         ScanResult scan = VPXFileScanner.scan(game.getGameFile());
         if (!StringUtils.isEmpty(scan.getRom())) {
           ScoringDB scoringDatabase = systemService.getScoringDatabase();
-          Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getRom().equals(scan.getRom())).findFirst();
+          Optional<ScoringDBMapping> first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getScannedRom() != null && mapping.getScannedRom().equals(scan.getRom())).findFirst();
           if (first.isPresent()) {
-            //enrich the scan result with data from the scoringdb.json
             ScoringDBMapping scoringDBMapping = first.get();
-            if (scoringDBMapping.getTextFile() != null) {
-              scan.setHsFileName(scoringDBMapping.getTextFile());
+            if (!StringUtils.isEmpty(scoringDBMapping.getScannedRom())) {
+              updateScanResult(scoringDBMapping, scan);
+              LOG.info("Applied scoring DB post processing for scan of \"" + game.getGameDisplayName() + "\"");
             }
-            if (scoringDBMapping.getTableName() != null) {
-              scan.setTableName(scoringDBMapping.getTableName());
+          }
+          else {
+            first = scoringDatabase.getHighscoreMappings().stream().filter(mapping -> mapping.getRom().equals(scan.getRom())).findFirst();
+            if (first.isPresent()) {
+              //enrich the scan result with data from the scoringdb.json
+              ScoringDBMapping scoringDBMapping = first.get();
+              updateScanResult(scoringDBMapping, scan);
+              LOG.info("Applied scoring DB post processing for scan of \"" + game.getGameDisplayName() + "\"");
             }
-
-            LOG.info("Applied scoring DB post processing for scan of \"" + game.getGameDisplayName() + "\"");
           }
         }
 
@@ -52,5 +56,21 @@ public class RomService {
     }
     LOG.info("Skipped reading of \"" + game.getGameDisplayName() + "\" (emulator '" + game.getEmulator() + "'), only VPX tables can be scanned.");
     return new ScanResult();
+  }
+
+  private static void updateScanResult(ScoringDBMapping scoringDBMapping, ScanResult scan) {
+    if (!StringUtils.isEmpty(scoringDBMapping.getScannedRom())) {
+      scan.setRom(scoringDBMapping.getRom());
+      scan.setTableName(scoringDBMapping.getTableName());
+      scan.setHsFileName(scoringDBMapping.getTextFile());
+      return;
+    }
+
+    if (scoringDBMapping.getTextFile() != null) {
+      scan.setHsFileName(scoringDBMapping.getTextFile());
+    }
+    if (scoringDBMapping.getTableName() != null) {
+      scan.setTableName(scoringDBMapping.getTableName());
+    }
   }
 }

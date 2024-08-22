@@ -1,9 +1,18 @@
 package de.mephisto.vpin.restclient.system;
 
 public class ScoringDBMapping {
+  private String scannedRom;
   private String rom;
   private String tableName;
   private String textFile;
+
+  public String getScannedRom() {
+    return scannedRom;
+  }
+
+  public void setScannedRom(String scannedRom) {
+    this.scannedRom = scannedRom;
+  }
 
   public String getTableName() {
     return tableName;

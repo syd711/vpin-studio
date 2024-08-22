@@ -71,6 +71,10 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
       return;
     }
 
+    if (isEventFiltered(name)) {
+      return;
+    }
+
     //always hide the overlay on any key press
     if (overlayVisible) {
       onToggleOverlayEvent(name);
@@ -142,6 +146,23 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
       frontendStatusService.notifyFrontendRestart();
     }).start();
   }
+
+
+  private boolean isEventFiltered(String name) {
+    if (pauseMenuSettings != null) {
+      String inputFilterList = pauseMenuSettings.getInputFilterList();
+      if (!StringUtils.isEmpty(inputFilterList)) {
+        String[] split = inputFilterList.toLowerCase().split(",");
+        for (String s : split) {
+          if (!StringUtils.isEmpty(s) && name.toLowerCase().contains(s)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
 
   private synchronized boolean isEventDebounced(String eventName) {
     long inputDebounceMs = pauseMenuSettings.getInputDebounceMs();

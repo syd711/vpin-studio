@@ -107,7 +107,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
-    if(options != null) {
+    if (options != null) {
       tabPane.getSelectionModel().select(0);
       tableOverviewController.selectGameInModel(options.getGameId());
     }
@@ -411,8 +411,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void tableUploaded(UploadDescriptor uploadeDescription) {
-    tableOverviewController.refreshUploadResult(uploadeDescription);
+  public void tableUploaded(UploadDescriptor uploadDescriptor) {
+    Platform.runLater(() -> {
+      tableOverviewController.refreshUploadResult(uploadDescriptor);
+    });
   }
-
 }
