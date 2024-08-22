@@ -16,6 +16,15 @@ public class PauseMenuSettings extends JsonSettings {
   private String rightButton;
   private String overlayButton;
   private String resetButton;
+  private String inputFilterList;
+
+  public String getInputFilterList() {
+    return inputFilterList;
+  }
+
+  public void setInputFilterList(String inputFilterList) {
+    this.inputFilterList = inputFilterList;
+  }
 
   public String getPauseButton() {
     return pauseButton;

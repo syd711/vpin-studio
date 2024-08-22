@@ -64,6 +64,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void controllerEvent(String name) {
+    //reset shutdown thread
+    shutdownThread.notifyKeyEvent();
+
     if (isEventDebounced(name)) {
       return;
     }
