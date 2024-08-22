@@ -10,6 +10,7 @@ import java.util.List;
 public class ProgressResultModel {
   private int processed;
   private int skipped;
+  private int withError;
   private boolean cancelled = false;
 
   public List<Object> results = new ArrayList<>();
@@ -44,6 +45,10 @@ public class ProgressResultModel {
     this.results.add(result);
   }
 
+  public boolean isSuccess() {
+    return !cancelled && withError == 0;
+  }
+
   public boolean isCancelled() {
     return cancelled;
   }
@@ -59,6 +64,9 @@ public class ProgressResultModel {
   public void addSkipped() {
     this.skipped++;
   }
+  public void addError() {
+    this.withError++;
+  }
 
   public int getProcessed() {
     return processed;
@@ -66,5 +74,9 @@ public class ProgressResultModel {
 
   public int getSkipped() {
     return skipped;
+  }
+
+  public int getWithError() {
+    return withError;
   }
 }

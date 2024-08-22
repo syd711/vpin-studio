@@ -311,8 +311,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  public void onBackglassManager() {
-    TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController());
+  public void onBackglassManager(GameRepresentation game) {
+    TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController(), game);
   }
 
   @FXML
@@ -590,21 +590,20 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   private void openUploadDialog(TableUploadType uploadDescriptor) {
     GameRepresentation game = getSelection();
-    TableDialogs.openTableUploadDialog(this, game, uploadDescriptor, null);
+    TableDialogs.openTableUploadDialog(game, uploadDescriptor, null);
   }
 
   public void refreshFilterId() {
     this.onRefresh(tableFilterController.getFilterSettings());
   }
 
-  public void refreshUploadResult(Optional<UploadDescriptor> uploadResult) {
+  public void refreshUploadResult(UploadDescriptor uploadResult) {
     //required for new table that may or may not be part of the filtered view
     refreshFilterId();
 
-    if (uploadResult.isPresent() && uploadResult.get().getGameId() != -1) {
+    if (uploadResult != null && uploadResult.getGameId() != -1) {
       Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
-        UploadDescriptor tableUploadResult = uploadResult.get();
-        Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == tableUploadResult.getGameId()).findFirst();
+        Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           setSelection(match.get());
           if (assetManagerMode) {

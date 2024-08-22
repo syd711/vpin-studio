@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.events;
 
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -104,6 +105,14 @@ public class EventManager {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
         listener.tablesChanged();
+      }
+    }).start();
+  }
+
+  public void notifyTableUploaded(UploadDescriptor result) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.tableUploaded(result);
       }
     }).start();
   }

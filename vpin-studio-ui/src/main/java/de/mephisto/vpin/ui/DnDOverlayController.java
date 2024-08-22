@@ -41,6 +41,10 @@ public class DnDOverlayController implements Initializable {
     tableWheelImage.managedProperty().bindBidirectional(tableWheelImage.visibleProperty());
   }
 
+  public void setMessage(String message) {
+    messageLabel.setText(message);
+  }
+
   public void setViewParams(double width, double height) {
     root.setPrefWidth(width);
     root.setPrefHeight(height);
