@@ -56,16 +56,19 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       UploadDescriptor result = Studio.client.getBackglassServiceClient().uploadDirectB2SFile(next, gameId, percent -> progressResultModel.setProgress(percent));
-      progressResultModel.addProcessed();
-      if (!StringUtils.isEmpty(result.getError())) {
+      if (StringUtils.isNotEmpty(result.getError())) {
+        progressResultModel.addError();
+
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
         });
       }
-      Platform.runLater(() -> {
-        EventManager.getInstance().notifyTableChange(gameId, null);
-      });
-      progressResultModel.addProcessed();
+      else {
+        Platform.runLater(() -> {
+          EventManager.getInstance().notifyTableChange(gameId, null);
+        });
+        progressResultModel.addProcessed(result);
+      }
     }
     catch (Exception e) {
       LOG.error("Res upload failed: " + e.getMessage(), e);

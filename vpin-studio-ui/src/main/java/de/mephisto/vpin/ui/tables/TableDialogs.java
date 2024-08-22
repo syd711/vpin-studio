@@ -27,8 +27,8 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogControll
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
-import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
@@ -170,7 +170,7 @@ public class TableDialogs {
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
-      Platform.runLater(() -> {
+      //Platform.runLater(() -> {
         String analyze = null;
         String suffix = FilenameUtils.getExtension(file.getName());
         if (!suffix.equalsIgnoreCase(AssetType.DIRECTB2S.name()) && PackageUtil.isSupportedArchive(suffix)) {
@@ -184,7 +184,7 @@ public class TableDialogs {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
           ProgressDialog.createProgressDialog(model);
         }
-      });
+      //});
       return true;
     }
     return false;
@@ -198,11 +198,11 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        Platform.runLater(() -> {
+        //Platform.runLater(() -> {
           DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
-          ProgressDialog.createProgressDialog(model);
-        });
-        return true;
+          ProgressResultModel resultmodel = ProgressDialog.createProgressDialog(model);
+          return resultmodel.isSuccess();
+        //});
       }
     }
     return false;
@@ -394,10 +394,11 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController) {
+  public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager", "backglassManager");
     BackglassManagerDialogController controller = (BackglassManagerDialogController) stage.getUserData();
     controller.setTableSidebarController(tablesSidebarController);
+    controller.selectGame(game);
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);
@@ -502,7 +503,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@NonNull TableOverviewController tableOverviewController, @Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -511,7 +512,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, tableOverviewController, game, descriptor, analysis);
+    controller.setGame(stage, game, descriptor, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
