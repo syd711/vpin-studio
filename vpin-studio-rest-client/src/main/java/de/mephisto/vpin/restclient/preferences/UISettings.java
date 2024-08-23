@@ -31,6 +31,9 @@ public class UISettings extends JsonSettings {
 
   private boolean autoApplyVpsData = true;
 
+  private String localFavsColor = "#ffcc00";
+  private String globalFavsColor = "#cc6600";
+
   //open after upload
   private boolean autoEditTableData = true;
 
@@ -74,6 +77,22 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public String getLocalFavsColor() {
+    return localFavsColor;
+  }
+
+  public void setLocalFavsColor(String localFavsColor) {
+    this.localFavsColor = localFavsColor;
+  }
+
+  public String getGlobalFavsColor() {
+    return globalFavsColor;
+  }
+
+  public void setGlobalFavsColor(String globalFavsColor) {
+    this.globalFavsColor = globalFavsColor;
+  }
 
   public boolean isHideFrontendLaunchQuestion() {
     return hideFrontendLaunchQuestion;

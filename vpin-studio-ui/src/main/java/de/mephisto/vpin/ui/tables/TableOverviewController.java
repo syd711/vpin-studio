@@ -1053,7 +1053,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
-  private void refreshPlaylists() {
+  public void refreshPlaylists() {
     this.playlistCombo.setDisable(true);
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
     List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
@@ -1367,13 +1367,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       int ICON_WIDTH = 26;
       double width = 0;
       if (fav) {
-        Label label = WidgetFactory.createLocalFavoritePlaylistIcon();
+        Label label = WidgetFactory.createLocalFavoritePlaylistIcon(uiSettings.getLocalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
       if (globalFav) {
-        Label label = WidgetFactory.createGlobalFavoritePlaylistIcon();
+        Label label = WidgetFactory.createGlobalFavoritePlaylistIcon(uiSettings.getGlobalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
@@ -1381,7 +1381,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       int count = 0;
       for (PlaylistRepresentation match : matches) {
         if (width < (columnPlaylists.widthProperty().get() - ICON_WIDTH)) {
-          box.getChildren().add(WidgetFactory.createPlaylistIcon(match));
+          box.getChildren().add(WidgetFactory.createPlaylistIcon(match, uiSettings));
           width += ICON_WIDTH;
           count++;
           continue;
@@ -1879,8 +1879,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
 
-    playlistCombo.setCellFactory(c -> new WidgetFactory.PlaylistBackgroundImageListCell());
-    playlistCombo.setButtonCell(new WidgetFactory.PlaylistBackgroundImageListCell());
+    playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
+    playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
     playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlist, PlaylistRepresentation t1) {
@@ -2127,6 +2127,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     @Override
     public String toString() {
       return "GameRepresentationModel \"" + game.getGameDisplayName() + "\"";
+    }
+  }
+
+  public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+    public PlaylistBackgroundImageListCell() {
+    }
+
+    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if (item != null) {
+        Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
+        setGraphic(playlistIcon);
+
+        setText(" " + item.toString());
+      }
     }
   }
 }

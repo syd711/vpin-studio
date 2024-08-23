@@ -16,3 +16,4 @@
 - **Highscores**: Fixed highscore parsing for **Punchy the Clown**.
 - **iScored**: Fixed missing score submissions, caused by a missing cache reset of the iScored game room by the server.
 - **Table Overview / Validators**: Fixed "Controller.stop" validator.
+- **Table Overview / Playlists**: Added color picker for local and global favorites.
