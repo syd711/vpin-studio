@@ -28,6 +28,7 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new FourColumnScoreAdapter("monopoly.nv"));
     adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
     adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
+    adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
     adapters.add(new SinglePlayerScoreAdapter());
   }
 

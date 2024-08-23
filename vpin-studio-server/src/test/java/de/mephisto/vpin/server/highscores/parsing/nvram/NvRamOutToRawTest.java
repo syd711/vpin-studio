@@ -62,7 +62,7 @@ public class NvRamOutToRawTest {
     // Set the path to this GameEmulator so that nv files can be found
     PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
     
-    File entry = new File(gameEmulator.getNvramFolder(), "kiko_a10.nv");
+    File entry = new File(gameEmulator.getNvramFolder(), "punchy.nv");
     String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 
     System.out.println(raw);
@@ -71,6 +71,11 @@ public class NvRamOutToRawTest {
     RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
     List<Score> parse = parser.parse();
     System.out.println("Parsed " + parse.size() + " score entries.");
+
+    for (Score score : parse) {
+      System.out.println(score);
+    }
+
     assertFalse(parse.isEmpty());
   }
 

@@ -13,4 +13,6 @@
 - **Highscores**: Fixed highscore resolving for **White Water** by adding "RIVER MASTER" to the list of highscore titles.
 - **Highscores**: Fixed ROM resolving and highscore parsing for **American Most Haunted**.
 - **Highscores**: Fixed highscore parsing for **Gemini**, which can now be differed from **Gemini 2000** which is not supported.
+- **Highscores**: Fixed highscore parsing for **Punchy the Clown**.
 - **iScored**: Fixed missing score submissions, caused by a missing cache reset of the iScored game room by the server.
+- **Table Overview / Validators**: Fixed "Controller.stop" validator.

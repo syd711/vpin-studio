@@ -240,7 +240,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
         File romFile = game.getRomFile();
         File nvRamFile = game.getNvRamFile();
-        if (romFile != null && romFile.exists() && !nvRamFile.exists()) {
+        if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
             result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
             if (findFirst) {
