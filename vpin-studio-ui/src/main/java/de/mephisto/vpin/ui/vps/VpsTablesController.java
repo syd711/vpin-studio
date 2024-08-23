@@ -464,7 +464,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       }
       Platform.runLater(() -> {
         editBtn.setDisable(gameByVpsTable == null);
-        tablesController.getVpsTablesSidebarController().setTable(newSelection);
+        tablesController.getVpsTablesSidebarController().setTable(newSelection, tablesController.getTablesSideBarController());
       });
     }).start();
   }

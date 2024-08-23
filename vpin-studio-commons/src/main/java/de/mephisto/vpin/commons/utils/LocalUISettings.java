@@ -13,6 +13,8 @@ public class LocalUISettings {
 
   public static final String LAST_FOLDER_SELECTION = "lastFolderSelection";
   public static final String LAST_ISCORED_SELECTION = "iscoredUrl";
+  public static final String DROP_IN_FOLDER = "dropInFolder";
+  public static final String DROP_IN_FOLDER_ENABLED = "dropInFolderEnabled";
 
   private static PropertiesStore store;
 
@@ -28,6 +30,21 @@ public class LocalUISettings {
 
   @Nullable
   public static String getProperties(@NonNull String key) {
+    if (store.containsKey(key)) {
+      return store.get(key);
+    }
+    return null;
+  }
+
+  public static boolean getBoolean(@NonNull String key) {
+    if (store.containsKey(key)) {
+      String s = store.get(key);
+      return Boolean.valueOf(s);
+    }
+    return false;
+  }
+
+  public static String getString(@NonNull String key) {
     if (store.containsKey(key)) {
       return store.get(key);
     }
@@ -52,7 +69,7 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(int x, int y, int width, int height) {
-    if(y >= 0) {
+    if (y >= 0) {
       store.set("x", x);
       store.set("y", y);
       store.set("width", width);
@@ -62,7 +79,7 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(String id, int x, int y, int width, int height) {
-    if(y >= 0) {
+    if (y >= 0) {
       store.set(id + "x", x);
       store.set(id + "y", y);
       store.set(id + ".x", x);

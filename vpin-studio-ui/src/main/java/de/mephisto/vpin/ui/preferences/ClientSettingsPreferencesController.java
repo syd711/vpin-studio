@@ -1,6 +1,10 @@
 package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -9,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -17,11 +22,14 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +43,9 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private VBox emulatorList;
+
+  @FXML
+  private VBox dropIns;
 
   @FXML
   private TextField winNetworkShare;
@@ -53,6 +64,15 @@ public class ClientSettingsPreferencesController implements Initializable {
 
   @FXML
   private CheckBox autoEditCheckbox;
+
+  @FXML
+  private CheckBox dropInFolderCheckbox;
+
+  @FXML
+  private Button dropInFolderButton;
+
+  @FXML
+  private TextField dropInTextField;
 
   @FXML
   private CheckBox vpsAltSound;
@@ -161,11 +181,36 @@ public class ClientSettingsPreferencesController implements Initializable {
     }
   }
 
+  @FXML
+  private void onDropInFolderSelection() {
+    StudioFolderChooser chooser = new StudioFolderChooser();
+    chooser.setTitle("Select Drop-In Folder");
+    File targetFolder = chooser.showOpenDialog(stage);
+
+    if (targetFolder != null && targetFolder.exists()) {
+      LocalUISettings.saveProperty(LocalUISettings.DROP_IN_FOLDER, targetFolder.getAbsolutePath());
+      dropInTextField.setText(LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER));
+    }
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     columnPupPack.managedProperty().bindBidirectional(columnPupPack.visibleProperty());
     sectionPupPack.managedProperty().bindBidirectional(sectionPupPack.visibleProperty());
     sectionAssets.managedProperty().bindBidirectional(sectionAssets.visibleProperty());
+
+    dropIns.managedProperty().bindBidirectional(dropIns.visibleProperty());
+
+    dropInFolderCheckbox.setSelected(LocalUISettings.getBoolean(LocalUISettings.DROP_IN_FOLDER_ENABLED));
+    dropInFolderCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      LocalUISettings.saveProperty(LocalUISettings.DROP_IN_FOLDER_ENABLED, t1.toString());
+      dropInTextField.setDisable(!t1);
+      dropInFolderButton.setDisable(!t1);
+    });
+
+    dropInTextField.setDisable(!dropInFolderCheckbox.isSelected());
+    dropInTextField.setText(LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER));
+    dropInFolderButton.setDisable(!dropInFolderCheckbox.isSelected());
 
     sectionPlaylists.managedProperty().bindBidirectional(sectionPlaylists.visibleProperty());
     columnPlaylists.managedProperty().bindBidirectional(columnPlaylists.visibleProperty());
@@ -180,7 +225,7 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnPlaylists.setVisible(frontendType.supportPlaylists());
 
     sectionAssets.setVisible(frontendType.supportMedias());
-
+    dropIns.setVisible(Features.DROP_IN_FOLDER);
 
     networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
 

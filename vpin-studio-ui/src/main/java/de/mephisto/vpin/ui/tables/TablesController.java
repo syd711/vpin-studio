@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
+import de.mephisto.vpin.ui.tables.drophandler.TableMediaDropinsMonitoring;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -43,6 +44,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -103,6 +105,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
 
+  /** a dropins monitoring service that installs assets when saved in the folder */
+  private TableMediaDropinsMonitoring dropinsMonitor;
 
   @Override
   public void onViewActivated(NavigationOptions options) {
@@ -204,6 +208,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
+
+    dropinsMonitor = new TableMediaDropinsMonitoring();
+    dropinsMonitor.startMonitoring(new File("C:/temp/vpin-dropins"), this);
 
     Platform.runLater(() -> {
       Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {

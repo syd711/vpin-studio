@@ -195,7 +195,7 @@ public class TableUploadController implements Initializable, DialogController {
           onCancelClick(event);
         });
 
-        Platform.runLater(() -> {
+        //Platform.runLater(() -> {
           TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
           ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
@@ -270,7 +270,7 @@ public class TableUploadController implements Initializable, DialogController {
               EventManager.getInstance().notifyTableUploaded(uploadedAndImportedDescriptor);
             }
           }
-        });
+        //});
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);

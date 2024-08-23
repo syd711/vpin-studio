@@ -15,7 +15,7 @@
          <content>
             <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
                <children>
-                  <Label styleClass="preference-title" text="VPIN PREFERENCES" textFill="WHITE" />
+                  <Label styleClass="preference-title" text="3RD PARTY PREFERENCES" textFill="WHITE" />
                   <Label styleClass="preference-subtitle" text="VPin MAME">
                      <VBox.margin>
                         <Insets />

@@ -41,9 +41,13 @@ public class UploadAnalysisDispatcher {
       validateArchive(file, game);
     }
     else {
-      UploaderAnalysis analysis = new UploaderAnalysis(file);
-      dispatchBySuffix(file, game, assetType, analysis);
+      dispatchFile(file, game, assetType);
     }
+  }
+
+  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+    UploaderAnalysis analysis = new UploaderAnalysis(file);
+    dispatchBySuffix(file, game, assetType, analysis);
   }
 
   private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
@@ -71,6 +75,8 @@ public class UploadAnalysisDispatcher {
       case VPX: {
         TableDialogs.openTableUploadDialog(game, TableUploadType.uploadAndImport, analysis);
         return;
+      }
+      default: {
       }
     }
 

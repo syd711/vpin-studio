@@ -31,6 +31,8 @@ public interface PreferenceNames {
   String FILTER_SETTINGS = "filterSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
+  String VPU_SETTINGS = "vpuSettings";
+  String VPF_SETTINGS = "vpfSettings";
 
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
