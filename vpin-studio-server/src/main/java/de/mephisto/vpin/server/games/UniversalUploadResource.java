@@ -88,6 +88,7 @@ public class UniversalUploadResource {
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
+      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
 
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);

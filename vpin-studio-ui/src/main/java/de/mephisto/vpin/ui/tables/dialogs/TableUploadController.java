@@ -63,11 +63,13 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private RadioButton uploadAndReplaceRadio;
+
   @FXML
   private Label uploadAndReplaceDescription;
 
   @FXML
   private RadioButton uploadAndCloneRadio;
+
   @FXML
   private Label uploadAndCloneDescription;
 
@@ -130,6 +132,8 @@ public class TableUploadController implements Initializable, DialogController {
   @FXML
   private CheckBox assetIniCheckbox;
   @FXML
+  private CheckBox assetResCheckbox;
+  @FXML
   private CheckBox assetCfgCheckbox;
   @FXML
   private CheckBox assetNvRamCheckbox;
@@ -185,6 +189,7 @@ public class TableUploadController implements Initializable, DialogController {
         boolean assetRom = assetRomCheckbox.isSelected();
         boolean assetDmd = assetDmdCheckbox.isSelected();
         boolean assetIni = assetIniCheckbox.isSelected();
+        boolean assetRes = assetResCheckbox.isSelected();
         boolean assetPov = assetPovCheckbox.isSelected();
         boolean assetNvRam = assetNvRamCheckbox.isSelected();
         boolean assetCfg = assetCfgCheckbox.isSelected();
@@ -246,6 +251,9 @@ public class TableUploadController implements Initializable, DialogController {
             }
             if (assetPov) {
               uploadDescriptor.getAssetsToImport().add(AssetType.POV);
+            }
+            if (assetRes) {
+              uploadDescriptor.getAssetsToImport().add(AssetType.RES);
             }
             if (assetCfg) {
               uploadDescriptor.getAssetsToImport().add(AssetType.CFG);
@@ -380,6 +388,9 @@ public class TableUploadController implements Initializable, DialogController {
     assetPovCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
     assetPovCheckbox.setVisible(assetPovCheckbox.isSelected());
 
+    assetResCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.RES) == null);
+    assetResCheckbox.setVisible(assetResCheckbox.isSelected());
+
     assetDmdCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
     assetDmdCheckbox.setVisible(assetDmdCheckbox.isSelected());
 
@@ -418,11 +429,15 @@ public class TableUploadController implements Initializable, DialogController {
       assetIniCheckbox.setText(".ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
     }
 
+    assetResCheckbox.setText(".res File");
+    if (assetResCheckbox.isSelected()) {
+      assetResCheckbox.setText(".res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
+    }
+
     assetRomCheckbox.setText("ROM");
     if (assetRomCheckbox.isSelected()) {
       assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
     }
-
 
     assetAltSoundCheckbox.setText("ALT Sound");
     if (assetAltSoundCheckbox.isSelected()) {
@@ -444,6 +459,7 @@ public class TableUploadController implements Initializable, DialogController {
         || assetAltColorCheckbox.isSelected()
         || assetPovCheckbox.isSelected()
         || assetIniCheckbox.isSelected()
+        || assetResCheckbox.isSelected()
         || assetCfgCheckbox.isSelected()
         || assetNvRamCheckbox.isSelected()
         || assetMusicCheckbox.isSelected()
@@ -589,6 +605,7 @@ public class TableUploadController implements Initializable, DialogController {
     assetBackglassCheckbox.managedProperty().bindBidirectional(assetBackglassCheckbox.visibleProperty());
     assetRomCheckbox.managedProperty().bindBidirectional(assetRomCheckbox.visibleProperty());
     assetDmdCheckbox.managedProperty().bindBidirectional(assetDmdCheckbox.visibleProperty());
+    assetResCheckbox.managedProperty().bindBidirectional(assetResCheckbox.visibleProperty());
     assetPovCheckbox.managedProperty().bindBidirectional(assetPovCheckbox.visibleProperty());
     assetIniCheckbox.managedProperty().bindBidirectional(assetIniCheckbox.visibleProperty());
     assetCfgCheckbox.managedProperty().bindBidirectional(assetCfgCheckbox.visibleProperty());
@@ -600,6 +617,7 @@ public class TableUploadController implements Initializable, DialogController {
     assetAltSoundCheckbox.setVisible(false);
     assetAltColorCheckbox.setVisible(false);
     assetBackglassCheckbox.setVisible(false);
+    assetResCheckbox.setVisible(false);
     assetRomCheckbox.setVisible(false);
     assetDmdCheckbox.setVisible(false);
     assetIniCheckbox.setVisible(false);
