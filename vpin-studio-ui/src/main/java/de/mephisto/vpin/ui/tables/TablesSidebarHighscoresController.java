@@ -379,8 +379,8 @@ public class TablesSidebarHighscoresController implements Initializable {
       ScoreListRepresentation scoreHistory = Studio.client.getGameService().getScoreHistory(game.getId());
       hsRecordLabel.setText(String.valueOf(scoreHistory.getScores().size()));
       if (!scoreHistory.getScores().isEmpty()) {
-        Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);
         try {
+          Tile highscoresGraphTile = ScoreGraphUtil.createGraph(scoreHistory);
           scoreGraph.setCenter(highscoresGraphTile);
         }
         catch (Exception e) {

@@ -411,9 +411,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
   @Override
-  public void tableUploaded(UploadDescriptor uploadDescriptor) {
+  public void tableUploaded(UploadDescriptor uploadeDescription) {
     Platform.runLater(() -> {
-      tableOverviewController.refreshUploadResult(uploadDescriptor);
+        tableOverviewController.refreshUploadResult(uploadeDescription);
     });
   }
 }

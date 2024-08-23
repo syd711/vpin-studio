@@ -605,7 +605,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
-          setSelection(match.get());
+          Platform.runLater(() -> {
+            setSelection(match.get());
+          });
+
           if (assetManagerMode) {
             onAssetView();
           }
