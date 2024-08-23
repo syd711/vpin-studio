@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **Table Overview / Playlists**: Added color picker for local and global favorites.
 - **Backglass Manager**: Added upload options via dialog and drag-and-drop:
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dnd.png" width="700" />
@@ -14,6 +15,5 @@
 - **Highscores**: Fixed ROM resolving and highscore parsing for **American Most Haunted**.
 - **Highscores**: Fixed highscore parsing for **Gemini**, which can now be differed from **Gemini 2000** which is not supported.
 - **Highscores**: Fixed highscore parsing for **Punchy the Clown**.
-- **iScored**: Fixed missing score submissions, caused by a missing cache reset of the iScored game room by the server.
+- **iScored**: Fixed **broken score submissions**, caused by a missing cache reset of the iScored game room by the server.
 - **Table Overview / Validators**: Fixed "Controller.stop" validator.
-- **Table Overview / Playlists**: Added color picker for local and global favorites.
