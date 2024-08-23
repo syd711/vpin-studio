@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.util;
 
-import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;

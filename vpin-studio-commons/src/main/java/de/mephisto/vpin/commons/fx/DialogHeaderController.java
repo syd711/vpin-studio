@@ -1,6 +1,6 @@
 package de.mephisto.vpin.commons.fx;
 
-import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;

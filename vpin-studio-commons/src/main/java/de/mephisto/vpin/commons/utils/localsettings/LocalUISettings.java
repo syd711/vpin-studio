@@ -1,5 +1,6 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.commons.utils.localsettings;
 
+import de.mephisto.vpin.commons.utils.PropertiesStore;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.scene.shape.Rectangle;
@@ -7,6 +8,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LocalUISettings {
   private final static Logger LOG = LoggerFactory.getLogger(LocalUISettings.class);
@@ -18,14 +21,23 @@ public class LocalUISettings {
 
   private static PropertiesStore store;
 
+  private static List<LocalSettingsChangeListener> listeners = new ArrayList<>();
+
   static {
     File propertiesFile = new File("config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
   }
 
-  public static void saveProperty(@NonNull String key, @NonNull String value) {
+  public static void addListener(LocalSettingsChangeListener listener) {
+    listeners.add(listener);
+  }
+
+  public static void saveProperty(@NonNull String key, @Nullable String value) {
     store.set(key, value);
+    for (LocalSettingsChangeListener listener : listeners) {
+      listener.localSettingsChanged(key, value);
+    }
   }
 
   @Nullable
