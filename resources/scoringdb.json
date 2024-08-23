@@ -31,6 +31,12 @@
       "rom": "AMH",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "scannedRom": "gemini_1977",
+      "rom": "Gemini",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [
