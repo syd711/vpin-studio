@@ -10,6 +10,7 @@
 
 ## Bugfixes
 
+- **Table Overview / Table Uploads**: Added missing .res file support for table bundle uploads.
 - **Auto-Shutdown**: Fixed resetting of auto-shutdown on key events. This reset got lost when changing to the new controller input API. (And I had such a great start on "Attack From Mars" when the shutdown warning popped up). 
 - **Highscores**: Fixed highscore resolving for **White Water** by adding "RIVER MASTER" to the list of highscore titles.
 - **Highscores**: Fixed ROM resolving and highscore parsing for **American Most Haunted**.
