@@ -426,8 +426,8 @@ public class TableDialogs {
 
     FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
     stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(600);
-    stage.setMinHeight(500);
+    stage.setMinWidth(900);
+    stage.setMinHeight(700);
 
     stage.showAndWait();
 

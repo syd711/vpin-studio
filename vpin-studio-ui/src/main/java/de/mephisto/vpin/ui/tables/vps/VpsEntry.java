@@ -57,7 +57,8 @@ public class VpsEntry extends HBox {
     button.setPrefWidth(70);
     button.setTooltip(new Tooltip(link));
     button.setOnAction(event -> {
-      VpsInstallerUtils.installOrBrowse(tablesController, game, link, type);
+//      VpsInstallerUtils.installOrBrowse(tablesController, game, link, type);
+      VpsDialogs.openVpsAssetInstaller(link);
     });
 
     FontIcon fontIcon = new FontIcon();
