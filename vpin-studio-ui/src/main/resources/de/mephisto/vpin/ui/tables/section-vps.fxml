@@ -52,6 +52,11 @@
             <Insets bottom="4.0" right="20.0" />
          </VBox.margin>
       </HBox>
+      <VBox>
+         <children>
+            <Label text="Loading..." textFill="WHITE" />
+         </children>
+      </VBox>
    </children>
    <padding>
       <Insets top="24.0" />

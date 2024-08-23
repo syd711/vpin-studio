@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
+   <children>
+      <VBox>
+         <children>
+            <BorderPane>
+               <left>
+                  <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+                     <children>
+                        <Hyperlink onAction="#onReset" text="Reset All">
+                           <HBox.margin>
+                              <Insets left="-5.0" top="-9.0" />
+                           </HBox.margin>
+                        </Hyperlink>
+                     </children>
+                     <BorderPane.margin>
+                        <Insets top="7.0" />
+                     </BorderPane.margin>
+                  </HBox>
+               </left>
+               <right>
+                  <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+                     </graphic>
+                  </Button>
+               </right>
+               <VBox.margin>
+                  <Insets bottom="12.0" />
+               </VBox.margin>
+            </BorderPane>
+         </children>
+      </VBox>
+      <ScrollPane hbarPolicy="NEVER">
+         <content>
+            <VBox fx:id="titlePaneRoot" prefWidth="230.0" spacing="3.0">
+               <children>
+
+                  <Label styleClass="default-title" text="Table Filters">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <VBox fx:id="tableFilters">
+                     <children>
+                        <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Show Only Installed Tables" />
+
+                        <Label styleClass="preference-checkbox" text="Author" />
+                        <TextField fx:id="author" />
+                        <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="Search author in all Assets" />
+
+                        <Label styleClass="preference-checkbox" text="Manufacturer" />
+                        <TextField fx:id="manufacturer" />
+
+                        <Label styleClass="preference-checkbox" text="Theme" />
+                        <TextField fx:id="theme" />
+                     </children>
+                  </VBox>
+
+                  <!--Label styleClass="default-title" text="Features Filters" >
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox fx:id="featuresPanel">
+                     <children>      
+                     </children>
+                  </VBox-->
+
+                  <Label styleClass="default-title" text="Assets Filters">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+
+                  <VBox fx:id="assetFilters">
+                     <children>
+
+                        <CheckBox fx:id="withDirectB2s" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Direct B2S" />
+                        <CheckBox fx:id="withPuppack" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Pup-pack" />
+                        <CheckBox fx:id="withRom" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Rom" />
+                        <CheckBox fx:id="withTopper" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Topper" />
+                        <CheckBox fx:id="withWheel" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Wheel Art" />
+                        <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Sound" />
+                        <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Color" />
+                        <CheckBox fx:id="withTutorial" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Tutorial" />
+
+                     </children>
+                  </VBox>
+               </children>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </children>
+   <padding>
+      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+   </padding>
+</VBox>
