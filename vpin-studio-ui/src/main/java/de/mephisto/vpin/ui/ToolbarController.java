@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
@@ -44,6 +46,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private MenuButton jobBtn;
+
+  @FXML
+  private MenuButton dropInsBtn;
 
   @FXML
   private MenuItem dofSyncEntry;
@@ -116,19 +121,19 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private void onFrontendMenu() {
-      try {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
-        File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
-        if (!file.exists()) {
-          WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
-        }
-        else {
-          Studio.open(file);
-        }
+    try {
+      Frontend frontend = client.getFrontendService().getFrontendCached();
+      File file = new File(frontend.getInstallationDirectory(), frontend.getAdminExe());
+      if (!file.exists()) {
+        WidgetFactory.showAlert(Studio.stage, "Did not find exe", "The exe file " + file.getAbsolutePath() + " was not found.");
       }
-      catch (Exception e) {
-        LOG.error("Failed to open admin frontend: " + e.getMessage(), e);
+      else {
+        Studio.open(file);
       }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open admin frontend: " + e.getMessage(), e);
+    }
   }
 
   @FXML
@@ -209,6 +214,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
+    dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
+
+    dropInsBtn.setVisible(Features.DROP_IN_FOLDER);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
@@ -255,5 +263,10 @@ public class ToolbarController implements Initializable, StudioEventListener {
     this.messagesBtn.setVisible(!client.getJobsService().getResults().isEmpty());
 
     preferencesChanged(PreferenceType.serverSettings);
+
+
+    Platform.runLater(() -> {
+      DropInManager.getInstance().init(dropInsBtn);
+    });
   }
 }
