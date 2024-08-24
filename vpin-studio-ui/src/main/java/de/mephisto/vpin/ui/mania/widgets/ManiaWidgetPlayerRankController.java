@@ -157,16 +157,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
     Optional<ButtonType> b = WidgetFactory.showConfirmation(Studio.stage, "Highscore Synchronization", "This will synchronize all highscores from all tables from all your VPin-Mania players.", "Only tables with a valid Virtual Pinball Spreadsheet mapping will be synchronized.", "Start Synchronization");
     if (b.get().equals(ButtonType.OK)) {
-      List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
-      List<VpsTable> vpsTables = new ArrayList<>();
-      for (GameRepresentation game : gamesCached) {
-        if (!StringUtils.isEmpty(game.getExtTableId())) {
-          VpsTable tableById = Studio.client.getVpsService().getTableById(game.getExtTableId());
-          if (tableById != null) {
-            vpsTables.add(tableById);
-          }
-        }
-      }
+      List<VpsTable> vpsTables = Studio.client.getGameService().getInstalledVpsTables();
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new HighscoreSynchronizeProgressModel("Highscore Synchronization", vpsTables));
       List<Object> results = progressDialog.getResults();

@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
@@ -23,17 +22,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class PupPackUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadController.class);
+  //private final static Logger LOG = LoggerFactory.getLogger(PupPackUploadController.class);
 
   @FXML
   private Node root;
@@ -61,7 +56,7 @@ public class PupPackUploadController implements Initializable, DialogController 
 
   private boolean result = false;
 
-  private UploaderAnalysis analysis;
+  private UploaderAnalysis<?> analysis;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -150,7 +145,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     return result;
   }
 
-  public void setFile(File file, UploaderAnalysis uploaderAnalysis, Stage stage) {
+  public void setFile(File file, UploaderAnalysis<?> uploaderAnalysis, Stage stage) {
     this.selection = file;
     this.stage = stage;
     if (selection != null) {
@@ -163,7 +158,7 @@ public class PupPackUploadController implements Initializable, DialogController 
     }
   }
 
-  private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
+  private void refreshMatchingGame(UploaderAnalysis<?> uploaderAnalysis) {
     tableLabel.setText("-");
     romLabel.setText("-");
     this.uploadBtn.setDisable(true);
@@ -178,13 +173,9 @@ public class PupPackUploadController implements Initializable, DialogController 
     romLabel.setText(rom);
     this.uploadBtn.setDisable(false);
 
-    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
-    for (GameRepresentation gameRepresentation : gamesCached) {
-      String gameRom = gameRepresentation.getRom();
-      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
-        tableLabel.setText(gameRepresentation.getGameDisplayName());
-        break;
-      }
+    GameRepresentation gameRepresentation = Studio.client.getGameService().getFirstGameByRom(rom);
+    if (gameRepresentation != null) {
+      tableLabel.setText(gameRepresentation.getGameDisplayName());
     }
   }
 }

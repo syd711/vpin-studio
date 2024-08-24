@@ -144,7 +144,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
 
     new Thread(() -> {
       if (force) {
-        client.getGameService().clearCache(-1);
+        client.getGameService().clearVpxCache();
       }
       games = client.getGameService().getVpxGamesCached();
 
