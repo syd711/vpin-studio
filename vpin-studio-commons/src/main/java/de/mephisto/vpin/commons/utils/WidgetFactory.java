@@ -1,12 +1,14 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.*;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.media.*;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -283,22 +285,22 @@ public class WidgetFactory {
     return "#" + hex;
   }
 
-  public static Label createLocalFavoritePlaylistIcon() {
+  public static Label createLocalFavoritePlaylistIcon(String color) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf(WidgetFactory.LOCAL_FAVS_COLOR));
+    fontIcon.setIconColor(Paint.valueOf(color));
     fontIcon.setIconLiteral("mdi2s-star");
     label.setTooltip(new Tooltip("Local Favorite"));
     label.setGraphic(fontIcon);
     return label;
   }
 
-  public static Label createGlobalFavoritePlaylistIcon() {
+  public static Label createGlobalFavoritePlaylistIcon(String color) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
-    fontIcon.setIconColor(Paint.valueOf(WidgetFactory.GLOBAL_FAVS_COLOR));
+    fontIcon.setIconColor(Paint.valueOf(color));
     fontIcon.setIconLiteral("mdi2s-star");
     label.setTooltip(new Tooltip("Global Favorite"));
     label.setGraphic(fontIcon);
@@ -318,7 +320,7 @@ public class WidgetFactory {
     label.setGraphic(fontIcon);
   }
 
-  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist) {
+  public static Label createPlaylistIcon(@Nullable PlaylistRepresentation playlist, @NonNull UISettings uiSettings) {
     Label label = new Label();
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(24);
@@ -327,12 +329,12 @@ public class WidgetFactory {
 
     if (playlist.getId() == -1) {
       fontIcon.setIconLiteral("mdi2s-star");
-      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.LOCAL_FAVS_COLOR));
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getLocalFavsColor()));
       label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getId() == -2) {
       fontIcon.setIconLiteral("mdi2s-star");
-      fontIcon.setIconColor(Paint.valueOf(WidgetFactory.GLOBAL_FAVS_COLOR));
+      fontIcon.setIconColor(Paint.valueOf(uiSettings.getGlobalFavsColor()));
       label.setTooltip(new Tooltip(playlist.getName()));
     }
     else if (playlist.getName().contains("Visual Pinball X")) {
@@ -684,24 +686,6 @@ public class WidgetFactory {
     }
 
     return null;
-  }
-
-  public static class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
-
-    public PlaylistBackgroundImageListCell() {
-    }
-
-    protected void updateItem(PlaylistRepresentation item, boolean empty) {
-      super.updateItem(item, empty);
-      setGraphic(null);
-      setText(null);
-      if (item != null) {
-        Label playlistIcon = WidgetFactory.createPlaylistIcon(item);
-        setGraphic(playlistIcon);
-
-        setText(" " + item.toString());
-      }
-    }
   }
 
   public static class HighscoreBackgroundImageListCell extends ListCell<String> {

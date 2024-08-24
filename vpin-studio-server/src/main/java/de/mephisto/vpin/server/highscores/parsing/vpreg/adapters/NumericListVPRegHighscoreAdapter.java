@@ -9,12 +9,12 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
-  public static final String HIGH_SCORE = "HighScore";
-  public static final String NAME_SUFFIX = "Name";
+  private static final String HIGH_SCORE = "HighScore";
+  private static final String NAME_SUFFIX = "Name";
 
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) {
-    if (gameFolder.hasEntry(HIGH_SCORE + "1") && gameFolder.hasEntry(HIGH_SCORE + "1" + NAME_SUFFIX)) {
+    if (gameFolder.hasEntry(getScoreKey(1)) && gameFolder.hasEntry(getNameKey(1))) {
       return true;
     }
     return false;
@@ -23,20 +23,22 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
   @Override
   public ScoreParsingSummary readHighscore(DirectoryEntry gameFolder) throws IOException {
     ScoreParsingSummary summary = new ScoreParsingSummary();
-    int index = 1;
-    String prefix = HIGH_SCORE;
-    String nameSuffix = "Name";
-    while (gameFolder.hasEntry(prefix + index) && gameFolder.hasEntry(prefix + index + nameSuffix)) {
-      DocumentEntry nameEntry = (DocumentEntry) gameFolder.getEntry(prefix + index + nameSuffix);
+    int index = getStartIndex();
+    while (gameFolder.hasEntry(getScoreKey(index)) && gameFolder.hasEntry(getNameKey(index))) {
+      DocumentEntry nameEntry = (DocumentEntry) gameFolder.getEntry(getNameKey(index));
       String nameString = super.getNameString(nameEntry);
 
-      DocumentEntry scoreEntry = (DocumentEntry) gameFolder.getEntry(prefix + index);
+      DocumentEntry scoreEntry = (DocumentEntry) gameFolder.getEntry(getScoreKey(index));
       String scoreString = super.getScoreEntry(scoreEntry);
 
       ScoreParsingEntry score = new ScoreParsingEntry();
       score.setInitials(nameString);
       score.setScore(parseScoreString(scoreString));
       score.setPos(index);
+
+      if (getStartIndex() == 0) {
+        score.setPos(score.getPos() + 1);
+      }
       summary.getScores().add(score);
       index++;
     }
@@ -45,14 +47,14 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
 
   @Override
   public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
-    int index = 1;
-    while (gameFolder.hasEntry(HIGH_SCORE + index) && gameFolder.hasEntry(HIGH_SCORE + index + NAME_SUFFIX)) {
-      String scoreKey = HIGH_SCORE + index;
+    int index = getStartIndex();
+    while (gameFolder.hasEntry(getScoreKey(index)) && gameFolder.hasEntry(getNameKey(index))) {
+      String scoreKey = getHighScorePrefix() + index;
       DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(scoreKey);
       POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
       scoreDocument.replaceContents(new ByteArrayInputStream(new Base64Encoder().decode(VPRegHighscoreAdapter.BASE64_ZERO_SCORE)));
 
-      String nameKey = HIGH_SCORE + index + NAME_SUFFIX;
+      String nameKey = getNameKey(index);
       DocumentNode nameEntry = (DocumentNode) gameFolder.getEntry(nameKey);
       POIFSDocument nameDocument = new POIFSDocument(nameEntry);
       nameDocument.replaceContents(new ByteArrayInputStream("".getBytes()));
@@ -62,5 +64,25 @@ public class NumericListVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl 
       fs.writeFilesystem();
     }
     return true;
+  }
+
+  protected int getStartIndex() {
+    return 1;
+  }
+
+  protected String getNameKey(int index) {
+    return getHighScorePrefix() + index + getNamePrefix();
+  }
+
+  protected String getScoreKey(int index) {
+    return getHighScorePrefix() + index;
+  }
+
+  protected String getHighScorePrefix() {
+    return HIGH_SCORE;
+  }
+
+  protected String getNamePrefix() {
+    return NAME_SUFFIX;
   }
 }

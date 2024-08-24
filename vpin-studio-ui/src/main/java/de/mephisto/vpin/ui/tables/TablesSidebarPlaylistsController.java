@@ -1,11 +1,13 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
@@ -112,6 +114,68 @@ public class TablesSidebarPlaylistsController implements Initializable {
     dataRoot.setVisible(g.isPresent());
 
     assetManagerBtn.setDisable(g.isEmpty());
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    HBox localFavsRoot = new HBox();
+    localFavsRoot.setAlignment(Pos.BASELINE_LEFT);
+    localFavsRoot.setSpacing(3);
+    ColorPicker colorPicker = new ColorPicker(Color.web(uiSettings.getLocalFavsColor()));
+    colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
+      try {
+        String hexValue = t1 != null ? PreferenceBindingUtil.toHexString(t1) : WidgetFactory.LOCAL_FAVS_COLOR;
+        uiSettings.setLocalFavsColor(hexValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        tablesSidebarController.getTableOverviewController().refreshPlaylists();
+        EventManager.getInstance().notifyTablesChanged();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to update playlists: " + e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+      }
+    });
+    Label name = new Label("Local Favorites");
+    name.setPadding(new Insets(0, 0, 3, 120));
+    name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
+    name.setPrefWidth(392);
+
+    Label playlistIcon = WidgetFactory.createLocalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
+    localFavsRoot.getChildren().add(playlistIcon);
+    localFavsRoot.getChildren().add(name);
+    localFavsRoot.getChildren().add(colorPicker);
+    dataBox.getChildren().add(localFavsRoot);
+
+
+    HBox globalFavsRoot = new HBox();
+    globalFavsRoot.setAlignment(Pos.BASELINE_LEFT);
+    globalFavsRoot.setSpacing(3);
+    colorPicker = new ColorPicker(Color.web(uiSettings.getGlobalFavsColor()));
+    colorPicker.valueProperty().addListener((observableValue, color, t1) -> {
+      try {
+        String hexValue = t1 != null ? PreferenceBindingUtil.toHexString(t1) : WidgetFactory.GLOBAL_FAVS_COLOR;
+        uiSettings.setGlobalFavsColor(hexValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+        tablesSidebarController.getTableOverviewController().refreshPlaylists();
+        EventManager.getInstance().notifyTablesChanged();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to update playlists: " + e.getMessage(), e);
+        WidgetFactory.showAlert(stage, "Error", "Failed to update playlists: " + e.getMessage());
+      }
+    });
+    name = new Label("Global Favorites");
+    name.setPadding(new Insets(0, 0, 24, 120));
+    name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
+    name.setPrefWidth(392);
+
+    playlistIcon = WidgetFactory.createGlobalFavoritePlaylistIcon(PreferenceBindingUtil.toHexString(colorPicker.getValue()));
+    globalFavsRoot.getChildren().add(playlistIcon);
+    globalFavsRoot.getChildren().add(name);
+    globalFavsRoot.getChildren().add(colorPicker);
+    dataBox.getChildren().add(globalFavsRoot);
+
+    dataBox.getChildren().add(new Label(" "));
+
 
     this.errorBox.setVisible(false);
     if (g.isPresent()) {
@@ -234,7 +298,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
           }
         });
 
-        ColorPicker colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
+        colorPicker = new ColorPicker(Color.web(WidgetFactory.hexColor(playlist.getMenuColor())));
         colorPicker.valueProperty().addListener(new ChangeListener<Color>() {
           @Override
           public void changed(ObservableValue<? extends Color> observableValue, Color color, Color t1) {
@@ -248,11 +312,11 @@ public class TablesSidebarPlaylistsController implements Initializable {
             }
           }
         });
-        Label name = new Label(playlist.getName());
+        name = new Label(playlist.getName());
         name.setStyle("-fx-font-size: 14px;-fx-text-fill: white;-fx-padding: 0 0 0 6;");
         name.setPrefWidth(370);
 
-        Label playlistIcon = WidgetFactory.createPlaylistIcon(playlist);
+        playlistIcon = WidgetFactory.createPlaylistIcon(playlist, uiSettings);
         root.getChildren().add(playlistIcon);
         root.getChildren().add(gameCheckbox);
         root.getChildren().add(name);

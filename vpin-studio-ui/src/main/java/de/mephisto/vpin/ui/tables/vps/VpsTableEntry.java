@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -21,20 +22,19 @@ import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTableEntry extends HBox {
-  private final static Logger LOG = LoggerFactory.getLogger(VpsTableEntry.class);
 
-  public VpsTableEntry(String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update) {
+  public VpsTableEntry(GameRepresentation game, String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update) {
     this.setAlignment(Pos.CENTER_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
 
@@ -86,20 +86,26 @@ public class VpsTableEntry extends HBox {
       authorLabel.setText(String.join(", ", authors));
       authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
     }
+    // As getGameByVpsTable() use the cache, may be long if not initialized 
+    // so code below runs in a non blocking thread
+    new Thread(() -> {
+      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
+      if (gameByVpsTable != null) {
+        // show all installed versions when no game is selected (case of VPS Tab), 
+        // or only the selected one in sidebar
+        if (game == null || game.getId() == gameByVpsTable.getId()) {
+          //FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
+          //checkboxIcon.setIconSize(14);
+          //checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
+          //authorBox.getChildren().add(checkboxIcon);
+          authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+        }
+      }
+    }).start();
 
-    GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
     HBox authorBox = new HBox(6);
     authorBox.setAlignment(Pos.CENTER_LEFT);
-    if (gameByVpsTable != null) {
-      FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
-      checkboxIcon.setIconSize(14);
-      checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
-      authorBox.getChildren().add(checkboxIcon);
-
-      authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
-    }
     authorBox.setPrefWidth(230);
-
     authorBox.getChildren().add(authorLabel);
     this.getChildren().add(authorBox);
 
@@ -112,7 +118,12 @@ public class VpsTableEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-        Studio.browse(link);
+        if (Features.AUTO_INSTALLER) {
+          VpsInstallerUtils.installTable(game, link, tableId, versionId, version);
+        } 
+        else {
+          Studio.browse(link);
+        }
       });
 
       FontIcon fontIcon = new FontIcon();
@@ -120,7 +131,6 @@ public class VpsTableEntry extends HBox {
       fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
       fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
       button.setGraphic(fontIcon);
-
 
       Label label = new Label();
       label.setPrefWidth(20);

@@ -101,7 +101,17 @@ public class RestClient implements ClientHttpRequestInterceptor {
     String url = baseUrl + path;
     try {
       long start = System.currentTimeMillis();
-      T forObject = restTemplate.getForObject(url, entityType, urlVariables);
+
+      T forObject;
+      if (String.class.equals(entityType)) {
+        final RestTemplate _restTemplate = new RestTemplate();
+        @SuppressWarnings("unchecked")
+        T ret = (T) _restTemplate.getForObject(url, String.class, urlVariables);
+        forObject = ret;
+      }
+      else {
+        forObject = restTemplate.getForObject(url, entityType, urlVariables);
+      }
       LOG.info("HTTP GET " + url + " (" + (System.currentTimeMillis() - start) + "ms)");
       return forObject;
     } catch (ResourceAccessException e) {
@@ -110,6 +120,11 @@ public class RestClient implements ClientHttpRequestInterceptor {
         errorHandler.onError(e);
       }
     }
+
+
+
+
+
     return null;
   }
 

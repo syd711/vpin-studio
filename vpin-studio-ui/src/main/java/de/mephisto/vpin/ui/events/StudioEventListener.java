@@ -19,7 +19,7 @@ public interface StudioEventListener {
 
   }
 
-  default void tableUploaded(UploadDescriptor result) {
+  default void tableUploaded(UploadDescriptor uploadDescriptor) {
 
   }
 

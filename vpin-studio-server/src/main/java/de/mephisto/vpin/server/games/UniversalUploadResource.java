@@ -70,6 +70,9 @@ public class UniversalUploadResource {
     long start = System.currentTimeMillis();
     LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
     try {
+      // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
+      universalUploadService.resolveLinks(uploadDescriptor);
+
       File tempFile = new File(uploadDescriptor.getTempFilename());
       UploaderAnalysis analysis = new UploaderAnalysis<>(tempFile);
       analysis.analyze();
@@ -85,6 +88,7 @@ public class UniversalUploadResource {
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
       universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
+      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
 
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);

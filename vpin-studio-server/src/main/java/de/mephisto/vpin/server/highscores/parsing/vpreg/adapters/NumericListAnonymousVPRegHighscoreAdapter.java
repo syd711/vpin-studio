@@ -11,11 +11,12 @@ import java.util.Comparator;
 import java.util.List;
 
 public class NumericListAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
-  public static final String HIGH_SCORE = "HighScore";
+  private static final String HIGH_SCORE = "HighScore";
+  private static final String NAME_SUFFIX = "Name";
 
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) {
-    if (gameFolder.hasEntry(HIGH_SCORE + "1") && !gameFolder.hasEntry(HIGH_SCORE + "1" + NumericListVPRegHighscoreAdapter.NAME_SUFFIX)) {
+    if (gameFolder.hasEntry(HIGH_SCORE + "1") && !gameFolder.hasEntry(HIGH_SCORE + "1" + NAME_SUFFIX)) {
       return true;
     }
     return false;

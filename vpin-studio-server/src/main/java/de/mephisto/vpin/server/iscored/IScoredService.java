@@ -92,6 +92,7 @@ public class IScoredService implements PreferenceChangedListener, InitializingBe
   }
 
   public void submitScore(String url, Score newScore, String vpsTableId, String vpsVersionId) {
+    IScored.invalidate();
     GameRoom gameRoom = IScored.getGameRoom(url);
     if (gameRoom != null) {
       IScoredGame iScoredGame = gameRoom.getGameByVps(vpsTableId, vpsVersionId);
