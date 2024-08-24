@@ -14,7 +14,7 @@ public class DirectB2STableSettings {
   private int usedLEDType = 2;
   private boolean isGlowBulbOn = false;
   private int glowIndex = -1;
-  private Boolean startAsEXE = false;
+  private Boolean startAsEXE = null;
   private boolean startBackground = false;
   private boolean formToFront = false;
 
