@@ -78,6 +78,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
+  private static final int ALL_VPX_ID = -10;
+
   @FXML
   private Separator deleteSeparator;
 
@@ -925,15 +927,19 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         GameRepresentation selection = getSelection();
         GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        int id = -1;
-        if (value != null) {
-          id = value.getId();
-        }
+        int id = value != null? value.getId() : ALL_VPX_ID;
 
         if (clearCache) {
-          client.getGameService().clearCache(id);
+          if (id == ALL_VPX_ID) {
+            client.getGameService().clearVpxCache();
+          } 
+          else {
+            client.getGameService().clearCache(id);
+          }
         }
-        List<GameRepresentation> _games = client.getGameService().getGamesCached(id);
+        List<GameRepresentation> _games = id == ALL_VPX_ID 
+            ? client.getGameService().getVpxGamesCached() 
+            : client.getGameService().getGamesByEmulator(id);
 
         // as the load of tables could take some time, users may have switched to another emulators in between
         // if this is the case, do not refresh the UI with the results
@@ -1095,7 +1101,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
 
     GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
-    allVpx.setId(-1);
+    allVpx.setId(ALL_VPX_ID);
     allVpx.setName("All VPX Tables");
     allVpx.setVpxEmulator(true);
     filtered.add(0, allVpx);

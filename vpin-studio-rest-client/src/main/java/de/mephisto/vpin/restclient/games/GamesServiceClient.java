@@ -52,6 +52,17 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.loadingFlags.clear();
   }
 
+  public void clearVpxCache() {
+    // acceptable shortcut, else use below 
+    clearCache();
+
+    // ALTERNATIVE
+    //List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+    //for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+    //  clearCache(gameEmulator.getId());
+    //}
+  }
+
   public void clearCache(int emulatorId) {
     this.allGames.remove(emulatorId);
     this.loadingFlags.remove(emulatorId);
@@ -112,6 +123,29 @@ public class GamesServiceClient extends VPinStudioClientService {
     for (GameRepresentation gameRepresentation : gameList) {
       if ((!StringUtils.isEmpty(gameRepresentation.getRom()) && gameRepresentation.getRom().equalsIgnoreCase(rom)) ||
           (!StringUtils.isEmpty(gameRepresentation.getTableName()) && gameRepresentation.getTableName().equalsIgnoreCase(rom))) {
+        result.add(gameRepresentation);
+      }
+    }
+    return result;
+  }
+
+  public GameRepresentation getFirstGameByRom(String rom) {
+    List<GameRepresentation> gamesCached = this.getGamesCached(-1);
+    for (GameRepresentation gameRepresentation : gamesCached) {
+      String gameRom = gameRepresentation.getRom();
+      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
+        return gameRepresentation;
+      }
+    }
+    return null;
+  }
+
+
+  public List<GameRepresentation> getGamesByFileName(int emuId, String gameFileName) {
+    List<GameRepresentation> gameList = this.getGamesCached(emuId);
+    List<GameRepresentation> result = new ArrayList<>();
+    for (GameRepresentation gameRepresentation : gameList) {
+      if (gameRepresentation.getGameFileName().trim().equalsIgnoreCase(gameFileName)) {
         result.add(gameRepresentation);
       }
     }
@@ -184,6 +218,20 @@ public class GamesServiceClient extends VPinStudioClientService {
     return Collections.emptyList();
   }
 
+  public List<VpsTable> getInstalledVpsTables() {
+    List<VpsTable> vpsTables = new ArrayList<>();
+    List<GameRepresentation> gamesCached = getGamesCached(-1);
+    for (GameRepresentation game : gamesCached) {
+      if (!StringUtils.isEmpty(game.getExtTableId())) {
+        VpsTable tableById = client.getVpsService().getTableById(game.getExtTableId());
+        if (tableById != null) {
+          vpsTables.add(tableById);
+        }
+      }
+    }
+    return vpsTables;
+  }
+
   @Nullable
   public GameRepresentation getGameByVpsTable(@NonNull VpsTable vpsTable, @Nullable VpsTableVersion vpsTableVersion) {
     return getGameByVpsTable(vpsTable.getId(), vpsTableVersion != null ? vpsTableVersion.getId() : null);
@@ -218,6 +266,10 @@ public class GamesServiceClient extends VPinStudioClientService {
       LOG.error("Failed to read game ids: " + e.getMessage(), e);
     }
     return Collections.emptyList();
+  }
+
+  public List<Integer> getGameIdsCached(int emuId) {
+    return getGamesCached(emuId).stream().map(g -> g.getId()).collect(Collectors.toList());
   }
 
   public ScoreSummaryRepresentation getGameScores(int id) {
@@ -280,10 +332,14 @@ public class GamesServiceClient extends VPinStudioClientService {
     return lock;
   }
 
-  public List<GameRepresentation> getGamesCached(int emulatorId) {
+  public List<GameRepresentation> getGamesByEmulator(int emulatorId) {
+    return getGamesCached(emulatorId);
+  }
+
+  private List<GameRepresentation> getGamesCached(int emulatorId) {
     if (emulatorId == -1) {
       List<GameRepresentation> games = new ArrayList<>();
-      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
+      List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
         games.addAll(getGamesCached(gameEmulator.getId()));
       }

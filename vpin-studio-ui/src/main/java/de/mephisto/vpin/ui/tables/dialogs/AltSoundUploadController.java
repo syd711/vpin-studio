@@ -26,7 +26,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,13 +196,9 @@ public class AltSoundUploadController implements Initializable, DialogController
     romLabel.setText(rom);
     this.uploadBtn.setDisable(false);
 
-    List<GameRepresentation> gamesCached = Studio.client.getGameService().getGamesCached(-1);
-    for (GameRepresentation gameRepresentation : gamesCached) {
-      String gameRom = gameRepresentation.getRom();
-      if (!StringUtils.isEmpty(gameRom) && gameRom.equalsIgnoreCase(rom)) {
-        tableLabel.setText(gameRepresentation.getGameDisplayName());
-        break;
-      }
+    GameRepresentation gameRepresentation = Studio.client.getGameService().getFirstGameByRom(rom);
+    if (gameRepresentation != null) {
+      tableLabel.setText(gameRepresentation.getGameDisplayName());
     }
   }
 }
