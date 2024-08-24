@@ -15,6 +15,8 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -122,14 +124,27 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   protected List<Emulator> loadEmulators() {
-    List<Emulator> emulators = new ArrayList<>();
     File pinballXFolder = getInstallationFolder();
     File pinballXIni = getPinballXIni();
 
     if (!pinballXIni.exists()) {
       LOG.warn("Ini file not found " + pinballXIni);
-      return emulators;
+      return Collections.emptyList();
     }
+
+    // mind pinballX.ini is encoded in UTF-16
+    List<Emulator> emulators = loadIni(pinballXFolder, pinballXIni, "UTF-16");
+    if (emulators.isEmpty()) {
+      // ...but old version could be in UTF-8
+      emulators = loadIni(pinballXFolder, pinballXIni, "UTF-8");
+    }
+
+    return emulators;
+  }
+
+  private List<Emulator> loadIni(File pinballXFolder, File pinballXIni, String charset) {
+
+    List<Emulator> emulators = new ArrayList<>();
 
     mapTableDetails = new HashMap<>();
 
@@ -138,8 +153,7 @@ public class PinballXConnector extends BaseConnector {
     iniConfiguration.setSeparatorUsedInOutput("=");
 //    iniConfiguration.setSeparatorUsedInInput("=");
 
-    // mind pinballX.ini is encoded in UTF-16
-    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
+    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName(charset))) {
       iniConfiguration.read(fileReader);
     }
     catch (Exception e) {

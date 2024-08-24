@@ -92,7 +92,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
       if (value.getId() != -1) {
         List<TableAlxEntry> filtered = new ArrayList<>();
-        List<Integer> collect = client.getGameService().getGamesCached(value.getId()).stream().map(g -> g.getId()).collect(Collectors.toList());
+        List<Integer> collect = client.getGameService().getGameIdsCached(value.getId());
         for (TableAlxEntry entry : entries) {
           if (collect.contains(entry.getGameId())) {
             filtered.add(entry);

@@ -804,10 +804,10 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     this.dataManagerBtn.setDisable(true);
 
     this.renameBtn.setDisable(newValue == null);
-    this.uploadBtn.setDisable(newValue == null);
     this.duplicateBtn.setDisable(newValue == null);
     this.deleteBtn.setDisable(newValue == null);
     this.reloadBackglassBtn.setDisable(newValue == null);
+    this.uploadBtn.setDisable(true);
 
     this.tableSettings = null;
 
@@ -866,6 +866,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         gameFilenameLabel.setText(game.getGameFileName());
         dataManagerBtn.setDisable(false);
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
+
+        this.uploadBtn.setDisable(false);
       }
       else {
         //VPX is not installed, but available!
