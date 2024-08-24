@@ -71,7 +71,6 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
-import static de.mephisto.vpin.commons.utils.WidgetFactory.hexColor;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
@@ -1761,6 +1760,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       }
     }
+
+    List<GameRepresentation> selection = new ArrayList<>(c.getList().stream().map(g -> g.getGame()).collect(Collectors.toList()));
+    EventManager.getInstance().notifyTableSelectionChanged(selection);
   }
 
   public void closeEditors() {

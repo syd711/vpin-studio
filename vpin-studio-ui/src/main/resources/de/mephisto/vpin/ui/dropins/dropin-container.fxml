@@ -12,11 +12,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.dropins.DropInContainerController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.dropins.DropInContainerController">
    <center>
-      <VBox prefWidth="350.0" BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="dataPanel" prefWidth="350.0" BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
-            <Insets />
+            <Insets left="6.0" />
          </BorderPane.margin>
          <children>
             <Label fx:id="filenameLabel" text="file name" textFill="WHITE">
@@ -68,11 +68,11 @@
          </items>
       </ToolBar>
    </right>
-   <padding>
-      <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-   </padding>
    <styleClass>
       <String fx:value="base-component" />
       <String fx:value="accordion-container" />
    </styleClass>
+   <left>
+      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-drag" iconSize="18" BorderPane.alignment="CENTER" />
+   </left>
 </BorderPane>

@@ -2,10 +2,16 @@ package de.mephisto.vpin.ui.dropins;
 
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -14,11 +20,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.StandardWatchEventKinds;
+import java.nio.file.WatchEvent;
+import java.util.List;
 
-public class DropInManager implements LocalSettingsChangeListener {
+public class DropInManager implements LocalSettingsChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(DropInManager.class);
 
-  private static DropInManager instance = new DropInManager();
+  private static DropInManager instance;
 
   private MenuButton dropInsBtn;
 
@@ -28,6 +38,8 @@ public class DropInManager implements LocalSettingsChangeListener {
   private DropInManager() {
     LocalUISettings.addListener(this);
   }
+
+  private GameRepresentation gameSelection;
 
   public static DropInManager getInstance() {
     if (instance == null) {
@@ -39,6 +51,12 @@ public class DropInManager implements LocalSettingsChangeListener {
   public void init(MenuButton dropInsBtn) {
     this.dropInsBtn = dropInsBtn;
     this.dropInsBtn.getGraphic().setVisible(false);
+    this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent event) {
+        dropInsBtn.getGraphic().setVisible(false);
+      }
+    });
 
     String dropInPath = LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER);
     if (dropInPath != null) {
@@ -49,6 +67,8 @@ public class DropInManager implements LocalSettingsChangeListener {
     dropinsMonitor.startMonitoring();
 
     this.reload();
+
+    EventManager.getInstance().addListener(this);
   }
 
   public void reload() {
@@ -63,7 +83,7 @@ public class DropInManager implements LocalSettingsChangeListener {
             BorderPane root = loader.load();
             root.getStyleClass().add("dropin-menu-item");
             DropInContainerController containerController = loader.getController();
-            containerController.setData(file);
+            containerController.setData(dropInsBtn, file);
             CustomMenuItem item = new CustomMenuItem();
             item.setContent(root);
             dropInsBtn.getItems().add(item);
@@ -87,7 +107,7 @@ public class DropInManager implements LocalSettingsChangeListener {
           dropInsBtn.setVisible(enabled);
         });
 
-        if(enabled) {
+        if (enabled) {
           dropinsMonitor.startMonitoring();
         }
         else {
@@ -118,8 +138,22 @@ public class DropInManager implements LocalSettingsChangeListener {
     }
   }
 
-  public void notifyDropInUpdates() {
+  @Override
+  public void tablesSelected(List<GameRepresentation> games) {
+    this.gameSelection = null;
+    if (!games.isEmpty()) {
+      this.gameSelection = games.get(0);
+    }
+  }
+
+  public void notifyDropInUpdates(WatchEvent.Kind<Path> entry) {
     reload();
-    dropInsBtn.getGraphic().setVisible(true);
+    dropInsBtn.getGraphic().setVisible(entry.equals(StandardWatchEventKinds.ENTRY_CREATE));
+  }
+
+  public void install(File file) {
+    if (gameSelection != null) {
+      UploadAnalysisDispatcher.dispatch(file, gameSelection);
+    }
   }
 }
