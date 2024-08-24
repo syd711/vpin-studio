@@ -379,7 +379,14 @@ public class GamesServiceClient extends VPinStudioClientService {
   }
 
   public List<GameRepresentation> getVpxGamesCached() {
-    return getGamesCached(-1).stream().filter(g -> g.isVpxGame()).collect(Collectors.toList());
+    List<GameRepresentation> games = new ArrayList<>();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      if (gameEmulator.isVpxEmulator()) {
+        games.addAll(getGamesCached(gameEmulator.getId()));
+      }
+    }
+    return games;
   }
 
   public GameRepresentation getGameCached(int gameId) {
