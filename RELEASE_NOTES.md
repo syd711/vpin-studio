@@ -1,30 +1,21 @@
-## Release Notes 3.1.0
+## Release Notes 3.3.0
 
 ## Changes
 
-- **VPin Mania / Table Statistics**: Added open button/open on double-click so that the table details are shown.
-- **VPin Mania / Highscores**: Added button to delete all highscores from all players from the cabinets VPin Mania account. 
-- **Preferences / Highscore Settings**: Added "NVRam Synchronization" button to re-download all available resetted nvram files. Usually you won't need this since new nvrams are downloaded on server startup, but this way you can update them e.g. in case the volume was adjusted too. The button for this can be found on the **Highscore Settings** page.
-- **iScored**: Added "Tournament Column" info to the iScored information dialog.
-- **System Manager**: Releases are now selectable via their actual name, not the tagged version anymore. Especially VPX has more meaningful names there.
-- **System Manager**: Added textarea that shows the release notes of the selected release.
-    
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/components/installer.png" width="760" />
-- **Launcher**: Add validation to prevent multiple connections for the same server.
-- **Table Overview / Highscores**: Added **Event Log**. The **Event Log** captures the most important events that are executed after a table has been exited. It tracks if and what new highscore has been created and what messages and notifications have been sent for this update. The event log is persisted for every table, but only when the table has been exited through the frontend/Popper. The button to see the event log is located in the **Highscore** section and as a context menu entry in the tables overview. I hope it will help the user to analyze why e.g. some iScored or Discord notifications are not sent.
+- **Table Overview / Playlists**: Added color picker for local and global favorites.
+- **Backglass Manager**: Added upload options via dialog and drag-and-drop:
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/highscores/event-log.png" width="760" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dnd.png" width="700" />
+
 
 ## Bugfixes
 
-- **Highscore Parsing**: Fixed highscore parsing for "Doctor Who" by adding "GREATEST TIME LORD" to the default list of possible score text titles.
-- **Highscore Parsing**: Fixed number format issues for French users (hopefully).
-- **Launcher**: Fixed issue where multiple connections cannot be created.
-- **Preferences / Notifications**: Fixed mixed up settings for "Highscore Change" and "Highscore Scan Completed" preferences.
-- **VPin Mania / Player Ranks**: Fixed cache reset on manual reload. 
-- **PinVol**: Fixed execution of UI so that the PinVol.exe is executed always from the "resources" folder.
+- **iScored**: Fixed **broken score submissions**, caused by a missing cache reset of the iScored game room by the server.
+- **Table Overview / Table Uploads**: Added missing .res file support for table bundle uploads.
+- **Auto-Shutdown**: Fixed resetting of auto-shutdown on key events. This reset got lost when changing to the new controller input API. (And I had such a great start on "Attack From Mars" when the shutdown warning popped up).
+- **Highscores**: Fixed highscore resolving for **White Water** by adding "RIVER MASTER" to the list of highscore titles.
+- **Highscores**: Fixed ROM resolving and highscore parsing for **American Most Haunted**.
+- **Highscores**: Fixed highscore parsing for **Gemini**, which can now be differed from **Gemini 2000** which is not supported.
+- **Highscores**: Fixed highscore parsing for **Punchy the Clown**.
+- **Table Overview / Validators**: Fixed "Controller.stop" validator.
 - **Table Repository**: Fixed Cancel button not cancelling progress when uploading ZIP file.
-
-## Credits
-
-A big thank you here to @gorgatron who provided a bunch of new resetted nvrams!
