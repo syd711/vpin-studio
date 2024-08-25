@@ -84,39 +84,46 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
         // the user might have selected not to submit all scores, but only tournament scores
         TableScore createdTableScore = null;
         if (tournamentSettings.isSubmitAllScores()) {
-          createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
-          LOG.info("Submitted VPinMania score " + createdTableScore);
+          try {
+            createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
+            LOG.info("Submitted VPinMania score " + createdTableScore);
+          }
+          catch (Exception e) {
+            LOG.warn("Mania score submission failed: " + e.getMessage());
+          }
         }
 
         //sync info before submitting to possible resetted tables
         tournamentSynchronizer.synchronize();
 
-        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-        for (Tournament tournament : tournaments) {
-          try {
-            TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
-            if (tournamentTable != null) {
-              if (tournament.isActive() && tournamentTable.isActive()) {
-                List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
-                if (tournamentScores.contains(createdTableScore)) {
-                  LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
+        if (createdTableScore != null) {
+          List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+          for (Tournament tournament : tournaments) {
+            try {
+              TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
+              if (tournamentTable != null) {
+                if (tournament.isActive() && tournamentTable.isActive()) {
+                  List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+                  if (tournamentScores.contains(createdTableScore)) {
+                    LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
+                  }
+                  else {
+                    TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                    LOG.info("Linked " + createdTableScore + " to " + tournament);
+                  }
+
+                  if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
+                  }
                 }
                 else {
-                  TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
-                  LOG.info("Linked " + createdTableScore + " to " + tournament);
+                  LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
                 }
-
-                if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                  iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
-                }
-              }
-              else {
-                LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
               }
             }
-          }
-          catch (Exception e) {
-            LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+            catch (Exception e) {
+              LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+            }
           }
         }
       }
