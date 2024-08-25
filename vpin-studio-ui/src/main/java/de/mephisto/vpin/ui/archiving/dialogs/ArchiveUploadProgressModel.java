@@ -1,5 +1,7 @@
 package de.mephisto.vpin.ui.archiving.dialogs;
 
+import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -9,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.Future;
 
 public class ArchiveUploadProgressModel extends ProgressModel<File> {
   private final static Logger LOG = LoggerFactory.getLogger(ArchiveUploadProgressModel.class);
@@ -18,11 +21,15 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
   private final List<File> files;
   private double percentage = 0;
 
+  private Future<JobExecutionResult> currentUploadFuture;
+  private final ArchiveServiceClient archiveServiceClient;
+
   public ArchiveUploadProgressModel(String title, long repositoryId, List<File> files) {
     super(title);
     this.repositoryId = repositoryId;
     this.files = files;
     this.iterator = files.iterator();
+    archiveServiceClient = Studio.client.getArchiveService();
   }
 
   @Override
@@ -48,19 +55,33 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      Studio.client.getArchiveService().uploadArchive(next, (int) repositoryId, percent -> {
+      currentUploadFuture = archiveServiceClient.uploadArchiveFuture(next, (int) repositoryId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });
+      currentUploadFuture.get();
+
       progressResultModel.addProcessed();
       percentage++;
     } catch (Exception e) {
-      LOG.error("Archive upload failed: " + e.getMessage(), e);
+      if (!currentUploadFuture.isCancelled()) {
+        LOG.error("Archive upload failed: " + e.getMessage(), e);
+      }
     }
   }
 
   @Override
   public boolean hasNext() {
     return iterator.hasNext();
+  }
+
+  @Override
+  public void cancel() {
+    if (currentUploadFuture != null && !currentUploadFuture.isDone()) {
+      archiveServiceClient.closeHttpClient();
+      currentUploadFuture.cancel(true);
+
+      LOG.warn("Upload cancelled");
+    }
   }
 }

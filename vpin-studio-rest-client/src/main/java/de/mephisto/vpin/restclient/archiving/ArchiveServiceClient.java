@@ -18,12 +18,18 @@ import org.springframework.web.client.RestTemplate;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 /*********************************************************************************************************************
  * Archiving
  ********************************************************************************************************************/
 public class ArchiveServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
+
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public ArchiveServiceClient(VPinStudioClient client) {
     super(client);
@@ -79,6 +85,14 @@ public class ArchiveServiceClient extends VPinStudioClientService {
     }
   }
 
+  public Future<JobExecutionResult> uploadArchiveFuture(File file, int repositoryId, FileUploadProgressListener listener) throws Exception {
+    Callable<JobExecutionResult> task = () -> {
+      return this.uploadArchive(file, repositoryId, listener);
+    };
+
+    return executor.submit(task);
+  }
+
   public boolean installArchive(ArchiveDescriptorRepresentation descriptor) throws Exception {
     try {
       return getRestClient().post(API + "archives/install", descriptor, Boolean.class);
@@ -87,7 +101,6 @@ public class ArchiveServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
-
 
   public boolean backupTable(BackupDescriptor exportDescriptor) throws Exception {
     return getRestClient().post(API + "io/backup", exportDescriptor, Boolean.class);
