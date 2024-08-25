@@ -93,6 +93,7 @@ public class DropInContainerController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     dragHandler.setStyle("-fx-cursor: hand;");
+    dataPanel.setStyle("-fx-cursor: hand;");
     root.setOnDragDetected(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
         /* drag was detected, start a drag-and-drop gesture*/

@@ -73,7 +73,7 @@
       <String fx:value="accordion-container" />
    </styleClass>
    <left>
-      <VBox fx:id="dragHandler" alignment="CENTER" BorderPane.alignment="CENTER">
+      <VBox fx:id="dragHandler" alignment="CENTER" styleClass="subpanel" BorderPane.alignment="CENTER">
          <children>
             <FontIcon iconColor="WHITE" iconLiteral="mdi2d-drag" iconSize="18" />
          </children>
