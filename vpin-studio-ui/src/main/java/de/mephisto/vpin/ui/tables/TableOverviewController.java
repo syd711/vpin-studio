@@ -603,6 +603,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     refreshFilterId();
 
     if (uploadResult != null && uploadResult.getGameId() != -1) {
+      //the cache miss will result in caching the new table
+      client.getGameService().getGame(uploadResult.getGameId());
+
       Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
         Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
@@ -622,7 +625,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         }
       };
       reloadConsumers.add(showTableDialogConsumer);
-      onReload();
+      //TODO not sure
+      doReload(false);
     }
   }
 
@@ -667,12 +671,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onTablesScan() {
     List<GameRepresentation> selectedItems = getSelections();
     ProgressDialog.createProgressDialog(new TableScanProgressModel("Scanning Tables", selectedItems));
-    if (selectedItems.size() == 1) {
-      GameRepresentation gameRepresentation = selectedItems.get(0);
-      EventManager.getInstance().notifyTableChange(gameRepresentation.getId(), gameRepresentation.getRom());
-    }
-    else {
-      this.onReload();
+    for (GameRepresentation selectedItem : selectedItems) {
+      EventManager.getInstance().notifyTableChange(selectedItem.getId(), selectedItem.getRom());
     }
   }
 
@@ -770,7 +770,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
-
       }
 
       // select the reloaded game
@@ -1685,7 +1684,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.tablesController = tablesController;
     new TableOverviewDragDropHandler(tablesController);
 
-    // start the relod process when the stage is on
+    // start the reload process when the stage is on
     Studio.stage.setOnShown(e -> this.onReload());
   }
 

@@ -183,6 +183,10 @@ public class GamesServiceClient extends VPinStudioClientService {
           games.remove(index);
           games.add(index, gameRepresentation);
         }
+        else {
+          games.add(gameRepresentation);
+          games.sort(Comparator.comparing(GameRepresentation::getGameDisplayName));
+        }
       }
       return gameRepresentation;
     }
