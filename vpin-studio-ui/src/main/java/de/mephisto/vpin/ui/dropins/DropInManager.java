@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
+import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -148,7 +149,8 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   public void notifyDropInUpdates(WatchEvent.Kind<Path> entry) {
     reload();
-    dropInsBtn.getGraphic().setVisible(entry.equals(StandardWatchEventKinds.ENTRY_CREATE));
+    boolean isNew = entry.equals(StandardWatchEventKinds.ENTRY_CREATE);
+    dropInsBtn.getGraphic().setVisible(isNew);
   }
 
   public void install(File file) {
