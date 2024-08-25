@@ -208,7 +208,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -216,7 +216,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -224,7 +224,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -232,7 +232,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -264,7 +264,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.0.0</version>
+      <version>3.3.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -603,6 +603,19 @@
           <url>http://www.gnu.org/software/classpath/license.html</url>
           <distribution>repo</distribution>
           <file>gplv2 with the classpath exception - license.html</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>4.4.0</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>apache-2.0 - license-2.0.txt</file>
         </license>
       </licenses>
     </dependency>
@@ -953,6 +966,18 @@
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
+      <version>2.7.4</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+          <file>apache 2.0 license - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-websocket</artifactId>
       <version>2.7.4</version>
       <licenses>
         <license>

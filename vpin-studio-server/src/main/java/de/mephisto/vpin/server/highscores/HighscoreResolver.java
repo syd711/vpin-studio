@@ -136,6 +136,7 @@ class HighscoreResolver {
 
       ScoreParsingSummary summary = reg.readHighscores();
       if (summary != null) {
+        metadata.setStatus(null);
         metadata.setRaw(summary.toRaw());
       }
       if (StringUtils.isEmpty(metadata.getRaw())) {

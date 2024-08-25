@@ -548,9 +548,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       }
     }
 
-    List<GameRepresentation> gamesCached = client.getGameService().getGamesCached(emuId);
-    for (GameRepresentation gameRepresentation : gamesCached) {
-      if (gameRepresentation.getId() != this.game.getId() && gameRepresentation.getGameFileName().trim().equalsIgnoreCase(updated)) {
+    List<GameRepresentation> gameList = client.getGameService().getGamesByFileName(emuId, updated);
+    for (GameRepresentation gameRepresentation : gameList) {
+      if (gameRepresentation.getId() != this.game.getId()) {
         return gameRepresentation.getGameFileName();
       }
     }

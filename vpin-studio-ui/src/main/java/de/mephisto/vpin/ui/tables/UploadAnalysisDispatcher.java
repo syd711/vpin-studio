@@ -23,7 +23,7 @@ import java.io.IOException;
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
 
-  public static void dispatch(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game) {
+  public static void dispatch(@NonNull File file, @Nullable GameRepresentation game) {
     String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
     AssetType assetType = null;
     try {
@@ -37,17 +37,20 @@ public class UploadAnalysisDispatcher {
       return;
     }
 
-
     if (PackageUtil.isSupportedArchive(extension)) {
-      validateArchive(tablesController, file, game);
+      validateArchive(file, game);
     }
     else {
-      UploaderAnalysis analysis = new UploaderAnalysis(file);
-      dispatchBySuffix(tablesController, file, game, assetType, analysis);
+      dispatchFile(file, game, assetType);
     }
   }
 
-  private static void dispatchBySuffix(@NonNull TablesSidebarController tablesController, @NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
+  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+    UploaderAnalysis analysis = new UploaderAnalysis(file);
+    dispatchBySuffix(file, game, assetType, analysis);
+  }
+
+  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file);
@@ -70,8 +73,10 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(tablesController.getTableOverviewController(), game, TableUploadType.uploadAndImport, analysis);
+        TableDialogs.openTableUploadDialog(game, TableUploadType.uploadAndImport, analysis);
         return;
+      }
+      default: {
       }
     }
 
@@ -168,7 +173,7 @@ public class UploadAnalysisDispatcher {
     return null;
   }
 
-  public static String validateArchive(@Nullable TablesSidebarController tablesSidebarController, File file, GameRepresentation game) {
+  public static String validateArchive(File file, GameRepresentation game) {
     try {
       ProgressModel model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
@@ -177,7 +182,7 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          dispatchBySuffix(tablesSidebarController, file, game, singleAssetType, analysis);
+          dispatchBySuffix(file, game, singleAssetType, analysis);
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);

@@ -64,13 +64,20 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Override
   public void controllerEvent(String name) {
+    //reset shutdown thread
+    shutdownThread.notifyKeyEvent();
+
     if (isEventDebounced(name)) {
+      return;
+    }
+
+    if (isEventFiltered(name)) {
       return;
     }
 
     //always hide the overlay on any key press
     if (overlayVisible) {
-      onToggleOverlayEvent();
+      onToggleOverlayEvent(name);
       return;
     }
 
@@ -86,7 +93,7 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
         }
 
         if (frontendIsRunning) {
-          onToggleOverlayEvent();
+          onToggleOverlayEvent(name);
           return;
         }
       }
@@ -107,10 +114,11 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   //-------------- Event Execution -------------------------------------------------------------------------------------
 
-  private void onToggleOverlayEvent() {
+  private void onToggleOverlayEvent(String eventName) {
+    LOG.info("Toggling overlay for key event '" + eventName + "'");
     this.overlayVisible = !overlayVisible;
     Platform.runLater(() -> {
-      LOG.info("Toggle pause menu show, was visible: " + !overlayVisible);
+      LOG.info("Toggle overlay visibility, was visible: " + !overlayVisible);
       ServerFX.getInstance().showOverlay(overlayVisible);
     });
   }
@@ -138,6 +146,23 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
       frontendStatusService.notifyFrontendRestart();
     }).start();
   }
+
+
+  private boolean isEventFiltered(String name) {
+    if (pauseMenuSettings != null) {
+      String inputFilterList = pauseMenuSettings.getInputFilterList();
+      if (!StringUtils.isEmpty(inputFilterList)) {
+        String[] split = inputFilterList.toLowerCase().split(",");
+        for (String s : split) {
+          if (!StringUtils.isEmpty(s) && name.toLowerCase().contains(s)) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
 
   private synchronized boolean isEventDebounced(String eventName) {
     long inputDebounceMs = pauseMenuSettings.getInputDebounceMs();

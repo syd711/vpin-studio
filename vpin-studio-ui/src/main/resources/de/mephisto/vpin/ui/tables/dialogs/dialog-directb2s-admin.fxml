@@ -77,6 +77,17 @@
                               <Tooltip text="Rename the backglass" />
                            </tooltip>
                         </Button>
+                        <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Upload a new Backglass" />
+                           </tooltip>
+                        </Button>
                         <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
@@ -16,6 +17,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
+import de.mephisto.vpin.ui.tables.drophandler.TableMediaDropinsMonitoring;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -42,6 +44,7 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.Arrays;
@@ -102,11 +105,13 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
 
+  /** a dropins monitoring service that installs assets when saved in the folder */
+  private TableMediaDropinsMonitoring dropinsMonitor;
 
   @Override
   public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
-    if(options != null) {
+    if (options != null) {
       tabPane.getSelectionModel().select(0);
       tableOverviewController.selectGameInModel(options.getGameId());
     }
@@ -203,6 +208,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
     view.setFitWidth(18);
     view.setFitHeight(18);
     vpsTablesTab.setGraphic(view);
+
+    dropinsMonitor = new TableMediaDropinsMonitoring();
+    dropinsMonitor.startMonitoring(new File("C:/temp/vpin-dropins"), this);
 
     Platform.runLater(() -> {
       Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -407,5 +415,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tablesChanged() {
     preferencesChanged(PreferenceType.uiSettings);
+  }
+
+  @Override
+  public void tableUploaded(UploadDescriptor uploadeDescription) {
+    Platform.runLater(() -> {
+        tableOverviewController.refreshUploadResult(uploadeDescription);
+    });
   }
 }

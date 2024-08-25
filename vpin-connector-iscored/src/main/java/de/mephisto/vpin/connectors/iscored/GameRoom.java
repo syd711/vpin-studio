@@ -51,11 +51,8 @@ public class GameRoom {
 
   public IScoredGame getGameByVps(String vpsTableId, String vpsVersionId) {
     for (IScoredGame game : this.games) {
-      List<String> tags = game.getTags();
-      for (String tag : tags) {
-        if(tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
-          return game;
-        }
+      if(game.matches(vpsTableId, vpsVersionId)) {
+        return game;
       }
     }
     return null;

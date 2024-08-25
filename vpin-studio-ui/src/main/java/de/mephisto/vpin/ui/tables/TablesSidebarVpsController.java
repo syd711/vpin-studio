@@ -3,10 +3,10 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
@@ -25,9 +25,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -39,13 +36,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
-import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -360,7 +354,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     boolean doFilter = filterCheckbox.isSelected();
 
-    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false);
+    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", game.get(), VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false);
 
     if (!doFilter || game.get().getPupPackName() == null) {
       addSection(dataRoot, "PUP Pack", game.get(), VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack());
@@ -413,20 +407,21 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         long updatedAt = authoredUrl.getUpdatedAt();
         List<String> authors = authoredUrl.getAuthors();
 
-        for (VpsUrl vpsUrl : authoredUrlUrls) {
-          String url = vpsUrl.getUrl();
-          String updateText = null;
-          if (game != null && showUpdates) {
-            List<VPSChange> changes = game.getVpsUpdates().getChanges();
-            for (VPSChange change : changes) {
-              if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-                VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
-                updateText = change.toString(gameTable);
-                break;
-              }
+        String updateText = null;
+        if (game != null && showUpdates) {
+          List<VPSChange> changes = game.getVpsUpdates().getChanges();
+          for (VPSChange change : changes) {
+            if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
+              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
+              updateText = change.toString(gameTable);
+              break;
             }
           }
-          entries.add(new VpsEntry(version, authors, url, updatedAt, updateText));
+        }
+
+        for (VpsUrl vpsUrl : authoredUrlUrls) {
+          String url = vpsUrl.getUrl();
+          entries.add(new VpsEntry(game, diffTypes, version, authors, url, updatedAt, updateText));
         }
 
         if (authoredUrl instanceof VpsBackglassFile) {
@@ -472,11 +467,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, url, vpsTableVersion.getTableFormat(), updatedAt, updateText));
+          entries.add(new VpsTableEntry(game, vpsTable.getId(), vpsTableVersion.getId(), version, authors, url, vpsTableVersion.getTableFormat(), updatedAt, updateText));
         }
       }
       else {
-        entries.add(new VpsTableEntry(vpsTable.getId(), vpsTableVersion.getId(), version, authors, null, vpsTableVersion.getTableFormat(), updatedAt, updateText));
+        entries.add(new VpsTableEntry(game, vpsTable.getId(), vpsTableVersion.getId(), version, authors, null, vpsTableVersion.getTableFormat(), updatedAt, updateText));
       }
     }
 
@@ -512,7 +507,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
             }
           }
         }
-        entries.add(new VpsEntry(version, authors, url, updatedAt, updateText));
+        entries.add(new VpsEntry(game, VpsDiffTypes.tutorial, version, authors, url, updatedAt, updateText));
       }
     }
 

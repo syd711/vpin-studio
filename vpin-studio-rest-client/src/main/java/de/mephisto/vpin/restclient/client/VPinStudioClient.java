@@ -331,6 +331,11 @@ public class VPinStudioClient implements OverlayClient {
     return getGameService().getGame(id);
   }
 
+  /**
+   * //TODO this method works only for VPX based games
+   * @param id
+   * @return
+   */
   @Override
   public GameRepresentation getGameCached(int id) {
     return getGameService().getGameCached(id);

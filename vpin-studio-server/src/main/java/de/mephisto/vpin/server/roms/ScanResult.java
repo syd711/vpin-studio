@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.roms;
 
+import de.mephisto.vpin.restclient.JsonSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -13,6 +14,15 @@ public class ScanResult {
   private String tableName;
   private String pupPackName;
   private boolean foundControllerStop = false;
+  private boolean foundTableExit = false;
+
+  public boolean isFoundTableExit() {
+    return foundTableExit;
+  }
+
+  public void setFoundTableExit(boolean foundTableExit) {
+    this.foundTableExit = foundTableExit;
+  }
 
   public boolean isFoundControllerStop() {
     return foundControllerStop;

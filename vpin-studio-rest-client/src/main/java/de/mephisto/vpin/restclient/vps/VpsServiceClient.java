@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,7 +26,7 @@ public class VpsServiceClient extends VPinStudioClientService {
 
   public List<VpsTable> getTables() {
     List<VpsTable> vpsTables = new ArrayList<>(cache.values());
-    List<VpsTable> filtered = vpsTables.stream().filter(t -> !StringUtils.isEmpty(t.getName())).collect(Collectors.toList());
+    List<VpsTable> filtered = vpsTables.stream().filter(t -> t != null && !StringUtils.isEmpty(t.getName())).collect(Collectors.toList());
     Collections.sort(filtered, Comparator.comparing(o -> String.valueOf(o.getName().trim().toLowerCase())));
     return filtered;
   }
@@ -75,4 +77,13 @@ public class VpsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "vps/changeDate", Date.class);
   }
 
+  public String checkInstallLogin(String link) {
+    String encodedLink = URLEncoder.encode(link, StandardCharsets.UTF_8); 
+    return getRestClient().get(API + "vps/installLogin/" + encodedLink, String.class);
+  }
+
+  public List<VpsInstallLink> getInstallLinks(String link) {
+    String encodedLink = URLEncoder.encode(link, StandardCharsets.UTF_8);    
+    return Arrays.asList(getRestClient().get(API + "vps/installLinks/" + encodedLink, VpsInstallLink[].class));
+  }
 }

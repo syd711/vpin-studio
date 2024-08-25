@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.Studio;
@@ -42,17 +43,34 @@ import java.io.IOException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTablesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
 
+  private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
+
+  static {
+
+    TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
+    TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
+    TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX", "Pinball FX"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX2", "Pinball FX2"));
+    TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
+  }
+
+
   @FXML
   private TextField searchTextField;
 
   @FXML
   private TableView<VpsTable> tableView;
+
+  @FXML
+  private ComboBox<VpsTableFormat> emulatorCombo;
 
   @FXML
   private TableColumn<VpsTable, String> installedColumn;
@@ -161,6 +179,11 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     new Thread(() -> {
       // get all tables
       vpsTables = client.getVpsService().getTables();
+
+      VpsTableFormat value = emulatorCombo.getValue();
+      String tableFormat = value.getAbbrev();
+      vpsTables = vpsTables.stream().filter(t -> t.getAvailableTableFormats().contains(tableFormat)).collect(Collectors.toList());
+
       Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
 
       // and calculate installed and unmapped in the non blocking thread
@@ -393,6 +416,15 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       tableView.setItems(FXCollections.observableList(filtered));
     });
 
+    emulatorCombo.setItems(FXCollections.observableList(TABLE_FORMATS));
+    emulatorCombo.getSelectionModel().select(0);
+    emulatorCombo.valueProperty().addListener(new ChangeListener<VpsTableFormat>() {
+      @Override
+      public void changed(ObservableValue<? extends VpsTableFormat> observable, VpsTableFormat oldValue, VpsTableFormat newValue) {
+        doReload(false);
+      }
+    });
+
     EventManager.getInstance().addListener(this);
     this.doReload(false);
   }
@@ -432,7 +464,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       }
       Platform.runLater(() -> {
         editBtn.setDisable(gameByVpsTable == null);
-        tablesController.getVpsTablesSidebarController().setTable(newSelection);
+        tablesController.getVpsTablesSidebarController().setTable(newSelection, tablesController.getTablesSideBarController());
       });
     }).start();
   }
@@ -473,5 +505,28 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   public void setRootController(TablesController tablesController) {
     this.tablesController = tablesController;
+  }
+
+  static class VpsTableFormat {
+    private final String abbrev;
+    private final String name;
+
+    VpsTableFormat(String abbrev, String name) {
+      this.abbrev = abbrev;
+      this.name = name;
+    }
+
+    public String getAbbrev() {
+      return abbrev;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    @Override
+    public String toString() {
+      return name;
+    }
   }
 }

@@ -45,6 +45,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
 
   @Autowired
   private PreferencesService preferencesService;
+
   private CardSettings cardSettings;
 
   public void extractDefaultPicture(@NonNull Game game) {

@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.events;
 
-
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -16,6 +16,10 @@ public interface StudioEventListener {
   }
 
   default void tablesChanged() {
+
+  }
+
+  default void tableUploaded(UploadDescriptor uploadDescriptor) {
 
   }
 

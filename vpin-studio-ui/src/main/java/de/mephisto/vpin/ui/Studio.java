@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;

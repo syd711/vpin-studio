@@ -1,7 +1,8 @@
 package de.mephisto.vpin.ui.competitions.dialogs;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.iscored.GameRoom;
 import de.mephisto.vpin.connectors.iscored.IScored;
@@ -45,6 +46,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class IScoredSubscriptionDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionDialogController.class);
+  private final Debouncer debouncer = new Debouncer();
 
   @FXML
   private ComboBox<String> badgeCombo;
@@ -354,7 +356,13 @@ public class IScoredSubscriptionDialogController implements Initializable, Dialo
       }
     });
 
-    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> loadIScoredGameRoomTables(true));
+    dashboardUrlField.textProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("url", () -> {
+        Platform.runLater(() -> {
+          loadIScoredGameRoomTables(true);
+        });
+      }, 500);
+    });
   }
 
   private boolean containsExisting(CompetitionRepresentation c) {

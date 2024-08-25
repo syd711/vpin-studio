@@ -281,6 +281,11 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <CheckBox fx:id="assetResCheckbox" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text=".res File" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </CheckBox>
                                     <CheckBox fx:id="assetRomCheckbox" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="ROM" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />

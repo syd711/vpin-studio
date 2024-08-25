@@ -46,6 +46,16 @@ public class IScoredGame {
     this.scores = scores;
   }
 
+  public boolean matches(String vpsTableId, String vpsVersionId) {
+    List<String> tags = getTags();
+    for (String tag : tags) {
+      if (tag.contains(vpsTableId) && tag.contains(vpsVersionId)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   @Override
   public String toString() {
     return this.name;

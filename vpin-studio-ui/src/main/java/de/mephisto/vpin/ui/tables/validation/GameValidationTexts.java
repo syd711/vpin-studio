@@ -183,6 +183,11 @@ public class GameValidationTexts {
         text = "Mandatory file not found to run ALT Color: " + state.getOptions().get(0);
         break;
       }
+      case CODE_SCRIPT_CONTROLLER_STOP_MISSING: {
+        label = "No \"Controller.stop\" call found in script.";
+        text = "The VPX script has an exit method but does not call \"Controller.stop\". This call is required so that the tables nvram file is written.";
+        break;
+      }
       default: {
         throw new UnsupportedOperationException("unmapped validation state");
       }

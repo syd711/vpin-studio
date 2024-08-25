@@ -72,6 +72,36 @@
                      </VBox.margin>
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
+                  <VBox fx:id="dropIns" spacing="3.0">
+                     <children>
+                        <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="Enable &quot;Drop-In&quot; folder imports" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </CheckBox>
+                        <Label styleClass="checkbox-description" text="If checked, archives downloaded into the selected drop-in folder will be imported once the download is finished." textFill="WHITE" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                           <children>
+                              <TextField fx:id="dropInTextField" editable="false" prefWidth="400.0" promptText="Select Drop-In Folder...">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </TextField>
+                              <Button fx:id="dropInFolderButton" mnemonicParsing="false" onAction="#onDropInFolderSelection" text="Select Folder..." textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </Button>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="25.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </VBox>
                   <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />

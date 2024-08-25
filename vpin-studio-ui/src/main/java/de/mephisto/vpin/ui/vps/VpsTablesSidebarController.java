@@ -4,6 +4,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -123,7 +124,7 @@ public class VpsTablesSidebarController implements Initializable {
   }
 
 
-  public void setTable(Optional<VpsTable> selection) {
+  public void setTable(Optional<VpsTable> selection, TablesSidebarController tablesSidebarController) {
     this.init();
     this.openBtn.setDisable(selection.isEmpty());
 

@@ -1,9 +1,8 @@
 package de.mephisto.vpin.connectors.vps.model;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class VpsTable implements VPSEntity {
@@ -42,6 +41,19 @@ public class VpsTable implements VPSEntity {
       }
     }
     return null;
+  }
+
+  @JsonIgnore
+  public List<String> getAvailableTableFormats() {
+    List<String> formats = new ArrayList<>();
+    List<VpsTableVersion> tableFiles = getTableFiles();
+    for (VpsTableVersion tableFile : tableFiles) {
+      String tableFormat = tableFile.getTableFormat();
+      if (!formats.contains(tableFormat)) {
+        formats.add(tableFormat);
+      }
+    }
+    return formats;
   }
 
   //------------------
@@ -159,7 +171,7 @@ public class VpsTable implements VPSEntity {
   }
 
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
-    if (t.getTableFormat() == null || t.getTableFormat().length()==0)  {
+    if (t.getTableFormat() == null || t.getTableFormat().length() == 0) {
       return true;
     }
     return t.getTableFormat().equals(tableFormat);

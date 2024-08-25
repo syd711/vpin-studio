@@ -447,6 +447,7 @@ public class TournamentEditDialogController implements Initializable, DialogCont
 
     this.gameRoom = null;
     if (!StringUtils.isEmpty(tournament.getDashboardUrl())) {
+      IScored.invalidate();
       gameRoom = IScored.getGameRoom(tournament.getDashboardUrl());
       iscoredScoresEnabled.setSelected(gameRoom != null && gameRoom.getSettings() != null && gameRoom.getSettings().isPublicScoreEnteringEnabled());
     }

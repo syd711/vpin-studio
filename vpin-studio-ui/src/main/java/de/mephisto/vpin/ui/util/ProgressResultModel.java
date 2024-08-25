@@ -6,10 +6,12 @@ import javafx.scene.control.ProgressIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ProgressResultModel {
   private int processed;
   private int skipped;
+  private int withError;
   private boolean cancelled = false;
 
   public List<Object> results = new ArrayList<>();
@@ -44,6 +46,10 @@ public class ProgressResultModel {
     this.results.add(result);
   }
 
+  public boolean isSuccess() {
+    return !cancelled && withError == 0;
+  }
+
   public boolean isCancelled() {
     return cancelled;
   }
@@ -56,8 +62,16 @@ public class ProgressResultModel {
     return results;
   }
 
+  @SuppressWarnings("unchecked")
+  public <T> List<T> getTypedResults() {
+    return results.stream().map(o -> (T) o).collect(Collectors.toList());
+  }
+
   public void addSkipped() {
     this.skipped++;
+  }
+  public void addError() {
+    this.withError++;
   }
 
   public int getProcessed() {
@@ -66,5 +80,9 @@ public class ProgressResultModel {
 
   public int getSkipped() {
     return skipped;
+  }
+
+  public int getWithError() {
+    return withError;
   }
 }

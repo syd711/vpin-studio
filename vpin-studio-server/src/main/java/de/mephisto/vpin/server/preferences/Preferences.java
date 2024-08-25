@@ -73,6 +73,10 @@ public class Preferences {
 
   private String filterSettings;
 
+  private String vpuSettings;
+
+  private String vpfSettings;
+
   @Column(length = 1024)
   private String doNotShowAgains;
 
@@ -98,6 +102,20 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getVpuSettings() {
+    return vpuSettings;
+  }
+  public void setVpuSettings(String vpuSettings) {
+    this.vpuSettings = vpuSettings;
+  }
+
+  public String getVpfSettings() {
+    return vpfSettings;
+  }
+  public void setVpfSettings(String vpfSettings) {
+    this.vpfSettings = vpfSettings;
+  }
 
   public String getFilterSettings() {
     return filterSettings;

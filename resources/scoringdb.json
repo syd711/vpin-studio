@@ -25,6 +25,18 @@
       "rom": "MountainClimbingHS",
       "tableName": "",
       "textFile": "MountainClimbingHS.txt"
+    },
+    {
+      "scannedRom": "LMEMDOFTables",
+      "rom": "AMH",
+      "tableName": "",
+      "textFile": ""
+    },
+    {
+      "scannedRom": "gemini_1977",
+      "rom": "Gemini",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [

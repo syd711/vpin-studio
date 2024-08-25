@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.vps;
 
-import de.mephisto.vpin.connectors.vps.VpsDiffer;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.List;
 
@@ -56,4 +58,15 @@ public class VpsResource {
     return vpsService.getChangeDate();
   }
 
+  @GetMapping("/installLogin/{link}")
+  public String checkLogin(@PathVariable("link") String link) {
+    String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
+    return vpsService.checkLogin(decodedLink);
+  }
+
+  @GetMapping("/installLinks/{link}")
+  public List<VpsInstallLink> getInstallLinks(@PathVariable("link") String link) {
+    String decodedLink = URLDecoder.decode(link, StandardCharsets.UTF_8);
+    return vpsService.getInstallLinks(decodedLink);
+  }
 }

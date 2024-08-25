@@ -203,13 +203,26 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
           HighscoreType hsType = HighscoreType.valueOf(gameRepresentation.getHighscoreType());
           if (hsType.equals(HighscoreType.VPReg) || hsType.equals(HighscoreType.EM)) {
             GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-            SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
+            if (new File(gameRepresentation.getHsFileName()).exists()) {
+              SystemUtil.openFile(new File(gameRepresentation.getHsFileName()));
+            }
+            else {
+              SystemUtil.openFolder(new File(emulatorRepresentation.getUserDirectory()));
+            }
+
             return;
           }
         }
 
         GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(this.game.get().getEmulatorId());
-        SystemUtil.openFolder(new File(emulatorRepresentation.getNvramDirectory()));
+        File nvRamFolder = new File(emulatorRepresentation.getNvramDirectory());
+        File nvRamFile = new File(nvRamFolder, gameRepresentation.getRom() + ".nv");
+        if (nvRamFile.exists()) {
+          SystemUtil.openFile(nvRamFile);
+        }
+        else {
+          SystemUtil.openFolder(nvRamFolder);
+        }
       }
     }
     catch (Exception e) {

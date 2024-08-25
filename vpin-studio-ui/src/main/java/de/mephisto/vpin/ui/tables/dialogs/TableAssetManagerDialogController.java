@@ -812,7 +812,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (!isEmbeddedMode()) {
       new Thread(() -> {
         // as get of games may takes some time, run in a dedicated Thread
-        List<GameRepresentation> games = client.getGameService().getGamesCached(emulatorId);
+        List<GameRepresentation> games = client.getGameService().getGamesByEmulator(emulatorId);
         ObservableList<GameRepresentation> gameRepresentations = FXCollections.observableArrayList(games);
         tablesCombo.getItems().addAll(gameRepresentations);
         tablesCombo.valueProperty().addListener((observableValue, gameRepresentation, t1) -> {

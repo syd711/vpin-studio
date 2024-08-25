@@ -1,7 +1,7 @@
 package de.mephisto.vpin.commons.fx;
 
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.LocalUISettings;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;

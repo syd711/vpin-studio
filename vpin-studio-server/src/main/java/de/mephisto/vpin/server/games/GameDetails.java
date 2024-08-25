@@ -63,6 +63,30 @@ public class GameDetails {
 
   private Boolean cardsDisabled;
 
+  private Boolean foundControllerStop = true;
+
+  private Boolean foundTableExit = true;
+
+  public Boolean getFoundControllerStop() {
+    return foundControllerStop;
+  }
+
+  public void setFoundControllerStop(Boolean foundControllerStop) {
+    this.foundControllerStop = foundControllerStop;
+  }
+
+  public Boolean getFoundTableExit() {
+    return foundTableExit;
+  }
+
+  public void setFoundTableExit(Boolean foundTableExit) {
+    this.foundTableExit = foundTableExit;
+  }
+
+  public Boolean getCardsDisabled() {
+    return cardsDisabled;
+  }
+
   public String getEventLog() {
     return eventLog;
   }
