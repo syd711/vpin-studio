@@ -18,4 +18,5 @@
 - **Highscores**: Fixed highscore parsing for **Gemini**, which can now be differed from **Gemini 2000** which is not supported.
 - **Highscores**: Fixed highscore parsing for **Punchy the Clown**.
 - **Table Overview / Validators**: Fixed "Controller.stop" validator.
+- **Table Upload**: Fixed Cancel button and invalid archive when uploading ZIP file.
 - **Table Repository**: Fixed Cancel button not cancelling progress when uploading ZIP file.
