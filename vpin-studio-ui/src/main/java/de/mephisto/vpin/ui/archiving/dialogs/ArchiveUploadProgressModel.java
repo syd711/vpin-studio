@@ -78,7 +78,6 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
   @Override
   public void cancel() {
     if (currentUploadFuture != null && !currentUploadFuture.isDone()) {
-      archiveServiceClient.closeHttpClient();
       currentUploadFuture.cancel(true);
 
       LOG.warn("Upload cancelled");
