@@ -49,7 +49,7 @@ public class PreferencesServiceClient extends VPinStudioClientService {
     return (T) jsonSettingsCache.get(key);
   }
 
-  public boolean setJsonPreference(String key, JsonSettings settings) {
+  public synchronized boolean setJsonPreference(String key, JsonSettings settings) {
     return setJsonPreference(key, settings, false);
   }
 

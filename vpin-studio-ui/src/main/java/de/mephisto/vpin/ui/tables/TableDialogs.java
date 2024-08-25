@@ -515,10 +515,10 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+  public static void openTableDeleteDialog(TableOverviewController tableOverviewController, List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
-    controller.setGames(selectedGames, allGames);
+    controller.setGames(tableOverviewController, selectedGames, allGames);
     stage.showAndWait();
   }
 

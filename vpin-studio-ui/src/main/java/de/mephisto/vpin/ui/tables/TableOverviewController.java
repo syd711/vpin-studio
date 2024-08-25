@@ -654,7 +654,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      TableDialogs.openTableDeleteDialog(selectedGames, this.games);
+      TableDialogs.openTableDeleteDialog(this, selectedGames, this.games);
     }
   }
 
