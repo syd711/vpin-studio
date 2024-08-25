@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
-import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.localsettings.LocalSettingsChangeListener;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -14,6 +14,7 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import org.controlsfx.control.Notifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -21,9 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
 import java.util.List;
 
 public class DropInManager implements LocalSettingsChangeListener, StudioEventListener {
@@ -147,10 +145,18 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     }
   }
 
-  public void notifyDropInUpdates(WatchEvent.Kind<Path> entry) {
+  public void notifyDropInUpdates(File file) {
     reload();
-    boolean isNew = entry.equals(StandardWatchEventKinds.ENTRY_CREATE);
-    dropInsBtn.getGraphic().setVisible(isNew);
+    if (file != null) {
+      dropInsBtn.getGraphic().setVisible(true);
+      Platform.runLater(() -> {
+        Notifications.create()
+            .title("Drop-In Download Finished!")
+            .text(file.getAbsolutePath())
+            .graphic(WidgetFactory.createCheckboxIcon())
+            .showInformation();
+      });
+    }
   }
 
   public void install(File file) {

@@ -17,10 +17,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.Dragboard;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.input.TransferMode;
+import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import org.slf4j.Logger;
@@ -28,9 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.Date;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 
 public class DropInContainerController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DropInContainerController.class);
@@ -40,6 +35,9 @@ public class DropInContainerController implements Initializable {
 
   @FXML
   private VBox dataPanel;
+
+  @FXML
+  private VBox dragHandler;
 
   @FXML
   private Label filenameLabel;
@@ -83,6 +81,7 @@ public class DropInContainerController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    dragHandler.setStyle("-fx-cursor: hand;");
     root.setOnDragDetected(new EventHandler<MouseEvent>() {
       public void handle(MouseEvent event) {
         /* drag was detected, start a drag-and-drop gesture*/
@@ -90,11 +89,9 @@ public class DropInContainerController implements Initializable {
         Dragboard db = root.startDragAndDrop(TransferMode.ANY);
         db.setDragView(root.snapshot(null, null));
 
-        /* Put a string on a dragboard */
-        ClipboardContent content = new ClipboardContent();
-        content.putString(file.getAbsolutePath());
-        db.setContent(content);
-
+        Map<DataFormat, Object> data = new HashMap<>();
+        data.put(DataFormat.FILES, Arrays.asList(file));
+        db.setContent(data);
         event.consume();
       }
     });

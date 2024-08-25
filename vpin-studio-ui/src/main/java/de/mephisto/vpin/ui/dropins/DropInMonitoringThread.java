@@ -46,12 +46,12 @@ public class DropInMonitoringThread {
                   File f = new File(dropinsFolder, filedropped.toString());
                   waitABit(f, 3000);
                   if (f.exists()) {
-                    notifyUpdates(StandardWatchEventKinds.ENTRY_CREATE);
+                    notifyUpdates(f);
                   }
                 }
               }
               else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                notifyUpdates(StandardWatchEventKinds.ENTRY_DELETE);
+                notifyUpdates(null);
               }
             }
             wk.reset();
@@ -105,9 +105,9 @@ public class DropInMonitoringThread {
     }
   }
 
-  private void notifyUpdates(WatchEvent.Kind<Path> entry) {
+  private void notifyUpdates(@Nullable File file) {
     LOG.info("Noticed drop-in folder update.");
-    DropInManager.getInstance().notifyDropInUpdates(entry);
+    DropInManager.getInstance().notifyDropInUpdates(file);
   }
 
   public void setDropInFolder(@Nullable File dropinsFolder) {

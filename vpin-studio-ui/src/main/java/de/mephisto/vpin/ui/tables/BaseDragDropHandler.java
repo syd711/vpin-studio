@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
+import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TableView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
@@ -58,7 +59,7 @@ public abstract class BaseDragDropHandler {
     tableView.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).collect(Collectors.toList());
+        List<Window> open = Stage.getWindows().stream().filter(Window::isShowing).filter(s -> s instanceof ContextMenu).collect(Collectors.toList());
         if (open.size() > (isInDialog? 2 : 1)) {
           return;
         }
