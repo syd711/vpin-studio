@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -14,13 +15,15 @@ import java.util.List;
 
 public class TableDeleteProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(TableDeleteProgressModel.class);
+  private final TableOverviewController tableOverviewController;
   private final List<Integer> games;
   private final DeleteDescriptor descriptor;
 
   private final Iterator<Integer> gameIterator;
 
-  public TableDeleteProgressModel(DeleteDescriptor descriptor) {
+  public TableDeleteProgressModel(TableOverviewController tableOverviewController, DeleteDescriptor descriptor) {
     super("Table Deletion");
+    this.tableOverviewController = tableOverviewController;
     this.games = descriptor.getGameIds();
     this.descriptor = descriptor;
     this.gameIterator = games.iterator();
@@ -60,14 +63,15 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
   public void finalizeModel(ProgressResultModel progressResultModel) {
     super.finalizeModel(progressResultModel);
 
-    EventManager.getInstance().notifyTablesChanged();
+    tableOverviewController.doReload(false);
   }
 
   @Override
   public void processNext(ProgressResultModel progressResultModel, Integer gameId) {
     try {
+      GameRepresentation game = Studio.client.getGameCached(gameId);
       descriptor.setGameIds(Arrays.asList(gameId));
-      Studio.client.getGameService().deleteGame(descriptor);
+      Studio.client.getGameService().deleteGame(descriptor, game);
     }
     catch (Exception e) {
       LOG.error("Error during dismissal: " + e.getMessage(), e);
