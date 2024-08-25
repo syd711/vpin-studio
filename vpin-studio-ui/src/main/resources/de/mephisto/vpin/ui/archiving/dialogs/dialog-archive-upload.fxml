@@ -20,7 +20,7 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" BorderPane.alignment="CENTER">
          <children>
-          <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
+            <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel">
                <HBox.margin>
                   <Insets right="12.0" />
                </HBox.margin>

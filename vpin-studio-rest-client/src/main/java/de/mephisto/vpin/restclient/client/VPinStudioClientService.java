@@ -53,7 +53,6 @@ public class VPinStudioClientService {
     return new RestTemplate(rf);
   }
 
-
   public static void finalizeUpload(HttpEntity upload) {
     Map<String, Object> data = (Map<String, Object>) upload.getBody();
     List fields = (List) data.get("file");

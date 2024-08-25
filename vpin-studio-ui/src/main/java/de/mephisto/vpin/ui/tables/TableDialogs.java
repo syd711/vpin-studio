@@ -27,7 +27,6 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogControll
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
