@@ -327,6 +327,7 @@ public class HighscoreService implements InitializingBean {
 
   public void addHighscoreChangeListener(@NonNull HighscoreChangeListener listener) {
     this.listeners.add(listener);
+    LOG.info("Registered highscore change listener: " + listener.getClass().getSimpleName());
   }
 
   /**
@@ -365,7 +366,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
+  public synchronized HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
     if (!game.isVpxGame()) {
       SLOG.error("Game " + game.getGameDisplayName() + " is not a VPX game.");
       throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");

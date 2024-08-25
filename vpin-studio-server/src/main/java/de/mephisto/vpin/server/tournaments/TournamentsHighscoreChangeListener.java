@@ -63,79 +63,82 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
 
     if (cabinet != null) {
-      new Thread(() -> {
-        Thread.currentThread().setName("VPin Mania Highscore ChangeListener Thread");
-
+      try {
         Score newScore = event.getNewScore();
         Game game = event.getGame();
 
-        try {
-          TableScore newTableScore = createTableScore(game, newScore);
-          Player player = newScore.getPlayer();
-          if (player == null || player.getTournamentUserUuid() == null) {
-            LOG.info("");
-            Player adminPlayer = playerService.getAdminPlayer();
-            if (adminPlayer != null) {
-              player = adminPlayer;
-            }
+        String tournamentPlayerUuid = getTournamentUserId(newScore);
+        TableScore newTableScore = createTableScore(game, newScore);
+        Account accountByUuid = null;
+        if (tournamentPlayerUuid != null) {
+          accountByUuid = maniaClient.getAccountClient().getAccountByUuid(tournamentPlayerUuid);
+          if (accountByUuid != null) {
+            newTableScore.setAccountId(accountByUuid.getId());
           }
-
-          Account accountByUuid = null;
-          if (player.getTournamentUserUuid() != null) {
-            accountByUuid = maniaClient.getAccountClient().getAccountByUuid(player.getTournamentUserUuid());
-            if (accountByUuid != null) {
-              newTableScore.setAccountId(accountByUuid.getId());
-            }
-            else {
-              LOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
-              return;
-            }
+          else {
+            LOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
+            return;
           }
+        }
 
-          // the user might have selected not to submit all scores, but only tournament scores
-          TableScore createdTableScore = null;
-          if (tournamentSettings.isSubmitAllScores()) {
-            createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
-            LOG.info("Submitted VPinMania score " + createdTableScore);
-          }
+        // the user might have selected not to submit all scores, but only tournament scores
+        TableScore createdTableScore = null;
+        if (tournamentSettings.isSubmitAllScores()) {
+          createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
+          LOG.info("Submitted VPinMania score " + createdTableScore);
+        }
 
-          //sync info before submitting to possible resetted tables
-          tournamentSynchronizer.synchronize();
+        //sync info before submitting to possible resetted tables
+        tournamentSynchronizer.synchronize();
 
-          List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-          for (Tournament tournament : tournaments) {
-            try {
-              TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
-              if (tournamentTable != null) {
-                if (tournament.isActive() && tournamentTable.isActive()) {
-                  List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
-                  if (tournamentScores.contains(createdTableScore)) {
-                    LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
-                  }
-                  else {
-                    TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
-                    LOG.info("Linked " + createdTableScore + " to " + tournament);
-                  }
-
-                  if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
-                    iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
-                  }
+        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+        for (Tournament tournament : tournaments) {
+          try {
+            TournamentTable tournamentTable = findTournamentTable(tournament, game.getExtTableId(), game.getExtTableVersionId());
+            if (tournamentTable != null) {
+              if (tournament.isActive() && tournamentTable.isActive()) {
+                List<TableScore> tournamentScores = maniaClient.getHighscoreClient().getTournamentScores(tournament.getId());
+                if (tournamentScores.contains(createdTableScore)) {
+                  LOG.warn("Skipped reporting duplicated tournament score \"" + createdTableScore + "\"");
                 }
                 else {
-                  LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
+                  TableScore tournamentScore = maniaClient.getTournamentClient().submitTournamentScore(tournament, createdTableScore);
+                  LOG.info("Linked " + createdTableScore + " to " + tournament);
+                }
+
+                if (accountByUuid != null && tournament.getDashboardUrl() != null && iScoredService.isIscoredGameRoomUrl(tournament.getDashboardUrl())) {
+                  iScoredService.submitTournamentScore(tournament, tournamentTable, createdTableScore, accountByUuid);
                 }
               }
-            }
-            catch (Exception e) {
-              LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+              else {
+                LOG.info("Found " + tournamentTable + ", but it is not active or the tournament " + tournament + " is already finished.");
+              }
             }
           }
+          catch (Exception e) {
+            LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+          }
         }
-        catch (Exception e) {
-          LOG.error("Failed to submit VPin Mania highscore: " + e.getMessage(), e);
-        }
-      }).start();
+      }
+      catch (Exception e) {
+        LOG.error("Failed to submit VPin Mania highscore: " + e.getMessage(), e);
+      }
     }
+  }
+
+  private String getTournamentUserId(Score newScore) {
+    Player player = newScore.getPlayer();
+    if (player == null || player.getTournamentUserUuid() == null) {
+      LOG.info("");
+      Player adminPlayer = playerService.getAdminPlayer();
+      if (adminPlayer != null) {
+        player = adminPlayer;
+      }
+    }
+    if (player != null) {
+      return player.getTournamentUserUuid();
+    }
+    return null;
   }
 
   private TournamentTable findTournamentTable(Tournament tournament, String vpsTableId, String vpsTableVersionId) {
