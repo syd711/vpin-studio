@@ -12,7 +12,7 @@ public class TableOverviewDragDropHandler extends BaseDragDropHandler {
   
   private final TablesController tablesController;
 
-  private final List<String> suffixes = Arrays.asList("vpx", "zip", "rar", "res", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz", "cfg", "nv");
+  public static final List<String> INSTALLABLE_SUFFIXES = Arrays.asList("vpx", "zip", "rar", "res", "ini", "pov", "directb2s", "vni", "pal", "pac", "crz", "cfg", "nv");
 
   public TableOverviewDragDropHandler(TablesController tablesController) {
     super(tablesController.getTableOverviewController().getTableView(), 
@@ -29,7 +29,7 @@ public class TableOverviewDragDropHandler extends BaseDragDropHandler {
   @Override
   protected boolean acceptFile(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
-    return suffixes.contains(extension);
+    return INSTALLABLE_SUFFIXES.contains(extension);
   }
 
   @Override

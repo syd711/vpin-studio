@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.TableOverviewDragDropHandler;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
@@ -20,6 +21,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,8 +47,13 @@ public class DropInContainerController implements Initializable {
   @FXML
   private Label sizeLabel;
 
+  @FXML
+  private Button installBtn;
+
   @Nullable
   private MenuButton dropInButton;
+
+
   private File file;
 
   @FXML
@@ -77,6 +84,10 @@ public class DropInContainerController implements Initializable {
     filenameLabel.setTooltip(new Tooltip(file.getName()));
     sizeLabel.setText("" + FileUtils.readableFileSize(file.length()) + ", created " + DateUtil.formatDateTime(new Date(file.lastModified())));
     sizeLabel.setStyle("-fx-font-size: 13px");
+
+    String suffix = FilenameUtils.getExtension(file.getName());
+    boolean disable = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix.toLowerCase());
+    this.installBtn.setDisable(disable);
   }
 
   @Override
@@ -93,6 +104,15 @@ public class DropInContainerController implements Initializable {
         data.put(DataFormat.FILES, Arrays.asList(file));
         db.setContent(data);
         event.consume();
+
+        ((BorderPane)event.getSource()).getParent().getParent().getParent().setVisible(false);
+      }
+    });
+
+    root.setOnDragDone(new EventHandler<DragEvent>() {
+      @Override
+      public void handle(DragEvent event) {
+        ((BorderPane)event.getSource()).getParent().getParent().getParent().setVisible(true);
       }
     });
   }
