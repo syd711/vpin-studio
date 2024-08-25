@@ -336,6 +336,10 @@ public class TableUploadController implements Initializable, DialogController {
             // If the analysis failed.
             if (analyze != null) {
               WidgetFactory.showAlert(Studio.stage, analyze);
+
+              this.fileNameField.setText("");
+              this.subfolderText.setText("");
+              this.uploaderAnalysis.reset();
             } else {
               String readmeText = uploaderAnalysis.getReadMeText();
               this.readmeTextField.setText(readmeText);
@@ -350,7 +354,11 @@ public class TableUploadController implements Initializable, DialogController {
 
             updateAnalysis();
 
-            this.uploaderAnalysis.reset();
+            this.uploadBtn.setDisable(analyze != null);
+            this.fileBtn.setDisable(false);
+            this.cancelBtn.setDisable(false);
+
+            return;
           }
 
           this.fileNameField.setText("");
