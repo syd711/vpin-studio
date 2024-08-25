@@ -2,7 +2,9 @@
 
 ## Changes
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dnd.png" width="700" />
+- **Added drop-in folder feature**: 
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
 
 
 ## Bugfixes
@@ -13,3 +15,5 @@
 - **Table Upload**: Fixed Cancel button and invalid archive when uploading ZIP file.
 - **Table Repository**: Fixed Cancel button not cancelling progress when uploading ZIP file.
 - **Highscore Cards**: Fixed "margins" for the non-raw score rendering, so that only the score values are positioned and the table title remains centered.
+- **Table Overview / Table Uploads**: The table overview does not perform a full reload after table uploads anymore. 
+- **Table Overview / Table Deletions**: The table overview does not perform a full reload after table deletions anymore. 
