@@ -192,7 +192,7 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     codeField.setText(settings.getString(SETTING_CODE));
     codeField.textProperty().addListener((observableValue, s, t1) -> settings.set(SETTING_CODE, t1));
 
-    List<String> keyNames = Keys.getUIKeyNames();
+    List<String> keyNames = Keys.getPinemHiKeyNames();
     keyKey.setItems(FXCollections.observableList(keyNames));
     keyKey.setValue(settings.getString(SETTING_KEY));
     keyKey.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_KEY, toKeyValue(t1)));
