@@ -315,6 +315,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.readmeTextField.setText("");
 
     uploadBtn.setDisable(true);
+
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
       readmeBox.setVisible(PackageUtil.isSupportedArchive(suffix));
@@ -325,35 +326,43 @@ public class TableUploadController implements Initializable, DialogController {
 
         Platform.runLater(() -> {
           if (rescan) {
-            uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
+            this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
-          String readmeText = uploaderAnalysis.getReadMeText();
-          this.readmeTextField.setText(readmeText);
 
-          String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
+          // If null the analysis was not successful.
+          if(this.uploaderAnalysis != null) {
+            String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
 
-          tableTitleLabel.setVisible(true);
-          tableNameLabel.setVisible(true);
-          tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
+            // If the analysis failed.
+            if (analyze != null) {
+              WidgetFactory.showAlert(Studio.stage, analyze);
+            } else {
+              String readmeText = uploaderAnalysis.getReadMeText();
+              this.readmeTextField.setText(readmeText);
 
-          this.fileNameField.setText(this.selection.getAbsolutePath());
-          this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
+              tableTitleLabel.setVisible(true);
+              tableNameLabel.setVisible(true);
+              tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
+
+              this.fileNameField.setText(this.selection.getAbsolutePath());
+              this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
+            }
+
+            updateAnalysis();
+
+            this.uploaderAnalysis.reset();
+          }
+
+          this.fileNameField.setText("");
+          this.subfolderText.setText("");
+
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
           this.cancelBtn.setDisable(false);
-
-          if (analyze != null) {
-            WidgetFactory.showAlert(Studio.stage, analyze);
-            this.fileNameField.setText("");
-            this.subfolderText.setText("");
-            this.uploaderAnalysis.reset();
-          }
-          updateAnalysis();
-          this.uploadBtn.setDisable(analyze != null);
+          this.uploadBtn.setDisable(true);
         });
       }
       else {
-        this.uploadBtn.setDisable(false);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
       }

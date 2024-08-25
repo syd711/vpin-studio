@@ -41,7 +41,12 @@ public class ProgressDialogController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    cancelButton.setOnAction(event -> this.onDialogCancel());
+    cancelButton.setOnAction(event -> {
+      this.onDialogCancel();
+
+      Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+      stage.close();
+    });
   }
 
   public void setProgressModel(Stage stage, ProgressModel model) {

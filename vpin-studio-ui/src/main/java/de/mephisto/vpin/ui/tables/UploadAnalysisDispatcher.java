@@ -19,6 +19,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
@@ -149,7 +151,12 @@ public class UploadAnalysisDispatcher {
     try {
       ProgressModel model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      return (UploaderAnalysis) progressDialog.getResults().get(0);
+      List<Object> results = progressDialog.getResults();
+      if (!results.isEmpty()) {
+        return (UploaderAnalysis) results.get(0);
+      } else {
+        WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
+      }
     }
     catch (Exception e) {
       LOG.error("Error opening archive: " + e.getMessage(), e);
