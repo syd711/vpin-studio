@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,11 +14,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextHighscoreToRawConverter {
-  private final static Logger LOG = LoggerFactory.getLogger(TextHighscoreToRawConverter.class);
+public class TextHighscoreConverters {
+  private final static Logger LOG = LoggerFactory.getLogger(TextHighscoreConverters.class);
 
   private final static List<ScoreTextFileAdapter> adapters = new ArrayList<>();
 
@@ -48,6 +50,35 @@ public class TextHighscoreToRawConverter {
     adapters.add(new AlteringScoreInitialsLinesAdapter(10, 0, 5));
     adapters.add(new SinglePlayerScoreAdapter());
     adapters.add(new TwoPlayersAdapter(8));
+  }
+
+  public static boolean resetHighscores(@NonNull ScoringDB scoringDB, @NonNull File file) {
+    if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
+      LOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based and will not be resetted.");
+      return false;
+    }
+
+    FileInputStream fileInputStream = null;
+    try {
+      fileInputStream = new FileInputStream(file);
+      List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
+      fileInputStream.close();
+      for (ScoreTextFileAdapter adapter : adapters) {
+        if (adapter.isApplicable(file, lines)) {
+          LOG.info("Resetting \"" + file.getAbsolutePath() + "\" using " + adapter.getClass().getSimpleName());
+          List<String> resetHighscoreText = adapter.resetHighscore(file, lines);
+          if (resetHighscoreText != null) {
+            FileUtils.writeLines(file, StandardCharsets.UTF_8.name(), resetHighscoreText);
+            LOG.info("Resetted \"" + file.getAbsolutePath() + "\"");
+            return true;
+          }
+        }
+      }
+    }
+    catch (IOException e) {
+      LOG.error("Error reading EM highscore file: " + e.getMessage(), e);
+    }
+    return false;
   }
 
   public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {

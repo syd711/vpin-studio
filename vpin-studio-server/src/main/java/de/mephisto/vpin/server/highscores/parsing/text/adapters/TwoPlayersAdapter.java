@@ -33,6 +33,11 @@ public class TwoPlayersAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    return lines;
+  }
+
+  @Override
   public String convert(@NotNull File file, @NotNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine1);

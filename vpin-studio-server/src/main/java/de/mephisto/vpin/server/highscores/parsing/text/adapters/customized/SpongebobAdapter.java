@@ -39,4 +39,9 @@ public class SpongebobAdapter implements ScoreTextFileAdapter {
 
     return builder.toString();
   }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    return lines;
+  }
 }

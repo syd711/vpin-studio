@@ -11,4 +11,6 @@ public interface ScoreTextFileAdapter {
   boolean isApplicable(@NonNull File file, @NonNull List<String> lines);
 
   String convert(@NonNull File file, @NonNull List<String> lines);
+
+  List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines);
 }

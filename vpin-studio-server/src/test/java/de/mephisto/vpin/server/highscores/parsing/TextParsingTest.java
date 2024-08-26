@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores.parsing;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreToRawConverter;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreConverters;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
     int count = 0;
     for (File entry : files) {
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreToRawConverter.convertTextFileTextToMachineReadable(scoringDB, entry);
+      String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(scoringDB, entry);
       if (raw != null) {
         List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
         assertNotNull(scores, "Reading failed for " + entry);

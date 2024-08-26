@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
 import java.util.List;
 
 abstract public class ScoreTextFileAdapterImpl implements ScoreTextFileAdapter {
@@ -69,5 +72,10 @@ abstract public class ScoreTextFileAdapterImpl implements ScoreTextFileAdapter {
       pos++;
     }
     return builder.toString();
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    return lines;
   }
 }
