@@ -2,12 +2,12 @@ package de.mephisto.vpin.ui.tables.panels;
 
 import javafx.scene.control.TableCell;
 
-public abstract class BaseLoadingTableCell<T extends BaseLoadingModel<?>> extends TableCell<T, T> {
+public abstract class BaseLoadingTableCell<M extends BaseLoadingModel<?, ?>> extends TableCell<M, M> {
 
-    protected abstract String getLoading(T model);
+    protected abstract String getLoading(M model);
 
     @Override
-    protected void updateItem(T model, boolean empty) {
+    protected void updateItem(M model, boolean empty) {
       super.updateItem(model, empty);
       setText(null);
       setTooltip(null);
@@ -21,6 +21,6 @@ public abstract class BaseLoadingTableCell<T extends BaseLoadingModel<?>> extend
       }
     }
 
-    protected abstract void renderItem(T model);
+    protected abstract void renderItem(M model);
 }
 

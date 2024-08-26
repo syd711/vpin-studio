@@ -124,7 +124,7 @@ public class VpsTablesSidebarController implements Initializable {
   }
 
 
-  public void setTable(Optional<VpsTable> selection, TablesSidebarController tablesSidebarController) {
+  public void setTable(Optional<VpsTable> selection) {
     this.init();
     this.openBtn.setDisable(selection.isEmpty());
 

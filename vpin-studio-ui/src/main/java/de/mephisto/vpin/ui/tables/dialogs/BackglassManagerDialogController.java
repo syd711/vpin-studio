@@ -250,8 +250,6 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
    */
   private BackglassManagerFilterController backglassFilterController;
 
-  private BackglassManagerDragDropHandler dndHandler;
-
 //-------------
 
   private DirectB2SData tableData;
@@ -283,7 +281,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
       if (selectedItem != null) {
         selectedItem.reload();
-        refresh(selectedItem.backglass);
+        refresh(selectedItem.getBacklass());
       }
     }
     catch (Exception ex) {
@@ -366,7 +364,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
           if (!newName.endsWith(".directb2s")) {
             newName = newName + ".directb2s";
           }
-          client.getBackglassServiceClient().renameBackglass(selectedItem.backglass, newName);
+          client.getBackglassServiceClient().renameBackglass(selectedItem.getBacklass(), newName);
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
@@ -384,7 +382,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getFileName() + "\"?", null, "Duplicate");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getBackglassServiceClient().duplicateBackglass(selectedItem.backglass);
+          client.getBackglassServiceClient().duplicateBackglass(selectedItem.getBacklass());
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
@@ -402,7 +400,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getFileName() + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          client.getBackglassServiceClient().deleteBackglass(selectedItem.backglass);
+          client.getBackglassServiceClient().deleteBackglass(selectedItem.getBacklass());
           if (game != null) {
             EventManager.getInstance().notifyTableChange(game.getId(), null);
           }
@@ -636,13 +634,13 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
       Platform.runLater(() -> {
         if (newValue != null) {
-          refresh(newValue.backglass);
+          refresh(newValue.getBacklass());
         }
       });
     });
 
     // add the overlay for drag and drop
-    this.dndHandler = new BackglassManagerDragDropHandler(this, directb2sList, tableStack);
+    new BackglassManagerDragDropHandler(this, directb2sList, tableStack);
 
     if (this.directb2sList.getItems().isEmpty()) {
       this.directb2sList.getSelectionModel().clearSelection();
@@ -1025,7 +1023,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
         if (this.saveEnabled) {
           client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
           Platform.runLater(() -> {
-            this.refresh(this.directb2sList.getSelectionModel().getSelectedItem().backglass);
+            this.refresh(this.directb2sList.getSelectionModel().getSelectedItem().getBacklass());
             EventManager.getInstance().notifyTableChange(game.getId(), null);
           });
         }
@@ -1057,11 +1055,10 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   //------------------------------------------------
 
 
-  private static class DirectB2SEntryModel extends BaseLoadingModel<DirectB2SEntryModel> {
+  private static class DirectB2SEntryModel extends BaseLoadingModel<DirectB2S, DirectB2SEntryModel> {
 
     private BackglassManagerDialogController controller;
 
-    DirectB2S backglass;
     // not null when loaded
     DirectB2SData backglassData;
 
@@ -1078,13 +1075,13 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     private int hideDMD;
 
     private DirectB2SEntryModel(BackglassManagerDialogController controller, DirectB2S backglass) {
+      super(backglass);
       this.controller = controller;
-      this.backglass = backglass;
     }
 
     @Override
     public void load() {
-      this.backglassData = client.getBackglassServiceClient().getDirectB2SData(backglass);
+      this.backglassData = client.getBackglassServiceClient().getDirectB2SData(bean);
       if (backglassData != null) {
 
         this.grillHeight = backglassData.getGrillHeight();
@@ -1126,20 +1123,25 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       }
     }
 
+    public DirectB2S getBacklass() {
+      return getBean();
+    }
+
+    @Override
     public String getName() {
-      return backglass.getName();
+      return bean.getName();
     }
 
     public int getEmulatorId() {
-      return backglass.getEmulatorId();
+      return bean.getEmulatorId();
     }
 
     public String getFileName() {
-      return backglass.getFileName();
+      return bean.getFileName();
     }
 
     public boolean isVpxAvailable() {
-      return backglass.isVpxAvailable();
+      return bean.isVpxAvailable();
     }
 
     /**
@@ -1157,7 +1159,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (controller.scoresAvailableFilter.getValue() && nbScores <= 0) {
         return false;
       }
-      if (controller.missingTableFilter.getValue() && backglass.isVpxAvailable()) {
+      if (controller.missingTableFilter.getValue() && bean.isVpxAvailable()) {
         return false;
       }
       if (equalsVisibility(controller.grillVisibilityFilter.getValue(), this.hideGrill)) {

@@ -34,7 +34,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsTableEntry extends HBox {
 
-  public VpsTableEntry(GameRepresentation game, String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update) {
+  public VpsTableEntry(GameRepresentation game, String tableId, String versionId, String version, List<String> authors, String link, String type, long changeDate, String update, boolean installed) {
     this.setAlignment(Pos.CENTER_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
 
@@ -86,22 +86,9 @@ public class VpsTableEntry extends HBox {
       authorLabel.setText(String.join(", ", authors));
       authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
     }
-    // As getGameByVpsTable() use the cache, may be long if not initialized 
-    // so code below runs in a non blocking thread
-    new Thread(() -> {
-      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(tableId, versionId);
-      if (gameByVpsTable != null) {
-        // show all installed versions when no game is selected (case of VPS Tab), 
-        // or only the selected one in sidebar
-        if (game == null || game.getId() == gameByVpsTable.getId()) {
-          //FontIcon checkboxIcon = WidgetFactory.createCheckboxIcon();
-          //checkboxIcon.setIconSize(14);
-          //checkboxIcon.setIconColor(Paint.valueOf("#66FF66"));
-          //authorBox.getChildren().add(checkboxIcon);
-          authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
-        }
-      }
-    }).start();
+    if (installed) {
+      authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+    }
 
     HBox authorBox = new HBox(6);
     authorBox.setAlignment(Pos.CENTER_LEFT);
@@ -120,7 +107,7 @@ public class VpsTableEntry extends HBox {
       button.setOnAction(event -> {
         if (Features.AUTO_INSTALLER) {
           VpsInstallerUtils.installTable(game, link, tableId, versionId, version);
-        } 
+        }
         else {
           Studio.browse(link);
         }
