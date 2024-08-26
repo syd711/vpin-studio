@@ -21,7 +21,7 @@ import java.util.List;
 public class TextHighscoreConverters {
   private final static Logger LOG = LoggerFactory.getLogger(TextHighscoreConverters.class);
 
-  private final static List<ScoreTextFileAdapter> adapters = new ArrayList<>();
+  protected final static List<ScoreTextFileAdapter> adapters = new ArrayList<>();
 
   static {
     adapters.add(new SpongebobAdapter());
@@ -29,11 +29,11 @@ public class TextHighscoreConverters {
     adapters.add(new SinglePlayerScoreAdapter("thunderbirds.txt", 5));
     adapters.add(new TwoPlayersAdapter("Strip_JP_EM_1978.txt", 1, 3));
     adapters.add(new TwoPlayersAdapter("The_Fog_1979.txt", 1, 3));
+    adapters.add(new AlteringScoreInitialsBlocksWithOffsetAdapter("BountyHunter.txt", 1, 5, 2));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("CanadaDry_76VPX.txt", 7, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MagicCity_67VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("WorldSeries_72VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MountainClimbingHS.txt", 3, 5));
-    adapters.add(new AlteringScoreInitialsBlocksWithOffsetAdapter("BountyHunter.txt", 1, 5, 2));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));

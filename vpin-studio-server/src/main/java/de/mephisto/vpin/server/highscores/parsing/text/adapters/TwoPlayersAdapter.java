@@ -1,10 +1,9 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TwoPlayersAdapter implements ScoreTextFileAdapter {
@@ -34,7 +33,17 @@ public class TwoPlayersAdapter implements ScoreTextFileAdapter {
 
   @Override
   public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
-    return lines;
+    List<String> newScoreText = new ArrayList<>();
+
+    for (int i = 0; i < lines.size(); i++) {
+      String line = lines.get(i);
+      if (i == scoreLine1 || i == scoreLine2) {
+        newScoreText.add("0");
+        continue;
+      }
+      newScoreText.add(line);
+    }
+    return newScoreText;
   }
 
   @Override

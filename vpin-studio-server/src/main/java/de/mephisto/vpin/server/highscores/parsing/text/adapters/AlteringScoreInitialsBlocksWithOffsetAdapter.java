@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -76,5 +77,21 @@ public class AlteringScoreInitialsBlocksWithOffsetAdapter extends ScoreTextFileA
       builder.append("\n");
     }
     return builder.toString();
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    List<String> newScoreText = new ArrayList<>();
+    for (int i = 0; i < lines.size(); i++) {
+      String line = lines.get(i);
+      if (i >= start && i < start + size) {
+        line = "0";
+      }
+      else if (i >= start + size + offset && i < (start + size +size + offset)) {
+        line = "???";
+      }
+      newScoreText.add(line);
+    }
+    return newScoreText;
   }
 }
