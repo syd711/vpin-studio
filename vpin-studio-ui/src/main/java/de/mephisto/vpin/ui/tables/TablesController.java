@@ -120,7 +120,32 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private void onTableSettings() {
-    PreferencesController.open("settings_client");
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    switch (selectedIndex) {
+      case 0: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 1: {
+        PreferencesController.open("backglass");
+        break;
+      }
+      case 2: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 3: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 4: {
+        PreferencesController.open("vpbm");
+        break;
+      }
+      default: {
+        PreferencesController.open("settings_client");
+      }
+    }
   }
 
   @FXML
