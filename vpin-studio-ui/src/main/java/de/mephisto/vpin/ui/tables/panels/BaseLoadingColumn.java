@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.scene.Node;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.util.Callback;
 
 public class BaseLoadingColumn {
 
@@ -24,6 +25,13 @@ public class BaseLoadingColumn {
       });
       return cell;
     });
+  }
+
+  public static <T, M extends BaseLoadingModel<T, M>> void configureLoadingColumn(
+        TableColumn<M, M> column, Callback<TableColumn<M, M>, TableCell<M, M>> factory) {
+
+    column.setCellValueFactory(cellData -> cellData.getValue());
+    column.setCellFactory(factory);
   }
 
   public static <T, M extends BaseLoadingModel<T, M>> void configureLoadingColumn(

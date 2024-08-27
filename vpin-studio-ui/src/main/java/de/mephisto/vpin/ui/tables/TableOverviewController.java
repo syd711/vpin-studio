@@ -45,7 +45,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -1619,6 +1618,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+
+    GameRepresentation game = getSelection();
+    if (game != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
+    }
   }
 
   public void setRootController(TablesController tablesController) {
@@ -1631,13 +1635,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public List<GameRepresentation> getGames() {
     return games;
-  }
-
-  public void initSelection() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
-    }
   }
 
   public GameRepresentation getSelection() {

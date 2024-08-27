@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -18,6 +20,7 @@ import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -49,7 +52,7 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpsTablesController implements Initializable, StudioEventListener {
+public class VpsTablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
 
   private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
@@ -285,7 +288,6 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     tableView.setPlaceholder(new Label("The list of VPS tables is shown here."));
 
     this.loadingOverlay = new WaitOverlay(loaderStack, tableView, "Loading Tables...");
@@ -450,15 +452,23 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     });
 
     EventManager.getInstance().addListener(this);
-    this.doReload(false);
+  }
+
+  @Override
+  public void onViewActivated(NavigationOptions options) {
+    // first time activation
+    if (vpsTables == null) {
+      this.doReload(false);
+    }
+    refresh(getSelection());
   }
 
   public void refresh(@Nullable VpsTableModel newSelection) {
-    if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 1) {
+    if (newSelection != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
+    }
+    else {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-      if (newSelection != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
-      }
     }
 
     openBtn.setDisable(newSelection != null);

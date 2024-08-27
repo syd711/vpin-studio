@@ -12,7 +12,9 @@ import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -49,7 +51,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class RepositoryController implements Initializable, StudioEventListener {
+public class RepositoryController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
 
   @FXML
@@ -475,6 +477,15 @@ public class RepositoryController implements Initializable, StudioEventListener 
     this.doReload();
   }
 
+  @Override
+  public void onViewActivated(NavigationOptions options) {
+    NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
+    ArchiveDescriptorRepresentation archiveDescriptor = tableView.getSelectionModel().getSelectedItem();
+    if (archiveDescriptor != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Table Repository", archiveDescriptor.getFilename()));
+    }
+  }
+
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     if (newSelection.isPresent()) {
@@ -558,10 +569,4 @@ public class RepositoryController implements Initializable, StudioEventListener 
     this.tablesController = tablesController;
   }
 
-  public void initSelection() {
-    ArchiveDescriptorRepresentation archiveDescriptor = tableView.getSelectionModel().getSelectedItem();
-    if (archiveDescriptor != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", archiveDescriptor.getFilename()));
-    }
-  }
 }

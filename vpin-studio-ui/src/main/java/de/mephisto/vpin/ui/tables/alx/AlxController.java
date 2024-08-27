@@ -122,9 +122,10 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
+    //NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
+    NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
   }
-
+  
   @Override
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.UI_SETTINGS.equals(key)) {

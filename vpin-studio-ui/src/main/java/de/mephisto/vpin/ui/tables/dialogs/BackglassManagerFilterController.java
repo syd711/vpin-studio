@@ -1,12 +1,16 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
+import de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController.DirectB2SEntryModel;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.application.Platform;
@@ -22,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -60,6 +65,9 @@ public class BackglassManagerFilterController extends BaseFilterController imple
   @FXML
   private VBox emulatorFilters;
 
+  private List<CheckBox> emulatorCheckboxes = new ArrayList<>();
+
+
   @FXML
   private Node backglassFilters;
 
@@ -70,9 +78,16 @@ public class BackglassManagerFilterController extends BaseFilterController imple
 
   private BackglassManagerDialogController backglassManagerController;
 
+  private BackglassManagerPredicateFactory predicateFactory;
+
+
   @FXML
   private void onReset() {
     updatesDisabled = true;
+
+    for (CheckBox cb : emulatorCheckboxes) {
+      cb.setSelected(true);
+    }
 
     missingDMDImageCheckBox.setSelected(false);
     notFullDMDRatioCheckBox.setSelected(false);
@@ -121,6 +136,11 @@ public class BackglassManagerFilterController extends BaseFilterController imple
       || b2sdmdVisibilityCheckBox.isSelected()
       || backglassVisibilityCheckBox.isSelected()
       || isNotEmpty(dmdVisibilityComboBox);
+
+    for (CheckBox cb : emulatorCheckboxes) {
+      hasFilter |= !cb.isSelected();
+    }
+
     toggleFilterButton(hasFilter);
 
     // add filter check on selected emulators
@@ -130,23 +150,38 @@ public class BackglassManagerFilterController extends BaseFilterController imple
       updatesDisabled = false;
     });
   }
-
   private boolean isNotEmpty(ComboBox<B2SVisibility> comboBox) {
     return comboBox.getValue()!=null && comboBox.getValue().getId()>=0;
   }
 
+  public Predicate<? super DirectB2SEntryModel> buildPredicate() {
+    return predicateFactory.buildPredicate();
+  }
+
+  //--------------------------------
   @Override
   public void initialize(URL location, ResourceBundle resources) {
   }
 
-  @SuppressWarnings("exports")
   public void setTableController(BackglassManagerDialogController backglassManagerController, 
-       Button filterButton, StackPane stackPane, TableView<?> filteredTable) {
+       Button filterButton, TextField searchField, StackPane stackPane, TableView<?> filteredTable) {
 
     this.backglassManagerController = backglassManagerController;
     super.setupDrawer(filterRoot, filterButton, stackPane, filteredTable);
 
-    for (GameEmulatorRepresentation gameEmulator: backglassManagerController.selectedEmulators) {
+    predicateFactory = new BackglassManagerPredicateFactory(backglassManagerController);
+
+    searchField.textProperty().addListener((observable, oldValue, filterValue) -> {
+      filteredTable.getSelectionModel().clearSelection();
+    
+      // reset the Predicate to trigger the table refiltering
+      predicateFactory.setFilterTerm(filterValue);
+
+      backglassManagerController.applyFilter();
+    });
+
+    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getVpxGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator: emulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
       checkBox.setPrefHeight(30);
@@ -155,13 +190,14 @@ public class BackglassManagerFilterController extends BaseFilterController imple
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
           if (newValue) {
-            backglassManagerController.selectedEmulators.add(gameEmulator);
+            predicateFactory.selectEmulator(gameEmulator.getId());
           } else {
-            backglassManagerController.selectedEmulators.remove(gameEmulator);
+            predicateFactory.unselectEmulator(gameEmulator.getId());
           }
           applyFilter();
         }
       });
+      emulatorCheckboxes.add(checkBox);
       emulatorFilters.getChildren().add(checkBox);
     }
 
@@ -179,7 +215,6 @@ public class BackglassManagerFilterController extends BaseFilterController imple
     setupCheckbox(b2sdmdVisibilityCheckBox, backglassManagerController.b2sdmdVisibilityFilter);
     setupCheckbox(backglassVisibilityCheckBox, backglassManagerController.backglassVisibilityFilter);
     setupComboBox(dmdVisibilityComboBox, visibilitiesModel, backglassManagerController.dmdVisibilityFilter);
-
   }
 
   private void setupCheckbox(CheckBox cb, Property<Boolean> model) {
@@ -196,5 +231,4 @@ public class BackglassManagerFilterController extends BaseFilterController imple
       applyFilter();
     });
   }
-
 }

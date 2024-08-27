@@ -140,6 +140,13 @@
          <BorderPane.margin>
             <Insets right="12.0" />
          </BorderPane.margin>
+         <bottom>
+            <Label fx:id="labelBackglassCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+               <BorderPane.margin>
+                  <Insets bottom="3.0" />
+               </BorderPane.margin>
+            </Label>
+         </bottom>
       </BorderPane>
    </left>
    <center>

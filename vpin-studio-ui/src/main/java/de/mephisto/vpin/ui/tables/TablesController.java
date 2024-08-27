@@ -57,8 +57,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerDialogController backglassManagerController;
-  private RepositoryController repositoryController;
   private VpsTablesController vpsTablesController;
+  private AlxController alxController;
+  private RepositoryController repositoryController;
 
   @FXML
   private BorderPane root;
@@ -86,9 +87,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
-
-  @FXML
-  private AlxController alxController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -306,45 +304,42 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
       if (t1.intValue() == 0) {
-        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
         tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
-        tableOverviewController.initSelection();
+        tableOverviewController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
       else if (t1.intValue() == 1) {
-        NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
+        backglassManagerController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
       else if (t1.intValue() == 2) {
-        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
-        vpsTablesController.refresh(vpsTablesController.getSelection());
+        vpsTablesController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
       else if (t1.intValue() == 3) {
-        NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
+        alxController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
-        repositoryController.initSelection();
+        repositoryController.onViewActivated(null);
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
