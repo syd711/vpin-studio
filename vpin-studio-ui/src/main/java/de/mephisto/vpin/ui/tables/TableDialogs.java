@@ -391,21 +391,6 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager", "backglassManager");
-    BackglassManagerDialogController controller = (BackglassManagerDialogController) stage.getUserData();
-    controller.setTableSidebarController(tablesSidebarController);
-    controller.selectGame(game);
-
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(1408);
-    stage.setMinHeight(600);
-
-    stage.showAndWait();
-
-    return true;
-  }
 
   public static boolean openNotesDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");

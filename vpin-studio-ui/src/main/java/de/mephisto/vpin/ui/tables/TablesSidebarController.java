@@ -746,6 +746,9 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     loadSidePanels();
   }
 
+  public TablesController getTablesController() {
+    return tablesController.getTablesController();
+  }
   public TableOverviewController getTableOverviewController() {
     return tablesController;
   }
@@ -866,7 +869,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
     index = refreshSection(titledPaneScriptDetails, uiSettings.isSectionScriptDetails(), index);
     index = refreshSection(titledPanePUPPack, uiSettings.isSectionPupPack() && frontendType.supportPupPacks(), index);
 
-    getTableOverviewController().getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
+    getTablesController().setSidebarVisible(!tableAccordion.getPanes().isEmpty() && uiSettings.isSidebarVisible());
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {

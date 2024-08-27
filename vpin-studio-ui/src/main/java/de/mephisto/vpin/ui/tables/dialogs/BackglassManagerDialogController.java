@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
@@ -20,6 +21,7 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -58,12 +60,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nullable;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
+/**
+ * FIXME Rename at the end in BackglassManagerController
+ */
 public class BackglassManagerDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerDialogController.class);
 
@@ -116,8 +122,12 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private Label modificationDateLabel;
 
   @FXML
+  private BorderPane thumbnailImagePane;
+  @FXML
   private ImageView thumbnailImage;
 
+  @FXML
+  private BorderPane dmdThumbnailImagePane;
   @FXML
   private ImageView dmdThumbnailImage;
 
@@ -202,6 +212,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   private Button dataManagerBtn;
 
   @FXML
+  private StackPane loaderStack;
+  @FXML
   private StackPane tableStack;
 
   @FXML
@@ -254,7 +266,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
-  private boolean saveEnabled;
+  private boolean refreshing;
+
+  private WaitOverlay loadingOverlay;
 
   private TablesSidebarController tablesSidebarController;
   private List<DirectB2SEntryModel> unfilteredBackglasses;
@@ -422,11 +436,15 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
   @FXML
   private void onReload() {
-    client.getBackglassServiceClient().clearCache();
-    setSaveEnabled(false);
-    unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
-    applyFilter();
-    setSaveEnabled(true);
+    this.refreshing = true;
+    loadingOverlay.setBusy("Re-loading Backglasses...", true);
+    JFXFuture.runAsync(() -> {
+      client.getBackglassServiceClient().clearCache();
+      this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
+    }).thenLater(() -> {
+      loadingOverlay.setBusy("", false);
+      applyFilter();
+    });
   }
 
   @FXML
@@ -465,8 +483,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
     }
 
-
-    root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
+    //root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
     this.dataManagerBtn.setDisable(true);
     this.renameBtn.setDisable(true);
@@ -515,26 +532,20 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipLampFrames.setValueFactory(factory);
-    factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("skipLampFrames", () -> {
-        if (tableSettings == null) {
-          return;
-        }
-        tableSettings.setLampsSkipFrames(t1);
-        save();
-      }, DEBOUNCE_MS);
+    skipLampFrames.valueProperty().addListener((observableValue, integer, t1) -> {
+      if (tableSettings == null) {
+        return;
+      }
+      debounceAndSave("skipLampFrames", () -> tableSettings.setLampsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipGIFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      debouncer.debounce("skipGIFrames", () -> {
-        if (tableSettings == null) {
-          return;
-        }
-        tableSettings.setGiStringsSkipFrames(t1);
-        save();
-      }, DEBOUNCE_MS);
+      if (tableSettings == null) {
+        return;
+      }
+      debounceAndSave("skipGIFrames", () ->  tableSettings.setGiStringsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
@@ -543,10 +554,7 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (tableSettings == null) {
         return;
       }
-      debouncer.debounce("skipSolenoidFrames", () -> {
-        tableSettings.setSolenoidsSkipFrames(t1);
-        save();
-      }, DEBOUNCE_MS);
+      debounceAndSave("skipSolenoidFrames", () -> tableSettings.setSolenoidsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
@@ -555,13 +563,8 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (tableSettings == null) {
         return;
       }
-
-      debouncer.debounce("skipLEDFrames", () -> {
-        tableSettings.setLedsSkipFrames(t1);
-        save();
-      }, DEBOUNCE_MS);
+      debounceAndSave("skipLEDFrames", () -> tableSettings.setLedsSkipFrames(t1));
     });
-
 
     glowing.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.GLOWINGS));
     glowing.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -598,9 +601,9 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       if (tableSettings == null) {
         return;
       }
-      tableSettings.setUsedLEDType(t1.getId());
-      glowing.setDisable(t1.getId() == 1);
-      lightBulbOn.setDisable(t1.getId() == 1);
+      tableSettings.setUsedLEDType(t1 != null ? t1.getId() : 0);
+      glowing.setDisable(t1 != null ? t1.getId() == 1 : true);
+      lightBulbOn.setDisable(t1 != null ? t1.getId() == 1 : true);
       lightBulbOn.setSelected(false);
       save();
     });
@@ -621,23 +624,21 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
       save();
     });
 
-    new Thread(() -> {
-      this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
-      Platform.runLater(() -> {
-        this.directb2sList.setItems(FXCollections.observableList(unfilteredBackglasses));
+    // add the loading overlay
+    loadingOverlay = new WaitOverlay(loaderStack, directb2sList, null);
 
-      });
-    }).start();
+    loadingOverlay.setBusy("Loading Backglasses...", true);
+    JFXFuture.runAsync(() -> {
+      this.unfilteredBackglasses = toModels(client.getBackglassServiceClient().getBackglasses());
+    }).thenLater(() -> {
+      loadingOverlay.setBusy("", false);
+      this.directb2sList.setItems(FXCollections.observableList(unfilteredBackglasses));
+    });
 
     this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      refresh(null);
-
-      Platform.runLater(() -> {
-        if (newValue != null) {
-          refresh(newValue.getBacklass());
-        }
-      });
+      refresh(newValue != null ? newValue.getBacklass() : null);
     });
+
 
     // add the overlay for drag and drop
     new BackglassManagerDragDropHandler(this, directb2sList, tableStack);
@@ -797,14 +798,14 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
   public void onDialogCancel() {
   }
 
-  private void refresh(@Nullable DirectB2S newValue) {
-    setSaveEnabled(false);
+  private JFXFuture refresh(@Nullable DirectB2S newValue) {
+    this.refreshing = true;
     this.dataManagerBtn.setDisable(true);
 
-    this.renameBtn.setDisable(newValue == null);
-    this.duplicateBtn.setDisable(newValue == null);
-    this.deleteBtn.setDisable(newValue == null);
-    this.reloadBackglassBtn.setDisable(newValue == null);
+    this.renameBtn.setDisable(true);
+    this.duplicateBtn.setDisable(true);
+    this.deleteBtn.setDisable(true);
+    this.reloadBackglassBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
 
     this.tableSettings = null;
@@ -830,151 +831,195 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     gameLabel.setText("-");
     gameFilenameLabel.setText("-");
 
-    glowing.setDisable(newValue == null);
-    startAsExe.setDisable(newValue == null);
-    dataManagerBtn.setDisable(newValue == null);
-    hideB2SDMD.setDisable(newValue == null);
-    hideB2SBackglass.setDisable(newValue == null);
-    hideGrill.setDisable(newValue == null);
-    hideDMD.setDisable(newValue == null);
-    startBackground.setDisable(newValue == null);
-    bringBGFromTop.setDisable(newValue == null);
-    skipGIFrames.setDisable(newValue == null);
-    skipLampFrames.setDisable(newValue == null);
-    skipSolenoidFrames.setDisable(newValue == null);
-    skipLEDFrames.setDisable(newValue == null);
-    bulbsLabel.setDisable(newValue == null);
-    usedLEDType.setDisable(newValue == null);
+    glowing.setDisable(true);
+    startAsExe.setDisable(true);
+    dataManagerBtn.setDisable(true);
+    hideB2SDMD.setDisable(true);
+    hideB2SBackglass.setDisable(true);
+    hideGrill.setDisable(true);
+    hideDMD.setDisable(true);
+    startBackground.setDisable(true);
+    bringBGFromTop.setDisable(true);
+    skipGIFrames.setDisable(true);
+    skipLampFrames.setDisable(true);
+    skipSolenoidFrames.setDisable(true);
+    skipLEDFrames.setDisable(true);
+    bulbsLabel.setDisable(true);
+    usedLEDType.setDisable(true);
 
     game = null;
+    tableSettings = null;
 
     if (newValue != null) {
-      DirectB2STableSettings tmpTableSettings;
-      try {
-        this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
-      }
-      catch (Exception e) {
-        this.tableData = new DirectB2SData();
-      }
 
-      if (this.tableData.getGameId() > 0) {
-        tmpTableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
-        game = client.getGame(this.tableData.getGameId());
-        gameLabel.setText(game.getGameDisplayName());
-        gameFilenameLabel.setText(game.getGameFileName());
-        dataManagerBtn.setDisable(false);
+      thumbnailImagePane.setCenter(new ProgressIndicator());
+      dmdThumbnailImagePane.setCenter(new ProgressIndicator());
+
+      return JFXFuture.runAsync(() -> {
+        try {
+          this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
+          if (this.tableData.getGameId() > 0) {
+            this.game = client.getGame(this.tableData.getGameId());
+            this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
+          }
+        }
+        catch (Exception e) {
+          this.tableData = new DirectB2SData();
+        }
+
+        loadImages(tableSettings);
+
+      }).thenLater(() -> {
+        if (game != null) {
+          gameLabel.setText(game.getGameDisplayName());
+          gameFilenameLabel.setText(game.getGameFileName());
+          dataManagerBtn.setDisable(false);
+          this.uploadBtn.setDisable(false);
+        }
+        else {
+          //VPX is not installed, but available!
+          if (newValue.isVpxAvailable()) {
+            gameLabel.setText("?");
+            gameFilenameLabel.setText("(Available, but not installed)");
+          }
+        }
+
+        nameLabel.setText(tableData.getName());
+        typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
+        authorLabel.setText(tableData.getAuthor());
+        artworkLabel.setText(tableData.getArtwork());
+        grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
+        b2sElementsLabel.setText(String.valueOf(tableData.getB2sElements()));
+        scoresLabel.setText(String.valueOf(tableData.getScores()));
+        playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
+        filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
+        bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
+
+        hideGrill.setDisable(tableData.getGrillHeight() == 0);
+
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
-        this.uploadBtn.setDisable(false);
+        if (tableSettings != null) {
+          boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
+          boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
+          startAsExe.setSelected(tableLaunchAsExe);
+          startAsExeServer.setSelected(serverLaunchAsExe);
+          startAsExeServer.setDisable(true);
+
+          hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
+          hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+          hideB2SBackglass.selectedProperty().setValue(tableSettings.isHideB2SBackglass());
+          hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
+          skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
+          skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
+          skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
+          skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
+          lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
+          glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+          usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
+          startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+          bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
+        }
+
+        hideGrill.setDisable(tableSettings == null);
+        hideB2SDMD.setSelected(false);
+        hideB2SDMD.setDisable(tableSettings == null);
+        hideB2SBackglass.setSelected(false);
+        hideB2SBackglass.setDisable(tableSettings == null);
+        hideDMD.setDisable(tableSettings == null);
+        skipLampFrames.getValueFactory().setValue(0);
+        skipLampFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+        skipGIFrames.getValueFactory().setValue(0);
+        skipGIFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+        skipSolenoidFrames.getValueFactory().setValue(0);
+        skipSolenoidFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
+        skipLEDFrames.getValueFactory().setValue(0);
+        skipLEDFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0 || usedLEDType.getValue() == null || usedLEDType.getValue().getId() == 2);
+        lightBulbOn.setSelected(false);
+        lightBulbOn.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
+        glowing.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
+        usedLEDType.setDisable(tableSettings == null);
+        startBackground.setSelected(false);
+        startBackground.setDisable(tableSettings == null);
+        startAsExe.setSelected(false);
+        startAsExe.setDisable(tableSettings == null);
+        bringBGFromTop.setSelected(false);
+        bringBGFromTop.setDisable(tableSettings == null);
+
+        this.refreshing = false;
+      });
+    }
+    else {
+      return new JFXFuture(CompletableFuture.completedFuture(null));
+    }
+  }
+
+
+  private void loadImages(DirectB2STableSettings tmpTableSettings) {
+    Image thumbnail = null;
+    String thumbnailError = null;
+    if (tableData.isDmdImageAvailable()) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+        thumbnail = new Image(in);
+        if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
+          PixelReader reader = thumbnail.getPixelReader();
+          thumbnail = new WritableImage(reader, 0, 0, (int) thumbnail.getWidth(), (int) (thumbnail.getHeight() - tableData.getGrillHeight()));
+        }
       }
-      else {
-        //VPX is not installed, but available!
-        if (newValue.isVpxAvailable()) {
-          gameLabel.setText("?");
-          gameFilenameLabel.setText("(Available, but not installed)");
-        }
-        tmpTableSettings = null;
+      catch (IOException ioe) {
+        LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
+        thumbnail = null;
+        thumbnailError = "Failed to read image data.";
       }
-
-      nameLabel.setText(tableData.getName());
-      typeLabel.setText(DirectB2SData.getTableType(tableData.getTableType()));
-      authorLabel.setText(tableData.getAuthor());
-      artworkLabel.setText(tableData.getArtwork());
-      grillLabel.setText(String.valueOf(tableData.getGrillHeight()));
-      b2sElementsLabel.setText(String.valueOf(tableData.getB2sElements()));
-      scoresLabel.setText(String.valueOf(tableData.getScores()));
-      playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
-      filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
-      bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-
-      hideGrill.setDisable(tableData.getGrillHeight() == 0);
-
-      if (tableData.isBackgroundAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
-          Image image = new Image(in);
-          if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
-            PixelReader reader = image.getPixelReader();
-            image = new WritableImage(reader, 0, 0, (int) image.getWidth(), (int) (image.getHeight() - tableData.getGrillHeight()));
-          }
-          thumbnailImage.setImage(image);
-          downloadBackglassBtn.setDisable(false);
-          resolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot download background image for game " + tableData.getGameId(), ioe);
-        }
+    } else {
+      thumbnailError = "No Image data available.";
+    }
+    final Image _thumbnail = thumbnail;
+    final String _thumbnailError = thumbnailError;
+    Platform.runLater(() -> {
+      if (_thumbnail != null) {
+        thumbnailImage.setImage(_thumbnail);
+        thumbnailImagePane.setCenter(thumbnailImage);
+        downloadBackglassBtn.setDisable(false);
+        resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
       }
       else {
         thumbnailImage.setImage(null);
-        resolutionLabel.setText("Failed to read image data.");
+        thumbnailImagePane.setCenter(null);
+        resolutionLabel.setText(_thumbnailError);
       }
+    });
 
-      if (tableData.isDmdImageAvailable()) {
-        try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
-          Image image = new Image(in);
-          dmdThumbnailImage.setImage(image);
-          downloadDMDBtn.setDisable(false);
-          dmdResolutionLabel.setText("Resolution: " + (int) image.getWidth() + " x " + (int) image.getHeight());
-          fullDmdLabel.setText(isFullDmd(image.getWidth(), image.getHeight()) ? "Yes" : "No");
-        }
-        catch (IOException ioe) {
-          LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
-        }
+    Image dmdThumbnail = null; 
+    String dmdThumbnailError = null;
+    if (tableData.isDmdImageAvailable()) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
+        dmdThumbnail = new Image(in);
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
+        dmdThumbnailError = "Failed to read DMD image data.";
+      }
+    }  else {
+      dmdThumbnailError = "No DMD background available.";
+    }
+    final Image _dmdThumbnail = dmdThumbnail;
+    final String _dmdThumbnailError = dmdThumbnailError;
+    Platform.runLater(() -> {
+      if (_dmdThumbnail != null) {
+        dmdThumbnailImage.setImage(_dmdThumbnail);
+        dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
+        downloadDMDBtn.setDisable(false);
+        dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
+        fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
       }
       else {
-        dmdResolutionLabel.setText("No DMD background available.");
+        dmdThumbnailImage.setImage(null);
+        dmdThumbnailImagePane.setCenter(null);
+        dmdResolutionLabel.setText(_dmdThumbnailError);
         fullDmdLabel.setText("No");
       }
-
-      hideGrill.setDisable(tmpTableSettings == null);
-      hideB2SDMD.setSelected(false);
-      hideB2SDMD.setDisable(tmpTableSettings == null);
-      hideB2SBackglass.setSelected(false);
-      hideB2SBackglass.setDisable(tmpTableSettings == null);
-      hideDMD.setDisable(tmpTableSettings == null);
-      skipLampFrames.getValueFactory().setValue(0);
-      skipLampFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
-      skipGIFrames.getValueFactory().setValue(0);
-      skipGIFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
-      skipSolenoidFrames.getValueFactory().setValue(0);
-      skipSolenoidFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0);
-      skipLEDFrames.getValueFactory().setValue(0);
-      skipLEDFrames.setDisable(tmpTableSettings == null || tableData.getIlluminations() == 0 || usedLEDType.getValue() == null || usedLEDType.getValue().getId() == 2);
-      lightBulbOn.setSelected(false);
-      lightBulbOn.setDisable(tmpTableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
-      glowing.setDisable(tmpTableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 2));
-      usedLEDType.setDisable(tmpTableSettings == null);
-      startBackground.setSelected(false);
-      startBackground.setDisable(tmpTableSettings == null);
-      bringBGFromTop.setSelected(false);
-      bringBGFromTop.setDisable(tmpTableSettings == null);
-
-      if (tmpTableSettings != null) {
-        boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
-        boolean tableLaunchAsExe = tmpTableSettings.getStartAsEXE() != null && tmpTableSettings.getStartAsEXE();
-        startAsExe.setSelected(tableLaunchAsExe);
-        startAsExeServer.setSelected(serverLaunchAsExe);
-        startAsExeServer.setDisable(true);
-
-        hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideGrill()).findFirst().orElse(null));
-        hideB2SDMD.selectedProperty().setValue(tmpTableSettings.isHideB2SDMD());
-        hideB2SBackglass.selectedProperty().setValue(tmpTableSettings.isHideB2SBackglass());
-        hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tmpTableSettings.getHideDMD()).findFirst().orElse(null));
-        skipLampFrames.getValueFactory().valueProperty().set(tmpTableSettings.getLampsSkipFrames());
-        skipGIFrames.getValueFactory().valueProperty().set(tmpTableSettings.getGiStringsSkipFrames());
-        skipSolenoidFrames.getValueFactory().valueProperty().set(tmpTableSettings.getSolenoidsSkipFrames());
-        skipLEDFrames.getValueFactory().valueProperty().set(tmpTableSettings.getLedsSkipFrames());
-        lightBulbOn.selectedProperty().setValue(tmpTableSettings.isGlowBulbOn());
-        glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tmpTableSettings.getGlowIndex()).findFirst().get());
-        usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tmpTableSettings.getUsedLEDType()).findFirst().orElse(null));
-        startBackground.selectedProperty().setValue(tmpTableSettings.isStartBackground());
-        bringBGFromTop.selectedProperty().setValue(tmpTableSettings.isFormToFront());
-      }
-
-      this.tableSettings = tmpTableSettings;
-
-      setSaveEnabled(true);
-    }
+    });
   }
 
   public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
@@ -1013,39 +1058,38 @@ public class BackglassManagerDialogController implements Initializable, DialogCo
     }
   }
 
-  private void save() {
-    if (!saveEnabled) {
-      return;
-    }
 
-    if (this.game != null) {
+  private void debounceAndSave(String debounceKey, Runnable r) {
+    if (refreshing) {
+      r.run();
+    }
+    else {
+      debouncer.debounce(debounceKey, () -> {
+        r.run();
+        save();
+      }, DEBOUNCE_MS);
+    }
+  }
+
+  private void save() {
+    if (!this.refreshing && this.game != null) {
       try {
-        if (this.saveEnabled) {
-          client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
+        client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
+        //DirectB2SEntryModel selectedItem = directb2sList.getSelectionModel().getSelectedItem();
+        //if (selectedItem != null) {
           Platform.runLater(() -> {
-            this.refresh(this.directb2sList.getSelectionModel().getSelectedItem().getBacklass());
-            EventManager.getInstance().notifyTableChange(game.getId(), null);
+            //JFXFuture future = this.refresh(selectedItem.getBacklass());
+            //future.thenLater(() -> {
+              EventManager.getInstance().notifyTableChange(game.getId(), null);
+            //});
           });
-        }
+        //}
       }
       catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
       }
     }
-  }
-
-  private void setSaveEnabled(boolean b) {
-    if (b) {
-      try {
-        Thread.sleep(DEBOUNCE_MS + 100);
-      }
-      catch (InterruptedException e) {
-        throw new RuntimeException(e);
-      }
-    }
-
-    this.saveEnabled = b;
   }
 
   public GameRepresentation getGame() {

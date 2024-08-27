@@ -32,14 +32,22 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
                                 </Tab>
-                        <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
-                           <content>
-                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                           </content>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
-                           </graphic>
-                        </Tab>
+                                <Tab fx:id="backglassManagerTab" closable="false" text="Backglasses">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
+                                    </graphic>
+                                </Tab>
+                                <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
+                                    <content>
+                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
+                                    </graphic>
+                                </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
                                     <content>
                                         <BorderPane />
@@ -105,9 +113,9 @@
             <padding>
                 <Insets bottom="7.0" />
             </padding>
-         <BorderPane.margin>
-            <Insets right="12.0" />
-         </BorderPane.margin>
+            <BorderPane.margin>
+                <Insets right="12.0" />
+            </BorderPane.margin>
         </VBox>
     </right>
     <stylesheets>

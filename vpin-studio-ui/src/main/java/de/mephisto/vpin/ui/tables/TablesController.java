@@ -17,7 +17,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.dropins.DropInMonitoringThread;
+import de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -56,6 +56,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   private TableOverviewController tableOverviewController;
+  private BackglassManagerDialogController backglassManagerController;
   private RepositoryController repositoryController;
   private VpsTablesController vpsTablesController;
 
@@ -67,6 +68,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private Tab tablesTab;
+
+  @FXML
+  private Tab backglassManagerTab;
 
   @FXML
   private Tab tablesStatisticsTab;
@@ -103,9 +107,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
-
-  /** a dropins monitoring service that installs assets when saved in the folder */
-  private DropInMonitoringThread dropinsMonitor;
 
   @Override
   public void onViewActivated(NavigationOptions options) {
@@ -161,13 +162,31 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(BackglassManagerDialogController.class.getResource("dialog-directb2s-admin.fxml"));
+      Parent directb2sRoot = loader.load();
+      backglassManagerController = loader.getController();
+      backglassManagerController.setTableSidebarController(tablesSideBarController);
+      backglassManagerTab.setContent(directb2sRoot);
+
+      Image image = new Image(Studio.class.getResourceAsStream("b2s.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
+      backglassManagerTab.setGraphic(view);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+
+
+    try {
       FXMLLoader loader = new FXMLLoader(AlxController.class.getResource("scene-alx.fxml"));
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       tablesStatisticsTab.setContent(repositoryRoot);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load statistic tab: " + e.getMessage(), e);
     }
 
     try {
@@ -178,7 +197,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableRepositoryTab.setContent(repositoryRoot);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load repositoy tab: " + e.getMessage(), e);
     }
 
 
@@ -188,9 +207,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
+
+      Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
+      vpsTablesTab.setGraphic(view);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load VPS table tab: " + e.getMessage(), e);
     }
 
 
@@ -201,12 +226,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
-
-    Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
-    ImageView view = new ImageView(image);
-    view.setFitWidth(18);
-    view.setFitHeight(18);
-    vpsTablesTab.setGraphic(view);
 
     Platform.runLater(() -> {
       Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -268,22 +287,32 @@ public class TablesController implements Initializable, StudioFXController, Stud
         vpsTablesSidebarController.setVisible(false);
         tableOverviewController.initSelection();
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
       else if (t1.intValue() == 1) {
+        NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
+        tableOverviewController.setVisible(false);
+        repositorySideBarController.setVisible(false);
+        vpsTablesSidebarController.setVisible(false);
+        root.setRight(null);
+        toggleSidebarBtn.setDisable(true);
+      }
+      else if (t1.intValue() == 2) {
         NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
         vpsTablesController.refresh(vpsTablesController.getSelection());
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == 2) {
+      else if (t1.intValue() == 3) {
         NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
         root.setRight(null);
-
+        toggleSidebarBtn.setDisable(true);
       }
       else {
         NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
@@ -292,6 +321,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         vpsTablesSidebarController.setVisible(false);
         repositoryController.initSelection();
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
     });
   }
@@ -316,6 +346,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return vpsTablesSidebarController;
   }
 
+  public void switchToBackglassManagerTab(GameRepresentation game) {
+    backglassManagerController.selectGame(game);
+    tabPane.getSelectionModel().select(backglassManagerTab);
+  }
 
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
