@@ -3,6 +3,7 @@
 ## Changes
 
 - **Backglass Manager**: The backglass manager dialog has been moved into a separate tab of the "Tables" view.
+- **Filters in VPS Tables**: The VPS tab now supports filtering and full column sorting like other tabs.
 - **Added drop-in folder feature**: 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
