@@ -6,6 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class SinglePlayerScoreAdapter extends ScoreTextFileAdapterImpl {
@@ -41,5 +42,19 @@ public class SinglePlayerScoreAdapter extends ScoreTextFileAdapterImpl {
     builder.append(ScoreFormatUtil.cleanScore(score1));
     builder.append("\n");
     return builder.toString();
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    List<String> newScoreText = new ArrayList<>();
+    for (int i = 0; i < lines.size(); i++) {
+      String line = lines.get(i);
+      if (i == scoreLine) {
+        newScoreText.add("0");
+        continue;
+      }
+      newScoreText.add(line);
+    }
+    return newScoreText;
   }
 }

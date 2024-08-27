@@ -17,4 +17,5 @@
 - **Highscore Cards**: Fixed "margins" for the non-raw score rendering, so that only the score values are positioned and the table title remains centered.
 - **Table Overview / Table Uploads**: The table overview does not perform a full reload after table uploads anymore. 
 - **Table Overview / Table Deletions**: The table overview does not perform a full reload after table deletions anymore. 
+- **Highscores Parsing**: Text based highscores are now resetted by their values and not simply deleted anymore.
 - **Highscores**: Fixed highscore for "No good gofers" by adding "CLUB CHAMPION" to the default list of highscore titles.

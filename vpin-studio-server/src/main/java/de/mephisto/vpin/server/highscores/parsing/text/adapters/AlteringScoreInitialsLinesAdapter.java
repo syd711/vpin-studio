@@ -5,6 +5,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl {
@@ -27,5 +28,21 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
   @Override
   public String convert(@NotNull File file, @NotNull List<String> lines) {
     return super.convertAlteringScoreLines(start, entryCount, lines);
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    List<String> newScoreText = new ArrayList<>();
+    for (int i = 0; i < lines.size(); i++) {
+      String line = lines.get(i);
+      if (i >= start && i < start + (entryCount * 2) && i % 2 == 0) {
+        line = "0";
+      }
+      else if (i >= start && i < start + (entryCount * 2) && i % 2 == 1) {
+        line = "???";
+      }
+      newScoreText.add(line);
+    }
+    return newScoreText;
   }
 }
