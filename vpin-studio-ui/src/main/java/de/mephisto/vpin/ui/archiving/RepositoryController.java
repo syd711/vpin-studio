@@ -292,7 +292,6 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 
     vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());

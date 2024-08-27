@@ -372,7 +372,6 @@ public class BackglassManagerDialogController implements Initializable, StudioFX
   @FXML
   private void onTableDataManager(ActionEvent e) {
     if (game != null) {
-      onCancel(e);
       Platform.runLater(() -> {
         TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), this.game);
       });
@@ -443,12 +442,6 @@ public class BackglassManagerDialogController implements Initializable, StudioFX
     catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
     }
-  }
-
-  @FXML
-  private void onCancel(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
   }
 
   @FXML
