@@ -275,8 +275,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @FXML
   private StackPane loaderStack;
 
-  private Parent tablesLoadingOverlay;
-  private WaitOverlayController tablesLoadingController;
+  private WaitOverlay tablesLoadingOverlay;
 
   private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
@@ -313,7 +312,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onBackglassManager(GameRepresentation game) {
-    TableDialogs.openDirectB2sManagerDialog(tablesController.getTablesSideBarController(), game);
+    tablesController.switchToBackglassManagerTab(game);
   }
 
   @FXML
@@ -872,13 +871,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       this.data.setPredicate(predicateFactory.buildPredicate());
     }
     else {
-      setBusy("Filtering Tables...", true);
+      tablesLoadingOverlay.setBusy("Filtering Tables...", true);
       new Thread(() -> {
         List<Integer> filteredIds = client.getGameService().filterGames(filterSettings);
         predicateFactory.setFilterIds(filteredIds);
         Platform.runLater(() -> {
           this.data.setPredicate(predicateFactory.buildPredicate());
-          setBusy("", false);
+          tablesLoadingOverlay.setBusy("", false);
         });
       }).start();
     }
@@ -922,7 +921,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
-    setBusy("Loading Tables...", true);
+    tablesLoadingOverlay.setBusy("Loading Tables...", true);
     new Thread(() -> {
       try {
         GameRepresentation selection = getSelection();
@@ -996,7 +995,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           reloadConsumers.clear();
 
-          setBusy("", false);
+          tablesLoadingOverlay.setBusy("", false);
         });
 
 
@@ -1040,21 +1039,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     // filter the list and refresh number of items
     this.data.setPredicate(predicateFactory.buildPredicate());
-  }
-
-
-  private void setBusy(String msg, boolean b) {
-    tablesLoadingController.setLoadingMessage(msg);
-    if (b) {
-      tableView.setVisible(false);
-      if (!loaderStack.getChildren().contains(tablesLoadingOverlay)) {
-        loaderStack.getChildren().add(tablesLoadingOverlay);
-      }
-    }
-    else {
-      tableView.setVisible(true);
-      loaderStack.getChildren().remove(tablesLoadingOverlay);
-    }
   }
 
   public void refreshPlaylists() {
@@ -1823,16 +1807,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      tablesLoadingOverlay = loader.load();
-      tablesLoadingOverlay.setTranslateY(-100);
-      tablesLoadingController = loader.getController();
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
-
-    try {
       FXMLLoader loader = new FXMLLoader(TableFilterController.class.getResource("scene-tables-overview-filter.fxml"));
       loader.load();
       tableFilterController = loader.getController();
@@ -1842,6 +1816,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 
+    tablesLoadingOverlay = new WaitOverlay(loaderStack, tableView, null);
+
+    validationError.setVisible(false);
 
     playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
     playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
