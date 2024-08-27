@@ -391,7 +391,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       addSection(dataRoot, "POV", game.get(), VpsDiffTypes.pov, vpsTable.getPovFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPOV());
     }
 
-    TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", game.get(), vpsTable.getTutorialFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsTutorial());
+    addSection(dataRoot, "Tutorials", game.get(), VpsDiffTypes.tutorial, vpsTable.getTutorialFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsTutorial());
   }
 
   public static void addSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, List<? extends VpsAuthoredUrls> urls, boolean showUpdates) {
@@ -491,44 +491,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
       });
     }).start();
-  }
-
-  public static void addTutorialsSection(VBox dataRoot, String title, GameRepresentation game, List<VpsTutorialUrls> urls, boolean showUpdateIndicator) {
-    if (urls == null || urls.isEmpty()) {
-      return;
-    }
-
-    List<Node> entries = new ArrayList<>();
-    for (VpsTutorialUrls authoredUrl : urls) {
-      String youtubeId = authoredUrl.getYoutubeId();
-      if (youtubeId != null) {
-        String version = authoredUrl.getVersion();
-        long updatedAt = authoredUrl.getUpdatedAt();
-        List<String> authors = authoredUrl.getAuthors();
-
-        String url = "https://www.youtube.com/watch?v=" + youtubeId;
-
-        String updateText = null;
-        if (game != null && showUpdateIndicator) {
-          List<VPSChange> changes = game.getVpsUpdates().getChanges();
-          for (VPSChange change : changes) {
-            if (change.getId() != null && authoredUrl.getId() != null && change.getId().equals(authoredUrl.getId())) {
-              VpsTable gameTable = client.getVpsService().getTableById(game.getExtTableId());
-              updateText = change.toString(gameTable);
-              break;
-            }
-          }
-        }
-        entries.add(new VpsEntry(game, VpsDiffTypes.tutorial, version, authors, url, updatedAt, updateText));
-      }
-    }
-
-
-    if (!entries.isEmpty()) {
-      VBox rows = addSectionHeader(dataRoot, title);
-      rows.getChildren().clear();
-      rows.getChildren().addAll(entries);
-    }
   }
 
   private static VBox addSectionHeader(VBox dataRoot, String title) {

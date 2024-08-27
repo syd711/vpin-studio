@@ -1,12 +1,27 @@
 package de.mephisto.vpin.connectors.vps.model;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class VpsTutorialUrls extends VpsAuthoredUrls {
   private String title;
   private String youtubeId;
 
+  public List<VpsUrl> getUrls() {
+    List<VpsUrl> urls = super.getUrls();
+    if (youtubeId != null) {
+      VpsUrl url = new VpsUrl();
+      url.setUrl("https://www.youtube.com/watch?v=" + youtubeId);
+      url.setBroken(false);
+      if (urls == null) {
+        urls = new ArrayList<>();
+      }
+      urls.add(url);
+    }
+    return urls;
+  }
 
   @Override
   public String toString() {
