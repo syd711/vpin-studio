@@ -4,9 +4,12 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
+import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -114,6 +117,7 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     if (featureCheckboxes != null) {
       for (CheckBox cb : featureCheckboxes.values())  {
         cb.setSelected(false);
+        filterSettings.registerFeature(cb.getText());
       }
     }
 
@@ -215,6 +219,30 @@ public class VpsTablesFilterController extends BaseFilterController implements I
       filterSettings.setWithTutorial(newValue);
       applyFilters();
     });
+
+    // create Checkboxes for features
+    featureCheckboxes = new LinkedHashMap<>();
+    for (String feature: VpsFeatures.forFilter()) {
+      CheckBox checkBox = new CheckBox(feature);
+      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
+      checkBox.setPrefHeight(30);
+      checkBox.setSelected(false);
+      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (newValue) {
+            filterSettings.selectFeature(feature);
+          } else {
+            filterSettings.unselectFeature(feature);
+          }
+          applyFilters();
+        }
+      });
+      filterSettings.registerFeature(feature);
+      featureCheckboxes.put(feature, checkBox);
+      featuresPanel.getChildren().add(checkBox);
+    }
+
   }
 
   public void bindSearchField(TextField searchTextField) {

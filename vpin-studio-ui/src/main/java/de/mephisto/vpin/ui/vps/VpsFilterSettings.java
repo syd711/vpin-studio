@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
  class VpsFilterSettings {
@@ -137,6 +138,20 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     this.vpsUpdates = vpsUpdates;
   }
 
+  public void registerFeature(String feature) {
+    features.put(feature, Boolean.FALSE);
+  }
+  public void selectFeature(String feature) {
+    if (features.containsKey(feature)) {
+      features.put(feature, Boolean.TRUE);
+    }
+  }
+  public void unselectFeature(String feature) {
+    if (features.containsKey(feature)) {
+      features.put(feature, Boolean.FALSE);
+    }
+  }
+
   public boolean isResetted() {
 
     boolean isFeaturesEmpty = true;
@@ -179,6 +194,17 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
           return false;
         }
 
+        // check for feature
+        for (String f : features.keySet()) {
+          if (features.get(f)) {
+            for (VpsTableVersion version: table.getTableFiles()) {
+              if (version.getFeatures() == null || (!containsIgnoreCase(version.getFeatures(), f))) {
+                return false;
+              }
+            }
+          }
+        }
+
         if (!containsAnyIgnoreCase(table.getManufacturer(), manufacturers)) {
           return false;
         }
@@ -209,7 +235,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         }
         if (isWithTutorial() && !VpsUtil.isDataAvailable(table.getTutorialFiles())) {
           return false;
-        }      
+        }
 
         // As this filter is a bit heavy, keep it last
         if (searchAuthorInOtherAssetsToo) {
@@ -243,6 +269,20 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     for (String m : _manufacturers) {
       if (StringUtils.containsIgnoreCase(manufacturer, m)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean containsIgnoreCase(String[] values, String value) {
+    if (StringUtils.isEmpty(value)) {
+      return true;
+    }
+    if (values != null) {
+      for (String t : values) {
+        if (StringUtils.containsIgnoreCase(t, value)) {
+          return true;
+        }
       }
     }
     return false;
