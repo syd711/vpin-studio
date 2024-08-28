@@ -1040,9 +1040,19 @@
 .vps-badge {
     -fx-font-color: white;
     -fx-font-weight : bold;
-    -fx-font-size : 11px;
+    -fx-font-size : 12px;
     -fx-border-style: hidden hidden hidden hidden;
     -fx-background-radius: 3 3 3 3;
+    -fx-padding: 2 4 2 4;
+}
+
+.vps-badge-button {
+    -fx-font-color: white;
+    -fx-font-weight : bold;
+    -fx-font-size : 14px;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: #338033;
+    -fx-border-radius: 3 3 3 3;
     -fx-padding: 2 4 2 4;
 }
 

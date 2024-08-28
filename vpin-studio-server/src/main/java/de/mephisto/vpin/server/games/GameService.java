@@ -815,7 +815,6 @@ public class GameService implements InitializingBean {
     for (Game knownGame : knownGames) {
       String displayName = knownGame.getGameDisplayName();
       double similarity = StringSimilarity.getSimilarity(displayName, term);
-//      System.out.println(displayName + ":" + term + ": "  +similarity);
       if (similarity < match) {
         match = similarity;
         tableMatch = knownGame;

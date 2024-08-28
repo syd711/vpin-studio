@@ -241,7 +241,7 @@ public class VpsTablesFilterController extends BaseFilterController implements I
       Label badge = new Label(feature);
       badge.getStyleClass().add("white-label");
       badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
-      badge.getStyleClass().add("vps-badge");
+      badge.getStyleClass().add("vps-badge-button");
 
       badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, filterSettings.isSelectedFeature(feature)) + ";");
 

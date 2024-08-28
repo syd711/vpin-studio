@@ -4,18 +4,17 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
    <children>
       <BorderPane>
          <left>
@@ -59,18 +58,18 @@
                         <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Only NOT Installed Tables" />
 
                         <Label styleClass="preference-checkbox" text="Author" />
-                        <TextField fx:id="author" maxWidth="204.0"/>
+                        <TextField fx:id="author" maxWidth="204.0" />
                         <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="Search author in all Assets" />
 
                         <Label styleClass="preference-checkbox" text="Manufacturer" />
-                        <TextField fx:id="manufacturer" maxWidth="204.0"/>
+                        <TextField fx:id="manufacturer" maxWidth="204.0" />
 
                         <Label styleClass="preference-checkbox" text="Theme" />
-                        <TextField fx:id="theme" maxWidth="204.0"/>
+                        <TextField fx:id="theme" maxWidth="204.0" />
                      </children>
                   </VBox>
 
-                  <Label styleClass="default-title" text="Features Filters" >
+                  <Label styleClass="default-title" text="Features Filters">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
