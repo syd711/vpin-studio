@@ -1,6 +1,6 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.backglassmanager;
 
-import de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController.DirectB2SEntryModel;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController.DirectB2SEntryModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -8,9 +8,9 @@ import java.util.Comparator;
 
 public class BackglassManagerColumnSorter {
 
-  private final BackglassManagerDialogController backglassManagerController;
+  private final BackglassManagerController backglassManagerController;
 
-  public BackglassManagerColumnSorter(BackglassManagerDialogController backglassManagerController) {
+  public BackglassManagerColumnSorter(BackglassManagerController backglassManagerController) {
     this.backglassManagerController = backglassManagerController;
   }
 

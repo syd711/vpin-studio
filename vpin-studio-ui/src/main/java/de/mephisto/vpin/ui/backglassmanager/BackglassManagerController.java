@@ -1,7 +1,6 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
@@ -10,14 +9,12 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
@@ -29,7 +26,6 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import de.mephisto.vpin.ui.vps.VpsTablesColumnSorter;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
@@ -80,8 +76,8 @@ import static de.mephisto.vpin.ui.Studio.stage;
 /**
  * FIXME Rename at the end in BackglassManagerController
  */
-public class BackglassManagerDialogController implements Initializable, StudioFXController {
-  private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerDialogController.class);
+public class BackglassManagerController implements Initializable, StudioFXController {
+  private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 100;
@@ -496,7 +492,7 @@ public class BackglassManagerDialogController implements Initializable, StudioFX
     bindTable();
 
     try {
-      FXMLLoader loader = new FXMLLoader(BackglassManagerFilterController.class.getResource("dialog-directb2s-admin-filter.fxml"));
+      FXMLLoader loader = new FXMLLoader(BackglassManagerFilterController.class.getResource("scene-directb2s-admin-filter.fxml"));
       loader.load();
       backglassFilterController = loader.getController();
       backglassFilterController.setTableController(this, filterButton, searchField, tableStack, directb2sList);
@@ -1178,7 +1174,7 @@ public class BackglassManagerDialogController implements Initializable, StudioFX
       return hasDmd;
     }
     public boolean isFullDmd() {
-      return BackglassManagerDialogController.isFullDmd(dmdWidth, dmdHeight);
+      return BackglassManagerController.isFullDmd(dmdWidth, dmdHeight);
     }
 
     public int getDmdWidth() {

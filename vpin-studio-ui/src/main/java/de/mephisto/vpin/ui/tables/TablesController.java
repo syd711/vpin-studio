@@ -17,7 +17,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -55,7 +55,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   private TableOverviewController tableOverviewController;
-  private BackglassManagerDialogController backglassManagerController;
+  private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
   private AlxController alxController;
   private RepositoryController repositoryController;
@@ -184,7 +184,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(BackglassManagerDialogController.class.getResource("dialog-directb2s-admin.fxml"));
+      FXMLLoader loader = new FXMLLoader(BackglassManagerController.class.getResource("scene-directb2s-admin.fxml"));
       Parent directb2sRoot = loader.load();
       backglassManagerController = loader.getController();
       backglassManagerController.setTableSidebarController(tablesSideBarController);

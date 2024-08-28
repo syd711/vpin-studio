@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.BackglassManagerFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerFilterController">
    <children>
       <VBox>
          <children>

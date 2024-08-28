@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.tables.dialogs;
+package de.mephisto.vpin.ui.backglassmanager;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -10,7 +10,7 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
-import de.mephisto.vpin.ui.tables.dialogs.BackglassManagerDialogController.DirectB2SEntryModel;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController.DirectB2SEntryModel;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.application.Platform;
@@ -76,7 +76,7 @@ public class BackglassManagerFilterController extends BaseFilterController imple
 
   private boolean updatesDisabled = false;
 
-  private BackglassManagerDialogController backglassManagerController;
+  private BackglassManagerController backglassManagerController;
 
   private BackglassManagerPredicateFactory predicateFactory;
 
@@ -163,8 +163,8 @@ public class BackglassManagerFilterController extends BaseFilterController imple
   public void initialize(URL location, ResourceBundle resources) {
   }
 
-  public void setTableController(BackglassManagerDialogController backglassManagerController, 
-       Button filterButton, TextField searchField, StackPane stackPane, TableView<?> filteredTable) {
+  public void setTableController(BackglassManagerController backglassManagerController,
+                                 Button filterButton, TextField searchField, StackPane stackPane, TableView<?> filteredTable) {
 
     this.backglassManagerController = backglassManagerController;
     super.setupDrawer(filterRoot, filterButton, stackPane, filteredTable);
