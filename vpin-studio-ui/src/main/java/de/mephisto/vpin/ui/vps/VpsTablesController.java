@@ -424,9 +424,9 @@ public class VpsTablesController implements Initializable, StudioFXController, S
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     }
 
-    openBtn.setDisable(newSelection != null);
+    openBtn.setDisable(newSelection == null);
 
-    editBtn.setDisable(newSelection != null && newSelection.isInstalled());
+    editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
 
     VpsTable vpsTable = newSelection != null? newSelection.getVpsTable(): null;
     tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable));
