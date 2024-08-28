@@ -120,6 +120,9 @@
       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER" >
          <center>
             <StackPane fx:id="loaderStack">
+               <BorderPane.margin>
+                  <Insets bottom="6.0" />
+               </BorderPane.margin>
                <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
@@ -637,7 +640,4 @@
          </center>
       </BorderPane>
    </center>
-   <BorderPane.margin>
-      <Insets bottom="6.0" left="6.0" right="6.0" />
-   </BorderPane.margin>
 </BorderPane>
