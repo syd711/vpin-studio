@@ -32,8 +32,8 @@ public class VpsInstallerTest {
     assertNotNull(installer.login());
 
     //FIXME change here
-    settings.setLogin("leprinco");
-    settings.setPassword("Oliver01");
+    settings.setLogin("####");
+    settings.setPassword("####");
 
     List<VpsInstallLink> links = installer.getInstallLinks(url);
 
@@ -66,8 +66,8 @@ public class VpsInstallerTest {
     assertNotNull(installer.login());
 
     //FIXME change here
-    settings.setLogin("leprinco");
-    settings.setPassword("vpuniverse is very cool");
+    settings.setLogin("####");
+    settings.setPassword("####");
 
     List<VpsInstallLink> links = installer.getInstallLinks(url);
     assertEquals(2, links.size());
