@@ -4,6 +4,7 @@
 
 - **Backglass Manager**: The backglass manager dialog has been moved into a separate tab of the "Tables" view.
 - **Filters in VPS Tables**: The VPS tab now supports filtering and full column sorting like other tabs.
+- **Support of statitics with pinballX frontend**: The statistics tab is now supported with pinballX frontend.
 - **Added drop-in folder feature**: 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />

@@ -37,18 +37,21 @@ public class TableDataTabStatisticsController implements Initializable {
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     int played = 0;
-    if (tableDetails!=null && tableDetails.getNumberPlays() != null) {
-      played = tableDetails.getNumberPlays();
-    }
-    timesPlayedTile.refresh(new AlxTileEntry("Total Times Played", 
-      FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
-      String.valueOf(played)));
 
     if (!alxSummary.getEntries().isEmpty()) {
       TableAlxEntry entry = alxSummary.getEntries().get(0);
+
+      // may be overriden by TableDetail below
+      played = entry.getNumberOfPlays();
+
       String totalTimeFormatted = null;
       try {
-        totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "HH 'hrs'", false);
+        if (entry.getTimePlayedSecs() < 60 * 60) {
+          totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "mm 'mins'", false);
+        }
+        else {
+          totalTimeFormatted = DurationFormatUtils.formatDuration(entry.getTimePlayedSecs() * 1000, "HH 'hrs'", false);
+        }
       } catch (Exception e) {
         LOG.error("Error calculating total play time: " + e.getMessage());
       }
@@ -58,6 +61,13 @@ public class TableDataTabStatisticsController implements Initializable {
       timePlayedTile.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
     }
 
+    // Override statistics by TableDetails when numberPlays is set
+    if (tableDetails!=null && tableDetails.getNumberPlays() != null) {
+      played = tableDetails.getNumberPlays();
+    }
+    timesPlayedTile.refresh(new AlxTileEntry("Total Times Played", 
+      FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
+      String.valueOf(played)));
   }
 
   @Override
