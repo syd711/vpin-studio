@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   private String filterValue;
 
   private boolean installedOnly;
+  private boolean notInstalledOnly;
 
   private String[] authors;
   private boolean searchAuthorInOtherAssetsToo;
@@ -41,6 +42,13 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   }
   public void setInstalledOnly(boolean installedOnly) {
     this.installedOnly = installedOnly;
+  }
+
+  public boolean isNotInstalledOnly() {
+    return notInstalledOnly;
+  }
+  public void setNotInstalledOnly(boolean notInstalledOnly) {
+    this.notInstalledOnly = notInstalledOnly;
   }
 
   public String getAuthor() {
@@ -186,6 +194,9 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         if (installedOnly && !noVPX && !model.isInstalled()) {
           return false;
         }
+        if (notInstalledOnly && !noVPX && model.isInstalled()) {
+          return false;
+        }
 
         if (StringUtils.isNotEmpty(filterValue)
             && !StringUtils.containsIgnoreCase(table.getName(), filterValue)
@@ -197,10 +208,18 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         // check for feature
         for (String f : features.keySet()) {
           if (features.get(f)) {
-            for (VpsTableVersion version: table.getTableFiles()) {
-              if (version.getFeatures() == null || (!containsIgnoreCase(version.getFeatures(), f))) {
-                return false;
-              }
+            boolean hasFeature = containsIgnoreCase(table.getFeatures(), f);
+            if (!hasFeature) {
+              // check at version level
+              for (VpsTableVersion version: table.getTableFiles()) {
+                if (containsIgnoreCase(version.getFeatures(), f)) {
+                  hasFeature = true;
+                  break;
+                }
+              }  
+            }
+            if (!hasFeature) {
+              return false;
             }
           }
         }

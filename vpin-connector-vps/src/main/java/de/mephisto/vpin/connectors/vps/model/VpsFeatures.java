@@ -41,7 +41,7 @@ public interface VpsFeatures {
 
   public static String[] forFilter() {
     return new String[] {
-      MOD, NO_ROM, SSF, FASTFLIPS, NFOZZY, FLEEP, LUT, HYBRID, VR, KIDS, ADULT, FSS, FOUR_K, SCORBIT, INCL_PUP
+      MOD, NO_ROM, SSF, FASTFLIPS, NFOZZY, FLEEP, LUT, HYBRID, VR, KIDS, ADULT, FSS, FOUR_K, SCORBIT, INCL_PUP, MEDIAPACK
     };
   }
 

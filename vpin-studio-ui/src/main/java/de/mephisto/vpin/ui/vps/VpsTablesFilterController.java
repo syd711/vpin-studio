@@ -28,6 +28,8 @@ public class VpsTablesFilterController extends BaseFilterController implements I
 
   @FXML
   private CheckBox installedOnlyCheckbox;
+  @FXML
+  private CheckBox notInstalledOnlyCheckbox;
 
   @FXML
   private TextField author;
@@ -108,6 +110,7 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     updatesDisabled = true;
 
     installedOnlyCheckbox.setSelected(false);
+    notInstalledOnlyCheckbox.setSelected(false);
 
     author.setText(null);
     withAuthorInOtherAssetsToo.setSelected(false);
@@ -154,6 +157,15 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     installedOnlyCheckbox.setSelected(filterSettings.isInstalledOnly());
     installedOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setInstalledOnly(newValue);
+      // cannot select two opposite checkboxes
+      notInstalledOnlyCheckbox.setDisable(newValue);
+      applyFilters();
+    });
+    notInstalledOnlyCheckbox.setSelected(filterSettings.isNotInstalledOnly());
+    notInstalledOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNotInstalledOnly(newValue);
+      // cannot select two opposite checkboxes
+      installedOnlyCheckbox.setDisable(newValue);
       applyFilters();
     });
 
