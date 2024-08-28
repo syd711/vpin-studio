@@ -11,14 +11,14 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
 
   public List<VpsUrl> getUrls() {
     List<VpsUrl> urls = super.getUrls();
-    if (youtubeId != null) {
-      VpsUrl url = new VpsUrl();
-      url.setUrl("https://www.youtube.com/watch?v=" + youtubeId);
-      url.setBroken(false);
-      if (urls == null) {
-        urls = new ArrayList<>();
+    if (urls == null) {
+      urls = new ArrayList<>();
+      if (youtubeId != null) {
+        VpsUrl url = new VpsUrl();
+        url.setUrl("https://www.youtube.com/watch?v=" + youtubeId);
+        url.setBroken(false);
+        urls.add(url);
       }
-      urls.add(url);
     }
     return urls;
   }

@@ -4,6 +4,7 @@ import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 
+import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 
 import javafx.application.Platform;
@@ -11,8 +12,11 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -25,6 +29,8 @@ public class VpsTablesFilterController extends BaseFilterController implements I
 
   @FXML
   private CheckBox installedOnlyCheckbox;
+  @FXML
+  private CheckBox notInstalledOnlyCheckbox;
 
   @FXML
   private TextField author;
@@ -40,9 +46,9 @@ public class VpsTablesFilterController extends BaseFilterController implements I
 
   //-------------------------------
   @FXML
-  private VBox featuresPanel;
+  private FlowPane featuresPanel;
 
-  private LinkedHashMap<String, CheckBox> featureCheckboxes;
+  private LinkedHashMap<String, Label> featureCheckboxes;
 
   //-------------------------------
   // Presence of assets
@@ -105,6 +111,7 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     updatesDisabled = true;
 
     installedOnlyCheckbox.setSelected(false);
+    notInstalledOnlyCheckbox.setSelected(false);
 
     author.setText(null);
     withAuthorInOtherAssetsToo.setSelected(false);
@@ -112,8 +119,10 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     theme.setText(null);
 
     if (featureCheckboxes != null) {
-      for (CheckBox cb : featureCheckboxes.values())  {
-        cb.setSelected(false);
+      for (Label badge : featureCheckboxes.values())  {
+        String feature = badge.getText();
+        filterSettings.registerFeature(feature);
+        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, false) + ";");
       }
     }
 
@@ -150,6 +159,15 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     installedOnlyCheckbox.setSelected(filterSettings.isInstalledOnly());
     installedOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setInstalledOnly(newValue);
+      // cannot select two opposite checkboxes
+      notInstalledOnlyCheckbox.setDisable(newValue);
+      applyFilters();
+    });
+    notInstalledOnlyCheckbox.setSelected(filterSettings.isNotInstalledOnly());
+    notInstalledOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      filterSettings.setNotInstalledOnly(newValue);
+      // cannot select two opposite checkboxes
+      installedOnlyCheckbox.setDisable(newValue);
       applyFilters();
     });
 
@@ -215,6 +233,28 @@ public class VpsTablesFilterController extends BaseFilterController implements I
       filterSettings.setWithTutorial(newValue);
       applyFilters();
     });
+
+    // create Checkboxes for features
+    featureCheckboxes = new LinkedHashMap<>();
+    for (String feature: VpsFeatures.forFilter()) {
+
+      Label badge = new Label(feature);
+      badge.getStyleClass().add("white-label");
+      badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
+      badge.getStyleClass().add("vps-badge");
+
+      badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, filterSettings.isSelectedFeature(feature)) + ";");
+
+      badge.setOnMouseClicked(e -> {
+        boolean selected = filterSettings.toggleFeature(feature);
+        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, selected) + ";");
+        applyFilters();
+      });
+      filterSettings.registerFeature(feature);
+      featureCheckboxes.put(feature, badge);
+      featuresPanel.getChildren().add(badge);
+    }
+
   }
 
   public void bindSearchField(TextField searchTextField) {

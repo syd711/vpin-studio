@@ -8,6 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
  class VpsFilterSettings {
@@ -15,6 +16,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   private String filterValue;
 
   private boolean installedOnly;
+  private boolean notInstalledOnly;
 
   private String[] authors;
   private boolean searchAuthorInOtherAssetsToo;
@@ -40,6 +42,13 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   }
   public void setInstalledOnly(boolean installedOnly) {
     this.installedOnly = installedOnly;
+  }
+
+  public boolean isNotInstalledOnly() {
+    return notInstalledOnly;
+  }
+  public void setNotInstalledOnly(boolean notInstalledOnly) {
+    this.notInstalledOnly = notInstalledOnly;
   }
 
   public String getAuthor() {
@@ -137,6 +146,21 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     this.vpsUpdates = vpsUpdates;
   }
 
+  public void registerFeature(String feature) {
+    features.put(feature, Boolean.FALSE);
+  }
+  public boolean isSelectedFeature(String feature) {
+    return features.containsKey(feature) && features.get(feature);
+  }
+  public boolean toggleFeature(String feature) {
+    if (features.containsKey(feature)) {
+      boolean newstate = !features.get(feature);
+      features.put(feature, newstate);
+      return newstate;
+    }
+    return false;
+  }
+
   public boolean isResetted() {
 
     boolean isFeaturesEmpty = true;
@@ -171,12 +195,34 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         if (installedOnly && !noVPX && !model.isInstalled()) {
           return false;
         }
+        if (notInstalledOnly && !noVPX && model.isInstalled()) {
+          return false;
+        }
 
         if (StringUtils.isNotEmpty(filterValue)
             && !StringUtils.containsIgnoreCase(table.getName(), filterValue)
             //&& !StringUtils.containsIgnoreCase(table.getRom(), filterValue)
             ) {
           return false;
+        }
+
+        // check for feature
+        for (String f : features.keySet()) {
+          if (features.get(f)) {
+            boolean hasFeature = containsIgnoreCase(table.getFeatures(), f);
+            if (!hasFeature) {
+              // check at version level
+              for (VpsTableVersion version: table.getTableFiles()) {
+                if (containsIgnoreCase(version.getFeatures(), f)) {
+                  hasFeature = true;
+                  break;
+                }
+              }  
+            }
+            if (!hasFeature) {
+              return false;
+            }
+          }
         }
 
         if (!containsAnyIgnoreCase(table.getManufacturer(), manufacturers)) {
@@ -209,7 +255,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         }
         if (isWithTutorial() && !VpsUtil.isDataAvailable(table.getTutorialFiles())) {
           return false;
-        }      
+        }
 
         // As this filter is a bit heavy, keep it last
         if (searchAuthorInOtherAssetsToo) {
@@ -243,6 +289,20 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     for (String m : _manufacturers) {
       if (StringUtils.containsIgnoreCase(manufacturer, m)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean containsIgnoreCase(String[] values, String value) {
+    if (StringUtils.isEmpty(value)) {
+      return true;
+    }
+    if (values != null) {
+      for (String t : values) {
+        if (StringUtils.containsIgnoreCase(t, value)) {
+          return true;
+        }
       }
     }
     return false;

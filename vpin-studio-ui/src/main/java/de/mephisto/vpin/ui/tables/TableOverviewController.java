@@ -45,7 +45,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -754,12 +753,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
-  public void reload(GameRepresentation refreshedGame, boolean select) {
+  public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-      if (select) {
-        tableView.getSelectionModel().getSelectedItems().removeListener(this);
-        tableView.getSelectionModel().clearSelection();
-      }
+
+      GameRepresentation selectedGame = getSelection();
+
       GameRepresentationModel model = null;
       int index = games.indexOf(refreshedGame);
       if (index != -1) {
@@ -769,12 +767,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
-      }
 
-      // select the reloaded game
-      if (select) {
-        tableView.getSelectionModel().getSelectedItems().addListener(this);
-        tableView.getSelectionModel().select(model);
+        // re-select if it was selected
+        if (selectedGame.getId() == model.getGame().getId()) {
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(model);
+        }
       }
 
       // force refresh the view for elements not observed by the table
@@ -1619,6 +1617,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
+
+    GameRepresentation game = getSelection();
+    if (game != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
+    }
   }
 
   public void setRootController(TablesController tablesController) {
@@ -1631,13 +1634,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   public List<GameRepresentation> getGames() {
     return games;
-  }
-
-  public void initSelection() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
-    }
   }
 
   public GameRepresentation getSelection() {

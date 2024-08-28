@@ -117,6 +117,9 @@ public class VpsUtil {
   public static String getFeatureColor(String abb) {
     return "#338033";
   }
+  public static String getFeatureColor(String abb, boolean selected) {
+    return selected ? getFeatureColor(abb) : "#151515";
+  }
 
   public static String getIconClass(String abb) {
     if (abb.equals("VPU")) {

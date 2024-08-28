@@ -9,7 +9,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -142,6 +141,11 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract void commitDb(Emulator emu);
 
   //-------------------------------------------------
+
+  public Emulator getEmulator(int emulatorId) {
+    return emulators.get(emulatorId);
+  }
+
 
   @NonNull
   @Override
@@ -369,7 +373,7 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public File getPlaylistMediaFolder(@NotNull Playlist playList, @NotNull VPinScreen screen) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
     return null;
   }
 
@@ -415,7 +419,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public java.util.Date getStartDate() {
-    return new java.util.Date();
+    return null;
   }
 
   @NonNull

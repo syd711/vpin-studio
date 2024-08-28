@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
@@ -16,13 +17,11 @@ import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +61,7 @@ public class PinballXConnector extends BaseConnector {
     LOG.info("Finished initialization of " + this);
   }
 
-  @NotNull
+  @NonNull
   @Override
   public File getInstallationFolder() {
     return systemService.getPinballXInstallationFolder();
@@ -104,7 +103,7 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  public void saveSettings(@NotNull Map<String, Object> data) {
+  public void saveSettings(@NonNull Map<String, Object> data) {
     try {
       PinballXSettings settings = JsonSettings.objectMapper.convertValue(data, PinballXSettings.class);
       preferencesService.savePreference(PreferenceNames.PINBALLX_SETTINGS, settings);
@@ -197,7 +196,7 @@ public class PinballXConnector extends BaseConnector {
     return emulators;
   }
 
-  @NotNull
+  @NonNull
   private File getPinballXIni() {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Config/PinballX.ini");
@@ -376,10 +375,24 @@ public class PinballXConnector extends BaseConnector {
     return displayList;
   }
 
+  //----------------------------------
+  // Statistics
+
+  @NonNull
+  @Override
+  public List<TableAlxEntry> getAlxData() {
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    return parser.getAlxData();
+  }
+
+  @Override
+  public List<TableAlxEntry> getAlxData(int gameId) {
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    return parser.getAlxData(gameId);
+  }
 
   //----------------------------------
   // UI Management
-
 
   @Override
   public boolean killFrontend() {

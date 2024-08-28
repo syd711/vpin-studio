@@ -6,7 +6,9 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -19,8 +21,6 @@ import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -49,13 +49,12 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpsTablesController implements Initializable, StudioEventListener {
+public class VpsTablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
 
   private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
 
   static {
-
     TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
     TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
     TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
@@ -63,7 +62,6 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     TABLE_FORMATS.add(new VpsTableFormat("FX2", "Pinball FX2"));
     TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
   }
-
 
   @FXML
   private TextField searchTextField;
@@ -78,40 +76,40 @@ public class VpsTablesController implements Initializable, StudioEventListener {
   TableColumn<VpsTableModel, VpsTableModel> installedColumn;
 
   @FXML
-  TableColumn<VpsTableModel, String> nameColumn;
+  TableColumn<VpsTableModel, VpsTableModel> nameColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Integer> versionsColumn;
+  TableColumn<VpsTableModel, VpsTableModel> versionsColumn;
 
   @FXML
   TableColumn<VpsTableModel, VpsTableModel> statusColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> directB2SColumn;
+  TableColumn<VpsTableModel, VpsTableModel> directB2SColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> pupPackColumn;
+  TableColumn<VpsTableModel, VpsTableModel> pupPackColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> romColumn;
+  TableColumn<VpsTableModel, VpsTableModel> romColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> topperColumn;
+  TableColumn<VpsTableModel, VpsTableModel> topperColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> povColumn;
+  TableColumn<VpsTableModel, VpsTableModel> povColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> altSoundColumn;
+  TableColumn<VpsTableModel, VpsTableModel> altSoundColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> altColorColumn;
+  TableColumn<VpsTableModel, VpsTableModel> altColorColumn;
 
   @FXML
-  TableColumn<VpsTableModel, Object> tutorialColumn;
+  TableColumn<VpsTableModel, VpsTableModel> tutorialColumn;
 
   @FXML
-  TableColumn<VpsTableModel, String> updatedColumn;
+  TableColumn<VpsTableModel, VpsTableModel> updatedColumn;
 
   @FXML
   private StackPane loaderStack;
@@ -155,6 +153,9 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
 
   // Add a public no-args constructor
   public VpsTablesController() {
@@ -285,7 +286,6 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     tableView.setPlaceholder(new Label("The list of VPS tables is shown here."));
 
     this.loadingOverlay = new WaitOverlay(loaderStack, tableView, "Loading Tables...");
@@ -306,89 +306,44 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       return model.isInstalled() ? WidgetFactory.createCheckIcon() : null;
     });
 
-    nameColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      return new SimpleStringProperty(value.getVpsTable().getDisplayName());
-    });
-
-    versionsColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      return new SimpleObjectProperty<Integer>(CollectionUtils.size(value.getVpsTable().getTableFiles()));
-    });
+    BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> new Label(value.getDisplayName()), true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
       return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
     });
 
-    directB2SColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getB2sFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(versionsColumn, (value, model) -> 
+      new Label(Integer.toString(CollectionUtils.size(value.getTableFiles()))), true);
 
-    pupPackColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getPupPackFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    topperColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getTopperFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    povColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getPovFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getPupPackFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    romColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getRomFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(topperColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getTopperFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    altSoundColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getAltSoundFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(povColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getPovFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    altColorColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getAltColorFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(romColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getRomFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    tutorialColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      if (VpsUtil.isDataAvailable(value.getVpsTable().getTutorialFiles())) {
-        return new SimpleObjectProperty<>(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleObjectProperty<>("");
-    });
+    BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getAltSoundFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    updatedColumn.setCellValueFactory(cellData -> {
-      VpsTableModel value = cellData.getValue();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-      return new SimpleStringProperty(dateFormat.format(new Date(value.getVpsTable().getUpdatedAt())));
-    });
+    BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getAltColorFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+
+    BaseLoadingColumn.configureColumn(tutorialColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getTutorialFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+
+    BaseLoadingColumn.configureColumn(updatedColumn, (value, model) ->
+      new Label(dateFormat.format(new Date(value.getUpdatedAt()))), true);
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -450,15 +405,23 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     });
 
     EventManager.getInstance().addListener(this);
-    this.doReload(false);
+  }
+
+  @Override
+  public void onViewActivated(NavigationOptions options) {
+    // first time activation
+    if (vpsTables == null) {
+      this.doReload(false);
+    }
+    refresh(getSelection());
   }
 
   public void refresh(@Nullable VpsTableModel newSelection) {
-    if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 1) {
+    if (newSelection != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
+    }
+    else {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-      if (newSelection != null) {
-        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
-      }
     }
 
     openBtn.setDisable(newSelection != null);
