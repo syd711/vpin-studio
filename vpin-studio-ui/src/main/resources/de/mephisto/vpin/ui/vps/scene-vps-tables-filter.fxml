@@ -10,45 +10,42 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
    <children>
-      <VBox>
-         <children>
-            <BorderPane>
-               <left>
-                  <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
-                     <children>
-                        <Hyperlink onAction="#onReset" text="Reset All">
-                           <HBox.margin>
-                              <Insets left="-5.0" top="-9.0" />
-                           </HBox.margin>
-                        </Hyperlink>
-                     </children>
-                     <BorderPane.margin>
-                        <Insets top="7.0" />
-                     </BorderPane.margin>
-                  </HBox>
-               </left>
-               <right>
-                  <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
-                     </graphic>
-                  </Button>
-               </right>
-               <VBox.margin>
-                  <Insets bottom="12.0" />
-               </VBox.margin>
-            </BorderPane>
-         </children>
-      </VBox>
+      <BorderPane>
+         <left>
+            <HBox alignment="CENTER_LEFT" BorderPane.alignment="CENTER">
+               <children>
+                  <Hyperlink onAction="#onReset" text="Reset All">
+                     <HBox.margin>
+                        <Insets left="-5.0" top="-9.0" />
+                     </HBox.margin>
+                  </Hyperlink>
+               </children>
+               <BorderPane.margin>
+                  <Insets top="7.0" />
+               </BorderPane.margin>
+            </HBox>
+         </left>
+         <right>
+            <Button mnemonicParsing="false" onAction="#toggle" BorderPane.alignment="CENTER">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2w-window-close" iconSize="12" />
+               </graphic>
+            </Button>
+         </right>
+         <VBox.margin>
+            <Insets bottom="12.0" />
+         </VBox.margin>
+      </BorderPane>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="230.0">
+            <VBox fx:id="titlePaneRoot" prefWidth="204.0">
                <children>
 
                   <Label styleClass="default-title" text="Table Filters">
@@ -58,18 +55,18 @@
                   </Label>
                   <VBox fx:id="tableFilters">
                      <children>
-                        <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Show Only Installed Tables" />
-                        <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Show Only NOT Installed Tables" />
+                        <CheckBox fx:id="installedOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Only Installed Tables" />
+                        <CheckBox fx:id="notInstalledOnlyCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Only NOT Installed Tables" />
 
                         <Label styleClass="preference-checkbox" text="Author" />
-                        <TextField fx:id="author" />
+                        <TextField fx:id="author" maxWidth="204.0"/>
                         <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="Search author in all Assets" />
 
                         <Label styleClass="preference-checkbox" text="Manufacturer" />
-                        <TextField fx:id="manufacturer" />
+                        <TextField fx:id="manufacturer" maxWidth="204.0"/>
 
                         <Label styleClass="preference-checkbox" text="Theme" />
-                        <TextField fx:id="theme" />
+                        <TextField fx:id="theme" maxWidth="204.0"/>
                      </children>
                   </VBox>
 
@@ -78,10 +75,11 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <VBox fx:id="featuresPanel">
-                     <children>      
-                     </children>
-                  </VBox>
+                  <FlowPane fx:id="featuresPanel" hgap="3.0" rowValignment="TOP" vgap="3.0">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </FlowPane>
 
                   <Label styleClass="default-title" text="Assets Filters">
                      <VBox.margin>
@@ -91,7 +89,6 @@
 
                   <VBox fx:id="assetFilters">
                      <children>
-
                         <CheckBox fx:id="withDirectB2s" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Direct B2S" />
                         <CheckBox fx:id="withPuppack" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Pup-pack" />
                         <CheckBox fx:id="withRom" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Rom" />
@@ -100,7 +97,6 @@
                         <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Sound" />
                         <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Color" />
                         <CheckBox fx:id="withTutorial" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Tutorial" />
-
                      </children>
                   </VBox>
                </children>

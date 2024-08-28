@@ -8,14 +8,15 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
@@ -45,9 +46,9 @@ public class VpsTablesFilterController extends BaseFilterController implements I
 
   //-------------------------------
   @FXML
-  private VBox featuresPanel;
+  private FlowPane featuresPanel;
 
-  private LinkedHashMap<String, CheckBox> featureCheckboxes;
+  private LinkedHashMap<String, Label> featureCheckboxes;
 
   //-------------------------------
   // Presence of assets
@@ -118,9 +119,10 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     theme.setText(null);
 
     if (featureCheckboxes != null) {
-      for (CheckBox cb : featureCheckboxes.values())  {
-        cb.setSelected(false);
-        filterSettings.registerFeature(cb.getText());
+      for (Label badge : featureCheckboxes.values())  {
+        String feature = badge.getText();
+        filterSettings.registerFeature(feature);
+        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, false) + ";");
       }
     }
 
@@ -235,24 +237,22 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     // create Checkboxes for features
     featureCheckboxes = new LinkedHashMap<>();
     for (String feature: VpsFeatures.forFilter()) {
-      CheckBox checkBox = new CheckBox(feature);
-      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
-      checkBox.setPrefHeight(30);
-      checkBox.setSelected(false);
-      checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          if (newValue) {
-            filterSettings.selectFeature(feature);
-          } else {
-            filterSettings.unselectFeature(feature);
-          }
-          applyFilters();
-        }
+
+      Label badge = new Label(feature);
+      badge.getStyleClass().add("white-label");
+      badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
+      badge.getStyleClass().add("vps-badge");
+
+      badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, filterSettings.isSelectedFeature(feature)) + ";");
+
+      badge.setOnMouseClicked(e -> {
+        boolean selected = filterSettings.toggleFeature(feature);
+        badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, selected) + ";");
+        applyFilters();
       });
       filterSettings.registerFeature(feature);
-      featureCheckboxes.put(feature, checkBox);
-      featuresPanel.getChildren().add(checkBox);
+      featureCheckboxes.put(feature, badge);
+      featuresPanel.getChildren().add(badge);
     }
 
   }

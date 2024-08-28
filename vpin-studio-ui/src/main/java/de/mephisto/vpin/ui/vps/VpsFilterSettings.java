@@ -149,15 +149,16 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public void registerFeature(String feature) {
     features.put(feature, Boolean.FALSE);
   }
-  public void selectFeature(String feature) {
-    if (features.containsKey(feature)) {
-      features.put(feature, Boolean.TRUE);
-    }
+  public boolean isSelectedFeature(String feature) {
+    return features.containsKey(feature) && features.get(feature);
   }
-  public void unselectFeature(String feature) {
+  public boolean toggleFeature(String feature) {
     if (features.containsKey(feature)) {
-      features.put(feature, Boolean.FALSE);
+      boolean newstate = !features.get(feature);
+      features.put(feature, newstate);
+      return newstate;
     }
+    return false;
   }
 
   public boolean isResetted() {
