@@ -810,18 +810,20 @@ public class GameService implements InitializingBean {
 
   public Game findMatch(String term) {
     List<Game> knownGames = getKnownGames(-1);
-    double match = 0;
+    double match = 1;
     Game tableMatch = null;
     for (Game knownGame : knownGames) {
       String displayName = knownGame.getGameDisplayName();
       double similarity = StringSimilarity.getSimilarity(displayName, term);
-      if (similarity > match) {
+//      System.out.println(displayName + ":" + term + ": "  +similarity);
+      if (similarity < match) {
         match = similarity;
         tableMatch = knownGame;
       }
     }
 
-    if (match >= MATCHING_THRESHOLD) {
+    if (match <= MATCHING_THRESHOLD) {
+      LOG.info("Found matching table '" + tableMatch.getGameDisplayName() + "' with matching value of '" + match + "' for term '" + term + "'");
       return tableMatch;
     }
     return null;

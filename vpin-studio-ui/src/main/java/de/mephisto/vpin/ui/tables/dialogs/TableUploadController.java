@@ -299,11 +299,11 @@ public class TableUploadController implements Initializable, DialogController {
 
   private boolean runPreChecks(Stage s) {
     //check accidental overwrite
-    String fileName = selection.getName();
+    String fileName = FilenameUtils.getBaseName(selection.getName());
     if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 50);
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 70);
       if (!similarAtLeastToPercent) {
-        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameFileName(), 50);
+        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), 70);
       }
       if (!similarAtLeastToPercent) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning", "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
@@ -317,9 +317,15 @@ public class TableUploadController implements Initializable, DialogController {
     if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
       try {
         GameRepresentation game = client.getGameService().findMatch(fileName);
+        if (game != null) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".", "You can cancel the action to change the selection or proceed with the upload.", "Yes, upload table");
+          if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+            return false;
+          }
+        }
       }
       catch (Exception e) {
-
+        LOG.warn("Failed to find matching table: " + e.getMessage(), e);
       }
     }
     return true;
