@@ -3,8 +3,12 @@
 ## Changes
 
 - **Backglass Manager**: The backglass manager dialog has been moved into a separate tab of the "Tables" view.
+- **Table Uploads**: Added additional matcher check for uploads (import / import and replace). The matcher checks if there the given files matches the table that should be overwritten or if there is an existing table that may match with the given uploads and could be selected for replacement. Note that the check is a bit vague, I hope we found the correct degree of matching.
+- **Support of statistics for the PinballX frontend**: The statistics tab is now supported for the PinballX frontend.
 - **Filters in VPS Tables**: The VPS tab now supports filtering and full column sorting like other tabs.
-- **Support of statistics with pinballX frontend**: The statistics tab is now supported with pinballX frontend.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-tab.png" width="700" />
+
 - **Added drop-in folder feature**: 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
