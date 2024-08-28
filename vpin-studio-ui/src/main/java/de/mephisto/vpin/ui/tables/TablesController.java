@@ -46,7 +46,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -421,7 +420,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game, false);
+        this.tableOverviewController.reload(game);
       }
     }
 
@@ -429,18 +428,18 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game, false);
+        this.tableOverviewController.reload(game);
       }
     }
 
     if (id > 0) {
       GameRepresentation refreshedGame = client.getGameService().getGame(id);
-      this.tableOverviewController.reload(refreshedGame, true);
+      this.tableOverviewController.reload(refreshedGame);
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
-        this.tableOverviewController.reload(selection, true);
+        this.tableOverviewController.reload(selection);
       }
     }
   }

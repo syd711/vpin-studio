@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.vps;
 
-import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 

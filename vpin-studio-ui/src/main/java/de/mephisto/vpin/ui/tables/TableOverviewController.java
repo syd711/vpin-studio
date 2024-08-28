@@ -753,12 +753,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     }
   }
 
-  public void reload(GameRepresentation refreshedGame, boolean select) {
+  public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-      if (select) {
-        tableView.getSelectionModel().getSelectedItems().removeListener(this);
-        tableView.getSelectionModel().clearSelection();
-      }
+
+      GameRepresentation selectedGame = getSelection();
+
       GameRepresentationModel model = null;
       int index = games.indexOf(refreshedGame);
       if (index != -1) {
@@ -768,12 +767,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
-      }
 
-      // select the reloaded game
-      if (select) {
-        tableView.getSelectionModel().getSelectedItems().addListener(this);
-        tableView.getSelectionModel().select(model);
+        // re-select if it was selected
+        if (selectedGame.getId() == model.getGame().getId()) {
+          tableView.getSelectionModel().clearAndSelect(index);
+        }
       }
 
       // force refresh the view for elements not observed by the table

@@ -202,10 +202,6 @@ public class TableFilterController extends BaseFilterController implements Initi
     notPlayedSettings.setVisible(frontendType.supportStatistics());
     missingAssetsCheckBox.setVisible(frontendType.supportMedias());
 
-    List<GameEmulatorRepresentation> gameEmulators = new ArrayList<>(client.getFrontendService().getGameEmulators());
-    gameEmulators.add(0, null);
-    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-
     filterSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.FILTER_SETTINGS, FilterSettings.class);
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
