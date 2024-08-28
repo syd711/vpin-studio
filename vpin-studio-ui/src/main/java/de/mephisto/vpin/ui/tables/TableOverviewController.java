@@ -770,7 +770,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         // re-select if it was selected
         if (selectedGame.getId() == model.getGame().getId()) {
-          tableView.getSelectionModel().clearAndSelect(index);
+          tableView.getSelectionModel().clearSelection();
+          tableView.getSelectionModel().select(model);
         }
       }
 
