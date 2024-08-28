@@ -206,7 +206,7 @@ public class PropperRenamingController implements Initializable {
           builder.append("MOD");
         }
 
-        if (vrBtn.isSelected() && vpsTableVersion.getFeatures() != null && vpsTableVersion.getFeatures().contains("MOD")) {
+        if (vrBtn.isSelected() && vpsTableVersion.getFeatures() != null && vpsTableVersion.getFeatures().contains("VR")) {
           builder.append(" ");
           builder.append("VR");
         }
