@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -173,8 +175,15 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
+    Stage s = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null) {
+      if (!runPreChecks(s)) {
+        return;
+      }
+
       uploadBtn.setDisable(true);
+
+
       try {
         String subFolder = this.subfolderText.getText();
         boolean useSubFolder = this.subfolderCheckbox.isSelected();
@@ -286,6 +295,34 @@ public class TableUploadController implements Initializable, DialogController {
         WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
+  }
+
+  private boolean runPreChecks(Stage s) {
+    //check accidental overwrite
+    String fileName = selection.getName();
+    if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 50);
+      if (!similarAtLeastToPercent) {
+        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameFileName(), 50);
+      }
+      if (!similarAtLeastToPercent) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning", "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
+        if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+          return false;
+        }
+      }
+    }
+
+    //suggest table match
+    if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+      try {
+        GameRepresentation game = client.getGameService().findMatch(fileName);
+      }
+      catch (Exception e) {
+
+      }
+    }
+    return true;
   }
 
   private int getGameId() {

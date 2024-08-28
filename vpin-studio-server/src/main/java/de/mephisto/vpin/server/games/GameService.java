@@ -2,8 +2,10 @@ package de.mephisto.vpin.server.games;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -54,6 +56,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
+  private static final double MATCHING_THRESHOLD = 0.5;
 
   @Autowired
   private FrontendService frontendService;
@@ -803,6 +806,25 @@ public class GameService implements InitializingBean {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     TableDetails tableDetails = frontendService.getTableDetails(id);
     return gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
+  }
+
+  public Game findMatch(String term) {
+    List<Game> knownGames = getKnownGames(-1);
+    double match = 0;
+    Game tableMatch = null;
+    for (Game knownGame : knownGames) {
+      String displayName = knownGame.getGameDisplayName();
+      double similarity = StringSimilarity.getSimilarity(displayName, term);
+      if (similarity > match) {
+        match = similarity;
+        tableMatch = knownGame;
+      }
+    }
+
+    if (match >= MATCHING_THRESHOLD) {
+      return tableMatch;
+    }
+    return null;
   }
 
   @Override

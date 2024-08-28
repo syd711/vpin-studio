@@ -321,6 +321,18 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
+  public GameRepresentation findMatch(String term) throws Exception {
+    try {
+      Map<String, String> params = new HashMap<>();
+      params.put("term", term);
+      return getRestClient().post(API + "games/match", params, GameRepresentation.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to save game: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
   //--------------- avoid multiple loading in //
   /**
    * one blocking thread by emulatorId
