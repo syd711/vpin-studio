@@ -994,7 +994,7 @@
 }
 
 .dropin-menu-item, .dropin-menu-item:hover{
-   -fx-padding: 12 12 12 3;
+   -fx-padding: 3 3 3 3;
 }
 
 .dropin-menu-item .label:hover {

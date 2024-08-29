@@ -96,6 +96,9 @@
                      </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="24.0" />
+               </padding>
             </VBox>
          </content>
       </ScrollPane>

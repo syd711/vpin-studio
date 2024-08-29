@@ -18,14 +18,19 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.util.*;
 
@@ -50,10 +55,13 @@ public class DropInContainerController implements Initializable {
   @FXML
   private Button installBtn;
 
-  @Nullable
+  @FXML
+  private ImageView imageView;
+
+  @FXML
+  private HBox imageWrapper;
+
   private MenuButton dropInButton;
-
-
   private File file;
 
   @FXML
@@ -85,13 +93,27 @@ public class DropInContainerController implements Initializable {
     sizeLabel.setText("" + FileUtils.readableFileSize(file.length()) + ", created " + DateUtil.formatDateTime(new Date(file.lastModified())));
     sizeLabel.setStyle("-fx-font-size: 13px");
 
-    String suffix = FilenameUtils.getExtension(file.getName());
-    boolean disable = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix.toLowerCase());
+    String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
+    if (Arrays.asList("png", "jpg").contains(suffix)) {
+      try {
+        imageView.setImage(new Image(new FileInputStream(file)));
+      }
+      catch (FileNotFoundException e) {
+        LOG.error("Failed to set image: " + e, e);
+      }
+    }
+    else {
+      dataPanel.setPrefWidth(356);
+      imageWrapper.setVisible(false);
+    }
+
+    boolean disable = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix);
     this.installBtn.setDisable(disable);
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    imageWrapper.managedProperty().bindBidirectional(imageWrapper.visibleProperty());
     dragHandler.setStyle("-fx-cursor: hand;");
     dataPanel.setStyle("-fx-cursor: hand;");
     root.setOnDragDetected(new EventHandler<MouseEvent>() {
@@ -106,14 +128,14 @@ public class DropInContainerController implements Initializable {
         db.setContent(data);
         event.consume();
 
-        ((BorderPane)event.getSource()).getParent().getParent().getParent().setVisible(false);
+        ((BorderPane) event.getSource()).getParent().getParent().getParent().setVisible(false);
       }
     });
 
     root.setOnDragDone(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
-        ((BorderPane)event.getSource()).getParent().getParent().getParent().setVisible(true);
+        ((BorderPane) event.getSource()).getParent().getParent().getParent().setVisible(true);
       }
     });
   }

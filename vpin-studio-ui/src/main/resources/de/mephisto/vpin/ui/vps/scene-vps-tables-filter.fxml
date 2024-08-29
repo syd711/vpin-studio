@@ -74,7 +74,7 @@
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
-                  <FlowPane fx:id="featuresPanel" hgap="3.0" rowValignment="TOP" vgap="3.0">
+                  <FlowPane fx:id="featuresPanel" hgap="3.0" minHeight="150.0" rowValignment="TOP" vgap="3.0">
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin>

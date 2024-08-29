@@ -129,11 +129,13 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   @FXML
   private BorderPane thumbnailImagePane;
+
   @FXML
   private ImageView thumbnailImage;
 
   @FXML
   private BorderPane dmdThumbnailImagePane;
+
   @FXML
   private ImageView dmdThumbnailImage;
 
