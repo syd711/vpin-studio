@@ -20,7 +20,7 @@ public class PinballXAssetsIndexAdapterTest {
   PinballXAssetsIndexAdapter createAdapter() {
     PinballXAssetsIndexAdapter adapter = new PinballXAssetsIndexAdapter();
     adapter.configure("ftp.gameex.com", 21, "/-PinballX-");
-    adapter.configureCredentials("leprinco@yahoo.fr", "Oliver01");
+    adapter.configureCredentials("####", "####");
     return adapter;
   }
 

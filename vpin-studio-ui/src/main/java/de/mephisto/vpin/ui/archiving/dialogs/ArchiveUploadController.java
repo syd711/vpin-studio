@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveType;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
@@ -67,7 +68,12 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
         ArchiveSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
         ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Repository Upload", selectedItem.getId(), selection);
-        ProgressDialog.createProgressDialog(model);
+        ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
+
+        // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
+        if (progressResult.isCancelled()) {
+          result = false;
+        }
       } catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading archive failed", "Please check the log file for details", "Error: " + e.getMessage());

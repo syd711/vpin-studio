@@ -3,41 +3,43 @@ package de.mephisto.vpin.ui.vps;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
-import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.WaitOverlayController;
+import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.Keys;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -47,13 +49,12 @@ import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class VpsTablesController implements Initializable, StudioEventListener {
+public class VpsTablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
 
   private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
 
   static {
-
     TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
     TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
     TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
@@ -62,57 +63,56 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
   }
 
-
   @FXML
   private TextField searchTextField;
 
   @FXML
-  private TableView<VpsTable> tableView;
+  private TableView<VpsTableModel> tableView;
 
   @FXML
   private ComboBox<VpsTableFormat> emulatorCombo;
 
   @FXML
-  private TableColumn<VpsTable, String> installedColumn;
+  TableColumn<VpsTableModel, VpsTableModel> installedColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> nameColumn;
+  TableColumn<VpsTableModel, VpsTableModel> nameColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> versionsColumn;
+  TableColumn<VpsTableModel, VpsTableModel> versionsColumn;
 
   @FXML
-  private TableColumn<VpsTable, Node> statusColumn;
+  TableColumn<VpsTableModel, VpsTableModel> statusColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> directB2SColumn;
+  TableColumn<VpsTableModel, VpsTableModel> directB2SColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> pupPackColumn;
+  TableColumn<VpsTableModel, VpsTableModel> pupPackColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> romColumn;
+  TableColumn<VpsTableModel, VpsTableModel> romColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> topperColumn;
+  TableColumn<VpsTableModel, VpsTableModel> topperColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> povColumn;
+  TableColumn<VpsTableModel, VpsTableModel> povColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> altSoundColumn;
+  TableColumn<VpsTableModel, VpsTableModel> altSoundColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> altColorColumn;
+  TableColumn<VpsTableModel, VpsTableModel> altColorColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> tutorialColumn;
+  TableColumn<VpsTableModel, VpsTableModel> tutorialColumn;
 
   @FXML
-  private TableColumn<VpsTable, String> updatedColumn;
+  TableColumn<VpsTableModel, VpsTableModel> updatedColumn;
 
   @FXML
-  private CheckBox installedOnlyCheckbox;
+  private StackPane loaderStack;
 
   @FXML
   private StackPane tableStack;
@@ -126,19 +126,36 @@ public class VpsTablesController implements Initializable, StudioEventListener {
   @FXML
   private Label countLabel;
 
-  private Parent loadingOverlay;
+  //--------------- Filters
+
+  @FXML
+  private Button filterButton;
+
+  private VpsTablesFilterController vpsTablesFilterController;
 
 
-  private ObservableList<VpsTable> data;
-  private List<VpsTable> vpsTables;
+  //--------------- Sorter
+
+  private VpsTablesColumnSorter vpsTablesColumnSorter;
+
+  //------------------------
+
+  private ObservableList<VpsTableModel> vpsTables;
+
+  private FilteredList<VpsTableModel> data;
+
+  private WaitOverlay loadingOverlay;
+
   private TablesController tablesController;
 
-  // calculated KPIs on vpsTables
-  private int installed = 0;
+  // calculated global KPIs on vpsTables
   private int unmapped = 0;
 
   private long lastKeyInputTime = System.currentTimeMillis();
   private String lastKeyInput = "";
+
+  private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
 
   // Add a public no-args constructor
   public VpsTablesController() {
@@ -146,15 +163,46 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   @FXML
   private void onTableEdit() {
-    if (getSelection().isPresent()) {
-      GameRepresentation game = client.getGameService().getGameByVpsTable(getSelection().get(), null);
+    VpsTableModel model = getSelection();
+    if (model != null) {
+      GameRepresentation game = client.getGameService().getGameByVpsTable(model.getVpsTable(), null);
       tablesController.getTableOverviewController().setSelection(game);
     }
   }
 
   @FXML
   private void onOpen() {
-    Studio.browse(VPS.getVpsTableUrl(getSelection().get().getId()));
+    VpsTableModel model = getSelection();
+    if (model != null) {
+      Studio.browse(VPS.getVpsTableUrl(model.getVpsTable().getId()));
+    }
+  }
+
+  @FXML
+  private void onFilter() {
+    vpsTablesFilterController.toggle();
+  }
+
+  /**
+   * @return true if the filtered list did change and reload is required
+   */
+  public synchronized void applyFilters() {
+    // mind that it can be called by threads before data is even initialized
+    if (this.data != null) {
+      VpsFilterSettings filters = vpsTablesFilterController.getFilterSettings();
+
+      boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
+      this.data.setPredicate(filters.buildPredicate(noVPX));
+
+      // Now update counters
+      int installed = 0;
+      for (VpsTableModel model : this.data) {
+        if (model.isInstalled()) {
+          installed++;
+        }
+      }
+      countLabel.setText(data.size() + " tables / " + installed + " installed / " + unmapped + " not mapped");
+    }
   }
 
   @FXML
@@ -164,219 +212,154 @@ public class VpsTablesController implements Initializable, StudioEventListener {
 
   public void doReload(boolean forceReload) {
     this.searchTextField.setDisable(true);
-    tableView.setVisible(false);
-
-    if (!tableStack.getChildren().contains(loadingOverlay)) {
-      tableStack.getChildren().add(loadingOverlay);
-    }
-
-    VpsTable selection = tableView.getSelectionModel().getSelectedItem();
+    loadingOverlay.show();
+    VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
 
     if (forceReload) {
       ProgressDialog.createProgressDialog(new VpsDBDownloadProgressModel("Download VPS Database", Arrays.asList(new File("<vpsdb.json>"))));
     }
 
-    new Thread(() -> {
-      // get all tables
-      vpsTables = client.getVpsService().getTables();
-
-      VpsTableFormat value = emulatorCombo.getValue();
-      String tableFormat = value.getAbbrev();
-      vpsTables = vpsTables.stream().filter(t -> t.getAvailableTableFormats().contains(tableFormat)).collect(Collectors.toList());
-
-      Collections.sort(vpsTables, Comparator.comparing(o -> o.getDisplayName().trim()));
-
-      // and calculate installed and unmapped in the non blocking thread
-      this.installed = 0;
+    // calculate installed and unmapped in a non blocking thread
+     JFXFuture.runAsync(()-> {
       this.unmapped = 0;
-      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
-        for (VpsTable vpsTable : vpsTables) {
-          GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable, null);
-          if (gameByVpsTable != null) {
-            installed++;
-          }
-        }
-      }
-
       List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
       for (GameRepresentation gameRepresentation : gamesCached) {
         if (StringUtils.isEmpty(gameRepresentation.getExtTableId())) {
           unmapped++;
         }
       }
+    }).thenLater(() -> {
+      applyFilters();
+    });
 
-      Platform.runLater(() -> {
-        data = FXCollections.observableList(filterTables(vpsTables));
-        tableView.setItems(data);
-        tableView.refresh();
-        if (selection != null && data.contains(selection)) {
-          tableView.getSelectionModel().select(selection);
-        }
-        else {
-          tableView.getSelectionModel().select(0);
-        }
+    //-----------
+    // load tables in parallel
+    JFXFuture.runAsync(()-> {
+      // get all tables and filter by format
+      VpsTableFormat value = emulatorCombo.getValue();
+      String tableFormat = value.getAbbrev();
 
-        this.searchTextField.setDisable(false);
-        tableStack.getChildren().remove(loadingOverlay);
-        tableView.setVisible(true);
+      List<VpsTable> _vpsTables = client.getVpsService().getTables();
+      vpsTables = FXCollections.observableList(_vpsTables.stream()
+        .filter(t -> t.getAvailableTableFormats().contains(tableFormat))
+        .map(t -> new VpsTableModel(t))
+        .collect(Collectors.toList())
+      );
 
-        countLabel.setText(vpsTables.size() + " tables / " + installed + " installed / " + unmapped + " not mapped");
-
-        tableView.requestFocus();
+      VpsTableModel.loadAllThenLater(vpsTables, () -> {
+        applyFilters();
       });
-    }, "VPS Tables Load").start();
+
+    }).thenLater(() -> {
+
+      this.data = new FilteredList<>(vpsTables);
+
+      // Wrap the FilteredList in a SortedList
+      SortedList<VpsTableModel> sortedData = new SortedList<>(this.data);
+      // Bind the SortedList comparator to the TableView comparator.
+      sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
+          () -> vpsTablesColumnSorter .buildComparator(tableView),
+          tableView.comparatorProperty()));
+      // Set a dummy SortPolicy to tell the TableView data is successfully sorted
+      tableView.setSortPolicy(tableView -> true);
+
+      // Set the items in the TableView
+      tableView.setItems(sortedData);
+
+      // filter the list and refresh number of items
+      applyFilters();
+
+      // reapply selection
+      if (selection != null && data.contains(selection)) {
+        tableView.getSelectionModel().select(selection);
+      }
+      else {
+        tableView.getSelectionModel().select(0);
+      }
+
+      this.searchTextField.setDisable(false);
+      loadingOverlay.hide();
+
+      tableView.requestFocus();
+    });
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     tableView.setPlaceholder(new Label("The list of VPS tables is shown here."));
 
+    this.loadingOverlay = new WaitOverlay(loaderStack, tableView, "Loading Tables...");
+
+    this.vpsTablesColumnSorter = new VpsTablesColumnSorter(this);
+
     try {
-      FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
-      loadingOverlay = loader.load();
-      WaitOverlayController ctrl = loader.getController();
-      ctrl.setLoadingMessage("Loading Tables...");
+      FXMLLoader loader = new FXMLLoader(VpsTablesFilterController.class.getResource("scene-vps-tables-filter.fxml"));
+      loader.load();
+      vpsTablesFilterController = loader.getController();
+      vpsTablesFilterController.setVpsTablesController(this, filterButton, tableStack, tableView);
     }
     catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
+      LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
 
-    installedColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
-        GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
-        if (gameByVpsTable != null) {
-          return new SimpleObjectProperty(WidgetFactory.createCheckIcon());
-        }
-      }
-      return new SimpleObjectProperty("");
+    BaseLoadingColumn.configureLoadingColumn(installedColumn, "", (value, model) -> {
+      return model.isInstalled() ? WidgetFactory.createCheckIcon() : null;
     });
 
-    nameColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      return new SimpleStringProperty(value.getDisplayName());
+    BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> new Label(value.getDisplayName()), true);
+
+    BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
+      return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
     });
 
-    versionsColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      List<VpsTableVersion> tableFiles = value.getTableFiles();
-      if (tableFiles != null) {
-        return new SimpleStringProperty(String.valueOf(tableFiles.size()));
-      }
-      return new SimpleStringProperty("0");
-    });
+    BaseLoadingColumn.configureColumn(versionsColumn, (value, model) -> 
+      new Label(Integer.toString(CollectionUtils.size(value.getTableFiles()))), true);
 
-    statusColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      String versionId = null;
-      VPSChanges updates = null;
-      if (!client.getFrontendService().getVpxGameEmulators().isEmpty()) {
-        GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(value, null);
-        if (gameByVpsTable != null) {
-          versionId = gameByVpsTable.getExtTableVersionId();
-          updates = gameByVpsTable.getVpsUpdates();
-          return new SimpleObjectProperty<>(new VpsTableColumn(value.getId(), versionId, updates, null));
-        }
-      }
+    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-      return new SimpleObjectProperty("-");
-    });
+    BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    directB2SColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getB2sFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getPupPackFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    pupPackColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getPupPackFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(topperColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getTopperFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    topperColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getTopperFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(povColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getPovFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    povColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getPovFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(romColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getRomFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    romColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getRomFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getAltSoundFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    altSoundColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getAltSoundFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getAltColorFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    altColorColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (this.isDataAvailable(value.getAltColorFiles())) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
+    BaseLoadingColumn.configureColumn(tutorialColumn, (value, model) ->
+      VpsUtil.isDataAvailable(value.getTutorialFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
-    tutorialColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      if (value.getTutorialFiles() != null && !value.getTutorialFiles().isEmpty()) {
-        return new SimpleObjectProperty(WidgetFactory.createCheckboxIcon());
-      }
-      return new SimpleStringProperty("");
-    });
-
-    updatedColumn.setCellValueFactory(cellData -> {
-      VpsTable value = cellData.getValue();
-      SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-      return new SimpleStringProperty(dateFormat.format(new Date(value.getUpdatedAt())));
-    });
+    BaseLoadingColumn.configureColumn(updatedColumn, (value, model) ->
+      new Label(dateFormat.format(new Date(value.getUpdatedAt()))), true);
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        refresh(Optional.ofNullable(newSelection));
+        refresh(newSelection);
       }
     });
 
     tableView.setRowFactory(tv -> {
-      TableRow<VpsTable> row = new TableRow<>();
+      TableRow<VpsTableModel> row = new TableRow<>();
       row.setOnMouseClicked(event -> {
         if (event.getClickCount() == 2 && (!row.isEmpty())) {
           onOpen();
         }
       });
       return row;
-    });
-
-    installedOnlyCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        tableView.getSelectionModel().clearSelection();
-        List<VpsTable> filtered = filterTables(vpsTables);
-        tableView.setItems(FXCollections.observableList(filtered));
-      }
     });
 
     tableView.setOnKeyPressed(new EventHandler<KeyEvent>() {
@@ -399,9 +382,9 @@ public class VpsTablesController implements Initializable, StudioEventListener {
           text = lastKeyInput;
         }
 
-        for (VpsTable table : data) {
-          if (table.getDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
-            tableView.getSelectionModel().clearSelection();
+        for (VpsTableModel table : data) {
+          if (table.getName().toLowerCase().startsWith(text.toLowerCase())) {
+            clearSelection();
             tableView.getSelectionModel().select(table);
             tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
             break;
@@ -410,11 +393,7 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       }
     });
 
-    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-      List<VpsTable> filtered = filterTables(this.vpsTables);
-      tableView.setItems(FXCollections.observableList(filtered));
-    });
+    vpsTablesFilterController.bindSearchField(searchTextField);
 
     emulatorCombo.setItems(FXCollections.observableList(TABLE_FORMATS));
     emulatorCombo.getSelectionModel().select(0);
@@ -426,81 +405,39 @@ public class VpsTablesController implements Initializable, StudioEventListener {
     });
 
     EventManager.getInstance().addListener(this);
-    this.doReload(false);
   }
 
-  private boolean isDataAvailable(List<? extends VpsAuthoredUrls> entries) {
-    if (entries == null) {
-      return false;
+  @Override
+  public void onViewActivated(NavigationOptions options) {
+    // first time activation
+    if (vpsTables == null) {
+      this.doReload(false);
     }
-    for (VpsAuthoredUrls entry : entries) {
-      if (entry.getUrls() != null && !entry.getUrls().isEmpty()) {
-        return true;
-      }
-    }
-    return false;
+    refresh(getSelection());
   }
 
-  public void refresh(Optional<VpsTable> newSelection) {
-    if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 1) {
+  public void refresh(@Nullable VpsTableModel newSelection) {
+    if (newSelection != null) {
+      NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
+    }
+    else {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
-      if (newSelection.isPresent()) {
-        VpsTable selection = newSelection.get();
-        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", selection.getDisplayName()));
-      }
     }
 
-    editBtn.setDisable(true);
-    openBtn.setDisable(newSelection.isEmpty());
+    openBtn.setDisable(newSelection == null);
 
-    // run in a dedicated thread as getGameByVpsTable() can block UI
-    new Thread(() -> {
-      final GameRepresentation gameByVpsTable;
-      if (newSelection.isPresent() && !client.getFrontendService().getVpxGameEmulators().isEmpty()) {
-        gameByVpsTable = client.getGameService().getGameByVpsTable(newSelection.get(), null);
-      }
-      else {
-        gameByVpsTable = null;
-      }
-      Platform.runLater(() -> {
-        editBtn.setDisable(gameByVpsTable == null);
-        tablesController.getVpsTablesSidebarController().setTable(newSelection, tablesController.getTablesSideBarController());
-      });
-    }).start();
+    editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
+
+    VpsTable vpsTable = newSelection != null? newSelection.getVpsTable(): null;
+    tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable));
   }
 
-  private List<VpsTable> filterTables(List<VpsTable> tables) {
-    List<VpsTable> filtered = new ArrayList<>();
-    String filterValue = searchTextField.textProperty().getValue();
-    if (filterValue == null) {
-      filterValue = "";
-    }
-
-    boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
-    for (VpsTable table : tables) {
-      if (installedOnlyCheckbox.isSelected() && !noVPX) {
-        GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(table, null);
-        if (gameByVpsTable == null) {
-          continue;
-        }
-      }
-
-      if (table.getDisplayName() != null) {
-        String filename = table.getDisplayName().toLowerCase();
-        if (filename.contains(filterValue.toLowerCase())) {
-          filtered.add(table);
-        }
-      }
-    }
-    return filtered;
+  public void clearSelection() {
+    tableView.getSelectionModel().clearSelection();
   }
 
-  public Optional<VpsTable> getSelection() {
-    VpsTable selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      return Optional.of(selection);
-    }
-    return Optional.empty();
+  public @Nullable VpsTableModel getSelection() {
+    return tableView.getSelectionModel().getSelectedItem();
   }
 
   public void setRootController(TablesController tablesController) {
@@ -529,4 +466,46 @@ public class VpsTablesController implements Initializable, StudioEventListener {
       return name;
     }
   }
+
+   public static class VpsTableModel extends BaseLoadingModel<VpsTable, VpsTableModel> {
+
+    private boolean installed;
+
+    private String versionId = null;
+
+    private VPSChanges updates = null;
+
+    public VpsTableModel(VpsTable table) {
+      super(table);
+    }
+
+    public VpsTable getVpsTable() {
+      return getBean();
+    }
+
+    public boolean isInstalled() {
+      return installed;
+    }
+
+    public String getVersionId() {
+      return versionId;
+    }
+
+    public VPSChanges getUpdates() {
+      return updates;
+    }
+
+    @Override
+    public String getName() {
+      return bean.getDisplayName();
+    }
+
+    @Override
+    public void load() {
+      GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(bean, null);
+      installed  = (gameByVpsTable != null);
+      versionId = (gameByVpsTable != null) ? gameByVpsTable.getExtTableVersionId() : null;
+      updates = (gameByVpsTable != null) ? gameByVpsTable.getVpsUpdates() : null;
+    }
+   }
 }

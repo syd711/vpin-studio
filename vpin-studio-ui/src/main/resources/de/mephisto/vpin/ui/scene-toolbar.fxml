@@ -72,6 +72,17 @@
                               <Font size="14.0" />
                            </font>
                         </MenuButton>
+                        <MenuButton fx:id="dropInsBtn" layoutX="200.0" layoutY="12.0" mnemonicParsing="false" prefWidth="160.0" text="Drop-In Assets">
+                           <tooltip>
+                              <Tooltip text="Shows the available assets to install" />
+                           </tooltip>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#66ff66" iconLiteral="mdi2a-asterisk" iconSize="18" visible="false" />
+                           </graphic>
+                        </MenuButton>
                         <MenuButton fx:id="messagesBtn" mnemonicParsing="false">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="18" />

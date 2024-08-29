@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.events;
 
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
@@ -89,6 +90,14 @@ public class EventManager {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {
         listener.repositoryUpdated();
+      }
+    }).start();
+  }
+
+  public void notifyTableSelectionChanged(List<GameRepresentation> games) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.tablesSelected(games);
       }
     }).start();
   }

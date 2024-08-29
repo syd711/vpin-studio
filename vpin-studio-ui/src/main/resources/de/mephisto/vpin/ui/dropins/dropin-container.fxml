@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.dropins.DropInContainerController">
+   <center>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets left="6.0" />
+         </BorderPane.margin>
+         <center>
+            <VBox fx:id="dataPanel" prefWidth="250.0">
+               <children>
+                  <Label fx:id="filenameLabel" text="file name" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></Label>
+               </children>
+            </VBox>
+         </center>
+         <right>
+            <HBox fx:id="imageWrapper" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+               </BorderPane.margin>
+               <children>
+                  <ImageView fx:id="imageView" fitHeight="75.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+               </children>
+            </HBox>
+         </right>
+      </BorderPane>
+   </center>
+   <right>
+      <ToolBar styleClass="floating-toolbar" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" text="Install">
+               <tooltip>
+                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
+               </tooltip>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Delete table and assets" />
+               </tooltip>
+            </Button>
+            <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open VPX tables folder" />
+               </tooltip>
+            </Button>
+         </items>
+      </ToolBar>
+   </right>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="accordion-container" />
+   </styleClass>
+   <left>
+      <VBox fx:id="dragHandler" alignment="CENTER" styleClass="subpanel" BorderPane.alignment="CENTER">
+         <children>
+            <FontIcon iconColor="WHITE" iconLiteral="mdi2d-drag" iconSize="18" />
+         </children>
+      </VBox>
+   </left>
+</BorderPane>

@@ -109,7 +109,7 @@ public class HighscoreService implements InitializingBean {
       if (highscoreType != null) {
         switch (highscoreType) {
           case EM: {
-            result = game.getHighscoreTextFile() != null && game.getHighscoreTextFile().exists() && game.getHighscoreTextFile().delete();
+            result = highscoreResolver.deleteTextScore(game);
             break;
           }
           case NVRam: {

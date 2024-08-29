@@ -24,27 +24,15 @@ public class TableOverviewColumnSorter {
 
       if (column.equals(tableOverviewController.columnDisplayName)) {
         comp = Comparator.comparing(o -> o.getGame().getGameDisplayName());
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnVersion)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getVersion()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnStatus)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getValidationState().getCode()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnEmulator)) {
         comp = Comparator.comparing(o -> o.getGame().getEmulatorId());
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnDateAdded)) {
         comp = (o1, o2) -> {
@@ -52,74 +40,41 @@ public class TableOverviewColumnSorter {
           Date date2 = o2.getGame().getDateAdded() == null ? new Date() : o2.getGame().getDateAdded();
           return date1.compareTo(date2);
         };
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnB2S)) {
         comp = Comparator.comparing(o -> o.getGame().getDirectB2SPath() != null);
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnVPS)) {
-        comp = (o1, o2) -> {
-          if (o1.getGame().getVpsUpdates().isEmpty()) {
-            return -1;
-          }
-          return 1;
-        };
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
+        comp = (o1, o2) -> (o1.getGame().getVpsUpdates().isEmpty()) ? -1 : 1;
       }
       else if (column.equals(tableOverviewController.columnPUPPack)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getPupPackName()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnAltColor)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getAltColorType()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnAltSound)) {
         comp = Comparator.comparing(o -> o.getGame().isAltSoundAvailable());
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnRom)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getRom()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnPOV)) {
         comp = Comparator.comparing(o -> o.getGame().getPovPath() != null);
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnRES)) {
         comp = Comparator.comparing(o -> o.getGame().getResPath() != null);
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnINI)) {
         comp = Comparator.comparing(o -> o.getGame().getIniPath() != null);
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
       }
       else if (column.equals(tableOverviewController.columnHSType)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getHighscoreType()));
-        if (column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
-          comp = comp.reversed();
-        }
+      }
+
+      // optionally reverse order 
+      if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
+        comp = comp.reversed();
       }
     }
     return comp;

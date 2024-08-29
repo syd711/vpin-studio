@@ -1,6 +1,12 @@
 package de.mephisto.vpin.server.highscores.parsing.vpreg.adapters;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.POIFSDocument;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 
 public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscoreAdapter {
 
@@ -10,6 +16,20 @@ public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscore
       return true;
     }
     return false;
+  }
+
+  @Override
+  public boolean resetHighscore(POIFSFileSystem fs, DirectoryEntry gameFolder) throws IOException {
+    int index = getStartIndex();
+    while (gameFolder.hasEntry(getScoreKey(index))) {
+      DocumentNode scoreEntry = (DocumentNode) gameFolder.getEntry(getScoreKey(index));
+      POIFSDocument scoreDocument = new POIFSDocument(scoreEntry);
+      scoreDocument.replaceContents(new ByteArrayInputStream("\0".getBytes()));
+
+      index++;
+      fs.writeFilesystem();
+    }
+    return true;
   }
 
   @Override

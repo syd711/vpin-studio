@@ -17,7 +17,7 @@ import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.tables.drophandler.TableMediaDropinsMonitoring;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -44,10 +44,8 @@ import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -57,8 +55,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
   private TableOverviewController tableOverviewController;
-  private RepositoryController repositoryController;
+  private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
+  private AlxController alxController;
+  private RepositoryController repositoryController;
 
   @FXML
   private BorderPane root;
@@ -68,6 +68,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private Tab tablesTab;
+
+  @FXML
+  private Tab backglassManagerTab;
 
   @FXML
   private Tab tablesStatisticsTab;
@@ -83,9 +86,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private RepositorySidebarController repositorySideBarController; //fxml magic! Not unused
-
-  @FXML
-  private AlxController alxController; //fxml magic! Not unused
 
   @FXML
   private VpsTablesSidebarController vpsTablesSidebarController; //fxml magic! Not unused
@@ -105,9 +105,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private Node sidePanelRoot;
   private boolean sidebarVisible = true;
 
-  /** a dropins monitoring service that installs assets when saved in the folder */
-  private TableMediaDropinsMonitoring dropinsMonitor;
-
   @Override
   public void onViewActivated(NavigationOptions options) {
     refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
@@ -120,7 +117,32 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private void onTableSettings() {
-    PreferencesController.open("settings_client");
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    switch (selectedIndex) {
+      case 0: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 1: {
+        PreferencesController.open("backglass");
+        break;
+      }
+      case 2: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 3: {
+        PreferencesController.open("settings_client");
+        break;
+      }
+      case 4: {
+        PreferencesController.open("vpbm");
+        break;
+      }
+      default: {
+        PreferencesController.open("settings_client");
+      }
+    }
   }
 
   @FXML
@@ -162,13 +184,31 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
     try {
+      FXMLLoader loader = new FXMLLoader(BackglassManagerController.class.getResource("scene-directb2s-admin.fxml"));
+      Parent directb2sRoot = loader.load();
+      backglassManagerController = loader.getController();
+      backglassManagerController.setTableSidebarController(tablesSideBarController);
+      backglassManagerTab.setContent(directb2sRoot);
+
+      Image image = new Image(Studio.class.getResourceAsStream("b2s.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
+      backglassManagerTab.setGraphic(view);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+
+
+    try {
       FXMLLoader loader = new FXMLLoader(AlxController.class.getResource("scene-alx.fxml"));
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
       tablesStatisticsTab.setContent(repositoryRoot);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load statistic tab: " + e.getMessage(), e);
     }
 
     try {
@@ -179,7 +219,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       tableRepositoryTab.setContent(repositoryRoot);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load repositoy tab: " + e.getMessage(), e);
     }
 
 
@@ -189,9 +229,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
       vpsTablesController = loader.getController();
       vpsTablesController.setRootController(this);
       vpsTablesTab.setContent(repositoryRoot);
+
+      Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
+      ImageView view = new ImageView(image);
+      view.setFitWidth(18);
+      view.setFitHeight(18);
+      vpsTablesTab.setGraphic(view);
     }
     catch (IOException e) {
-      LOG.error("failed to load table overview: " + e.getMessage(), e);
+      LOG.error("failed to load VPS table tab: " + e.getMessage(), e);
     }
 
 
@@ -202,15 +248,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
     tablesSideBarController.setVisible(true);
     repositorySideBarController.setVisible(false);
     vpsTablesSidebarController.setVisible(false);
-
-    Image image = new Image(Studio.class.getResourceAsStream("vps.png"));
-    ImageView view = new ImageView(image);
-    view.setFitWidth(18);
-    view.setFitHeight(18);
-    vpsTablesTab.setGraphic(view);
-
-    dropinsMonitor = new TableMediaDropinsMonitoring();
-    dropinsMonitor.startMonitoring(new File("C:/temp/vpin-dropins"), this);
 
     Platform.runLater(() -> {
       Studio.stage.getScene().addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
@@ -266,36 +303,44 @@ public class TablesController implements Initializable, StudioFXController, Stud
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
       if (t1.intValue() == 0) {
-        NavigationController.setBreadCrumb(Arrays.asList("Tables"));
         tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
-        tableOverviewController.initSelection();
+        tableOverviewController.onViewActivated(null);
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
       else if (t1.intValue() == 1) {
-        NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
+        tableOverviewController.setVisible(false);
+        repositorySideBarController.setVisible(false);
+        vpsTablesSidebarController.setVisible(false);
+        backglassManagerController.onViewActivated(null);
+        root.setRight(null);
+        toggleSidebarBtn.setDisable(true);
+      }
+      else if (t1.intValue() == 2) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
-        vpsTablesController.refresh(vpsTablesController.getSelection());
+        vpsTablesController.onViewActivated(null);
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == 2) {
-        NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
+      else if (t1.intValue() == 3) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
+        alxController.onViewActivated(null);
         root.setRight(null);
-
+        toggleSidebarBtn.setDisable(true);
       }
       else {
-        NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
-        repositoryController.initSelection();
+        repositoryController.onViewActivated(null);
         root.setRight(sidePanelRoot);
+        toggleSidebarBtn.setDisable(false);
       }
     });
   }
@@ -320,6 +365,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return vpsTablesSidebarController;
   }
 
+  public void switchToBackglassManagerTab(GameRepresentation game) {
+    backglassManagerController.selectGame(game);
+    tabPane.getSelectionModel().select(backglassManagerTab);
+  }
 
   @Override
   public void jobFinished(@NonNull JobFinishedEvent event) {
@@ -371,7 +420,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game, false);
+        this.tableOverviewController.reload(game);
       }
     }
 
@@ -379,18 +428,18 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game, false);
+        this.tableOverviewController.reload(game);
       }
     }
 
     if (id > 0) {
       GameRepresentation refreshedGame = client.getGameService().getGame(id);
-      this.tableOverviewController.reload(refreshedGame, true);
+      this.tableOverviewController.reload(refreshedGame);
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
-        this.tableOverviewController.reload(selection, true);
+        this.tableOverviewController.reload(selection);
       }
     }
   }

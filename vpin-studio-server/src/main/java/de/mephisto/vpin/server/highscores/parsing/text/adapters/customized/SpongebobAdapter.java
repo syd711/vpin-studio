@@ -6,9 +6,19 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * High Scores 2.1
+ * 1.:EDY:1535780600
+ * 2.:EDY:868583110
+ * 3.:EDY:711932830
+ * 4.:EDY:556150830
+ * 5.:EDY:457438950
+ * 6.:SDY:30000000
+ */
 public class SpongebobAdapter implements ScoreTextFileAdapter {
   @Override
   public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
@@ -38,5 +48,18 @@ public class SpongebobAdapter implements ScoreTextFileAdapter {
     }
 
     return builder.toString();
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    List<String> newScoreText = new ArrayList<>();
+    newScoreText.add(lines.get(0));
+    newScoreText.add("1.:???:0");
+    newScoreText.add("2.:???:0");
+    newScoreText.add("3.:???:0");
+    newScoreText.add("4.:???:0");
+    newScoreText.add("5.:???:0");
+    newScoreText.add("6.:???:0");
+    return newScoreText;
   }
 }

@@ -1,98 +1,71 @@
-package de.mephisto.vpin.ui.tables.drophandler;
+package de.mephisto.vpin.ui.dropins;
 
-import java.io.File;
-import java.io.RandomAccessFile;
-import java.nio.file.FileSystems;
-import java.nio.file.Path;
-import java.nio.file.StandardWatchEventKinds;
-import java.nio.file.WatchEvent;
-import java.nio.file.WatchKey;
-import java.nio.file.WatchService;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import javafx.application.Platform;
+import java.io.File;
+import java.io.RandomAccessFile;
+import java.nio.file.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-public class TableMediaDropinsMonitoring {
+public class DropInMonitoringThread {
 
-  private final static Logger LOG = LoggerFactory.getLogger(TableMediaDropinsMonitoring.class);
+  private final static Logger LOG = LoggerFactory.getLogger(DropInMonitoringThread.class);
   private final AtomicBoolean running = new AtomicBoolean(false);
-  private final AtomicBoolean paused = new AtomicBoolean(false);
-
-  private TablesController tablesController;
 
   private Thread monitorThread;
   private File dropinsFolder;
-  private boolean deleteFileAfterImport = false;
 
-  public void startMonitoring(File dropinsFolder, TablesController tablesController) {
-    this.dropinsFolder = dropinsFolder;
-    this.tablesController = tablesController;
-
-    if (monitorThread == null) {
+  public void startMonitoring() {
+    if (this.monitorThread == null) {
       startMonitor();
     }
   }
 
-  public void setPaused(boolean b) {
-    paused.set(b);
-  }
-
   public void stopMonitoring() {
-    if (monitorThread != null) {
-      this.running.set(false);
-    }
+    this.running.set(false);
   }
 
   private void startMonitor() {
     this.running.set(true);
     monitorThread = new Thread(() -> {
+      Thread.currentThread().setName("Drop-In Monitoring Thread for \"" + dropinsFolder.getAbsolutePath() + "\"");
+      LOG.info("Launched " + Thread.currentThread().getName());
       try {
-        LOG.info("Launched \"Dropins folder monitoring (" + dropinsFolder.getAbsolutePath() + ")\"");
-
-        if (!dropinsFolder.exists() && !dropinsFolder.mkdirs()) {
-          LOG.error("Failed to create dropins folder");
-        }
-
         final Path path = dropinsFolder.toPath();
         try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-          path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE);
+          path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
           while (running.get()) {
             final WatchKey wk = watchService.take();
             for (WatchEvent<?> event : wk.pollEvents()) {
-              if (paused.get()) {
-                continue;
-              }
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                 final Path filedropped = (Path) event.context();
                 if (isNotTempFile(filedropped)) {
                   File f = new File(dropinsFolder, filedropped.toString());
-                  waitABit(f, 5000);
+                  waitABit(f, 3000);
                   if (f.exists()) {
-                    dispatchDroppedFile(f);
-                    //f.delete();
+                    notifyUpdates(f);
                   }
                 }
+              }
+              else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+                notifyUpdates(null);
               }
             }
             wk.reset();
           }
-          LOG.info("Terminated Monitoring Thread");
+          LOG.info("Terminated Drop-In Monitoring Thread");
         }
       }
       catch (Exception e) {
-        LOG.info("Highscore monitor failed: " + e.getMessage(), e);
+        LOG.info("Drop-in monitor failed: " + e.getMessage(), e);
       }
       finally {
         LOG.info(Thread.currentThread().getName() + " terminated.");
       }
-    }, "Dropins folder monitor");
+    }, "Drop-in folder monitor");
     monitorThread.start();
   }
 
@@ -132,16 +105,18 @@ public class TableMediaDropinsMonitoring {
     }
   }
 
-  private void dispatchDroppedFile(File file) {
-    LOG.info("File ready for import: '{}", file.getAbsolutePath());
-    Platform.runLater(() -> {
-      // go back on javafx Thread for installation
-      GameRepresentation selection = tablesController.getTableOverviewController().getSelection();
-      UploadAnalysisDispatcher.dispatch(file, selection);
-      if (deleteFileAfterImport) {
-        file.delete();
-      }
-      LOG.info("File imported: '{}", file.getAbsolutePath());
-    });
+  private void notifyUpdates(@Nullable File file) {
+    LOG.info("Noticed drop-in folder update.");
+    DropInManager.getInstance().notifyDropInUpdates(file);
+  }
+
+  public void setDropInFolder(@Nullable File dropinsFolder) {
+    this.dropinsFolder = dropinsFolder;
+
+    if (monitorThread != null) {
+      stopMonitoring();
+      monitorThread = null;
+    }
+    startMonitoring();
   }
 }

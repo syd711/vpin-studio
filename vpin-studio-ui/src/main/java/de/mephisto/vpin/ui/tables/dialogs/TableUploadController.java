@@ -2,7 +2,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -173,8 +175,15 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onUploadClick(ActionEvent event) {
+    Stage s = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null) {
+      if (!runPreChecks(s)) {
+        return;
+      }
+
       uploadBtn.setDisable(true);
+
+
       try {
         String subFolder = this.subfolderText.getText();
         boolean useSubFolder = this.subfolderCheckbox.isSelected();
@@ -201,83 +210,83 @@ public class TableUploadController implements Initializable, DialogController {
         });
 
         //Platform.runLater(() -> {
-          TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
-          ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
+        TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
+        ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
-          List<Object> results = uploadResultModel.getResults();
-          if (!results.isEmpty()) {
-            final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
-            if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
+        List<Object> results = uploadResultModel.getResults();
+        if (!results.isEmpty()) {
+          final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
+          if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
+            Platform.runLater(() -> {
+              WidgetFactory.showAlert(stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
+            });
+            return;
+          }
+
+
+          uploadDescriptor.setSubfolderName(subFolder);
+          uploadDescriptor.setFolderBasedImport(useSubFolder);
+          uploadDescriptor.setAutoFill(autoFill);
+
+          if (assetAltSound) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
+          }
+          if (assetAltSound) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
+          }
+          if (assetAltColor) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
+          }
+          if (assetBackglass) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
+          }
+          if (assetDmd) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.DMD_PACK);
+          }
+          if (assetMusic) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.MUSIC);
+          }
+          if (assetMedia) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
+          }
+          if (assetPupPack) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.PUP_PACK);
+          }
+          if (assetRom) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.ROM);
+          }
+          if (assetIni) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.INI);
+          }
+          if (assetPov) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.POV);
+          }
+          if (assetRes) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.RES);
+          }
+          if (assetCfg) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.CFG);
+          }
+          if (assetNvRam) {
+            uploadDescriptor.getAssetsToImport().add(AssetType.NV);
+          }
+
+          TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
+          ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
+          if (!progressDialogResult.getResults().isEmpty()) {
+            UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
+            if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
               Platform.runLater(() -> {
-                WidgetFactory.showAlert(stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
+                WidgetFactory.showAlert(stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
               });
               return;
             }
 
-
-            uploadDescriptor.setSubfolderName(subFolder);
-            uploadDescriptor.setFolderBasedImport(useSubFolder);
-            uploadDescriptor.setAutoFill(autoFill);
-
-            if (assetAltSound) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
-            }
-            if (assetAltSound) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
-            }
-            if (assetAltColor) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
-            }
-            if (assetBackglass) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
-            }
-            if (assetDmd) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.DMD_PACK);
-            }
-            if (assetMusic) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.MUSIC);
-            }
-            if (assetMedia) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
-            }
-            if (assetPupPack) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.PUP_PACK);
-            }
-            if (assetRom) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.ROM);
-            }
-            if (assetIni) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.INI);
-            }
-            if (assetPov) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.POV);
-            }
-            if (assetRes) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.RES);
-            }
-            if (assetCfg) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.CFG);
-            }
-            if (assetNvRam) {
-              uploadDescriptor.getAssetsToImport().add(AssetType.NV);
-            }
-
-            TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
-            ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
-            if (!progressDialogResult.getResults().isEmpty()) {
-              UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
-              if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
-                Platform.runLater(() -> {
-                  WidgetFactory.showAlert(stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
-                });
-                return;
-              }
-
-              result = Optional.of(uploadedAndImportedDescriptor);
-              // notify listeners of table import done
-              EventManager.getInstance().notifyTableUploaded(uploadedAndImportedDescriptor);
-            }
+            result = Optional.of(uploadedAndImportedDescriptor);
+            // notify listeners of table import done
+            EventManager.getInstance().notifyTableUploaded(uploadedAndImportedDescriptor);
           }
+        }
         //});
       }
       catch (Exception e) {
@@ -286,6 +295,40 @@ public class TableUploadController implements Initializable, DialogController {
         WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
+  }
+
+  private boolean runPreChecks(Stage s) {
+    //check accidental overwrite
+    String fileName = FilenameUtils.getBaseName(selection.getName());
+    if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 70);
+      if (!similarAtLeastToPercent) {
+        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), 70);
+      }
+      if (!similarAtLeastToPercent) {
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning", "The selected file \"" + selection.getName() + "\" doesn't seem to match with table \"" + game.getGameDisplayName() + "\".", "Proceed anyway?", "Yes, replace table");
+        if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+          return false;
+        }
+      }
+    }
+
+    //suggest table match
+    if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+      try {
+        GameRepresentation game = client.getGameService().findMatch(fileName);
+        if (game != null) {
+          Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".", "You can cancel the action to change the selection or proceed with the upload.", "Yes, upload table");
+          if (!result.isPresent() || result.get().equals(ButtonType.CANCEL)) {
+            return false;
+          }
+        }
+      }
+      catch (Exception e) {
+        LOG.warn("Failed to find matching table: " + e.getMessage(), e);
+      }
+    }
+    return true;
   }
 
   private int getGameId() {
@@ -315,6 +358,7 @@ public class TableUploadController implements Initializable, DialogController {
     this.readmeTextField.setText("");
 
     uploadBtn.setDisable(true);
+
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
       readmeBox.setVisible(PackageUtil.isSupportedArchive(suffix));
@@ -325,35 +369,52 @@ public class TableUploadController implements Initializable, DialogController {
 
         Platform.runLater(() -> {
           if (rescan) {
-            uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
+            this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
           }
-          String readmeText = uploaderAnalysis.getReadMeText();
-          this.readmeTextField.setText(readmeText);
 
-          String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
+          // If null the analysis was not successful.
+          if (this.uploaderAnalysis != null) {
+            String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
 
-          tableTitleLabel.setVisible(true);
-          tableNameLabel.setVisible(true);
-          tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
+            // If the analysis failed.
+            if (analyze != null) {
+              WidgetFactory.showAlert(Studio.stage, analyze);
 
-          this.fileNameField.setText(this.selection.getAbsolutePath());
-          this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
+              this.fileNameField.setText("");
+              this.subfolderText.setText("");
+              this.uploaderAnalysis.reset();
+            }
+            else {
+              String readmeText = uploaderAnalysis.getReadMeText();
+              this.readmeTextField.setText(readmeText);
+
+              tableTitleLabel.setVisible(true);
+              tableNameLabel.setVisible(true);
+              tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
+
+              this.fileNameField.setText(this.selection.getAbsolutePath());
+              this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
+            }
+
+            updateAnalysis();
+
+            this.uploadBtn.setDisable(analyze != null);
+            this.fileBtn.setDisable(false);
+            this.cancelBtn.setDisable(false);
+
+            return;
+          }
+
+          this.fileNameField.setText("");
+          this.subfolderText.setText("");
+
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
           this.cancelBtn.setDisable(false);
-
-          if (analyze != null) {
-            WidgetFactory.showAlert(Studio.stage, analyze);
-            this.fileNameField.setText("");
-            this.subfolderText.setText("");
-            this.uploaderAnalysis.reset();
-          }
-          updateAnalysis();
-          this.uploadBtn.setDisable(analyze != null);
+          this.uploadBtn.setDisable(true);
         });
       }
       else {
-        this.uploadBtn.setDisable(false);
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
       }
@@ -509,12 +570,12 @@ public class TableUploadController implements Initializable, DialogController {
     uploadAndImportRadio.setToggleGroup(toggleGroup);
     uploadAndCloneRadio.setToggleGroup(toggleGroup);
     uploadAndReplaceRadio.setToggleGroup(toggleGroup);
-    
+
     FrontendUtil.replaceName(uploadAndImportRadio, frontend);
     FrontendUtil.replaceName(uploadAndImportDescription, frontend);
     FrontendUtil.replaceName(uploadAndReplaceDescription, frontend);
     FrontendUtil.replaceName(uploadAndCloneDescription, frontend);
- 
+
     keepNamesCheckbox.setSelected(serverSettings.isVpxKeepFileNames());
     keepNamesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uploadAndReplaceRadio.setSelected(true);

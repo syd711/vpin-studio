@@ -77,7 +77,7 @@
                         </Button>
                      </children>
                   </HBox>
-                  <Label styleClass="preference-subtitle" text="Dispay" textFill="WHITE">
+                  <Label styleClass="preference-subtitle" text="Display" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

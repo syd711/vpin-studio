@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
+import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -104,6 +105,8 @@ public class TableDeleteController implements Initializable, DialogController {
 
   private List<GameRepresentation> games;
 
+  private TableOverviewController tableOverviewController;
+
   @FXML
   private void onDeleteClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
@@ -127,7 +130,7 @@ public class TableDeleteController implements Initializable, DialogController {
     descriptor.setGameIds(games.stream().map(GameRepresentation::getId).collect(Collectors.toList()));
 
     Platform.runLater(() -> {
-      ProgressDialog.createProgressDialog(new TableDeleteProgressModel(descriptor));
+      ProgressDialog.createProgressDialog(new TableDeleteProgressModel(tableOverviewController, descriptor));
     });
 
     stage.close();
@@ -187,7 +190,8 @@ public class TableDeleteController implements Initializable, DialogController {
 
   }
 
-  public void setGames(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+  public void setGames(TableOverviewController tableOverviewController, List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+    this.tableOverviewController = tableOverviewController;
     this.games = selectedGames;
     if (selectedGames.size() == 1) {
       this.titleLabel.setText("Delete \"" + selectedGames.get(0).getGameDisplayName() + "\"?");

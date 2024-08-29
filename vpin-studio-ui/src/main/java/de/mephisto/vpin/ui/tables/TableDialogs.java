@@ -27,7 +27,6 @@ import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2ProfileDialogControll
 import de.mephisto.vpin.ui.tables.editors.dialogs.AltSound2SampleTypeDialogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
@@ -392,21 +391,6 @@ public class TableDialogs {
     return true;
   }
 
-  public static boolean openDirectB2sManagerDialog(TablesSidebarController tablesSidebarController, GameRepresentation game) {
-    Stage stage = Dialogs.createStudioDialogStage(BackglassManagerDialogController.class, "dialog-directb2s-admin.fxml", "Backglass Manager", "backglassManager");
-    BackglassManagerDialogController controller = (BackglassManagerDialogController) stage.getUserData();
-    controller.setTableSidebarController(tablesSidebarController);
-    controller.selectGame(game);
-
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(1408);
-    stage.setMinHeight(600);
-
-    stage.showAndWait();
-
-    return true;
-  }
 
   public static boolean openNotesDialog(GameRepresentation game) {
     Stage stage = Dialogs.createStudioDialogStage(TableNotesController.class, "dialog-table-notes.fxml", "Comments");
@@ -516,10 +500,10 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static void openTableDeleteDialog(List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
+  public static void openTableDeleteDialog(TableOverviewController tableOverviewController, List<GameRepresentation> selectedGames, List<GameRepresentation> allGames) {
     Stage stage = Dialogs.createStudioDialogStage(TableDeleteController.class, "dialog-table-delete.fxml", "Delete");
     TableDeleteController controller = (TableDeleteController) stage.getUserData();
-    controller.setGames(selectedGames, allGames);
+    controller.setGames(tableOverviewController, selectedGames, allGames);
     stage.showAndWait();
   }
 

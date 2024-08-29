@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
@@ -12,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.BackglassManagerFilterController">
+<VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerFilterController">
    <children>
       <VBox>
          <children>
@@ -46,12 +47,12 @@
       </VBox>
       <ScrollPane hbarPolicy="NEVER">
          <content>
-            <VBox fx:id="titlePaneRoot" prefWidth="230.0" spacing="3.0">
+            <VBox fx:id="titlePaneRoot" prefWidth="230.0">
                <children>
 
                   <Label styleClass="default-title" text="Emulator Filters">
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
                   <VBox fx:id="emulatorFilters">
@@ -95,10 +96,17 @@
                      </children>
                   </VBox>
                </children>
+               <padding>
+                  <Insets bottom="24.0" />
+               </padding>
             </VBox>
          </content>
       </ScrollPane>
    </children>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="filter-component" />
+   </styleClass>
    <padding>
       <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
    </padding>

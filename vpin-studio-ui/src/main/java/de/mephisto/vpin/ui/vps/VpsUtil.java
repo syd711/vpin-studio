@@ -1,6 +1,22 @@
 package de.mephisto.vpin.ui.vps;
 
+import java.util.List;
+
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
+
 public class VpsUtil {
+
+  public static boolean isDataAvailable(List<? extends VpsAuthoredUrls> entries) {
+    if (entries == null) {
+      return false;
+    }
+    for (VpsAuthoredUrls entry : entries) {
+      if (entry.getUrls() != null && !entry.getUrls().isEmpty()) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   public static String abbreviate(String url) {
     if (url.length() == 0) {
@@ -100,6 +116,9 @@ public class VpsUtil {
 
   public static String getFeatureColor(String abb) {
     return "#338033";
+  }
+  public static String getFeatureColor(String abb, boolean selected) {
+    return selected ? getFeatureColor(abb) : "#151515";
   }
 
   public static String getIconClass(String abb) {

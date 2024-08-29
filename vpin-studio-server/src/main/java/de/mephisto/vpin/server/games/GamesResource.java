@@ -19,6 +19,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -141,5 +142,11 @@ public class GamesResource {
   @PostMapping("/save")
   public Game save(@RequestBody Game game) throws Exception {
     return gameService.save(game);
+  }
+
+  @PostMapping("/match")
+  public Game findMatch(@RequestBody Map<String, String> params) throws Exception {
+    String term = params.get("term");
+    return gameService.findMatch(term);
   }
 }

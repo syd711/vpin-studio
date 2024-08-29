@@ -142,31 +142,12 @@ public class CardGraphics {
       currentY = currentY + template.getPadding();
     }
 
-    if (template.isRenderTableName()) {
-      String tableFontName = template.getTableFontName();
-      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
-      int tableFontSize = template.getTableFontSize();
-      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
-
-      String tableName = game.getGameDisplayName();
-      int width = g.getFontMetrics().stringWidth(tableName);
-      while (width > highscoreCardResolution.toWidth() - template.getMarginLeft() - template.getMarginRight()) {
-        tableFontSize = tableFontSize - 1;
-        g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
-        width = g.getFontMetrics().stringWidth(tableName);
-      }
-      currentY = currentY + tableFontSize;
-      int tableNameX = ((imageWidth - template.getMarginLeft() - template.getMarginRight()) / 2 - width / 2) + template.getMarginLeft();
-      g.drawString(tableName, tableNameX, currentY);
-
-      currentY = currentY + template.getPadding();
-    }
 
     if (template.isRawScore()) {
       renderRawScore(game, image.getHeight(), image.getWidth(), g, currentY);
     }
     else {
-      renderScorelist(game, g, template.getTitle(), currentY); //TODO why title?
+      renderScorelist(game, g, currentY, image.getWidth()); //TODO why title?
     }
   }
 
@@ -180,7 +161,21 @@ public class CardGraphics {
     g.fillRoundRect(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
   }
 
-  private void renderScorelist(Game game, Graphics g, String title, int currentY) throws IOException {
+  private void renderScorelist(Game game, Graphics g, int currentY, int imageWidth) throws IOException {
+    if (template.isRenderTableName()) {
+      String tableFontName = template.getTableFontName();
+      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int tableFontSize = template.getTableFontSize();
+      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+
+      String tableName = game.getGameDisplayName();
+      currentY = currentY + tableFontSize;
+      int tableNameWidth = g.getFontMetrics().stringWidth(tableName);
+      g.drawString(tableName, imageWidth / 2 - tableNameWidth / 2, currentY);
+
+      currentY = currentY + template.getPadding();
+    }
+
     g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), template.getScoreFontSize()));
 
     currentY = currentY + template.getTableFontSize() / 2;
@@ -245,6 +240,26 @@ public class CardGraphics {
   }
 
   private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
+    if (template.isRenderTableName()) {
+      String tableFontName = template.getTableFontName();
+      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      int tableFontSize = template.getTableFontSize();
+      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+
+      String tableName = game.getGameDisplayName();
+      int width = g.getFontMetrics().stringWidth(tableName);
+      while (width > highscoreCardResolution.toWidth() - template.getMarginLeft() - template.getMarginRight()) {
+        tableFontSize = tableFontSize - 1;
+        g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+        width = g.getFontMetrics().stringWidth(tableName);
+      }
+      yStart = yStart + tableFontSize;
+      int tableNameX = ((imageWidth - template.getMarginLeft() - template.getMarginRight()) / 2 - width / 2) + template.getMarginLeft();
+      g.drawString(tableName, tableNameX, yStart);
+
+      yStart = yStart + template.getPadding();
+    }
+
     int wheelWidth = template.getWheelSize();
     if (!template.isRenderWheelIcon()) {
       wheelWidth = 0;

@@ -198,7 +198,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
 
   @FXML
   private void onBackglassManager() {
-    TableDialogs.openDirectB2sManagerDialog(tablesSidebarController, game.orElse(null));
+    tablesSidebarController.getTablesController().switchToBackglassManagerTab(game.orElse(null));
   }
 
   @FXML

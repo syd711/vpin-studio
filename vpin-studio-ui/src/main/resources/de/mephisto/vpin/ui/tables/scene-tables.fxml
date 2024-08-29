@@ -26,20 +26,28 @@
                             <tabs>
                                 <Tab fx:id="tablesTab" closable="false" text="All Tables">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                        <BorderPane/>
                                     </content>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
                                 </Tab>
-                        <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
-                           <content>
-                              <BorderPane prefHeight="200.0" prefWidth="200.0" />
-                           </content>
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
-                           </graphic>
-                        </Tab>
+                                <Tab fx:id="backglassManagerTab" closable="false" text="Backglasses">
+                                    <content>
+                                        <BorderPane />
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
+                                    </graphic>
+                                </Tab>
+                                <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
+                                    <content>
+                                        <BorderPane/>
+                                    </content>
+                                    <graphic>
+                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
+                                    </graphic>
+                                </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
                                     <content>
                                         <BorderPane />
@@ -50,7 +58,7 @@
                                 </Tab>
                                 <Tab fx:id="tableRepositoryTab" text=" Table Repository">
                                     <content>
-                                        <BorderPane prefHeight="200.0" prefWidth="200.0" />
+                                        <BorderPane/>
                                     </content>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
@@ -95,19 +103,19 @@
         </BorderPane>
     </center>
     <right>
-        <VBox maxHeight="1.7976931348623157E308" styleClass="subpanel" BorderPane.alignment="CENTER">
+        <VBox styleClass="subpanel" BorderPane.alignment="CENTER">
             <children>
-                <fx:include fx:id="assetViewSideBar" maxHeight="1.7976931348623157E308" source="scene-tables-assetview-sidebar.fxml" />
-                <fx:include fx:id="tablesSideBar" maxHeight="1.7976931348623157E308" source="scene-tables-sidebar.fxml" />
-                <fx:include fx:id="repositorySideBar" maxHeight="1.7976931348623157E308" source="../archiving/scene-repository-sidebar.fxml" />
+                <fx:include fx:id="assetViewSideBar" source="scene-tables-assetview-sidebar.fxml" />
+                <fx:include fx:id="tablesSideBar" source="scene-tables-sidebar.fxml" />
+                <fx:include fx:id="repositorySideBar" source="../archiving/scene-repository-sidebar.fxml" />
                 <fx:include fx:id="vpsTablesSidebar" source="../vps/scene-vps-tables-sidebar.fxml" />
             </children>
             <padding>
                 <Insets bottom="7.0" />
             </padding>
-         <BorderPane.margin>
-            <Insets right="12.0" />
-         </BorderPane.margin>
+            <BorderPane.margin>
+                <Insets right="12.0" />
+            </BorderPane.margin>
         </VBox>
     </right>
     <stylesheets>

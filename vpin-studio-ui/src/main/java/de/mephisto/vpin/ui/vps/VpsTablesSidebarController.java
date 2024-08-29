@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -124,7 +123,7 @@ public class VpsTablesSidebarController implements Initializable {
   }
 
 
-  public void setTable(Optional<VpsTable> selection, TablesSidebarController tablesSidebarController) {
+  public void setTable(Optional<VpsTable> selection) {
     this.init();
     this.openBtn.setDisable(selection.isEmpty());
 
@@ -179,7 +178,7 @@ public class VpsTablesSidebarController implements Initializable {
       TablesSidebarVpsController.addSection(dataRoot, "ROM", null, VpsDiffTypes.rom, table.getRomFiles(), false);
       TablesSidebarVpsController.addSection(dataRoot, "Sound", null, VpsDiffTypes.sound, table.getSoundFiles(), false);
       TablesSidebarVpsController.addSection(dataRoot, "Topper", null, VpsDiffTypes.topper, table.getTopperFiles(), false);
-      TablesSidebarVpsController.addTutorialsSection(dataRoot, "Tutorials", null, table.getTutorialFiles(), false);
+      TablesSidebarVpsController.addSection(dataRoot, "Tutorials", null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false);
       TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles(), false);
       TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false);
     }
