@@ -28,10 +28,13 @@
                         <Font size="16.0" />
                      </font>
                      <VBox.margin>
-                        <Insets top="12.0" />
+                        <Insets top="3.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE" />
+                  <Label fx:id="sizeLabel" layoutX="10.0" layoutY="10.0" text="size label" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin></Label>
                </children>
             </VBox>
          </center>
