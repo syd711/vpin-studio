@@ -9,7 +9,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-tab.png" width="700" />
 
-- **Added drop-in folder feature**: 
+- **Added drop-in folder feature**: The "drop-in folder" feature allows you to configure a dedicated download folder for VPin assets. The assets of the folder are shown inside the Studio can be installed directly from there, either via drag-and-drop or via a separate "install" button.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
 
@@ -24,6 +24,6 @@
 - **Highscore Cards**: Fixed "margins" for the non-raw score rendering, so that only the score values are positioned and the table title remains centered.
 - **Table Overview / Table Uploads**: The table overview does not perform a full reload after table uploads anymore. 
 - **Table Overview / Table Deletions**: The table overview does not perform a full reload after table deletions anymore. 
-- **Highscores Parsing**: Text based highscores are now resetted by their values and not simply deleted anymore.
+- **Highscores Parsing**: Text based highscore files are now resetted by their values and not simply deleted anymore.
 - **Highscores Parsing**: Added filtering for duplicated scores. There are tables like "Hurricane" or "Whirlwind" where the "GRAND CHAMPION" is also listed on the first place. Instead of fixing all affected tables one-by-one, a filter for duplicated scores has been added.
 - **Highscores**: Fixed highscore for "No good gofers" by adding "CLUB CHAMPION" to the default list of highscore titles.
