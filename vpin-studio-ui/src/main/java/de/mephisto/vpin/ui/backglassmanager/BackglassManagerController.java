@@ -938,7 +938,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   private void loadImages(DirectB2STableSettings tmpTableSettings) {
     Image thumbnail = null;
     String thumbnailError = null;
-    if (tableData.isDmdImageAvailable()) {
+    if (tableData.isBackgroundAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         thumbnail = new Image(in);
         if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
