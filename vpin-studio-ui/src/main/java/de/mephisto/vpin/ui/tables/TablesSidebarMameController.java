@@ -174,15 +174,6 @@ public class TablesSidebarMameController implements Initializable {
 
   @FXML
   private void onVPMAlias() {
-//    if (client.getSystemService().isLocal()) {
-//      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-//      File folder = new File(defaultGameEmulator.getMameDirectory());
-//      File textFile = new File(folder, "VPMAlias.txt");
-//      Dialogs.editFile(textFile);
-//    }
-//    else {
-//
-//    }
     try {
       boolean b = Dialogs.openTextEditor(new TextFile(VPinFile.VPMAliasTxt), "VPMAlias.txt");
       if (b) {

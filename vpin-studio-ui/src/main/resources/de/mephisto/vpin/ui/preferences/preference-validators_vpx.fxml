@@ -40,7 +40,7 @@
                   </Label>
                   <Label layoutX="34.0" layoutY="608.0" styleClass="preference-description" text="These validators check the VPX script for possible errors." textFill="WHITE" />
                   <CheckBox fx:id="pref_90" layoutX="34.0" layoutY="460.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;Controller.stop&quot; Routine Call" />
-                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="Checks for ROM based games it the Controller.Stop routine is called." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="Checks for ROM based games, if the &quot;Controller.stop&quot; routine is called." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="This routine also triggers the writing of the nvram file which stores the highscores." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="652.0" styleClass="checkbox-description" text="You may need to re-scan your table(s) to update the status of this validation." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="MAME Settings Validators">

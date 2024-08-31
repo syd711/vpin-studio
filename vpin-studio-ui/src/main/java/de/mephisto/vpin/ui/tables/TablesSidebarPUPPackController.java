@@ -12,10 +12,7 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.Dialogs;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -208,7 +205,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     String value = txtsCombo.getValue();
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
-      Dialogs.openFile(file);
+      Studio.edit(file);
     }
   }
 
