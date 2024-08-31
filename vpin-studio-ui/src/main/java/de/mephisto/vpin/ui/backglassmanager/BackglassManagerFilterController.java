@@ -10,7 +10,6 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController.DirectB2SEntryModel;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.application.Platform;

@@ -42,7 +42,7 @@ public class SystemUtil {
         if (file.exists()) {
           new ProcessBuilder("explorer.exe", "/select,", file.getAbsolutePath()).start();
         }
-        else if(folder.exists()) {
+        else if(folder != null && folder.exists()) {
           new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
         }
       }
