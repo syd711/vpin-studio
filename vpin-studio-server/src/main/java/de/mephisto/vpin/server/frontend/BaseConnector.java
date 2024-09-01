@@ -455,6 +455,16 @@ public abstract class BaseConnector implements FrontendConnector {
     return result;
   }
 
+  @Override
+  public boolean updateNumberOfPlaysForGame(int gameId, long value) {
+    return false;
+  }
+
+  @Override
+  public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
+    return false;
+  }
+
   //-------------------------
 
   @Override

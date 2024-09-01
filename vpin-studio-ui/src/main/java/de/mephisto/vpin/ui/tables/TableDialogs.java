@@ -573,11 +573,11 @@ public class TableDialogs {
     return false;
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
+  public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game) {
     openTableDataDialog(overviewController, game, TableDataController.lastTab);
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
     try {
       Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager", "tableDataManager");
       TableDataController controller = (TableDataController) stage.getUserData();

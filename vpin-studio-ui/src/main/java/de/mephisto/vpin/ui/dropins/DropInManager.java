@@ -151,7 +151,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       dropInsBtn.getGraphic().setVisible(true);
       Platform.runLater(() -> {
         Notifications.create()
-            .title("Drop-In Download Finished!")
+            .title("New Drop-In Detected!")
             .text(file.getAbsolutePath())
             .graphic(WidgetFactory.createCheckboxIcon())
             .showInformation();

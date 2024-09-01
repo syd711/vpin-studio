@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
-  private static final double MATCHING_THRESHOLD = 0.5;
+    private static final double MATCHING_THRESHOLD = 0.3;
 
   @Autowired
   private FrontendService frontendService;
@@ -825,6 +825,7 @@ public class GameService implements InitializingBean {
       LOG.info("Found matching table '" + tableMatch.getGameDisplayName() + "' with matching value of '" + match + "' for term '" + term + "'");
       return tableMatch;
     }
+    LOG.info("Closed table match '" + tableMatch.getGameDisplayName() + "' with value '" + match + "' not sufficient for term '" + term + "'");
     return null;
   }
 

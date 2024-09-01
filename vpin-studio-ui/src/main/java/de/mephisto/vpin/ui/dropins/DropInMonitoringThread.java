@@ -19,7 +19,7 @@ public class DropInMonitoringThread {
   private File dropinsFolder;
 
   public void startMonitoring() {
-    if (this.monitorThread == null) {
+    if (this.monitorThread == null && dropinsFolder != null) {
       startMonitor();
     }
   }

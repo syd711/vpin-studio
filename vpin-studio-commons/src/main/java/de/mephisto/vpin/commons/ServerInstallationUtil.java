@@ -21,6 +21,7 @@ public class ServerInstallationUtil {
       File vbsFile = new File("./", "server.vbs");
       String script = "wscript \"" + vbsFile.getAbsolutePath() + "\"";
 
+      //do not remove this, it is used by the inno installer from the registry
       File runFile = new File("./", VPIN_STUDIO_SERVER_BAT);
       if (runFile.exists() && !runFile.delete()) {
         throw new IOException("Could not delete existing autostart file " + runFile.getAbsolutePath());

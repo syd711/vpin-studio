@@ -205,6 +205,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       FXMLLoader loader = new FXMLLoader(AlxController.class.getResource("scene-alx.fxml"));
       Parent repositoryRoot = loader.load();
       alxController = loader.getController();
+      alxController.setTablesController(this);
       tablesStatisticsTab.setContent(repositoryRoot);
     }
     catch (IOException e) {

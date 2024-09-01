@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxController">
    <center>
-      <ScrollPane BorderPane.alignment="CENTER">
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
          <BorderPane.margin>
             <Insets bottom="12.0" />
          </BorderPane.margin>
          <content>
             <HBox spacing="12.0">
                <children>
-                      <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                      <VBox fx:id="col1" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
                      <children>
                         <Label styleClass="default-title" text="Most Played" />
-                        <Label styleClass="default-text" text="(Number of times a table has been launched)">
+                        <Label styleClass="default-text" text="(Number of times a table has been launched)" wrapText="true">
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
@@ -39,13 +44,13 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox fx:id="col2" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
                      <children>
                         <Label styleClass="default-title" text="Time Played" />
-                        <Label styleClass="default-text" text="(Total emulation time by table)">
+                        <Label styleClass="default-text" text="(Total emulation time by table)" wrapText="true">
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
@@ -57,13 +62,13 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox minWidth="430.0" prefWidth="430.0" styleClass="subpanel">
+                  <VBox fx:id="col3" prefWidth="430.0" styleClass="subpanel">
                      <padding>
                         <Insets bottom="12.0" left="12.0" right="3.0" top="12.0" />
                      </padding>
                      <children>
                         <Label styleClass="default-title" text="Recorded Scores" />
-                        <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio by table)">
+                        <Label styleClass="default-text" text="(Total number of scores recorded by VPin Studio)" wrapText="true">
                            <VBox.margin>
                               <Insets bottom="12.0" />
                            </VBox.margin>
@@ -75,7 +80,7 @@
                         </ScrollPane>
                      </children>
                   </VBox>
-                  <VBox fx:id="tileList" minWidth="430.0" prefWidth="430.0" spacing="12.0">
+                  <VBox fx:id="tileList" prefWidth="430.0" spacing="12.0">
                      <padding>
                         <Insets right="3.0" />
                      </padding>
@@ -94,7 +99,31 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
         <items>
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Reload all table data" />
+               </tooltip>
+            </Button>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+            <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+            <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Delete Statistics" />
+               </tooltip>
+            </Button>
         </items>
       </ToolBar>
    </top>

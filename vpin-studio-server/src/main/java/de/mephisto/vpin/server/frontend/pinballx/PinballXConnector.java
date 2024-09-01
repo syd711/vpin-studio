@@ -391,6 +391,16 @@ public class PinballXConnector extends BaseConnector {
     return parser.getAlxData(gameId);
   }
 
+  @Override
+  public boolean updateNumberOfPlaysForGame(int gameId, long value) {
+    return true;//TODO
+  }
+
+  @Override
+  public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
+    return true;//TODO
+  }
+
   //----------------------------------
   // UI Management
 
