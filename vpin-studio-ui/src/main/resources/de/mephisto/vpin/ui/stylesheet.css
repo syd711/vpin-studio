@@ -217,6 +217,14 @@
     -fx-text-fill: -fx-font-2;
 }
 
+.ghost-button-default {
+    -fx-font-color: -fx-font-2;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 4 4 4 4;
+    -fx-text-fill: -fx-font-2;
+}
+
 .ghost-button:hover {
     -fx-font-color: #fff8f8;
     -fx-font-size : 32px;

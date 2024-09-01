@@ -21,7 +21,7 @@ public class DropInMonitoringThread {
   private WatchService watchService;
 
   public void startMonitoring() {
-    if (this.monitorThread == null) {
+    if (this.monitorThread == null && dropinsFolder != null) {
       startMonitor();
     }
   }

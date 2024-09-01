@@ -30,6 +30,7 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -624,6 +625,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
+
     FrontendType frontendType = null;
     try {
       frontendType = client.getFrontendService().getFrontendType();
@@ -706,13 +709,17 @@ public class TableDataController implements Initializable, DialogController, Aut
     EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 
-  public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public void setGame(Stage stage, @Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
     this.stage = stage;
     this.game = game;
-    this.serverSettings = overviewController.getServerSettings();
-    this.uiSettings = overviewController.getUISettings();
+    this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    this.uiSettings =client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
+
+    nextButton.setVisible(overviewController != null);
+    prevButton.setVisible(overviewController != null);
+    openAssetMgrBtn.setVisible(overviewController != null);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     Frontend frontend = client.getFrontendService().getFrontendCached();

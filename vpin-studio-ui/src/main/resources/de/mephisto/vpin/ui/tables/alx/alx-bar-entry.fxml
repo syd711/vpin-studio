@@ -7,28 +7,19 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxBarEntryController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.alx.AlxBarEntryController">
    <top>
       <StackPane BorderPane.alignment="CENTER_LEFT">
          <children>
-            <HBox alignment="CENTER_LEFT" maxWidth="320.0" StackPane.alignment="CENTER_LEFT">
-               <children>
-                  <Label fx:id="titleLabel" contentDisplay="RIGHT" maxWidth="340.0" text="-" textFill="WHITE">
+            <BorderPane>
+               <left>
+                  <Label fx:id="titleLabel" contentDisplay="RIGHT" text="-" textFill="WHITE" BorderPane.alignment="CENTER">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-               </children>
-            </HBox>
-            <HBox alignment="CENTER_RIGHT" styleClass="base-component">
-               <children>
-                  <Label fx:id="valueLabel" text="Label" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
-               </children>
-            </HBox>
+               </left>
+            </BorderPane>
          </children>
          <padding>
             <Insets top="3.0" />
@@ -36,9 +27,18 @@
       </StackPane>
    </top>
    <center>
-      <HBox fx:id="parent" minWidth="400.0" prefHeight="10.0" prefWidth="400.0" BorderPane.alignment="CENTER">
+      <HBox fx:id="parent" prefHeight="10.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="bar" />
+            <StackPane>
+               <children>
+                  <HBox fx:id="bar" />
+                  <Label fx:id="valueLabel" text="Label" textFill="WHITE">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </StackPane>
          </children>
          <BorderPane.margin>
             <Insets bottom="6.0" />

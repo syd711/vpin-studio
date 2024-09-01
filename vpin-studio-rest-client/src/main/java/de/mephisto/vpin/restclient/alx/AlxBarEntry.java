@@ -5,12 +5,18 @@ public class AlxBarEntry {
   private final String value;
   private final int percentage;
   private final String color;
+  private final int gameId;
 
-  public AlxBarEntry(String title, String value, int percentage, String color) {
+  public AlxBarEntry(String title, String value, int percentage, String color, int gameId) {
     this.title = title;
     this.value = value;
     this.percentage = percentage;
     this.color = color;
+    this.gameId = gameId;
+  }
+
+  public int getGameId() {
+    return gameId;
   }
 
   public String getTitle() {

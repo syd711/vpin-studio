@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.alx;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
@@ -12,9 +13,14 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import de.mephisto.vpin.ui.tables.TablesController;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
@@ -29,6 +35,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class AlxController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(AlxController.class);
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
 
   @FXML
   private VBox mostPlayedWidget;
@@ -46,11 +54,35 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   private VBox tileList;
 
   @FXML
+  private VBox col1;
+
+  @FXML
+  private VBox col2;
+
+  @FXML
+  private VBox col3;
+
+  @FXML
   private BorderPane root;
+
+  @FXML
+  private Button reloadBtn;
+  private TablesController tablesController;
 
 
   // Add a public no-args constructor
   public AlxController() {
+  }
+
+  @FXML
+  private void onReload() {
+    refreshAlxData();
+  }
+
+  @FXML
+  private void onDelete() {
+    AlxDialogs.openTableDeleteDialog(this);
+    refreshAlxData();
   }
 
 
@@ -70,18 +102,38 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     refreshAlxData();
   }
 
+  public void setTablesController(TablesController tablesController) {
+    this.tablesController = tablesController;
+  }
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    refreshEmulators();
-
     this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> refreshAlxData());
 
     client.getPreferenceService().addListener(this);
     NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
+
+    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 3) {
+          debouncer.debounce("position", () -> {
+            Platform.runLater(() -> {
+              refreshAlxData();
+            });
+          }, DEBOUNCE_MS);
+        }
+      }
+    });
   }
 
-  private void refreshAlxData() {
+  public void refreshAlxData() {
     try {
+      double v = AlxFactory.calculateColumnWidth();
+      col1.setPrefWidth(v);
+      col2.setPrefWidth(v);
+      col3.setPrefWidth(v);
+
       AlxSummary alxSummary = client.getAlxService().getAlxSummary();
       List<TableAlxEntry> entries = alxSummary.getEntries();
 
@@ -122,10 +174,10 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    //NavigationController.setBreadCrumb(Arrays.asList("Analytics"));
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
+    refreshAlxData();
   }
-  
+
   @Override
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.UI_SETTINGS.equals(key)) {

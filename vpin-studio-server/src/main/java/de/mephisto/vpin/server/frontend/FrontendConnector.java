@@ -130,6 +130,10 @@ public interface FrontendConnector {
   @NonNull
   List<TableAlxEntry> getAlxData(int gameId);
 
+  boolean updateNumberOfPlaysForGame(int gameId, long value);
+
+  boolean updateSecondsPlayedForGame(int gameId, long seconds);
+
   //----------------------------------
   // Pinup control management
 

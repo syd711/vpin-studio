@@ -1201,7 +1201,45 @@ public class PinUPConnector implements FrontendConnector {
     return result;
   }
 
-//  public void enablePCGameEmulator() {
+  @Override
+  public boolean updateNumberOfPlaysForGame(int gameId, long value) {
+    Connection connect = this.connect();
+    String sql = "UPDATE GamesStats SET 'NumberPlays'=" + value + " WHERE GameID = " + gameId;
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+      LOG.info("Update of NumberPlays for '" + gameId + "' successful.");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update NumberPlays for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
+      return false;
+    } finally {
+      this.disconnect(connect);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
+    Connection connect = this.connect();
+    String sql = "UPDATE GamesStats SET 'TimePlayedSecs'=" + seconds + " WHERE GameID = " + gameId;
+    try {
+      Statement stmt = connect.createStatement();
+      stmt.executeUpdate(sql);
+      stmt.close();
+      LOG.info("Update of TimePlayedSecs for '" + gameId + "' successful.");
+    }
+    catch (Exception e) {
+      LOG.error("Failed to update TimePlayedSecs for " + gameId + " [" + sql + "]: " + e.getMessage(), e);
+      return false;
+    } finally {
+      this.disconnect(connect);
+    }
+    return true;
+  }
+
+  //  public void enablePCGameEmulator() {
 //    List<Emulator> ems = this.getEmulators();
 //    for (Emulator em : ems) {
 //      if (em.getName().equalsIgnoreCase(EmulatorType.PC_GAMES) && em.isVisible()) {
