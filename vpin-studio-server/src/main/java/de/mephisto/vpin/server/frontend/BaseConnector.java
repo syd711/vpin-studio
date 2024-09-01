@@ -73,6 +73,9 @@ public abstract class BaseConnector implements FrontendConnector {
       }
       LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
     }
+
+    loadStats();
+
     return loaded;
   }
 
@@ -121,6 +124,12 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract List<String> loadGames(Emulator emu);
 
   /**
+   * To be implemented by parent to complete load
+   */
+  protected abstract void loadStats();
+
+
+  /**
    * Get from the connector a game from DB
    */
   protected abstract TableDetails getGameFromDb(int emuId, String filename);
@@ -156,6 +165,11 @@ public abstract class BaseConnector implements FrontendConnector {
       games.addAll(gamesForEmu);
     }
     return games;
+  }
+
+  public String getGameFilename(int id) {
+    GameEntry e = mapFilenames.get(id);
+    return (e != null ? e.filename : null);
   }
 
   @Override
@@ -401,18 +415,6 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public void deleteFromPlaylist(int playlistId, int gameId) {
-  }
-
-  @Override
-  public Playlist getPlayListForGame(int gameId) {
-    return null;
-  }
-
-
-  @NonNull
-  @Override
-  public List<Integer> getGameIdsFromPlaylists() {
-    return new ArrayList<>();
   }
 
   //-------------------------

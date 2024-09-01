@@ -1044,31 +1044,35 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
     List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
 
-    List<PlaylistGame> localFavs = new ArrayList<>();
-    List<PlaylistGame> globalFavs = new ArrayList<>();
-    for (PlaylistRepresentation playlistRepresentation : pl) {
-      List<PlaylistGame> games1 = playlistRepresentation.getGames();
-      for (PlaylistGame playlistGame : games1) {
-        if (playlistGame.isFav()) {
-          localFavs.add(playlistGame);
-        }
-        if (playlistGame.isGlobalFav()) {
-          globalFavs.add(playlistGame);
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+    if (frontendType.supportExtendedPlaylists()) {
+      List<PlaylistGame> localFavs = new ArrayList<>();
+      List<PlaylistGame> globalFavs = new ArrayList<>();
+      for (PlaylistRepresentation playlistRepresentation : pl) {
+        List<PlaylistGame> games1 = playlistRepresentation.getGames();
+        for (PlaylistGame playlistGame : games1) {
+          if (playlistGame.isFav()) {
+            localFavs.add(playlistGame);
+          }
+          if (playlistGame.isGlobalFav()) {
+            globalFavs.add(playlistGame);
+          }
         }
       }
+      PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
+      favsPlaylist.setGames(localFavs);
+      favsPlaylist.setId(-1);
+      favsPlaylist.setName("Local Favorites");
+
+      PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
+      globalFavsPlaylist.setGames(globalFavs);
+      globalFavsPlaylist.setId(-2);
+      globalFavsPlaylist.setName("Global Favorites");
+
+      pl.add(0, globalFavsPlaylist);
+      pl.add(0, favsPlaylist);
     }
-    PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
-    favsPlaylist.setGames(localFavs);
-    favsPlaylist.setId(-1);
-    favsPlaylist.setName("Local Favorites");
-
-    PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
-    globalFavsPlaylist.setGames(globalFavs);
-    globalFavsPlaylist.setId(-2);
-    globalFavsPlaylist.setName("Global Favorites");
-
-    pl.add(0, globalFavsPlaylist);
-    pl.add(0, favsPlaylist);
     pl.add(0, null);
     playlistCombo.setItems(FXCollections.observableList(pl));
     this.playlistCombo.setDisable(false);
@@ -1114,6 +1118,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     tableView.setPlaceholder(new Label("No matching tables found."));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
@@ -1352,13 +1358,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       int ICON_WIDTH = 26;
       double width = 0;
-      if (fav) {
+      if (fav && frontendType.supportExtendedPlaylists()) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon(uiSettings.getLocalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
-      if (globalFav) {
+      if (globalFav && frontendType.supportExtendedPlaylists()) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon(uiSettings.getGlobalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;

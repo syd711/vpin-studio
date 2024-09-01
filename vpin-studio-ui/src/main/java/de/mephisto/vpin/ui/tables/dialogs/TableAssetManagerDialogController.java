@@ -994,7 +994,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     if (isPlaylistMode()) {
-      this.frontendMedia = client.getPlaylistsService().getPlaylist(this.playlist.getId()).getPlaylistMedia();
+      this.frontendMedia = client.getPlaylistMediaService().getPlaylistMedia(this.playlist.getId());
     }
     else {
       if (this.game == null) {

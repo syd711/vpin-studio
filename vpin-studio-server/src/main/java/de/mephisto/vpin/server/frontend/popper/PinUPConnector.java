@@ -940,38 +940,7 @@ public class PinUPConnector implements FrontendConnector {
     return result;
   }
 
-  private void addPlaylistMedia(Playlist playlist) {
-    FrontendMedia frontendMedia = new FrontendMedia();
-    VPinScreen[] screens = VPinScreen.values();
-    for (VPinScreen screen : screens) {
-      List<FrontendMediaItem> itemList = new ArrayList<>();
-      List<File> mediaFiles = getPlaylistMediaFiles(playlist, screen);
-      for (File file : mediaFiles) {
-        FrontendMediaItem item = new PlaylistFrontendMediaItem(playlist.getId(), screen, file);
-        itemList.add(item);
-      }
-      frontendMedia.getMedia().put(screen.name(), itemList);
-    }
-    playlist.setPlaylistMedia(frontendMedia);
-  }
-
-  @NonNull
-  public List<File> getPlaylistMediaFiles(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
-    String baseFilename = !StringUtils.isEmpty(playlist.getMediaName()) ? playlist.getMediaName().toLowerCase() : playlist.getName().toLowerCase();
-    File mediaFolder = getPlaylistMediaFolder(playlist, screen);
-    if (mediaFolder.exists()) {
-      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename));
-      if (mediaFiles != null && mediaFiles.length > 0) {
-        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}");
-        return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(FilenameUtils.getBaseName(f.getName().toLowerCase())).matches()).collect(Collectors.toList());
-      }
-    }
-    else {
-      LOG.error("Failed to resolve playlist media folder: " + mediaFolder.getAbsolutePath());
-    }
-    return Collections.emptyList();
-  }
-
+  @Override
   public File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
     File defaultMedia = new File(getInstallationFolder(), "POPMedia/Default");
     return new File(defaultMedia, screen.getSegment());
@@ -1089,7 +1058,8 @@ public class PinUPConnector implements FrontendConnector {
     }
   }
 
-  public Playlist getPlayListForGame(int gameId) {
+  // no more used
+  private Playlist getPlayListForGame(int gameId) {
     Playlist result = null;
     Connection connect = connect();
     try {
@@ -1098,7 +1068,6 @@ public class PinUPConnector implements FrontendConnector {
       while (rs.next()) {
         Playlist playlist = new Playlist();
         playlist.setId(rs.getInt("PlayListID"));
-        addPlaylistMedia(playlist);
         result = playlist;
         break;
       }
@@ -1438,9 +1407,8 @@ public class PinUPConnector implements FrontendConnector {
     }
   }
 
-  @NonNull
-  @Override
-  public List<Integer> getGameIdsFromPlaylists() {
+  // no more used
+  private List<Integer> getGameIdsFromPlaylists() {
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
@@ -1465,7 +1433,7 @@ public class PinUPConnector implements FrontendConnector {
 
   @NonNull
   private Map<Integer, PlaylistGame> getGamesFromPlaylist(int id) {
-    Map<Integer, PlaylistGame> result = new LinkedHashMap();
+    Map<Integer, PlaylistGame> result = new LinkedHashMap<>();
     Connection connect = connect();
     try {
       Statement statement = connect.createStatement();
@@ -1622,7 +1590,10 @@ public class PinUPConnector implements FrontendConnector {
       playlistGameMap = updateSQLPlaylist(sql, playlistGameMap);
     }
     playlist.setGames(new ArrayList<>(playlistGameMap.values()));
-    addPlaylistMedia(playlist);
+
+    // used for playlist management, moved from TablesSidebarPlaylistsController as it is pinup specific
+    playlist.setAddFavCheckboxes(sqlPlaylist && sql != null && sql.contains("EMUID"));
+
     return playlist;
   }
 

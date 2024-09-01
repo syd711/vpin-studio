@@ -117,11 +117,6 @@ public interface FrontendConnector {
 
   void deleteFromPlaylist(int playlistId, int gameId);
 
-  Playlist getPlayListForGame(int gameId);
-
-  @NonNull
-  List<Integer> getGameIdsFromPlaylists();
-
   File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen);
 
   //----------------------------------
