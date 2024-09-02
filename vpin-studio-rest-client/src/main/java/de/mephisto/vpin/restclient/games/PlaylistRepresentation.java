@@ -14,8 +14,10 @@ public class PlaylistRepresentation {
   private String playListSQL;
   private String mediaName;
   private boolean sqlPlayList;
+  private boolean addFavCheckboxes;
   private List<PlaylistGame> games = new ArrayList<>();
-  private FrontendMediaRepresentation playlistMedia;
+
+  private Integer emulatorId;
 
   public String getMediaName() {
     return mediaName;
@@ -25,13 +27,6 @@ public class PlaylistRepresentation {
     this.mediaName = mediaName;
   }
 
-  public FrontendMediaRepresentation getPlaylistMedia() {
-    return playlistMedia;
-  }
-
-  public void setPlaylistMedia(FrontendMediaRepresentation playlistMedia) {
-    this.playlistMedia = playlistMedia;
-  }
 
   public List<PlaylistGame> getGames() {
     return games;
@@ -81,17 +76,33 @@ public class PlaylistRepresentation {
     this.name = name;
   }
 
+  public boolean isAddFavCheckboxes() {
+    return addFavCheckboxes;
+  }
+  public void setAddFavCheckboxes(boolean addFavCheckboxes) {
+    this.addFavCheckboxes = addFavCheckboxes;
+  }
+
+  public Integer getEmulatorId() {
+    return emulatorId;
+  }
+  public void setEmulatorId(Integer emulatorId) {
+    this.emulatorId = emulatorId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     PlaylistRepresentation that = (PlaylistRepresentation) o;
-    return id == that.id && sqlPlayList == that.sqlPlayList && Objects.equals(menuColor, that.menuColor) && Objects.equals(name, that.name) && Objects.equals(playListSQL, that.playListSQL) && Objects.equals(mediaName, that.mediaName) && Objects.equals(games, that.games) && Objects.equals(playlistMedia, that.playlistMedia);
+    return id == that.id && sqlPlayList == that.sqlPlayList && Objects.equals(menuColor, that.menuColor) 
+              && Objects.equals(name, that.name) && Objects.equals(playListSQL, that.playListSQL) 
+              && Objects.equals(mediaName, that.mediaName) && Objects.equals(games, that.games);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, menuColor, name, playListSQL, mediaName, sqlPlayList, games, playlistMedia);
+    return Objects.hash(id, menuColor, name, playListSQL, mediaName, sqlPlayList, games);
   }
 
   @Override
@@ -127,4 +138,5 @@ public class PlaylistRepresentation {
     PlaylistGame game = getGame(id);
     return game != null && game.isPlayed();
   }
+
 }

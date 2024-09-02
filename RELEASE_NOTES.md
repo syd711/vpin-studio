@@ -7,9 +7,8 @@
 - **Table Statistics**: Change to a more responsive design, so that the view supports smaller resolutions too.
 - **Table Data Manager Dialog**: Added reset options to the table statistics tab.
 - **Table Data Manager Dialog**: Added statistic options to the table statistics tab which allows to set specific values for the table statistics.
-- 
+- **Playlist for pinballX**: Added support of playlists and favorites for pinballX frontend
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
 
 
 ## Bugfixes

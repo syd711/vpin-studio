@@ -6,19 +6,22 @@ package de.mephisto.vpin.restclient.frontend;
  */
 public enum FrontendType {
 
-  Standalone(false, false, false, false, false, false, false, false, false),
-  Popper(true, true, true, true, false, true, true, true, true),
-  // playlist and statistics not activated yet but will be supported
-  PinballX(true, false, false, true, true, false, true, false, false);
+  Standalone(false, false, false, false, false, false, false, false, false, false, false),
+  Popper(true, true, true, true, false, true, false, true, true, true, true),
 
-  FrontendType(boolean supportStandardFields, boolean supportExtendedFields, boolean supportPlaylists,
-          boolean supportMedias,
-               boolean supportMediaCache,
-               boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
+  // playlist not activated yet but will be supported
+  PinballX(true, false, true, false, true, true, true, false, true, false, false);
+
+  FrontendType(boolean supportStandardFields, boolean supportExtendedFields, 
+          boolean supportPlaylists, boolean supportExtendedPlaylists, boolean supportPlaylistsCrud, 
+          boolean supportMedias, boolean supportMediaCache,
+          boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
           boolean supportControls) {
     this.supportStandardFields = supportStandardFields;
     this.supportExtendedFields = supportExtendedFields;
     this.supportPlaylists = supportPlaylists;
+    this.supportExtendedPlaylists = supportExtendedPlaylists;
+    this.supportPlaylistsCrud = supportPlaylistsCrud;
     this.supportMedias = supportMedias;
     this.supportMediaCache = supportMediaCache;
     this.supportPupPacks = supportPupPacks;
@@ -33,6 +36,11 @@ public enum FrontendType {
   private boolean supportExtendedFields;
   /** Whether Playlists are supported or not */
   private boolean supportPlaylists;
+  /** Whether Playlists creation / update / deletion are supported or not */
+  private boolean supportPlaylistsCrud;
+  /** pinup way of managing favorites : local and global favorites support + management at playlist level
+   * If false, ie pinballX way, one level of favorites managed globally */
+  private boolean supportExtendedPlaylists;
   /** Whether medias are supported by the frontend */
   private boolean supportMedias;
   /** Whether a media cache is supported by the frontend */
@@ -56,6 +64,12 @@ public enum FrontendType {
   }
   public boolean supportPlaylists() {
     return supportPlaylists;
+  }
+  public boolean supportPlaylistsCrud() {
+    return supportPlaylistsCrud;
+  }
+  public boolean supportExtendedPlaylists() {
+    return supportExtendedPlaylists;
   }
   public boolean supportMedias() {
     return supportMedias;

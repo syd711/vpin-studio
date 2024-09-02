@@ -100,8 +100,8 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
-
-        FrontendMediaRepresentation medias = client.getPlaylistsService().getPlaylist(playlist.getId()).getPlaylistMedia();
+      
+        FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMedia(playlist.getId());
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
           Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",

@@ -70,7 +70,7 @@ public class HeaderResizeableController implements Initializable {
 
     if (!uiSettings.isHideFrontendLaunchQuestion()) {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not shown again", false);
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
       if (!confirmationResult.isApplyClicked()) {
         client.getFrontendService().restartFrontend();
       }
