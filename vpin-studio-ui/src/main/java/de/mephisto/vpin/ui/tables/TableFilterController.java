@@ -119,13 +119,12 @@ public class TableFilterController extends BaseFilterController implements Initi
     GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       this.filterSettings = new FilterSettings();
-      saveFilterSettings();
       resetFilters();
       applyFilter();
     }
   }
 
-  private void saveFilterSettings() {
+  public void saveFilterSettings() {
     client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
   }
 
