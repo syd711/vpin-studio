@@ -117,7 +117,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
         if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 3) {
-          debouncer.debounce("position", () -> {
+          debouncer.debounce("prefWidth", () -> {
             Platform.runLater(() -> {
               refreshAlxData();
             });

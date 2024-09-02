@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
@@ -249,6 +250,10 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   @FXML
   private Label labelBackglassCount;
+
+  @FXML
+  private BorderPane tableWrapper;
+
 
   //--------------- Filters
 
