@@ -16,6 +16,7 @@ import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
@@ -247,6 +248,10 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   @FXML
   private Label labelBackglassCount;
+
+  @FXML
+  private BorderPane tableWrapper;
+
 
   //--------------- Filters
 
@@ -490,6 +495,21 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.reloadBackglassBtn.setDisable(true);
+
+
+//    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
+//      @Override
+//      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//        TablesController tablesController = tablesSidebarController.getTablesController();
+//        if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 1) {
+//          debouncer.debounce("prefWidth", () -> {
+//            Platform.runLater(() -> {
+//              loaderStack.setMaxWidth(300);
+//            });
+//          }, DEBOUNCE_MS);
+//        }
+//      }
+//    });
 
     bindTable();
 

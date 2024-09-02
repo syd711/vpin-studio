@@ -119,7 +119,7 @@
       </ToolBar>
    </top>
    <left>
-      <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+      <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
          <center>
             <StackPane fx:id="loaderStack">
                <BorderPane.margin>
@@ -131,7 +131,7 @@
                         <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
                            <columns>
                                  <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
-                                 <TableColumn fx:id="displayNameColumn" prefWidth="300" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
+                                 <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
                                  <TableColumn fx:id="fullDmdColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="FullDMD" />
                                  <TableColumn fx:id="grillColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Grill" />
                                  <TableColumn fx:id="scoreColumn" minWidth="50" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Score" />
