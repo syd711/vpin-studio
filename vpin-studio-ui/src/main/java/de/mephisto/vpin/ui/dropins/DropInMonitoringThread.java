@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -17,6 +18,7 @@ public class DropInMonitoringThread {
 
   private Thread monitorThread;
   private File dropinsFolder;
+  private WatchService watchService;
 
   public void startMonitoring() {
     if (this.monitorThread == null && dropinsFolder != null) {
@@ -26,18 +28,33 @@ public class DropInMonitoringThread {
 
   public void stopMonitoring() {
     this.running.set(false);
+    try {
+      watchService.close();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to close watch service: " + e.getMessage(), e);
+    }
+    finally {
+      monitorThread = null;
+    }
   }
 
   private void startMonitor() {
     this.running.set(true);
+    try {
+      watchService = FileSystems.getDefault().newWatchService();
+    }
+    catch (IOException e) {
+      LOG.error("Failed to create watch service: " + e.getMessage(), e);
+    }
     monitorThread = new Thread(() -> {
       Thread.currentThread().setName("Drop-In Monitoring Thread for \"" + dropinsFolder.getAbsolutePath() + "\"");
       LOG.info("Launched " + Thread.currentThread().getName());
       try {
         final Path path = dropinsFolder.toPath();
-        try (final WatchService watchService = FileSystems.getDefault().newWatchService()) {
-          path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
-          while (running.get()) {
+        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
+        while (running.get()) {
+          try {
             final WatchKey wk = watchService.take();
             for (WatchEvent<?> event : wk.pollEvents()) {
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
@@ -56,8 +73,11 @@ public class DropInMonitoringThread {
             }
             wk.reset();
           }
-          LOG.info("Terminated Drop-In Monitoring Thread");
+          catch (ClosedWatchServiceException e) {
+            LOG.info("Terminated closed watch service.");
+          }
         }
+        LOG.info("Terminated Drop-In Monitoring Thread");
       }
       catch (Exception e) {
         LOG.info("Drop-in monitor failed: " + e.getMessage(), e);

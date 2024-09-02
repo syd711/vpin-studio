@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController.DirectB2SEntryModel;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 

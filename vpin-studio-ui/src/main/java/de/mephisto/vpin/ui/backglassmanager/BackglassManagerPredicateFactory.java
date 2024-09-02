@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController.DirectB2SEntryModel;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 
 import org.apache.commons.lang3.StringUtils;
@@ -14,9 +13,9 @@ public class BackglassManagerPredicateFactory {
 
   private String filterValue;
 
-  private BackglassManagerController controller;
+  private final BackglassManagerController controller;
 
-  private List<Integer> emulatorIds = new ArrayList<>();
+  private final List<Integer> emulatorIds = new ArrayList<>();
 
   public BackglassManagerPredicateFactory(BackglassManagerController controller) {
     this.controller = controller;

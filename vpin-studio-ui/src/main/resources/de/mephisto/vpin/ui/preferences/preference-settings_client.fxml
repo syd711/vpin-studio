@@ -43,35 +43,7 @@
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin></VBox>
-                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Table Overview Settings">
-                     <VBox.margin>
-                        <Insets top="24.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="You can customize the appearance of the table overview here." textFill="WHITE">
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Label>
-                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
-                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </CheckBox>
-                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="Drop-In Folder" />
                   <VBox fx:id="dropIns" spacing="3.0">
                      <children>
                         <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="Enable &quot;Drop-In&quot; folder imports" textFill="WHITE">
@@ -102,6 +74,35 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </VBox>
+                  <Label layoutX="34.0" layoutY="534.0" styleClass="preference-subtitle" text="Table Overview Settings">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="488.0" styleClass="preference-description" text="You can customize the appearance of the table overview here." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="uiShowVersion" mnemonicParsing="false" text="Show table version update indicators in the table overview." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="584.0" styleClass="checkbox-description" text="The table update icon is shown when there is a version mismatch between the your table version" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="632.0" styleClass="checkbox-description" text="and the associated &quot;Virtual Pinball Spreadsheet&quot; table version." textFill="WHITE" />
+                  <CheckBox fx:id="autoEditCheckbox" layoutX="34.0" layoutY="784.0" mnemonicParsing="false" text="Edit table data after upload." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="804.0" styleClass="checkbox-description" text="If checked, the table data dialog will open after a new table has been uploaded." textFill="WHITE" />
                   <Label styleClass="default-headline" text="Visible Table Columns" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />

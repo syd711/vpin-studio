@@ -61,6 +61,17 @@
                <font>
                   <Font size="14.0" />
                </font></Button>
+            <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Upload a new Backglass" />
+               </tooltip>
+            </Button>
 
             <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
                <font>
@@ -71,17 +82,6 @@
                </graphic>
                <tooltip>
                   <Tooltip text="Rename the backglass" />
-               </tooltip>
-            </Button>
-            <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Upload a new Backglass" />
                </tooltip>
             </Button>
             <Button fx:id="duplicateBtn" layoutX="557.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDuplicate" text="Duplicate" textFill="WHITE">
@@ -114,6 +114,18 @@
                <graphic>
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" />
                </graphic>
+            </Button>
+            <Separator layoutX="856.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-open" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open .ini File" />
+               </tooltip>
+               <font>
+                  <Font size="14.0" />
+               </font>
             </Button>
          </items>
       </ToolBar>
@@ -245,7 +257,7 @@
                               </VBox>
                            </children>
                         </HBox>
-                        <HBox spacing="54.0">
+                        <HBox spacing="48.0">
                            <children>
                               <GridPane hgap="12.0" vgap="3.0">
                                  <columnConstraints>
@@ -414,7 +426,7 @@
                                     <CheckBox fx:id="startAsExeServer" disable="true" layoutX="196.0" layoutY="453.0" mnemonicParsing="false" GridPane.columnIndex="1" GridPane.rowIndex="14" />
                                  </children>
                               </GridPane>
-                              <VBox>
+                              <VBox prefWidth="400.0">
                                  <children>
                                     <VBox>
                                        <children>
