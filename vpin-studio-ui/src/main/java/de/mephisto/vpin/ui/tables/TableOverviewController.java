@@ -867,6 +867,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       predicateFactory.setFilterIds(null);
       this.data.setPredicate(predicateFactory.buildPredicate());
+      // as we do not call filterGames(), manually call saveFilterSettings to persist the reset
+      tableFilterController.saveFilterSettings();
     }
     else {
       tablesLoadingOverlay.setBusy("Filtering Tables...", true);
