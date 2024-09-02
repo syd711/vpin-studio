@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.util.ProgressableFileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -51,6 +52,12 @@ public class VPinStudioClientService {
     SimpleClientHttpRequestFactory rf = new SimpleClientHttpRequestFactory();
     rf.setBufferRequestBody(false);
     return new RestTemplate(rf);
+  }
+
+  protected RestTemplate createAbortableUploadTemplate() {
+    HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+    requestFactory.setBufferRequestBody(false);
+    return new RestTemplate(requestFactory);
   }
 
   public static void finalizeUpload(HttpEntity upload) {

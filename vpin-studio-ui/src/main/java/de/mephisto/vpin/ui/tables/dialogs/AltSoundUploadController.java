@@ -9,10 +9,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
-import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -62,6 +59,9 @@ public class AltSoundUploadController implements Initializable, DialogController
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
   private Stage stage;
+  private AltSoundUploadProgressModel model;
+  private boolean result = false;
+
   private File selection;
   private UploaderAnalysis uploaderAnalysis;
   private GameEmulatorRepresentation emulatorRepresentation;
@@ -75,13 +75,20 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   @FXML
   private void onUploadClick(ActionEvent event) {
+    result = true;
+
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
       stage.close();
-      AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
+      model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
 
       Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(model);
+        ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
+
+        // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
+        if (progressResult.isCancelled()) {
+          result = false;
+        }
       });
     }
   }
@@ -140,7 +147,9 @@ public class AltSoundUploadController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.result = false;
     this.selection = null;
+    
     this.uploadBtn.setDisable(true);
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
@@ -157,11 +166,6 @@ public class AltSoundUploadController implements Initializable, DialogController
       selection = file;
       refreshSelection();
     }));
-  }
-
-  @Override
-  public void onDialogCancel() {
-
   }
 
   public void setData(Stage stage, File file, UploaderAnalysis uploaderAnalysis, int gameId) {
@@ -200,5 +204,14 @@ public class AltSoundUploadController implements Initializable, DialogController
     if (gameRepresentation != null) {
       tableLabel.setText(gameRepresentation.getGameDisplayName());
     }
+  }
+
+  @Override
+  public void onDialogCancel() {
+    result = false;
+  }
+
+  public boolean uploadFinished() {
+    return result;
   }
 }
