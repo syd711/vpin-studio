@@ -81,7 +81,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @FXML
   private void onDelete() {
-    AlxDialogs.openTableDeleteDialog(this);
+    AlxDialogs.openDeleteAlxDialog(this);
     refreshAlxData();
   }
 

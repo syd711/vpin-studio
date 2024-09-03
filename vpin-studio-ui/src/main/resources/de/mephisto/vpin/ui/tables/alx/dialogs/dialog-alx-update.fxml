@@ -24,7 +24,7 @@
                   <Insets right="12.0" />
                </HBox.margin>
             </Button>
-            <Button fx:id="deleteBtn" defaultButton="true" disable="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onDeleteClick" styleClass="submit-button" text="Delete">
+            <Button fx:id="saveBtn" defaultButton="true" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Save">
                <HBox.margin>
                   <Insets />
                </HBox.margin>
@@ -61,7 +61,7 @@
                   </Label>
                   <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
                      <children>
-                        <Spinner />
+                        <Spinner fx:id="timeSpinner" />
                         <Label text="minutes" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
@@ -69,8 +69,11 @@
                         </Label>
                      </children>
                   </HBox>
-                  <Spinner layoutX="121.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Spinner fx:id="playsSpinner" layoutX="121.0" layoutY="12.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                </children>
+               <BorderPane.margin>
+                  <Insets top="12.0" />
+               </BorderPane.margin>
             </GridPane>
          </center>
          <BorderPane.margin>
@@ -79,7 +82,7 @@
          <top>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label styleClass="preference-description" text="minutes" textFill="WHITE">
+                  <Label styleClass="preference-description" text="You can manually configure the table statistics here." textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

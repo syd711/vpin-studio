@@ -2,6 +2,8 @@ package de.mephisto.vpin.ui.tables.alx.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.alx.AlxSummary;
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -15,9 +17,7 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
+import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -30,57 +30,39 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 
 public class AlxUpdateStatsDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(AlxUpdateStatsDialogController.class);
 
   @FXML
-  private Button deleteBtn;
+  private Button saveBtn;
 
   @FXML
-  private HBox emulatorWrapper;
+  private Spinner<Integer> timeSpinner;
 
   @FXML
-  private CheckBox timePlayedCheckbox;
-
-  @FXML
-  private CheckBox numberPlaysCheckbox;
-
-  @FXML
-  private CheckBox recordScoresCheckbox;
-
-  @FXML
-  private CheckBox confirmationCheckbox;
-
-  @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
-  private AlxController alxController;
+  private Spinner<Integer> playsSpinner;
+  @Nullable
   private GameRepresentation gameRepresentation;
 
   @FXML
-  private void onDeleteClick(ActionEvent e) {
+  private void onSaveClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
 
-    boolean deleteTime = timePlayedCheckbox.isSelected();
-    boolean deletePlays = numberPlaysCheckbox.isSelected();
-    boolean deleteScores = numberPlaysCheckbox.isSelected();
-
-    if (gameRepresentation != null) {
-      Platform.runLater(() -> {
-        AlxDeleteGameStatsProgressModel deletingTableStatistics = new AlxDeleteGameStatsProgressModel("Deleting Table Statistic", gameRepresentation, deleteTime, deletePlays, deleteScores);
-        ProgressDialog.createProgressDialog(deletingTableStatistics);
-      });
+    try {
+      client.getAlxService().updateTimePlayedForGame(gameRepresentation.getId(), timeSpinner.getValue());
     }
-    else {
-      int emulatorId = this.emulatorCombo.getSelectionModel().getSelectedItem().getId();
-      stage.close();
-
-      Platform.runLater(() -> {
-        AlxDeleteStatsProgressModel deletingTableStatistics = new AlxDeleteStatsProgressModel("Deleting Table Statistics", emulatorId, deleteTime, deletePlays, deleteScores);
-        ProgressDialog.createProgressDialog(deletingTableStatistics);
-        alxController.refreshAlxData();
-      });
+    catch (Exception ex) {
+      LOG.error("Failed to store stats: " + ex.getMessage(), ex);
     }
+    try {
+      client.getAlxService().updateNumberOfPlaysForGame(gameRepresentation.getId(), playsSpinner.getValue());
+    }
+    catch (Exception ex) {
+      LOG.error("Failed to store stats: " + ex.getMessage(), ex);
+    }
+    stage.close();
   }
 
   @FXML
@@ -91,60 +73,31 @@ public class AlxUpdateStatsDialogController implements Initializable, DialogCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    emulatorWrapper.managedProperty().bindBidirectional(emulatorWrapper.visibleProperty());
 
-    deleteBtn.setDisable(true);
-
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-
-    GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
-    allTables.setId(-1);
-    allTables.setName("All Tables");
-    filtered.add(0, allTables);
-
-    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-    this.emulatorCombo.getSelectionModel().select(0);
-
-    numberPlaysCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refresh();
-      }
-    });
-
-    timePlayedCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refresh();
-      }
-    });
-
-    recordScoresCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refresh();
-      }
-    });
-
-    confirmationCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        refresh();
-      }
-    });
   }
 
 
-  public void setData(@Nullable AlxController alxController, @Nullable GameRepresentation gameRepresentation) {
-    this.alxController = alxController;
+  public void setData(@Nullable GameRepresentation gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
-    this.emulatorWrapper.setVisible(gameRepresentation == null);
-  }
 
-  private void refresh() {
-    this.deleteBtn.setDisable((!numberPlaysCheckbox.isSelected() && !timePlayedCheckbox.isSelected() && !recordScoresCheckbox.isSelected()) || !confirmationCheckbox.isSelected());
+    AlxSummary alxSummary = client.getAlxService().getAlxSummary(gameRepresentation.getId());
+    int timePlayedSecs = 0;
+    int numberOfPlays = 0;
+    if (alxSummary != null && !alxSummary.getEntries().isEmpty()) {
+      TableAlxEntry tableAlxEntry = alxSummary.getEntries().get(0);
+      timePlayedSecs = tableAlxEntry.getTimePlayedSecs() / 60;
+      numberOfPlays = tableAlxEntry.getNumberOfPlays();
+    }
+    else {
+      this.timeSpinner.setDisable(true);
+      this.playsSpinner.setDisable(true);
+      this.saveBtn.setDisable(true);
+    }
+
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999999, timePlayedSecs);
+    timeSpinner.setValueFactory(factory);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory2 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 999999, numberOfPlays);
+    playsSpinner.setValueFactory(factory2);
   }
 
   @Override

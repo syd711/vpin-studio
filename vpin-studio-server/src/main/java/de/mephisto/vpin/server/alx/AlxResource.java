@@ -48,7 +48,7 @@ public class AlxResource {
   public boolean updateAlx(@PathVariable("gameId") int gameId,
                            @RequestBody Map<String, Object> values) {
     String field = (String) values.get("dataField");
-    long value = (long) values.get("value");
+    int value = (int) values.get("value");
     if(field.equals("numberOfPlays")) {
       return analyticsService.updateNumberOfPlaysForGame(gameId, value);
     }
