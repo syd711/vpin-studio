@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.stage.Stage;
 
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -32,7 +33,7 @@ public class AlxBarEntryController implements Initializable {
   @FXML
   private BorderPane root;
 
-  public void refresh(@NonNull AlxBarEntry entry) {
+  public void refresh(@NonNull Stage stage, @NonNull AlxBarEntry entry) {
     String title = entry.getTitle();
     if (title.length() > 40) {
       title = title.substring(0, 39) + "...";
@@ -56,7 +57,7 @@ public class AlxBarEntryController implements Initializable {
       }, Platform::runLater);
 
     int percentage = entry.getPercentage();
-    double v = AlxFactory.calculateColumnWidth() - 24;
+    double v = AlxFactory.calculateColumnWidth(stage) - 24;
     double barWidth = v * percentage / 100;
     if (barWidth < 1) {
       barWidth = 1;

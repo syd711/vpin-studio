@@ -39,6 +39,7 @@ public class TableDataTabStatisticsController implements Initializable {
   private AlxTileEntryController timePlayedTile;
   private AlxTileEntryController scoresCountTile;
 
+  private Stage stage;
   private GameRepresentation game;
   private TableDetails tableDetails;
 
@@ -58,7 +59,8 @@ public class TableDataTabStatisticsController implements Initializable {
   }
 
 
-  public void setGame(GameRepresentation game, TableDetails tableDetails) {
+  public void setGame(Stage stage, GameRepresentation game, TableDetails tableDetails) {
+    this.stage = stage;
     this.game = game;
     this.tableDetails = tableDetails;
     refreshView();
@@ -88,10 +90,10 @@ public class TableDataTabStatisticsController implements Initializable {
       catch (Exception e) {
         LOG.error("Error calculating total play time: " + e.getMessage());
       }
-      timePlayedTile.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
+      timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", totalTimeFormatted));
     }
     else {
-      timePlayedTile.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
+      timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
     }
 
     // Override statistics by TableDetails when numberPlays is set
@@ -101,9 +103,9 @@ public class TableDataTabStatisticsController implements Initializable {
 
     int scores = client.getGameService().getGameScores(game.getId()).getScores().size();
     AlxTileEntry entry = new AlxTileEntry("Recorded Scores", "(Total number of scores recorded by the VPin Studio)", String.valueOf(scores));
-    scoresCountTile.refresh(entry);
+    scoresCountTile.refresh(stage, entry);
 
-    timesPlayedTile.refresh(new AlxTileEntry("Total Times Played",
+    timesPlayedTile.refresh(stage, new AlxTileEntry("Total Times Played",
         FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend),
         String.valueOf(played)));
   }

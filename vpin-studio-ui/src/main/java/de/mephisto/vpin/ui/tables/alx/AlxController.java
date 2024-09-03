@@ -129,7 +129,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   public void refreshAlxData() {
     try {
-      double v = AlxFactory.calculateColumnWidth();
+      double v = AlxFactory.calculateColumnWidth(Studio.stage);
       col1.setPrefWidth(v);
       col2.setPrefWidth(v);
       col3.setPrefWidth(v);
@@ -153,18 +153,18 @@ public class AlxController implements Initializable, StudioFXController, StudioE
         entries = filtered;
       }
 
-      AlxFactory.createMostPlayed(mostPlayedWidget, entries);
-      AlxFactory.createLongestPlayed(timePlayedWidget, entries);
-      AlxFactory.createRecordedScores(scoresWidget, entries);
+      AlxFactory.createMostPlayed(Studio.stage, mostPlayedWidget, entries);
+      AlxFactory.createLongestPlayed(Studio.stage, timePlayedWidget, entries);
+      AlxFactory.createRecordedScores(Studio.stage, scoresWidget, entries);
 
       tileList.getChildren().removeAll(tileList.getChildren());
-      AlxFactory.createTotalTimeTile(tileList, entries);
-      AlxFactory.createTotalGamesPlayedTile(tileList, entries);
-      AlxFactory.createTotalScoresTile(tileList, entries);
-      AlxFactory.createTotalHighScoresTile(tileList, entries);
+      AlxFactory.createTotalTimeTile(Studio.stage, tileList, entries);
+      AlxFactory.createTotalGamesPlayedTile(Studio.stage, tileList, entries);
+      AlxFactory.createTotalScoresTile(Studio.stage, tileList, entries);
+      AlxFactory.createTotalHighScoresTile(Studio.stage, tileList, entries);
       Date alxStartDate = alxSummary.getStartDate() != null ? alxSummary.getStartDate() :
           new Date(System.currentTimeMillis() - 1 * 365 * 24 * 3600 * 1000);
-      AlxFactory.createAvgWeekTimeTile(tileList, entries, alxStartDate);
+      AlxFactory.createAvgWeekTimeTile(Studio.stage, tileList, entries, alxStartDate);
     }
     catch (Exception e) {
       LOG.error("Failed to initialize ALX dashboard: " + e.getMessage(), e);

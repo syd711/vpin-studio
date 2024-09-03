@@ -30,6 +30,7 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -709,7 +710,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 
-  public void setGame(Stage stage, @Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public void setGame(@NonNull Stage stage, @Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
     this.stage = stage;
     this.game = game;
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -1018,7 +1019,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     initVpsStatus();
     if (frontendType.supportStatistics()) {
-      tableStatisticsController.setGame(game, tableDetails);
+      tableStatisticsController.setGame(stage, game, tableDetails);
     }
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);

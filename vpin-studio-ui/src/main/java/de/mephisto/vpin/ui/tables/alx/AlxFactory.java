@@ -12,6 +12,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,13 +30,17 @@ public class AlxFactory {
 
   private static final List<Color> colors = Arrays.asList(Tile.DARK_BLUE, Tile.RED, Tile.ORANGE, Tile.GREEN, Tile.MAGENTA, Tile.PINK.grayscale(), Tile.DARK_BLUE);
 
-  public static double calculateColumnWidth() {
-    double width = Studio.stage.getWidth();
-    width = width - 130; //minus navigation
-    return width / 4 - (12 * 2);
+  public static double calculateColumnWidth(Stage stage) {
+    if(stage.getTitle().startsWith("VPin Studio")) {
+      double width = stage.getWidth();
+      width = width - 130; //minus navigation
+      return width / 4 - (12 * 2);
+    }
+    double width = stage.getWidth();
+    return width / 2 - (12 * 2);
   }
 
-  public static void createTotalTimeTile(Pane root, List<TableAlxEntry> entries) {
+  public static void createTotalTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
@@ -53,14 +58,14 @@ public class AlxFactory {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", totalTimeFormatted));
+      controller.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of all tables)", totalTimeFormatted));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
     }
   }
 
-  public static void createTotalScoresTile(Pane root, List<TableAlxEntry> entries) {
+  public static void createTotalScoresTile(Stage stage, Pane root, List<TableAlxEntry> entries) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getScores();
@@ -70,7 +75,7 @@ public class AlxFactory {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
+      controller.refresh(stage, new AlxTileEntry("Total Scores Created", "(The total amount of recorded scores)", String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
@@ -78,7 +83,7 @@ public class AlxFactory {
   }
 
 
-  public static void createTotalHighScoresTile(Pane root, List<TableAlxEntry> entries) {
+  public static void createTotalHighScoresTile(Stage stage, Pane root, List<TableAlxEntry> entries) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getHighscores();
@@ -88,14 +93,14 @@ public class AlxFactory {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
+      controller.refresh(stage, new AlxTileEntry("Total Highscores Created", "(The total amount of times a #1 score has been created)", String.valueOf(total)));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
     }
   }
 
-  public static void createAvgWeekTimeTile(Pane root, List<TableAlxEntry> entries, Date start) {
+  public static void createAvgWeekTimeTile(Stage stage, Pane root, List<TableAlxEntry> entries, Date start) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getTimePlayedSecs();
@@ -123,14 +128,14 @@ public class AlxFactory {
       FXMLLoader loader = new FXMLLoader(AlxTileEntryController.class.getResource("alx-tile-entry.fxml"));
       Parent builtInRoot = loader.load();
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
+      controller.refresh(stage, new AlxTileEntry("Avg. Playtime / Week", "(The average time played every week, starting " + DateFormat.getDateInstance().format(start) + ")", time));
       root.getChildren().add(builtInRoot);
     } catch (IOException e) {
       LOG.error("Failed to load tile: " + e.getMessage(), e);
     }
   }
 
-  public static void createTotalGamesPlayedTile(Pane root, List<TableAlxEntry> entries) {
+  public static void createTotalGamesPlayedTile(Stage stage, Pane root, List<TableAlxEntry> entries) {
     long total = 0;
     for (TableAlxEntry entry : entries) {
       total += entry.getNumberOfPlays();
@@ -142,7 +147,7 @@ public class AlxFactory {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
 
       AlxTileEntryController controller = loader.getController();
-      controller.refresh(new AlxTileEntry("Total Games Played", 
+      controller.refresh(stage, new AlxTileEntry("Total Games Played",
         FrontendUtil.replaceName("(The total number of table launches from [Frontend])", frontend), 
         String.valueOf(total)));
       root.getChildren().add(builtInRoot);
@@ -152,7 +157,7 @@ public class AlxFactory {
   }
 
 
-  public static void createRecordedScores(Pane root, List<TableAlxEntry> entries) {
+  public static void createRecordedScores(Stage stage, Pane root, List<TableAlxEntry> entries) {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
@@ -178,7 +183,7 @@ public class AlxFactory {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(entry);
+        controller.refresh(stage, entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
@@ -191,7 +196,7 @@ public class AlxFactory {
     }
   }
 
-  public static void createLongestPlayed(Pane root, List<TableAlxEntry> entries) {
+  public static void createLongestPlayed(Stage stage, Pane root, List<TableAlxEntry> entries) {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> statEntries = new ArrayList<>(entries);
@@ -218,7 +223,7 @@ public class AlxFactory {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(entry);
+        controller.refresh(stage, entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
@@ -231,7 +236,7 @@ public class AlxFactory {
     }
   }
 
-  public static void createMostPlayed(Pane root, List<TableAlxEntry> entries) {
+  public static void createMostPlayed(Stage stage, Pane root, List<TableAlxEntry> entries) {
     root.getChildren().removeAll(root.getChildren());
 
     List<TableAlxEntry> mostPlayedEntries = new ArrayList<>(entries);
@@ -257,7 +262,7 @@ public class AlxFactory {
         FXMLLoader loader = new FXMLLoader(AlxBarEntryController.class.getResource("alx-bar-entry.fxml"));
         Parent builtInRoot = loader.load();
         AlxBarEntryController controller = loader.getController();
-        controller.refresh(entry);
+        controller.refresh(stage, entry);
         root.getChildren().add(builtInRoot);
       } catch (IOException e) {
         LOG.error("Failed to load bar: " + e.getMessage(), e);
