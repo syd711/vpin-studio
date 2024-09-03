@@ -46,13 +46,14 @@ public class TableDataTabStatisticsController implements Initializable {
   @FXML
   private void onDelete(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    AlxDialogs.openTableDeleteDialog(stage, game);
+    AlxDialogs.openDeleteAlxDialog(stage, game);
     refreshView();
   }
 
   @FXML
   private void onStatsEdit(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    AlxDialogs.openUpdateTableAlxDialog(stage, game);
     refreshView();
   }
 

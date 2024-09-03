@@ -75,7 +75,7 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, TableUploadType.uploadAndImport, analysis);
+        TableDialogs.openTableUploadDialog(game, null, analysis);
         return;
       }
       default: {

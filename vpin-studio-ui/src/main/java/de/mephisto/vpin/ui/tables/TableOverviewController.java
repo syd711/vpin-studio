@@ -29,6 +29,7 @@ import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.*;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
@@ -573,23 +574,23 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTableUpload() {
-    openUploadDialogWithCheck(TableUploadType.uploadAndImport);
+    openUploadDialogWithCheck(null);
   }
 
-  public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
+  public void openUploadDialogWithCheck(@Nullable TableUploadType tableUploadType) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        openUploadDialog(uploadDescriptor);
+        openUploadDialog(tableUploadType);
       }
       return;
     }
 
-    openUploadDialog(uploadDescriptor);
+    openUploadDialog(tableUploadType);
   }
 
-  private void openUploadDialog(TableUploadType uploadDescriptor) {
+  private void openUploadDialog(@Nullable TableUploadType uploadType) {
     GameRepresentation game = getSelection();
-    TableDialogs.openTableUploadDialog(game, uploadDescriptor, null);
+    TableDialogs.openTableUploadDialog(game, uploadType, null);
   }
 
   public void refreshFilterId() {

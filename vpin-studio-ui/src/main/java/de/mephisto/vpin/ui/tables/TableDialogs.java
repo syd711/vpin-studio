@@ -485,7 +485,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -494,7 +494,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, descriptor, analysis);
+    controller.setGame(stage, game, tableUploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
