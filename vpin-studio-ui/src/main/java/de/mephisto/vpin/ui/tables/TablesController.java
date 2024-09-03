@@ -187,7 +187,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       FXMLLoader loader = new FXMLLoader(BackglassManagerController.class.getResource("scene-directb2s-admin.fxml"));
       Parent directb2sRoot = loader.load();
       backglassManagerController = loader.getController();
-      backglassManagerController.setTableSidebarController(tablesSideBarController);
+      backglassManagerController.setRootController(this);
       backglassManagerTab.setContent(directb2sRoot);
 
       Image image = new Image(Studio.class.getResourceAsStream("b2s.png"));
@@ -390,14 +390,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
           EventManager.getInstance().notifyTableChange(event.getGameId(), rom);
         }
         else {
-          this.tableOverviewController.onReload();
+          this.tableOverviewController.doReload();
         }
       });
     }
     else if (jobType.equals(JobType.TABLE_IMPORT)) {
       Platform.runLater(() -> {
-        tableOverviewController.refreshFilterId();
-        tableOverviewController.onReload();
+        tableOverviewController.refreshFilters();
+        tableOverviewController.doReload();
       });
     }
     else if (jobType.equals(JobType.POV_INSTALL)
@@ -409,7 +409,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
         }
         else {
-          this.tableOverviewController.onReload();
+          this.tableOverviewController.doReload();
         }
       });
     }
@@ -453,7 +453,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
   public void preferencesChanged(PreferenceType preferenceType) {
     if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings)) {
       Platform.runLater(() -> {
-        this.tableOverviewController.onReload();
+        this.tableOverviewController.doReload();
       });
     }
   }

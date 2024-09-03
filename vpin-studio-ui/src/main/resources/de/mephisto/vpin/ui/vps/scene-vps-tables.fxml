@@ -53,7 +53,7 @@
    <top>
       <ToolBar BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="filterButton" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -67,19 +67,21 @@
 
             <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="0.0" />
-            <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="215.0" promptText="Search Table...">
+            <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Search Table...">
                <font>
                   <Font size="14.0" />
                </font>
             </TextField>
-            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+            <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                </graphic>
+               <tooltip>
+                  <Tooltip text="Reload all VPS data" />
+               </tooltip>
             </Button>
             <Separator layoutX="229.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="editBtn" layoutX="245.0" layoutY="11.0" mnemonicParsing="false" onAction="#onTableEdit" text="Edit Table" textFill="WHITE">
@@ -108,7 +110,7 @@
    <bottom>
       <HBox alignment="CENTER_RIGHT" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="countLabel" layoutX="1164.0" layoutY="13.0" text="" />
+            <Label fx:id="labelCount" layoutX="1164.0" layoutY="13.0" text="" />
          </children>
          <padding>
             <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />

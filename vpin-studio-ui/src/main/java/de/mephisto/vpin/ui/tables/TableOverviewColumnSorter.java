@@ -1,13 +1,14 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.Comparator;
 import java.util.Date;
 
-public class TableOverviewColumnSorter {
+public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresentationModel> {
 
   private final TableOverviewController tableOverviewController;
 

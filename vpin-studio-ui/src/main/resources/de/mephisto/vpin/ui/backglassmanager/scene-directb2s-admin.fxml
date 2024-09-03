@@ -24,11 +24,11 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane fx:id="root" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.backglassmanager.BackglassManagerController">
    <top>
       <ToolBar prefHeight="40.0" prefWidth="500.0" BorderPane.alignment="CENTER">
          <items>
-            <Button fx:id="filterButton" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+            <Button fx:id="filterBtn" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
@@ -39,7 +39,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <TextField fx:id="searchField" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
+            <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
                <font>
                   <Font size="14.0" />
                </font>
@@ -57,10 +57,6 @@
             </Button>
             <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" />
             
-            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" text="Open Table Data Manager" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font></Button>
             <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -73,12 +69,20 @@
                </tooltip>
             </Button>
 
-            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableDataManager" text="Edit Table" textFill="WHITE">
                <font>
                   <Font size="14.0" />
                </font>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+               </graphic>
+            </Button>
+            <Button fx:id="renameBtn" mnemonicParsing="false" onAction="#onRename" text="Rename" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-square-edit-outline" iconSize="18" />
                </graphic>
                <tooltip>
                   <Tooltip text="Rename the backglass" />
@@ -130,7 +134,7 @@
          </items>
       </ToolBar>
    </top>
-   <left>
+   <center>
       <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
          <center>
             <StackPane fx:id="loaderStack">
@@ -140,7 +144,7 @@
                <children>
                   <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                      <children>
-                        <TableView fx:id="directb2sList" style="-fx-background-color: #2a2a2a;">
+                        <TableView fx:id="tableView" style="-fx-background-color: #2a2a2a;">
                            <columns>
                                  <TableColumn fx:id="statusColumn" minWidth="33" prefWidth="55.0" style="-fx-alignment: CENTER;" text="Status" />
                                  <TableColumn fx:id="displayNameColumn" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Table Name" />
@@ -158,15 +162,15 @@
             <Insets right="12.0" />
          </BorderPane.margin>
          <bottom>
-            <Label fx:id="labelBackglassCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
+            <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
                <BorderPane.margin>
                   <Insets bottom="3.0" />
                </BorderPane.margin>
             </Label>
          </bottom>
       </BorderPane>
-   </left>
-   <center>
+   </center>
+   <right>
       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
          <center>
             <ScrollPane>
@@ -653,5 +657,5 @@
             </ScrollPane>
          </center>
       </BorderPane>
-   </center>
+   </right>
 </BorderPane>

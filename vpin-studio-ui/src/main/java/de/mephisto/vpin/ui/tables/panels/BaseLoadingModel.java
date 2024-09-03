@@ -33,9 +33,11 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
   }
 
   public void setBean(T object) {
-  this.bean = object;
-  fireValueChangedEvent();
-}
+    this.bean = object;
+    fireValueChangedEvent();
+  }
+
+  public abstract boolean sameBean(T object);
 
 
   public void reload() {
