@@ -72,7 +72,10 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.reload();
   }
 
-  public void reload() {
+  /**
+   * Should run on JavaFX Thread !
+   */
+  private void reload() {
     this.dropInsBtn.getItems().clear();
 
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
@@ -148,17 +151,17 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   }
 
   public void notifyDropInUpdates(File file) {
-    reload();
-    if (file != null) {
-      dropInsBtn.getGraphic().setVisible(true);
-      Platform.runLater(() -> {
+    Platform.runLater(() -> {
+      reload();
+      if (file != null) {
+        dropInsBtn.getGraphic().setVisible(true);
         Notifications.create()
             .title("New Drop-In Detected!")
             .text(file.getAbsolutePath())
             .graphic(WidgetFactory.createCheckboxIcon())
             .showInformation();
-      });
-    }
+      }
+    });
   }
 
   public boolean isNotTempFile(File file) {
