@@ -109,7 +109,7 @@ public class DropInContainerController implements Initializable {
     this.installBtn.setVisible(!hidden);
     this.installSeparator.setVisible(!hidden);
 
-    if(hidden) {
+    if (hidden) { //TODO wip
       dataPanel.setPrefWidth(356);
     }
   }
