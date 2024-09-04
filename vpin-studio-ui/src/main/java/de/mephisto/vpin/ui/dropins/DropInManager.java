@@ -14,6 +14,8 @@ import javafx.scene.control.CustomMenuItem;
 import javafx.scene.control.MenuButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+
+import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.Notifications;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -34,10 +36,6 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   private File dropinsFolder;
   private DropInMonitoringThread dropinsMonitor;
 
-  private DropInManager() {
-    LocalUISettings.addListener(this);
-  }
-
   private GameRepresentation gameSelection;
 
   public static DropInManager getInstance() {
@@ -45,6 +43,21 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       instance = new DropInManager();
     }
     return instance;
+  }
+
+  private DropInManager() {
+    // initialize monitoring thread once here
+    String dropInPath = LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER);
+    if (dropInPath != null) {
+      this.dropinsFolder = new File(dropInPath);
+    }
+    dropinsMonitor = new DropInMonitoringThread(this);
+    dropinsMonitor.setDropInFolder(dropinsFolder);
+    dropinsMonitor.startMonitoring();
+
+    // monitor changes
+    LocalUISettings.addListener(this);
+    EventManager.getInstance().addListener(this);
   }
 
   public void init(MenuButton dropInsBtn) {
@@ -56,18 +69,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
         dropInsBtn.getGraphic().setVisible(false);
       }
     });
-
-    String dropInPath = LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER);
-    if (dropInPath != null) {
-      this.dropinsFolder = new File(dropInPath);
-    }
-    dropinsMonitor = new DropInMonitoringThread();
-    dropinsMonitor.setDropInFolder(dropinsFolder);
-    dropinsMonitor.startMonitoring();
-
     this.reload();
-
-    EventManager.getInstance().addListener(this);
   }
 
   public void reload() {
@@ -77,6 +79,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       File[] files = dropinsFolder.listFiles(pathname -> pathname.isFile());
       if (files != null) {
         for (File file : files) {
+          if (isNotTempFile(file))
           try {
             FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
             BorderPane root = loader.load();
@@ -94,7 +97,6 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       }
     }
   }
-
 
   @Override
   public void localSettingsChanged(@NotNull String key, @Nullable String value) {
@@ -159,9 +161,17 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     }
   }
 
+  public boolean isNotTempFile(File file) {
+    String filename = file.getName();
+    return !StringUtils.endsWithIgnoreCase(filename, "tmp")
+        && !StringUtils.endsWithIgnoreCase(filename, "crdownload")
+        && !StringUtils.startsWith(filename, ".");
+  }
+
   public void install(File file) {
     if (gameSelection != null) {
       UploadAnalysisDispatcher.dispatch(file, gameSelection);
     }
   }
+
 }
