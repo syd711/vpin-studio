@@ -12,8 +12,10 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -23,7 +25,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +44,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   public static final int DEBOUNCE_MS = 200;
 
   @FXML
+  private StackPane loaderStack;
+
+  @FXML
   private VBox mostPlayedWidget;
 
   @FXML
@@ -49,6 +57,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  private boolean emulatorsLoaded = false;
+  private List<Integer> ignoredEmulators = null;
 
   @FXML
   private VBox tileList;
@@ -67,8 +78,12 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @FXML
   private Button reloadBtn;
+  @FXML
+  private Button deleteBtn;
+
   private TablesController tablesController;
 
+  private WaitOverlay waitOverlay;
 
   // Add a public no-args constructor
   public AlxController() {
@@ -85,21 +100,29 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     refreshAlxData();
   }
 
+  private void refreshEmulators(boolean uiSettingsChanged) {
+    // if view not activated but UI change happens, just ignore the event 
+    if (!emulatorsLoaded && uiSettingsChanged) {
+      return;
+    }
+    if (!emulatorsLoaded) {
+      List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
+      List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !ignoredEmulators.contains(e.getId())).collect(Collectors.toList());
 
-  private void refreshEmulators() {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+      GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
+      allTables.setId(-1);
+      allTables.setName("All Tables");
+      filtered.add(0, allTables);
 
-    GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
-    allTables.setId(-1);
-    allTables.setName("All Tables");
-    filtered.add(0, allTables);
-
-    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-    this.emulatorCombo.getSelectionModel().select(0);
-
-    refreshAlxData();
+      // mind settings combo will also trigger refreshAlxData()
+      this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+      this.emulatorCombo.getSelectionModel().select(0);
+      emulatorsLoaded = true;
+    }
+    else {
+      // simply refresh data in that case
+      refreshAlxData();
+    }
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -108,6 +131,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    this.waitOverlay = new WaitOverlay(loaderStack, "Loading Statistics...");
+
     this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> refreshAlxData());
 
     client.getPreferenceService().addListener(this);
@@ -116,7 +141,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (tablesController.getTabPane().getSelectionModel().getSelectedIndex() == 3) {
+        if (tablesController.isTabSelected(TablesController.TAB_STATISTICS)) {
           debouncer.debounce("prefWidth", () -> {
             Platform.runLater(() -> {
               refreshAlxData();
@@ -128,21 +153,26 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   }
 
   public void refreshAlxData() {
-    try {
-      double v = AlxFactory.calculateColumnWidth();
-      col1.setPrefWidth(v);
-      col2.setPrefWidth(v);
-      col3.setPrefWidth(v);
+    waitOverlay.show();
 
+    // empty screen
+    tileList.getChildren().clear();
+    mostPlayedWidget.getChildren().clear();
+    timePlayedWidget.getChildren().clear();
+    scoresWidget.getChildren().clear();
+
+    reloadBtn.setDisable(true);
+    deleteBtn.setDisable(true);
+
+    JFXFuture.supplyAsync(() -> {
       AlxSummary alxSummary = client.getAlxService().getAlxSummary();
       List<TableAlxEntry> entries = alxSummary.getEntries();
 
       GameEmulatorRepresentation value = this.emulatorCombo.getValue();
       if (value == null) {
-        return;
+        entries.clear();
       }
-
-      if (value.getId() != -1) {
+      else if (value.getId() != -1) {
         List<TableAlxEntry> filtered = new ArrayList<>();
         List<Integer> collect = client.getGameService().getGameIdsCached(value.getId());
         for (TableAlxEntry entry : entries) {
@@ -150,14 +180,39 @@ public class AlxController implements Initializable, StudioFXController, StudioE
             filtered.add(entry);
           }
         }
-        entries = filtered;
+        alxSummary.setEntries(filtered);
       }
+      return alxSummary;
+    })
+    .thenAcceptLater(alxSummary -> {
+      refreshAlxData(alxSummary);
+      waitOverlay.hide();
+    })
+    .onErrorLater(e -> {
+      waitOverlay.hide();
+      LOG.error("Failed to load ALX dashboard: " + e.getMessage(), e);
+      WidgetFactory.showAlert(Studio.stage, "Error", "Cannot load Statistics to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
+      // only reload button is re-activated, to permit retry retrieving data 
+      reloadBtn.setDisable(false);
+      return null;
+    });
+  }
+  private void refreshAlxData(AlxSummary alxSummary) {
+    reloadBtn.setDisable(false);
+    deleteBtn.setDisable(false);
 
+    try {
+      double v = AlxFactory.calculateColumnWidth();
+      col1.setPrefWidth(v);
+      col2.setPrefWidth(v);
+      col3.setPrefWidth(v);
+
+      List<TableAlxEntry> entries = alxSummary.getEntries();
+    
       AlxFactory.createMostPlayed(mostPlayedWidget, entries);
       AlxFactory.createLongestPlayed(timePlayedWidget, entries);
       AlxFactory.createRecordedScores(scoresWidget, entries);
 
-      tileList.getChildren().removeAll(tileList.getChildren());
       AlxFactory.createTotalTimeTile(tileList, entries);
       AlxFactory.createTotalGamesPlayedTile(tileList, entries);
       AlxFactory.createTotalScoresTile(tileList, entries);
@@ -175,13 +230,19 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
-    refreshAlxData();
+    refreshEmulators(false);
   }
 
   @Override
   public void preferencesChanged(String key, Object value) {
+    // refresh emulators only when they have been loaded first time
     if (PreferenceNames.UI_SETTINGS.equals(key)) {
-      refreshEmulators();
+      UISettings uiSettings = (UISettings) value;
+      if (ignoredEmulators == null || !ListUtils.isEqualList(ignoredEmulators, uiSettings.getIgnoredEmulatorIds())) {
+        this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
+        this.emulatorsLoaded = false;
+        refreshEmulators(true);
+      }
     }
   }
 }
