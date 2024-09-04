@@ -218,7 +218,7 @@ public class FrontendStatusService implements InitializingBean {
         }
 
         if (autoFillSettings.isNumberOfPlayers()) {
-          if (vpsTable.getPlayers() > 0 && (tableDetails.getNumberPlays() == null || tableDetails.getNumberPlays() == 0 || overwrite)) {
+          if (vpsTable.getPlayers() == 0 || overwrite) {
             tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
           }
         }

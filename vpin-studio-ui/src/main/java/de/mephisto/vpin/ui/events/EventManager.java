@@ -102,6 +102,14 @@ public class EventManager {
     }).start();
   }
 
+  public void notifyAlxUpdate(@Nullable GameRepresentation game) {
+    new Thread(() -> {
+      for (StudioEventListener listener : listeners) {
+        listener.alxDataUpdated(game);
+      }
+    }).start();
+  }
+
   public void notifyPreferenceChanged(PreferenceType preferenceType) {
     new Thread(() -> {
       for (StudioEventListener listener : listeners) {

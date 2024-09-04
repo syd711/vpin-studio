@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -54,7 +55,6 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
-  private AlxController alxController;
   private GameRepresentation gameRepresentation;
 
   @FXML
@@ -78,7 +78,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
       Platform.runLater(() -> {
         AlxDeleteStatsProgressModel deletingTableStatistics = new AlxDeleteStatsProgressModel("Deleting Table Statistics", emulatorId, deleteTime, deletePlays, deleteScores);
         ProgressDialog.createProgressDialog(deletingTableStatistics);
-        alxController.refreshAlxData();
+        EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
       });
     }
   }
@@ -137,8 +137,7 @@ public class AlxDeleteStatsDialogController implements Initializable, DialogCont
   }
 
 
-  public void setData(@Nullable AlxController alxController, @Nullable GameRepresentation gameRepresentation) {
-    this.alxController = alxController;
+  public void setData(@Nullable GameRepresentation gameRepresentation) {
     this.gameRepresentation = gameRepresentation;
     this.emulatorWrapper.setVisible(gameRepresentation == null);
   }

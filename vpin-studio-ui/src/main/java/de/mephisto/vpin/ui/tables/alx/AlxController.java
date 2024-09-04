@@ -6,12 +6,14 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TablesController;
 import javafx.application.Platform;
@@ -24,6 +26,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,7 +84,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @FXML
   private void onDelete() {
-    AlxDialogs.openDeleteAlxDialog(this);
+    AlxDialogs.openDeleteAlxDialog();
     refreshAlxData();
   }
 
@@ -125,6 +128,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
         }
       }
     });
+
+    EventManager.getInstance().addListener(this);
   }
 
   public void refreshAlxData() {
@@ -176,6 +181,13 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
     refreshAlxData();
+  }
+
+  @Override
+  public void alxDataUpdated(@Nullable GameRepresentation game) {
+    Platform.runLater(() -> {
+      refreshAlxData();
+    });
   }
 
   @Override

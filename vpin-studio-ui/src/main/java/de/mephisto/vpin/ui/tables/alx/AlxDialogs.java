@@ -7,17 +7,17 @@ import de.mephisto.vpin.ui.util.Dialogs;
 import javafx.stage.Stage;
 
 public class AlxDialogs {
-  public static void openDeleteAlxDialog(AlxController alxController) {
+  public static void openDeleteAlxDialog() {
     Stage stage = Dialogs.createStudioDialogStage(AlxDeleteStatsDialogController.class, "dialog-alx-delete.fxml", "Delete Table Statistics");
     AlxDeleteStatsDialogController controller = (AlxDeleteStatsDialogController) stage.getUserData();
-    controller.setData(alxController, null);
+    controller.setData(null);
     stage.showAndWait();
   }
 
   public static void openDeleteAlxDialog(Stage parentStage, GameRepresentation gameRepresentation) {
     Stage stage = Dialogs.createStudioDialogStage(parentStage, AlxDeleteStatsDialogController.class, "dialog-alx-delete.fxml", "Delete Table Statistic");
     AlxDeleteStatsDialogController controller = (AlxDeleteStatsDialogController) stage.getUserData();
-    controller.setData(null, gameRepresentation);
+    controller.setData(gameRepresentation);
     stage.showAndWait();
   }
 

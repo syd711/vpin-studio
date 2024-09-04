@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.AlxTileEntry;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.tables.alx.AlxDialogs;
@@ -96,9 +97,12 @@ public class TableDataTabStatisticsController implements Initializable {
       timePlayedTile.refresh(stage, new AlxTileEntry("Total Time Played", "(The total emulation time of this table)", "-"));
     }
 
-    // Override statistics by TableDetails when numberPlays is set
-    if (tableDetails != null && tableDetails.getNumberPlays() != null) {
-      played = tableDetails.getNumberPlays();
+    if(client.getFrontendService().getFrontendType().equals(FrontendType.PinballX)) {
+      // Override statistics by TableDetails when numberPlays is set
+      // TODO why?
+      if (tableDetails != null && tableDetails.getNumberPlays() != null) {
+        played = tableDetails.getNumberPlays();
+      }
     }
 
     int scores = client.getGameService().getGameScores(game.getId()).getScores().size();

@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.alx.dialogs;
 
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -74,6 +75,7 @@ public class AlxDeleteGameStatsProgressModel extends ProgressModel<GameRepresent
         descriptor.setGameIds(Arrays.asList(game.getId()));
         client.getGameService().deleteGame(descriptor, game);
       }
+      EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
     }
     catch (Exception e) {
       LOG.error("ALX deletion failed: " + e.getMessage(), e);

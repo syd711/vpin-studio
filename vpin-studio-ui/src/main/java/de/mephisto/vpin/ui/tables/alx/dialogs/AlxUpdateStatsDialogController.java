@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -63,6 +64,8 @@ public class AlxUpdateStatsDialogController implements Initializable, DialogCont
       LOG.error("Failed to store stats: " + ex.getMessage(), ex);
     }
     stage.close();
+
+    EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
   }
 
   @FXML
