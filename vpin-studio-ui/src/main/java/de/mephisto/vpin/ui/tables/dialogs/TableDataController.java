@@ -343,7 +343,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
       // set the detected version
-      gameVersion.setText(vpsMatch.getVersion());
+      if (StringUtils.isEmpty(gameVersion.getText())) {
+        gameVersion.setText(vpsMatch.getVersion());
+      }
 
       setVpsTableIdValue(mappedTableId);
       game.setExtTableId(mappedTableId);
@@ -424,8 +426,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     designedBy.setText(td.getDesignedBy());
     tags.setText(td.getTags());
     notes.setText(td.getNotes());
-    // do not override the version
-    //gameVersion.setText(td.getGameVersion());
+    gameVersion.setText(td.getGameVersion());
     gNotes.setText(td.getgNotes());
     gDetails.setText(td.getgDetails());
     gLog.setText(td.getgLog());
