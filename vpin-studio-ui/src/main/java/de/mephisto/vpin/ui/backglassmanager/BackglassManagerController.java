@@ -13,33 +13,24 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDialogs;
-import de.mephisto.vpin.ui.tables.TablesController;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import javafx.beans.property.SimpleBooleanProperty;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -47,7 +38,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 import org.apache.commons.io.FilenameUtils;
@@ -76,7 +66,9 @@ import static de.mephisto.vpin.ui.Studio.stage;
 /**
  *
  */
-public class BackglassManagerController implements Initializable, StudioFXController {
+public class BackglassManagerController extends BaseTableController<DirectB2S, DirectB2SModel>
+  implements Initializable, StudioFXController {
+
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
   private final Debouncer debouncer = new Debouncer();
@@ -205,9 +197,6 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   private Button duplicateBtn;
 
   @FXML
-  private Button reloadBtn;
-
-  @FXML
   private Button reloadBackglassBtn;
 
   @FXML
@@ -223,76 +212,26 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   private Button openBtn;
 
   @FXML
-  private StackPane loaderStack;
-  @FXML
-  private StackPane tableStack;
+  TableColumn<DirectB2SModel, DirectB2SModel> statusColumn;
 
   @FXML
-  private TableView<DirectB2SEntryModel> directb2sList;
+  TableColumn<DirectB2SModel, DirectB2SModel> displayNameColumn;
 
   @FXML
-  TableColumn<DirectB2SEntryModel, DirectB2SEntryModel> statusColumn;
+  TableColumn<DirectB2SModel, DirectB2SModel> fullDmdColumn;
 
   @FXML
-  TableColumn<DirectB2SEntryModel, DirectB2SEntryModel> displayNameColumn;
+  TableColumn<DirectB2SModel, DirectB2SModel> grillColumn;
+
 
   @FXML
-  TableColumn<DirectB2SEntryModel, DirectB2SEntryModel> fullDmdColumn;
-
-  @FXML
-  TableColumn<DirectB2SEntryModel, DirectB2SEntryModel> grillColumn;
-
-  @FXML
-  TableColumn<DirectB2SEntryModel, DirectB2SEntryModel> scoreColumn;
-
-  @FXML
-  private ScrollPane main;
-
-  @FXML
-  private Label labelBackglassCount;
-
-  @FXML
-  private BorderPane tableWrapper;
-
-
-  //--------------- Filters
-
-  @FXML
-  private Button filterButton;
-
-  @FXML
-  private TextField searchField;
-
-  Property<Boolean> missingDMDImageFilter = new SimpleBooleanProperty(false);
-  Property<Boolean> notFullDMDRatioFilter = new SimpleBooleanProperty(false);
-  Property<Boolean> scoresAvailableFilter = new SimpleBooleanProperty(false);
-  Property<Boolean> missingTableFilter = new SimpleBooleanProperty(false);
-
-  Property<B2SVisibility> grillVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
-  Property<Boolean> b2sdmdVisibilityFilter = new SimpleBooleanProperty(false);
-  Property<Boolean> backglassVisibilityFilter = new SimpleBooleanProperty(false);
-  Property<B2SVisibility> dmdVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
-
-  /**
-   * dedicated controller for backglass filtering
-   */
-  private BackglassManagerFilterController backglassFilterController;
+  TableColumn<DirectB2SModel, DirectB2SModel> scoreColumn;
 
 //-------------
 
   private DirectB2SData tableData;
   private DirectB2STableSettings tableSettings;
   private boolean refreshing;
-
-  private WaitOverlay loadingOverlay;
-
-  private TablesSidebarController tablesSidebarController;
-
-  private List<DirectB2S> backglasses;
-  private ObservableList<DirectB2SEntryModel> models;
-  private FilteredList<DirectB2SEntryModel> data;
-
-  private BackglassManagerColumnSorter columnSorter;
 
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
@@ -314,10 +253,10 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   public void refreshBackglass() {
     try {
-      DirectB2SEntryModel selectedItem = getSelection();
-      if (selectedItem != null) {
-        selectedItem.reload();
-        refresh(selectedItem.getBacklass());
+      DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
+      if (selection != null) {
+        selection.reload();
+        refresh(selection.getBacklass());
       }
     }
     catch (Exception ex) {
@@ -378,14 +317,14 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   private void onTableDataManager(ActionEvent e) {
     if (game != null) {
       Platform.runLater(() -> {
-        TableDialogs.openTableDataDialog(tablesSidebarController.getTableOverviewController(), this.game);
+        TableDialogs.openTableDataDialog(tablesController.getTableOverviewController(), this.game);
       });
     }
   }
 
   @FXML
   private void onRename(ActionEvent e) {
-    DirectB2SEntryModel selectedItem = getSelection();
+    DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getFileName() + "\"", null, null, selectedItem.getName());
@@ -399,7 +338,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
           if (!newName.endsWith(".directb2s")) {
             newName = newName + ".directb2s";
           }
-          client.getBackglassServiceClient().renameBackglass(selectedItem.getBacklass(), newName);
+          client.getBackglassServiceClient().renameBackglass(selectedItem, newName);
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
@@ -411,13 +350,13 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   @FXML
   private void onDuplicate(ActionEvent e) {
-    DirectB2SEntryModel selectedItem = getSelection();
+    DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getFileName() + "\"?", null, "Duplicate");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getBackglassServiceClient().duplicateBackglass(selectedItem.getBacklass());
+          client.getBackglassServiceClient().duplicateBackglass(selectedItem);
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
@@ -430,16 +369,16 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   @FXML
   private void onDelete(ActionEvent e) {
     try {
-      DirectB2SEntryModel selectedItem = getSelection();
+      DirectB2S selectedItem = getSelection();
       if (selectedItem != null) {
         Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getFileName() + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          client.getBackglassServiceClient().deleteBackglass(selectedItem.getBacklass());
+          client.getBackglassServiceClient().deleteBackglass(selectedItem);
           if (game != null) {
             EventManager.getInstance().notifyTableChange(game.getId(), null);
           }
-          directb2sList.getSelectionModel().clearSelection();
+          clearSelection();
           onReload();
         }
       }
@@ -459,7 +398,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   @FXML
   private void onOpen() {
-    DirectB2SEntryModel selectedItem = getSelection();
+    DirectB2S selectedItem = getSelection();
     if (selectedItem != null) {
       File file = new File(selectedItem.getFileName());
       SystemUtil.openFile(file);
@@ -467,29 +406,20 @@ public class BackglassManagerController implements Initializable, StudioFXContro
   }
 
   public void doReload() {
-    loadingOverlay.setBusy("Loading Backglasses...", true);
+    startReload("Loading Backglasses...");
+
     JFXFuture.runAsync(() -> {
-      this.backglasses = client.getBackglassServiceClient().getBackglasses();
+      this.data = client.getBackglassServiceClient().getBackglasses();
     }).thenLater(() -> {
-      loadingOverlay.setBusy("", false);
       setItems();
+      endReload();
     });
-  }
-
-  @FXML
-  private void onFilter() {
-    backglassFilterController.toggle();
-  }
-
-  public void applyFilter() {
-    // mind that it can be called by threads before data is even initialized
-    if (this.data != null) {
-      this.data.setPredicate(backglassFilterController.buildPredicate());
-    }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
+
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
     if (gameEmulators.isEmpty()) {
       LOG.error("No backglass server game emulator found!");
@@ -497,8 +427,6 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     else {
       serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
     }
-
-    //root.setMaxSize(Double.MAX_VALUE, Double.MAX_VALUE);
 
     this.dataManagerBtn.setDisable(true);
     this.renameBtn.setDisable(true);
@@ -511,15 +439,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
     bindTable();
 
-    try {
-      FXMLLoader loader = new FXMLLoader(BackglassManagerFilterController.class.getResource("scene-directb2s-admin-filter.fxml"));
-      loader.load();
-      backglassFilterController = loader.getController();
-      backglassFilterController.setTableController(this, filterButton, searchField, tableStack, directb2sList);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load filters: " + e.getMessage(), e);
-    }
+    super.loadFilterPanel("scene-directb2s-admin-filter.fxml");
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -650,17 +570,12 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     });
 
     // Install the handler for backglass selection
-    this.directb2sList.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+    this.tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
       refresh(newValue != null ? newValue.getBacklass() : null);
     });
 
-    this.columnSorter = new BackglassManagerColumnSorter(this);
-
-    // add the loading overlay
-    loadingOverlay = new WaitOverlay(loaderStack, directb2sList, null);
-
     // add the overlay for drag and drop
-    new BackglassManagerDragDropHandler(this, directb2sList, tableStack);
+    new BackglassManagerDragDropHandler(this, tableView, tableStack);
   }
 
   @Override
@@ -668,14 +583,14 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
     // first time activation 
-    if (this.backglasses == null) {
+    if (this.data == null) {
       doReload();
 
-      if (this.directb2sList.getItems().isEmpty()) {
-        this.directb2sList.getSelectionModel().clearSelection();
+      if (this.tableView.getItems().isEmpty()) {
+        clearSelection();
       }
       else {
-        this.directb2sList.getSelectionModel().select(0);
+        this.tableView.getSelectionModel().select(0);
       }
       refresh(null);
     }
@@ -703,86 +618,58 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
     BaseLoadingColumn.configureLoadingColumn(fullDmdColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected String getLoading(DirectB2SEntryModel model) {
+      protected String getLoading(DirectB2SModel model) {
         return "loading...";
       }
 
       @Override
-      protected int isChecked(DirectB2SEntryModel model) {
-        return model.hasDmd ? (isFullDmd(model.dmdWidth, model.dmdHeight) ? 1 : 2) : 0;
+      protected int isChecked(DirectB2SModel model) {
+        return model.hasDmd() ? (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ? 1 : 2) : 0;
       }
 
       @Override
-      protected String getTooltip(DirectB2SEntryModel model) {
-        return (isFullDmd(model.dmdWidth, model.dmdHeight) ?
+      protected String getTooltip(DirectB2SModel model) {
+        return (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ?
             "Full DMD backglass" : "DMD backglass present, but not Full-DMD Aspect Ratio")
-            + ", resolution " + model.dmdWidth + "x" + model.dmdHeight;
+            + ", resolution " + model.getDmdWidth() + "x" + model.getDmdHeight();
       }
     });
 
     BaseLoadingColumn.configureLoadingColumn(grillColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected String getLoading(DirectB2SEntryModel model) {
+      protected String getLoading(DirectB2SModel model) {
         return "";
       }
 
       @Override
-      protected int isChecked(DirectB2SEntryModel model) {
-        return model.grillHeight > 0 ? 1 : 0;
+      protected int isChecked(DirectB2SModel model) {
+        return model.getGrillHeight() > 0 ? 1 : 0;
       }
 
       @Override
-      protected String getTooltip(DirectB2SEntryModel model) {
-        return "Grill Height set to " + model.grillHeight;
+      protected String getTooltip(DirectB2SModel model) {
+        return "Grill Height set to " + model.getGrillHeight();
       }
     });
 
     BaseLoadingColumn.configureLoadingColumn(scoreColumn, cell -> new LoadingCheckTableCell() {
       @Override
-      protected String getLoading(DirectB2SEntryModel model) {
+      protected String getLoading(DirectB2SModel model) {
         return "";
       }
 
       @Override
-      protected int isChecked(DirectB2SEntryModel model) {
-        return model.nbScores > 0 ? 1 : 0;
+      protected int isChecked(DirectB2SModel model) {
+        return model.getNbScores() > 0 ? 1 : 0;
       }
 
       @Override
-      protected String getTooltip(DirectB2SEntryModel model) {
-        return model.nbScores > 0 ? "Backglass contains " + model.nbScores + " scores" : "";
+      protected String getTooltip(DirectB2SModel model) {
+        return model.getNbScores() > 0 ? "Backglass contains " + model.getNbScores() + " scores" : "";
       }
     });
   }
 
-  private void setItems() {
-    this.models = FXCollections.observableArrayList();
-    for (DirectB2S b2s : backglasses) {
-      models.add(new DirectB2SEntryModel(b2s));
-    }
-
-    // Wrap games in a FilteredList
-    this.data = new FilteredList<>(models);
-    // When predicate change, update data count
-    this.data.predicateProperty().addListener((o, oldP, newP) -> {
-      labelBackglassCount.setText(data.size() + " backglasses");
-    });
-
-    // Wrap the FilteredList in a SortedList
-    SortedList<DirectB2SEntryModel> sortedData = new SortedList<>(this.data);
-    // Bind the SortedList comparator to the TableView comparator.
-    sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
-        () -> columnSorter.buildComparator(directb2sList),
-        directb2sList.comparatorProperty()));
-    // Set a dummy SortPolicy to tell the TableView data is successfully sorted
-    directb2sList.setSortPolicy(tableView -> true);
-
-    // Set the items in the TableView
-    directb2sList.setItems(sortedData);
-
-    // filter the list and refresh number of items
-    this.data.setPredicate(backglassFilterController.buildPredicate());
-  }
 
   static boolean isFullDmd(double imageWidth, double imageHeight) {
     double ratio = imageWidth / imageHeight;
@@ -804,14 +691,11 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     this.uploadBtn.setDisable(true);
     this.dataManagerBtn.setDisable(true);
 
-
     this.openBtn.setDisable(disable);
     this.renameBtn.setDisable(disable);
     this.duplicateBtn.setDisable(disable);
     this.deleteBtn.setDisable(disable);
     this.reloadBackglassBtn.setDisable(disable);
-
-    this.tableSettings = null;
 
     nameLabel.setText("-");
     typeLabel.setText("-");
@@ -873,6 +757,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
         loadImages(tableSettings);
 
       }).thenLater(() -> {
+
         if (game != null) {
           gameLabel.setText(game.getGameDisplayName());
           gameFilenameLabel.setText(game.getGameFileName());
@@ -1030,45 +915,37 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     });
   }
 
-  public void setTableSidebarController(TablesSidebarController tablesSidebarController) {
-    this.tablesSidebarController = tablesSidebarController;
-  }
-
   public void selectGame(@Nullable GameRepresentation game) {
     // try to select first backglass of the game, do the selection by name
     if (game != null) {
       String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
 
       // at calling time, the list may not have been populated so register a listener in that case
-      if (backglasses != null) {
+      if (data != null) {
         selectGame(gameBaseName);
       }
       else {
-        ChangeListener<ObservableList<DirectB2SEntryModel>> listener = new ChangeListener<ObservableList<DirectB2SEntryModel>>() {
+        ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<ObservableList<DirectB2SModel>>() {
           @Override
-          public void changed(ObservableValue<? extends ObservableList<DirectB2SEntryModel>> observable,
-                              ObservableList<DirectB2SEntryModel> oldValue, ObservableList<DirectB2SEntryModel> newValue) {
+          public void changed(ObservableValue<? extends ObservableList<DirectB2SModel>> observable,
+              ObservableList<DirectB2SModel> oldValue, ObservableList<DirectB2SModel> newValue) {
             selectGame(gameBaseName);
-            directb2sList.itemsProperty().removeListener(this);
+            tableView.itemsProperty().removeListener(this);
           }
         };
-        this.directb2sList.itemsProperty().addListener(listener);
+        this.tableView.itemsProperty().addListener(listener);
       }
     }
   }
 
   private void selectGame(String gameBaseName) {
-    for (DirectB2SEntryModel backglass : models) {
+    for (DirectB2SModel backglass : models) {
       if (StringUtils.startsWithIgnoreCase(backglass.getFileName(), gameBaseName)) {
-        directb2sList.scrollTo(backglass);
-        directb2sList.getSelectionModel().select(backglass);
+        tableView.scrollTo(backglass);
+        tableView.getSelectionModel().select(backglass);
         break;
       }
     }
-  }
-
-  private DirectB2SEntryModel getSelection() {
-    return directb2sList.getSelectionModel().getSelectedItem();
   }
 
   private void debounceAndSave(String debounceKey, Runnable r) {
@@ -1087,7 +964,7 @@ public class BackglassManagerController implements Initializable, StudioFXContro
     if (!this.refreshing && this.game != null) {
       try {
         client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
-        //DirectB2SEntryModel selectedItem = getSelection();
+        //DirectB2SModel selectedItem = getSelection();
         //if (selectedItem != null) {
         Platform.runLater(() -> {
           //JFXFuture future = this.refresh(selectedItem.getBacklass());
@@ -1106,5 +983,11 @@ public class BackglassManagerController implements Initializable, StudioFXContro
 
   public GameRepresentation getGame() {
     return game;
+  }
+
+  //------------------------------------------------
+
+  protected DirectB2SModel toModel(DirectB2S b2s) {
+    return new DirectB2SModel(b2s);
   }
 }

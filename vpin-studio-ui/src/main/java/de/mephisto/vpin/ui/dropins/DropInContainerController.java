@@ -1,16 +1,10 @@
 package de.mephisto.vpin.ui.dropins;
 
-import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
-import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableOverviewDragDropHandler;
-import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;

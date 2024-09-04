@@ -54,6 +54,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
+  public static final int TAB_TABLE = 0;
+  public static final int TAB_BACKGLASS = 1;
+  public static final int TAB_VPS = 2;
+  public static final int TAB_STATISTICS = 3;
+  public static final int TAB_REPOSITORY = 4;
+
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
   private VpsTablesController vpsTablesController;
@@ -187,7 +193,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       FXMLLoader loader = new FXMLLoader(BackglassManagerController.class.getResource("scene-directb2s-admin.fxml"));
       Parent directb2sRoot = loader.load();
       backglassManagerController = loader.getController();
-      backglassManagerController.setTableSidebarController(tablesSideBarController);
+      backglassManagerController.setRootController(this);
       backglassManagerTab.setContent(directb2sRoot);
 
       Image image = new Image(Studio.class.getResourceAsStream("b2s.png"));
@@ -303,7 +309,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   private void refreshTabSelection(Number t1) {
     Platform.runLater(() -> {
-      if (t1.intValue() == 0) {
+      if (t1.intValue() == TAB_TABLE) {
         tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -311,7 +317,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == 1) {
+      else if (t1.intValue() == TAB_BACKGLASS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -319,7 +325,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (t1.intValue() == 2) {
+      else if (t1.intValue() == TAB_VPS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
@@ -327,7 +333,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == 3) {
+      else if (t1.intValue() == TAB_STATISTICS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -390,14 +396,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
           EventManager.getInstance().notifyTableChange(event.getGameId(), rom);
         }
         else {
-          this.tableOverviewController.onReload();
+          this.tableOverviewController.doReload();
         }
       });
     }
     else if (jobType.equals(JobType.TABLE_IMPORT)) {
       Platform.runLater(() -> {
-        tableOverviewController.refreshFilterId();
-        tableOverviewController.onReload();
+        tableOverviewController.refreshFilters();
+        tableOverviewController.doReload();
       });
     }
     else if (jobType.equals(JobType.POV_INSTALL)
@@ -409,7 +415,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
           EventManager.getInstance().notifyTableChange(event.getGameId(), null);
         }
         else {
-          this.tableOverviewController.onReload();
+          this.tableOverviewController.doReload();
         }
       });
     }
@@ -449,17 +455,17 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return editorRootStack;
   }
 
+  public boolean isTabSelected(int tab) {
+    return tabPane.getSelectionModel().getSelectedIndex() == tab;
+  }
+
   @Override
   public void preferencesChanged(PreferenceType preferenceType) {
     if (preferenceType.equals(PreferenceType.serverSettings) || preferenceType.equals(PreferenceType.uiSettings) || preferenceType.equals(PreferenceType.validationSettings)) {
       Platform.runLater(() -> {
-        this.tableOverviewController.onReload();
+        this.tableOverviewController.doReload();
       });
     }
-  }
-
-  public TabPane getTabPane() {
-    return tabPane;
   }
 
   @Override

@@ -359,7 +359,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
   }
 
   private void refreshPlaylist(PlaylistRepresentation playlist, boolean updateAll) {
-    tablesSidebarController.getTableOverviewController().updatePlaylist();
+    tablesSidebarController.getTableOverviewController().updatePlaylist(playlist);
 
     if (updateAll) {
       List<PlaylistGame> games = playlist.getGames();
@@ -372,9 +372,11 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
       }
     }
-    else {
-      if (this.game.isPresent()) {
-        EventManager.getInstance().notifyTableChange(this.game.get().getId(), null);
+    // also update the game if it has not been updated previously
+    if (this.game.isPresent()) {
+      int gameId = this.game.get().getId();
+      if (!updateAll || !playlist.containsGame(gameId)) {
+        EventManager.getInstance().notifyTableChange(gameId, null);
       }
     }
   }

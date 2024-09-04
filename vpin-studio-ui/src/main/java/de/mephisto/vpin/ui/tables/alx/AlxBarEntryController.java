@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -41,6 +42,7 @@ public class AlxBarEntryController implements Initializable {
 
     titleLabel.setText(title);
     valueLabel.setText(entry.getValue());
+    valueLabel.setTooltip(new Tooltip(entry.getValue()));
 
     bar.setStyle("-fx-background-color: " + entry.getColor() + ";");
     CompletableFuture.supplyAsync(() -> client.getGameService().getGame(entry.getGameId()))

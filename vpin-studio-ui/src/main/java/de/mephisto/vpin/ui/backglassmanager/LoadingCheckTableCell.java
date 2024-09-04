@@ -4,20 +4,20 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingTableCell;
 import javafx.scene.control.Tooltip;
 
-abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<DirectB2SEntryModel> {
+abstract public class LoadingCheckTableCell  extends BaseLoadingTableCell<DirectB2SModel> {
 
   /**
    * should return true if the checked mark is visible. Model is never null
    */
-  protected abstract int isChecked(DirectB2SEntryModel model);
+  protected abstract int isChecked(DirectB2SModel model);
 
   /**
    * should return a contextualized tooltip for given model. Model is never null
    */
-  protected abstract String getTooltip(DirectB2SEntryModel model);
+  protected abstract String getTooltip(DirectB2SModel model);
 
   @Override
-  protected void renderItem(DirectB2SEntryModel model) {
+  protected void renderItem(DirectB2SModel model) {
     int check = isChecked(model);
     if (check == 1) {
       setText(null);

@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,9 +15,17 @@ public class DropInMonitoringThread {
   private final static Logger LOG = LoggerFactory.getLogger(DropInMonitoringThread.class);
   private final AtomicBoolean running = new AtomicBoolean(false);
 
+  private DropInManager dropInManager;
+
   private Thread monitorThread;
   private File dropinsFolder;
   private WatchService watchService;
+
+
+  public DropInMonitoringThread(DropInManager dropInManager) {
+    this.dropInManager = dropInManager;
+  }
+
 
   public void startMonitoring() {
     if (this.monitorThread == null && dropinsFolder != null) {
@@ -59,9 +66,10 @@ public class DropInMonitoringThread {
             for (WatchEvent<?> event : wk.pollEvents()) {
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                 final Path filedropped = (Path) event.context();
-                if (isNotTempFile(filedropped)) {
-                  File f = new File(dropinsFolder, filedropped.toString());
+                File f = new File(dropinsFolder, filedropped.toString());
+                if (dropInManager.isNotTempFile(f)) {
                   waitABit(f, 3000);
+                  // still exists ?
                   if (f.exists()) {
                     notifyUpdates(f);
                   }
@@ -87,12 +95,6 @@ public class DropInMonitoringThread {
       }
     }, "Drop-in folder monitor");
     monitorThread.start();
-  }
-
-  private boolean isNotTempFile(Path filedropped) {
-    String filename = filedropped.toString();
-    return !StringUtils.endsWithIgnoreCase(filename, "tmp")
-        && !StringUtils.endsWithIgnoreCase(filename, "crdownload");
   }
 
   /**
@@ -127,7 +129,7 @@ public class DropInMonitoringThread {
 
   private void notifyUpdates(@Nullable File file) {
     LOG.info("Noticed drop-in folder update.");
-    DropInManager.getInstance().notifyDropInUpdates(file);
+    dropInManager.notifyDropInUpdates(file);
   }
 
   public void setDropInFolder(@Nullable File dropinsFolder) {

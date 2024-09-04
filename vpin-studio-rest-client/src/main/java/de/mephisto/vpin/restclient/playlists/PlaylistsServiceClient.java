@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -22,7 +23,9 @@ public class PlaylistsServiceClient extends VPinStudioClientService {
   }
 
   public List<PlaylistRepresentation> getPlaylists() {
-    return Arrays.asList(getRestClient().get(API + "playlists", PlaylistRepresentation[].class));
+    PlaylistRepresentation[] playlists = getRestClient().get(API + "playlists", PlaylistRepresentation[].class);
+    ArrayList<PlaylistRepresentation> list = new ArrayList<>(Arrays.asList(playlists));
+    return list;    
   }
 
   public PlaylistRepresentation getPlaylist(int playlistId) {

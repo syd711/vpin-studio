@@ -11,17 +11,12 @@ import java.util.function.Predicate;
 
 public class TableOverviewPredicateFactory {
 
-  private String filterValue;
-
   private List<Integer> filteredIds;
 
   private PlaylistRepresentation playlist;
 
   GameEmulatorRepresentation emulator;
 
-  public void setFilterTerm(String filterTerm) {
-    this.filterValue = filterTerm;
-  }
 
   public void setFilterIds(List<Integer> filterIds) {
     this.filteredIds = filterIds;
@@ -38,7 +33,7 @@ public class TableOverviewPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<GameRepresentationModel> buildPredicate() {
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm) {
     return new Predicate<GameRepresentationModel>() {
       @Override
       public boolean test(GameRepresentationModel model) {
@@ -59,10 +54,10 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
-        if (StringUtils.isNotEmpty(filterValue)
-            && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), filterValue)
-            && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), filterValue)
-            && !StringUtils.containsIgnoreCase(game.getRom(), filterValue)) {
+        if (StringUtils.isNotEmpty(searchTerm)
+            && !StringUtils.containsIgnoreCase(game.getGameDisplayName(), searchTerm)
+            && !StringUtils.containsIgnoreCase(String.valueOf(game.getId()), searchTerm)
+            && !StringUtils.containsIgnoreCase(game.getRom(), searchTerm)) {
           return false;
         }
 
