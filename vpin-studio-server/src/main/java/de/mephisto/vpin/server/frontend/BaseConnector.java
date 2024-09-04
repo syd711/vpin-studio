@@ -213,9 +213,11 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public List<Game> getGamesByEmulator(int emuId) {
     List<String> filenames = gamesByEmu.get(emuId);
-    List<Game> games = new ArrayList<>(filenames.size());
-    for (String filename : filenames) {
-      games.add(getGameByFilename(emuId, filename));
+    List<Game> games = new ArrayList<>();
+    if (filenames != null) {
+      for (String filename : filenames) {
+        games.add(getGameByFilename(emuId, filename));
+      }
     }
     return games;
   }
