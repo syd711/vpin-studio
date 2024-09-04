@@ -336,6 +336,7 @@ public class Studio extends Application {
     }
     catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());
+      Features.MANIA_ENABLED = false;
     }
   }
 

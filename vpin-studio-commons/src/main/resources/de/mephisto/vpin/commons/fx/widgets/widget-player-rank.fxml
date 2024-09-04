@@ -28,7 +28,7 @@
         <columns>
           <TableColumn fx:id="columnRank" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Rank" />
             <TableColumn fx:id="columnPoints" prefWidth="61.60009574890137" style="-fx-alignment: BASELINE_CENTER;" text="Points" />
-          <TableColumn fx:id="columnName" prefWidth="300.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
+          <TableColumn fx:id="columnName" prefWidth="250.0" style="-fx-alignment: BASELINE_LEFT;" text="Name" />
             <TableColumn fx:id="columnFirst" minWidth="0.0" prefWidth="60.0" style="-fx-alignment: CENTER;">
                <graphic>
                   <ImageView fitHeight="40.0" fitWidth="40.0" pickOnBounds="true" preserveRatio="true">

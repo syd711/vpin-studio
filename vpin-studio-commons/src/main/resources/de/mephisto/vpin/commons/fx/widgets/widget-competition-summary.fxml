@@ -17,7 +17,7 @@
                     <children>
                         <ImageView fx:id="competitionWheelImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true">
                             <HBox.margin>
-                                <Insets left="12.0" right="12.0" />
+                                <Insets left="12.0" />
                             </HBox.margin>
                         </ImageView>
                         <VBox>
@@ -59,7 +59,7 @@
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name1" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name1" minWidth="160.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <BorderPane.margin>
                                                 <Insets left="12.0" />
                                             </BorderPane.margin>
@@ -85,7 +85,7 @@
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name2" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name2" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <BorderPane.margin>
                                                 <Insets left="12.0" />
                                             </BorderPane.margin>
@@ -111,7 +111,7 @@
                                         </Label>
                                     </right>
                                     <center>
-                                        <Label fx:id="name3" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                                        <Label fx:id="name3" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                             <font>
                                                 <Font size="20.0" />
                                             </font>
@@ -137,7 +137,7 @@
                               </Label>
                            </right>
                            <center>
-                              <Label fx:id="name4" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                              <Label fx:id="name4" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                  <BorderPane.margin>
                                     <Insets left="12.0" />
                                  </BorderPane.margin>
@@ -163,7 +163,7 @@
                               </Label>
                            </right>
                            <center>
-                              <Label fx:id="name5" minWidth="200.0" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
+                              <Label fx:id="name5" text="-" textFill="WHITE" BorderPane.alignment="CENTER_LEFT">
                                  <BorderPane.margin>
                                     <Insets left="12.0" />
                                  </BorderPane.margin>
@@ -175,7 +175,7 @@
                         </BorderPane>
                             </children>
                             <HBox.margin>
-                                <Insets bottom="6.0" top="6.0" />
+                                <Insets bottom="6.0" left="12.0" top="6.0" />
                             </HBox.margin>
                         </VBox>
                     </children>

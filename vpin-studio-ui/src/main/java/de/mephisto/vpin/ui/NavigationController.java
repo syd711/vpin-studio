@@ -177,6 +177,7 @@ public class NavigationController implements Initializable, StudioEventListener,
     NavigationView navigationView = navigationItemMap.get(item);
     if (activeNavigation != null) {
       activeNavigation.getNavigationButton().getStyleClass().remove("navigation-button-selected");
+      activeNavigation.getController().onViewDeactivated();
     }
 
     activeNavigation = navigationView;
@@ -201,6 +202,7 @@ public class NavigationController implements Initializable, StudioEventListener,
         activeNavigation.setController(controller);
         activeNavigation.setRoot(root);
         main.setCenter(root);
+        activeNavigation.getController().onViewActivated(options);
       }
       catch (IOException e) {
         LOG.info("Failed to load main view: " + e.getMessage(), e);

@@ -55,6 +55,9 @@ public class DropInContainerController implements Initializable {
   @FXML
   private HBox imageWrapper;
 
+  @FXML
+  private Separator installSeparator;
+
   private MenuButton dropInButton;
   private File file;
 
@@ -88,7 +91,8 @@ public class DropInContainerController implements Initializable {
     sizeLabel.setStyle("-fx-font-size: 13px");
 
     String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
-    if (Arrays.asList("png", "jpg").contains(suffix)) {
+    boolean imagePreview = Arrays.asList("png", "jpg").contains(suffix);
+    if (imagePreview) {
       try {
         imageView.setImage(new Image(new FileInputStream(file)));
       }
@@ -97,16 +101,23 @@ public class DropInContainerController implements Initializable {
       }
     }
     else {
-      dataPanel.setPrefWidth(356);
+      dataPanel.setPrefWidth(376);
       imageWrapper.setVisible(false);
     }
 
-    boolean disable = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix);
-    this.installBtn.setDisable(disable);
+    boolean hidden = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix);
+    this.installBtn.setVisible(!hidden);
+    this.installSeparator.setVisible(!hidden);
+
+    if(hidden) {
+      dataPanel.setPrefWidth(356);
+    }
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    installBtn.managedProperty().bindBidirectional(installBtn.visibleProperty());
+    installSeparator.managedProperty().bindBidirectional(installSeparator.visibleProperty());
     imageWrapper.managedProperty().bindBidirectional(imageWrapper.visibleProperty());
     dragHandler.setStyle("-fx-cursor: hand;");
     dataPanel.setStyle("-fx-cursor: hand;");

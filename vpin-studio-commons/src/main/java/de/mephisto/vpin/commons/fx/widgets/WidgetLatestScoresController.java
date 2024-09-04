@@ -12,6 +12,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
+import javafx.scene.control.Control;
 import javafx.scene.control.Label;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -55,14 +57,15 @@ public class WidgetLatestScoresController extends WidgetController implements In
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Latest Scores...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }
 
   public void refresh() {
     listRoot.setVisible(false);
-    if(!viewStack.getChildren().contains(loadingOverlay)) {
+    if (!viewStack.getChildren().contains(loadingOverlay)) {
       viewStack.getChildren().add(loadingOverlay);
     }
 
@@ -76,37 +79,41 @@ public class WidgetLatestScoresController extends WidgetController implements In
         limit = 8;
       }
 
-      ScoreSummaryRepresentation scoreSummary = ServerFX.client.getRecentScores(limit);
+      final List<Pane> scoresPanels = new ArrayList<>();
+      try {
+        ScoreSummaryRepresentation scoreSummary = ServerFX.client.getRecentScores(limit);
+
+        List<ScoreRepresentation> scores = scoreSummary.getScores();
+        if (scores.isEmpty()) {
+          Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
+          label.setPadding(new Insets(80, 0, 0, 100));
+          label.getStyleClass().add("preference-description");
+//          scoresPanels.add(label);
+        }
+        else {
+          for (ScoreRepresentation score : scores) {
+            GameRepresentation game = ServerFX.client.getGameCached(score.getGameId());
+            if (game == null) {
+              continue;
+            }
+            FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
+            Pane row = loader.load();
+            row.setPrefWidth(root.getPrefWidth() - 24);
+            WidgetLatestScoreItemController controller = loader.getController();
+            controller.setData(game, score);
+            scoresPanels.add(row);
+          }
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Failed to create widget: " + e.getMessage(), e);
+      }
+
       Platform.runLater(() -> {
         highscoreVBox.getChildren().removeAll(highscoreVBox.getChildren());
 
-        try {
-          List<ScoreRepresentation> scores = scoreSummary.getScores();
-          if (scores.isEmpty()) {
-            Label label = new Label("                            No highscore record yet.\nThe history of newly achieved highscores will be shown here.");
-            label.setPadding(new Insets(80, 0, 0, 100));
-            label.getStyleClass().add("preference-description");
-            highscoreVBox.getChildren().add(label);
-          }
-          else {
-            for (ScoreRepresentation score : scores) {
-              GameRepresentation game = ServerFX.client.getGameCached(score.getGameId());
-              if(game == null) {
-                continue;
-              }
-
-              FXMLLoader loader = new FXMLLoader(WidgetLatestScoreItemController.class.getResource("widget-latest-score-item.fxml"));
-              Pane row = loader.load();
-              row.setPrefWidth(root.getPrefWidth() - 24);
-              WidgetLatestScoreItemController controller = loader.getController();
-              controller.setData(game, score);
-
-              highscoreVBox.getChildren().add(row);
-            }
-          }
-
-        } catch (IOException e) {
-          LOG.error("Failed to create widget: " + e.getMessage(), e);
+        for (Pane scoresPanel : scoresPanels) {
+          highscoreVBox.getChildren().add(scoresPanel);
         }
 
         viewStack.getChildren().remove(loadingOverlay);

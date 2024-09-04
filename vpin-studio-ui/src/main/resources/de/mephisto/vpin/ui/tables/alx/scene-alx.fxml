@@ -9,8 +9,8 @@
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -37,7 +37,7 @@
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </Label>
-                        <ScrollPane hbarPolicy="NEVER">
+                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                            <content>
                               <VBox fx:id="mostPlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
@@ -58,7 +58,7 @@
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </Label>
-                        <ScrollPane hbarPolicy="NEVER">
+                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                            <content>
                               <VBox fx:id="timePlayedWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
@@ -76,7 +76,7 @@
                               <Insets bottom="12.0" />
                            </VBox.margin>
                         </Label>
-                        <ScrollPane hbarPolicy="NEVER">
+                        <ScrollPane hbarPolicy="NEVER" vbarPolicy="NEVER">
                            <content>
                               <VBox fx:id="scoresWidget" minWidth="430.0" prefWidth="430.0" spacing="1.0" />
                            </content>
@@ -99,6 +99,9 @@
          </content>
       </ScrollPane>
      </children>
+         <BorderPane.margin>
+            <Insets bottom="12.0" />
+         </BorderPane.margin>
     </StackPane>
    </center>
    <top>

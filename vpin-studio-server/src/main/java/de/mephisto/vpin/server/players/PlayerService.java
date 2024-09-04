@@ -71,7 +71,7 @@ public class PlayerService {
   }
 
   @Nullable
-  public Player getPlayerForInitials(long serverId, @Nullable String initials) {
+  public synchronized Player getPlayerForInitials(long serverId, @Nullable String initials) {
     if (StringUtils.isEmpty(initials)) {
       return null;
     }

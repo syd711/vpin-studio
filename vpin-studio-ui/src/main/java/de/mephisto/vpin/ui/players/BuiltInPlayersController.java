@@ -225,11 +225,20 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
     tournamentColumn.setCellValueFactory(cellData -> {
       PlayerRepresentation value = cellData.getValue();
-      if (!StringUtils.isEmpty(value.getTournamentUserUuid())) {
-        Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getTournamentUserUuid());
-        if (accountByUuid != null) {
+      if (!StringUtils.isEmpty(value.getTournamentUserUuid()) && Features.MANIA_ENABLED) {
+        try {
+          Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(value.getTournamentUserUuid());
+          if (accountByUuid != null) {
+            Label label = new Label();
+            label.setGraphic(WidgetFactory.createCheckIcon());
+            return new SimpleObjectProperty<>(label);
+          }
+        }
+        catch (Exception e) {
           Label label = new Label();
-          label.setGraphic(WidgetFactory.createCheckIcon());
+          label.setGraphic(WidgetFactory.createExclamationIcon());
+          label.setTooltip(new Tooltip(e.getMessage()));
+          Features.MANIA_ENABLED = false;
           return new SimpleObjectProperty<>(label);
         }
       }
