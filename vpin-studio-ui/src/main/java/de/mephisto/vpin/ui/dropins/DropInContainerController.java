@@ -31,6 +31,8 @@ import java.util.*;
 public class DropInContainerController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DropInContainerController.class);
 
+  private final static int IMAGE_WIDTH = 100;
+
   @FXML
   private BorderPane root;
 
@@ -93,24 +95,20 @@ public class DropInContainerController implements Initializable {
     String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
     boolean imagePreview = Arrays.asList("png", "jpg").contains(suffix);
     if (imagePreview) {
+      boolean hidden = true;//!AssetType.isInstallable(suffix);
+      this.installBtn.setVisible(!hidden);
+      this.installSeparator.setVisible(!hidden);
       try {
         imageView.setImage(new Image(new FileInputStream(file)));
       }
       catch (FileNotFoundException e) {
         LOG.error("Failed to set image: " + e, e);
       }
+      dataPanel.setPrefWidth(dataPanel.getPrefWidth() + 70);
     }
     else {
-      dataPanel.setPrefWidth(376);
+      dataPanel.setPrefWidth(dataPanel.getPrefWidth() + IMAGE_WIDTH);
       imageWrapper.setVisible(false);
-    }
-
-    boolean hidden = !AssetType.isInstallable(suffix);
-    this.installBtn.setVisible(!hidden);
-    this.installSeparator.setVisible(!hidden);
-
-    if (hidden) { //TODO wip
-      dataPanel.setPrefWidth(356);
     }
   }
 

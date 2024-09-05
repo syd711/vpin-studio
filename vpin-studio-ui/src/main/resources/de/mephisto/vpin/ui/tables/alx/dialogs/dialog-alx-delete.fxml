@@ -62,7 +62,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="recordScoresCheckbox" layoutX="10.0" layoutY="96.0" mnemonicParsing="false" text="Delete Record Highscores">
+                        <CheckBox fx:id="recordScoresCheckbox" layoutX="10.0" layoutY="96.0" mnemonicParsing="false" text="Delete Record Highscores" visible="false">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -82,7 +82,7 @@
                         <Font name="System Bold" size="14.0" />
                      </font>
                      <BorderPane.margin>
-                        <Insets top="24.0" />
+                        <Insets />
                      </BorderPane.margin>
                   </CheckBox>
                </bottom>

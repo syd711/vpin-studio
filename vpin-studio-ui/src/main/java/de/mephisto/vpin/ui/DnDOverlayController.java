@@ -50,6 +50,9 @@ public class DnDOverlayController implements Initializable {
   @FXML
   private BorderPane root;
 
+  @FXML
+  private VBox dropZone;
+
   protected Parent dndLoadingOverlay;
 
   private EventHandler<Event> showHandler;
@@ -77,6 +80,11 @@ public class DnDOverlayController implements Initializable {
   public void setViewParams(double width, double height) {
     root.setPrefWidth(width);
     root.setPrefHeight(height);
+
+    if(width < 300) {
+      dropZone.getStyleClass().clear();
+      dropZone.getStyleClass().add("dnd-dashed-border-small");
+    }
   }
 
   public void setGame(@Nullable GameRepresentation game) {

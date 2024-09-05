@@ -1280,6 +1280,12 @@
     -fx-border-style: segments(15, 15, 15, 15);
 }
 
+.dnd-dashed-border-small {
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-style: segments(7, 7,7, 7);
+}
+
 
 .selection-panel {
     -fx-background-color: #272b2f;

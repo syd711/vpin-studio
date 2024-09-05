@@ -36,7 +36,7 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     this.suffixes = Arrays.asList(suffix);
 
     this.overlayController = DnDOverlayController.load(loaderStack, node, singleSelectionOnly);
-    overlayController.setMessage("Drop Medias here.");
+    overlayController.setMessage("Drop Media here.");
     overlayController.setMessageFontsize(14);
   }
 
