@@ -466,7 +466,7 @@ public class UploaderAnalysis<T> {
     for (String name : fileNames) {
       String suffix = FilenameUtils.getExtension(name);
       if (altColorSuffixes.contains(suffix)) {
-        return AssetType.valueOf(suffix.toUpperCase());
+        return AssetType.fromExtension(suffix);
       }
     }
     return null;

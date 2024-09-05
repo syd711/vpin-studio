@@ -8,7 +8,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DnDOverlayController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" 
+      style="-fx-background-color: #111111;" styleClass="base-component" stylesheets="@stylesheet.css" 
+      xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.DnDOverlayController">
    <center>
       <VBox alignment="CENTER" styleClass="dnd-dashed-border" BorderPane.alignment="CENTER">
          <BorderPane.margin>
@@ -16,45 +18,34 @@
          </BorderPane.margin>
          <children>
             <BorderPane>
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
                <center>
-                  <HBox alignment="CENTER" BorderPane.alignment="CENTER">
+                  <HBox spacing="12.0" visible="false">
                      <children>
-                        <BorderPane>
-                           <center>
-                              <HBox spacing="12.0" visible="false">
-                                 <children>
-                                    <ImageView fx:id="tableWheelImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
-                                    <VBox>
-                                       <children>
-                                          <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Selected Table:" textFill="WHITE">
-                                             <font>
-                                                <Font size="18.0" />
-                                             </font>
-                                          </Label>
-                                          <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE">
-                                             <font>
-                                                <Font size="24.0" />
-                                             </font>
-                                          </Label>
-                                       </children>
-                                    </VBox>
-                                 </children>
-                              </HBox>
-                           </center>
-                           <top>
-                              <Label fx:id="messageLabel" text="Drop Tables and Assets here." textFill="WHITE" BorderPane.alignment="CENTER">
+                        <ImageView fx:id="tableWheelImage" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true" />
+                        <VBox>
+                           <children>
+                              <Label fx:id="tableTitleLabel" layoutX="10.0" layoutY="59.0" text="Selected Table:" textFill="WHITE">
                                  <font>
-                                    <Font size="48.0" />
+                                    <Font size="18.0" />
                                  </font>
                               </Label>
-                           </top>
-                        </BorderPane>
+                              <Label fx:id="tableLabel" layoutX="10.0" layoutY="45.0" text="-" textFill="WHITE">
+                                 <font>
+                                    <Font size="24.0" />
+                                 </font>
+                              </Label>
+                           </children>
+                        </VBox>
                      </children>
                   </HBox>
                </center>
+               <top>
+                  <Label fx:id="messageLabel" text="Drop Tables and Assets here." textFill="WHITE" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="48.0" />
+                     </font>
+                  </Label>
+               </top>
             </BorderPane>
          </children>
       </VBox>

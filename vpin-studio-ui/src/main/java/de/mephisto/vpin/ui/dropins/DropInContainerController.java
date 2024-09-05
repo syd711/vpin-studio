@@ -2,9 +2,9 @@ package de.mephisto.vpin.ui.dropins;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TableOverviewDragDropHandler;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -105,7 +105,7 @@ public class DropInContainerController implements Initializable {
       imageWrapper.setVisible(false);
     }
 
-    boolean hidden = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix);
+    boolean hidden = !AssetType.isInstallable(suffix);
     this.installBtn.setVisible(!hidden);
     this.installSeparator.setVisible(!hidden);
 
