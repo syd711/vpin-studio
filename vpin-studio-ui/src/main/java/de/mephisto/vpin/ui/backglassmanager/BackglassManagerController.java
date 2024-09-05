@@ -975,7 +975,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         //}
       }
       catch (Exception e) {
-        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage(), e);
+        LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage());
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to save B2STableSettings.xml: " + e.getMessage());
       }
     }
