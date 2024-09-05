@@ -69,12 +69,12 @@ public class AlxDeleteGameStatsProgressModel extends ProgressModel<GameRepresent
       if (deletePlays) {
         client.getAlxService().deleteNumberPlaysForGame(game.getId());
       }
-      if (deleteScores) {
-        DeleteDescriptor descriptor = new DeleteDescriptor();
-        descriptor.setDeleteHighscores(true);
-        descriptor.setGameIds(Arrays.asList(game.getId()));
-        client.getGameService().deleteGame(descriptor, game);
-      }
+//      if (deleteScores) {
+//        DeleteDescriptor descriptor = new DeleteDescriptor();
+//        descriptor.setDeleteHighscores(true);
+//        descriptor.setGameIds(Arrays.asList(game.getId()));
+//        client.getGameService().deleteGame(descriptor, game);
+//      }
       EventManager.getInstance().notifyAlxUpdate(gameRepresentation);
     }
     catch (Exception e) {
