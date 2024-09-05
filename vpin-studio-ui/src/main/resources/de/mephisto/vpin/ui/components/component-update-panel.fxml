@@ -136,9 +136,6 @@
                </graphic>
             </Button>
             <Button fx:id="installBtn" mnemonicParsing="false" onAction="#onInstall" styleClass="installer-button" text="Start Installation">
-               <tooltip>
-                  <Tooltip prefWidth="300.0" text="Updates can only be installed when VPin Studio is running on the cabinet PC." wrapText="true" />
-               </tooltip>
                <font>
                   <Font size="14.0" />
                </font>
