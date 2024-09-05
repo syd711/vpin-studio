@@ -1275,6 +1275,7 @@ public class PinUPConnector implements FrontendConnector {
         f.setActive(rs.getInt("Active") == 1);
         f.setDescription(rs.getString("Descript"));
         f.setCtrlKey(rs.getInt("CntrlCodes"));
+        f.setJoyCode(rs.getInt("JoyCodes"));
         f.setId(rs.getInt("uniqueID"));
       }
 
