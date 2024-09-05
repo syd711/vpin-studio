@@ -52,6 +52,9 @@ public class DropInContainerController implements Initializable {
   private Button installBtn;
 
   @FXML
+  private Button openBtn;
+
+  @FXML
   private ImageView imageView;
 
   @FXML
@@ -61,6 +64,7 @@ public class DropInContainerController implements Initializable {
   private Separator installSeparator;
 
   private MenuButton dropInButton;
+
   private File file;
 
   @FXML
@@ -114,6 +118,8 @@ public class DropInContainerController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    openBtn.setDisable(!SystemUtil.isWindows());//TODO
+
     installBtn.managedProperty().bindBidirectional(installBtn.visibleProperty());
     installSeparator.managedProperty().bindBidirectional(installSeparator.visibleProperty());
     imageWrapper.managedProperty().bindBidirectional(imageWrapper.visibleProperty());

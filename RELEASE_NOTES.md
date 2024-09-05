@@ -20,3 +20,4 @@
 - **Dashboard**: "Smoothend" the latest score loading.
 - **Studio Client Window**: Optimized a lot of sizing issue for smaller resolutions. Maybe we are not still there, but we've taken a hug step on the road.
 - **Notifications**: Added missing check for notification which validates that VPX is not running. Otherwise these pop-up windows might pause the game which is not intended.  
+- **Preferences / Highscore Cards Settings**: Fixed key binding error message that didn't check if a joystick mapping is available.  

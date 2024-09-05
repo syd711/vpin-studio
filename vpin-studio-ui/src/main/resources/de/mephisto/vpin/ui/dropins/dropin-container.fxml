@@ -73,7 +73,7 @@
                   <Tooltip text="Delete table and assets" />
                </tooltip>
             </Button>
-            <Button fx:id="tablesBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
+            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" styleClass="folder-component">
                <font>
                   <Font size="13.0" />
                </font>
