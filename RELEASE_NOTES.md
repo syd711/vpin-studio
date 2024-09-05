@@ -7,12 +7,16 @@
 - **Table Statistics**: Change to a more responsive design, so that the view supports smaller resolutions too.
 - **Table Data Manager Dialog**: Added reset options to the table statistics tab.
 - **Table Data Manager Dialog**: Added statistic options to the table statistics tab which allows to set specific values for the table statistics.
-- **Playlist for pinballX**: Added support of playlists and favorites for PinballX frontend
+- **Playlist for PinballX**: Added support of playlists and favorites for PinballX frontend
 - **Table Uploads**: The dialog remembers the last selected upload type now.
 - **Dashboard**: Removed competition widgets since the data can be shown in the competition section and caused layout issues for smaller screens.
+- **Table Overview / Table Media**: Added additional drag-hover indicator which looks like the one for the table overview. This way, user have a better visual feedback where file drops are allowed.
 
 ## Bugfixes
 
+- **Drop-In Folder**: Fixed refresh issues and filtered system files.
+- **Drop-In Folder**: The install button is not hidden for images to avoid confusion that this button might become enabled somehow.
 - **Table Uploads**: Fixed file drop handler for the table upload dialog which did not enable the "Upload" button.
 - **Dashboard**: "Smoothend" the latest score loading.
-- **Studio Client Window**: Optimized a lot of size issue for smaller resolutions. Maybe we are not still there, but we've take a hug step on the road.
+- **Studio Client Window**: Optimized a lot of sizing issue for smaller resolutions. Maybe we are not still there, but we've taken a hug step on the road.
+- **Notifications**: Added missing check for notification which validates that VPX is not running. Otherwise these pop-up windows might pause the game which is not intended.  
