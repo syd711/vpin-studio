@@ -32,9 +32,11 @@ public class NotificationStageService extends Application {
     launch(args);
   }
 
-  public void queueNotification(Notification notification) {
+  public void queueNotification(Notification notification, boolean poll) {
     queue.offer(notification);
-    pollNotifications();
+    if (poll) {
+      pollNotifications();
+    }
   }
 
   public void pollNotifications() {
@@ -106,9 +108,9 @@ public class NotificationStageService extends Application {
     notification4.setDurationSec(3);
     notification4.setDesktopMode(true);
 
-    queueNotification(notification1);
-    queueNotification(notification2);
-    queueNotification(notification3);
+    queueNotification(notification1, true);
+    queueNotification(notification2, true);
+    queueNotification(notification3, true);
 
 //    pollNotifications();
 //    showNotification(notification4);
