@@ -162,7 +162,7 @@ public class CardGenerationPreferencesController implements Initializable {
             msg = "The screen has not been activated in PinUP Popper.";
           }
 
-          if (fn.getCtrlKey() == 0) {
+          if (fn.getCtrlKey() <= 0 && fn.getJoyCode() <= 0) {
             msg = "The screen is not bound to any key in PinUP Popper.";
           }
         }
