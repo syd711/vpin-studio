@@ -11,7 +11,7 @@
 - **Table Uploads**: The dialog remembers the last selected upload type now.
 - **Dashboard**: Removed competition widgets since the data can be shown in the competition section and caused layout issues for smaller screens.
 - **Table Overview / Table Media**: Added additional drag-hover indicator which looks like the one for the table overview. This way, user have a better visual feedback where file drops are allowed.
-
+ 
 ## Bugfixes
 
 - **Drop-In Folder**: Fixed refresh issues and filtered system files.

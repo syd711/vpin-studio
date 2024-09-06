@@ -32,8 +32,8 @@ public enum AssetType {
   DEFAULT_BACKGROUND,
   CARD_BACKGROUND;
 
-  static AssetType[] INSTALLABLE_ASSET_TYPES = { 
-    ZIP, RAR, RES, INI, POV, DIRECTB2S, VNI, PAL, PAC, CRZ, CFG, NV
+  static final AssetType[] INSTALLABLE_ASSET_TYPES = {
+    ZIP, RAR, RES, INI, POV, DIRECTB2S, VNI, VPX, PAL, PAC, CRZ, CFG, NV
   };
 
   public static AssetType fromExtension(String extension) {
