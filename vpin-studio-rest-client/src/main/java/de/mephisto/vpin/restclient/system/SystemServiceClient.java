@@ -50,6 +50,11 @@ public class SystemServiceClient extends VPinStudioClientService {
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/restart", Boolean.class);
   }
 
+  public void mute(boolean mute) {
+    final RestTemplate restTemplate = new RestTemplate();
+    restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/mute/" + (mute ? "1" : "0"), Boolean.class);
+  }
+
   public void systemShutdown() {
     final RestTemplate restTemplate = new RestTemplate();
     restTemplate.getForObject(getRestClient().getBaseUrl() + API + "system/systemshutdown", Boolean.class);

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
@@ -54,6 +55,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuItem dofSyncEntry;
 
   @FXML
+  private MenuItem muteSystemEntry;
+
+  @FXML
   private MenuItem frontendMenuItem;
 
   @FXML
@@ -72,6 +76,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private ProgressIndicator jobProgress;
 
   public static String newVersion;
+  public boolean muted = false;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -110,6 +115,21 @@ public class ToolbarController implements Initializable, StudioEventListener {
       Platform.runLater(() -> {
         runUpdateCheck();
       });
+    }
+  }
+
+  @FXML
+  private void onMute() {
+    client.getSystemService().mute(!muted);
+    muted = !muted;
+
+    if (muted) {
+      muteSystemEntry.setText("Unmute System");
+      muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
+    }
+    else {
+      muteSystemEntry.setText("Mute System");
+      muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-mute"));
     }
   }
 
