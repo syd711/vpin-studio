@@ -73,6 +73,9 @@ public abstract class BaseConnector implements FrontendConnector {
       }
       LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
     }
+
+    loadStats();
+
     return loaded;
   }
 
@@ -121,6 +124,12 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract List<String> loadGames(Emulator emu);
 
   /**
+   * To be implemented by parent to complete load
+   */
+  protected abstract void loadStats();
+
+
+  /**
    * Get from the connector a game from DB
    */
   protected abstract TableDetails getGameFromDb(int emuId, String filename);
@@ -156,6 +165,11 @@ public abstract class BaseConnector implements FrontendConnector {
       games.addAll(gamesForEmu);
     }
     return games;
+  }
+
+  public String getGameFilename(int id) {
+    GameEntry e = mapFilenames.get(id);
+    return (e != null ? e.filename : null);
   }
 
   @Override
@@ -199,9 +213,11 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public List<Game> getGamesByEmulator(int emuId) {
     List<String> filenames = gamesByEmu.get(emuId);
-    List<Game> games = new ArrayList<>(filenames.size());
-    for (String filename : filenames) {
-      games.add(getGameByFilename(emuId, filename));
+    List<Game> games = new ArrayList<>();
+    if (filenames != null) {
+      for (String filename : filenames) {
+        games.add(getGameByFilename(emuId, filename));
+      }
     }
     return games;
   }
@@ -403,18 +419,6 @@ public abstract class BaseConnector implements FrontendConnector {
   public void deleteFromPlaylist(int playlistId, int gameId) {
   }
 
-  @Override
-  public Playlist getPlayListForGame(int gameId) {
-    return null;
-  }
-
-
-  @NonNull
-  @Override
-  public List<Integer> getGameIdsFromPlaylists() {
-    return new ArrayList<>();
-  }
-
   //-------------------------
 
   @Override
@@ -453,6 +457,16 @@ public abstract class BaseConnector implements FrontendConnector {
         result.add(e);
         */
     return result;
+  }
+
+  @Override
+  public boolean updateNumberOfPlaysForGame(int gameId, long value) {
+    return false;
+  }
+
+  @Override
+  public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
+    return false;
   }
 
   //-------------------------

@@ -1,12 +1,15 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.widgets.WidgetCompetitionController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetLatestScoresController;
 import de.mephisto.vpin.commons.fx.widgets.WidgetPlayerRankController;
-import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
+import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -22,8 +25,11 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DashboardController implements Initializable, StudioFXController {
+public class DashboardController implements Initializable, StudioFXController, ChangeListener<Number> {
   private final static Logger LOG = LoggerFactory.getLogger(DashboardController.class);
+
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
 
   @FXML
   private BorderPane widgetLatestScore;
@@ -38,6 +44,7 @@ public class DashboardController implements Initializable, StudioFXController {
   private WidgetCompetitionController discordCompetitionWidgetController;
   private WidgetLatestScoresController latestScoresController;
   private WidgetPlayerRankController playerRankController;
+  private BorderPane discordCompetitionsRoot;
 
   // Add a public no-args constructor
   public DashboardController() {
@@ -53,35 +60,38 @@ public class DashboardController implements Initializable, StudioFXController {
       latestScoresController = loader.getController();
       root.setMaxHeight(Double.MAX_VALUE);
       widgetLatestScore.setLeft(root);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load score widget: " + e.getMessage(), e);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
-      BorderPane activeCompetitionBorderPane = loader.load();
-      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
-      offlineCompetitionWidgetController = loader.getController();
-      widgetCompetition.getChildren().add(activeCompetitionBorderPane);
-      offlineCompetitionWidgetController.setCompetitionType(CompetitionType.OFFLINE);
-      offlineCompetitionWidgetController.setCompact();
-
-    } catch (IOException e) {
-      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
-    }
-
-    try {
-      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
-      BorderPane activeCompetitionBorderPane = loader.load();
-      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
-      discordCompetitionWidgetController = loader.getController();
-      widgetCompetition.getChildren().add(activeCompetitionBorderPane);
-      discordCompetitionWidgetController.setCompact();
-      discordCompetitionWidgetController.setCompetitionType(CompetitionType.DISCORD);
-
-    } catch (IOException e) {
-      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
-    }
+//    try {
+//      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
+//      BorderPane activeCompetitionBorderPane = loader.load();
+//      activeCompetitionBorderPane.setMaxWidth(Double.MAX_VALUE);
+//      offlineCompetitionWidgetController = loader.getController();
+//      widgetCompetition.getChildren().add(activeCompetitionBorderPane);
+//      offlineCompetitionWidgetController.setCompetitionType(CompetitionType.OFFLINE);
+//      offlineCompetitionWidgetController.setCompact();
+//
+//    }
+//    catch (IOException e) {
+//      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
+//    }
+//
+//    try {
+//      FXMLLoader loader = new FXMLLoader(WidgetCompetitionController.class.getResource("widget-competition.fxml"));
+//      discordCompetitionsRoot = loader.load();
+//      discordCompetitionsRoot.setMaxWidth(Double.MAX_VALUE);
+//      discordCompetitionWidgetController = loader.getController();
+//      widgetCompetition.getChildren().add(discordCompetitionsRoot);
+//      discordCompetitionWidgetController.setCompact();
+//      discordCompetitionWidgetController.setCompetitionType(CompetitionType.DISCORD);
+//    discordCompetitionsRoot.managedProperty().bindBidirectional(discordCompetitionsRoot.visibleProperty());
+//    }
+//    catch (IOException e) {
+//      LOG.error("Failed to load competitions widget: " + e.getMessage(), e);
+//    }
 
     try {
       FXMLLoader loader = new FXMLLoader(WidgetPlayerRankController.class.getResource("widget-player-rank.fxml"));
@@ -90,26 +100,46 @@ public class DashboardController implements Initializable, StudioFXController {
       playersBorderPane.setMaxWidth(Double.MAX_VALUE);
       playersBorderPane.setMaxHeight(Double.MAX_VALUE);
       widgetRight.setCenter(playersBorderPane);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load finished players widget: " + e.getMessage(), e);
     }
 
-    onViewActivated(null);
+  }
+
+  private void refreshView() {
+    Platform.runLater(() -> {
+//      discordCompetitionsRoot.setVisible(Studio.stage.getHeight() > 1000);
+      latestScoresController.refresh();
+      playerRankController.refresh();
+
+//      CompetitionRepresentation c = client.getActiveCompetition(CompetitionType.OFFLINE);
+//      offlineCompetitionWidgetController.refresh(c);
+//      if (discordCompetitionsRoot.isVisible()) {
+//        c = client.getActiveCompetition(CompetitionType.DISCORD);
+//        discordCompetitionWidgetController.refresh(c);
+//      }
+      NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
+    });
+  }
+
+  @Override
+  public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+//    debouncer.debounce("height", () -> {
+//      Platform.runLater(() -> {
+//        refreshView();
+//      });
+//    }, DEBOUNCE_MS);
   }
 
   @Override
   public void onViewActivated(@Nullable NavigationOptions options) {
-    Platform.runLater(() -> {
-      latestScoresController.refresh();
-      playerRankController.refresh();
+    Studio.stage.heightProperty().addListener(this);
+    refreshView();
+  }
 
-      CompetitionRepresentation c = client.getActiveCompetition(CompetitionType.OFFLINE);
-      offlineCompetitionWidgetController.refresh(c);
-
-      c = client.getActiveCompetition(CompetitionType.DISCORD);
-      discordCompetitionWidgetController.refresh(c);
-
-      NavigationController.setBreadCrumb(Arrays.asList("Dashboard"));
-    });
+  @Override
+  public void onViewDeactivated() {
+    Studio.stage.heightProperty().removeListener(this);
   }
 }

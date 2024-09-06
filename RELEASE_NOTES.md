@@ -1,39 +1,23 @@
-## Release Notes 3.4.1
-
-## Bugfixes
-
-- **Backglass Manager**: Fixed miscellaneous issues refreshing the backglass data and formular for the selected .directb2s file.
-- **Table Overview / PUP Packs**: Fixed open file action for additional PUP pack files.
-- **Table Overview / Table Uploads**: Improved detection of PUP pack folders inside archives.
-- **Preferences / VPX Validators**: Fixed typos.
-
-
-## Release Notes 3.4.0
+## Release Notes 3.5.0
 
 ## Changes
 
-- **Backglass Manager**: The backglass manager dialog has been moved into a separate tab of the "Tables" view.
-- **Table Uploads**: Added additional matcher check for uploads (import / import and replace). The matcher checks if there the given files matches the table that should be overwritten or if there is an existing table that may match with the given uploads and could be selected for replacement. Note that the check is a bit vague, I hope we found the correct degree of matching.
-- **Support of statistics for the PinballX frontend**: The statistics tab is now supported for the PinballX frontend.
-- **Filters in VPS Tables**: The VPS tab now supports filtering and full column sorting like other tabs.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vps-tab.png" width="700" />
-
-- **Added drop-in folder feature**:
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/drop-ins-menu.png" width="700" />
-
-
+- **Table Statistics**: Added reload button.
+- **Table Statistics**: Added click handler for single table statistics which opens the table data dialog with the statistics tab.
+- **Table Statistics**: Change to a more responsive design, so that the view supports smaller resolutions too.
+- **Table Data Manager Dialog**: Added reset options to the table statistics tab.
+- **Table Data Manager Dialog**: Added statistic options to the table statistics tab which allows to set specific values for the table statistics.
+- **Playlist for PinballX**: Added support of playlists and favorites for PinballX frontend
+- **Table Uploads**: The dialog remembers the last selected upload type now.
+- **Dashboard**: Removed competition widgets since the data can be shown in the competition section and caused layout issues for smaller screens.
+- **Table Overview / Table Media**: Added additional drag-hover indicator which looks like the one for the table overview. This way, user have a better visual feedback where file drops are allowed.
+ 
 ## Bugfixes
 
-- **Pinemhi Settings**: Removed num-pad keys from the list of selectable keys for the pinemhi settings.
-- **Backglass Editing**: Fixed **Start as Exe** setting that was set to **false** when any other option was changed than itself. The field remains empty now so that the server default will be used. You have to toggle previously touched .directb2s files to reset the flag to the default.
-- **VPin Server**: Fixed a database locked issue during the highscore reading.
-- **Table Uploads**: Fixed Cancel button and invalid archive when uploading ZIP file.
-- **Table Repository**: Fixed Cancel button not cancelling progress when uploading ZIP file.
-- **Highscore Cards**: Fixed "margins" for the non-raw score rendering, so that only the score values are positioned and the table title remains centered.
-- **Table Overview / Table Uploads**: The table overview does not perform a full reload after table uploads anymore.
-- **Table Overview / Table Deletions**: The table overview does not perform a full reload after table deletions anymore.
-- **Highscores Parsing**: Text based highscores are now resetted by their values and not simply deleted anymore.
-- **Highscores Parsing**: Added filtering for duplicated scores. There are tables like "Hurricane" or "Whirlwind" where the "GRAND CHAMPION" is also listed on the first place. Instead of fixing all affected tables one-by-one, a filter for duplicated scores has been added.
-- **Highscores**: Fixed highscore for "No good gofers" by adding "CLUB CHAMPION" to the default list of highscore titles.
+- **Drop-In Folder**: Fixed refresh issues and filtered system files.
+- **Drop-In Folder**: The install button is not hidden for images to avoid confusion that this button might become enabled somehow.
+- **Table Uploads**: Fixed file drop handler for the table upload dialog which did not enable the "Upload" button.
+- **Dashboard**: "Smoothend" the latest score loading.
+- **Studio Client Window**: Optimized a lot of sizing issue for smaller resolutions. Maybe we are not still there, but we've taken a hug step on the road.
+- **Notifications**: Added missing check for notification which validates that VPX is not running. Otherwise these pop-up windows might pause the game which is not intended.  
+- **Preferences / Highscore Cards Settings**: Fixed key binding error message that didn't check if a joystick mapping is available.  

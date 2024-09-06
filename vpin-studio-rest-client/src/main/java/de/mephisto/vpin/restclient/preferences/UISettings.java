@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.preferences;
 
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,6 +34,8 @@ public class UISettings extends JsonSettings {
 
   private String localFavsColor = "#ffcc00";
   private String globalFavsColor = "#cc6600";
+
+  private String defaultUploadMode = TableUploadType.uploadAndImport.name();
 
   //open after upload
   private boolean autoEditTableData = true;
@@ -77,6 +80,14 @@ public class UISettings extends JsonSettings {
   private boolean columnVpsStatus = true;
 
   private AutoFillSettings autoFillSettings = new AutoFillSettings();
+
+  public String getDefaultUploadMode() {
+    return defaultUploadMode;
+  }
+
+  public void setDefaultUploadMode(String defaultUploadMode) {
+    this.defaultUploadMode = defaultUploadMode;
+  }
 
   public String getLocalFavsColor() {
     return localFavsColor;

@@ -5,4 +5,8 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 public interface StudioFXController {
 
   void onViewActivated(@Nullable NavigationOptions options);
+
+  default void onViewDeactivated() {
+
+  }
 }

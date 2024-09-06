@@ -203,7 +203,7 @@ public class VpsAutomatcher  {
 
       //------------------------------------------------------
       // Step 4, add the parsed version
-      if (StringUtils.isNotEmpty(_version)) {
+      if (StringUtils.isNotEmpty(_version) && (StringUtils.isEmpty(vpsMatch.getVersion()) || overwrite)) {
         vpsMatch.setVersion(_version);
       }
 

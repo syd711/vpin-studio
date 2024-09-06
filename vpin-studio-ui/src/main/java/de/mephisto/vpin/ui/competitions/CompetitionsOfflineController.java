@@ -371,7 +371,6 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
     validationError.setVisible(false);
     bindSearchField();
-    onReload();
   }
 
   private void bindSearchField() {

@@ -4,29 +4,32 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.layout.VBox;
 
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableFilterController extends BaseFilterController implements Initializable {
+public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> 
+    implements Initializable {
 
   @FXML
   private CheckBox missingAssetsCheckBox;
@@ -83,9 +86,6 @@ public class TableFilterController extends BaseFilterController implements Initi
   private CheckBox withAliasCheckBox;
 
   @FXML
-  private VBox filterRoot;
-
-  @FXML
   private Node notPlayedSettings;
 
   @FXML
@@ -109,76 +109,77 @@ public class TableFilterController extends BaseFilterController implements Initi
   @FXML
   private ComboBox<NoteType> notesCombo;
 
-  private boolean updatesDisabled = false;
   private FilterSettings filterSettings;
-  private TableOverviewController tableOverviewController;
+
+  private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
 
 
-  @FXML
-  private void onReset() {
-    GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
+  public void refreshFilters() {
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+    if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
+      predicateFactory.setFilterIds(null);
+      // as we do not call filterGames(), manually call saveFilterSettings to persist the reset
+      client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
+
+      applyFilters();
+    }
+    else {
+      tableController.setBusy("Filtering Tables...", true);
+      new Thread(() -> {
+        List<Integer> filteredIds = client.getGameService().filterGames(filterSettings);
+        predicateFactory.setFilterIds(filteredIds);
+        Platform.runLater(() -> {
+          applyFilters();
+          tableController.setBusy("", false);
+        });
+      }).start();
+    }
+  }
+
+  @Override
+  protected boolean hasFilter() {
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+    return !filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator());
+  }
+
+  private GameEmulatorRepresentation getEmulatorSelection() {
+    return ((TableOverviewController) tableController).getEmulatorSelection();
+  }
+
+  @Override
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm) {
+    return predicateFactory.buildPredicate(searchTerm);
+  }
+
+  protected void resetFilters() {
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
     if (!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
       this.filterSettings = new FilterSettings();
-      saveFilterSettings();
-      resetFilters();
-      applyFilter();
+
+      statusCombo.setValue(null);
+      notesCombo.setValue(null);
+      missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
+      otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
+      vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
+      versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
+      notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
+      noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
+      noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
+      noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
+      noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
+      withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
+      withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
+      withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
+      withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
+      withIniCheckBox.setSelected(filterSettings.isWithIni());
+      withPovCheckBox.setSelected(filterSettings.isWithPov());
+      withResCheckBox.setSelected(filterSettings.isWithRes());
+      withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
+      withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     }
   }
 
-  private void saveFilterSettings() {
-    client.getPreferenceService().setJsonPreference(PreferenceNames.FILTER_SETTINGS, filterSettings);
-  }
-
-  public void setTableController(TableOverviewController tableOverviewController) {
-    this.tableOverviewController = tableOverviewController;
-    super.setupDrawer(filterRoot, tableOverviewController.getFilterButton(),
-        tableOverviewController.getTableStack(), tableOverviewController.getTableView());
-
-    applyFilter();
-  }
-
-  @FXML
-  public void toggle() {
-    super.toggleDrawer();
-  }
-
-  private void resetFilters() {
-    updatesDisabled = true;
-    statusCombo.setValue(null);
-    notesCombo.setValue(null);
-    missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
-    otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
-    vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
-    versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
-    notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
-    noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
-    noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
-    noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
-    noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
-    withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
-    withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
-    withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
-    withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
-    withIniCheckBox.setSelected(filterSettings.isWithIni());
-    withPovCheckBox.setSelected(filterSettings.isWithPov());
-    withResCheckBox.setSelected(filterSettings.isWithRes());
-    withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
-    withAliasCheckBox.setSelected(filterSettings.isWithAlias());
-    updatesDisabled = false;
-  }
-
-  public void applyFilter() {
-    GameEmulatorRepresentation emulatorSelection = tableOverviewController.getEmulatorSelection();
-    super.toggleFilterButton(!filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator()));
-
-    if (updatesDisabled) {
-      return;
-    }
-
-    Platform.runLater(() -> {
-      tableOverviewController.onRefresh(filterSettings);
-    });
-  }
+  
 
   public FilterSettings getFilterSettings() {
     return filterSettings;
@@ -206,92 +207,92 @@ public class TableFilterController extends BaseFilterController implements Initi
     missingAssetsCheckBox.setSelected(filterSettings.isMissingAssets());
     missingAssetsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setMissingAssets(newValue);
-      applyFilter();
+      refreshFilters();
     });
     otherIssuesCheckbox.setSelected(filterSettings.isOtherIssues());
     otherIssuesCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setOtherIssues(newValue);
-      applyFilter();
+      refreshFilters();
     });
     vpsUpdatesCheckBox.setSelected(filterSettings.isVpsUpdates());
     vpsUpdatesCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setVpsUpdates(newValue);
-      applyFilter();
+      refreshFilters();
     });
     versionUpdatesCheckBox.setSelected(filterSettings.isVersionUpdates());
     versionUpdatesCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setVersionUpdates(newValue);
-      applyFilter();
+      refreshFilters();
     });
     notPlayedCheckBox.setSelected(filterSettings.isNotPlayed());
     notPlayedCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNotPlayed(newValue);
-      applyFilter();
+      refreshFilters();
     });
     noHighscoreSettingsCheckBox.setSelected(filterSettings.isNoHighscoreSettings());
     noHighscoreSettingsCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNoHighscoreSettings(newValue);
-      applyFilter();
+      refreshFilters();
     });
     noHighscoreSupportCheckBox.setSelected(filterSettings.isNoHighscoreSupport());
     noHighscoreSupportCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNoHighscoreSupport(newValue);
-      applyFilter();
+      refreshFilters();
     });
     noVpsMappingTableCheckBox.setSelected(filterSettings.isNoVpsTableMapping());
     noVpsMappingTableCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNoVpsTableMapping(newValue);
-      applyFilter();
+      refreshFilters();
     });
     noVpsMappingVersionCheckBox.setSelected(filterSettings.isNoVpsVersionMapping());
     noVpsMappingVersionCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setNoVpsVersionMapping(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withBackglassCheckBox.setSelected(filterSettings.isWithBackglass());
     withBackglassCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithBackglass(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withPupPackCheckBox.setSelected(filterSettings.isWithPupPack());
     withPupPackCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithPupPack(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withAltSoundCheckBox.setSelected(filterSettings.isWithAltSound());
     withAltSoundCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithAltSound(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withAltColorCheckBox.setSelected(filterSettings.isWithAltColor());
     withAltColorCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithAltColor(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withPovCheckBox.setSelected(filterSettings.isWithPov());
     withPovCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithPov(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withResCheckBox.setSelected(filterSettings.isWithRes());
     withResCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithRes(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withIniCheckBox.setSelected(filterSettings.isWithIni());
     withIniCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithIni(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withNVOffsetCheckBox.setSelected(filterSettings.isWithNVOffset());
     withNVOffsetCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithNVOffset(newValue);
-      applyFilter();
+      refreshFilters();
     });
     withAliasCheckBox.setSelected(filterSettings.isWithAlias());
     withAliasCheckBox.selectedProperty().addListener((observable, oldValue, newValue) -> {
       filterSettings.setWithAlias(newValue);
-      applyFilter();
+      refreshFilters();
     });
 
     List<TableStatus> statuses = new ArrayList<>(TableDataController.TABLE_STATUSES);
@@ -307,7 +308,7 @@ public class TableFilterController extends BaseFilterController implements Initi
       else {
         filterSettings.setGameStatus(newValue.getValue());
       }
-      applyFilter();
+      refreshFilters();
     });
 
     List<NoteType> noteTypes = new ArrayList<>(Arrays.asList(NoteType.values()));
@@ -321,7 +322,7 @@ public class TableFilterController extends BaseFilterController implements Initi
       else {
         filterSettings.setNoteType(newValue);
       }
-      applyFilter();
+      refreshFilters();
     });
   }
 
@@ -334,4 +335,10 @@ public class TableFilterController extends BaseFilterController implements Initi
     vpsFilters.setVisible(vpxMode);
     configurationIssuesFilter.setVisible(vpxMode);
   }
+ 
+  public void setFilterPlaylist(PlaylistRepresentation playlist) {
+    predicateFactory.setFilterPlaylist(playlist);
+    tableController.applyFilter();
+  }
+
 }

@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -44,6 +43,11 @@ public class PlaylistMediaResource {
   private PlaylistService playlistService;
 
 
+  @GetMapping("/{playlistId}")
+  public FrontendMedia getPlaylistMedia(@PathVariable("playlistId") int playlistId) {
+    return playlistMediaService.getPlaylistMedia(playlistId);
+  }
+
   @DeleteMapping("/{playlistId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
     return playlistMediaService.deleteMedia(playlistId, screen, filename);
@@ -52,9 +56,8 @@ public class PlaylistMediaResource {
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> getMedia(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Playlist playlist = playlistService.getPlaylist(id);
-    if (playlist != null) {
-      FrontendMedia frontendMedia = playlist.getPlaylistMedia();
+    FrontendMedia frontendMedia = playlistMediaService.getPlaylistMedia(id);
+    if (frontendMedia != null) {
       FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
       if (!StringUtils.isEmpty(name)) {
         name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");

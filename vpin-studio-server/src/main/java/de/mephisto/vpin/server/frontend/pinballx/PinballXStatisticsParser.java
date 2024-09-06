@@ -2,13 +2,15 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.nio.charset.Charset;
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
 import org.jetbrains.annotations.NotNull;
@@ -36,50 +38,32 @@ public class PinballXStatisticsParser {
     return new File(pinballXFolder, "/Databases/Statistics.ini");
   }
 
-  public List<TableAlxEntry> getAlxData() {
-    List<TableAlxEntry> result = new ArrayList<>();
+  public void getAlxData(List<TableAlxEntry> stats, Set<Integer> favs) {
     INIConfiguration iniConfiguration = new INIConfiguration();
     try (FileReader fileReader = new FileReader(getPinballXStatisticsIni(), Charset.forName("UTF-8"))) {
       iniConfiguration.read(fileReader);
       for (Game game : connector.getGames()) {
-        getAlxData(iniConfiguration, result, game);
+        getAlxData(iniConfiguration, stats, favs, game);
       }
     }
     catch (Exception e) {
       LOG.error("cannot parse Statistics.ini", e);
     }
-    return result;
   }
 
-  public List<TableAlxEntry> getAlxData(int gameId) {
-    List<TableAlxEntry> result = new ArrayList<>();
-    INIConfiguration iniConfiguration = new INIConfiguration();
-    try (FileReader fileReader = new FileReader(getPinballXStatisticsIni(), Charset.forName("UTF-8"))) {
-      iniConfiguration.read(fileReader);
-      getAlxData(iniConfiguration, result, connector.getGame(gameId));
-    }
-    catch (Exception e) {
-      LOG.error("cannot parse Statistics.ini for game " + gameId, e);
-    }
-    return result;
-  }
-
-  private void getAlxData(INIConfiguration iniConfiguration, List<TableAlxEntry> result, Game game) throws ParseException {
+  private void getAlxData(INIConfiguration iniConfiguration, List<TableAlxEntry> stats, Set<Integer> favs, Game game) throws ParseException {
     if (game == null) {
       return;
     }
-    Emulator emu = connector.getEmulator(game.getEmulatorId());
-    String emuName = StringUtils.remove(emu.getName(), ' ');
-    String sectionName =  emuName + "_" + game.getGameDisplayName().trim();
-    sectionName = sectionName.replaceAll("[^A-Za-z0-9]", "_");
-    int p = -1;
-    while ((p = sectionName.indexOf("__")) >= 0) {
-      sectionName = sectionName.substring(0, p) + sectionName.substring(p + 1);
-    }
-    sectionName = StringUtils.removeEnd(sectionName, "_");
+    SubnodeConfiguration s = getGameSection(iniConfiguration, game);
 
-    SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
-    if (s.containsKey("lastplayed")) {
+    // collect favorites
+    if (s.containsKey("favorite") && BooleanUtils.toBoolean(s.getString("favorite"))) {
+      favs.add(game.getId());
+    }
+
+    // collect table stats
+    if (stats != null && s.containsKey("lastplayed")) {
       TableAlxEntry e = new TableAlxEntry();
       /*
         [VisualPinball_24_Stern_2009]
@@ -94,15 +78,53 @@ public class PinballXStatisticsParser {
       e.setDisplayName(game.getGameDisplayName());
       e.setGameId(game.getId());
       e.setUniqueId(game.getId());
-      
+
       e.setLastPlayed(statisticsSdf.parse(s.getString("lastplayed")));
+
       if (s.containsKey("secondsplayed")) {
         e.setTimePlayedSecs(Integer.parseInt(s.getString("secondsplayed")));
       }
       if (s.containsKey("timesplayed")) {
         e.setNumberOfPlays(Integer.parseInt(s.getString("timesplayed")));
       }
-      result.add(e);
+      stats.add(e);
     }
   }
+
+  protected SubnodeConfiguration getGameSection(INIConfiguration iniConfiguration, Game game) {
+    Emulator emu = connector.getEmulator(game.getEmulatorId());
+    String emuName = StringUtils.remove(emu.getName(), ' ');
+    String sectionName =  emuName + "_" + game.getGameDisplayName().trim();
+    sectionName = sectionName.replaceAll("[^A-Za-z0-9]", "_");
+    int p = -1;
+    while ((p = sectionName.indexOf("__")) >= 0) {
+      sectionName = sectionName.substring(0, p) + sectionName.substring(p + 1);
+    }
+    sectionName = StringUtils.removeEnd(sectionName, "_");
+
+    SubnodeConfiguration s = iniConfiguration.getSection(sectionName);
+    return s;
+  }
+
+  public void writeAlxData(Game game, boolean favorite) {
+    File statsIni = getPinballXStatisticsIni();
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    try (FileReader fileReader = new FileReader(statsIni, Charset.forName("UTF-8"))) {
+      iniConfiguration.read(fileReader);
+    }
+    catch (Exception e) {
+      LOG.error("cannot parse Statistics.ini", e);
+    }
+
+    SubnodeConfiguration conf = getGameSection(iniConfiguration, game);
+    conf.addProperty("favorite", favorite);
+
+    try (FileWriter fileWriter = new FileWriter(statsIni, Charset.forName("UTF-8"))) {
+      iniConfiguration.write(fileWriter);
+    }
+    catch (Exception e) {
+      LOG.error("cannot write Statistics.ini", e);
+    }
+  }
+
 }

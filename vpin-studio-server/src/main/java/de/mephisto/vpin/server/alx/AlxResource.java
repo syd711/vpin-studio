@@ -2,10 +2,9 @@ package de.mephisto.vpin.server.alx;
 
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -23,5 +22,41 @@ public class AlxResource {
   @GetMapping("/{gameId}")
   public AlxSummary getAlxSummary(@PathVariable("gameId") int gameId) {
     return analyticsService.getAlxSummary(gameId);
+  }
+
+  @DeleteMapping("/game/numberplays/{gameId}")
+  public boolean deleteNumberPlaysForGame(@PathVariable("gameId") int gameId) {
+    return analyticsService.deleteNumberPlaysForGame(gameId);
+  }
+
+  @DeleteMapping("/emulator/numberplays/{emulatorId}")
+  public boolean deleteNumberOfPlaysForEmulator(@PathVariable("emulatorId") int emulatorId) {
+    return analyticsService.deleteNumberOfPlaysForEmulator(emulatorId);
+  }
+
+  @DeleteMapping("/game/timeplayed/{gameId}")
+  public boolean deleteTimePlayedForGame(@PathVariable("gameId") int gameId) {
+    return analyticsService.deleteTimePlayedForGame(gameId);
+  }
+
+  @DeleteMapping("/emulator/timeplayed/{emulatorId}")
+  public boolean deleteTimePlayedForEmulator(@PathVariable("emulatorId") int emulatorId) {
+    return analyticsService.deleteTimePlayedForEmulator(emulatorId);
+  }
+
+  @PutMapping("/{gameId}")
+  public boolean updateAlx(@PathVariable("gameId") int gameId,
+                           @RequestBody Map<String, Object> values) {
+    String field = (String) values.get("dataField");
+    int value = (int) values.get("value");
+    if(field.equals("numberOfPlays")) {
+      return analyticsService.updateNumberOfPlaysForGame(gameId, value);
+    }
+    else if(field.equals("timePlayed")) {
+      long seconds = value * 60;
+      return analyticsService.updateSecondsPlayedForGame(gameId, seconds);
+    }
+
+    return false;
   }
 }

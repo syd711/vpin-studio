@@ -1,28 +1,26 @@
 package de.mephisto.vpin.ui.vps;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
-
-import javafx.application.Platform;
+import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 
-public class VpsTablesFilterController extends BaseFilterController implements Initializable {
-  @FXML
-  private VBox filterRoot;
+public class VpsTablesFilterController extends BaseFilterController<VpsTable, VpsTableModel> implements Initializable {
 
   @FXML
   private VBox tableFilters;
@@ -78,37 +76,13 @@ public class VpsTablesFilterController extends BaseFilterController implements I
 
   //------------------------------------------------------
 
-  private boolean updatesDisabled = false;
+  private VpsTablesPredicateFactory predicateFactory = new VpsTablesPredicateFactory();
   
-  private VpsFilterSettings filterSettings = new VpsFilterSettings();
-  
-  private VpsTablesController vpsTablesController;
-
   //------------------------------------------------------
 
-  
-  @FXML
-  private void onReset() {
-    resetFilters();
-    applyFilters();
-  }
-
-
-  public void setVpsTablesController(VpsTablesController vpsTablesController, Button filterButton, StackPane pane, TableView<?> tableView) {
-    this.vpsTablesController = vpsTablesController;
-    super.setupDrawer(filterRoot, filterButton, pane, tableView);
-    super.toggleFilterButton(!filterSettings.isResetted());
-  }
-
-  @FXML
-  public void toggle() {
-    super.toggleDrawer();
-  }
-
-  private void resetFilters() {
-    this.filterSettings = new VpsFilterSettings();
-
-    updatesDisabled = true;
+  @Override
+  protected void resetFilters() {
+    this.predicateFactory = new VpsTablesPredicateFactory();
 
     installedOnlyCheckbox.setSelected(false);
     notInstalledOnlyCheckbox.setSelected(false);
@@ -121,7 +95,7 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     if (featureCheckboxes != null) {
       for (Label badge : featureCheckboxes.values())  {
         String feature = badge.getText();
-        filterSettings.registerFeature(feature);
+        predicateFactory.registerFeature(feature);
         badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, false) + ";");
       }
     }
@@ -130,107 +104,101 @@ public class VpsTablesFilterController extends BaseFilterController implements I
     withPuppack.setSelected(false);
     withRom.setSelected(false);
     withTopper.setSelected(false);
+    withWheel.setSelected(false);
     withAltSound.setSelected(false);
     withAltColor.setSelected(false);
     withTutorial.setSelected(false);
-
-    updatesDisabled = false;
   }
 
-  protected void applyFilters() {
-    super.toggleFilterButton(!filterSettings.isResetted());
-    if (updatesDisabled) {
-      return;
-    }
-
-    Platform.runLater(() -> {
-      vpsTablesController.applyFilters();
-    });
+  protected boolean hasFilter() {
+    return !predicateFactory.isResetted();
   }
 
-  public VpsFilterSettings getFilterSettings() {
-    return filterSettings;
+  @Override
+  public Predicate<VpsTableModel> buildPredicate(String searchTerm) {
+    boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
+    return predicateFactory.buildPredicate(noVPX, searchTerm);
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     tableFilters.managedProperty().bindBidirectional(tableFilters.visibleProperty());
 
-    installedOnlyCheckbox.setSelected(filterSettings.isInstalledOnly());
+    installedOnlyCheckbox.setSelected(predicateFactory.isInstalledOnly());
     installedOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setInstalledOnly(newValue);
+      predicateFactory.setInstalledOnly(newValue);
       // cannot select two opposite checkboxes
       notInstalledOnlyCheckbox.setDisable(newValue);
       applyFilters();
     });
-    notInstalledOnlyCheckbox.setSelected(filterSettings.isNotInstalledOnly());
+    notInstalledOnlyCheckbox.setSelected(predicateFactory.isNotInstalledOnly());
     notInstalledOnlyCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setNotInstalledOnly(newValue);
+      predicateFactory.setNotInstalledOnly(newValue);
       // cannot select two opposite checkboxes
       installedOnlyCheckbox.setDisable(newValue);
       applyFilters();
     });
 
-    author.textProperty().setValue(filterSettings.getAuthor());
+    author.textProperty().setValue(predicateFactory.getAuthor());
     author.textProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setAuthor(newValue);
+      predicateFactory.setAuthor(newValue);
       applyFilters();
     });
-    withAuthorInOtherAssetsToo.setSelected(filterSettings.isSearchAuthorInOtherAssetsToo());
+    withAuthorInOtherAssetsToo.setSelected(predicateFactory.isSearchAuthorInOtherAssetsToo());
     withAuthorInOtherAssetsToo.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setSearchAuthorInOtherAssetsToo(newValue);
+      predicateFactory.setSearchAuthorInOtherAssetsToo(newValue);
       applyFilters();
     });
 
-    manufacturer.textProperty().setValue(filterSettings.getManufacturer());
+    manufacturer.textProperty().setValue(predicateFactory.getManufacturer());
     manufacturer.textProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setManufacturer(newValue);
+      predicateFactory.setManufacturer(newValue);
       applyFilters();
     });
-    theme.textProperty().setValue(filterSettings.getTheme());
+    theme.textProperty().setValue(predicateFactory.getTheme());
     theme.textProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setTheme(newValue);
+      predicateFactory.setTheme(newValue);
       applyFilters();
     });
 
-    withDirectB2s.setSelected(filterSettings.isWithBackglass());
+    withDirectB2s.setSelected(predicateFactory.isWithBackglass());
     withDirectB2s.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithBackglass(newValue);
+      predicateFactory.setWithBackglass(newValue);
       applyFilters();
     });
-    withPuppack.setSelected(filterSettings.isWithPupPack());
+    withPuppack.setSelected(predicateFactory.isWithPupPack());
     withPuppack.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithPupPack(newValue);
+      predicateFactory.setWithPupPack(newValue);
       applyFilters();
     });
-    withRom.setSelected(filterSettings.isWithRom());
+    withRom.setSelected(predicateFactory.isWithRom());
     withRom.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithRom(newValue);
+      predicateFactory.setWithRom(newValue);
       applyFilters();
     });
-    withTopper.setSelected(filterSettings.isWithTopper());
+    withTopper.setSelected(predicateFactory.isWithTopper());
     withTopper.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithTopper(newValue);
+      predicateFactory.setWithTopper(newValue);
       applyFilters();
     });
-    withWheel.setSelected(filterSettings.isWithWheel());
-    withTopper.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithWheel(newValue);
+    withWheel.setSelected(predicateFactory.isWithWheel());
+    withWheel.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      predicateFactory.setWithWheel(newValue);
       applyFilters();
     });
-    withAltSound.setSelected(filterSettings.isWithAltSound());
+    withAltSound.setSelected(predicateFactory.isWithAltSound());
     withAltSound.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithAltSound(newValue);
+      predicateFactory.setWithAltSound(newValue);
       applyFilters();
     });
-    withAltColor.setSelected(filterSettings.isWithAltColor());
+    withAltColor.setSelected(predicateFactory.isWithAltColor());
     withAltColor.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithAltColor(newValue);
+      predicateFactory.setWithAltColor(newValue);
       applyFilters();
     });
-    withTutorial.setSelected(filterSettings.isWithTutorial());
+    withTutorial.setSelected(predicateFactory.isWithTutorial());
     withTutorial.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      filterSettings.setWithTutorial(newValue);
+      predicateFactory.setWithTutorial(newValue);
       applyFilters();
     });
 
@@ -243,29 +211,17 @@ public class VpsTablesFilterController extends BaseFilterController implements I
       badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
       badge.getStyleClass().add("vps-badge-button");
 
-      badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, filterSettings.isSelectedFeature(feature)) + ";");
+      badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, predicateFactory.isSelectedFeature(feature)) + ";");
 
       badge.setOnMouseClicked(e -> {
-        boolean selected = filterSettings.toggleFeature(feature);
+        boolean selected = predicateFactory.toggleFeature(feature);
         badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, selected) + ";");
         applyFilters();
       });
-      filterSettings.registerFeature(feature);
+      predicateFactory.registerFeature(feature);
       featureCheckboxes.put(feature, badge);
       featuresPanel.getChildren().add(badge);
     }
 
   }
-
-  public void bindSearchField(TextField searchTextField) {
-    searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
-      vpsTablesController.clearSelection();
-
-      // reset the Predicate to trigger the table refiltering
-      filterSettings.setFilterTerm(filterValue);
-      applyFilters();
-    });
-  }
-
-
 }

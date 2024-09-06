@@ -173,6 +173,10 @@ public class ComponentUpdateController implements Initializable, StudioEventList
     releasesCombo.setItems(FXCollections.observableList(component.getReleases()));
     releasesCombo.setDisable(component.getReleases().isEmpty());
 
+    if(localInstallOnly && !client.getSystemService().isLocal()) {
+      installBtn.setText("Start Installation (on cabinet only)");
+    }
+
     checkBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     simBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null);
     installBtn.setDisable(component.getReleases().isEmpty() || artifactCombo.getValue() == null || (localInstallOnly && !client.getSystemService().isLocal()));

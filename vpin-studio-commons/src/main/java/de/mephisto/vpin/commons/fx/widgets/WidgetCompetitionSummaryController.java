@@ -108,6 +108,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    competitionWheelImage.managedProperty().bindBidirectional(competitionWheelImage.visibleProperty());
     competitionStack.setStyle(" -fx-border-radius: 6 6 6 6;\n" +
         "    -fx-border-style: solid solid solid solid;\n" +
         "    -fx-border-color: #111111;\n" +

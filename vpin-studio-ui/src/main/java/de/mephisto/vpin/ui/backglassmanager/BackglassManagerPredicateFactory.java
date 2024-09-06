@@ -2,6 +2,9 @@ package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,19 +14,20 @@ import java.util.function.Predicate;
 
 public class BackglassManagerPredicateFactory {
 
-  private String filterValue;
-
-  private final BackglassManagerController controller;
-
   private final List<Integer> emulatorIds = new ArrayList<>();
 
-  public BackglassManagerPredicateFactory(BackglassManagerController controller) {
-    this.controller = controller;
-  }
+    //--------------- Filters
 
-  public void setFilterTerm(String filterTerm) {
-    this.filterValue = filterTerm;
-  }
+  Property<Boolean> missingDMDImageFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> notFullDMDRatioFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> scoresAvailableFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> missingTableFilter = new SimpleBooleanProperty(false);
+
+  Property<B2SVisibility> grillVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
+  Property<Boolean> b2sdmdVisibilityFilter = new SimpleBooleanProperty(false);
+  Property<Boolean> backglassVisibilityFilter = new SimpleBooleanProperty(false);
+  Property<B2SVisibility> dmdVisibilityFilter = new SimpleObjectProperty<B2SVisibility>();
+
 
   public void selectEmulator(Integer id) {
     emulatorIds.add(id);
@@ -35,41 +39,41 @@ public class BackglassManagerPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<DirectB2SEntryModel> buildPredicate() {
-    return new Predicate<DirectB2SEntryModel>() {
+  public Predicate<DirectB2SModel> buildPredicate(String searchTerm) {
+    return new Predicate<DirectB2SModel>() {
       @Override
-      public boolean test(DirectB2SEntryModel model) {
+      public boolean test(DirectB2SModel model) {
         DirectB2S backglass = model.getBacklass();
 
         if (emulatorIds!=null && !emulatorIds.isEmpty() && !emulatorIds.contains(backglass.getEmulatorId())) {
           return false;
         }
-        if (StringUtils.isNotEmpty(filterValue) && !StringUtils.containsIgnoreCase(backglass.getName(), filterValue)) {
+        if (StringUtils.isNotEmpty(searchTerm) && !StringUtils.containsIgnoreCase(backglass.getName(), searchTerm)) {
           return false;
         }
 
-        if (controller.missingDMDImageFilter.getValue() && model.hasDmd()) {
+        if (missingDMDImageFilter.getValue() && model.hasDmd()) {
           return false;
         }
-        if (controller.notFullDMDRatioFilter.getValue() && (!model.hasDmd() || model.isFullDmd())) {
+        if (notFullDMDRatioFilter.getValue() && (!model.hasDmd() || model.isFullDmd())) {
           return false;
         }
-        if (controller.scoresAvailableFilter.getValue() && model.getNbScores() <= 0) {
+        if (scoresAvailableFilter.getValue() && model.getNbScores() <= 0) {
           return false;
         }
-        if (controller.missingTableFilter.getValue() && model.isVpxAvailable()) {
+        if (missingTableFilter.getValue() && model.isVpxAvailable()) {
           return false;
         }
-        if (equalsVisibility(controller.grillVisibilityFilter.getValue(), model.getHideGrill())) {
+        if (equalsVisibility(grillVisibilityFilter.getValue(), model.getHideGrill())) {
           return false;
         }
-        if (controller.backglassVisibilityFilter.getValue() && !model.isHideBackglass()) {
+        if (backglassVisibilityFilter.getValue() && !model.isHideBackglass()) {
           return false;
         }
-        if (controller.b2sdmdVisibilityFilter.getValue() && !model.isHideB2SDMD()) {
+        if (b2sdmdVisibilityFilter.getValue() && !model.isHideB2SDMD()) {
           return false;
         }
-        if (equalsVisibility(controller.dmdVisibilityFilter.getValue(), model.getHideDMD())) {
+        if (equalsVisibility(dmdVisibilityFilter.getValue(), model.getHideDMD())) {
           return false;
         }
 

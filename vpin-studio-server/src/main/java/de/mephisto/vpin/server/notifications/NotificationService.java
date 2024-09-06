@@ -55,7 +55,9 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
       if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
-        NotificationStageService.getInstance().queueNotification(notification);
+
+        boolean vpxRunning = systemService.isVPXRunning();
+        NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
       }
     }
     else {

@@ -7,13 +7,10 @@ import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ZipProgressModel;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.TableView;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -31,12 +28,8 @@ public abstract class BaseDragDropHandler {
   private final static Logger LOG = LoggerFactory.getLogger(BaseDragDropHandler.class);
 
   private final TableView<?> tableView;
-  private final StackPane loaderStack;
 
   protected DnDOverlayController overlayController;
-
-  protected Parent dndLoadingOverlay;
-
 
   /**
    * @param tableView The Table that is the drop zone
@@ -45,16 +38,9 @@ public abstract class BaseDragDropHandler {
    */
   public BaseDragDropHandler(TableView<?> tableView, StackPane loaderStack, boolean isInDialog) {
     this.tableView = tableView;
-    this.loaderStack = loaderStack;
 
-    try {
-      FXMLLoader loader = new FXMLLoader(DnDOverlayController.class.getResource("overlay-dnd.fxml"));
-      dndLoadingOverlay = loader.load();
-      overlayController = loader.getController();
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load loading overlay: " + e.getMessage());
-    }
+    // only one file supported
+    overlayController = DnDOverlayController.load(loaderStack, tableView, true);
 
     tableView.setOnDragOver(new EventHandler<DragEvent>() {
       @Override
@@ -89,42 +75,12 @@ public abstract class BaseDragDropHandler {
           event.consume();
         }
 
-        if (!loaderStack.getChildren().contains(dndLoadingOverlay)) {
-          tableView.setVisible(false);
-          dndLoadingOverlay.setTranslateX(tableView.getTranslateX());
-          dndLoadingOverlay.setTranslateY(tableView.getTranslateY());
-
-          double width = ((Pane) tableView.getParent()).getWidth();
-          double height = tableView.getHeight();
-          overlayController.setViewParams(width, height);
-          // OLE commented as Game area in overlay is invisible
-          overlayController.setGame(null); //getSelectedGame()
-          loaderStack.getChildren().add(dndLoadingOverlay);
-        }
+        overlayController.showOverlay();
       }
     });
 
-    dndLoadingOverlay.setOnDragOver(new EventHandler<DragEvent>() {
-      @Override
-      public void handle(DragEvent event) {
-        if (event.getDragboard().hasFiles() && event.getDragboard().getFiles().size() == 1) {
-          event.acceptTransferModes(TransferMode.COPY);
-        }
-        else {
-          event.consume();
-        }
-      }
-    });
 
-    dndLoadingOverlay.setOnDragExited(new EventHandler<DragEvent>() {
-      @Override
-      public void handle(DragEvent event) {
-        tableView.setVisible(true);
-        loaderStack.getChildren().remove(dndLoadingOverlay);
-      }
-    });
-
-    dndLoadingOverlay.setOnDragDropped(new EventHandler<DragEvent>() {
+    overlayController.setOnDragDropped(new EventHandler<DragEvent>() {
       @Override
       public void handle(DragEvent event) {
         event.consume();
@@ -226,8 +182,7 @@ public abstract class BaseDragDropHandler {
 
   private void dispatchDroppedFile(File file) {
     Platform.runLater(() -> {
-      tableView.setVisible(true);
-      loaderStack.getChildren().remove(dndLoadingOverlay);
+      overlayController.hideOverlay();
       processDroppedFile(file);
     });
   }

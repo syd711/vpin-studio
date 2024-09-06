@@ -100,8 +100,8 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
-
-        FrontendMediaRepresentation medias = client.getPlaylistsService().getPlaylist(playlist.getId()).getPlaylistMedia();
+      
+        FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMedia(playlist.getId());
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
           Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace Media?",
@@ -485,7 +485,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, TableUploadType descriptor, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -494,7 +494,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, descriptor, analysis);
+    controller.setGame(stage, game, tableUploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -573,11 +573,11 @@ public class TableDialogs {
     return false;
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game) {
+  public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game) {
     openTableDataDialog(overviewController, game, TableDataController.lastTab);
   }
 
-  public static void openTableDataDialog(TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public static void openTableDataDialog(@Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
     try {
       Stage stage = Dialogs.createStudioDialogStage(TableDataController.class, "dialog-table-data.fxml", "Table Data Manager", "tableDataManager");
       TableDataController controller = (TableDataController) stage.getUserData();

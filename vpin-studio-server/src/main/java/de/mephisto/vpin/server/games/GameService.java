@@ -1,11 +1,9 @@
 package de.mephisto.vpin.server.games;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -16,7 +14,6 @@ import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
-import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
@@ -56,7 +53,8 @@ import java.util.stream.Collectors;
 @Service
 public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
-  private static final double MATCHING_THRESHOLD = 0.3;
+  
+  private static final double MATCHING_THRESHOLD = 0.5;
 
   @Autowired
   private FrontendService frontendService;
@@ -514,13 +512,6 @@ public class GameService implements InitializingBean {
     return null;
   }
 
-  @SuppressWarnings("unused")
-  public List<Game> getActiveGameInfos() {
-    List<Integer> gameIdsFromPlaylists = this.frontendService.getGameIdsFromPlaylists();
-    List<Game> games = frontendService.getGames();
-    return games.stream().filter(g -> gameIdsFromPlaylists.contains(g.getId())).collect(Collectors.toList());
-  }
-
   public Game getGameByFilename(int emuId, String name) {
     Game game = this.frontendService.getGameByFilename(emuId, name);
     if (game != null) {
@@ -825,6 +816,7 @@ public class GameService implements InitializingBean {
       LOG.info("Found matching table '" + tableMatch.getGameDisplayName() + "' with matching value of '" + match + "' for term '" + term + "'");
       return tableMatch;
     }
+    LOG.info("Closed table match '" + tableMatch.getGameDisplayName() + "' with value '" + match + "' not sufficient for term '" + term + "'");
     return null;
   }
 

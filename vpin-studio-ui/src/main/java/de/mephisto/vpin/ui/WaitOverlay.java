@@ -1,13 +1,14 @@
 package de.mephisto.vpin.ui;
 
 import java.io.IOException;
+import java.util.Iterator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 
 public class WaitOverlay {
@@ -15,15 +16,12 @@ public class WaitOverlay {
 
   private StackPane pane;
   
-  private TableView<?> tableView;
-
   private Parent overlay;
 
   private WaitOverlayController controller;
 
-  public WaitOverlay(StackPane pane, TableView<?> tableView, String message) {
+  public WaitOverlay(StackPane pane, String message) {
     this.pane = pane;
-    this.tableView = tableView;
 
     try {
       FXMLLoader loader = new FXMLLoader(WaitOverlayController.class.getResource("overlay-wait.fxml"));
@@ -37,7 +35,15 @@ public class WaitOverlay {
   }
 
   public void show() {
-    tableView.setVisible(false);
+
+    // hide all children
+    for (Iterator<Node> iter = pane.getChildren().iterator(); iter.hasNext(); ) {
+      Node child = iter.next();
+      if (child != overlay) {
+        child.setVisible(false);
+      }
+    }
+
     if (!pane.getChildren().contains(overlay)) {
       pane.getChildren().add(overlay);
     }
@@ -45,7 +51,14 @@ public class WaitOverlay {
 
   public void hide() {
     pane.getChildren().remove(overlay);
-    tableView.setVisible(true);
+
+    // hide all children
+    for (Iterator<Node> iter = pane.getChildren().iterator(); iter.hasNext(); ) {
+      Node child = iter.next();
+      if (child != overlay) {
+        child.setVisible(true);
+      }
+    }
   }
 
   public void toggle(boolean b) {
