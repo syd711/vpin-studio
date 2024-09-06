@@ -51,6 +51,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
+  public static final int MATCHING_PERCENTAGE = 90;
 
   @FXML
   private Node root;
@@ -303,9 +304,9 @@ public class TableUploadController implements Initializable, DialogController {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
     if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 80);
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), MATCHING_PERCENTAGE);
       if (!similarAtLeastToPercent) {
-        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), 80);
+        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
       }
       if (!similarAtLeastToPercent) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",

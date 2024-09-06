@@ -57,7 +57,6 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
 
-  private boolean emulatorsLoaded = false;
   private List<Integer> ignoredEmulators = null;
 
   @FXML
@@ -99,29 +98,18 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     refreshAlxData();
   }
 
-  private void refreshEmulators(boolean uiSettingsChanged) {
-    // if view not activated but UI change happens, just ignore the event
-    if (!emulatorsLoaded && uiSettingsChanged) {
-      return;
-    }
-    if (!emulatorsLoaded) {
-      List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
-      List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !ignoredEmulators.contains(e.getId())).collect(Collectors.toList());
+  private void refreshEmulators() {
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !ignoredEmulators.contains(e.getId())).collect(Collectors.toList());
 
-      GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
-      allTables.setId(-1);
-      allTables.setName("All Tables");
-      filtered.add(0, allTables);
+    GameEmulatorRepresentation allTables = new GameEmulatorRepresentation();
+    allTables.setId(-1);
+    allTables.setName("All Tables");
+    filtered.add(0, allTables);
 
-      // mind settings combo will also trigger refreshAlxData()
-      this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-      this.emulatorCombo.getSelectionModel().select(0);
-      emulatorsLoaded = true;
-    }
-    else {
-      // simply refresh data in that case
-      refreshAlxData();
-    }
+    // mind settings combo will also trigger refreshAlxData()
+    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+    this.emulatorCombo.getSelectionModel().select(0);
   }
 
   public void setTablesController(TablesController tablesController) {
@@ -130,6 +118,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
+
     this.waitOverlay = new WaitOverlay(loaderStack, "Loading Statistics...");
 
     this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> refreshAlxData());
@@ -140,7 +131,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (tablesController.isTabSelected(TablesController.TAB_STATISTICS)) {
+        if (tablesController != null && tablesController.isTabSelected(TablesController.TAB_STATISTICS)) {
           debouncer.debounce("prefWidth", () -> {
             Platform.runLater(() -> {
               refreshAlxData();
@@ -243,7 +234,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
-    refreshEmulators(false);
+    refreshEmulators();
+    refreshAlxData();
   }
 
   @Override
@@ -260,10 +252,9 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     // refresh emulators only when they have been loaded first time
     if (PreferenceNames.UI_SETTINGS.equals(key)) {
       UISettings uiSettings = (UISettings) value;
-      if (ignoredEmulators == null || !ListUtils.isEqualList(ignoredEmulators, uiSettings.getIgnoredEmulatorIds())) {
+      if (!ListUtils.isEqualList(ignoredEmulators, uiSettings.getIgnoredEmulatorIds())) {
         this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
-        this.emulatorsLoaded = false;
-        refreshEmulators(true);
+        refreshEmulators();
       }
     }
   }
