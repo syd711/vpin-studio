@@ -208,7 +208,7 @@ public class Studio extends Application {
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
-        stage.setMinHeight(950);
+        stage.setMinHeight(700);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 
@@ -270,7 +270,7 @@ public class Studio extends Application {
               Parent r = stage.getScene().getRoot();
               scaling = 1;
               stage.setWidth(1280);
-              stage.setHeight(900);
+              stage.setHeight(720);
               r.setScaleX(1);
               r.setScaleY(1);
               ke.consume();

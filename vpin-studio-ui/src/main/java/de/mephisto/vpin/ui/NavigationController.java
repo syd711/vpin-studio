@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -25,6 +26,8 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import eu.hansolo.tilesfx.Tile;
 import eu.hansolo.tilesfx.TileBuilder;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -33,8 +36,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import org.apache.commons.lang3.StringUtils;
@@ -50,6 +55,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class NavigationController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(NavigationController.class);
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
 
   private final static FontIcon updateIcon = WidgetFactory.createUpdateStar();
 
@@ -83,11 +90,16 @@ public class NavigationController implements Initializable, StudioEventListener,
   @FXML
   private Pane cardsBtn;
 
+  @FXML
+  private StackPane systemManagerStack;
+
   private static BorderPane staticAvatarPane;
 
   private static NavigationView activeNavigation;
 
   private final static Map<NavigationItem, NavigationView> navigationItemMap = new HashMap<>();
+
+  private final List<Pane> buttons = new ArrayList();
 
   // Add a public no-args constructor
   public NavigationController() {
@@ -314,13 +326,56 @@ public class NavigationController implements Initializable, StudioEventListener,
       maniaBtn.setVisible(true);
     }
 
+    this.buttons.add(tablesBtn);
+    this.buttons.add(dashboardBtn);
+    this.buttons.add(cardsBtn);
+
+    this.buttons.add(competitionsBtn);
+    this.buttons.add(playersBtn);
+    this.buttons.add(tournamentsBtn);
+
+    this.buttons.add(systemManagerBtn);
+    this.buttons.add(maniaBtn);
+
     navigationItemMap.put(NavigationItem.Tables, new NavigationView(NavigationItem.Tables, TablesController.class, tablesBtn, "scene-tables.fxml"));
     navigationItemMap.put(NavigationItem.Dashboard, new NavigationView(NavigationItem.Dashboard, DashboardController.class, dashboardBtn, "scene-dashboard.fxml"));
     navigationItemMap.put(NavigationItem.Players, new NavigationView(NavigationItem.Players, PlayersController.class, playersBtn, "scene-players.fxml"));
+
     navigationItemMap.put(NavigationItem.Competitions, new NavigationView(NavigationItem.Competitions, CompetitionsController.class, competitionsBtn, "scene-competitions.fxml"));
     navigationItemMap.put(NavigationItem.HighscoreCards, new NavigationView(NavigationItem.HighscoreCards, HighscoreCardsController.class, cardsBtn, "scene-highscore-cards.fxml"));
     navigationItemMap.put(NavigationItem.Tournaments, new NavigationView(NavigationItem.Tournaments, TournamentsController.class, tournamentsBtn, "scene-tournaments.fxml"));
+
     navigationItemMap.put(NavigationItem.SystemManager, new NavigationView(NavigationItem.SystemManager, ComponentsController.class, systemManagerBtn, "scene-components.fxml"));
     navigationItemMap.put(NavigationItem.Mania, new NavigationView(NavigationItem.Mania, ManiaController.class, maniaBtn, "scene-mania.fxml"));
+
+    Studio.stage.heightProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        debouncer.debounce("height", () -> {
+          Platform.runLater(() -> {
+            boolean scaleDown = newValue.intValue() < 900;
+            String style = scaleDown ? "navigation-button-small" : "navigation-button";
+            systemManagerStack.getStyleClass().clear();
+            systemManagerStack.getStyleClass().add(style);
+            for (Pane button : buttons) {
+              setLabelStyle(button, scaleDown ? "-fx-font-size: 12px" : "-fx-font-size: 14px");
+              setFontIconSize(button, scaleDown ? 20 : 28);
+              button.getStyleClass().clear();
+              button.getStyleClass().add(style);
+            }
+          });
+        }, DEBOUNCE_MS);
+      }
+
+      private void setLabelStyle(Pane button, String style) {
+        button.getChildren().stream().filter(c -> c instanceof Label).forEach(c -> c.setStyle(style));
+        button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setLabelStyle((Pane) c, style));
+      }
+      private void setFontIconSize(Pane button, int size) {
+        button.getChildren().stream().filter(c -> c instanceof FontIcon).forEach(c -> ((FontIcon)c).setIconSize(size));
+        button.getChildren().stream().filter(c -> c instanceof ImageView).forEach(c -> ((ImageView)c).setFitHeight(size));
+        button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setFontIconSize((Pane) c, size));
+      }
+    });
   }
 }
