@@ -25,6 +25,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.4</version>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+            <version>2.7.4</version>
+        </dependency>
 
         <dependency>
             <groupId>de.mephisto.vpin</groupId>
@@ -75,16 +80,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.15.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpclient</artifactId>
-            <version>4.5.14</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcore</artifactId>
-            <version>4.4.16</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>

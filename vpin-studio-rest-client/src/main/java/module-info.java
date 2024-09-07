@@ -5,8 +5,6 @@ open module de.mephisto.vpin.restclient {
   requires spring.core;
   requires com.fasterxml.jackson.databind;
   requires org.apache.commons.io;
-  requires org.apache.httpcomponents.httpcore;
-  requires org.apache.httpcomponents.httpclient;
 
   requires de.mephisto.vpin.connectors.assets;
   requires de.mephisto.vpin.connectors.mania;
@@ -15,6 +13,8 @@ open module de.mephisto.vpin.restclient {
   requires spring.boot;
   requires sevenzipjbinding;
   requires logback.classic;
+  requires spring.webflux;
+  requires reactor.core;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;
