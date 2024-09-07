@@ -297,7 +297,8 @@ public class UniversalUploadResource {
 
     File tablesFolder = gameEmulator.getTablesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
-      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName());
+      LOG.info("Using folder based import.");
+      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName().trim());
     }
     File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
 

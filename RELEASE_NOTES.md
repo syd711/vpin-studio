@@ -1,6 +1,16 @@
-## Release Notes 3.5.0
+## Release Notes 3.5.1
 
-## Changes
+
+## Bugfixes
+
+- **Studio Server**: Fixed possible dead-lock causing the whole server to be stuck. I could not reproduce this issue, but found two possible reasons that caused this issue.
+- **Table Uploads**: Fixed uploads of files with a whitespace at the end of the base name. This lead to invalid folder names when the file was uploaded to a table subfolder.
+- **VPin Mania Player Ranking**: Fixed showing of duplicated players.
+
+
+### Release Notes 3.5.0
+
+### Changes
 
 - **Table Statistics**: Added reload button.
 - **Table Statistics**: Added click handler for single table statistics which opens the table data dialog with the statistics tab.
@@ -13,7 +23,7 @@
 - **Table Overview / Table Media**: Added additional drag-hover indicator which looks like the one for the table overview. This way, user have a better visual feedback where file drops are allowed.
 - **Backglass Manager Tab**: Added type-ahead input option. Like for the other table overviews, you can now simply input a search term when the table is focussed and the matching entry gets selected.
  
-## Bugfixes
+### Bugfixes
 
 - **Table Overview / Filter**: Fixed sticky filter issue where the filter updates have not been saved and restored on startup.
 - **Drop-In Folder**: Fixed refresh issues and filtered system files.

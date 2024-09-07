@@ -78,6 +78,7 @@ public class FrontendStatusService implements InitializingBean {
 
   public void addTableStatusChangeListener(TableStatusChangeListener listener) {
     this.tableStatusChangeListeners.add(listener);
+    this.tableStatusChangeListeners.sort((o1, o2) -> o2.getPriority() - o1.getPriority());
   }
 
   public void addFrontendStatusChangeListener(FrontendStatusChangeListener listener) {
@@ -86,7 +87,7 @@ public class FrontendStatusService implements InitializingBean {
 
   public GameList getImportTables(int emuId) {
     GameEmulator emulator = frontendService.getGameEmulator(emuId);
-    if(emulator == null) {
+    if (emulator == null) {
       LOG.warn("No emulator found for id " + emuId);
       return new GameList();
     }
@@ -507,6 +508,7 @@ public class FrontendStatusService implements InitializingBean {
       augmenter.deAugment();
     }
   }
+
   public void cloneGameMedia(Game original, Game clone) {
     VPinScreen[] values = VPinScreen.values();
     for (VPinScreen originalScreenValue : values) {

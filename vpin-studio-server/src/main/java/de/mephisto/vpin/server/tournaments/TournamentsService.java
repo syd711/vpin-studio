@@ -63,7 +63,27 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
   }
 
   public boolean synchronize() {
-    return tournamentSynchronizer.synchronize();
+    tournamentSynchronizer.synchronizeTournaments();
+    return true;
+  }
+
+  @Override
+  public void tableLaunched(TableStatusChangedEvent event) {
+
+  }
+
+  @Override
+  public void tableExited(TableStatusChangedEvent event) {
+    if (Features.MANIA_ENABLED) {
+      Game game = event.getGame();
+      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
+      tournamentSynchronizer.synchronizeTournaments();
+    }
+  }
+
+  @Override
+  public int getPriority() {
+    return 10;
   }
 
   @Override
@@ -78,7 +98,7 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
         }
 
         highscoreService.addHighscoreChangeListener(tournamentsHighscoreChangeListener);
-        tournamentSynchronizer.synchronize();
+        tournamentSynchronizer.synchronizeTournaments();
 
         frontendStatusService.addTableStatusChangeListener(this);
       }
@@ -87,19 +107,5 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
         LOG.info("Error initializing tournament service: " + e.getMessage(), e);
       }
     }
-  }
-
-  @Override
-  public void tableLaunched(TableStatusChangedEvent event) {
-    new Thread(() -> {
-      Game game = event.getGame();
-      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
-      tournamentSynchronizer.synchronize(game);
-    }).start();
-  }
-
-  @Override
-  public void tableExited(TableStatusChangedEvent event) {
-
   }
 }
