@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
@@ -14,17 +15,22 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,6 +44,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ToolbarController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
 
   @FXML
   private Button updateBtn;
@@ -68,6 +76,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
   @FXML
   private HBox toolbarHBox;
+
+  @FXML
+  private Label breadcrumb;
 
   @FXML
   private SplitMenuButton preferencesBtn;
@@ -287,6 +298,18 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
+    });
+
+    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        debouncer.debounce("breadcrumb", () -> {
+          Platform.runLater(() -> {
+            double maxWidth = newValue.intValue() - 800;
+            breadcrumb.setMaxWidth(maxWidth);
+          });
+        }, DEBOUNCE_MS);
+      }
     });
   }
 }
