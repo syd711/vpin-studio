@@ -55,11 +55,20 @@ public class CardTemplate extends JsonSettings {
   private int canvasWidth = 100;
   private int canvasHeight = 100;
   private String canvasBackground;
+  private boolean canvasCentered = false;
   private int canvasAlphaPercentage = 0;
   private int canvasBorderRadius = 0;
 
   private boolean overlayMode = false;
   private String overlayScreen = null;
+
+  public boolean isCanvasCentered() {
+    return canvasCentered;
+  }
+
+  public void setCanvasCentered(boolean canvasCentered) {
+    this.canvasCentered = canvasCentered;
+  }
 
   public boolean isOverlayMode() {
     return overlayMode;

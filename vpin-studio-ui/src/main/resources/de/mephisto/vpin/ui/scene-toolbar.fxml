@@ -152,7 +152,7 @@
             <Insets />
          </BorderPane.margin>
          <left>
-            <Label fx:id="breadcrumb" maxWidth="800.0" minWidth="400.0" styleClass="breadcrumb" text="/" textFill="WHITE" BorderPane.alignment="CENTER">
+            <Label fx:id="breadcrumb" maxWidth="800.0" styleClass="breadcrumb" text="/" textFill="WHITE" BorderPane.alignment="CENTER">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>

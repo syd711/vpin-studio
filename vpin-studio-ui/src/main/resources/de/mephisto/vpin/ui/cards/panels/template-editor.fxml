@@ -568,6 +568,14 @@
                                           </Label>
                                        </children>
                                     </HBox>
+                                    <CheckBox fx:id="canvasCenteredCheckbox" mnemonicParsing="false" text="Center Canvas">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <VBox.margin>
+                                          <Insets top="12.0" />
+                                       </VBox.margin>
+                                    </CheckBox>
                                     <Label text="Color" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />

@@ -105,6 +105,13 @@ public class NavigationController implements Initializable, StudioEventListener,
   public NavigationController() {
   }
 
+  public static NavigationItem getActiveNavigation() {
+    if (activeNavigation != null) {
+      return activeNavigation.getItem();
+    }
+    return null;
+  }
+
   public static void refreshControllerCache() {
     navigateTo(activeNavigation.getItem());
     refreshAvatar();
@@ -371,9 +378,10 @@ public class NavigationController implements Initializable, StudioEventListener,
         button.getChildren().stream().filter(c -> c instanceof Label).forEach(c -> c.setStyle(style));
         button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setLabelStyle((Pane) c, style));
       }
+
       private void setFontIconSize(Pane button, int size) {
-        button.getChildren().stream().filter(c -> c instanceof FontIcon).forEach(c -> ((FontIcon)c).setIconSize(size));
-        button.getChildren().stream().filter(c -> c instanceof ImageView).forEach(c -> ((ImageView)c).setFitHeight(size));
+        button.getChildren().stream().filter(c -> c instanceof FontIcon).forEach(c -> ((FontIcon) c).setIconSize(size));
+        button.getChildren().stream().filter(c -> c instanceof ImageView).forEach(c -> ((ImageView) c).setFitHeight(size));
         button.getChildren().stream().filter(c -> c instanceof Pane).forEach(c -> setFontIconSize((Pane) c, size));
       }
     });

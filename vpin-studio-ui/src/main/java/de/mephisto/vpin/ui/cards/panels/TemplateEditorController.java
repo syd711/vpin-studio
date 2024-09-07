@@ -171,6 +171,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private CheckBox renderCanvasCheckbox;
 
   @FXML
+  private CheckBox canvasCenteredCheckbox;
+
+  @FXML
   private Slider canvasAlphaPercentageSlider;
 
   @FXML
@@ -462,6 +465,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
     renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
+    canvasCenteredCheckbox.setSelected(cardTemplate.isCanvasCentered());
     canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
     canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
     canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
@@ -469,6 +473,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
 
+    canvasCenteredCheckbox.setDisable(!renderCanvasCheckbox.isSelected());
     canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
     canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
     canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
@@ -506,6 +511,12 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
+      canvasCenteredCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          canvasXSpinner.setDisable(newValue || !renderCanvasCheckbox.isSelected());
+        }
+      });
 
       List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
       VPinScreens.remove(VPinScreen.Audio);
@@ -528,6 +539,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
       templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
       templateBeanBinder.bindCheckbox(overlayModeCheckbox, getCardTemplate(), "overlayMode");
+      templateBeanBinder.bindCheckbox(canvasCenteredCheckbox, getCardTemplate(), "canvasCentered");
 
       overlayModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -608,9 +620,10 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       });
 
       renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+        canvasCenteredCheckbox.setDisable(!t1);
         canvasAlphaPercentageSlider.setDisable(!t1);
         canvasColorSelector.setDisable(!t1);
-        canvasXSpinner.setDisable(!t1);
+        canvasXSpinner.setDisable(!t1 || canvasCenteredCheckbox.isSelected());
         canvasYSpinner.setDisable(!t1);
         canvasWidthSpinner.setDisable(!t1);
         canvasHeightSpinner.setDisable(!t1);
@@ -659,7 +672,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onGenerate() {
-    if(this.gameRepresentation.isPresent()) {
+    if (this.gameRepresentation.isPresent()) {
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       String targetScreen = cardSettings.getPopperScreen();
       if (StringUtils.isEmpty(targetScreen)) {
@@ -677,7 +690,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
         refreshPreview(this.gameRepresentation, true);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
         WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
       }
@@ -844,7 +858,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @Override
   public void onReady(Media media) {
     if (media != null && media.getWidth() > 0) {
-      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " +media.getHeight());
+      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " + media.getHeight());
     }
   }
 
