@@ -65,7 +65,7 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      currentUploadFuture = Studio.client.getAltSoundService().uploadAltSoundFuture(next, emulatorId, percent -> progressResultModel.setProgress(percent));
+      currentUploadFuture = Studio.client.getAltSoundService().uploadAltSoundFuture(next, emulatorId, progressResultModel::setProgress);
       UploadDescriptor result = currentUploadFuture.get();
 
       if (!StringUtils.isEmpty(result.getError())) {
