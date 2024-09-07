@@ -85,7 +85,6 @@ public class AltSoundUploadController implements Initializable, DialogController
       Platform.runLater(() -> {
         ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
 
-        // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
         if (progressResult.isCancelled()) {
           result = false;
         }
