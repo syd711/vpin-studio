@@ -98,9 +98,6 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
           }
         }
 
-        //sync info before submitting to possible resetted tables
-        tournamentSynchronizer.synchronize();
-
         if (createdTableScore != null) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           for (Tournament tournament : tournaments) {
