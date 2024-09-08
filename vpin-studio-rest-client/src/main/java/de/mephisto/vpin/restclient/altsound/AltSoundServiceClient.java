@@ -60,7 +60,8 @@ public class AltSoundServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
 
       MultiValueMap<String, Object> formData = createUploadForm(file, emulatorId, null, AssetType.ALT_SOUND, listener);
-      Mono<UploadDescriptor> responseMono = webClientPost(url, formData, /*builder,*/ UploadDescriptor.class);
+      Mono<UploadDescriptor> responseMono = webClientPost(url, formData, UploadDescriptor.class, listener);
+
       uploadDisposable = responseMono.subscribe();
 
       return responseMono.block();
@@ -78,8 +79,7 @@ public class AltSoundServiceClient extends VPinStudioClientService {
   public Future<UploadDescriptor> uploadAltSoundFuture(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
     Callable<UploadDescriptor> task = () -> {
       try {
-        UploadDescriptor foo = this.uploadAltSound(file, emulatorId, listener);
-        return foo;
+        return this.uploadAltSound(file, emulatorId, listener);
       } catch (Exception e) {
         if (uploadDisposable != null && !uploadDisposable.isDisposed()) {
           uploadDisposable.dispose();

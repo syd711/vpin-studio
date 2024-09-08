@@ -69,20 +69,25 @@ public class VPinStudioClientService {
     return formData;
   }
 
-  protected <T> Mono<T> webClientPost(String url, MultiValueMap<String, Object> formData, Class<T> responseType) {
+  protected <T> Mono<T> webClientPost(String url, MultiValueMap<String, Object> formData, Class<T> responseType, FileUploadProgressListener listener) {
     return WebClient.builder().build().post()
             .uri(url)
             .contentType(MediaType.MULTIPART_FORM_DATA)
             .body(BodyInserters.fromMultipartData(formData))
             .retrieve()
             .bodyToMono(responseType)
-            .doOnCancel(() -> LOG.warn("Upload aborted due to cancellation request"))
-            .doOnError(throwable -> {
-              if (!(throwable instanceof java.util.concurrent.CancellationException)) {
-                  LOG.error("Failed to upload using the WebClient: {}", throwable.getMessage(), throwable);
-              }
-            })
-            .doFinally(signal -> finalizeUploadWebClient(formData));
+      .doOnCancel(() -> LOG.warn("Upload aborted due to cancellation request"))
+      .doOnError(throwable -> {
+        if (!(throwable instanceof java.util.concurrent.CancellationException)) {
+            LOG.error("Failed to upload using the WebClient: {}", throwable.getMessage(), throwable);
+        }
+      })
+      .doFinally((signal) -> {
+        finalizeUploadWebClient(formData);
+
+        // TODO: WebClient doesn't make an InputStream very easy. Find a better way with WebClient
+        listener.process(90);
+      });
   }
 
   protected RestTemplate createUploadTemplate() {
