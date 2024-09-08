@@ -640,7 +640,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onImport() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (emulatorSelection != null) {
+    if (emulatorSelection == null) {
       WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
       return;
     }
