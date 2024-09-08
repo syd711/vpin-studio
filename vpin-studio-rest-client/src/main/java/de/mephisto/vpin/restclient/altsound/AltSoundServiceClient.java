@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -54,30 +55,32 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "altsound/" + gameId);
   }
 
-  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener, Supplier<Boolean> isCancelled) throws Exception {
-    WebClient webClient = WebClient.builder().build();
-
+  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
 
       MultiValueMap<String, Object> formData = createUploadForm(file, emulatorId, null, AssetType.ALT_SOUND, listener);
-      Mono<UploadDescriptor> responseMono = webClientPost(url, formData, UploadDescriptor.class);
+      // MultipartBodyBuilder builder = createUploadBuilder(file, emulatorId, null, AssetType.ALT_SOUND, listener);
+      Mono<UploadDescriptor> responseMono = webClientPost(url, formData, /*builder,*/ UploadDescriptor.class);
       uploadDisposable = responseMono.subscribe();
 
       return responseMono.block();
     } catch (Exception e) {
-      LOG.error("ALT sound upload failed: " + e.getMessage(), e);
+      if (e.getCause() instanceof InterruptedException) {
+        LOG.error("ALT sound upload has likely been cancelled: {}", e.getMessage());
+      } else {
+        LOG.error("ALT sound upload failed: {}", e.getMessage(), e);
+      }
+
       throw e;
     }
   }
 
   public Future<UploadDescriptor> uploadAltSoundFuture(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
     Callable<UploadDescriptor> task = () -> {
-      // Create a Supplier<Boolean> that checks the cancellation status
-      Supplier<Boolean> isCancelled = () -> Thread.currentThread().isInterrupted();
-
       try {
-        return this.uploadAltSound(file, emulatorId, listener, isCancelled);
+        UploadDescriptor foo = this.uploadAltSound(file, emulatorId, listener);
+        return foo;
       } catch (Exception e) {
         if (uploadDisposable != null && !uploadDisposable.isDisposed()) {
           uploadDisposable.dispose();
