@@ -203,7 +203,8 @@ public class CardGraphics {
     Paint paint = Paint.valueOf(color + hex);
     g.setFill(paint);
 
-    if (template.isCanvasCentered()) {
+    boolean canvasCentered = template.getCanvasX() == 0;
+    if (canvasCentered) {
       double x = (image.getWidth() / 2) - (template.getCanvasWidth() / 2);
       g.fillRoundRect(x, template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
     }
