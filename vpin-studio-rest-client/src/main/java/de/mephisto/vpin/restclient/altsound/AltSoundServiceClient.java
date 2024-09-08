@@ -60,7 +60,6 @@ public class AltSoundServiceClient extends VPinStudioClientService {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
 
       MultiValueMap<String, Object> formData = createUploadForm(file, emulatorId, null, AssetType.ALT_SOUND, listener);
-      // MultipartBodyBuilder builder = createUploadBuilder(file, emulatorId, null, AssetType.ALT_SOUND, listener);
       Mono<UploadDescriptor> responseMono = webClientPost(url, formData, /*builder,*/ UploadDescriptor.class);
       uploadDisposable = responseMono.subscribe();
 
