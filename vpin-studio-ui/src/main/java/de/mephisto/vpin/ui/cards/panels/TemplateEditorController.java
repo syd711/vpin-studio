@@ -171,9 +171,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   private CheckBox renderCanvasCheckbox;
 
   @FXML
-  private CheckBox canvasCenteredCheckbox;
-
-  @FXML
   private Slider canvasAlphaPercentageSlider;
 
   @FXML
@@ -465,7 +462,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     templateBeanBinder.setColorPickerValue(canvasColorSelector, getCardTemplate(), "canvasBackground");
 
     renderCanvasCheckbox.setSelected(cardTemplate.isRenderCanvas());
-    canvasCenteredCheckbox.setSelected(cardTemplate.isCanvasCentered());
     canvasXSpinner.getValueFactory().setValue(cardTemplate.getCanvasX());
     canvasYSpinner.getValueFactory().setValue(cardTemplate.getCanvasY());
     canvasWidthSpinner.getValueFactory().setValue(cardTemplate.getCanvasWidth());
@@ -473,7 +469,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     canvasBorderRadiusSpinner.getValueFactory().setValue(cardTemplate.getCanvasBorderRadius());
     canvasAlphaPercentageSlider.setValue(cardTemplate.getCanvasAlphaPercentage());
 
-    canvasCenteredCheckbox.setDisable(!renderCanvasCheckbox.isSelected());
     canvasAlphaPercentageSlider.setDisable(!renderCanvasCheckbox.isSelected());
     canvasColorSelector.setDisable(!renderCanvasCheckbox.isSelected());
     canvasXSpinner.setDisable(!renderCanvasCheckbox.isSelected());
@@ -511,13 +506,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
-      canvasCenteredCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-        @Override
-        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          canvasXSpinner.setDisable(newValue || !renderCanvasCheckbox.isSelected());
-        }
-      });
-
       List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
       VPinScreens.remove(VPinScreen.Audio);
       VPinScreens.remove(VPinScreen.AudioLaunch);
@@ -539,7 +527,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       templateBeanBinder.bindCheckbox(renderPositionsCheckbox, getCardTemplate(), "renderPositions");
       templateBeanBinder.bindCheckbox(renderCanvasCheckbox, getCardTemplate(), "renderCanvas");
       templateBeanBinder.bindCheckbox(overlayModeCheckbox, getCardTemplate(), "overlayMode");
-      templateBeanBinder.bindCheckbox(canvasCenteredCheckbox, getCardTemplate(), "canvasCentered");
 
       overlayModeCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
@@ -620,10 +607,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       });
 
       renderCanvasCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-        canvasCenteredCheckbox.setDisable(!t1);
         canvasAlphaPercentageSlider.setDisable(!t1);
         canvasColorSelector.setDisable(!t1);
-        canvasXSpinner.setDisable(!t1 || canvasCenteredCheckbox.isSelected());
+        canvasXSpinner.setDisable(!t1);
         canvasYSpinner.setDisable(!t1);
         canvasWidthSpinner.setDisable(!t1);
         canvasHeightSpinner.setDisable(!t1);
