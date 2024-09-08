@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import javafx.scene.image.Image;
+
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,25 +16,25 @@ import java.io.InputStream;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DirectB2SEntryModel extends BaseLoadingModel<DirectB2S, DirectB2SEntryModel> {
-  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SEntryModel.class);
+public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> {
+  private final static Logger LOG = LoggerFactory.getLogger(DirectB2SModel.class);
 
   // not null when loaded
-  DirectB2SData backglassData;
+  private DirectB2SData backglassData;
 
-  boolean hasDmd;
+  private boolean hasDmd;
 
-  int dmdWidth;
-  int dmdHeight;
-  int grillHeight;
-  int nbScores;
+  private int dmdWidth;
+  private int dmdHeight;
+  private int grillHeight;
+  private int nbScores;
 
-  int hideGrill;
-  boolean hideB2SDMD;
-  boolean hideBackglass;
-  int hideDMD;
+  private int hideGrill;
+  private boolean hideB2SDMD;
+  private boolean hideBackglass;
+  private int hideDMD;
 
-  public DirectB2SEntryModel(DirectB2S backglass) {
+  public DirectB2SModel(DirectB2S backglass) {
     super(backglass);
   }
 
@@ -75,6 +77,11 @@ public class DirectB2SEntryModel extends BaseLoadingModel<DirectB2S, DirectB2SEn
 
   public DirectB2S getBacklass() {
     return getBean();
+  }
+
+  @Override
+  public boolean sameBean(DirectB2S other) {
+    return bean.getEmulatorId() == other.getEmulatorId() && StringUtils.equals(bean.getFileName(), other.getFileName());
   }
 
   @Override

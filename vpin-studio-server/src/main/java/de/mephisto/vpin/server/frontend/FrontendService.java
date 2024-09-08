@@ -296,10 +296,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     getFrontendConnector().deleteFromPlaylist(playlistId, gameId);
   }
 
-  public Playlist getPlayListForGame(int gameId) {
-    return getFrontendConnector().getPlayListForGame(gameId);
-  }
-
   //--------------------------
 
   public java.util.Date getStartDate() {
@@ -338,12 +334,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public FrontendControls getControls() {
     return getFrontendConnector().getControls();
-  }
-
-
-  @NonNull
-  public List<Integer> getGameIdsFromPlaylists() {
-    return getFrontendConnector().getGameIdsFromPlaylists();
   }
 
   //--------------------------

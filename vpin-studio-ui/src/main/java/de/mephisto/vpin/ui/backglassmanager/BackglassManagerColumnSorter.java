@@ -1,11 +1,12 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
+import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
 import java.util.Comparator;
 
-public class BackglassManagerColumnSorter {
+public class BackglassManagerColumnSorter implements BaseColumnSorter<DirectB2SModel> {
 
   private final BackglassManagerController backglassManagerController;
 
@@ -13,12 +14,13 @@ public class BackglassManagerColumnSorter {
     this.backglassManagerController = backglassManagerController;
   }
 
-  public Comparator<DirectB2SEntryModel> buildComparator(TableView<DirectB2SEntryModel> tableView) {
+  @Override
+  public Comparator<DirectB2SModel> buildComparator(TableView<DirectB2SModel> tableView) {
 
-    Comparator<DirectB2SEntryModel> comp = null;
+    Comparator<DirectB2SModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<DirectB2SEntryModel, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<DirectB2SModel, ?> column = tableView.getSortOrder().get(0);
 
       if (column.equals(backglassManagerController.displayNameColumn)) {
         comp = Comparator.comparing(o -> o.getName());

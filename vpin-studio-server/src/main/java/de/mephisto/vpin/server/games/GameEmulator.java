@@ -86,7 +86,7 @@ public class GameEmulator {
     }
 
     if (emulator.getDirGames() != null) {
-      this.tablesFolder = new File(emulator.getDirGames());
+      this.tablesFolder = new File(emulator.getDirGames().trim());
     }
     if (this.backglassServerFolder != null) {
       this.backglassServerDirectory = new File(this.backglassServerFolder);

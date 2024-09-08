@@ -11,9 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
- class VpsFilterSettings {
-
-  private String filterValue;
+ class VpsTablesPredicateFactory {
 
   private boolean installedOnly;
   private boolean notInstalledOnly;
@@ -79,9 +77,6 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     this.theme = theme;
   }
 
-  public void setFilterTerm(String filterTerm) {
-    this.filterValue = filterTerm;
-  }
 
   public boolean isWithTutorial() {
     return withTutorial;
@@ -173,6 +168,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       && (manufacturers == null || manufacturers.length == 0)
       && StringUtils.isEmpty(theme)
       && !this.vpsUpdates
+      && !installedOnly
+      && !notInstalledOnly
       && !this.withAltColor
       && !this.withAltSound
       && !this.withBackglass
@@ -186,7 +183,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<VpsTableModel> buildPredicate(boolean noVPX) {
+  public Predicate<VpsTableModel> buildPredicate(boolean noVPX, String searchTerm) {
     return new Predicate<VpsTableModel>() {
       @Override
       public boolean test(VpsTableModel model) {
@@ -199,8 +196,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
           return false;
         }
 
-        if (StringUtils.isNotEmpty(filterValue)
-            && !StringUtils.containsIgnoreCase(table.getName(), filterValue)
+        if (StringUtils.isNotEmpty(searchTerm)
+            && !StringUtils.containsIgnoreCase(table.getName(), searchTerm)
             //&& !StringUtils.containsIgnoreCase(table.getRom(), filterValue)
             ) {
           return false;

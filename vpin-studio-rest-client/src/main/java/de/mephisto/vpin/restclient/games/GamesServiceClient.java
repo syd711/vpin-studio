@@ -408,8 +408,8 @@ public class GamesServiceClient extends VPinStudioClientService {
     return games;
   }
 
-  public GameRepresentation getGameCached(int gameId) {
-    List<GameRepresentation> games = this.getGamesCached(-1);
+  public GameRepresentation getVpxGameCached(int gameId) {
+    List<GameRepresentation> games = this.getVpxGamesCached();
     Optional<GameRepresentation> first = games.stream().filter(g -> g.getId() == gameId).findFirst();
     return first.orElse(null);
   }

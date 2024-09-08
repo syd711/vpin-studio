@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Studio" type="Application" factoryName="Application" nameIsGenerated="true">
+  <configuration default="false" name="Studio" type="Application" factoryName="Application" singleton="true" nameIsGenerated="true">
     <option name="MAIN_CLASS_NAME" value="de.mephisto.vpin.ui.Studio" />
     <module name="vpin-studio-ui" />
     <extension name="coverage">

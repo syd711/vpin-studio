@@ -202,10 +202,13 @@
                         <Insets top="28.0" />
                      </BorderPane.margin>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#onClose" styleClass="ghost-button">
+                        <Button mnemonicParsing="false" onAction="#onClose" styleClass="ghost-button-default">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close-circle-outline" iconSize="48" />
                            </graphic>
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
                         </Button>
                      </children>
                   </HBox>

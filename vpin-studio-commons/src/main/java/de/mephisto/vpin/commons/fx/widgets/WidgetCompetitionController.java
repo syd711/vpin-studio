@@ -109,7 +109,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
             turnoverTile.setRank(firstRank);
             turnoverTile.setValueColor(firstRank.getColor());
             turnoverTile.setUnitColor(firstRank.getColor());
-          } else if (TileEvent.EventType.THRESHOLD_UNDERRUN == e.getEventType()) {
+          }
+          else if (TileEvent.EventType.THRESHOLD_UNDERRUN == e.getEventType()) {
             turnoverTile.setRank(Rank.DEFAULT);
             turnoverTile.setValueColor(Tile.FOREGROUND);
             turnoverTile.setUnitColor(Tile.FOREGROUND);
@@ -138,7 +139,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       root.setMaxWidth(Double.MAX_VALUE);
       summaryWidgetController = loader.getController();
       summaryBorderPane.setCenter(root);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load competition summary widget: " + e.getMessage(), e);
     }
 
@@ -147,7 +149,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
       loadingOverlay = loader.load();
       LoadingOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Competition...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
   }
@@ -167,7 +170,7 @@ public class WidgetCompetitionController extends WidgetController implements Ini
 
       if (remainingDays == 0) {
         long ms = competition.getEndDate().getTime() - new Date().getTime();
-        if((ms/1000) < 3600){
+        if ((ms / 1000) < 3600) {
           countdownTile.setTitle("Remaining Minutes");
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "mm", false));
           countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
@@ -177,7 +180,8 @@ public class WidgetCompetitionController extends WidgetController implements Ini
           countdownTile.setDescription(DurationFormatUtils.formatDuration(ms, "HH", false));
           countdownTile.setText("Competition End: " + DateFormat.getDateTimeInstance().format(competition.getEndDate()));
         }
-      } else {
+      }
+      else {
         countdownTile.setTitle("Remaining Days");
         countdownTile.setDescription(String.valueOf(remainingDays));
         countdownTile.setText("Competition End: " + DateFormat.getDateInstance().format(competition.getEndDate()));
@@ -208,16 +212,18 @@ public class WidgetCompetitionController extends WidgetController implements Ini
                 String avatarUrl = currentScore.getPlayer().getAvatarUrl();
                 if (!StringUtils.isEmpty(avatarUrl)) {
                   InputStream cachedUrlImage = ServerFX.client.getCachedUrlImage(avatarUrl);
-                  if(cachedUrlImage == null) {
+                  if (cachedUrlImage == null) {
                     cachedUrlImage = ServerFX.class.getResourceAsStream("avatar-blank.png");
                   }
                   Image image = new Image(cachedUrlImage);
                   turnoverTile.setImage(image);
-                } else if (currentScore.getPlayer().getAvatar() != null) {
+                }
+                else if (currentScore.getPlayer().getAvatar() != null) {
                   AssetRepresentation avatar = currentScore.getPlayer().getAvatar();
                   turnoverTile.setImage(new Image(ServerFX.client.getAsset(AssetType.AVATAR, avatar.getUuid())));
                 }
-              } else {
+              }
+              else {
                 turnoverTile.setText(currentScore.getPlayerInitials());
               }
             });
@@ -229,7 +235,9 @@ public class WidgetCompetitionController extends WidgetController implements Ini
   }
 
   public void refresh(CompetitionRepresentation competition) {
-    viewStack.getChildren().add(loadingOverlay);
+    if (!viewStack.getChildren().contains(loadingOverlay)) {
+      viewStack.getChildren().add(loadingOverlay);
+    }
     new Thread(() -> {
       Platform.runLater(() -> {
         setCompetition(competition);
@@ -239,22 +247,24 @@ public class WidgetCompetitionController extends WidgetController implements Ini
             DiscordServer discordServer = ServerFX.client.getDiscordServer(competition.getDiscordServerId());
             if (discordServer != null) {
               titleLabel.setText("Discord: " + discordServer.getName());
-            } else {
+            }
+            else {
               titleLabel.setText("Discord: - invalid server id -");
             }
-          } else {
+          }
+          else {
             titleLabel.setText("Offline: " + competition.getName());
           }
-        } else {
+        }
+        else {
           if (competitionType.equals(CompetitionType.DISCORD)) {
             titleLabel.setText("- No Discord Competition Found - ");
-          } else {
+          }
+          else {
             titleLabel.setText("- No Offline Competition Found - ");
           }
         }
-
         viewStack.getChildren().remove(loadingOverlay);
-
       });
     }).start();
   }

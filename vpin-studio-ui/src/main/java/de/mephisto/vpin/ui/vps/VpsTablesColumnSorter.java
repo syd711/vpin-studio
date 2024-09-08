@@ -8,9 +8,10 @@ import java.util.Date;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
-public class VpsTablesColumnSorter {
+public class VpsTablesColumnSorter implements BaseColumnSorter<VpsTableModel> {
 
   private final VpsTablesController vpsTablesController;
 

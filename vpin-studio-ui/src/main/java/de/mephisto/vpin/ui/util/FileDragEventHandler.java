@@ -5,7 +5,11 @@ import javafx.scene.Node;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
+import javafx.scene.layout.Pane;
+
 import org.apache.commons.io.FilenameUtils;
+
+import de.mephisto.vpin.ui.DnDOverlayController;
 
 import java.io.File;
 import java.util.Arrays;
@@ -18,11 +22,24 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   private final boolean singleSelectionOnly;
   private List<String> suffixes;
 
-  public FileDragEventHandler(Node node, boolean singleSelectionOnly, String... suffix) {
+  protected DnDOverlayController overlayController;
+
+  public static FileDragEventHandler install(Pane loaderStack, Node node, boolean singleSelectionOnly, String... suffix) {
+    FileDragEventHandler handler = new FileDragEventHandler(loaderStack, node, singleSelectionOnly, suffix);
+    node.setOnDragOver(handler);
+    return handler;
+  }
+
+  public FileDragEventHandler(Pane loaderStack, Node node, boolean singleSelectionOnly, String... suffix) {
     this.node = node;
     this.singleSelectionOnly = singleSelectionOnly;
     this.suffixes = Arrays.asList(suffix);
+
+    this.overlayController = DnDOverlayController.load(loaderStack, node, singleSelectionOnly);
+    overlayController.setMessage("Drop Media here.");
+    overlayController.setMessageFontsize(14);
   }
+
 
   @Override
   public void handle(DragEvent event) {
@@ -34,15 +51,6 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     }
 
     boolean containsMedia = !files.isEmpty();
-//    for (DataFormat contentType : contentTypes) {
-//      if (checkDataFormat(contentType)) {
-//        containsMedia = true;
-//      }
-//    }
-//
-//    if (!containsMedia) {
-//      return;
-//    }
 
     //files may be empty for drag from a zip file
     if (!files.isEmpty() && singleSelectionOnly && files.size() > 1) {
@@ -68,7 +76,23 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     else {
       event.consume();
     }
+    overlayController.showOverlay();
   }
+
+  public FileDragEventHandler setOnDragDropped(EventHandler<DragEvent> handler) {
+    overlayController.setOnDragDropped(e -> {
+      overlayController.hideOverlay();
+      handler.handle(e);
+    });
+    return this;
+  }
+  public FileDragEventHandler setEmbeddedMode(boolean sidebarMode) {
+    if (sidebarMode) {
+      overlayController.setMessage(null);
+    }
+    return this;
+  }
+
 
   private boolean checkDataFormat(DataFormat contentType) {
     Set<String> identifiers = contentType.getIdentifiers();

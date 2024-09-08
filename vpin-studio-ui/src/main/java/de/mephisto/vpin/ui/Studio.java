@@ -42,6 +42,7 @@ import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.ServerSocket;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
@@ -59,6 +60,7 @@ public class Studio extends Application {
   private static HostServices hostServices;
 
   private static double scaling = 1;
+  private ServerSocket ss;
 
   public static void main(String[] args) {
     launch(args);
@@ -68,6 +70,14 @@ public class Studio extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
+    try {
+      ss = new ServerSocket(1044);
+    } catch (IOException e) {
+      LOG.error("Application already running!");
+      System.exit(-1);
+    }
+
+
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
 
@@ -198,7 +208,7 @@ public class Studio extends Application {
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
-        stage.setMinHeight(950);
+        stage.setMinHeight(700);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 
@@ -260,7 +270,7 @@ public class Studio extends Application {
               Parent r = stage.getScene().getRoot();
               scaling = 1;
               stage.setWidth(1280);
-              stage.setHeight(900);
+              stage.setHeight(720);
               r.setScaleX(1);
               r.setScaleY(1);
               ke.consume();
@@ -326,6 +336,7 @@ public class Studio extends Application {
     }
     catch (Exception e) {
       LOG.error("Failed to create mania client: " + e.getMessage());
+      Features.MANIA_ENABLED = false;
     }
   }
 

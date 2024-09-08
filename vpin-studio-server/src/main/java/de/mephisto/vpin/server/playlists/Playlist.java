@@ -1,10 +1,10 @@
 package de.mephisto.vpin.server.playlists;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class Playlist {
@@ -14,8 +14,11 @@ public class Playlist {
   private String playListSQL;
   private boolean sqlPlayList;
   private String mediaName;
+  private boolean addFavCheckboxes;
   private List<PlaylistGame> games = new ArrayList<>();
-  private FrontendMedia playlistMedia;
+
+  // optional emulator id when playlist is linked to an emulator, leave null if not
+  private Integer emulatorId;
 
   public String getMediaName() {
     return mediaName;
@@ -23,14 +26,6 @@ public class Playlist {
 
   public void setMediaName(String mediaName) {
     this.mediaName = mediaName;
-  }
-
-  public FrontendMedia getPlaylistMedia() {
-    return playlistMedia;
-  }
-
-  public void setPlaylistMedia(FrontendMedia playlistMedia) {
-    this.playlistMedia = playlistMedia;
   }
 
   public List<PlaylistGame> getGames() {
@@ -81,6 +76,20 @@ public class Playlist {
     this.name = name;
   }
 
+  public boolean isAddFavCheckboxes() {
+    return addFavCheckboxes;
+  }
+  public void setAddFavCheckboxes(boolean addFavCheckboxes) {
+    this.addFavCheckboxes = addFavCheckboxes;
+  }
+
+  public Integer getEmulatorId() {
+    return emulatorId;
+  }
+  public void setEmulatorId(Integer emuId) {
+    this.emulatorId = emuId;
+  }
+
   @Override
   public boolean equals(Object o) {
     if (this == o) return true;
@@ -112,6 +121,16 @@ public class Playlist {
       }
     }
     return null;
+  }
+
+  public boolean removeGame(int id) {
+    for (Iterator<PlaylistGame> iter = this.games.iterator(); iter.hasNext();) {
+      if (iter.next().getId() == id) {
+        iter.remove();
+        return true;
+      }
+    }
+    return false;
   }
 
   public boolean isFavGame(int id) {

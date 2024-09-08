@@ -16,6 +16,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import javafx.application.Platform;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,6 +29,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Semaphore;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,6 +94,22 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   }
 
   public boolean generateCard(Game game, boolean generateSampleCard, CardTemplate template) {
+    try {
+      Semaphore semaphore = new Semaphore(0);
+      Platform.runLater(() -> {
+        doGenerateCard(game, generateSampleCard, template);
+        semaphore.release();
+      });
+      semaphore.acquire();
+      return true;
+    }
+    catch (InterruptedException e) {
+      LOG.error("Failed to generate image: " + e.getMessage(), e);
+      return false;
+    }
+  }
+
+  private boolean doGenerateCard(Game game, boolean generateSampleCard, CardTemplate template) {
     try {
       long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
       ScoreSummary summary = highscoreService.getScoreSummary(serverId, game);

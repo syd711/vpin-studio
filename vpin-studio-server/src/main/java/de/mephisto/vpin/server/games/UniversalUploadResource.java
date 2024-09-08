@@ -245,6 +245,13 @@ public class UniversalUploadResource {
       LOG.warn("VPX file to overwrite \"" + existingVPXFile.getAbsolutePath() + "\" was not found.");
     }
 
+    //delete existing .vbs file
+    String baseName = FilenameUtils.getBaseName(tableDetails.getGameFileName());
+    File existingVbsFile = new File(gameEmulator.getTablesDirectory(), baseName + ".vbs");
+    if (existingVbsFile.exists() && !existingVbsFile.delete()) {
+      LOG.error("Failed to delete existing .vbs file \"" + existingVbsFile.getAbsolutePath() + "\"");
+    }
+
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     if (!keepExistingFilename) {
@@ -259,6 +266,14 @@ public class UniversalUploadResource {
     //copy file
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
+
+
+    //delete possibly existing .vbs file that matches with the new name
+    baseName = FilenameUtils.getBaseName(target.getName());
+    existingVbsFile = new File(target.getParentFile(), baseName + ".vbs");
+    if (existingVbsFile.exists() && !existingVbsFile.delete()) {
+      LOG.error("Failed to delete .vbs file \"" + existingVbsFile.getAbsolutePath() + "\"");
+    }
 
     //update frontend table database entry
     //if the VPX file is inside a subfolder, we have to prepend the folder name
@@ -297,7 +312,8 @@ public class UniversalUploadResource {
 
     File tablesFolder = gameEmulator.getTablesFolder();
     if (uploadDescriptor.isFolderBasedImport()) {
-      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName());
+      LOG.info("Using folder based import.");
+      tablesFolder = new File(tablesFolder, uploadDescriptor.getSubfolderName().trim());
     }
     File targetVPXFile = new File(tablesFolder, uploadDescriptor.getOriginalUploadFileName());
 

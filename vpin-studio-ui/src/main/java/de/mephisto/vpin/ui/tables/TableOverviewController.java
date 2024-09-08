@@ -26,18 +26,16 @@ import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.*;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
-import javafx.beans.binding.Bindings;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.collections.transformation.SortedList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -48,14 +46,14 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -73,7 +71,9 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TableOverviewController implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> 
+  implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
   private static final int ALL_VPX_ID = -10;
@@ -167,13 +167,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnOther2;
 
   @FXML
-  private TableView<GameRepresentationModel> tableView;
-
-  @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
-
-  @FXML
-  private TextField textfieldSearch;
 
   @FXML
   private Label validationErrorLabel;
@@ -183,9 +177,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   private Node validationError;
-
-  @FXML
-  private Label labelTableCount;
 
   @FXML
   private Button tableEditBtn;
@@ -224,16 +215,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private SplitMenuButton uploadTableBtn;
 
   @FXML
-  private Button reloadBtn;
-
-  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   @FXML
   private Separator playlistSplitter;
-
-  @FXML
-  private StackPane tableStack;
 
   @FXML
   private MenuItem backglassUploadItem;
@@ -266,42 +251,25 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private MenuItem resItem;
 
   @FXML
-  private Button filterBtn;
-
-  @FXML
   private Hyperlink dismissBtn;
 
-  @FXML
-  private StackPane loaderStack;
-
-  private WaitOverlay tablesLoadingOverlay;
-
-  private TablesController tablesController;
   private List<PlaylistRepresentation> playlists;
+
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-  private long lastKeyInputTime = System.currentTimeMillis();
-  private String lastKeyInput = "";
   private UISettings uiSettings;
   private ServerSettings serverSettings;
   private ValidationSettings validationSettings;
-
-  private TableFilterController tableFilterController;
 
   private final List<Consumer<GameRepresentation>> reloadConsumers = new ArrayList<>();
 
   private boolean assetManagerMode = false;
   private TableOverviewContextMenu contextMenuController;
-  private TableOverviewColumnSorter tableOverviewColumnSorter;
   private IgnoredValidationSettings ignoredValidations;
 
-  private List<GameRepresentation> games;
-  private ObservableList<GameRepresentationModel> models;
-  private FilteredList<GameRepresentationModel> data;
-  private TableOverviewPredicateFactory predicateFactory = new TableOverviewPredicateFactory();
-
+  
   private GameEmulatorChangeListener gameEmulatorChangeListener;
   private GameStatus status;
 
@@ -341,7 +309,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       refreshColumns();
 
       GameRepresentation selectedItem = getSelection();
-      tableView.getSelectionModel().clearSelection();
+      clearSelection();
       if (selectedItem != null) {
         selectGameInModel(selectedItem);
       }
@@ -498,11 +466,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onFilter() {
-    tableFilterController.toggle();
-  }
-
-  @FXML
   public void onTableEdit() {
     GameRepresentation selectedItems = getSelection();
     if (selectedItems != null) {
@@ -564,48 +527,40 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   @FXML
-  private void onSearchKeyPressed(KeyEvent e) {
-    if (e.getCode().equals(KeyCode.ENTER)) {
-      tableView.getSelectionModel().select(0);
-      tableView.requestFocus();
-    }
-  }
-
-  @FXML
   public void onTableUpload() {
-    openUploadDialogWithCheck(TableUploadType.uploadAndImport);
+    openUploadDialogWithCheck(null);
   }
 
-  public void openUploadDialogWithCheck(TableUploadType uploadDescriptor) {
+  public void openUploadDialogWithCheck(@Nullable TableUploadType tableUploadType) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        openUploadDialog(uploadDescriptor);
+        openUploadDialog(tableUploadType);
       }
       return;
     }
 
-    openUploadDialog(uploadDescriptor);
+    openUploadDialog(tableUploadType);
   }
 
-  private void openUploadDialog(TableUploadType uploadDescriptor) {
+  private void openUploadDialog(@Nullable TableUploadType uploadType) {
     GameRepresentation game = getSelection();
-    TableDialogs.openTableUploadDialog(game, uploadDescriptor, null);
+    TableDialogs.openTableUploadDialog(game, uploadType, null);
   }
 
-  public void refreshFilterId() {
-    this.onRefresh(tableFilterController.getFilterSettings());
+  public void refreshFilters() {
+    getTableFilterController().refreshFilters();
   }
 
   public void refreshUploadResult(UploadDescriptor uploadResult) {
     //required for new table that may or may not be part of the filtered view
-    refreshFilterId();
+    refreshFilters();
 
     if (uploadResult != null && uploadResult.getGameId() != -1) {
       //the cache miss will result in caching the new table
       client.getGameService().getGame(uploadResult.getGameId());
 
       Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
-        Optional<GameRepresentation> match = this.games.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
+        Optional<GameRepresentation> match = this.data.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
         if (match.isPresent()) {
           Platform.runLater(() -> {
             setSelection(match.get());
@@ -652,7 +607,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       }
 
       tableView.getSelectionModel().clearSelection();
-      TableDialogs.openTableDeleteDialog(this, selectedGames, this.games);
+      TableDialogs.openTableDeleteDialog(this, selectedGames, this.data);
     }
   }
 
@@ -676,16 +631,16 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onTablesScanAll() {
-    boolean scanned = TableDialogs.openScanAllDialog(this.games);
+    boolean scanned = TableDialogs.openScanAllDialog(this.data);
     if (scanned) {
-      this.onReload();
+      this.doReload();
     }
   }
 
   @FXML
   public void onImport() {
     GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (emulatorSelection != null && emulatorSelection.getId() == -1) {
+    if (emulatorSelection == null) {
       WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
       return;
     }
@@ -708,9 +663,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @FXML
   public void onValidateAll() {
-    boolean done = TableDialogs.openValidationDialog(this.games, true);
+    boolean done = TableDialogs.openValidationDialog(this.data, true);
     if (done) {
-      onReload();
+      doReload();
     }
   }
 
@@ -759,17 +714,17 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       GameRepresentation selectedGame = getSelection();
 
       GameRepresentationModel model = null;
-      int index = games.indexOf(refreshedGame);
+      int index = data.indexOf(refreshedGame);
       if (index != -1) {
-        games.remove(index);
-        games.add(index, refreshedGame);
+        data.remove(index);
+        data.add(index, refreshedGame);
         // also change the model that triggers a screen refresh
         model = new GameRepresentationModel(refreshedGame);
         models.remove(index);
         models.add(index, model);
 
         // re-select if it was selected
-        if (selectedGame.getId() == model.getGame().getId()) {
+        if (selectedGame != null && selectedGame.getId() == model.getGame().getId()) {
           tableView.getSelectionModel().clearSelection();
           tableView.getSelectionModel().select(model);
         }
@@ -859,37 +814,14 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
 
-  /**
-   * @return true if the filtered list did change and reload is required
-   */
-  public synchronized boolean onRefresh(FilterSettings filterSettings) {
-    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator())) {
-      predicateFactory.setFilterIds(null);
-      this.data.setPredicate(predicateFactory.buildPredicate());
-    }
-    else {
-      tablesLoadingOverlay.setBusy("Filtering Tables...", true);
-      new Thread(() -> {
-        List<Integer> filteredIds = client.getGameService().filterGames(filterSettings);
-        predicateFactory.setFilterIds(filteredIds);
-        Platform.runLater(() -> {
-          this.data.setPredicate(predicateFactory.buildPredicate());
-          tablesLoadingOverlay.setBusy("", false);
-        });
-      }).start();
-    }
-    return true;
-  }
-
   @FXML
-  private void onReloadPressed(ActionEvent e) {
+  private void onReload(ActionEvent e) {
     client.getFrontendService().reload();
     client.getGameService().reload();
-    this.onReload();
+    this.doReload();
   }
 
-  public void onReload() {
+  public void doReload() {
     status = client.getGameStatusService().getStatus();
     client.getGameService().clearCache();
     doReload(true);
@@ -904,10 +836,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.showVersionUpdates = !uiSettings.isHideVersions();
     this.showVpsUpdates = !uiSettings.isHideVPSUpdates();
 
+    startReload("Loading Tables...");
+
     refreshPlaylists();
     refreshEmulators(uiSettings);
 
-    this.textfieldSearch.setDisable(true);
+    this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
     this.scanAllBtn.setDisable(true);
@@ -919,12 +853,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
-    tablesLoadingOverlay.setBusy("Loading Tables...", true);
     new Thread(() -> {
       try {
         GameRepresentation selection = getSelection();
         GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
         int id = value != null? value.getId() : ALL_VPX_ID;
 
         if (clearCache) {
@@ -935,7 +868,8 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             client.getGameService().clearCache(id);
           }
         }
-        List<GameRepresentation> _games = id == ALL_VPX_ID 
+        
+        this.data = id == ALL_VPX_ID 
             ? client.getGameService().getVpxGamesCached() 
             : client.getGameService().getGamesByEmulator(id);
 
@@ -948,10 +882,10 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
         Platform.runLater(() -> {
 
-          setItems(_games);
+          setItems();
 
           if (selection != null) {
-            final Optional<GameRepresentation> updatedGame = this.games.stream().filter(g -> g.getId() == selection.getId()).findFirst();
+            final Optional<GameRepresentation> updatedGame = this.data.stream().filter(g -> g.getId() == selection.getId()).findFirst();
             if (updatedGame.isPresent()) {
               GameRepresentation gameRepresentation = updatedGame.get();
               //tableView.getSelectionModel().select(gameRepresentation);
@@ -959,7 +893,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
             }
           }
 
-          if (!games.isEmpty()) {
+          if (!data.isEmpty()) {
             this.validateBtn.setDisable(false);
             this.deleteBtn.setDisable(false);
             this.tableEditBtn.setDisable(false);
@@ -973,7 +907,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
           this.importBtn.setDisable(false);
           this.stopBtn.setDisable(false);
-          this.textfieldSearch.setDisable(false);
+          this.searchTextField.setDisable(false);
           this.reloadBtn.setDisable(false);
           this.scanBtn.setDisable(false);
           this.scanAllBtn.setDisable(false);
@@ -993,85 +927,84 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           }
           reloadConsumers.clear();
 
-          tablesLoadingOverlay.setBusy("", false);
+          endReload();
         });
-
-
       }
       catch (Exception e) {
         LOG.error("Failed to load tables: " + e.getMessage(), e);
         Platform.runLater(() -> {
           WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage());
+          endReload();
         });
       }
 
     }).start();
   }
 
-  private void setItems(List<GameRepresentation> _games) {
+  public void updatePlaylist(PlaylistRepresentation playlist) {
 
-    this.games = _games;
-    this.models = FXCollections.observableArrayList();
-    for (GameRepresentation g : _games) {
-      models.add(new GameRepresentationModel(g));
+    int idx = ListUtils.indexOf(this.playlistCombo.getItems(), p -> p != null && p.getId() == playlist.getId());
+    if (idx >= 0) {
+      boolean selected = this.playlistCombo.getSelectionModel().isSelected(idx);
+
+      this.playlistCombo.getItems().remove(idx);
+      this.playlistCombo.getItems().add(idx, playlist);
+
+      int idx2 = ListUtils.indexOf(playlists, p -> p.getId() == playlist.getId());
+      if (idx2 >= 0) {
+        this.playlists.remove(idx2);
+        this.playlists.add(idx2, playlist);
+      }
+
+      if (selected) {
+        this.playlistCombo.getSelectionModel().select(playlist);
+      }
     }
-
-    // Wrap games in a FilteredList
-    this.data = new FilteredList<>(models);
-    // When predicate change, update data count
-    this.data.predicateProperty().addListener((o, oldP, newP) -> {
-      labelTableCount.setText(data.size() + " games");
-    });
-
-    // Wrap the FilteredList in a SortedList
-    SortedList<GameRepresentationModel> sortedData = new SortedList<>(this.data);
-    // Bind the SortedList comparator to the TableView comparator.
-    sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
-        () -> tableOverviewColumnSorter.buildComparator(tableView),
-        tableView.comparatorProperty()));
-    // Set a dummy SortPolicy to tell the TableView data is successfully sorted
-    tableView.setSortPolicy(tableView -> true);
-
-    // Set the items in the TableView
-    tableView.setItems(sortedData);
-
-    // filter the list and refresh number of items
-    this.data.setPredicate(predicateFactory.buildPredicate());
   }
 
   public void refreshPlaylists() {
+
     this.playlistCombo.setDisable(true);
-    playlists = new ArrayList<>(client.getPlaylistsService().getPlaylists());
-    List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
 
-    List<PlaylistGame> localFavs = new ArrayList<>();
-    List<PlaylistGame> globalFavs = new ArrayList<>();
-    for (PlaylistRepresentation playlistRepresentation : pl) {
-      List<PlaylistGame> games1 = playlistRepresentation.getGames();
-      for (PlaylistGame playlistGame : games1) {
-        if (playlistGame.isFav()) {
-          localFavs.add(playlistGame);
+    JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
+
+      this.playlists = playlists;
+      List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
+
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+      if (frontendType.supportExtendedPlaylists()) {
+        List<PlaylistGame> localFavs = new ArrayList<>();
+        List<PlaylistGame> globalFavs = new ArrayList<>();
+        for (PlaylistRepresentation playlistRepresentation : pl) {
+          List<PlaylistGame> games1 = playlistRepresentation.getGames();
+          for (PlaylistGame playlistGame : games1) {
+            if (playlistGame.isFav()) {
+              localFavs.add(playlistGame);
+            }
+            if (playlistGame.isGlobalFav()) {
+              globalFavs.add(playlistGame);
+            }
+          }
         }
-        if (playlistGame.isGlobalFav()) {
-          globalFavs.add(playlistGame);
-        }
+        PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
+        favsPlaylist.setGames(localFavs);
+        favsPlaylist.setId(-1);
+        favsPlaylist.setName("Local Favorites");
+
+        PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
+        globalFavsPlaylist.setGames(globalFavs);
+        globalFavsPlaylist.setId(-2);
+        globalFavsPlaylist.setName("Global Favorites");
+
+        pl.add(0, globalFavsPlaylist);
+        pl.add(0, favsPlaylist);
       }
-    }
-    PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
-    favsPlaylist.setGames(localFavs);
-    favsPlaylist.setId(-1);
-    favsPlaylist.setName("Local Favorites");
+      pl.add(0, null);
 
-    PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
-    globalFavsPlaylist.setGames(globalFavs);
-    globalFavsPlaylist.setId(-2);
-    globalFavsPlaylist.setName("Global Favorites");
-
-    pl.add(0, globalFavsPlaylist);
-    pl.add(0, favsPlaylist);
-    pl.add(0, null);
-    playlistCombo.setItems(FXCollections.observableList(pl));
-    this.playlistCombo.setDisable(false);
+      playlistCombo.setItems(FXCollections.observableList(pl));
+      this.playlistCombo.setDisable(false);
+    });
   }
 
 
@@ -1099,21 +1032,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
   }
 
-  private void bindSearchField() {
-    textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
-      tableView.getSelectionModel().clearSelection();
-      refreshView(Optional.empty());
-
-      // reset the Predicate to trigger the table refiltering
-      predicateFactory.setFilterTerm(filterValue);
-      data.setPredicate(predicateFactory.buildPredicate());
-    });
-  }
-
   private void bindTable() {
     tableView.setPlaceholder(new Label("No matching tables found."));
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+
+    FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     // set ValueCellFactory and CellFactory, and get a renderer that is responsible to render the cell
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
@@ -1352,13 +1276,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
       int ICON_WIDTH = 26;
       double width = 0;
-      if (fav) {
+      if (fav && frontendType.supportExtendedPlaylists()) {
         Label label = WidgetFactory.createLocalFavoritePlaylistIcon(uiSettings.getLocalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;
       }
 
-      if (globalFav) {
+      if (globalFav && frontendType.supportExtendedPlaylists()) {
         Label label = WidgetFactory.createGlobalFavoritePlaylistIcon(uiSettings.getGlobalFavsColor());
         box.getChildren().add(label);
         width += ICON_WIDTH;
@@ -1397,8 +1321,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
     BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
-    setItems(new ArrayList<>());
-
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
     //tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
@@ -1426,34 +1348,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
           return row;
         });
 
-
-    tableView.setOnKeyPressed(event -> {
-      if (Keys.isSpecial(event)) {
-        return;
-      }
-
-      String text = event.getText();
-
-      long timeDiff = System.currentTimeMillis() - lastKeyInputTime;
-      if (timeDiff > 800) {
-        lastKeyInputTime = System.currentTimeMillis();
-        lastKeyInput = text;
-      }
-      else {
-        lastKeyInputTime = System.currentTimeMillis();
-        lastKeyInput = lastKeyInput + text;
-        text = lastKeyInput;
-      }
-
-      for (GameRepresentationModel model : data) {
-        GameRepresentation game = model.getGame();
-        if (game.getGameDisplayName().toLowerCase().startsWith(text.toLowerCase())) {
-          setSelection(game);
-          break;
-        }
-      }
-    });
-  }
+ }
 
   //------------------------------
 
@@ -1618,39 +1513,25 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Tables"));
 
+    if (this.models == null) {
+      this.doReload();
+    }
+
     GameRepresentation game = getSelection();
     if (game != null) {
       NavigationController.setBreadCrumb(Arrays.asList("Tables", game.getGameDisplayName()));
     }
   }
 
+  @Override
   public void setRootController(TablesController tablesController) {
-    this.tablesController = tablesController;
-    new TableOverviewDragDropHandler(tablesController);
-
+    super.setRootController(tablesController);
     // start the reload process when the stage is on
-    Studio.stage.setOnShown(e -> this.onReload());
+    Studio.stage.setOnShown(e -> this.doReload());
   }
 
   public List<GameRepresentation> getGames() {
-    return games;
-  }
-
-  public GameRepresentation getSelection() {
-    GameRepresentationModel selection = tableView.getSelectionModel().getSelectedItem();
-    return selection != null ? selection.getGame() : null;
-  }
-
-  public List<GameRepresentation> getSelections() {
-    List<GameRepresentationModel> models = tableView.getSelectionModel().getSelectedItems();
-    return models.stream().map(model -> model.getGame()).collect(Collectors.toList());
-  }
-
-  public void updatePlaylist() {
-    this.playlists = client.getPlaylistsService().getPlaylists();
-    List<PlaylistRepresentation> refreshedData = new ArrayList<>(this.playlists);
-    refreshedData.add(0, null);
-    this.playlistCombo.setItems(FXCollections.observableList(refreshedData));
+    return data;
   }
 
   @Override
@@ -1728,21 +1609,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return status;
   }
 
-  public void setSelection(GameRepresentation game) {
-    tablesController.getTabPane().getSelectionModel().select(0);
-    this.tableView.getSelectionModel().clearSelection();
-    selectGameInModel(game);
-    this.tableView.scrollTo(tableView.getSelectionModel().getSelectedItem());
-  }
-
-  public void selectGameInModel(GameRepresentation game) {
-    Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == game.getId()).findFirst();
-    if (model.isPresent()) {
-      this.tableView.getSelectionModel().clearSelection();
-      this.tableView.getSelectionModel().select(model.get());
-      this.tableView.scrollTo(model.get());
-    }
-  }
 
   public void selectGameInModel(int gameId) {
     Optional<GameRepresentationModel> model = models.stream().filter(m -> m.getGame().getId() == gameId).findFirst();
@@ -1755,11 +1621,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("game", "games", new TableOverviewColumnSorter(this));
+
     status = client.getGameStatusService().getStatus();
     gameEmulatorChangeListener = new GameEmulatorChangeListener();
 
     contextMenuController = new TableOverviewContextMenu(this);
-    tableOverviewColumnSorter = new TableOverviewColumnSorter(this);
 
     deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
 
@@ -1802,17 +1669,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       playlistSplitter.setVisible(false);
     }
 
-    try {
-      FXMLLoader loader = new FXMLLoader(TableFilterController.class.getResource("scene-tables-overview-filter.fxml"));
-      loader.load();
-      tableFilterController = loader.getController();
-      tableFilterController.setTableController(this);
-    }
-    catch (IOException e) {
-      LOG.error("Failed to load loading filter: " + e.getMessage(), e);
-    }
-
-    tablesLoadingOverlay = new WaitOverlay(loaderStack, tableView, null);
+    super.loadFilterPanel("scene-tables-overview-filter.fxml");
 
     validationError.setVisible(false);
 
@@ -1821,13 +1678,13 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
       @Override
       public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlist, PlaylistRepresentation t1) {
-        predicateFactory.setFilterPlaylist(t1);
-        data.setPredicate(predicateFactory.buildPredicate());
+        getTableFilterController().setFilterPlaylist(t1);
       }
     });
 
+    new TableOverviewDragDropHandler(this, tableView, loaderStack);
+
     bindTable();
-    bindSearchField();
 
     if (frontendType.supportPupPacks()) {
       Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
@@ -1878,7 +1735,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   private void refreshViewForEmulator() {
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
-    tableFilterController.setEmulator(newValue);
+    getTableFilterController().setEmulator(newValue);
     boolean vpxOrFpEmulator = newValue == null || newValue.isVpxEmulator() || newValue.isFpEmulator();
     boolean vpxEmulator = newValue == null || newValue.isVpxEmulator();
 
@@ -1896,6 +1753,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
 
     tablesController.getTablesSideBarController().refreshViewForEmulator(newValue);
   }
+
+  private TableFilterController getTableFilterController() {
+    return (TableFilterController) filterController;
+  }
+
 
   private void refreshColumns() {
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
@@ -1960,18 +1822,6 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return this.assetManagerMode;
   }
 
-  public StackPane getTableStack() {
-    return this.tableStack;
-  }
-
-  public StackPane getLoaderStack() {
-    return loaderStack;
-  }
-
-  public TableView<GameRepresentationModel> getTableView() {
-    return this.tableView;
-  }
-
   public ServerSettings getServerSettings() {
     return this.serverSettings;
   }
@@ -1980,12 +1830,9 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     return this.uiSettings;
   }
 
-  public Button getFilterButton() {
-    return this.filterBtn;
-  }
-
   public GameEmulatorRepresentation getEmulatorSelection() {
-    return this.emulatorCombo.getSelectionModel().getSelectedItem();
+    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    return selectedEmu == null || selectedEmu.getId() == ALL_VPX_ID ? null : selectedEmu;
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
@@ -1995,7 +1842,7 @@ public class TableOverviewController implements Initializable, StudioFXControlle
       Platform.runLater(() -> {
         reloadConsumers.add(selection -> {
           refreshViewForEmulator();
-          tableFilterController.applyFilter();
+          getTableFilterController().refreshFilters();
         });
         // just reload from cache
         onSwitchFromCache();
@@ -2004,6 +1851,11 @@ public class TableOverviewController implements Initializable, StudioFXControlle
   }
 
   //----------------------------------
+
+  protected GameRepresentationModel toModel(GameRepresentation game) {
+    return new GameRepresentationModel(game);
+  }
+
   public static class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> {
 
     VpsTable vpsTable;
@@ -2016,6 +1868,12 @@ public class TableOverviewController implements Initializable, StudioFXControlle
     public GameRepresentation getGame() {
       return getBean();
     }
+
+    @Override
+    public boolean sameBean(GameRepresentation other) {
+      return bean.getId() == other.getId();
+    }
+
 
     public VpsTable getVpsTable() {
       return vpsTable;

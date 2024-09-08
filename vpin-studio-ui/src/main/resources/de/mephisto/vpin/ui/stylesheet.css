@@ -217,6 +217,14 @@
     -fx-text-fill: -fx-font-2;
 }
 
+.ghost-button-default {
+    -fx-font-color: -fx-font-2;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-background-radius: 4 4 4 4;
+    -fx-text-fill: -fx-font-2;
+}
+
 .ghost-button:hover {
     -fx-font-color: #fff8f8;
     -fx-font-size : 32px;
@@ -320,15 +328,24 @@
     -fx-text-fill: #DDDDDD;
 }
 
-.navigation-button:hover {
+.navigation-button-small {
     -fx-min-width: 96px;
     -fx-max-width: 96px;
-    -fx-min-height: 76px;
-    -fx-max-height: 76px;
+    -fx-min-height: 56px;
+    -fx-max-height: 56px;
+    -fx-background-color: -fx-base-6;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-size: 10px;
+    -fx-border-color:-fx-base-6;
+    -fx-text-fill: #DDDDDD;
+}
+
+.navigation-button:hover, .navigation-button-small:hover {
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
-    -fx-font-size: 14px;
     -fx-border-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
     -fx-text-fill: #fff8f8;
@@ -336,10 +353,6 @@
 }
 
 .navigation-button-selected {
-    -fx-min-width: 96px;
-    -fx-max-width: 96px;
-    -fx-min-height: 76px;
-    -fx-max-height: 76px;
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
@@ -1270,6 +1283,12 @@
     -fx-border-color: white;
     -fx-border-width: 3;
     -fx-border-style: segments(15, 15, 15, 15);
+}
+
+.dnd-dashed-border-small {
+    -fx-border-color: white;
+    -fx-border-width: 2;
+    -fx-border-style: segments(7, 7,7, 7);
 }
 
 

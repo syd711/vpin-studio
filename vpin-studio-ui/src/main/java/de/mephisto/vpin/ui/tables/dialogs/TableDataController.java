@@ -30,6 +30,8 @@ import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
 import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.AutoCompleteTextField;
 import de.mephisto.vpin.ui.util.AutoCompleteTextFieldChangeListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -342,7 +344,9 @@ public class TableDataController implements Initializable, DialogController, Aut
       String mappedVersion = vpsMatch.getExtTableVersionId();
 
       // set the detected version
-      gameVersion.setText(vpsMatch.getVersion());
+      if (StringUtils.isEmpty(gameVersion.getText())) {
+        gameVersion.setText(vpsMatch.getVersion());
+      }
 
       setVpsTableIdValue(mappedTableId);
       game.setExtTableId(mappedTableId);
@@ -423,8 +427,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     designedBy.setText(td.getDesignedBy());
     tags.setText(td.getTags());
     notes.setText(td.getNotes());
-    // do not override the version
-    //gameVersion.setText(td.getGameVersion());
+    gameVersion.setText(td.getGameVersion());
     gNotes.setText(td.getgNotes());
     gDetails.setText(td.getgDetails());
     gLog.setText(td.getgLog());
@@ -624,6 +627,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    openAssetMgrBtn.managedProperty().bindBidirectional(openAssetMgrBtn.visibleProperty());
+
     FrontendType frontendType = null;
     try {
       frontendType = client.getFrontendService().getFrontendType();
@@ -706,13 +711,17 @@ public class TableDataController implements Initializable, DialogController, Aut
     EventManager.getInstance().notifyTableChange(this.game.getId(), null);
   }
 
-  public void setGame(Stage stage, TableOverviewController overviewController, GameRepresentation game, int tab) {
+  public void setGame(@NonNull Stage stage, @Nullable TableOverviewController overviewController, GameRepresentation game, int tab) {
     this.stage = stage;
     this.game = game;
-    this.serverSettings = overviewController.getServerSettings();
-    this.uiSettings = overviewController.getUISettings();
+    this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    this.uiSettings =client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
+
+    nextButton.setVisible(overviewController != null);
+    prevButton.setVisible(overviewController != null);
+    openAssetMgrBtn.setVisible(overviewController != null);
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     Frontend frontend = client.getFrontendService().getFrontendCached();
@@ -1011,7 +1020,7 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     initVpsStatus();
     if (frontendType.supportStatistics()) {
-      tableStatisticsController.setGame(game, tableDetails);
+      tableStatisticsController.setGame(stage, game, tableDetails);
     }
     tableScreensController.setGame(game, tableDetails);
     tabPane.getSelectionModel().select(tab);

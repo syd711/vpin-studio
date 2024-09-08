@@ -366,7 +366,7 @@ public class HighscoreService implements InitializingBean {
   }
 
   @NonNull
-  public synchronized HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
+  public HighscoreMetadata scanScore(@NonNull Game game, @NonNull EventOrigin eventOrigin) {
     if (!game.isVpxGame()) {
       SLOG.error("Game " + game.getGameDisplayName() + " is not a VPX game.");
       throw new UnsupportedOperationException("Game " + game.getGameDisplayName() + " is not a VPX game.");

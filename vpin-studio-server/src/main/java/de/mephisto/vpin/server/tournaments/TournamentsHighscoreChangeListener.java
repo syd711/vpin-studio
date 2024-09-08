@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.tournaments;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.*;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
@@ -56,6 +57,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
 
     if (event.getNewScore().getPlayer() == null) {
       LOG.info("Ignored tournament highscore change, because no player set for this score.");
+      SLOG.info("Ignored tournament highscore change, because no player set for this score.");
       return;
     }
 
@@ -77,6 +79,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
           }
           else {
             LOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
+            SLOG.warn("The new highscore has not been submitted to VPin Mania, no registered player could be determined.");
             return;
           }
         }
@@ -87,14 +90,13 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
           try {
             createdTableScore = maniaClient.getHighscoreClient().submitOrUpdate(newTableScore);
             LOG.info("Submitted VPinMania score " + createdTableScore);
+            SLOG.info("Submitted VPinMania score " + createdTableScore);
           }
           catch (Exception e) {
             LOG.warn("Mania score submission failed: " + e.getMessage());
+            SLOG.warn("Mania score submission failed: " + e.getMessage());
           }
         }
-
-        //sync info before submitting to possible resetted tables
-        tournamentSynchronizer.synchronize();
 
         if (createdTableScore != null) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
@@ -123,12 +125,14 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
             }
             catch (Exception e) {
               LOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage(), e);
+              SLOG.error("Failed to submit tournament score for " + tournament + ": " + e.getMessage());
             }
           }
         }
       }
       catch (Exception e) {
         LOG.error("Failed to submit VPin Mania highscore: " + e.getMessage(), e);
+        SLOG.error("Failed to submit VPin Mania highscore: " + e.getMessage());
       }
     }
   }

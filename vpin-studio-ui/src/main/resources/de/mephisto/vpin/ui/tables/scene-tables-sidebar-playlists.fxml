@@ -17,7 +17,7 @@
       <Insets left="1.0" right="1.0" />
    </padding>
    <center>
-      <VBox BorderPane.alignment="TOP_LEFT">
+      <VBox fx:id="parentBox" BorderPane.alignment="TOP_LEFT">
          <children>
             <VBox fx:id="errorBox" styleClass="error-container">
                <children>
@@ -55,7 +55,7 @@
                     <VBox fx:id="dataBox" spacing="1.0" />
                </content>
                <VBox.margin>
-                  <Insets left="12.0" top="12.0" />
+                  <Insets left="12.0" top="12.0"  bottom="12.0" />
                </VBox.margin>
             </ScrollPane>
          </children>

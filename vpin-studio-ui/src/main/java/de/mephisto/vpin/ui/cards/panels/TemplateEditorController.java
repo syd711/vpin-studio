@@ -506,7 +506,6 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       backgroundImageCombo.setDisable(useDirectB2SCheckbox.isSelected());
       falbackUploadBtn.setDisable(useDirectB2SCheckbox.isSelected());
 
-
       List<VPinScreen> VPinScreens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
       VPinScreens.remove(VPinScreen.Audio);
       VPinScreens.remove(VPinScreen.AudioLaunch);
@@ -659,7 +658,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
   @FXML
   private void onGenerate() {
-    if(this.gameRepresentation.isPresent()) {
+    if (this.gameRepresentation.isPresent()) {
       CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
       String targetScreen = cardSettings.getPopperScreen();
       if (StringUtils.isEmpty(targetScreen)) {
@@ -677,7 +676,8 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
       try {
         client.getHighscoreCardTemplatesClient().save((CardTemplate) this.templateBeanBinder.getBean());
         refreshPreview(this.gameRepresentation, true);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to save template: " + e.getMessage());
         WidgetFactory.showAlert(stage, "Error", "Failed to save template: " + e.getMessage());
       }
@@ -844,7 +844,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   @Override
   public void onReady(Media media) {
     if (media != null && media.getWidth() > 0) {
-      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " +media.getHeight());
+      resolutionLabel.setText("Resolution: " + media.getWidth() + " x " + media.getHeight());
     }
   }
 

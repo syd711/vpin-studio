@@ -43,7 +43,10 @@
                      <VBox.margin>
                         <Insets top="6.0" />
                      </VBox.margin></VBox>
-                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="Drop-In Folder" />
+                  <Label layoutX="34.0" layoutY="247.0" styleClass="preference-subtitle" text="Drop-In Folder">
+                     <VBox.margin>
+                        <Insets top="24.0" />
+                     </VBox.margin></Label>
                   <VBox fx:id="dropIns" spacing="3.0">
                      <children>
                         <CheckBox fx:id="dropInFolderCheckbox" mnemonicParsing="false" text="Enable &quot;Drop-In&quot; folder imports" textFill="WHITE">

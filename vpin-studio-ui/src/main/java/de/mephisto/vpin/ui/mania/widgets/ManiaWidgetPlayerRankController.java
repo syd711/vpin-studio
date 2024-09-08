@@ -314,6 +314,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     new Thread(() -> {
       try {
         List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
+        LOG.info("Loaded " + rankedAccounts.size() + " ranked accounts.");
         if (rankedAccounts != null) {
           rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
           Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
@@ -355,7 +356,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     this.maniaController = maniaController;
   }
 
-  class RankedPlayer {
+  static class RankedPlayer {
     private final int points;
     private final RankedAccount account;
     private final String displayName;
@@ -407,12 +408,12 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
       if (this == o) return true;
       if (o == null || getClass() != o.getClass()) return false;
       RankedPlayer that = (RankedPlayer) o;
-      return Objects.equals(uuid, that.uuid);
+      return points == that.points && place1 == that.place1 && place2 == that.place2 && place3 == that.place3 && Objects.equals(account, that.account) && Objects.equals(displayName, that.displayName) && Objects.equals(uuid, that.uuid);
     }
 
     @Override
     public int hashCode() {
-      return Objects.hashCode(uuid);
+      return Objects.hash(points, account, displayName, uuid, place1, place2, place3);
     }
   }
 }

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.SystemService;
@@ -27,8 +28,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.*;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,6 +56,13 @@ public class PinballXConnector extends BaseConnector {
   private PreferencesService preferencesService;
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
+
+  /** A cache of Playlists indexed by their id */
+  private Map<Integer, Playlist> playlists;
+  /** map between gameId and stat */
+  private Map<Integer, TableAlxEntry> gameStats;
+  /** set of favorite gameId */
+  private Set<Integer> gameFavs;
 
   @Override
   public void initializeConnector() {
@@ -292,6 +304,11 @@ public class PinballXConnector extends BaseConnector {
     return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
 
+  @Override
+  protected void loadStats() {
+    // load statistics, method is also caching data
+    getAlxData();
+  }
 
   //---------------------------------------------------
 
@@ -376,19 +393,234 @@ public class PinballXConnector extends BaseConnector {
   }
 
   //----------------------------------
+  // Playlist management
+
+  @Override
+  public List<Playlist> getPlayLists() {
+    File pinballXFolder = getInstallationFolder();
+
+    List<Playlist> result = new ArrayList<>();
+
+    Playlist favs = new Playlist();
+    favs.setId(-1);
+    favs.setName("Favorites");
+    List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
+    favs.setGames(favspg);
+    result.add(favs);
+
+    this.playlists = new HashMap<>();
+    int id = 1;
+    for (Emulator emu : emulators.values()) {
+      File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
+      for (File f : dbfolder.listFiles((dir, name) -> StringUtils.endsWithIgnoreCase(name, ".xml"))) {
+        String playlistname = FilenameUtils.getBaseName(f.getName());
+        if (!StringUtils.equalsIgnoreCase(playlistname, emu.getName())) {
+
+          Playlist p = new Playlist();
+          p.setId(id++);
+          p.setEmulatorId(emu.getId());
+          p.setName(playlistname);
+          // don't set mediaName, studio will use the name
+
+          // now cache playlist
+          playlists.put(p.getId(), p);
+
+          // get color if set
+          File fileconf = getPlaylistConfFile(p.getId());
+          Map<String, ?> playlistConf = getPlaylistConf(fileconf);
+          p.setMenuColor((Integer) playlistConf.get("menuColor"));
+          
+          PinballXTableParser parser = new PinballXTableParser();
+          List<String> _games = new ArrayList<>();
+          Map<String, TableDetails> _tabledetails = new HashMap<>();
+          parser.addGames(f, _games, _tabledetails, emu);
+
+          List<PlaylistGame> pg = _games.stream()
+              .map(g -> toPlaylistGame(filenameToId(emu.getId(), g)))
+              .collect(Collectors.toList());
+          p.setGames(pg);
+
+          result.add(p);
+
+        }
+      }
+    }
+    return result;
+  }
+
+  @NonNull
+  @Override
+  public Playlist getPlayList(int id) {
+    return playlists.get(id);
+  }
+
+  private File getPlaylistConfFile(int playlistId) {
+    Playlist playlist = getPlayList(playlistId);
+    if (playlist != null && playlist.getEmulatorId() != null) {
+      Emulator emu = getEmulator(playlist.getEmulatorId());
+      File pinballXFolder = getInstallationFolder();
+      File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
+      return new File(dbfolder, playlist.getName() + ".json");
+    }
+    return null;
+  }
+
+  private Map<String, Object> getPlaylistConf(File playlistConfFile) {
+    if (playlistConfFile != null && playlistConfFile.exists()) {
+      try {
+        String content = Files.readString(playlistConfFile.toPath(), Charset.forName("UTF-8"));
+        // convert JSON string to Map
+        return new ObjectMapper().readValue(content, new TypeReference<>() {});
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+    return new HashMap<>();
+  }
+
+  private void savePlaylistConf(File playlistConfFile, Map<String, ?> playlistConf) {
+    if (playlistConfFile != null) {
+      try {
+        String content = new ObjectMapper().writeValueAsString(playlistConf);
+        Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+  }
+  
+  private PlaylistGame toPlaylistGame(int gameId) {
+    PlaylistGame pg = new PlaylistGame();
+    pg.setId(gameId);
+
+    TableAlxEntry gamestat = gameStats.get(gameId);
+    if (gamestat != null) {
+      pg.setPlayed(true);
+      pg.setFav(gameFavs.contains(gameId));
+      pg.setGlobalFav(false);
+    }
+    else {
+      pg.setPlayed(false);
+    }
+
+    return pg;
+  }
+
+  @Override
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+    File pinballXFolder = getInstallationFolder();
+    // not standard but why not...
+    File mediaDir = new File(pinballXFolder, "Media/Playlists");
+    return new File(mediaDir, screen.getSegment());
+  }
+
+  @Override
+  public void setPlaylistColor(int playlistId, long color) {
+    Playlist playlist = getPlayList(playlistId);
+    if (playlist != null) {
+      playlist.setMenuColor((int) color);
+      File fileconf = getPlaylistConfFile(playlistId);
+      Map<String, Object> playlistConf = getPlaylistConf(fileconf);
+      playlistConf.put("menuColor", color);
+      savePlaylistConf(fileconf, playlistConf);
+    }
+  }
+
+  @Override
+  public void addToPlaylist(int playlistId, int gameId, int favMode) {
+    if (playlistId >= 0) {
+      Playlist pl = playlists.get(playlistId);
+      if (!pl.containsGame(gameId)) {
+        pl.getGames().add(toPlaylistGame(gameId));
+      }
+      savePlaylist(pl);
+    } else {
+      gameFavs.add(gameId);
+      saveFavorite(gameId, true);
+    }
+  }
+  @Override
+  public void deleteFromPlaylists(int gameId) {
+    for (Integer playlistId : playlists.keySet()) {
+      deleteFromPlaylist(playlistId, gameId);
+    }
+  }
+  @Override
+  public void deleteFromPlaylist(int playlistId, int gameId) {
+    if (playlistId >= 0) {
+      Playlist pl = playlists.get(playlistId);
+      if (pl.removeGame(gameId)) {
+        savePlaylist(pl);
+      }
+    }
+    else {
+      if (gameFavs.remove(gameId)) {
+        saveFavorite(gameId, false);
+      }
+    }
+  }
+
+  private void saveFavorite(int gameId, boolean favorite) {
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    parser.writeAlxData(getGame(gameId), favorite);
+  }
+
+  protected void savePlaylist(Playlist pl) {
+    if (pl.getEmulatorId() != null) {
+      Emulator emu = getEmulator(pl.getEmulatorId());
+      PinballXTableParser parser = new PinballXTableParser();
+      List<String> games = pl.getGames().stream().map(pg -> getGameFilename(pg.getId())).collect(Collectors.toList());
+
+      File pinballXFolder = getInstallationFolder();
+      File playlistDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + pl.getName() + ".xml");
+      parser.writeGames(playlistDb, games, mapTableDetails, emu);
+    }
+  }
+
+  //----------------------------------
   // Statistics
 
   @NonNull
   @Override
   public List<TableAlxEntry> getAlxData() {
     PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
-    return parser.getAlxData();
+    List<TableAlxEntry> stats = new ArrayList<>();
+    Set<Integer> favs = new HashSet<>();
+    parser.getAlxData(stats, favs);
+    
+    // refresh cache of stats
+    gameStats = new HashMap<>();
+    for (TableAlxEntry stat : stats) {
+      gameStats.put(stat.getGameId(), stat);
+    }
+    gameFavs = favs;
+
+    return stats;
+  }
+
+  /**
+   * Leverage cache instead of callling PinballXTableParser.getAlxData(gameId)
+   */
+  @Override
+  public List<TableAlxEntry> getAlxData(int gameId) {
+    List<TableAlxEntry> stats = new ArrayList<>();
+    TableAlxEntry stat = gameStats.get(gameId);
+    if (stat != null) {
+      stats.add(stat);
+    }
+    return stats;
   }
 
   @Override
-  public List<TableAlxEntry> getAlxData(int gameId) {
-    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
-    return parser.getAlxData(gameId);
+  public boolean updateNumberOfPlaysForGame(int gameId, long value) {
+    return true;//TODO
+  }
+
+  @Override
+  public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
+    return true;//TODO
   }
 
   //----------------------------------
@@ -517,23 +749,11 @@ public class PinballXConnector extends BaseConnector {
       killAdministration();
     }
 
-    FileWriter fileWriter = null;
-    try {
-      fileWriter = new FileWriter(getPinballXIni(), Charset.forName("UTF-16"));
+    try (FileWriter fileWriter = new FileWriter(getPinballXIni(), Charset.forName("UTF-16"))) {
       iniConfiguration.write(fileWriter);
     }
     catch (Exception e) {
       LOG.error("Failed to write PinballX.ini: " + e.getMessage(), e);
-    }
-    finally {
-      try {
-        if (fileWriter != null) {
-          fileWriter.close();
-        }
-      }
-      catch (IOException e) {
-        //ignore
-      }
     }
   }
 

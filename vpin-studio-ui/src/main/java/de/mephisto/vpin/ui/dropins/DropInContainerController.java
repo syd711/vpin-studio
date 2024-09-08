@@ -1,16 +1,10 @@
 package de.mephisto.vpin.ui.dropins;
 
-import de.mephisto.vpin.commons.utils.FXUtil;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.competitions.dialogs.CompetitionSyncProgressModel;
-import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.tables.TableOverviewDragDropHandler;
-import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -37,6 +31,8 @@ import java.util.*;
 public class DropInContainerController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(DropInContainerController.class);
 
+  private final static int IMAGE_WIDTH = 100;
+
   @FXML
   private BorderPane root;
 
@@ -56,12 +52,19 @@ public class DropInContainerController implements Initializable {
   private Button installBtn;
 
   @FXML
+  private Button openBtn;
+
+  @FXML
   private ImageView imageView;
 
   @FXML
   private HBox imageWrapper;
 
+  @FXML
+  private Separator installSeparator;
+
   private MenuButton dropInButton;
+
   private File file;
 
   @FXML
@@ -94,25 +97,31 @@ public class DropInContainerController implements Initializable {
     sizeLabel.setStyle("-fx-font-size: 13px");
 
     String suffix = FilenameUtils.getExtension(file.getName()).toLowerCase();
-    if (Arrays.asList("png", "jpg").contains(suffix)) {
+    boolean imagePreview = Arrays.asList("png", "jpg").contains(suffix);
+    if (imagePreview) {
+      boolean hidden = true;//!AssetType.isInstallable(suffix);
+      this.installBtn.setVisible(!hidden);
+      this.installSeparator.setVisible(!hidden);
       try {
         imageView.setImage(new Image(new FileInputStream(file)));
       }
       catch (FileNotFoundException e) {
         LOG.error("Failed to set image: " + e, e);
       }
+      dataPanel.setPrefWidth(dataPanel.getPrefWidth() + 70);
     }
     else {
-      dataPanel.setPrefWidth(356);
+      dataPanel.setPrefWidth(dataPanel.getPrefWidth() + IMAGE_WIDTH);
       imageWrapper.setVisible(false);
     }
-
-    boolean disable = !TableOverviewDragDropHandler.INSTALLABLE_SUFFIXES.contains(suffix);
-    this.installBtn.setDisable(disable);
   }
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
+    openBtn.setDisable(!SystemUtil.isWindows());//TODO
+
+    installBtn.managedProperty().bindBidirectional(installBtn.visibleProperty());
+    installSeparator.managedProperty().bindBidirectional(installSeparator.visibleProperty());
     imageWrapper.managedProperty().bindBidirectional(imageWrapper.visibleProperty());
     dragHandler.setStyle("-fx-cursor: hand;");
     dataPanel.setStyle("-fx-cursor: hand;");

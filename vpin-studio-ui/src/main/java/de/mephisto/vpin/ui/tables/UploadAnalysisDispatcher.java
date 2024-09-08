@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -19,19 +18,15 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
 
   public static void dispatch(@NonNull File file, @Nullable GameRepresentation game) {
-    String extension = FilenameUtils.getExtension(file.getName()).toLowerCase();
-    AssetType assetType = null;
-    try {
-      assetType = AssetType.valueOf(extension.toUpperCase());
-    }
-    catch (IllegalArgumentException e) {
+    String extension = FilenameUtils.getExtension(file.getName());
+    AssetType assetType = AssetType.fromExtension(extension);
+    if (assetType == null) {
       LOG.error("Unsupported upload type: " + assetType);
       Platform.runLater(() -> {
         WidgetFactory.showInformation(Studio.stage, "The given file type is not supported for any upload.", null);
@@ -48,11 +43,11 @@ public class UploadAnalysisDispatcher {
   }
 
   public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
-    UploaderAnalysis analysis = new UploaderAnalysis(file);
+    UploaderAnalysis<?> analysis = new UploaderAnalysis<>(file);
     dispatchBySuffix(file, game, assetType, analysis);
   }
 
-  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis analysis) {
+  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis<?> analysis) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file);
@@ -75,7 +70,7 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, TableUploadType.uploadAndImport, analysis);
+        TableDialogs.openTableUploadDialog(game, null, analysis);
         return;
       }
       default: {
@@ -147,13 +142,13 @@ public class UploadAnalysisDispatcher {
     return PackageUtil.isSupportedArchive(extension);
   }
 
-  public static UploaderAnalysis analyzeArchive(File file) {
+  public static UploaderAnalysis<?> analyzeArchive(File file) {
     try {
-      ProgressModel model = createProgressModel(file);
+      ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
-        return (UploaderAnalysis) results.get(0);
+        return (UploaderAnalysis<?>) results.get(0);
       } else {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
       }
@@ -168,9 +163,9 @@ public class UploadAnalysisDispatcher {
 
   public static String validateArchive(File file, AssetType assetType) {
     try {
-      ProgressModel model = createProgressModel(file);
+      ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      UploaderAnalysis analysis = (UploaderAnalysis) progressDialog.getResults().get(0);
+      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) progressDialog.getResults().get(0);
       return analysis.validateAssetType(assetType);
     }
     catch (Exception e) {
@@ -182,9 +177,9 @@ public class UploadAnalysisDispatcher {
 
   public static String validateArchive(File file, GameRepresentation game) {
     try {
-      ProgressModel model = createProgressModel(file);
+      ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      UploaderAnalysis analysis = (UploaderAnalysis) progressDialog.getResults().get(0);
+      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) progressDialog.getResults().get(0);
       AssetType singleAssetType = analysis.getSingleAssetType();
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
@@ -205,7 +200,7 @@ public class UploadAnalysisDispatcher {
     return null;
   }
 
-  private static ProgressModel createProgressModel(File file) throws IOException {
+  private static ProgressModel<?> createProgressModel(File file) throws IOException {
     String suffix = FilenameUtils.getExtension(file.getName());
     if (suffix.equalsIgnoreCase("rar")) {
       return new UploadDispatchAnalysisRarProgressModel(file);

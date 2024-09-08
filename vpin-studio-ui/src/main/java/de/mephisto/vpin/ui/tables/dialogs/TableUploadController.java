@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -50,6 +51,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class TableUploadController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TableUploadController.class);
+  public static final int MATCHING_PERCENTAGE = 90;
 
   @FXML
   private Node root;
@@ -166,6 +168,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploadDescriptor tableUploadDescriptor = UploadDescriptorFactory.create();
   private UploaderAnalysis uploaderAnalysis;
   private Stage stage;
+  private UISettings uiSettings;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -301,9 +304,9 @@ public class TableUploadController implements Initializable, DialogController {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
     if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), 80);
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), MATCHING_PERCENTAGE);
       if (!similarAtLeastToPercent) {
-        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), 80);
+        similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
       }
       if (!similarAtLeastToPercent) {
         Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Warning",
@@ -419,6 +422,7 @@ public class TableUploadController implements Initializable, DialogController {
       else {
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
+        this.uploadBtn.setDisable(false);
       }
     }
     else {
@@ -535,6 +539,8 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
     assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
     assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
 
@@ -613,6 +619,7 @@ public class TableUploadController implements Initializable, DialogController {
         if (newValue) {
           uploadCloneBox.getStyleClass().add("selection-panel-selected");
           tableUploadDescriptor.setUploadType(TableUploadType.uploadAndClone);
+          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndClone.name());
         }
         else {
           uploadCloneBox.getStyleClass().remove("selection-panel-selected");
@@ -626,6 +633,7 @@ public class TableUploadController implements Initializable, DialogController {
         if (newValue) {
           uploadReplaceBox.getStyleClass().add("selection-panel-selected");
           tableUploadDescriptor.setUploadType(TableUploadType.uploadAndReplace);
+          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndReplace.name());
         }
         else {
           uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
@@ -639,6 +647,7 @@ public class TableUploadController implements Initializable, DialogController {
         if (newValue) {
           uploadImportBox.getStyleClass().add("selection-panel-selected");
           tableUploadDescriptor.setUploadType(TableUploadType.uploadAndImport);
+          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndImport.name());
         }
         else {
           uploadImportBox.getStyleClass().remove("selection-panel-selected");
@@ -689,14 +698,23 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgCheckbox.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
+
+    if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
+      uploadType = TableUploadType.valueOf(uiSettings.getDefaultUploadMode());
+    }
+
+    if (game == null) {
+      uploadType = TableUploadType.uploadAndImport;
+    }
 
     tableUploadDescriptor.setUploadType(uploadType);
     tableUploadDescriptor.setEmulatorId(this.emulatorCombo.getValue().getId());
     tableUploadDescriptor.setAutoFill(this.autofillCheckbox.isSelected());
     this.tableUploadDescriptor.setUploadType(uploadType);
+
 
     this.game = game;
 

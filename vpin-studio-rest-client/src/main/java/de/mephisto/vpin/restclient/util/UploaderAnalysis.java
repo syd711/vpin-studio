@@ -466,7 +466,7 @@ public class UploaderAnalysis<T> {
     for (String name : fileNames) {
       String suffix = FilenameUtils.getExtension(name);
       if (altColorSuffixes.contains(suffix)) {
-        return AssetType.valueOf(suffix.toUpperCase());
+        return AssetType.fromExtension(suffix);
       }
     }
     return null;
@@ -637,7 +637,7 @@ public class UploaderAnalysis<T> {
   public String getPupPackRootDirectory() {
     String match = null;
     for (String name : fileNamesWithPath) {
-      if (name.contains("screens.pup") || name.contains("scriptonly.txt")) {
+      if (name.contains("screens.pup") || (name.toLowerCase().contains("option") && name.toLowerCase().endsWith(".bat")) || name.contains("scriptonly.txt")) {
         if (name.contains("/")) {
           String path = name.substring(0, name.lastIndexOf("/") + 1);
 

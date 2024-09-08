@@ -1,26 +1,31 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import java.util.function.Predicate;
+
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TableView;
-import javafx.scene.layout.Pane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 
 /**
  * Common code for toggling FilterPane with animation
  */
-public class BaseFilterController {
+public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> {
 
   protected boolean visible = false;
 
-  private Pane filterRoot;
+  @FXML
+  protected VBox filterRoot;
 
   private Button filterButton;
 
@@ -30,15 +35,37 @@ public class BaseFilterController {
 
   private boolean blocked;
 
+  protected boolean updatesDisabled = false;
+
+  private String searchTerm;
+
+  protected BaseTableController<T, M> tableController;
+
+  //--------------------------------------
+  // Initialisation
+
+  public void setTableController(BaseTableController<T, M> tableController) {
+    this.tableController = tableController;
+  }
+
+  public void bindSearchField(TextField textfieldSearch) {
+    textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
+      tableController.clearSelection();
+      searchTerm = filterValue;
+      tableController.applyFilter();
+    });
+  }
+
+  //--------------------------------------
+  // Drawer management
+
   /**
    * Setup the drawer, bind events and properties
-   * @param filterRoot The Pane containing the filters that is togggled
    * @param filterButton The Button to open / close the filter pane 
    * @param stackPane The StackPane that contains the table, in which filter pane is added
    * @param filteredTable The table that is filtered
    */
-  protected void setupDrawer(Pane filterRoot, Button filterButton, StackPane stackPane, TableView<?> filteredTable) {
-    this.filterRoot = filterRoot;
+  protected void setupDrawer(Button filterButton, StackPane stackPane, TableView<M> filteredTable) {
     this.filterButton = filterButton;
     this.stackPane = stackPane;
     this.filteredTable = filteredTable;
@@ -49,10 +76,7 @@ public class BaseFilterController {
     stackPane.getChildren().add(0, filterRoot);
     filterRoot.prefHeightProperty().bind(stackPane.heightProperty());
     //titlePaneRoot.prefHeightProperty().bind(stackPane.heightProperty());
-    initStackPaneListener(stackPane);
-  }
 
-  protected void initStackPaneListener(StackPane stackPane) {
     stackPane.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
@@ -73,7 +97,8 @@ public class BaseFilterController {
   /**
    * Open / close the filter pane with animation
    */
-  public void toggleDrawer() {
+  @FXML
+  public void toggle() {
     if (blocked) {
       return;
     }
@@ -130,5 +155,36 @@ public class BaseFilterController {
       }
     }
   }
+
+  //--------------------------------------
+
+  @FXML
+  private void onReset() {
+    updatesDisabled = true;
+    resetFilters();
+    updatesDisabled = false;
+    tableController.applyFilter();
+  }
+
+  protected abstract void resetFilters();
+
+  protected void applyFilters() {
+    toggleFilterButton(hasFilter());
+    if (updatesDisabled) {
+      return;
+    }
+    updatesDisabled = true;
+    Platform.runLater(() -> {
+      tableController.applyFilter();
+      updatesDisabled = false;
+    });
+  }
+
+  protected abstract boolean hasFilter();
+
+  public final Predicate<M> buildPredicate() {
+    return buildPredicate(searchTerm);
+  }
+  public abstract Predicate<M> buildPredicate(String searchTerm);
 
 }

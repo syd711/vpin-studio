@@ -86,17 +86,21 @@ public class TournamentSynchronizer {
     return info;
   }
 
-  public boolean synchronize() {
-    VPinManiaClient maniaClient = maniaService.getClient();
-    Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
-    if (cabinet != null) {
-      List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-      return synchronize(tournaments);
+  public void synchronizeTournaments() {
+    try {
+      VPinManiaClient maniaClient = maniaService.getClient();
+      Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
+      if (cabinet != null) {
+        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+        synchronize(tournaments);
+      }
     }
-    return false;
+    catch (Exception e) {
+      LOG.error("Tournaments synchronization failed: " + e.getMessage(), e);
+    }
   }
 
-  public synchronized boolean synchronize(Game game) {
+  public void synchronize(Game game) {
     VPinManiaClient maniaClient = maniaService.getClient();
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     if (cabinet != null) {
@@ -113,17 +117,16 @@ public class TournamentSynchronizer {
         }
       }
 
-      return synchronize(filtered);
+      synchronize(filtered);
     }
-    return false;
   }
 
-  public synchronized boolean synchronize(List<Tournament> tournaments) {
+  public void synchronize(List<Tournament> tournaments) {
     try {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       if (cabinet == null) {
-        return false;
+        return;
       }
 
       LOG.info("-----------------------Synchronization of Tournaments-----------------------------");
@@ -191,8 +194,6 @@ public class TournamentSynchronizer {
     catch (Exception e) {
       LOG.error("Failed to synchronize tournaments: " + e.getMessage(), e);
     }
-
-    return false;
   }
 
   private void finishTables(Tournament tournament, List<TournamentTable> tournamentTables) {

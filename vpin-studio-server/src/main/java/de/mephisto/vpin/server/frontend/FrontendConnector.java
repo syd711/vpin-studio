@@ -117,11 +117,6 @@ public interface FrontendConnector {
 
   void deleteFromPlaylist(int playlistId, int gameId);
 
-  Playlist getPlayListForGame(int gameId);
-
-  @NonNull
-  List<Integer> getGameIdsFromPlaylists();
-
   File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen);
 
   //----------------------------------
@@ -134,6 +129,10 @@ public interface FrontendConnector {
 
   @NonNull
   List<TableAlxEntry> getAlxData(int gameId);
+
+  boolean updateNumberOfPlaysForGame(int gameId, long value);
+
+  boolean updateSecondsPlayedForGame(int gameId, long seconds);
 
   //----------------------------------
   // Pinup control management

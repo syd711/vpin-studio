@@ -42,6 +42,10 @@ public interface StudioEventListener {
 
   }
 
+  default void alxDataUpdated(@Nullable GameRepresentation game) {
+
+  }
+
   default void maintenanceEnabled(boolean b) {
 
   }

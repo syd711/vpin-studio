@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
@@ -28,6 +29,9 @@ public class PlaylistMediaServiceClient extends VPinStudioClientService {
     super(client);
   }
 
+ public FrontendMediaRepresentation getPlaylistMedia(int playlistId) {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/" + playlistId, FrontendMediaRepresentation.class);
+  }
 
   public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
     return getRestClient().delete(API + "playlistmedia/" + gameId + "/" + screen.name() + "/" + name);

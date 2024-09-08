@@ -147,6 +147,10 @@ public class StandaloneConnector extends BaseConnector {
     return filenames;
   }
 
+  @Override
+  protected void loadStats() {
+  }
+
   //------------------------------------------------------------
 
   @Override
