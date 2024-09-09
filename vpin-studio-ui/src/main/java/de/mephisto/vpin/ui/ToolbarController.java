@@ -216,8 +216,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
     dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
 
-    dropInsBtn.setVisible(Features.DROP_IN_FOLDER);
-
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);

@@ -70,6 +70,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
       }
     });
     this.reload();
+    localSettingsChanged(LocalUISettings.DROP_IN_FOLDER_ENABLED, LocalUISettings.getString(LocalUISettings.DROP_IN_FOLDER_ENABLED));
   }
 
   /**
