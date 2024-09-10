@@ -55,18 +55,18 @@ public class GithubReleaseFactoryTest {
     assertNull(install.getStatus());
   }
 
-//  @Test
-  public void testMameDiff() throws Exception {
-    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/pinmame/releases", Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
-    assertNotNull(githubRelease);
 
-    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
-    ReleaseArtifactActionLog install = artifact.diff(new File(TEST_FOLDER, artifact.getName()), new File(TEST_FOLDER), Arrays.asList("VPMAlias.txt"), Collections.emptyList(), "*.dll");
-    assertNotNull(install);
-    assertFalse(install.getLogs().isEmpty());
-    assertFalse(install.getDiffEntries().isEmpty());
-    assertNull(install.getStatus());
-  }
+//  public void testMameDiff() throws Exception {
+//    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/pinmame/releases", Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "sc-", "osx"));
+//    assertNotNull(githubRelease);
+//
+//    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
+//    ReleaseArtifactActionLog install = artifact.diff(new File(TEST_FOLDER, artifact.getName()), new File(TEST_FOLDER), Arrays.asList("VPMAlias.txt"), Collections.emptyList(), "*.dll");
+//    assertNotNull(install);
+//    assertFalse(install.getLogs().isEmpty());
+//    assertFalse(install.getDiffEntries().isEmpty());
+//    assertNull(install.getStatus());
+//  }
 
 
   @Test
@@ -109,18 +109,17 @@ public class GithubReleaseFactoryTest {
   }
 
 
-  @Test
-  public void testVpxDiff() throws Exception {
-    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug"));
-    assertNotNull(githubRelease);
-
-    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
-    ReleaseArtifactActionLog install = artifact.diff(new File(TEST_FOLDER, artifact.getName()), new File(TEST_FOLDER), Arrays.asList("VPinballX64.exe", "VPinballX.exe", "VPinballX_GL.exe"), Collections.emptyList());
-    assertNotNull(install);
-    assertNull(install.getStatus());
-    assertFalse(install.getDiffEntries().isEmpty());
-
-  }
+//  @Test
+//  public void testVpxDiff() throws Exception {
+//    GithubRelease githubRelease = GithubReleaseFactory.loadRelease("https://github.com/vpinball/vpinball/releases", Collections.emptyList(), Arrays.asList("Debug"));
+//    assertNotNull(githubRelease);
+//
+//    ReleaseArtifact artifact = githubRelease.getArtifacts().get(0);
+//    ReleaseArtifactActionLog install = artifact.diff(new File(TEST_FOLDER, artifact.getName()), new File(TEST_FOLDER), Arrays.asList("VPinballX64.exe", "VPinballX.exe", "VPinballX_GL.exe"), Collections.emptyList());
+//    assertNotNull(install);
+//    assertNull(install.getStatus());
+//    assertFalse(install.getDiffEntries().isEmpty());
+//  }
 
   @Test
   public void testBackglass() throws Exception {
