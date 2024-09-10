@@ -8,5 +8,5 @@
 - **Table Overview**: Fixed possible issue caused by the update news dialog which may have caused database locks.
 - **Event Log**: Improved event log with additional iScored infos.
 - **Highscore Parsing**: Added support for table "Jungle Princess".
-- **Highscore Parsing**: Fixed status message for unsupported highscore text files. Previously the wrong error message was shown, stating that no file has been found even though it was there. Now the correct message is shown, that the file was found but is not yet supported. Please report these tables so these can be fixed. 
+- **Highscore Parsing**: Fixed status message for unsupported highscore text files. Previously the wrong error message was shown, stating that no file has been found even though it was there. Now the correct message is shown, that the file was found but is not supported yet. Please report these tables so they can be fixed. 
 
