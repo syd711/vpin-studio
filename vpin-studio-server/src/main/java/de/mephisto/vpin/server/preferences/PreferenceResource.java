@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -88,6 +89,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.VPF_SETTINGS: {
           return preferencesService.getJsonPreference(key, VPFSettings.class);
+        }
+        case PreferenceNames.BACKUP_SETTINGS: {
+          return preferencesService.getJsonPreference(key, BackupSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

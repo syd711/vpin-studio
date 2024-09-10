@@ -61,9 +61,6 @@ public class DiscordBotResponseService implements DiscordBotCommandListener, Ini
       case BotCommand.CMD_HELP: {
         return () -> DiscordBotCommandResponseFactory.COMMAND_SUMMARY;
       }
-      case BotCommand.CMD_VPBM: {
-        return () -> DiscordBotCommandResponseFactory.createVPBMStatusMessage(vpbmService);
-      }
       case BotCommand.CMD_COMPETITIONS: {
         List<Competition> activeCompetitions = competitionService.getActiveCompetitions();
         if (activeCompetitions.isEmpty()) {
