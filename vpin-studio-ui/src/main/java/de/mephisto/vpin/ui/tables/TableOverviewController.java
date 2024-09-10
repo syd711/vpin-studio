@@ -639,19 +639,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onImport() {
-    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (emulatorSelection == null) {
-      WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
-      return;
-    }
-
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        TableDialogs.openTableImportDialog(emulatorSelection);
+        TableDialogs.openTableImportDialog();
       }
     }
     else {
-      TableDialogs.openTableImportDialog(emulatorSelection);
+      TableDialogs.openTableImportDialog();
     }
   }
 

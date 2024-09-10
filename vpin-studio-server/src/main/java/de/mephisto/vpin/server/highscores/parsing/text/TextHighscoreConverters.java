@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.highscores.parsing.text;
 
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -34,6 +35,7 @@ public class TextHighscoreConverters {
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MagicCity_67VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("WorldSeries_72VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MountainClimbingHS.txt", 3, 5));
+    adapters.add(new AlteringScoreInitialsBlocksAdapter("jungleprincess_1977_v2a.txt", 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));
@@ -81,7 +83,7 @@ public class TextHighscoreConverters {
     return false;
   }
 
-  public static String convertTextFileTextToMachineReadable(@NonNull ScoringDB scoringDB, @NonNull File file) {
+  public static String convertTextFileTextToMachineReadable(@NonNull HighscoreMetadata metadata, @NonNull ScoringDB scoringDB, @NonNull File file) {
     if (scoringDB.getIgnoredTextFiles().contains(file.getName())) {
       SLOG.info("\"" + file.getName() + "\" was marked as to be ignored for text file based highscores.");
       return null;
@@ -98,6 +100,7 @@ public class TextHighscoreConverters {
         }
       }
       LOG.info("No parser found for " + file.getName() + ", length: " + lines.size() + " rows.");
+      metadata.setStatus("No parser found for highscore file \"" + file.getName() + "\". Please report this table.");
     }
     catch (IOException e) {
       SLOG.error("Error reading EM highscore file: " + e.getMessage());
