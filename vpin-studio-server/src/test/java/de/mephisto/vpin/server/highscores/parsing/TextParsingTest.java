@@ -52,7 +52,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
     int count = 0;
     for (File entry : files) {
       HighscoreMetadata highscoreMetadata = new HighscoreMetadata();
-      if(entry.getName().equals("jungleprincess_1977_v2a.txt")) {
+      if(entry.getName().equals("Route66.txt")) {
         System.out.println("Reading '" + entry.getName() + "'");
         String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
         assertNull(highscoreMetadata.getStatus());

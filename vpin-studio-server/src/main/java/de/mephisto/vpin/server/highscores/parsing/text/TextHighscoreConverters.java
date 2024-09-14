@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.*;
+import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.Route66Adapter;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.customized.SpongebobAdapter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -26,6 +27,7 @@ public class TextHighscoreConverters {
 
   static {
     adapters.add(new SpongebobAdapter());
+    adapters.add(new Route66Adapter());
     adapters.add(new SinglePlayerScoreAdapter("JacksOpen.txt", 1));
     adapters.add(new SinglePlayerScoreAdapter("thunderbirds.txt", 5));
     adapters.add(new TwoPlayersAdapter("Strip_JP_EM_1978.txt", 1, 3));
