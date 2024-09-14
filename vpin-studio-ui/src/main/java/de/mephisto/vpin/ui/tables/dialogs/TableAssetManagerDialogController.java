@@ -446,7 +446,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private TableAssetSearch searchMedia(VPinScreen screen, String term) {
     ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(localStage,
-        new TableAssetSearchProgressModel("Media Asset Search", game.getId(), screen, term));
+        new TableAssetSearchProgressModel("Asset Search", game.getId(), screen, term));
     List<Object> results = progressDialog.getResults();
     if (!results.isEmpty()) {
       return (TableAssetSearch) results.get(0);
@@ -852,7 +852,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     initDragAndDrop();
   }
 
-  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @NonNull GameRepresentation game, @Nullable VPinScreen screen) {
+  public void setGame(Stage stage, @NonNull TableOverviewController overviewController, @Nullable GameRepresentation game, @Nullable VPinScreen screen) {
     localStage = stage;
     this.overviewController = overviewController;
 

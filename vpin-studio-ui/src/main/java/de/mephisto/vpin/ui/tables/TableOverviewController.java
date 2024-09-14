@@ -71,8 +71,8 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> 
-  implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
+    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
@@ -269,9 +269,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private TableOverviewContextMenu contextMenuController;
   private IgnoredValidationSettings ignoredValidations;
 
-  
+
   private GameEmulatorChangeListener gameEmulatorChangeListener;
   private GameStatus status;
+  private VPinScreen assetScreenSelection;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -294,7 +295,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     Platform.runLater(() -> {
       if (assetManagerMode) {
-        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
+        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), assetScreenSelection == null ? VPinScreen.Wheel : assetScreenSelection);
         assetManagerViewBtn.getStyleClass().add("toggle-selected");
         if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
           assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
@@ -311,7 +312,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       GameRepresentation selectedItem = getSelection();
       clearSelection();
       if (selectedItem != null) {
-        selectGameInModel(selectedItem);
+        selectGameInModel(selectedItem, false);
       }
     });
   }
@@ -852,19 +853,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         GameRepresentation selection = getSelection();
         GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
         GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-        int id = value != null? value.getId() : ALL_VPX_ID;
+        int id = value != null ? value.getId() : ALL_VPX_ID;
 
         if (clearCache) {
           if (id == ALL_VPX_ID) {
             client.getGameService().clearVpxCache();
-          } 
+          }
           else {
             client.getGameService().clearCache(id);
           }
         }
-        
-        this.data = id == ALL_VPX_ID 
-            ? client.getGameService().getVpxGamesCached() 
+
+        this.data = id == ALL_VPX_ID
+            ? client.getGameService().getVpxGamesCached()
             : client.getGameService().getGamesByEmulator(id);
 
         // as the load of tables could take some time, users may have switched to another emulators in between
@@ -1342,7 +1343,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
- }
+  }
 
   //------------------------------
 
@@ -1441,15 +1442,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return btn;
   }
 
-  private void showAssetDetails(GameRepresentation game, VPinScreen VPinScreen) {
-    tableView.getSelectionModel().clearSelection();
-    selectGameInModel(game);
+  private void showAssetDetails(GameRepresentation game, VPinScreen screen) {
+    assetScreenSelection = screen;
+    selectGameInModel(game, false);
+
     Platform.runLater(() -> {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, VPinScreen);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     });
   }
-
-  // filterGames() moved to TableOverviewPredicateFactory
 
   private void refreshView(Optional<GameRepresentation> g) {
     dismissBtn.setVisible(true);
@@ -1459,7 +1459,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationErrorText.setText("");
 
     if (assetManagerMode) {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), null);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), assetScreenSelection);
     }
     else {
       this.tablesController.getTablesSideBarController().setGame(g);
@@ -1859,6 +1859,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     public GameRepresentationModel(GameRepresentation game) {
       super(game);
     }
+
     public GameRepresentation getGame() {
       return getBean();
     }
