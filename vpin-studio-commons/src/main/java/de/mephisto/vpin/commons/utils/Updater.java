@@ -110,7 +110,7 @@ public class Updater {
   }
 
   public static boolean installServerUpdate() throws IOException {
-    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nwscript server.vbs\nexit");
+    FileUtils.writeBatch("update-server.bat", "timeout /T 8 /nobreak\ncd /d %~dp0\ndel VPin-Studio-Server.exe\nresources\\7z.exe -aoa x \"VPin-Studio-Server.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio-Server.zip\nwscript server.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "update-server.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(getBasePath());
@@ -121,7 +121,7 @@ public class Updater {
   public static boolean installClientUpdate() throws IOException {
     String os = System.getProperty("os.name");
     if (os.contains("Windows")) {
-      String cmds = "timeout /T 4 /nobreak\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
+      String cmds = "timeout /T 4 /nobreak\ncd /d %~dp0\nresources\\7z.exe -aoa x \"VPin-Studio.zip\"\ntimeout /T 4 /nobreak\ndel VPin-Studio.zip\nVPin-Studio.exe\nexit";
       FileUtils.writeBatch("update-client.bat", cmds);
       LOG.info("Written temporary batch: " + cmds);
       List<String> commands = Arrays.asList("cmd", "/c", "start", "update-client.bat");
