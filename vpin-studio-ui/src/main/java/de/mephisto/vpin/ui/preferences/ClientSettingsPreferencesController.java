@@ -592,7 +592,7 @@ public class ClientSettingsPreferencesController implements Initializable {
 
       String startsWith = SystemUtil.isWindows() ? "\\\\" : SystemUtil.isMac() ? "smb://" : null;
       if (startsWith == null) {
-        winNetworkShareStatusLabel.setText("<noOp>");
+        winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
       } else if (!newValue.startsWith(startsWith)) {
         winNetworkShareStatusLabel.setText("Network path must begin with " + startsWith + ".");
       }
