@@ -156,8 +156,6 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private void onWinShareTest() {
     SystemUtil.publicUrl = winNetworkShare.getText();
-    WidgetFactory.showAlert(stage, "onWinShareTest SystemUtil.publicUrl: " + SystemUtil.publicUrl);
-    WidgetFactory.showAlert(stage, "onWinShareTest networkShareTestPath: " + networkShareTestPath);
     SystemUtil.openFolder(new File(networkShareTestPath));
   }
 
