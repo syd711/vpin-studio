@@ -10,6 +10,7 @@
 
 - **Highscore Card**: The canvas is centered automatically now  when no left/right margins are set.
 - **Highscore Card**: The non-raw highscore list is centered automatically now when no left/right margins are set.
+- **Windows VPin Studio Server Tray**: Added option to launch the Studio. The action is also executed on double-click on the tray icon.
 - **Studio Client Toolbar**: Added mute/unmute option to system preferences drop-down menu.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />

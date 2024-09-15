@@ -38,7 +38,8 @@ public class JobPoller implements StudioEventListener {
   private final List<JobDescriptor> clientJobs = Collections.synchronizedList(new ArrayList<>());
   private final Service service;
 
-  private AtomicBoolean polling = new AtomicBoolean(false);
+  private final AtomicBoolean polling = new AtomicBoolean(false);
+  private JobsMenuHeaderController headerController;
 
   public static void destroy() {
     if (instance != null) {
@@ -57,6 +58,22 @@ public class JobPoller implements StudioEventListener {
   private JobPoller(MenuButton jobMenu, ProgressIndicator jobProgress) {
     this.jobMenu = jobMenu;
     this.jobProgress = jobProgress;
+
+    try {
+      FXMLLoader loader = new FXMLLoader(JobsMenuHeaderController.class.getResource("jobs-header.fxml"));
+      BorderPane root = loader.load();
+      root.getStyleClass().add("dropin-menu-item");
+      headerController = loader.getController();
+      headerController.setData(this);
+
+      CustomMenuItem item = new CustomMenuItem();
+      item.setContent(root);
+      jobMenu.getItems().add(item);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load job container: " + e.getMessage(), e);
+    }
+
 
     service = new Service() {
       @Override
@@ -116,6 +133,7 @@ public class JobPoller implements StudioEventListener {
     List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
     polling.set(!activeJobList.isEmpty());
     jobMenu.setDisable(allJobs.isEmpty());
+    headerController.setVisible(!allJobs.isEmpty());
 
     Platform.runLater(() -> {
       jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
@@ -135,6 +153,10 @@ public class JobPoller implements StudioEventListener {
       //remove dismissed jobs
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
       for (MenuItem item : items) {
+        if(item.getUserData() == null) {
+          continue;
+        }
+
         JobDescriptor descriptor = ((JobsContainerController) item.getUserData()).getDescriptor();
         if (!allJobs.contains(descriptor)) {
           jobMenu.getItems().remove(item);
@@ -144,7 +166,7 @@ public class JobPoller implements StudioEventListener {
 
       //update or add jobs
       for (JobDescriptor descriptor : allJobs) {
-        Optional<MenuItem> menuItem = items.stream().filter(c -> ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
+        Optional<MenuItem> menuItem = items.stream().filter(c -> c.getUserData() != null && ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
         if (menuItem.isPresent()) {
           JobsContainerController controller = (JobsContainerController) menuItem.get().getUserData();
           controller.setData(this, descriptor);
