@@ -13,6 +13,8 @@ open module de.mephisto.vpin.restclient {
   requires spring.boot;
   requires sevenzipjbinding;
   requires logback.classic;
+  requires spring.webflux;
+  requires reactor.core;
 
   exports de.mephisto.vpin.restclient;
   exports de.mephisto.vpin.restclient.alx;

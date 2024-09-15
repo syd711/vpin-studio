@@ -1,7 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.altsound.AltSoundServiceClient;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.concurrent.Future;
 
 import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
 
@@ -27,6 +30,8 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final File file;
   private final int emulatorId;
   private final String rom;
+
+  private Future<UploadDescriptor> currentUploadFuture;
 
   public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom) {
     super(file, title);
@@ -60,7 +65,9 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor result = Studio.client.getAltSoundService().uploadAltSound(next, emulatorId, percent -> progressResultModel.setProgress(percent));
+      currentUploadFuture = Studio.client.getAltSoundService().uploadAltSoundFuture(next, emulatorId, progressResultModel::setProgress);
+      UploadDescriptor result = currentUploadFuture.get();
+
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -73,12 +80,22 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
       progressResultModel.addProcessed();
     }
     catch (Exception e) {
-      LOG.error("Alt sound upload failed: " + e.getMessage(), e);
+      if (!currentUploadFuture.isCancelled()) {
+        LOG.error("Alt sound upload failed: " + e.getMessage(), e);
+      }
     }
   }
 
   @Override
   public boolean hasNext() {
     return iterator.hasNext();
+  }
+  @Override
+  public void cancel() {
+    if (currentUploadFuture != null && !currentUploadFuture.isDone()) {
+      currentUploadFuture.cancel(true);
+
+      LOG.warn("Upload cancelled");
+    }
   }
 }

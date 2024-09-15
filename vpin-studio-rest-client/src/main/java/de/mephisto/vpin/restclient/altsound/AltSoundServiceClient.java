@@ -7,18 +7,28 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.MultipartBodyBuilder;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.Disposable;
+import reactor.core.publisher.Mono;
 
 import java.io.File;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.function.Supplier;
 
 /*********************************************************************************************************************
  * Alt Sound
  ********************************************************************************************************************/
 public class AltSoundServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundServiceClient.class);
+
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
+  private Disposable uploadDisposable = null;
 
   public AltSoundServiceClient(VPinStudioClient client) {
     super(client);
@@ -45,17 +55,40 @@ public class AltSoundServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + "altsound/" + gameId);
   }
 
-  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
+  public UploadDescriptor uploadAltSound(File file, int emulatorId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "altsound/upload";
-      HttpEntity upload = createUpload(file, emulatorId, null, AssetType.ALT_SOUND, listener);
-      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
-      finalizeUpload(upload);
-      return exchange.getBody();
+
+      MultiValueMap<String, Object> formData = createUploadForm(file, emulatorId, null, AssetType.ALT_SOUND, listener);
+      Mono<UploadDescriptor> responseMono = webClientPost(url, formData, UploadDescriptor.class, listener);
+
+      uploadDisposable = responseMono.subscribe();
+
+      return responseMono.block();
     } catch (Exception e) {
-      LOG.error("ALT sound upload failed: " + e.getMessage(), e);
+      if (e.getCause() instanceof InterruptedException) {
+        LOG.error("ALT sound upload has likely been cancelled: {}", e.getMessage());
+      } else {
+        LOG.error("ALT sound upload failed: {}", e.getMessage(), e);
+      }
+
       throw e;
     }
+  }
+
+  public Future<UploadDescriptor> uploadAltSoundFuture(File file, int emulatorId, FileUploadProgressListener listener) throws Exception {
+    Callable<UploadDescriptor> task = () -> {
+      try {
+        return this.uploadAltSound(file, emulatorId, listener);
+      } catch (Exception e) {
+        if (uploadDisposable != null && !uploadDisposable.isDisposed()) {
+          uploadDisposable.dispose();
+        }
+        return null;
+      }
+    };
+
+    return executor.submit(task);
   }
 
   public String getAudioUrl(AltSound altSound, int emuId, String item) {

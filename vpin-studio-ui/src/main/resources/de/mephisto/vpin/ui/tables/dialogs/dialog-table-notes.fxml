@@ -59,7 +59,7 @@
                         <Insets bottom="6.0" top="6.0" />
                      </VBox.margin>
                   </TextArea>
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Tipp:" textFill="WHITE">
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="Tip:" textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>

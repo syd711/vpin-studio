@@ -417,11 +417,13 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis, int gameId) {
+  public static boolean openAltSoundUploadDialog(File file, UploaderAnalysis analysis, int gameId) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
     controller.setData(stage, file, analysis, gameId);
     stage.showAndWait();
+
+    return controller.uploadFinished();
   }
 
   public static AltSound2DuckingProfile openAltSound2ProfileEditor(AltSound altSound, AltSound2DuckingProfile profile) {

@@ -15,6 +15,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
 
+- **Studio Server**: Handle aborted requests and error handling in the request filter. 
 
 ## Bugfixes
 
@@ -25,3 +26,4 @@
   - Fixed all views of the tables section to be useable for 1280x768.
   - The Studio window now has a minimum with of 1280x700 pixel.
   - Fixed navigation and header toolbar to be useable on smaller screen resolutions too.
+- **Table Uploads / ALT Sound**: Fixed ALT Sound cancel upload.
