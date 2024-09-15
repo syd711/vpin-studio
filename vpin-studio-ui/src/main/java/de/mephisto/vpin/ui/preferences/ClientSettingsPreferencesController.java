@@ -148,11 +148,10 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnVpsStatus;
 
-
   public static Debouncer debouncer = new Debouncer();
   private String networkShareTestPath;
   private UISettings uiSettings;
-
+  private final boolean supportsNetworkShare = SystemUtil.isWindows() || SystemUtil.isMac();
 
   @FXML
   private void onWinShareTest() {
@@ -333,22 +332,22 @@ public class ClientSettingsPreferencesController implements Initializable {
     });
 
     winNetworkShare.setText(uiSettings.getWinNetworkShare());
-    winNetworkShare.setDisable(!SystemUtil.isWindows());
-    winNetworkShareStatusLabel.setVisible(SystemUtil.isWindows() && !StringUtils.isEmpty(winNetworkShare.getText()));
+    winNetworkShare.setDisable(!supportsNetworkShare);
+    winNetworkShareStatusLabel.setVisible(supportsNetworkShare && !StringUtils.isEmpty(winNetworkShare.getText()));
     winNetworkShare.textProperty().addListener(new ChangeListener<String>() {
       @Override
       public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
         debouncer.debounce("winNetworkShare", () -> {
           uiSettings.setWinNetworkShare(newValue);
 
-          boolean visible = SystemUtil.isWindows() && !StringUtils.isEmpty(newValue);
+          boolean visible = supportsNetworkShare && !StringUtils.isEmpty(newValue);
           winNetworkShareStatusLabel.setVisible(visible);
           refreshNetworkStatusLabel(newValue);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }, 300);
       }
     });
-    winNetworkShareTestBtn.setDisable(!SystemUtil.isWindows());
+    winNetworkShareTestBtn.setDisable(!supportsNetworkShare);
     refreshNetworkStatusLabel(uiSettings.getWinNetworkShare());
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulators();
@@ -586,13 +585,16 @@ public class ClientSettingsPreferencesController implements Initializable {
     winNetworkShareTestBtn.setDisable(true);
     Platform.runLater(() -> {
       String path = SystemUtil.resolveNetworkPath(newValue, networkShareTestPath);
-      if (StringUtils.isEmpty(newValue) || !SystemUtil.isWindows()) {
+      if (StringUtils.isEmpty(newValue) || !supportsNetworkShare) {
         winNetworkShareStatusLabel.setVisible(false);
         return;
       }
 
-      if (!newValue.startsWith("\\\\")) {
-        winNetworkShareStatusLabel.setText("Network path must with \"\\\\\".");
+      String startsWith = SystemUtil.isWindows() ? "\\\\" : SystemUtil.isMac() ? "smb://" : null;
+      if (startsWith == null) {
+        winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
+      } else if (!newValue.startsWith(startsWith)) {
+        winNetworkShareStatusLabel.setText("Network path must begin with " + startsWith + ".");
       }
       else if (path == null) {
         winNetworkShareStatusLabel.setText("No matching path with VPX installation found, using test folder \"" + networkShareTestPath + "\"");
