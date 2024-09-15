@@ -2,12 +2,25 @@ package de.mephisto.vpin.server.util;
 
 import com.jhlabs.image.GaussianFilter;
 import com.jhlabs.image.GrayscaleFilter;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.paint.Paint;
 import org.imgscalr.Scalr;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.GradientPaint;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsConfiguration;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.*;
 
@@ -84,10 +97,10 @@ public class ImageUtil {
   }
 
   @SuppressWarnings("unused")
-  public static void setDefaultColor(Graphics g, String fontColor) {
-    Color decode = Color.decode(fontColor);
-    g.setColor(decode);
-    setRendingHints(g);
+  public static void setDefaultColor(GraphicsContext g, String fontColor) {
+    Paint paint = Paint.valueOf(fontColor);
+    g.setStroke(paint);
+//    setRendingHints(g);
   }
 
   @SuppressWarnings("unused")
@@ -118,16 +131,11 @@ public class ImageUtil {
   }
 
   @SuppressWarnings("unused")
-  public static void drawBorder(BufferedImage image, int strokeWidth) {
+  public static void drawBorder(GraphicsContext g, int strokeWidth, int width, int height) {
     if (strokeWidth > 0) {
-      Graphics2D graphics = (Graphics2D) image.getGraphics();
-      graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-      graphics.setStroke(new BasicStroke(strokeWidth));
-      int width = image.getWidth();
-      int height = image.getHeight();
-
-      graphics.setColor(Color.WHITE);
-      graphics.drawRect(strokeWidth / 2, strokeWidth / 2, width - strokeWidth, height - strokeWidth);
+      g.setStroke(g.getFill());
+      g.setLineWidth(strokeWidth);
+      g.strokeRect(strokeWidth / 2, strokeWidth / 2, width - strokeWidth, height - strokeWidth);
     }
   }
 

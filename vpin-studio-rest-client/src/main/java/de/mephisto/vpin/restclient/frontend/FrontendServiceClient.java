@@ -8,7 +8,7 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +51,9 @@ public class FrontendServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/imports/" + emulatorId, GameList.class);
   }
 
-  public JobExecutionResult importTable(GameListItem item) throws Exception {
+  public JobDescriptor importTable(GameListItem item) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_FRONTEND + "/import", item, JobExecutionResult.class);
+      return getRestClient().post(API + API_SEGMENT_FRONTEND + "/import", item, JobDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed importing tables: " + e.getMessage(), e);

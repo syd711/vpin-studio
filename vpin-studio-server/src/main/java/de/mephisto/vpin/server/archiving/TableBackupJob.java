@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.games.descriptors.BackupDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -26,24 +26,18 @@ public class TableBackupJob implements Job {
     this.gameId = gameId;
   }
 
-  @Override
-  public double getProgress() {
-    return tableBackupAdapter.getProgress();
-  }
-
-  @Override
-  public String getStatus() {
-    return tableBackupAdapter.getStatus();
-  }
-
-  public JobExecutionResult execute() {
-    JobExecutionResult result = tableBackupAdapter.execute();
+  public void execute(JobDescriptor result) {
+    tableBackupAdapter.execute(result);
     if (!result.isErrorneous()) {
-      if(backupDescriptor.isRemoveFromPlaylists()) {
+      if (backupDescriptor.isRemoveFromPlaylists()) {
         frontendService.deleteFromPlaylists(gameId);
       }
       sourceAdapter.invalidate();
     }
-    return result;
+  }
+
+  @Override
+  public boolean isCancelable() {
+    return false;
   }
 }

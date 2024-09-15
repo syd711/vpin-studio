@@ -341,7 +341,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         Platform.runLater(() -> {
           DownloadJobDescriptor job = new DownloadJobDescriptor(selectedItem.getUri() + "/" + URLEncoder.encode(selectedItem.getName(), Charset.defaultCharset()), uniqueTarget);
           job.setTitle("Download of \"" + uniqueTarget.getName() + "\"");
-          job.setDescription("Downloading targetFolder \"" + uniqueTarget.getName() + "\"");
           JobPoller.getInstance().queueJob(job);
         });
       }

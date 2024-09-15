@@ -1,17 +1,16 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +26,6 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
   private final ArchiveSourceAdapter archiveSourceAdapter;
   private final TableDetails tableDetails;
 
-  private double progress;
-  private String status;
-
   public TableBackupAdapterVpbm(@NonNull VpbmService vpbmService,
                                 @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                 @NonNull Game game,
@@ -40,33 +36,24 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     this.tableDetails = tableDetails;
   }
 
-  @Override
-  public double getProgress() {
-    return progress;
+  public void execute(JobDescriptor jobDescriptor) {
+    createBackup(jobDescriptor);
   }
 
   @Override
-  public String getStatus() {
-    return status;
-  }
-
-  public JobExecutionResult execute() {
-    return createBackup();
-  }
-
-  @Override
-  public JobExecutionResult createBackup() {
+  public void createBackup(JobDescriptor result) {
     Thread.currentThread().setName("Backup Thread of " + game.getGameDisplayName());
     LOG.info("Starting VPBM backup of " + game.getGameDisplayName());
 
-    status = "Creating backup of \"" + game.getGameDisplayName() + "\"";
+    result.setStatus("Creating backup of \"" + game.getGameDisplayName() + "\"");
 
-    JobExecutionResult result = JobExecutionResultFactory.error(vpbmService.backup(game.getId()));
+    String backup = vpbmService.backup(game.getId());
+    result.setError(backup);
 
     File archiveFile = new File(this.archiveSourceAdapter.getArchiveSource().getLocation(), tableDetails.getGameName() + ".vpinzip");
 
-    progress = 90;
-    status = "Generating Metadata";
+    result.setProgress(0.9);
+    result.setStatus("Generating Metadata");
 
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     archiveDescriptor.setSource(archiveSourceAdapter.getArchiveSource());
@@ -87,8 +74,6 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
 
     ArchiveUtil.exportArchiveDescriptor(archiveDescriptor);
 
-    progress = 100;
-
-    return result;
+    result.setProgress(1);
   }
 }

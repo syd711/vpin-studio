@@ -3,16 +3,18 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.ScreenMode;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.frontend.ScreenMode;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.*;
+import de.mephisto.vpin.ui.util.DismissalUtil;
+import de.mephisto.vpin.ui.util.LocalizedValidation;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -154,7 +156,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     if (!StringUtils.isEmpty(option)) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Apply \"" + option + "\"?", "The existing settings will be overwritten.");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        JobExecutionResult jobExecutionResult = null;
+        JobDescriptor jobExecutionResult = null;
         try {
           jobExecutionResult = client.getPupPackService().option(game.get().getId(), option);
           if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
@@ -164,8 +166,8 @@ public class TablesSidebarPUPPackController implements Initializable {
           client.getPupPackService().clearCache();
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
 
-          if (!StringUtils.isEmpty(jobExecutionResult.getMessage())) {
-            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getMessage());
+          if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
+            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getError());
           }
         }
         catch (Exception e) {

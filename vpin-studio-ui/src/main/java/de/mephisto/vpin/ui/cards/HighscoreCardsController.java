@@ -264,6 +264,9 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
     templateEditorController.selectTable(selectedItem, false);
     refreshRawPreview(selectedItem);
+
+    templateEditorController.refreshPreviewSize();
+    refreshPreview(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), false);
   }
 
   private void filterGames(List<GameRepresentation> games) {
@@ -322,6 +325,10 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
   }
 
   public void onDragDone() {
+    if (!NavigationItem.HighscoreCards.equals(NavigationController.getActiveNavigation())) {
+      return;
+    }
+
     debouncer.debounce("position", () -> {
       Platform.runLater(() -> {
         templateEditorController.refreshPreviewSize();
@@ -531,7 +538,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
     }
 
     if (gameRepresentation.isPresent()) {
-      GameRepresentation refreshedGame = client.getGameService().getGameCached(gameRepresentation.get().getId());
+      GameRepresentation refreshedGame = client.getGameService().getVpxGameCached(gameRepresentation.get().getId());
       Platform.runLater(() -> {
         tableView.getSelectionModel().getSelectedItems().removeListener(this);
         GameRepresentation selection = tableView.getSelectionModel().getSelectedItem();

@@ -4,12 +4,11 @@ import de.mephisto.vpin.commons.OrbitalPins;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.JCodec;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -40,7 +39,7 @@ public class PupPacksService implements InitializingBean {
   private FrontendService frontendService;
 
   @Autowired
-  private JobQueue jobQueue;
+  private JobService jobService;
 
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
@@ -130,7 +129,7 @@ public class PupPacksService implements InitializingBean {
     return pupPack;
   }
 
-  public JobExecutionResult option(Game game, String option) {
+  public JobDescriptor option(Game game, String option) {
     PupPack pupPack = getPupPack(game);
     return pupPack.executeOption(option);
   }
@@ -191,17 +190,16 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom);
     if (!async) {
-      job.execute();
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
+      job.execute(jobDescriptor);
     }
     else {
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
 
       jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
-      jobDescriptor.setDescription("Unzipping " + uploadDescriptor.getOriginalUploadFileName());
       jobDescriptor.setJob(job);
-      jobDescriptor.setStatus(job.getStatus());
 
-      jobQueue.offer(jobDescriptor);
+      jobService.offer(jobDescriptor);
     }
   }
 

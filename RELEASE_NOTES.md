@@ -1,9 +1,27 @@
-## Release Notes 3.5.3
+## Release Notes 3.6.0
 
-### Bugfixes
+## Changes
 
-- **Studio Window Exit**: Fixed proper closing of the Studio client window. ALT-F4 or other actions than the "close" button from the toolbar resulted in a "Zulu" zombie process. The process is properly terminated now.
-- **Studio Update Error**: Fixed issue that the server update process didn't work (and showed some scripting error). For some users, the update batch file was executed in the wrong folder. **You have to install this update manually so that the automatic update works again for the next update!!!**.
-- **Highscore Parsing**: Added support for "Route 66".
-- **Table Overview / Asset Management View**: Fixed "scroll into view" issue when the screen-assets button was clicked. This auto-scrolling was not intended for these actions.
-- **Table Overview / Asset Management View**: Fixed wrong asset search when switching between the different screen buttons in the table overview.
+- **Data Exporter**: Added a new headless API (without UI) to export data in CSV format from the VPin Studio server. The usage of the API is documented here: https://github.com/syd711/vpin-studio/wiki/Data-Export. Note that this API is a first draft and likely to change, so don't consider it as stable yet in case you build your own tools based on it. Right now, it includes the following endpoints:
+  - **Table Data Exporter**: Exports all table metadata of the selected tables.
+  - **Highscore Exporter**: Exports all highscores of the selected tables.
+  - **Backglass Exporter**: Exports the backglass metadata of the selected .directb2s files.
+  - **Table Media Exporter**: Exports the number of media for available for every screen of the selected tables.
+
+- **Highscore Card**: The canvas is centered automatically now  when no left/right margins are set.
+- **Highscore Card**: The non-raw highscore list is centered automatically now when no left/right margins are set.
+- **Windows VPin Studio Server Tray**: Added option to launch the Studio. The action is also executed on double-click on the tray icon.
+- **Studio Client Toolbar**: Added mute/unmute option to system preferences drop-down menu.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
+
+
+## Bugfixes
+
+- **Highscore Card Editor / Performance**: Fixed performance issue that the view caused to load all available games.
+- **Highscore Card Editor / Fonts**: Fixed rendering of fonts. This one has been a flow right from the beginning. You finally get what you see when you select a font from the font selector, including the font weight and style. The issue that not all true-type-fonts (ttf files) have been rendered properly has been fixed too.
+- **Table Uploads**: Deleting existing .vbs files on table replacements.
+- **Smaller Screen Support**:
+  - Fixed all views of the tables section to be useable for 1280x768.
+  - The Studio window now has a minimum with of 1280x700 pixel.
+  - Fixed navigation and header toolbar to be useable on smaller screen resolutions too.

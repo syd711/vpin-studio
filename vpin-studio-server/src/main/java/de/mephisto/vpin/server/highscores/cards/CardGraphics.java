@@ -1,17 +1,30 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
+import javafx.embed.swing.SwingFXUtils;
+import javafx.geometry.Rectangle2D;
+import javafx.scene.SnapshotParameters;
+import javafx.scene.canvas.Canvas;
+import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
+import javafx.scene.image.WritableImage;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontPosture;
+import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,21 +71,26 @@ public class CardGraphics {
       ImageUtil.applyAlphaComposites(backgroundImage, alphaWhite, alphaBlack);
     }
 
-    renderCardData(backgroundImage, game);
-    int borderWidth = template.getBorderWidth();
-    ImageUtil.drawBorder(backgroundImage, borderWidth);
-
-    return backgroundImage;
+    return renderCardData(backgroundImage, game);
   }
 
   private BufferedImage getBackgroundImage() throws IOException {
+    int width = highscoreCardResolution.toWidth();
+    int height = highscoreCardResolution.toHeight();
+    if (width == 0) {
+      width = 1280;
+    }
+    if (height == 0) {
+      height = 720;
+    }
+
     if (template.isTransparentBackground()) {
-      BufferedImage bufferedImage = new BufferedImage(highscoreCardResolution.toWidth(), highscoreCardResolution.toHeight(), BufferedImage.TYPE_INT_ARGB);
+      BufferedImage bufferedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
       Graphics2D g2 = (Graphics2D) bufferedImage.getGraphics();
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR));
 
       int value = 255 - (255 * template.getTransparentPercentage() / 100);
-      g2.setBackground(new Color(0, 0, 0, value));
+      g2.setBackground(new java.awt.Color(0, 0, 0, value));
       g2.clearRect(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight());
       g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
       g2.dispose();
@@ -104,11 +122,16 @@ public class CardGraphics {
     else {
       try {
         backgroundImage = ImageUtil.loadImage(croppedDefaultPicture);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.info("Using default image as fallback instead of " + croppedDefaultPicture.getAbsolutePath());
         BufferedImage sImage = ImageUtil.loadImage(sourceImage);
         backgroundImage = ImageUtil.crop(sImage, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
       }
+    }
+
+    if (width != backgroundImage.getWidth()) {
+      backgroundImage = ImageUtil.resizeImage(backgroundImage, width);
     }
 
     return backgroundImage;
@@ -117,8 +140,18 @@ public class CardGraphics {
   /**
    * The upper section, usually with the three topscores.
    */
-  private void renderCardData(BufferedImage image, Game game) throws Exception {
-    Graphics g = image.getGraphics();
+  private BufferedImage renderCardData(BufferedImage image, Game game) throws Exception {
+    Canvas canvas = new Canvas(image.getWidth(), image.getHeight());
+    GraphicsContext g = canvas.getGraphicsContext2D();
+    g.setFill(Paint.valueOf(template.getFontColor()));
+
+    Image background = SwingFXUtils.toFXImage(image, null);
+    g.drawImage(background, 0, 0);
+
+
+    int borderWidth = template.getBorderWidth();
+    ImageUtil.drawBorder(g, borderWidth, image.getWidth(), image.getHeight());
+
     int imageWidth = image.getWidth();
 
     if (template.isRenderCanvas()) {
@@ -129,15 +162,14 @@ public class CardGraphics {
     int currentY = template.getMarginTop();
     if (template.isRenderTitle()) {
       String titleFontName = template.getTitleFontName();
-      int titleFontStyle = ImageUtil.convertFontPosture(template.getTitleFontStyle());
       int titleFontSize = template.getTitleFontSize();
-      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+      g.setFont(createFont(titleFontName, template.getTitleFontStyle(), titleFontSize));
 
       String title = template.getTitle();
-      int titleWidth = g.getFontMetrics().stringWidth(title);
+      int titleWidth = getTextWidth(title, g.getFont());
       currentY = currentY + titleFontSize;
-      g.drawString(title, imageWidth / 2 - titleWidth / 2, currentY);
-      g.setFont(new Font(titleFontName, titleFontStyle, titleFontSize));
+      g.fillText(title, imageWidth / 2 - titleWidth / 2, currentY);
+      g.setFont(createFont(titleFontName, template.getTitleFontStyle(), titleFontSize));
 
       currentY = currentY + template.getPadding();
     }
@@ -149,38 +181,111 @@ public class CardGraphics {
     else {
       renderScorelist(game, g, currentY, image.getWidth()); //TODO why title?
     }
+
+    SnapshotParameters snapshotParameters = new SnapshotParameters();
+    Rectangle2D rectangle2D = new Rectangle2D(0, 0, canvas.getWidth(), canvas.getHeight());
+    snapshotParameters.setViewport(rectangle2D);
+    snapshotParameters.setFill(Color.TRANSPARENT);
+    WritableImage snapshot = canvas.snapshot(snapshotParameters, null);
+    BufferedImage bufferedImage = new BufferedImage((int) rectangle2D.getWidth(), (int) rectangle2D.getHeight(), BufferedImage.TYPE_INT_ARGB);
+    return SwingFXUtils.fromFXImage(snapshot, bufferedImage);
   }
 
-  private void renderCanvas(BufferedImage image, Graphics g) {
-    Color decode = Color.decode("#FFFFFF");
-    if (template.getCanvasBackground() != null) {
-      decode = Color.decode(template.getCanvasBackground());
-    }
+
+  private void renderCanvas(BufferedImage image, GraphicsContext g) {
     int value = 255 - (255 * template.getCanvasAlphaPercentage() / 100);
-    g.setColor(new Color(decode.getRed(), decode.getGreen(), decode.getBlue(), value));
-    g.fillRoundRect(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
+    String hex = Integer.toHexString(value);
+    String color = "#FFFFFF";
+    if (template.getCanvasBackground() != null) {
+      color = template.getCanvasBackground();
+    }
+
+    Paint paint = Paint.valueOf(color + hex);
+    g.setFill(paint);
+
+    boolean canvasCentered = template.getCanvasX() == 0;
+    if (canvasCentered) {
+      double x = (image.getWidth() / 2) - (template.getCanvasWidth() / 2);
+      g.fillRoundRect(x, template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
+    }
+    else {
+      g.fillRoundRect(template.getCanvasX(), template.getCanvasY(), template.getCanvasWidth(), template.getCanvasHeight(), template.getCanvasBorderRadius(), template.getCanvasBorderRadius());
+    }
+    g.setFill(Paint.valueOf(template.getFontColor()));
   }
 
-  private void renderScorelist(Game game, Graphics g, int currentY, int imageWidth) throws IOException {
+  private void renderScorelist(Game game, GraphicsContext g, int currentY, int imageWidth) throws IOException {
     if (template.isRenderTableName()) {
       String tableFontName = template.getTableFontName();
-      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      String tableFontStyle = template.getTableFontStyle();
       int tableFontSize = template.getTableFontSize();
-      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+
+      Font font = createFont(tableFontName, tableFontStyle, tableFontSize);
+      g.setFont(font);
 
       String tableName = game.getGameDisplayName();
       currentY = currentY + tableFontSize;
-      int tableNameWidth = g.getFontMetrics().stringWidth(tableName);
-      g.drawString(tableName, imageWidth / 2 - tableNameWidth / 2, currentY);
+      int tableNameWidth = getTextWidth(tableName, font);
+      g.fillText(tableName, imageWidth / 2 - tableNameWidth / 2, currentY);
 
       currentY = currentY + template.getPadding();
     }
 
-    g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), template.getScoreFontSize()));
+    Font font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), template.getScoreFontSize());
+    g.setFont(font);
 
+    //calc max length of scores
+    int scoreLength = 0;
+    List<Score> scores = summary.getScores();
+    for (Score score : scores) {
+      if (score.getFormattedScore().length() > scoreLength) {
+        scoreLength = score.getFormattedScore().length();
+      }
+    }
+
+    //format score lines
+    List<String> scoreLines = new ArrayList<>();
+    for (Score score : scores) {
+      String renderString = score.getPlayerInitials() + "   ";
+      if (template.isRenderPositions()) {
+        renderString = score.getPosition() + ". " + renderString;
+      }
+      String scoreText = score.getFormattedScore();
+      while (scoreText.length() < scoreLength) {
+        scoreText = " " + scoreText;
+      }
+      renderString = renderString + scoreText;
+      scoreLines.add(renderString);
+    }
+
+
+    //the wheelsize should match the height of three score entries
+    int scoreX = template.getMarginLeft();
     currentY = currentY + template.getTableFontSize() / 2;
 
-    int wheelSize = template.getWheelSize();
+    int scoreY = currentY;
+    //center scores
+    double scoreStartX = scoreX;
+    double wheelStartX = template.getMarginLeft() + template.getWheelPadding();
+
+    if (template.getMarginLeft() == 0 && template.getMarginRight() == 0) {
+      if (!scoreLines.isEmpty()) {
+        String line = scoreLines.get(0);
+        double textWidth = getTextWidth(line, font);
+        scoreStartX = (imageWidth / 2) - (textWidth / 2);
+
+        if (template.isRenderWheelIcon()) {
+          double totalWheelWidth = template.getWheelSize() + template.getWheelPadding();
+          double totalScoreAndWheelWidth = totalWheelWidth + textWidth;
+          scoreStartX = (imageWidth / 2) - (totalScoreAndWheelWidth / 2) + totalWheelWidth;
+          wheelStartX = (imageWidth / 2) - (totalScoreAndWheelWidth / 2);
+        }
+      }
+    }
+    else {
+      scoreStartX = scoreStartX + template.getWheelSize() + template.getWheelPadding();
+    }
+
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
@@ -192,45 +297,15 @@ public class CardGraphics {
           wheelIconFile = augmenter.getBackupWheelIcon();
         }
         BufferedImage wheelImage = ImageIO.read(wheelIconFile);
-        g.drawImage(wheelImage, template.getMarginLeft() + template.getWheelPadding(), wheelY, wheelSize, wheelSize, null);
+        Image wImage = SwingFXUtils.toFXImage(wheelImage, null);
+        g.drawImage(wImage, wheelStartX, wheelY, template.getWheelSize(), template.getWheelSize());
       }
     }
-
-    //the wheelsize should match the height of three score entries
-    int scoreX = template.getMarginLeft();
-    if (template.isRenderWheelIcon()) {
-      scoreX = scoreX + template.getWheelPadding() + wheelSize + template.getWheelPadding();
-    }
-    int scoreY = currentY;
 
     int count = 0;
-
-    int scoreLength = 0;
-    List<Score> scores = summary.getScores();
-    for (Score score : scores) {
-      if (score.getFormattedScore().length() > scoreLength) {
-        scoreLength = score.getFormattedScore().length();
-      }
-    }
-
-    for (Score score : summary.getScores()) {
-      int initialX = scoreX;
+    for (String scoreString : scoreLines) {
       scoreY = scoreY + template.getScoreFontSize() + template.getRowMargin();
-
-      String renderString = score.getPlayerInitials() + " ";
-      if (template.isRenderPositions()) {
-        renderString = score.getPosition() + ". " + renderString;
-      }
-      int singleScoreWidth = g.getFontMetrics().stringWidth(renderString);
-      g.drawString(renderString, initialX, scoreY);
-
-      initialX = initialX + singleScoreWidth + template.getPadding();
-      String scoreText = score.getFormattedScore();
-      while (scoreText.length() < scoreLength) {
-        scoreText = " " + scoreText;
-      }
-      g.drawString(scoreText, initialX, scoreY);
-
+      g.fillText(scoreString, scoreStartX, scoreY);
       count++;
 
       if (template.getMaxScores() > 0 && count == template.getMaxScores()) {
@@ -239,23 +314,26 @@ public class CardGraphics {
     }
   }
 
-  private void renderRawScore(Game game, int imageHeight, int imageWidth, Graphics g, int yStart) throws IOException {
+  private void renderRawScore(Game game, int imageHeight, int imageWidth, GraphicsContext g, int yStart) throws IOException {
     if (template.isRenderTableName()) {
       String tableFontName = template.getTableFontName();
-      int tableFontStyle = ImageUtil.convertFontPosture(template.getTableFontStyle());
+      String tableFontStyle = template.getTableFontStyle();
       int tableFontSize = template.getTableFontSize();
-      g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
+      Font font = createFont(tableFontName, tableFontStyle, tableFontSize);
+      g.setFont(font);
 
       String tableName = game.getGameDisplayName();
-      int width = g.getFontMetrics().stringWidth(tableName);
+      int width = getTextWidth(tableName, font);
       while (width > highscoreCardResolution.toWidth() - template.getMarginLeft() - template.getMarginRight()) {
         tableFontSize = tableFontSize - 1;
-        g.setFont(new Font(tableFontName, tableFontStyle, tableFontSize));
-        width = g.getFontMetrics().stringWidth(tableName);
+        font = createFont(tableFontName, tableFontStyle, tableFontSize);
+        g.setFont(font);
+        width = getTextWidth(tableName, font);
       }
+
       yStart = yStart + tableFontSize;
       int tableNameX = ((imageWidth - template.getMarginLeft() - template.getMarginRight()) / 2 - width / 2) + template.getMarginLeft();
-      g.drawString(tableName, tableNameX, yStart);
+      g.fillText(tableName, tableNameX, yStart);
 
       yStart = yStart + template.getPadding();
     }
@@ -277,7 +355,9 @@ public class CardGraphics {
     else if (fontSize < 20) {
       fontSize = 20;
     }
-    g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
+
+    Font font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSize);
+    g.setFont(font);
 
     //debug frame
 //    g.drawRect(PADDING, yStart, remainingWidth, remainingHeight);
@@ -285,8 +365,9 @@ public class CardGraphics {
     List<TextBlock> textBlocks = createTextBlocks(Arrays.asList(lines), g);
     List<TextColumn> textColumns = createTextColumns(textBlocks, g, remainingHeight);
     while (fontSize > 20 && textColumns.size() > 1) {
-      int downScale = g.getFont().getSize() - 1;
-      g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), downScale));
+      int downScale = (int) (g.getFont().getSize() - 1);
+      font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), downScale);
+      g.setFont(font);
       textColumns = createTextColumns(textBlocks, g, remainingHeight);
     }
 
@@ -306,19 +387,31 @@ public class CardGraphics {
         wheelIconFile = augmenter.getBackupWheelIcon();
       }
       BufferedImage wheelImage = ImageIO.read(wheelIconFile);
+      Image wImage = SwingFXUtils.toFXImage(wheelImage, null);
       x = (remainingXSpace) / 2;
-      g.drawImage(wheelImage, x, yStart, wheelWidth, wheelWidth, null);
+      g.drawImage(wImage, x, yStart, wheelWidth, wheelWidth);
       x = x + wheelWidth + template.getPadding();
     }
     else {
       x = (imageWidth - columnsWidth) / 2;
     }
 
-    yStart = yStart + g.getFont().getSize();
+    yStart = yStart + ((int) g.getFont().getSize());
     for (TextColumn textColumn : textColumns) {
       textColumn.renderAt(g, x, yStart);
       x = x + textColumn.getWidth();
     }
+  }
+
+  private static Font createFont(String family, String posture, int size) {
+    FontWeight fontWeight = FontWeight.findByName(posture);
+    FontPosture fontPosture = FontPosture.findByName(posture);
+    if (posture != null && posture.contains(" ")) {
+      String[] split = posture.split(" ");
+      fontWeight = FontWeight.findByName(split[0]);
+      fontPosture = FontPosture.findByName(split[1]);
+    }
+    return Font.font(family, fontWeight, fontPosture, size);
   }
 
   private int getColumnsWidth(List<TextColumn> textColumns) {
@@ -329,13 +422,20 @@ public class CardGraphics {
     return width;
   }
 
-  private void scaleDownToWidth(int imageWidth, Graphics g, List<TextColumn> textColumns) {
+  private void scaleDownToWidth(int imageWidth, GraphicsContext g, List<TextColumn> textColumns) {
     int width = computeTotalWidth(textColumns);
     while (width >= imageWidth) {
-      int fontSize = g.getFont().getSize() - 1;
-      g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
+      int fontSize = ((int) g.getFont().getSize()) - 1;
+      Font font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSize);
+      g.setFont(font);
       width = computeTotalWidth(textColumns);
     }
+  }
+
+  private static int getTextWidth(String text, Font font) {
+    Text theText = new Text(text);
+    theText.setFont(font);
+    return (int) theText.getBoundsInLocal().getWidth();
   }
 
   private int computeTotalWidth(List<TextColumn> columns) {
@@ -347,14 +447,15 @@ public class CardGraphics {
     return width;
   }
 
-  List<TextColumn> createTextColumns(List<TextBlock> blocks, Graphics g, int remainingHeight) {
+  List<TextColumn> createTextColumns(List<TextBlock> blocks, GraphicsContext g, int remainingHeight) {
     List<TextColumn> columns = new ArrayList<>();
 
     //scale down block until every one is matching
     for (TextBlock block : blocks) {
       while (block.getHeight() > remainingHeight) {
-        int fontSize = g.getFont().getSize() - 1;
-        g.setFont(new Font(template.getScoreFontName(), ImageUtil.convertFontPosture(template.getScoreFontStyle()), fontSize));
+        int fontSize = ((int) g.getFont().getSize()) - 1;
+        Font font = createFont(template.getScoreFontName(), template.getScoreFontStyle(), fontSize);
+        g.setFont(font);
       }
     }
 
@@ -375,12 +476,12 @@ public class CardGraphics {
     return columns;
   }
 
-  List<TextBlock> createTextBlocks(List<String> lines, Graphics g) {
+  List<TextBlock> createTextBlocks(List<String> lines, GraphicsContext g) {
     List<TextBlock> result = new ArrayList<>();
 
     TextBlock textBlock = new TextBlock(g);
     for (String line : lines) {
-      if (line.trim().equals("")) {
+      if (line.trim().isEmpty()) {
         if (!textBlock.isEmpty()) {
           result.add(textBlock);
         }
@@ -419,7 +520,7 @@ public class CardGraphics {
     }
 
 
-    public void renderAt(Graphics g, int x, int y) {
+    public void renderAt(GraphicsContext g, int x, int y) {
       int startY = y;
       for (TextBlock block : blocks) {
         startY = block.renderAt(g, x, startY);
@@ -437,13 +538,13 @@ public class CardGraphics {
 
   static class TextBlock {
     private final List<String> lines;
-    private final Graphics g;
+    private final GraphicsContext g;
 
-    TextBlock(Graphics g) {
+    TextBlock(GraphicsContext g) {
       this(new ArrayList<>(), g);
     }
 
-    TextBlock(List<String> lines, Graphics g) {
+    TextBlock(List<String> lines, GraphicsContext g) {
       this.lines = lines;
       this.g = g;
     }
@@ -452,24 +553,24 @@ public class CardGraphics {
       this.lines.add(line);
     }
 
-    public int renderAt(Graphics g, int x, int y) {
+    public int renderAt(GraphicsContext g, int x, int y) {
       for (String line : lines) {
         //we add a whitespace for every line, nicer formatting for multi-column
-        g.drawString(line, x + g.getFontMetrics().stringWidth(" "), y);
-        y = y + g.getFont().getSize();
+        g.fillText(line, x + getTextWidth(" ", g.getFont()), y);
+        y = y + (int) g.getFont().getSize();
       }
-      y = y + g.getFont().getSize(); //render extra blank line
+      y = y + (int) g.getFont().getSize(); //render extra blank line
       return y;
     }
 
     public int getHeight() {
-      return (this.lines.size() + 1) * (g.getFont().getSize() - 1); //render extra blank line
+      return (this.lines.size() + 1) * (((int) g.getFont().getSize()) - 1); //render extra blank line
     }
 
     public int getWidth() {
       int maxWidth = 0;
       for (String line : lines) {
-        int width = g.getFontMetrics().stringWidth(line + "   ");
+        int width = getTextWidth(line + "   ", g.getFont());
         if (width > maxWidth) {
           maxWidth = width;
         }

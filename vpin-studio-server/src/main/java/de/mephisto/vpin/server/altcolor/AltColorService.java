@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
@@ -162,7 +162,7 @@ public class AltColorService implements InitializingBean {
     setAltColorEnabled(game.getRom(), true);
   }
 
-  public JobExecutionResult installAltColor(Game game, File out) {
+  public JobDescriptor installAltColor(Game game, File out) {
     File folder = game.getAltColorFolder();
     if (folder != null) {
       String name = out.getName();
@@ -173,7 +173,7 @@ public class AltColorService implements InitializingBean {
         }
         catch (IOException e) {
           LOG.error("Failed to copy pac file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy pac file: " + e.getMessage());
+          return JobDescriptorFactory.error("Failed to copy pac file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.PAL_SUFFIX)) {
@@ -183,7 +183,7 @@ public class AltColorService implements InitializingBean {
         }
         catch (IOException e) {
           LOG.error("Failed to copy pal file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy pal file: " + e.getMessage());
+          return JobDescriptorFactory.error("Failed to copy pal file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.VNI_SUFFIX)) {
@@ -193,7 +193,7 @@ public class AltColorService implements InitializingBean {
         }
         catch (IOException e) {
           LOG.error("Failed to copy vni file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy vni file: " + e.getMessage());
+          return JobDescriptorFactory.error("Failed to copy vni file: " + e.getMessage());
         }
       }
       else if (name.endsWith(UploaderAnalysis.SERUM_SUFFIX)) {
@@ -203,13 +203,13 @@ public class AltColorService implements InitializingBean {
         }
         catch (IOException e) {
           LOG.error("Failed to copy cRZ file: " + e.getMessage(), e);
-          return JobExecutionResultFactory.error("Failed to copy cRZ file: " + e.getMessage());
+          return JobDescriptorFactory.error("Failed to copy cRZ file: " + e.getMessage());
         }
       }
     }
     LOG.info("Successfully imported ALT color from temp file " + out.getAbsolutePath());
     setAltColorEnabled(game.getRom(), true);
-    return JobExecutionResultFactory.empty();
+    return JobDescriptorFactory.empty();
   }
 
   private void backupFolder(File folder, String targetSuffix) {

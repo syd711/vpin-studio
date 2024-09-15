@@ -69,7 +69,6 @@ public class ArchiveDownloadDialogController implements Initializable, DialogCon
         long repositoryId = selectedItem.getSource().getId();
         DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/file/" + repositoryId + "/" + URLEncoder.encode(target.getName(), StandardCharsets.UTF_8), target);
         job.setTitle("Download of \"" + selectedItem.getFilename() + "\"");
-        job.setDescription("Downloading file \"" + selectedItem.getFilename() + "\"");
         JobPoller.getInstance().queueJob(job);
       }
     } catch (Exception e) {

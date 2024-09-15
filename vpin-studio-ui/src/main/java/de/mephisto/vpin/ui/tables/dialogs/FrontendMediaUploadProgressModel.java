@@ -5,7 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressModel;
@@ -98,7 +98,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
   }
 
   private void uploadPlaylistMedia(ProgressResultModel progressResultModel, File next) throws Exception {
-    JobExecutionResult result = client.getPlaylistMediaService().uploadMedia(next, playlistId, screen, append, percent -> progressResultModel.setProgress(percent));
+    JobDescriptor result = client.getPlaylistMediaService().uploadMedia(next, playlistId, screen, append, percent -> progressResultModel.setProgress(percent));
     if (!StringUtils.isEmpty(result.getError())) {
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", result.getError());
@@ -110,7 +110,7 @@ public class FrontendMediaUploadProgressModel extends ProgressModel<File> {
   }
 
   private void uploadGameMedia(ProgressResultModel progressResultModel, File next) throws Exception {
-    JobExecutionResult result = client.getGameMediaService().uploadMedia(next, gameId, screen, append, percent -> progressResultModel.setProgress(percent));
+    JobDescriptor result = client.getGameMediaService().uploadMedia(next, gameId, screen, append, percent -> progressResultModel.setProgress(percent));
     if (!StringUtils.isEmpty(result.getError())) {
       Platform.runLater(() -> {
         WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

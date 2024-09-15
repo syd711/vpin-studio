@@ -1,11 +1,10 @@
 package de.mephisto.vpin.server.dof;
 
-import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
+import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,22 +20,21 @@ public class DOFSynchronizationJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(DOFSynchronizationJob.class);
 
   @NonNull
-  private final DOFService dofService;
-  @NonNull
   private final DOFSettings settings;
+  private HttpURLConnection connection;
 
-  public DOFSynchronizationJob(@NonNull DOFService dofService, @NonNull DOFSettings dofSettings) {
-    this.dofService = dofService;
+  public DOFSynchronizationJob(@NonNull DOFSettings dofSettings) {
     this.settings = dofSettings;
   }
 
   @Override
-  public JobExecutionResult execute() {
+  public void execute(JobDescriptor result) {
     try {
       String downloadUrl = "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=" + settings.getApiKey();
       LOG.info("Downloading " + "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
+      result.setStatus("Downloading " + "http://configtool.vpuniverse.com/api.php?query=getconfig&apikey=XXXXXXXXXXX");
       URL url = new URL(downloadUrl);
-      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection = (HttpURLConnection) url.openConnection();
       connection.setReadTimeout(5000);
       connection.setDoOutput(true);
       BufferedInputStream in = new BufferedInputStream(url.openStream());
@@ -52,46 +50,71 @@ public class DOFSynchronizationJob implements Job {
       }
       in.close();
       fileOutputStream.close();
+      connection = null;
 
       if (new String(dataBuffer).contains("API")) {
         zipFile.delete();
-        return JobExecutionResultFactory.error(new String(dataBuffer));
+        result.setError(new String(dataBuffer));
+        return;
+      }
+
+      if (result.isCancelled()) {
+        return;
       }
 
       LOG.info("Downloaded file " + zipFile.getAbsolutePath());
-
       if (!StringUtils.isEmpty(settings.getInstallationPath())) {
         File targetFolder = new File(settings.getInstallationPath(), "Config");
         if (!targetFolder.exists()) {
-          return JobExecutionResultFactory.error("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+          result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+          return;
         }
         LOG.info("Extracting DOF config for 64-bit folder " + settings.getInstallationPath());
+        result.setStatus("Extracting DOF config for 64-bit folder " + settings.getInstallationPath());
         ZipUtil.unzip(zipFile, targetFolder);
+      }
+
+      if (result.isCancelled()) {
+        return;
       }
 
       if (!StringUtils.isEmpty(settings.getInstallationPath32())) {
         File targetFolder = new File(settings.getInstallationPath32(), "Config");
         if (!targetFolder.exists()) {
-          return JobExecutionResultFactory.error("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+          result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
+          return;
         }
         LOG.info("Extracting DOF config for 32-bit folder " + settings.getInstallationPath32());
+        result.setStatus("Extracting DOF config for 32-bit folder " + settings.getInstallationPath32());
         ZipUtil.unzip(zipFile, targetFolder);
       }
-    } catch (Exception e) {
-      LOG.error("Failed to execute download: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Failed to execute download: " + e.getMessage());
+
+      result.setProgress(1);
     }
-    return JobExecutionResultFactory.empty();
-
+    catch (Exception e) {
+      LOG.error("Failed to execute download: " + e.getMessage(), e);
+      result.setError("Failed to execute download: " + e.getMessage());
+    }
+    finally {
+      LOG.info("DOF sync job finished.");
+    }
   }
 
   @Override
-  public double getProgress() {
-    return 0;
-  }
+  public void cancel(JobDescriptor jobDescriptor) {
+    Job.super.cancel(jobDescriptor);
 
-  @Override
-  public String getStatus() {
-    return "Synchronizing DOF Settings";
+    try {
+      if (connection != null) {
+        connection.disconnect();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to cancel DOF job: " + e.getMessage());
+    }
+    finally {
+      jobDescriptor.setError("The job has been cancelled");
+    }
+    LOG.info("Cancelled " + this);
   }
 }
