@@ -217,6 +217,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
       AlxFactory.createLongestPlayed(Studio.stage, timePlayedWidget, entries);
       AlxFactory.createRecordedScores(Studio.stage, scoresWidget, entries);
 
+      tileList.getChildren().removeAll(tileList.getChildren());
       AlxFactory.createTotalTimeTile(Studio.stage, tileList, entries);
       AlxFactory.createTotalGamesPlayedTile(Studio.stage, tileList, entries);
       AlxFactory.createTotalScoresTile(Studio.stage, tileList, entries);
