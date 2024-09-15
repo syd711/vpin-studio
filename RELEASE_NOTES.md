@@ -14,7 +14,8 @@
 - **Studio Client Toolbar**: Added mute/unmute option to system preferences drop-down menu.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
-
+- **Client Settings / Windows Network Share**: Added MacOS Support.
+- **System / Open Folder & Open File**: Added MacOS Support.
 
 ## Bugfixes
 
