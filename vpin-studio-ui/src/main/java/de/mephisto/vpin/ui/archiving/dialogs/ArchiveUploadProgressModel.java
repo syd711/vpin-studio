@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.archiving.dialogs;
 
 import de.mephisto.vpin.restclient.archiving.ArchiveServiceClient;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -21,7 +21,7 @@ public class ArchiveUploadProgressModel extends ProgressModel<File> {
   private final List<File> files;
   private double percentage = 0;
 
-  private Future<JobExecutionResult> currentUploadFuture;
+  private Future<JobDescriptor> currentUploadFuture;
   private final ArchiveServiceClient archiveServiceClient;
 
   public ArchiveUploadProgressModel(String title, long repositoryId, List<File> files) {

@@ -66,7 +66,6 @@ public class BundleProgressModel extends ProgressModel<String> {
         File target = new File(targetFolder, bundleName);
         DownloadJobDescriptor job = new DownloadJobDescriptor("archives/download/bundle/" + archiveBundleDescriptor.getArchiveSourceId() + "/" + URLEncoder.encode(bundleName, StandardCharsets.UTF_8), target);
         job.setTitle("Download of \"" + bundleName + "\"");
-        job.setDescription("Downloading file \"" + bundleName + "\"");
         JobPoller.getInstance().queueJob(job);
       });
     } catch (Exception e) {

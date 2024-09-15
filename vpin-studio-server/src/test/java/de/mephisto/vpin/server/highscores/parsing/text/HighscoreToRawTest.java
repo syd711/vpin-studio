@@ -4,6 +4,7 @@ package de.mephisto.vpin.server.highscores.parsing.text;
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
+import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
 import de.mephisto.vpin.server.highscores.parsing.RawScoreParser;
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
@@ -39,7 +40,7 @@ public class HighscoreToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(scoringDB, entry);
+      String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
       System.out.println(raw);
 
@@ -102,7 +103,7 @@ public class HighscoreToRawTest {
     ScoringDB scoringDB = ScoringDB.load();
     File entry = new File("../testsystem/vPinball/VisualPinball/User/", "MountainClimbingHS.txt");
     System.out.println("Reading '" + entry.getName() + "'");
-    String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(scoringDB, entry);
+    String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
     System.out.println(raw);
 

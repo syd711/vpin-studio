@@ -1,15 +1,20 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
@@ -24,6 +29,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -46,7 +52,13 @@ import java.net.ServerSocket;
 import java.net.URI;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
@@ -177,6 +189,9 @@ public class Studio extends Application {
           LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
           ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
         }
+
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+        client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
         //force pre-caching, this way, the table overview does not need to execute single GET requests
         new Thread(() -> {
@@ -430,5 +445,53 @@ public class Studio extends Application {
       }
     }
     return false;
+  }
+
+  @Override
+  public void stop() throws Exception {
+    super.stop();
+    exit();
+  }
+
+  public static void exit() {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+
+    if (!uiSettings.isHideFrontendLaunchQuestion()) {
+      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
+      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
+      if (!confirmationResult.isApplyClicked()) {
+        client.getFrontendService().restartFrontend();
+      }
+
+      if (confirmationResult.isChecked()) {
+        uiSettings.setHideFrontendLaunchQuestion(true);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      }
+    }
+
+    AtomicBoolean polling = new AtomicBoolean(false);
+    try {
+      final ExecutorService executor = Executors.newFixedThreadPool(1);
+      final Future<?> future = executor.submit(() -> {
+        client.getSystemService().setMaintenanceMode(false);
+        polling.set(JobPoller.getInstance().isPolling());
+      });
+      future.get(2000, TimeUnit.MILLISECONDS);
+      executor.shutdownNow();
+    }
+    catch (Exception e) {
+      //ignore
+    }
+
+
+    if (polling.get()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, exit VPin Studio");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        System.exit(0);
+      }
+    }
+    else {
+      System.exit(0);
+    }
   }
 }

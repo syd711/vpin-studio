@@ -1153,6 +1153,10 @@
   -fx-control-inner-background: #FFFFFF;
 }
 
+.progress-bar .bar {
+    -fx-background-insets: 3px;
+}
+
 .green {
     -fx-background-color: #338800;
 }

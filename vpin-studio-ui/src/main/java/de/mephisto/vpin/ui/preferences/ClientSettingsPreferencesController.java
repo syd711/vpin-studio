@@ -371,6 +371,9 @@ public class ClientSettingsPreferencesController implements Initializable {
             }
           }
           PreferencesController.markDirty(PreferenceType.serverSettings);
+
+          //update the REST client immediately
+          client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }
       });

@@ -3,7 +3,7 @@ package de.mephisto.vpin.ui.preferences;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -101,8 +101,8 @@ public class DOFPreferencesController implements Initializable {
           WidgetFactory.showAlert(Studio.stage, "Error", "DOF config download failed: " + o);
         }
         else {
-          JobExecutionResult result = (JobExecutionResult) resultModel.getResults().get(0);
-          if (result.isErrorneous()) {
+          JobDescriptor result = (JobDescriptor) resultModel.getResults().get(0);
+          if (result.getError() != null) {
             WidgetFactory.showAlert(Studio.stage, "Error", "DOF configuration download failed: ", result.getError());
           }
           else {

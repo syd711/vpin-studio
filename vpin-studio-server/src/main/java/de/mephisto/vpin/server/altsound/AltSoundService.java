@@ -3,13 +3,13 @@ package de.mephisto.vpin.server.altsound;
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.mame.MameService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -102,18 +102,18 @@ public class AltSoundService implements InitializingBean {
     return -1;
   }
 
-  public JobExecutionResult installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {
+  public JobDescriptor installAltSound(int emulatorId, @NonNull String rom, @NonNull File archive) {
     GameEmulator gameEmulator = frontendService.getGameEmulator(emulatorId);
     File altSoundFolder = new File(gameEmulator.getAltSoundFolder(), rom);
     if (!altSoundFolder.exists() && !altSoundFolder.mkdirs()) {
-      return JobExecutionResultFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
+      return JobDescriptorFactory.error("Failed to create ALT sound directory \"" + altSoundFolder.getAbsolutePath() + "\"");
     }
 
     LOG.info("Extracting ALT sound to " + altSoundFolder.getAbsolutePath());
     AltSoundUtil.unpack(archive, altSoundFolder);
     setAltSoundEnabled(rom, true);
     clearCache();
-    return JobExecutionResultFactory.empty();
+    return JobDescriptorFactory.empty();
   }
 
   public AltSound restore(Game game) {

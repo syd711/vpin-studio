@@ -1,38 +1,44 @@
 package de.mephisto.vpin.ui.jobs;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.messaging.MessageContainer;
+import de.mephisto.vpin.ui.events.JobFinishedEvent;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.scene.control.*;
-import javafx.scene.layout.VBox;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.control.CustomMenuItem;
+import javafx.scene.control.MenuButton;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.ProgressIndicator;
+import javafx.scene.layout.BorderPane;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class JobPoller {
+public class JobPoller implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(JobPoller.class);
 
   private static JobPoller instance;
 
   private final MenuButton jobMenu;
   private final ProgressIndicator jobProgress;
-  private final MenuButton messagesMenu;
 
-  private final List<JobDescriptor> activeJobs = Collections.synchronizedList(new ArrayList<>());
   private final List<JobDescriptor> clientJobs = Collections.synchronizedList(new ArrayList<>());
   private final Service service;
+
+  private AtomicBoolean polling = new AtomicBoolean(false);
 
   public static void destroy() {
     if (instance != null) {
@@ -41,19 +47,16 @@ public class JobPoller {
     }
   }
 
-  public static void create(MenuButton jobMenu, ProgressIndicator jobProgress, MenuButton messagesBtn) {
+  public static void create(MenuButton jobMenu, ProgressIndicator jobProgress) {
     if (instance == null) {
-      instance = new JobPoller(jobMenu, jobProgress, messagesBtn);
+      instance = new JobPoller(jobMenu, jobProgress);
+      EventManager.getInstance().addListener(instance);
     }
   }
 
-  //TODO throw UI out!
-  private JobPoller(MenuButton jobMenu, ProgressIndicator jobProgress, MenuButton messagesMenu) {
+  private JobPoller(MenuButton jobMenu, ProgressIndicator jobProgress) {
     this.jobMenu = jobMenu;
     this.jobProgress = jobProgress;
-    this.messagesMenu = messagesMenu;
-    this.jobMenu.setStyle("-fx-background-color: #111111;");
-    this.messagesMenu.setStyle("-fx-background-color: #111111;");
 
     service = new Service() {
       @Override
@@ -65,22 +68,16 @@ public class JobPoller {
             LOG.info("Started JobPoller service.");
             boolean poll = true;
 
-            //give the init some time
-            List<JobDescriptor> jobs = new ArrayList<>(getActiveJobs());
-            if (jobs.isEmpty()) {
-              Thread.sleep(1000);
-            }
-
             while (poll) {
-              jobs = new ArrayList<>(getActiveJobs());
-              refreshJobsUI(jobs);
-              refreshMessagesUI(false);
-              Thread.sleep(2000);
-              poll = !jobs.isEmpty();
-              LOG.info("JobPoller is waiting for " + jobs.size() + " running jobs.");
+              Thread.sleep(1000);
+              List<JobDescriptor> allJobs = getAllJobs();
+              List<JobDescriptor> activeJobs = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
+              LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
+              refreshJobsUI();
+              poll = !activeJobs.isEmpty();
             }
             LOG.info("JobPoller finished all jobs");
-            refreshJobsUI(Collections.emptyList());
+            refreshJobsUI();
             return true;
           }
         };
@@ -99,121 +96,84 @@ public class JobPoller {
     return instance;
   }
 
-  //TODO throw UI out!
   public boolean isPolling() {
-    return !jobMenu.isDisabled();
+    return polling.get();
   }
 
   public void setPolling() {
-    jobMenu.setDisable(false);
     jobProgress.setProgress(-1);
+    jobProgress.setVisible(true);
+    jobProgress.setDisable(false);
 
     if (!service.isRunning()) {
       service.restart();
     }
+    polling.set(true);
   }
 
-  private void refreshJobsUI(List<JobDescriptor> updatedJobList) {
-    Platform.runLater(() -> {
-      boolean disable = updatedJobList.isEmpty();
-      jobMenu.setDisable(disable);
-      jobProgress.setProgress(disable ? 0 : -1);
-      jobProgress.setVisible(!disable);
+  public void refreshJobsUI() {
+    List<JobDescriptor> allJobs = getAllJobs();
+    List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
+    polling.set(!activeJobList.isEmpty());
+    jobMenu.setDisable(allJobs.isEmpty());
 
-      if (jobMenu.isDisabled()) {
-        jobMenu.getStyleClass().remove("action-selected");
+    Platform.runLater(() -> {
+      jobProgress.setProgress(activeJobList.isEmpty() ? 0 : -1);
+      jobProgress.setVisible(!activeJobList.isEmpty());
+      jobProgress.setDisable(activeJobList.isEmpty());
+
+      if (activeJobList.size() == 1) {
+        jobMenu.setText(activeJobList.size() + " active job");
+      }
+      else if (activeJobList.isEmpty()) {
         jobMenu.setText("No active jobs");
-        jobMenu.setDisable(true);
       }
       else {
-        if (!jobMenu.getStyleClass().contains("action-selected")) {
-          jobMenu.getStyleClass().add("action-selected");
-        }
-        if (updatedJobList.size() == 1) {
-          jobMenu.setText(updatedJobList.size() + " active job");
-        }
-        else {
-          jobMenu.setText(updatedJobList.size() + " active jobs");
-        }
+        jobMenu.setText(activeJobList.size() + " active jobs");
       }
 
+      //remove dismissed jobs
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
       for (MenuItem item : items) {
-        JobDescriptor descriptor = (JobDescriptor) item.getUserData();
-        if (!updatedJobList.contains(descriptor)) {
+        JobDescriptor descriptor = ((JobsContainerController) item.getUserData()).getDescriptor();
+        if (!allJobs.contains(descriptor)) {
           jobMenu.getItems().remove(item);
-          EventManager.getInstance().notifyJobFinished(descriptor);
+          jobMenu.requestLayout();
         }
       }
 
-      activeJobs.clear();
-      activeJobs.addAll(updatedJobList);
-
-      for (JobDescriptor descriptor : updatedJobList) {
-        if (items.stream().anyMatch(c -> c.getUserData().equals(descriptor))) {
+      //update or add jobs
+      for (JobDescriptor descriptor : allJobs) {
+        Optional<MenuItem> menuItem = items.stream().filter(c -> ((JobsContainerController) c.getUserData()).getDescriptor().equals(descriptor)).findFirst();
+        if (menuItem.isPresent()) {
+          JobsContainerController controller = (JobsContainerController) menuItem.get().getUserData();
+          controller.setData(this, descriptor);
           continue;
         }
 
-        JobContainer c = new JobContainer(descriptor);
-        CustomMenuItem item = new CustomMenuItem();
-        item.setContent(c);
-        item.setUserData(descriptor);
-        jobMenu.getItems().add(item);
-      }
-    });
-  }
-
-  public void refreshMessagesUI(boolean reopen) {
-    Platform.runLater(() -> {
-      boolean showing = messagesMenu.isShowing();
-      List<JobExecutionResult> messages = new ArrayList<>(getResults());
-      messagesMenu.setDisable(messages.isEmpty());
-      messagesMenu.getItems().removeAll(messagesMenu.getItems());
-
-      if (!messages.isEmpty()) {
-        VBox vbox = new VBox();
-        vbox.setStyle("-fx-padding: 6 6 6 6;");
-        Button dismissBtn = new Button("Dismiss All");
-        dismissBtn.setOnAction(new EventHandler<>() {
-          @Override
-          public void handle(ActionEvent event) {
-            Studio.client.getJobsService().dismissAll();
-            JobPoller.getInstance().refreshMessagesUI(true);
-          }
-        });
-        vbox.getChildren().add(dismissBtn);
-
-        CustomMenuItem btnItem = new CustomMenuItem();
-        btnItem.setContent(vbox);
-        messagesMenu.getItems().add(btnItem);
-
-
-        for (JobExecutionResult message : messages) {
-          MessageContainer c = new MessageContainer(message);
+        try {
+          FXMLLoader loader = new FXMLLoader(JobsContainerController.class.getResource("jobs-container.fxml"));
+          BorderPane root = loader.load();
+          root.getStyleClass().add("dropin-menu-item");
+          JobsContainerController containerController = loader.getController();
+          containerController.setData(this, descriptor);
           CustomMenuItem item = new CustomMenuItem();
-          item.setContent(c);
-          item.setUserData(message);
-          messagesMenu.getItems().add(item);
+          item.setUserData(containerController);
+          item.setContent(root);
+          jobMenu.getItems().add(item);
         }
-
-        if (reopen || showing) {
-          messagesMenu.show();
+        catch (IOException e) {
+          LOG.error("Failed to load job container: " + e.getMessage(), e);
         }
       }
     });
   }
 
-  private List<JobDescriptor> getActiveJobs() {
+  private List<JobDescriptor> getAllJobs() {
     List<JobDescriptor> jobs = new ArrayList<>();
     jobs.addAll(client.getJobsService().getJobs());
     jobs.addAll(clientJobs);
     return jobs;
-  }
-
-  private List<JobExecutionResult> getResults() {
-    List<JobExecutionResult> results = new ArrayList<>();
-    results.addAll(client.getJobsService().getResults());
-    return results;
   }
 
   public void queueJob(JobDescriptor jobDescriptor) {
@@ -221,9 +181,13 @@ public class JobPoller {
 
     new Thread(() -> {
       jobDescriptor.execute(client);
-      clientJobs.remove(jobDescriptor);
     }).start();
 
     JobPoller.getInstance().setPolling();
+  }
+
+  @Override
+  public void jobFinished(@NotNull JobFinishedEvent event) {
+    refreshJobsUI();
   }
 }

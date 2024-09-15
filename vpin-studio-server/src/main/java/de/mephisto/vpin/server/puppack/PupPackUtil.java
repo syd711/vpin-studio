@@ -1,7 +1,8 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.server.util.UnzipChangeListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
@@ -18,28 +19,41 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
-  public static JobExecutionResult unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
+  public static void unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom, @Nullable UnzipChangeListener listener) {
     if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
-      return unzip(archiveFile, destinationDir, pupPackFolderInArchive, rom);
+      unzip(archiveFile, destinationDir, pupPackFolderInArchive, rom, listener);
     }
     else if (archiveFile.getName().toLowerCase().endsWith(".rar")) {
-      return unrar(archiveFile, destinationDir, pupPackFolderInArchive, rom);
+      unrar(archiveFile, destinationDir, pupPackFolderInArchive, rom, listener);
     }
-    throw new UnsupportedOperationException("Unsupported archive format for PUP pack " + archiveFile.getName());
+    else {
+      LOG.error("Unsupported archive format for PUP pack " + archiveFile.getName());
+    }
   }
 
-  public static JobExecutionResult unrar(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
+  public static void unrar(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom, @Nullable UnzipChangeListener listener) {
     try {
       RandomAccessFile randomAccessFile = new RandomAccessFile(archiveFile, "r");
       RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
       IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+      int total = inArchive.getNumberOfItems();
 
+      int index = 0;
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+        if (listener != null) {
+          boolean continueOp = listener.unzipping(item.getPath(), index, total);
+          if (!continueOp) {
+            break;
+          }
+        }
+        index++;
+
         if (item.isFolder()) {
           continue;
         }
@@ -60,21 +74,36 @@ public class PupPackUtil {
       inArchive.close();
       randomAccessFileStream.close();
       randomAccessFile.close();
-    } catch (Exception e) {
-      LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
     }
-    return JobExecutionResultFactory.empty();
+    catch (Exception e) {
+      LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
+      listener.onError("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+    }
   }
 
-  public static JobExecutionResult unzip(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom) {
+  public static void unzip(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom, @Nullable UnzipChangeListener listener) {
     try {
+      ZipFile zipFile = new ZipFile(archiveFile);
+      int total = zipFile.size();
+      zipFile.close();
+
       byte[] buffer = new byte[1024];
       FileInputStream fileInputStream = new FileInputStream(archiveFile);
       ZipInputStream zis = new ZipInputStream(fileInputStream);
       ZipEntry zipEntry = zis.getNextEntry();
 
+      int index = 0;
       while (zipEntry != null) {
+        if (listener != null) {
+          boolean continueOp = listener.unzipping(zipEntry.getName(), index, total);
+          if (!continueOp) {
+            zis.closeEntry();
+            break;
+          }
+        }
+
+        index++;
+
         if (zipEntry.isDirectory()) {
           zis.closeEntry();
           zipEntry = zis.getNextEntry();
@@ -105,12 +134,12 @@ public class PupPackUtil {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
+      LOG.info("Finished unzipping of " + archiveFile.getAbsolutePath());
     }
     catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
+      listener.onError("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
     }
-    return JobExecutionResultFactory.empty();
   }
 
   @Nullable

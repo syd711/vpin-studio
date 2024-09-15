@@ -280,7 +280,7 @@ public class SystemResource {
 
   @GetMapping("/restart")
   public boolean restart() throws IOException {
-    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\nwscript server.vbs\nexit");
+    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\ncd /d %~dp0\nwscript server.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./"));

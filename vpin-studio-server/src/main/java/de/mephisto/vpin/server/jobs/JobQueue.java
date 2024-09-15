@@ -1,16 +1,12 @@
 package de.mephisto.vpin.server.jobs;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import org.apache.commons.lang3.StringUtils;
+import de.mephisto.vpin.restclient.jobs.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -23,55 +19,54 @@ public class JobQueue implements InitializingBean {
 
   private ExecutorService executor;
 
-  private final Queue<JobDescriptor> queue = new ConcurrentLinkedQueue();
-  private final List<JobDescriptor> statusQueue = new ArrayList<>();
-
-  @Autowired
-  private JobService jobService;
+  private final Queue<JobDescriptor> queue = new ConcurrentLinkedQueue<>();
 
   private JobQueue() {
 
   }
 
-  public void offer(JobDescriptor descriptor) {
-    queue.offer(descriptor);
-    statusQueue.add(descriptor);
-    LOG.info("Queue size: " + queue.size());
-    pollQueue();
-  }
-
   private void pollQueue() {
     if (!isEmpty()) {
       JobDescriptor descriptor = queue.poll();
-      Callable<JobExecutionResult> exec = () -> {
-        JobExecutionResult result = descriptor.getJob().execute();
-        statusQueue.remove(descriptor);
-        LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
-        pollQueue();
-        if(!StringUtils.isEmpty(result.getError())) {
-          jobService.addResult(result);
+      Callable<JobDescriptor> exec = () -> {
+        Thread.currentThread().setName(descriptor.toString());
+        Job job = descriptor.getJob();
+        if (job == null) {
+          LOG.error("No job found for " + descriptor);
         }
-        return result;
+        else {
+          descriptor.getJob().execute(descriptor);
+          descriptor.setProgress(1);
+          LOG.info("Finished " + descriptor + ", queue size is " + queue.size());
+        }
+        pollQueue();
+        return descriptor;
       };
       executor.submit(exec);
     }
+  }
+
+  public void submit(JobDescriptor descriptor) {
+    queue.offer(descriptor);
+    pollQueue();
+  }
+
+  public int size() {
+    return queue.size();
+  }
+
+  public void cancel(JobDescriptor descriptor) {
+    this.queue.remove(descriptor);
+    descriptor.setCancelled(true);
+    descriptor.getJob().cancel(descriptor);
   }
 
   public boolean isEmpty() {
     return this.queue.isEmpty();
   }
 
-  public List<JobDescriptor> status() {
-    List<JobDescriptor> elements = new ArrayList<>(statusQueue);
-    for (JobDescriptor descriptor : elements) {
-      descriptor.setStatus(descriptor.getJob().getStatus());
-      descriptor.setProgress(descriptor.getJob().getProgress());
-    }
-    return elements;
-  }
-
   @Override
   public void afterPropertiesSet() throws Exception {
-    executor = Executors.newSingleThreadExecutor();
+    executor = Executors.newCachedThreadPool();
   }
 }

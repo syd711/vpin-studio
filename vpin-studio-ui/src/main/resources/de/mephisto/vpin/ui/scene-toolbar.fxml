@@ -59,7 +59,7 @@
                               <Tooltip text="Job Overview" />
                            </tooltip>
                            <graphic>
-                              <ProgressIndicator fx:id="jobProgress" prefHeight="19.0" prefWidth="19.0">
+                              <ProgressIndicator fx:id="jobProgress" prefHeight="19.0" prefWidth="22.0">
                                  <padding>
                                     <Insets bottom="2.0" left="2.0" right="6.0" top="-2.0" />
                                  </padding>
@@ -82,14 +82,6 @@
                            <graphic>
                               <FontIcon iconColor="#66ff66" iconLiteral="mdi2a-asterisk" iconSize="18" visible="false" />
                            </graphic>
-                        </MenuButton>
-                        <MenuButton fx:id="messagesBtn" mnemonicParsing="false">
-                           <graphic>
-                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-message-alert-outline" iconSize="18" />
-                           </graphic>
-                           <font>
-                              <Font size="14.0" />
-                           </font>
                         </MenuButton>
                         <Button fx:id="frontendMenuBtn" mnemonicParsing="false" onAction="#onFrontendMenu" textFill="WHITE">
                            <font>

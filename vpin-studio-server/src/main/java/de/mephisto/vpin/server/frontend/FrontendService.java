@@ -143,7 +143,9 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private Game setGameEmulator(Game game) {
     if (game != null) {
       GameEmulator emulator = emulators.get(game.getEmulatorId());
-      game.setEmulator(emulator);
+      if(emulator != null) {
+        game.setEmulator(emulator);
+      }
     }
     return game;
   }

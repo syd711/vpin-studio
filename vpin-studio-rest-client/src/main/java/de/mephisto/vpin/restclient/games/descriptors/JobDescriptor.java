@@ -7,19 +7,43 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 
 public class JobDescriptor {
   private String uuid;
-  private String imageUrl;
   private String title;
-  private String description;
+  private String status;
   private JobType jobType;
   private double progress;
-  private String status;
+  private String error;
   private int gameId;
+  private boolean cancelled;
 
   @JsonIgnore
   private Job job;
 
   public JobDescriptor() {
 
+  }
+
+  public boolean isCancelled() {
+    return cancelled;
+  }
+
+  public void setCancelled(boolean cancelled) {
+    this.cancelled = cancelled;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getError() {
+    return error;
+  }
+
+  public void setError(String error) {
+    this.error = error;
   }
 
   public JobDescriptor(JobType jobType, String uuid) {
@@ -41,14 +65,6 @@ public class JobDescriptor {
 
   public void setProgress(double progress) {
     this.progress = progress;
-  }
-
-  public String getStatus() {
-    return status;
-  }
-
-  public void setStatus(String status) {
-    this.status = status;
   }
 
   public void setJobType(JobType jobType) {
@@ -75,14 +91,6 @@ public class JobDescriptor {
     this.uuid = uuid;
   }
 
-  public String getImageUrl() {
-    return imageUrl;
-  }
-
-  public void setImageUrl(String imageUrl) {
-    this.imageUrl = imageUrl;
-  }
-
   public String getTitle() {
     return title;
   }
@@ -91,21 +99,20 @@ public class JobDescriptor {
     this.title = title;
   }
 
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
   @Override
   public String toString() {
     return "Job '" + this.getTitle() + "'";
   }
 
   public void execute(VPinStudioClient client) {
-    //only for client jobs
+  }
+
+  public boolean isErrorneous() {
+    return error != null;
+  }
+
+  public boolean isFinished() {
+    return error != null || progress == 1;
   }
 
   @Override
