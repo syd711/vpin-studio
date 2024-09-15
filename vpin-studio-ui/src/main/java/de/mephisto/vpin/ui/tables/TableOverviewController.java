@@ -1215,13 +1215,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         icon.setIconSize(16);
         graphics.getChildren().add(0, icon);
 
-        if (notes.contains("//ERROR")) {
+        if (notes.toLowerCase().contains("//error")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
         }
-        else if (notes.contains("//TODO")) {
+        else if (notes.toLowerCase().contains("//todo")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
         }
-        else if (notes.contains("//OUTDATED")) {
+        else if (notes.toLowerCase().contains("//outdated")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
         }
       }
@@ -1724,6 +1724,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     refreshColumns();
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
+
+    Platform.runLater(() -> {
+      getTableFilterController().refreshFilters();
+    });
   }
 
   private void refreshViewForEmulator() {

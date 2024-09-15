@@ -90,13 +90,13 @@ public class GameFilterService {
         if (noteType.equals(NoteType.Any) && StringUtils.isEmpty(game.getNotes())) {
           continue;
         }
-        if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//ERROR"))) {
+        if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//error"))) {
           continue;
         }
-        if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//OUTDATED"))) {
+        if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//outdated"))) {
           continue;
         }
-        if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//TODO"))) {
+        if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//todo"))) {
           continue;
         }
       }
