@@ -14,12 +14,21 @@ public class JobDescriptor {
   private String error;
   private int gameId;
   private boolean cancelled;
+  private boolean cancelable;
 
   @JsonIgnore
   private Job job;
 
   public JobDescriptor() {
 
+  }
+
+  public boolean isCancelable() {
+    return cancelable;
+  }
+
+  public void setCancelable(boolean cancelable) {
+    this.cancelable = cancelable;
   }
 
   public boolean isCancelled() {

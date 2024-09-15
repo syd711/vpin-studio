@@ -87,6 +87,12 @@ public class JobsContainerController implements Initializable {
       infoLabel.setStyle("-fx-font-size: 13px");
       openBtn.setVisible(job.getGameId() > 0);
 
+      if (!job.isCancelable()) {
+        stopBtn.setDisable(true);
+        stopBtn.setTooltip(new Tooltip("This job can not be canceled."));
+      }
+
+
       if (job.getProgress() <= 0) {
         progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
       }

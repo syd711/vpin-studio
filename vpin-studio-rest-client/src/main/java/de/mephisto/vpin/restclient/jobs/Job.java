@@ -7,4 +7,8 @@ public interface Job {
 
   default void cancel(JobDescriptor jobDescriptor) {
   }
+
+  default boolean isCancelable() {
+    return true;
+  }
 }

@@ -35,4 +35,9 @@ public class TableBackupJob implements Job {
       sourceAdapter.invalidate();
     }
   }
+
+  @Override
+  public boolean isCancelable() {
+    return false;
+  }
 }

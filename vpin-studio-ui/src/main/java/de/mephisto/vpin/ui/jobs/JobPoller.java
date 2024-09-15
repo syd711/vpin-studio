@@ -86,7 +86,7 @@ public class JobPoller implements StudioEventListener {
             boolean poll = true;
 
             while (poll) {
-              Thread.sleep(1000);
+              Thread.sleep(600);
               List<JobDescriptor> allJobs = getAllJobs();
               List<JobDescriptor> activeJobs = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");

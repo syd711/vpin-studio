@@ -50,6 +50,9 @@ public class JobService {
   }
 
   public List<JobDescriptor> getJobs() {
+    for (JobDescriptor jobDescriptor : jobList) {
+      jobDescriptor.setCancelable(jobDescriptor.getJob().isCancelable());
+    }
     return new ArrayList<>(jobList);
   }
 }
