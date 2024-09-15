@@ -243,9 +243,6 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
-
-    BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
       VpsUtil.isDataAvailable(value.getPupPackFiles())? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(topperColumn, (value, model) ->
