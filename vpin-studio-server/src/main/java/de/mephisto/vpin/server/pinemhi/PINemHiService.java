@@ -189,6 +189,7 @@ public class PINemHiService implements InitializingBean {
           String pinemhiVersion = systemService.getScoringDatabase().getPinemhiVersion();
           if (version.equals(pinemhiVersion)) {
             LOG.info("Using latest version of PINemHi (" + version + ")");
+            break;
           }
           else {
             LOG.info("PINemHi is outdated (" + version + " vs. " + pinemhiVersion + "), checking for updates.");
@@ -197,6 +198,7 @@ public class PINemHiService implements InitializingBean {
               File check = new File(PINEMHI_FOLDER, resource);
               LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
+              break;
             }
           }
         }
