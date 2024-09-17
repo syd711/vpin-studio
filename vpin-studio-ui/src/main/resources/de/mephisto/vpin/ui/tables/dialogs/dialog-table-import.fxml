@@ -2,6 +2,7 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.layout.BorderPane?>
@@ -40,15 +41,7 @@
          <center>
             <VBox BorderPane.alignment="CENTER">
                <children>
-                  <Label text="Available Tables" textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets />
-                     </VBox.margin>
-                  </Label>
-                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The list shows the tables files located in the &quot;Tables&quot; folder of [Emulator]" textFill="WHITE">
+                  <Label fx:id="text1Description" layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="The list shows the tables for the selected emulator that have not been " textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -56,7 +49,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="that have not been imported to [Frontend] yet." textFill="WHITE">
+                  <Label fx:id="text2Description" layoutX="10.0" layoutY="30.0" styleClass="preference-description" text="imported to [Frontend] yet." textFill="WHITE">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -64,19 +57,19 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label fx:id="text3Description" layoutX="10.0" layoutY="58.0" styleClass="preference-description" text="Rename the &quot;Game Name&quot; in the &quot;Table Data&quot; dialog after the import " textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
+                  <HBox alignment="CENTER_LEFT" spacing="6.0">
+                     <children>
+                        <Label styleClass="default-text" text="Emulator:" textFill="WHITE">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
+                     </children>
                      <VBox.margin>
-                        <Insets />
+                        <Insets bottom="12.0" />
                      </VBox.margin>
-                  </Label>
-                  <Label fx:id="text4Description" layoutX="10.0" layoutY="92.0" styleClass="preference-description" text="if you have already assets in the screen folders of [Frontend] for this table." textFill="WHITE">
-                     <font>
-                        <Font name="System Bold" size="14.0" />
-                     </font>
-                  </Label>
+                  </HBox>
                   <ScrollPane maxHeight="500.0" minHeight="500.0">
                      <content>
                         <VBox fx:id="tableBox" />

@@ -3,11 +3,11 @@ package de.mephisto.vpin.server.puppack;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.games.Game;
@@ -102,14 +102,14 @@ public class PupPacksResource {
   }
 
   @PostMapping("/option/{id}")
-  public JobExecutionResult option(@PathVariable("id") Integer id,
-                                   @RequestBody CommandOption option) {
+  public JobDescriptor option(@PathVariable("id") Integer id,
+                              @RequestBody CommandOption option) {
 
     Game game = gameService.getGame(id);
     if (game != null) {
       return pupPacksService.option(game, option.getCommand());
     }
-    return JobExecutionResultFactory.empty();
+    return JobDescriptorFactory.empty();
   }
 
   @PostMapping("/upload")
@@ -144,7 +144,8 @@ public class PupPacksResource {
         Exception e) {
       LOG.error(AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.PUP_PACK.name() + " upload failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       descriptor.finalizeUpload();
     }
   }

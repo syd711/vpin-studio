@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.playlists;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -87,20 +87,20 @@ public class PlaylistMediaResource {
   }
 
   @PostMapping("/upload/{screen}/{append}")
-  public JobExecutionResult upload(@PathVariable("screen") VPinScreen screen,
-                                   @PathVariable("append") boolean append,
-                                   @RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam("objectId") Integer playlistId) {
+  public JobDescriptor upload(@PathVariable("screen") VPinScreen screen,
+                              @PathVariable("append") boolean append,
+                              @RequestParam(value = "file", required = false) MultipartFile file,
+                              @RequestParam("objectId") Integer playlistId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
+        return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
       Playlist playlist = playlistService.getPlaylist(playlistId);
       if (playlist == null) {
         LOG.error("No playlist for media upload.");
-        return JobExecutionResultFactory.error("No playlist found for media upload.");
+        return JobDescriptorFactory.error("No playlist found for media upload.");
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -108,7 +108,7 @@ public class PlaylistMediaResource {
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
-      return JobExecutionResultFactory.empty();
+      return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());

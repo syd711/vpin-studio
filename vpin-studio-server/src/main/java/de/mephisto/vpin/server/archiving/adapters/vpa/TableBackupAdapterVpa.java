@@ -2,25 +2,24 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
-import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
-import de.mephisto.vpin.commons.utils.ZipUtil;
-import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -39,27 +38,19 @@ import java.util.zip.ZipOutputStream;
 
 public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   private final static Logger LOG = LoggerFactory.getLogger(TableBackupAdapterVpa.class);
-
-
-  private final SystemService systemService;
-  private final ArchiveSourceAdapter archiveSourceAdapter;
   private final Game game;
   private final ObjectMapper objectMapper;
   private final TableDetails tableDetails;
 
-  private double progress;
-  private String status;
-
   private long totalSizeExpected;
   private File tempFile;
+  private JobDescriptor result;
 
 
   public TableBackupAdapterVpa(@NonNull SystemService systemService,
                                @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                @NonNull Game game,
                                @NonNull TableDetails tableDetails) {
-    this.systemService = systemService;
-    this.archiveSourceAdapter = archiveSourceAdapter;
     this.game = game;
     this.tableDetails = tableDetails;
 
@@ -68,22 +59,13 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     objectMapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
   }
 
-  @Override
-  public double getProgress() {
-    return progress;
+  public void execute(JobDescriptor jobDescriptor) {
+    createBackup(jobDescriptor);
   }
 
   @Override
-  public String getStatus() {
-    return status;
-  }
-
-  public JobExecutionResult execute() {
-    return createBackup();
-  }
-
-  @Override
-  public JobExecutionResult createBackup() {
+  public void createBackup(JobDescriptor result) {
+    this.result = result;
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     ArchivePackageInfo packageInfo = new ArchivePackageInfo();
 
@@ -91,7 +73,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
     archiveDescriptor.setTableDetails(tableDetails);
     archiveDescriptor.setPackageInfo(packageInfo);
 
-    status = "Calculating export size of " + game.getGameDisplayName();
+    result.setStatus("Calculating export size of " + game.getGameDisplayName());
     this.calculateTotalSize();
     LOG.info("Calculated total approx. size of " + FileUtils.readableFileSize(totalSizeExpected) + " for the archive of " + game.getGameDisplayName());
 
@@ -118,7 +100,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       LOG.info("Creating temporary archive file " + tempFile.getAbsolutePath());
       fos = new FileOutputStream(tempFile);
       zipOut = new ZipOutputStream(fos);
-      
+
       String gameFolderName = game.getEmulator().getInstallationFolder().getName();
 
       //store highscore
@@ -213,15 +195,19 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       zipPopperMedia(packageInfo, zipOut);
       zipTableDetails(zipOut);
       zipPackageInfo(zipOut, packageInfo);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
-    } finally {
+      result.setError("Create VPA for " + game.getGameDisplayName() + " failed: " + e.getMessage());
+      return;
+    }
+    finally {
       try {
         if (zipOut != null) {
           zipOut.close();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         //ignore
       }
 
@@ -229,7 +215,8 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
         if (fos != null) {
           fos.close();
         }
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         //ignore
       }
 
@@ -239,12 +226,12 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       }
       else {
         LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
-        return JobExecutionResultFactory.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        result.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
+        return;
       }
     }
 
     archiveDescriptor.setSize(target.length());
-    return JobExecutionResultFactory.error(null);
   }
 
   private boolean findAudioMatch(File[] allMusicFiles, String[] audioAssets) {
@@ -368,10 +355,11 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   }
 
   private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
-    status = "Packing " + fileToZip.getAbsolutePath();
-    if (progress < 100 && tempFile.exists()) {
-      if(totalSizeExpected > 0) {
-        this.progress = tempFile.length() * 100 / totalSizeExpected;
+    result.setStatus("Packing " + fileToZip.getAbsolutePath());
+    if (result.getProgress() < 1 && tempFile.exists()) {
+      if (totalSizeExpected > 0) {
+        long l = tempFile.length() * 100 / totalSizeExpected / 100;
+        result.setProgress(l);
       }
     }
 

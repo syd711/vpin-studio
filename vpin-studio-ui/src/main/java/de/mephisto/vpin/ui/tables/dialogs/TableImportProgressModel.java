@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import org.slf4j.Logger;
@@ -47,7 +47,7 @@ public class TableImportProgressModel extends ProgressModel<GameListItem> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, GameListItem next) {
     try {
-      JobExecutionResult jobExecutionResult = client.getFrontendService().importTable(next);
+      JobDescriptor jobExecutionResult = client.getFrontendService().importTable(next);
       progressResultModel.getResults().add(jobExecutionResult);
       LOG.info("Import finished: \"" + next.getName() + "\"");
     } catch (Exception e) {

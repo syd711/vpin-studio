@@ -604,10 +604,9 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog(GameEmulatorRepresentation emulator) {
-    Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Import for '" + emulator.getName() + "'");
+  public static void openTableImportDialog() {
+    Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Importer");
     TableImportController controller = (TableImportController) stage.getUserData();
-    controller.setEmulator(emulator);
     stage.showAndWait();
   }
 

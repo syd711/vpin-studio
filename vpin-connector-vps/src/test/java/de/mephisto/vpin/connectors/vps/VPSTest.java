@@ -34,6 +34,11 @@ public class VPSTest {
 
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
+      if(table == null || table.getB2sFiles() == null) {
+        System.out.println(table);
+        continue;
+      }
+
       for (VpsBackglassFile b2sFile : table.getB2sFiles()) {
         if(b2sFile.getId() == null) {
           System.out.println(table.getName());

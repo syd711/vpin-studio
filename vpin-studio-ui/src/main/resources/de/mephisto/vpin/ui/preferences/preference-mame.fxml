@@ -88,7 +88,7 @@
                         </CheckBox>
                         <Label layoutX="10.0" layoutY="260.0" styleClass="checkbox-description" text="Toggles the visibility of the DMD window." textFill="WHITE" wrapText="true" />
                         <Label layoutX="10.0" layoutY="496.0" styleClass="checkbox-description" text="If set, the DMD should be visible an can be repositioned via drag and drop." textFill="WHITE" wrapText="true" />
-                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox" text="User External DMD (dll)" textFill="WHITE">
+                        <CheckBox fx:id="useExternalDmd" layoutX="10.0" layoutY="170.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Use External DMD (dll)" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

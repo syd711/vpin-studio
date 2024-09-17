@@ -72,9 +72,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private ToggleButton maintenanceBtn;
 
   @FXML
-  private MenuButton messagesBtn;
-
-  @FXML
   private HBox toolbarHBox;
 
   @FXML
@@ -243,18 +240,14 @@ public class ToolbarController implements Initializable, StudioEventListener {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
-    messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
     dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
-
-    dropInsBtn.setVisible(Features.DROP_IN_FOLDER);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     frontendMenuItem.setText("Restart " + frontend.getName());
-    this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 
@@ -279,19 +272,16 @@ public class ToolbarController implements Initializable, StudioEventListener {
     }
 
 
-    this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
 
     JobPoller.destroy();
-    JobPoller.create(this.jobBtn, this.jobProgress, this.messagesBtn);
+    JobPoller.create(this.jobBtn, this.jobProgress);
 
     runUpdateCheck();
 
     JobPoller.getInstance().setPolling();
-
-    this.messagesBtn.setVisible(!client.getJobsService().getResults().isEmpty());
 
     preferencesChanged(PreferenceType.serverSettings);
 

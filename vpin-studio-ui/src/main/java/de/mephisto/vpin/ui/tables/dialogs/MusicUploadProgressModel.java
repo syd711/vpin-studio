@@ -1,16 +1,9 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

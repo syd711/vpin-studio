@@ -1,8 +1,7 @@
 package de.mephisto.vpin.server.archiving;
 
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -17,9 +16,8 @@ public class CopyArchiveToRepositoryJob implements Job {
   private final ArchiveDescriptor archiveDescriptor;
   private final boolean overwrite;
 
-  private String status;
-
   private File temp;
+  private JobDescriptor result;
 
   public CopyArchiveToRepositoryJob(@NonNull ArchiveService archiveService,
                                     @NonNull ArchiveDescriptor archiveDescriptor,
@@ -30,9 +28,10 @@ public class CopyArchiveToRepositoryJob implements Job {
   }
 
   @Override
-  public JobExecutionResult execute() {
+  public void execute(JobDescriptor result) {
+    this.result = result;
     try {
-      status = "Downloading " + archiveDescriptor.getFilename();
+      result.setStatus("Downloading " + archiveDescriptor.getFilename());
       File archiveTarget = archiveService.getTargetFile(archiveDescriptor);
       temp = new File(archiveTarget.getParentFile(), archiveDescriptor.getFilename() + ".bak");
       if (temp.exists()) {
@@ -40,11 +39,12 @@ public class CopyArchiveToRepositoryJob implements Job {
       }
       if (archiveTarget.exists()) {
         if (overwrite && !archiveTarget.delete()) {
-          return JobExecutionResultFactory.error("Failed to delete existing archive " + archiveTarget.getAbsolutePath());
+          result.setError("Failed to delete existing archive " + archiveTarget.getAbsolutePath());
+          return;
         }
 
         if (!overwrite) {
-          return JobExecutionResultFactory.empty();
+          return;
         }
       }
 
@@ -55,11 +55,12 @@ public class CopyArchiveToRepositoryJob implements Job {
       boolean renamed = temp.renameTo(archiveTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return JobExecutionResultFactory.error("Failed to rename downloaded file " + temp.getAbsolutePath());
+        result.setError("Failed to rename downloaded file " + temp.getAbsolutePath());
+        return;
       }
 
-      if(archiveDescriptor.getFilename().endsWith(".vpa")) {
-        return null;
+      if (archiveDescriptor.getFilename().endsWith(".vpa")) {
+        return;
       }
 
 
@@ -78,24 +79,18 @@ public class CopyArchiveToRepositoryJob implements Job {
       renamed = temp.renameTo(descriptorTarget);
       if (!renamed) {
         LOG.error("Failed to rename downloaded file " + temp.getAbsolutePath());
-        return JobExecutionResultFactory.error("Failed to rename downloaded file " + temp.getAbsolutePath());
+        result.setError("Failed to rename downloaded file " + temp.getAbsolutePath());
       }
 
-    } catch (Exception e) {
-      LOG.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage());
     }
-    return new JobExecutionResult();
+    catch (Exception e) {
+      LOG.error("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage(), e);
+      result.setError("Download of \"" + archiveDescriptor.getFilename() + "\" failed: " + e.getMessage());
+    }
   }
 
-  @Override
-  public double getProgress() {
+  public void setProgress() {
     long currentSize = temp.length();
-    return currentSize * 100d / archiveDescriptor.getSize();
-  }
-
-  @Override
-  public String getStatus() {
-    return status;
+    result.setProgress(currentSize * 100d / archiveDescriptor.getSize() / 100);
   }
 }
