@@ -54,13 +54,13 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     dropinsMonitor = new DropInMonitoringThread(this);
     dropinsMonitor.setDropInFolder(dropinsFolder);
     dropinsMonitor.startMonitoring();
-
-    // monitor changes
-    LocalUISettings.addListener(this);
-    EventManager.getInstance().addListener(this);
   }
 
   public void init(MenuButton dropInsBtn) {
+    // monitor changes
+    LocalUISettings.addListener(this);
+    EventManager.getInstance().addListener(this);
+
     this.dropInsBtn = dropInsBtn;
     this.dropInsBtn.getGraphic().setVisible(false);
     this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
