@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
@@ -183,6 +184,10 @@ public class Studio extends Application {
         Studio.client = client;
         createManiaClient();
         ServerFX.client = Studio.client;
+
+        // reinitialize a new EventManager each time application starts
+        EventManager.initialize();
+        LocalUISettings.initialize();
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (unknownGameIds != null && !unknownGameIds.isEmpty()) {

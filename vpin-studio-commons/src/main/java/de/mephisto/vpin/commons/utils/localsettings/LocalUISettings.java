@@ -21,12 +21,14 @@ public class LocalUISettings {
 
   private static PropertiesStore store;
 
-  private static List<LocalSettingsChangeListener> listeners = new ArrayList<>();
+  private static List<LocalSettingsChangeListener> listeners;
 
-  static {
+  public static void initialize() {
     File propertiesFile = new File("config/settings.properties");
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
+
+    listeners = new ArrayList<>();
   }
 
   public static void addListener(LocalSettingsChangeListener listener) {

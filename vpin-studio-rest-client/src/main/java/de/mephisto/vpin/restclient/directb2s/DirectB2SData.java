@@ -174,9 +174,8 @@ public class DirectB2SData {
 
   public DirectB2S toDirectB2S() {
     DirectB2S b2s = new DirectB2S();
-    b2s.setName(this.getName());
-    b2s.setFileName(this.getFilename());
     b2s.setEmulatorId(this.getEmulatorId());
+    b2s.setFileName(this.getFilename());
     //b2s.setVpxAvailable(unknown but not needed);
     return b2s;
   }

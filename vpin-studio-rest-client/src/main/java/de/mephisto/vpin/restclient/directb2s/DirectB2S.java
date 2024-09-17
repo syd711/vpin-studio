@@ -2,11 +2,16 @@ package de.mephisto.vpin.restclient.directb2s;
 
 import java.util.Objects;
 
+import org.apache.commons.io.FilenameUtils;
+
 public class DirectB2S {
-  private String name;
   private int emulatorId;
   private boolean vpxAvailable;
   private String fileName;
+
+  public String getName() {
+    return FilenameUtils.getBaseName(fileName);
+  }
 
   public String getFileName() {
     return fileName;
@@ -24,14 +29,6 @@ public class DirectB2S {
     this.vpxAvailable = vpxAvailable;
   }
 
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
   public int getEmulatorId() {
     return emulatorId;
   }
@@ -42,7 +39,7 @@ public class DirectB2S {
 
   @Override
   public String toString() {
-    return name;
+    return getName();
   }
 
   @Override
@@ -53,12 +50,12 @@ public class DirectB2S {
     DirectB2S directB2S = (DirectB2S) o;
 
     if (emulatorId != directB2S.emulatorId) return false;
-    return Objects.equals(name, directB2S.name);
+    return Objects.equals(fileName, directB2S.fileName);
   }
 
   @Override
   public int hashCode() {
-    int result = name != null ? name.hashCode() : 0;
+    int result = fileName != null ? fileName.hashCode() : 0;
     result = 31 * result + emulatorId;
     return result;
   }

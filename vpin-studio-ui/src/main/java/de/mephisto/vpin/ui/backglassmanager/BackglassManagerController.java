@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
@@ -67,7 +68,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
  *
  */
 public class BackglassManagerController extends BaseTableController<DirectB2S, DirectB2SModel>
-  implements Initializable, StudioFXController {
+  implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
@@ -420,6 +421,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
+    EventManager.getInstance().addListener(this);
+
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
     if (gameEmulators.isEmpty()) {
       LOG.error("No backglass server game emulator found!");
@@ -676,7 +679,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     return ratio < 3.0;
   }
 
-  private JFXFuture refresh(@Nullable DirectB2S newValue) {
+  private JFXFuture<Void> refresh(@Nullable DirectB2S newValue) {
     if (newValue != null) {
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
     }
@@ -841,7 +844,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       });
     }
     else {
-      return new JFXFuture(CompletableFuture.completedFuture(null));
+      return new JFXFuture<Void>(CompletableFuture.completedFuture(null));
     }
   }
 
@@ -983,6 +986,38 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   public GameRepresentation getGame() {
     return game;
+  }
+
+
+  //------------------------------------------------
+  // Implementation of StudioEventListener
+
+  @Override
+  public void tableChanged(int id, String rom, String gameName) {
+    DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
+
+    if (id > 0) {
+      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      reload(refreshedGame);
+    }
+    
+    if (selection != null && selection.getGameId() == id) {
+      refresh(selection.getBacklass());
+    }
+  }
+
+  private void reload(GameRepresentation refreshedGame) {
+    // tab should have been initiliazed to support reload
+    if (refreshedGame != null && models != null) {
+      for (DirectB2SModel model : models)  {
+        if (model.getGameId() == refreshedGame.getId()) {
+          model.getBacklass().setFileName(refreshedGame.getGameFileName());
+          model.reload();
+        }
+      }
+      // force refresh the view for elements not observed by the table
+      tableView.refresh();
+    }
   }
 
   //------------------------------------------------
