@@ -129,6 +129,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateAdded;
 
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
+
 
   @FXML
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
@@ -257,7 +260,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -1241,7 +1244,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateAddedDateFormat.format(value.getDateAdded()));
+        label = new Label(dateFormat.format(value.getDateAdded()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
+      Label label = null;
+      if (value.getModified() != null) {
+        label = new Label(dateFormat.format(value.getModified()));
       }
       else {
         label = new Label("-");
@@ -1771,6 +1786,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible(!assetManagerMode && uiSettings.isColumnDateModified());
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 

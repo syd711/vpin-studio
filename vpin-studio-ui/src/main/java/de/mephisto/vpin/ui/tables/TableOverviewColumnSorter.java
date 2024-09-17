@@ -37,9 +37,22 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       }
       else if (column.equals(tableOverviewController.columnDateAdded)) {
         comp = (o1, o2) -> {
-          Date date1 = o1.getGame().getDateAdded() == null ? new Date() : o1.getGame().getDateAdded();
-          Date date2 = o2.getGame().getDateAdded() == null ? new Date() : o2.getGame().getDateAdded();
-          return date1.compareTo(date2);
+          if (o1.getGame().getDateAdded() == null) {
+            return o2.getGame().getDateAdded() == null ? 0 : 1;
+          }
+          else {
+            return o2.getGame().getDateAdded() == null ? -1 : o1.getGame().getDateAdded().compareTo(o2.getGame().getDateAdded());
+          }
+        };
+      }
+      else if (column.equals(tableOverviewController.columnDateModified)) {
+        comp = (o1, o2) -> {
+          if (o1.getGame().getModified() == null) {
+            return o2.getGame().getModified() == null ? 0 : -1;
+          }
+          else {
+            return o2.getGame().getModified() == null ? 1 : o1.getGame().getModified().compareTo(o2.getGame().getModified());
+          }
         };
       }
       else if (column.equals(tableOverviewController.columnB2S)) {

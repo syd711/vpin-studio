@@ -185,12 +185,12 @@ public class PinballXTableParser extends DefaultHandler {
         break;
       }
       case "dateadded": {
-        Date dateAdded = sdf.parse(content);
+        Date dateAdded = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
         detail.setDateAdded(dateAdded);
         break;
       }
       case "datemodified": {
-        Date dateModified = sdf.parse(content);
+        Date dateModified = content.equals("1900-01-01 00:00:00") ? null : sdf.parse(content);
         detail.setDateModified(dateModified);
         break;
       }
