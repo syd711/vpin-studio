@@ -401,11 +401,7 @@ public class PinballXConnector extends BaseConnector {
 
     List<Playlist> result = new ArrayList<>();
 
-    Playlist favs = new Playlist();
-    favs.setId(-1);
-    favs.setName("Favorites");
-    List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
-    favs.setGames(favspg);
+    Playlist favs = getFavPlaylist();
     result.add(favs);
 
     this.playlists = new HashMap<>();
@@ -448,10 +444,19 @@ public class PinballXConnector extends BaseConnector {
     return result;
   }
 
+  private Playlist getFavPlaylist() {
+    Playlist favs = new Playlist();
+    favs.setId(-1);
+    favs.setName("Favorites");
+    List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
+    favs.setGames(favspg);
+    return favs;
+  }
+
   @NonNull
   @Override
   public Playlist getPlayList(int id) {
-    return playlists.get(id);
+    return id == -1 ? getFavPlaylist() : playlists.get(id);
   }
 
   private File getPlaylistConfFile(int playlistId) {
