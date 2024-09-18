@@ -315,7 +315,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       GameRepresentation selectedItem = getSelection();
       clearSelection();
       if (selectedItem != null) {
-        selectGameInModel(selectedItem, false);
+        selectBeanInModel(selectedItem, false);
       }
     });
   }
@@ -1459,7 +1459,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void showAssetDetails(GameRepresentation game, VPinScreen screen) {
     assetScreenSelection = screen;
-    selectGameInModel(game, false);
+    selectBeanInModel(game, false);
 
     Platform.runLater(() -> {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);

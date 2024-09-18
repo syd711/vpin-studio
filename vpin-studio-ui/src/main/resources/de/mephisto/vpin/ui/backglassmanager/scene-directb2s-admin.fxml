@@ -245,11 +245,23 @@
                                                 </Label>
                                              </left>
                                              <right>
-                                                <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
-                                                   </graphic>
-                                                </Button>
+                                                <HBox>
+                                                   <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />
+                                                      </graphic>
+                                                   </Button>
+                                                   <Button fx:id="downloadDMDBtn" mnemonicParsing="false" onAction="#onDMDDownload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
+                                                      </graphic>
+                                                   </Button>
+                                                   <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="14" />
+                                                      </graphic>
+                                                   </Button>
+                                                </HBox>
                                              </right>
                                           </BorderPane>
                                        </bottom>
@@ -562,7 +574,7 @@
                                              </font>
                                           </Label>
       
-                                                                              <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
+                                          <Label text="Full DMD:" textFill="WHITE" GridPane.rowIndex="6">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -573,7 +585,7 @@
                                              </font>
                                           </Label>
                                           
-                                                                                          <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
+                                          <Label text="B2S Data Elements:" textFill="WHITE" GridPane.rowIndex="7">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

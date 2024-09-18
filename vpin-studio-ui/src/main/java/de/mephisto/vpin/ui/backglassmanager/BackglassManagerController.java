@@ -23,6 +23,8 @@ import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -39,6 +41,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import org.apache.commons.io.FilenameUtils;
@@ -136,7 +139,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button downloadBackglassBtn;
 
   @FXML
+  private Button uploadDMDBtn;
+  @FXML
   private Button downloadDMDBtn;
+  @FXML
+  private Button deleteDMDBtn;
 
   //-- Editors
 
@@ -253,16 +260,21 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   public void refreshBackglass() {
-    try {
-      DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
-      if (selection != null) {
-        selection.reload();
-        refresh(selection.getBacklass());
+    refreshBackglass(getSelection());
+  }
+  public void refreshBackglass(DirectB2S directB2s) {
+    if (directB2s != null) {
+      try {
+        DirectB2SModel selection = getModel(directB2s);
+        if (selection != null) {
+          selection.reload();
+          refresh(selection.getBacklass());
+        }
       }
-    }
-    catch (Exception ex) {
-      LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
+      catch (Exception ex) {
+        LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
+      }
     }
   }
 
@@ -279,6 +291,21 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   @FXML
+  private void onDMDUpload() {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select DMD Image");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+
+      File selection = fileChooser.showOpenDialog(stage);
+    if (selection != null) {
+      DirectB2S b2s = tableData.toDirectB2S();
+      ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+      refreshBackglass(b2s);
+    }
+  }
+
+  @FXML
   private void onDMDDownload() {
     if (tableData.isDmdImageAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
@@ -287,6 +314,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       catch (IOException ioe) {
         LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
       }
+    }
+  }
+
+  @FXML
+  private void onDMDDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image", 
+      "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      DirectB2S b2s = tableData.toDirectB2S();
+      ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", b2s, null));
+      refreshBackglass(b2s);
     }
   }
 
@@ -714,7 +752,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     downloadBackglassBtn.setDisable(true);
+    uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
+    deleteDMDBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -902,10 +942,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     final Image _dmdThumbnail = dmdThumbnail;
     final String _dmdThumbnailError = dmdThumbnailError;
     Platform.runLater(() -> {
+      uploadDMDBtn.setDisable(false);
       if (_dmdThumbnail != null) {
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
+        deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
       }
