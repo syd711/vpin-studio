@@ -135,41 +135,15 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   protected List<Emulator> loadEmulators() {
-    File pinballXFolder = getInstallationFolder();
-    File pinballXIni = getPinballXIni();
-
-    if (!pinballXIni.exists()) {
-      LOG.warn("Ini file not found " + pinballXIni);
+    INIConfiguration iniConfiguration = loadPinballXIni();
+    if (iniConfiguration == null) {
       return Collections.emptyList();
     }
 
-    // mind pinballX.ini is encoded in UTF-16
-    List<Emulator> emulators = loadIni(pinballXFolder, pinballXIni, "UTF-16");
-    if (emulators.isEmpty()) {
-      // ...but old version could be in UTF-8
-      emulators = loadIni(pinballXFolder, pinballXIni, "UTF-8");
-    }
-
-    return emulators;
-  }
-
-  private List<Emulator> loadIni(File pinballXFolder, File pinballXIni, String charset) {
+    File pinballXFolder = getInstallationFolder();
 
     List<Emulator> emulators = new ArrayList<>();
-
     mapTableDetails = new HashMap<>();
-
-    INIConfiguration iniConfiguration = new INIConfiguration();
-    //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-    iniConfiguration.setSeparatorUsedInOutput("=");
-//    iniConfiguration.setSeparatorUsedInInput("=");
-
-    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName(charset))) {
-      iniConfiguration.read(fileReader);
-    }
-    catch (Exception e) {
-      LOG.error("cannot parse ini file " + pinballXIni, e);
-    }
 
     // check standard emulators, starts with Visual Pinball as default one
     String[] emuNames = new String[]{
@@ -212,6 +186,42 @@ public class PinballXConnector extends BaseConnector {
   private File getPinballXIni() {
     File pinballXFolder = getInstallationFolder();
     return new File(pinballXFolder, "/Config/PinballX.ini");
+  }
+
+  private INIConfiguration loadPinballXIni() {
+    File pinballXIni = getPinballXIni();
+    if (!pinballXIni.exists()) {
+      LOG.warn("Ini file not found " + pinballXIni);
+      return null;
+    }
+
+    // mind pinballX.ini is encoded in UTF-16
+    INIConfiguration ini = loadIni(pinballXIni, "UTF-16");
+    if (ini == null) {
+      // ...but old version could be in UTF-8
+      ini = loadIni(pinballXIni, "UTF-8");
+    }
+
+    return ini;
+  }
+
+  private INIConfiguration loadIni(File pinballXIni, String charset) {
+    INIConfiguration iniConfiguration = new INIConfiguration();
+    //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
+    iniConfiguration.setSeparatorUsedInOutput("=");
+    //iniConfiguration.setSeparatorUsedInInput("=");
+
+    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName(charset))) {
+      iniConfiguration.read(fileReader);
+    }
+    catch (Exception e) {
+      LOG.error("cannot parse ini file " + pinballXIni, e);
+      return null;
+    }
+
+    // check presence of [internal] section
+    SubnodeConfiguration s = iniConfiguration.getSection("internal");
+    return s.isEmpty() ? null : iniConfiguration;
   }
 
   /*
@@ -358,37 +368,24 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
-    File pinballXIni = getPinballXIni();
-
-    INIConfiguration iniConfiguration = new INIConfiguration();
-    //iniConfiguration.setCommentLeadingCharsUsedInInput(";");
-    iniConfiguration.setSeparatorUsedInOutput("=");
-//    iniConfiguration.setSeparatorUsedInInput("=");
-
-    // mind pinballX.ini is encoded in UTF-16
-    try (FileReader fileReader = new FileReader(pinballXIni, Charset.forName("UTF-16"))) {
-      iniConfiguration.read(fileReader);
-    }
-    catch (Exception e) {
-      LOG.error("cannot parse ini file " + pinballXIni, e);
-    }
-
+    INIConfiguration iniConfiguration = loadPinballXIni();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
-    SubnodeConfiguration display = iniConfiguration.getSection("Display");
-    displayList.add(createDisplay(display, VPinScreen.PlayField));
+    if (iniConfiguration != null) {
+      SubnodeConfiguration display = iniConfiguration.getSection("Display");
+      displayList.add(createDisplay(display, VPinScreen.PlayField));
 
-    SubnodeConfiguration topper = iniConfiguration.getSection("Topper");
-    displayList.add(createDisplay(topper, VPinScreen.Topper));
+      SubnodeConfiguration topper = iniConfiguration.getSection("Topper");
+      displayList.add(createDisplay(topper, VPinScreen.Topper));
 
-    SubnodeConfiguration dmd = iniConfiguration.getSection("DMD");
-    displayList.add(createDisplay(dmd, VPinScreen.DMD));
+      SubnodeConfiguration dmd = iniConfiguration.getSection("DMD");
+      displayList.add(createDisplay(dmd, VPinScreen.DMD));
 
-    SubnodeConfiguration backGlass = iniConfiguration.getSection("BackGlass");
-    displayList.add(createDisplay(backGlass, VPinScreen.BackGlass));
+      SubnodeConfiguration backGlass = iniConfiguration.getSection("BackGlass");
+      displayList.add(createDisplay(backGlass, VPinScreen.BackGlass));
 
-    SubnodeConfiguration apron = iniConfiguration.getSection("Apron");
-    displayList.add(createDisplay(apron, VPinScreen.Menu));
-
+      SubnodeConfiguration apron = iniConfiguration.getSection("Apron");
+      displayList.add(createDisplay(apron, VPinScreen.Menu));
+    }
     return displayList;
   }
 
