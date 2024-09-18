@@ -22,6 +22,7 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
@@ -41,6 +42,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
@@ -122,6 +124,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Label modificationDateLabel;
+
+  @FXML
+  private Pane loaderStackImages;
 
   @FXML
   private BorderPane thumbnailImagePane;
@@ -297,7 +302,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     fileChooser.getExtensionFilters().addAll(
       new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
-      File selection = fileChooser.showOpenDialog(stage);
+    File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
       DirectB2S b2s = tableData.toDirectB2S();
       ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
@@ -617,6 +622,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     // add the overlay for drag and drop
     new BackglassManagerDragDropHandler(this, tableView, tableStack);
+
+    // add the overlay for DMD image drag    
+    FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
+      .setOnDragDropped(e -> {
+        List<File> files = e.getDragboard().getFiles();
+        if (files != null && files.size() == 1) {
+          File selection = files.get(0);
+          DirectB2S b2s = tableData.toDirectB2S();
+          ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+          refreshBackglass(b2s);
+        }
+      });
   }
 
   @Override

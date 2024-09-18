@@ -15,7 +15,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
 
-- **DMD Images in Backglass Manager**! Added ability to add/replace/remove a full dmd image to a backglass
+- **DMD Images in Backglass Manager**! Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop. 
 - **Client Settings / Windows Network Share**: Added MacOS Support.
 - **System / Open Folder & Open File**: Added MacOS Support.
 
