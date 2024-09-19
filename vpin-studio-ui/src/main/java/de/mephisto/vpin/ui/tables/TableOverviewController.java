@@ -1114,13 +1114,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New backglass updates available");
       }
       return null;
     }, true);
@@ -1131,13 +1135,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New POV updates available");
       }
       return null;
     }, true);
@@ -1157,37 +1165,49 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT sound updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
       if (value.getAltColorType() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT color updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
+      }
+      else if(hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New PUP pack updates available");
       }
       return null;
     }, true);
