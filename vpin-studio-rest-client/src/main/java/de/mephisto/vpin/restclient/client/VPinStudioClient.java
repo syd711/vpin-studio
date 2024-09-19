@@ -41,6 +41,7 @@ import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
 import de.mephisto.vpin.restclient.textedit.TextEditorServiceClient;
 import de.mephisto.vpin.restclient.tournaments.TournamentsServiceClient;
+import de.mephisto.vpin.restclient.video.VideoConversionServiceClient;
 import de.mephisto.vpin.restclient.vpbm.VpbmServiceClient;
 import de.mephisto.vpin.restclient.vps.VpsServiceClient;
 import de.mephisto.vpin.restclient.vpx.VpxServiceClient;
@@ -98,6 +99,7 @@ public class VPinStudioClient implements OverlayClient {
   private final PINemHiServiceClient pinemHiServiceClient;
   private final PlaylistsServiceClient playlistsServiceClient;
   private final PlaylistMediaServiceClient playlistMediaServiceClient;
+  private final VideoConversionServiceClient videoConversionServiceClient;
   private final VpbmServiceClient vpbmServiceClient;
   private final VpxServiceClient vpxServiceClient;
   private final VpsServiceClient vpsServiceClient;
@@ -142,8 +144,13 @@ public class VPinStudioClient implements OverlayClient {
     this.playlistsServiceClient = new PlaylistsServiceClient(this);
     this.playlistMediaServiceClient = new PlaylistMediaServiceClient(this);
     this.higscoreBackupServiceClient = new HigscoreBackupServiceClient(this);
+    this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public VideoConversionServiceClient getVideoConversionService() {
+    return videoConversionServiceClient;
   }
 
   public ManiaServiceClient getManiaService() {

@@ -16,6 +16,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -33,11 +34,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -61,6 +64,7 @@ import java.util.List;
 import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 
 public class TableAssetManagerDialogController implements Initializable, DialogController, StudioEventListener {
@@ -117,6 +121,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Button clearCacheBtn;
+
+  @FXML
+  private MenuButton conversionMenu;
 
   @FXML
   private Separator folderSeparator;
@@ -706,6 +713,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
         WidgetFactory.disposeMediaPane(mediaPane);
 
+        conversionMenu.setDisable(mediaItem == null || !mediaItem.getName().endsWith(".mp4"));
         deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
         downloadAssetBtn.setDisable(mediaItem == null);
@@ -749,6 +757,35 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       if (frontend.getFrontendType().equals(FrontendType.PinballX)) {
         frontendImage.setImage(new Image(Studio.class.getResourceAsStream("gameex.png")));
       }
+    }
+
+    conversionMenu.managedProperty().bindBidirectional(conversionMenu.visibleProperty());
+    conversionMenu.setDisable(true);
+    List<VideoConversionCommand> commandList = client.getVideoConversionService().getCommandList();
+    conversionMenu.setVisible(!commandList.isEmpty());
+    for (VideoConversionCommand command : commandList) {
+      MenuItem item = new MenuItem(command.getName());
+      conversionMenu.getItems().add(item);
+      item.setOnAction(new EventHandler<ActionEvent>() {
+        @Override
+        public void handle(ActionEvent event) {
+          Platform.runLater(() -> {
+            FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+            String name = selectedItem.getName();
+            ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new VideoConversionProgressModel("Video Conversion", game.getId(), screen, name, command));
+            List<Object> results = progressDialog.getResults();
+
+            Platform.runLater(() -> {
+              if (!results.isEmpty()) {
+                WidgetFactory.showAlert(stage, "Error", "Error converting video: " + results.get(0));
+              }
+              else {
+                refreshTableMediaView();
+              }
+            });
+          });
+        }
+      });
     }
   }
 
@@ -938,52 +975,52 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   private void initDragAndDrop() {
     FileDragEventHandler.install(mediaRootPane, screenAudio, false, "mp3")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Audio, "mp3"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Audio, "mp3"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenAudioLaunch, false, "mp3")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.AudioLaunch, "mp3"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.AudioLaunch, "mp3"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenTopper, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Topper, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Topper, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenLoading, false, "mp4")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Loading, "mp4"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Loading, "mp4"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenPlayField, false, "mp4")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.PlayField, "mp4"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.PlayField, "mp4"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenBackGlass, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.BackGlass, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.BackGlass, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenGameInfo, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameInfo, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameInfo, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenGameHelp, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameHelp, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.GameHelp, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenMenu, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Menu, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Menu, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenDMD, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.DMD, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.DMD, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenOther2, false, "mp4", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Other2, "mp4", "png", "jpg"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Other2, "mp4", "png", "jpg"))
+        .setEmbeddedMode(isEmbeddedMode());
 
     FileDragEventHandler.install(mediaRootPane, screenWheel, false, "apng", "png", "jpg")
-      .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"))
-      .setEmbeddedMode(isEmbeddedMode());
+        .setOnDragDropped(new TableMediaFileDropEventHandler(this, VPinScreen.Wheel, "apng", "png", "apng"))
+        .setEmbeddedMode(isEmbeddedMode());
   }
 
   private void refreshTableView() {
