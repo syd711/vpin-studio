@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.ByteArrayInputStream;
@@ -134,13 +135,37 @@ public class BackglassServiceClient extends VPinStudioClientService {
   public UploadDescriptor uploadDirectB2SFile(File file, int gameId, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + "directb2s/upload";
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.DIRECTB2S, listener);
+      HttpEntity<?> upload = createUpload(file, gameId, null, AssetType.DIRECTB2S, listener);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
-    } catch (Exception e) {
+    } 
+    catch (Exception e) {
       LOG.error("Directb2s upload failed: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public boolean uploadDMDImage(DirectB2S directb2s, File file) {
+    try {
+      LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+      map.add("emuid", directb2s.getEmulatorId());
+      map.add("filename", directb2s.getFileName());
+      String url = getRestClient().getBaseUrl() + API + "directb2s/uploadDmdImage";
+      HttpEntity<?> upload = createUpload(map, file, -1, null, AssetType.DIRECTB2S, null);
+
+      //new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      createUploadTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
+      finalizeUpload(upload);
+      return true;
+    } 
+    catch (Exception e) {
+      LOG.error("Directb2s upload failed: " + e.getMessage(), e);
+      throw e;
+    }
+  }
+
+  public boolean removeDMDImage(DirectB2S directb2s) throws Exception {
+    return getRestClient().post(API + "directb2s/removeDmdImage", directb2s, Boolean.class);
   }
 }

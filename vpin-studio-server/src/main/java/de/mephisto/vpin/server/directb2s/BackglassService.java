@@ -26,7 +26,12 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -98,6 +103,23 @@ public class BackglassService {
       return extractor.getDmdBase64();
     }
     return null;
+  }
+
+  public boolean setDmdImage(int emuId, String filename, String file, String dmdBase64) {
+    File b2sFile = getB2sFile(emuId, filename);
+    if (b2sFile.exists()) {
+      try {
+        DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
+        updater.updateDmdImage(b2sFile, file, dmdBase64, false);
+        // clean cache
+        cacheDirectB2SData.remove(b2sFile.getPath());
+        return true;
+      }
+      catch (Exception e) {
+        LOG.error("Error while updating " + filename, e);
+      }
+    }
+    return false;
   }
 
   public boolean deleteBackglass(int emuId, String filename) {

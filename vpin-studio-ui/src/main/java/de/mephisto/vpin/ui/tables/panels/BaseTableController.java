@@ -210,6 +210,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   //----------------------
 
+  public M getModel(T bean) {
+    return models.stream().filter(m -> m.sameBean(bean)).findFirst().orElse(null);
+  }
+
   public T getSelection() {
     M selection = tableView.getSelectionModel().getSelectedItem();
     return selection != null ? selection.getBean() : null;
@@ -222,11 +226,11 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void setSelection(T game) {
     clearSelection();
-    selectGameInModel(game, true);
+    selectBeanInModel(game, true);
   }
 
-  public void selectGameInModel(T game, boolean scrollToModel) {
-    Optional<M> model = models.stream().filter(m -> m.sameBean(game)).findFirst();
+  public void selectBeanInModel(T bean, boolean scrollToModel) {
+    Optional<M> model = models.stream().filter(m -> m.sameBean(bean)).findFirst();
     setSelection(model.orElse(null), scrollToModel);
   }
 
