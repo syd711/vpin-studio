@@ -36,7 +36,7 @@
                      </VBox.margin></Label>
                   <HBox alignment="CENTER_LEFT">
                      <children>
-                        <ProgressBar fx:id="progressBar" maxHeight="13.0" prefWidth="370.0" progress="0.0" />
+                        <ProgressBar fx:id="progressBar" maxHeight="13.0" prefWidth="360.0" progress="0.0" />
                         <Label fx:id="statusLabel" styleClass="default-text" text="size label" textFill="WHITE">
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="bi-check-circle" iconSize="18" />

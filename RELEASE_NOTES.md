@@ -15,20 +15,26 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
 
-- **DMD Images in Backglass Manager**! Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop. 
+- **DMD Images in Backglass Manager**! Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
+
 - **Client Settings / Windows Network Share**: Added MacOS Support.
 - **System / Open Folder & Open File**: Added MacOS Support.
 
 ## Bugfixes
 
-- **Table Overview**: Missing sync between VPX filename changes and backglass manager
+- **Table Overview / Backglass Manager**: Missing sync between VPX filename changes and backglass manager.
 - **Highscore Card Editor / Performance**: Fixed performance issue that the view caused to load all available games.
 - **Highscore Card Editor / Fonts**: Fixed rendering of fonts. This one has been a flow right from the beginning. You finally get what you see when you select a font from the font selector, including the font weight and style. The issue that not all true-type-fonts (ttf files) have been rendered properly has been fixed too.
+- **ALT Sound**: .ini files are not ignored anymore when installed via upload.
 - **Table Uploads**: Deleting existing .vbs files on table replacements.
+- **Studio Installation** : Added Popper version check on install.
 - **Smaller Screen Support**:
   - Fixed all views of the tables section to be useable for 1280x768.
   - The Studio window now has a minimum with of 1280x700 pixel.
   - Fixed navigation and header toolbar to be useable on smaller screen resolutions too.
-- **PinballX frontend**: 
-  - Fix small issues in Stats and Favorites
-  - Full support of pinballX.ini in UTF-8 or UTF-16
+- **PinballX Frontend**: 
+  - Fix small issues in Stats and Favorites.
+  - Full support of pinballX.ini in UTF-8 or UTF-16.
+  
