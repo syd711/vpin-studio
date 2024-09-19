@@ -16,9 +16,9 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -247,7 +247,7 @@
                                                 </Label>
                                              </left>
                                              <right>
-                                                <HBox>
+                                                <HBox spacing="3.0">
                                                    <Button fx:id="uploadDMDBtn" mnemonicParsing="false" onAction="#onDMDUpload" textFill="WHITE" BorderPane.alignment="CENTER">
                                                       <graphic>
                                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="14" />

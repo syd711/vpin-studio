@@ -248,6 +248,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
+  private FileDragEventHandler fileDragEventHandler;
 
   @FXML
   private void onUpload(ActionEvent e) {
@@ -624,16 +625,16 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     new BackglassManagerDragDropHandler(this, tableView, tableStack);
 
     // add the overlay for DMD image drag    
-    FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
-      .setOnDragDropped(e -> {
-        List<File> files = e.getDragboard().getFiles();
-        if (files != null && files.size() == 1) {
-          File selection = files.get(0);
-          DirectB2S b2s = tableData.toDirectB2S();
-          ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
-          refreshBackglass(b2s);
-        }
-      });
+    fileDragEventHandler = FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
+        .setOnDragDropped(e -> {
+          List<File> files = e.getDragboard().getFiles();
+          if (files != null && files.size() == 1) {
+            File selection = files.get(0);
+            DirectB2S b2s = tableData.toDirectB2S();
+            ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+            refreshBackglass(b2s);
+          }
+        });
   }
 
   @Override
@@ -736,9 +737,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   private JFXFuture<Void> refresh(@Nullable DirectB2S newValue) {
     if (newValue != null) {
+      fileDragEventHandler.setDisabled(false);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
     }
     else {
+      fileDragEventHandler.setDisabled(true);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
     }
 

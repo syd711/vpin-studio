@@ -81,7 +81,7 @@ public class DnDOverlayController implements Initializable {
     root.setPrefWidth(width);
     root.setPrefHeight(height);
 
-    if(width < 300) {
+    if(width < 400) {
       dropZone.getStyleClass().clear();
       dropZone.getStyleClass().add("dnd-dashed-border-small");
     }
