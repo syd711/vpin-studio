@@ -21,6 +21,7 @@
 
 - **Client Settings / Windows Network Share**: Added MacOS Support.
 - **System / Open Folder & Open File**: Added MacOS Support.
+- **Table Overview / VPS Updates**: VPS update indicators are now shown even if the asset is not installed. Previously, the update arrow icon was only shown when there was an existing asset already available. This way, you get notified about additional ALT sound or PUP packages which are often released later on for existing tables.
 
 ## Bugfixes
 
@@ -28,11 +29,11 @@
 - **Highscore Card Editor / Performance**: Fixed performance issue that the view caused to load all available games.
 - **Highscore Card Editor / Fonts**: Fixed rendering of fonts. This one has been a flow right from the beginning. You finally get what you see when you select a font from the font selector, including the font weight and style. The issue that not all true-type-fonts (ttf files) have been rendered properly has been fixed too.
 - **ALT Sound**: .ini files are not ignored anymore when installed via upload.
-- **Table Uploads**: Deleting existing .vbs files on table replacements.
+- **Table Uploads**: Existing .vbs files are deleted on table replacements now.
 - **Smaller Screen Support**:
-  - Fixed all views of the tables section to be useable for 1280x768.
-  - The Studio window now has a minimum with of 1280x700 pixel.
-  - Fixed navigation and header toolbar to be useable on smaller screen resolutions too.
+  - Fixed all views of the tables section to be useable for 1280x768 pixel.
+  - The Studio window has a minimum allowed size of 1280x700 pixel now.
+  - Fixed navigation and header toolbar to be useable on screen with smaller resolutions too.
 - **PinballX Frontend**: 
   - Fix small issues in Stats and Favorites.
   - Full support of pinballX.ini in UTF-8 or UTF-16.
