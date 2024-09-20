@@ -1,8 +1,20 @@
 package de.mephisto.vpin.server.assets;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.lang.Rational;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.StringValue;
+import com.drew.metadata.Tag;
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
+import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.players.Player;
@@ -14,6 +26,10 @@ import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.parser.ParseContext;
+import org.apache.tika.parser.mp3.LyricsHandler;
+import org.apache.tika.parser.mp3.Mp3Parser;
+import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +38,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class AssetService {
@@ -39,6 +56,9 @@ public class AssetService {
 
   @Autowired
   private DefaultPictureService defaultPictureService;
+
+  @Autowired
+  private FrontendService frontendService;
 
 
   public Asset save(Asset asset) {
@@ -78,6 +98,89 @@ public class AssetService {
     return null;
   }
 
+
+  public AssetRequest getMetadata(AssetRequest request) {
+    AssetMetaData metaData = new AssetMetaData();
+    request.setMetaData(metaData);
+    try {
+      Game game = frontendService.getGame(request.getGameId());
+      if (game == null) {
+        LOG.info("No game found for " + request.getGameId());
+        request.setResult("No game found for " + request.getGameId());
+        return request;
+      }
+
+      FrontendMediaItem mediaItem = game.getGameMedia().getMediaItem(request.getScreen(), request.getName());
+      if (mediaItem == null) {
+        LOG.info("No media item found for " + request.getName());
+        request.setResult("No media item found for " + request.getName());
+        return request;
+      }
+
+      File file = mediaItem.getFile();
+      if (file.exists()) {
+        if(file.getName().endsWith(".mp3")) {
+          //detecting the file type
+          BodyContentHandler handler = new BodyContentHandler();
+          org.apache.tika.metadata.Metadata mp3Meta = new  org.apache.tika.metadata.Metadata();
+          FileInputStream inputstream = new FileInputStream(file);
+          ParseContext pcontext = new ParseContext();
+
+          //Mp3 parser
+          Mp3Parser Mp3Parser = new  Mp3Parser();
+          Mp3Parser.parse(inputstream, handler, mp3Meta, pcontext);
+          LyricsHandler lyrics = new LyricsHandler(inputstream,handler);
+
+          while(lyrics.hasLyrics()) {
+            System.out.println(lyrics.toString());
+          }
+          System.out.println("Metadata of the document:");
+          String[] metadataNames = mp3Meta.names();
+
+          for(String name : metadataNames) {
+            System.out.println(name + ": " + mp3Meta.get(name));
+          }
+        }
+        else {
+          readVideoAndImageMetadata(file, metaData);
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read video metadata: " + e.getMessage());
+      request.setResult("Failed to read video metadata: " + e.getMessage());
+    }
+    return request;
+  }
+
+  private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws ImageProcessingException, IOException {
+    Metadata metadata = ImageMetadataReader.readMetadata(file);
+    Iterable<Directory> directories = metadata.getDirectories();
+    for (Directory directory : directories) {
+      Collection<Tag> tags = directory.getTags();
+      for (Tag tag : tags) {
+        Object object = directory.getObject(tag.getTagType());
+
+        if (object instanceof Rational || object instanceof byte[] || object instanceof StringValue) {
+          continue;
+        }
+        if (object instanceof String[]) {
+          object = String.join(", ", Arrays.asList((String[]) object));
+        }
+        if (object instanceof int[]) {
+          object = String.join(", ", Arrays.asList((int[]) object).stream().map(o -> String.valueOf(o)).collect(Collectors.toList()));
+        }
+        if (object instanceof float[]) {
+          object = String.join(", ", Arrays.asList((float[]) object).stream().map(o -> String.valueOf(o)).collect(Collectors.toList()));
+        }
+        metaData.getData().put(tag.getTagName(), object);
+
+//            System.out.println(tag.getTagName() + ": " + object + " (" + object.getClass().getSimpleName() + ")");
+      }
+    }
+  }
+
+
   public boolean deleteDefaultBackground(int gameId) {
     assetRepository.deleteByExternalId(String.valueOf(gameId));
 
@@ -105,7 +208,7 @@ public class AssetService {
     }
 
     defaultPictureService.deleteDefaultPictures(game);
-    
+
     LOG.info("Uploading " + rawDefaultPicture.getAbsolutePath());
     return UploadUtil.upload(file, rawDefaultPicture);
   }

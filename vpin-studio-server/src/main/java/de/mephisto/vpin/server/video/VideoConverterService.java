@@ -3,8 +3,8 @@ package de.mephisto.vpin.server.video;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.video.VideoConversion;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
+import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -21,7 +21,6 @@ import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class VideoConverterService implements InitializingBean {
@@ -33,7 +32,7 @@ public class VideoConverterService implements InitializingBean {
   private FrontendService frontendService;
 
 
-  public String convert(@NonNull VideoConversion converterParams) {
+  public String convert(@NonNull VideoOperation converterParams) {
     LOG.info("Executing video conversion for " + converterParams.getName() + "/" + converterParams.getCommand());
     try {
       Game game = frontendService.getGame(converterParams.getGameId());
@@ -117,7 +116,6 @@ public class VideoConverterService implements InitializingBean {
       }
     }
   }
-
   public List<VideoConversionCommand> getCommandList() {
     return commands;
   }

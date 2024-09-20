@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
+import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -121,6 +123,9 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private Button clearCacheBtn;
+
+  @FXML
+  private Button infoBtn;
 
   @FXML
   private MenuButton conversionMenu;
@@ -256,6 +261,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     Optional<ButtonType> result = WidgetFactory.showConfirmation(localStage, "Rebuild Index", "The rebuilding of the index can take a few minutes.", "Please wait until the indexing is finished.", "Build Index");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new MediaCacheProgressModel());
+    }
+  }
+
+  @FXML
+  private void onInfo() {
+    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
+    if(selectedItem != null) {
+      String name = selectedItem.getName();
+      client.getAssetService().getMetadata(game.getId(), screen, name);
     }
   }
 
@@ -712,7 +726,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         }
 
         WidgetFactory.disposeMediaPane(mediaPane);
-
+        infoBtn.setDisable(mediaItem == null);
         conversionMenu.setDisable(mediaItem == null || !mediaItem.getName().endsWith(".mp4"));
         deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
@@ -758,6 +772,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         frontendImage.setImage(new Image(Studio.class.getResourceAsStream("gameex.png")));
       }
     }
+
+    infoBtn.setDisable(true);
 
     conversionMenu.managedProperty().bindBidirectional(conversionMenu.visibleProperty());
     conversionMenu.setDisable(true);

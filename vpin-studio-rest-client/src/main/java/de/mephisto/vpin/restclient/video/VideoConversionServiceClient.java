@@ -19,7 +19,7 @@ public class VideoConversionServiceClient extends VPinStudioClientService {
 
   public Object convert(int gameId, VPinScreen screen, String name, VideoConversionCommand command) {
     try {
-      VideoConversion videoConversion = new VideoConversion();
+      VideoOperation videoConversion = new VideoOperation();
       videoConversion.setScreen(screen);
       videoConversion.setGameId(gameId);
       videoConversion.setName(name);

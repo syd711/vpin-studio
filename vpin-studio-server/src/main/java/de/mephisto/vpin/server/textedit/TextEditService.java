@@ -22,7 +22,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -116,7 +119,12 @@ public class TextEditService {
         }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-          mameRomAliasService.saveAliasFile(defaultGameEmulator, textFile.getContent());
+          String[] lines = textFile.getContent().split("\n");
+          List<String> sorted = Arrays.asList(lines);
+          sorted.sort(Comparator.comparing(String::toLowerCase));
+          String content = String.join("\n", sorted);
+
+          mameRomAliasService.saveAliasFile(defaultGameEmulator, content);
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
         }
         case VBScript: {
