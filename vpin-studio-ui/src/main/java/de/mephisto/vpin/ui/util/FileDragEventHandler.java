@@ -1,15 +1,13 @@
 package de.mephisto.vpin.ui.util;
 
+import de.mephisto.vpin.ui.DnDOverlayController;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
 import javafx.scene.input.DataFormat;
 import javafx.scene.input.DragEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Pane;
-
 import org.apache.commons.io.FilenameUtils;
-
-import de.mephisto.vpin.ui.DnDOverlayController;
 
 import java.io.File;
 import java.util.Arrays;
@@ -23,6 +21,8 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
   private List<String> suffixes;
 
   protected DnDOverlayController overlayController;
+  private boolean disabled = false;
+
 
   public static FileDragEventHandler install(Pane loaderStack, Node node, boolean singleSelectionOnly, String... suffix) {
     FileDragEventHandler handler = new FileDragEventHandler(loaderStack, node, singleSelectionOnly, suffix);
@@ -43,6 +43,11 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
 
   @Override
   public void handle(DragEvent event) {
+    if (disabled) {
+      return;
+    }
+
+
     List<File> files = event.getDragboard().getFiles();
 
     Set<DataFormat> contentTypes = event.getDragboard().getContentTypes();
@@ -86,6 +91,7 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
     });
     return this;
   }
+
   public FileDragEventHandler setEmbeddedMode(boolean sidebarMode) {
     if (sidebarMode) {
       overlayController.setMessage(null);
@@ -104,5 +110,9 @@ public class FileDragEventHandler implements EventHandler<DragEvent> {
       }
     }
     return false;
+  }
+
+  public void setDisabled(boolean b) {
+    this.disabled = b;
   }
 }

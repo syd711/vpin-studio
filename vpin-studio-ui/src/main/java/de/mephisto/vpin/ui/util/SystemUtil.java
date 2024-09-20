@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
 
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
@@ -24,7 +27,7 @@ public class SystemUtil {
   }
 
   public static boolean isFolderActionSupported() {
-    return isLocal() || (!StringUtils.isEmpty(publicUrl) && isWindows());
+    return isLocal() || (!StringUtils.isEmpty(publicUrl) && (isWindows() || isMac()));
   }
 
   public static void openFolder(File folder) {
@@ -40,10 +43,10 @@ public class SystemUtil {
     if (isLocal()) {
       try {
         if (file.exists()) {
-          new ProcessBuilder("explorer.exe", "/select,", file.getAbsolutePath()).start();
+          openFileWithOS(file.getAbsolutePath());
         }
-        else if(folder != null && folder.exists()) {
-          new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
+        else if (folder != null && folder.exists()) {
+          openFolder(folder);
         }
       }
       catch (IOException e) {
@@ -68,11 +71,9 @@ public class SystemUtil {
     if (isLocal()) {
       try {
         if (folder.exists()) {
-          new ProcessBuilder("explorer.exe", folder.getAbsolutePath()).start();
-          return;
-        }
-        if (fallback.exists()) {
-          new ProcessBuilder("explorer.exe", fallback.getAbsolutePath()).start();
+          openFolderWithOS(folder.getAbsolutePath());
+        } else if (fallback.exists()) {
+          openFolderWithOS(fallback.getAbsolutePath());
         }
       }
       catch (IOException e) {
@@ -80,16 +81,16 @@ public class SystemUtil {
       }
     }
     else {
-      if (isWindows()) {
+      if (isWindows() || isMac()) {
         try {
           String path = folder.getAbsolutePath();
 
           String remotePath = resolveNetworkPath(publicUrl, path);
           if (remotePath != null) {
-            new ProcessBuilder("explorer.exe", remotePath).start();
+            openFolderWithOS(remotePath);
           }
         }
-        catch (IOException e) {
+        catch (Exception e) {
           LOG.error("Failed to open network folder: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to open network folder: " + e.getMessage());
         }
@@ -97,32 +98,110 @@ public class SystemUtil {
     }
   }
 
+  /**
+   * Opens the folder specified by the absolute path using the operating system's
+   * file explorer.
+   *
+   * @param absolutePath The absolute path of the folder to open typically from getAbsolutePath().
+   * @throws IOException If an I/O error occurs.
+   * @throws UnsupportedOperationException If the operating system is not supported.
+   */
+  private static void openFolderWithOS(String absolutePath) throws IOException {
+    if (isWindows()) {
+      new ProcessBuilder("explorer.exe", absolutePath).start();
+    } else if (isMac()) {
+      new ProcessBuilder("open", absolutePath).start();  // macOS command
+    } else {
+      throw new UnsupportedOperationException("Unsupported operating system: " + System.getProperty("os.name"));
+    }
+  }
+
+  /**
+   * Opens the file specified by the absolute path using the operating system's
+   * file explorer, selecting the file if possible.
+   *
+   * @param absolutePath The absolute path of the file to open typically from getAbsolutePath().
+   * @throws IOException If an I/O error occurs.
+   * @throws UnsupportedOperationException If the operating system is not supported.
+   */
+  private static void openFileWithOS(String absolutePath) throws IOException {
+    if (isWindows()) {
+      new ProcessBuilder("explorer.exe", "/select,", absolutePath).start();
+    } else if (isMac()) {
+      new ProcessBuilder("open", "-R", absolutePath).start();
+    } else {
+      throw new UnsupportedOperationException("Unsupported operating system: " + System.getProperty("os.name"));
+    }
+  }
+
+  /**
+   * Resolves a network path based on the provided base path and target path.
+   * Supports Windows UNC paths and macOS SMB paths.
+   *
+   * @param base The base network path.
+   * @param path The target path to resolve relative to the base.
+   * @return The resolved network path or the original path if base is null.
+   */
   public static String resolveNetworkPath(String base, String path) {
     try {
-      String url = base;
-      if (url == null) {
+      // If base is null, return the original path
+      if (base == null) {
         return path;
       }
 
-      while (url.endsWith("\\")) {
-        url = url.substring(0, url.lastIndexOf("\\"));
+      // Handle both Windows UNC and macOS SMB paths
+      if (isWindows() && base.startsWith("\\\\")) {
+        return resolveNetworkPath(base, path, "\\", "\\\\");
+      } else if (isMac() && base.startsWith("smb://")) {
+        // Convert Windows backslashes to forward slashes for SMB paths
+        path = path.replace("\\", "/");
+        return resolveNetworkPath(base, path, "/", "/");
       }
 
-      String[] split = base.split("\\\\");
-      if (split.length > 0) {
-        String segment = split[split.length - 1];
-        if (path.toLowerCase().contains(segment.toLowerCase())) {
-          path = path.toLowerCase().substring(path.toLowerCase().indexOf(segment.toLowerCase()) + segment.length());
-
-          return url + path;
-        }
-      }
+      // Return null if no matching OS condition was met
       return null;
-    }
-    catch (Exception e) {
+    } catch (Exception e) {
       LOG.error("Failed to resolve network path: " + e.getMessage(), e);
     }
     return path;
+  }
+
+  /**
+   * Resolves a network path by combining the base and path using the given
+   * separator. Removes unnecessary separators and matches segments case-insensitively.
+   *
+   * @param base The base network path.
+   * @param path The target path to resolve relative to the base.
+   * @param separator The file separator used by the operating system.
+   * @param splitRegex The regular expression used to split the base path.
+   * @return The resolved network path or null if no matching segment is found.
+   */
+  private static String resolveNetworkPath(String base, String path, String separator, String splitRegex) {
+    // Normalize the base path by removing trailing separators
+    while (base.endsWith(separator)) {
+      base = base.substring(0, base.length() - 1);
+    }
+
+    // Split the base path by the appropriate separator
+    String[] split = base.split(splitRegex);
+    if (split.length > 0) {
+      String segment = split[split.length - 1];
+
+      // Case-insensitive match for both Windows and macOS
+      if (path.toLowerCase().contains(segment.toLowerCase())) {
+        // Extract the part of the path after the matched segment
+        String extractedPath = path.toLowerCase().substring(path.toLowerCase().indexOf(segment.toLowerCase()) + segment.length());
+
+        // Remove leading separators from extractedPath to avoid duplicate slashes
+        extractedPath = extractedPath.replaceAll("^" + separator, "");
+
+        // Concatenate the base and path with the correct separator
+        return base + separator + extractedPath;
+      }
+    }
+
+    // Return null if no matching segment is found
+    return null;
   }
 
   private static boolean isLocal() {
@@ -130,7 +209,12 @@ public class SystemUtil {
   }
 
   public static boolean isWindows() {
-    String os = System.getProperty("os.name");
-    return os.contains("Windows");
+    String os = System.getProperty("os.name").toLowerCase();
+    return os.contains("windows");
+  }
+
+  public static boolean isMac() {
+    String os = System.getProperty("os.name").toLowerCase();
+    return os.contains("mac") || os.contains("darwin");
   }
 }

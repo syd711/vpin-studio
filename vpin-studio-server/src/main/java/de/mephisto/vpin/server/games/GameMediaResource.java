@@ -4,10 +4,10 @@ import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.util.UploadUtil;
@@ -27,11 +27,17 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Base64;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -173,20 +179,20 @@ public class GameMediaResource {
   }
 
   @PostMapping("/upload/{screen}/{append}")
-  public JobExecutionResult upload(@PathVariable("screen") VPinScreen screen,
-                                   @PathVariable("append") boolean append,
-                                   @RequestParam(value = "file", required = false) MultipartFile file,
-                                   @RequestParam("objectId") Integer gameId) {
+  public JobDescriptor upload(@PathVariable("screen") VPinScreen screen,
+                              @PathVariable("append") boolean append,
+                              @RequestParam(value = "file", required = false) MultipartFile file,
+                              @RequestParam("objectId") Integer gameId) {
     try {
       if (file == null) {
         LOG.error("Upload request did not contain a file object.");
-        return JobExecutionResultFactory.error("Upload request did not contain a file object.");
+        return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
       Game game = gameService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for media upload.");
-        return JobExecutionResultFactory.error("No game found for media upload.");
+        return JobDescriptorFactory.error("No game found for media upload.");
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
@@ -194,7 +200,7 @@ public class GameMediaResource {
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 
-      return JobExecutionResultFactory.empty();
+      return JobDescriptorFactory.empty();
     }
     catch (Exception e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Playlist media upload failed: " + e.getMessage());

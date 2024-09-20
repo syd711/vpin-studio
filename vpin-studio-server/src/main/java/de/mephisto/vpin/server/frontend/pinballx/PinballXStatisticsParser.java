@@ -117,7 +117,11 @@ public class PinballXStatisticsParser {
     }
 
     SubnodeConfiguration conf = getGameSection(iniConfiguration, game);
-    conf.addProperty("favorite", favorite);
+    if (favorite) {
+      conf.setProperty("favorite", "true");
+    } else {
+      conf.clearProperty("favorite");
+    }
 
     try (FileWriter fileWriter = new FileWriter(statsIni, Charset.forName("UTF-8"))) {
       iniConfiguration.write(fileWriter);

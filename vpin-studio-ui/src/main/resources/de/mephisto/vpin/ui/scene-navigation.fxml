@@ -15,7 +15,7 @@
    <top>
       <BorderPane BorderPane.alignment="CENTER">
          <center>
-          <VBox fx:id="buttonList" alignment="TOP_CENTER" spacing="8.0">
+          <VBox fx:id="buttonList" alignment="TOP_CENTER" spacing="6.0">
               <children>
                   <VBox fx:id="tablesBtn" alignment="CENTER" onMousePressed="#onTablesClick" styleClass="navigation-button">
                      <children>
@@ -60,7 +60,7 @@
                   <VBox fx:id="cardsBtn" alignment="CENTER" onMousePressed="#onHighscoreCardsClick" styleClass="navigation-button">
                       <children>
                           <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-numbered" iconSize="28" />
-                          <Label text="Highscore" textFill="WHITE">
+                          <Label text="Highscore" textFill="WHITE" wrapText="true">
                               <font>
                                   <Font size="14.0" />
                               </font>
@@ -131,7 +131,7 @@
                   </VBox>
               </children>
                <BorderPane.margin>
-                  <Insets top="24.0" />
+                  <Insets top="12.0" />
                </BorderPane.margin>
           </VBox>
          </center>

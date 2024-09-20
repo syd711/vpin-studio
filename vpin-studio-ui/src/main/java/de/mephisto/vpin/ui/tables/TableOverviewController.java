@@ -129,6 +129,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateAdded;
 
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
+
 
   @FXML
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
@@ -257,7 +260,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -312,7 +315,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       GameRepresentation selectedItem = getSelection();
       clearSelection();
       if (selectedItem != null) {
-        selectGameInModel(selectedItem, false);
+        selectBeanInModel(selectedItem, false);
       }
     });
   }
@@ -1111,13 +1114,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New backglass updates available");
       }
       return null;
     }, true);
@@ -1128,13 +1135,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New POV updates available");
       }
       return null;
     }, true);
@@ -1154,37 +1165,49 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT sound updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
       if (value.getAltColorType() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT color updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
+      }
+      else if(hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New PUP pack updates available");
       }
       return null;
     }, true);
@@ -1241,7 +1264,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateAddedDateFormat.format(value.getDateAdded()));
+        label = new Label(dateFormat.format(value.getDateAdded()));
+      }
+      else {
+        label = new Label("-");
+      }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
+      Label label = null;
+      if (value.getModified() != null) {
+        label = new Label(dateFormat.format(value.getModified()));
       }
       else {
         label = new Label("-");
@@ -1444,7 +1479,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void showAssetDetails(GameRepresentation game, VPinScreen screen) {
     assetScreenSelection = screen;
-    selectGameInModel(game, false);
+    selectBeanInModel(game, false);
 
     Platform.runLater(() -> {
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
@@ -1775,6 +1810,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible(!assetManagerMode && uiSettings.isColumnDateModified());
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 

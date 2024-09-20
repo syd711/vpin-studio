@@ -142,7 +142,7 @@
                               <Font size="14.0" />
                            </font>
                         </TextField>
-                        <Button fx:id="popperFolderBtn" layoutX="625.0" layoutY="10.0" mnemonicParsing="false" onAction="#onPopperFolderBtn" text="Select Folder..." GridPane.columnIndex="2">
+                        <Button fx:id="installationFolderBtn" layoutX="625.0" layoutY="10.0" mnemonicParsing="false" onAction="#onInstallationFolderBtn" text="Select Folder..." GridPane.columnIndex="2">
                            <font>
                               <Font size="14.0" />
                            </font>

@@ -203,9 +203,12 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
 
       BufferedImage resized = ImageUtil.resizeImage(image, cropWidth);
       LOG.info("Resized to " + resized.getWidth() + "x" + resized.getHeight());
+      if(resized.getHeight() < cropHeight) {
+        resized = ImageUtil.crop(resized, DirectB2SImageRatio.RATIO_16X9.getXRatio(), DirectB2SImageRatio.RATIO_16X9.getYRatio());
+      }
+
       BufferedImage crop = resized.getSubimage(0, 0, cropWidth, cropHeight);
       BufferedImage blurred = ImageUtil.blurImage(crop, 8);
-//          ImageUtil.applyAlphaComposites(blurred, 0f, 10f);
 
       Color start = new Color(0f, 0f, 0f, .1f);
       Color end = Color.decode("#111111");

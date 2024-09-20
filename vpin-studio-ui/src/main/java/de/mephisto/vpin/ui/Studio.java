@@ -15,6 +15,7 @@ import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
@@ -184,11 +185,18 @@ public class Studio extends Application {
         createManiaClient();
         ServerFX.client = Studio.client;
 
+        // reinitialize a new EventManager each time application starts
+        EventManager.initialize();
+        LocalUISettings.initialize();
+
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
           LOG.info("Initial scan of " + unknownGameIds.size() + " unknown tables.");
           ProgressDialog.createProgressDialog(new TableReloadProgressModel(unknownGameIds));
         }
+
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+        client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
         //force pre-caching, this way, the table overview does not need to execute single GET requests
         new Thread(() -> {
@@ -220,7 +228,7 @@ public class Studio extends Application {
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
-        stage.setMinHeight(950);
+        stage.setMinHeight(700);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 
@@ -282,7 +290,7 @@ public class Studio extends Application {
               Parent r = stage.getScene().getRoot();
               scaling = 1;
               stage.setWidth(1280);
-              stage.setHeight(900);
+              stage.setHeight(720);
               r.setScaleX(1);
               r.setScaleY(1);
               ke.consume();
@@ -482,7 +490,7 @@ public class Studio extends Application {
 
 
     if (polling.get()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, continue");
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, exit VPin Studio");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         System.exit(0);
       }

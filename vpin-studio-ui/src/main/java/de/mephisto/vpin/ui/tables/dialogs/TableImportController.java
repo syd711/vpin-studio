@@ -7,7 +7,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
@@ -75,10 +75,10 @@ public class TableImportController implements Initializable, DialogController {
       List<Object> results = progressDialog.getResults();
 
       for (Object result : results) {
-        JobExecutionResult jobResult = (JobExecutionResult) result;
-        if (jobResult.isErrorneous()) {
+        JobDescriptor jobResult = (JobDescriptor) result;
+        if (jobResult.getError() != null) {
           LOG.error("Table import failed: " + jobResult.getError());
-          WidgetFactory.showAlert(Studio.stage, "Table Import Failed", "One ore more imports failed", jobResult.getMessage());
+          WidgetFactory.showAlert(Studio.stage, "Table Import Failed", "One ore more imports failed", jobResult.getError());
           break;
         }
       }

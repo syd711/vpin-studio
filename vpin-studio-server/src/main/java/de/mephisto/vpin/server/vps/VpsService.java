@@ -157,7 +157,8 @@ public class VpsService implements InitializingBean {
           if (gameDetails != null) {
             VPSChanges changes = tableDiff.getChanges();
             String json = changes.toJson();
-            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries)");
+            List<String> changeTypes = changes.getChanges().stream().map(c -> c.getDiffType().name()).collect(Collectors.toList());
+            LOG.info("Updating change list for \"" + game.getGameDisplayName() + "\" (" + tableDiff.getChanges().getChanges().size() + " entries): " + String.join(", ", changeTypes));
             gameDetails.setUpdates(json);
             gameDetailsRepository.saveAndFlush(gameDetails);
           }
@@ -190,7 +191,7 @@ public class VpsService implements InitializingBean {
         LOG.info("Get all links for {}:", link);
         List<VpsInstallLink> links = installer.getInstallLinks(link);
         for (VpsInstallLink l : links) {
-          LOG.info("link " + l.getOrder() + ", " + l.getName() + " (" + l.getSize() +")");
+          LOG.info("link " + l.getOrder() + ", " + l.getName() + " (" + l.getSize() + ")");
         }
         return links;
       }

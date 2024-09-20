@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound2DuckingProfile;
 import de.mephisto.vpin.restclient.altsound.AltSound2SampleType;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -128,6 +129,13 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
     CfgUploadController controller = (CfgUploadController) stage.getUserData();
     controller.setFile(file);
+    stage.showAndWait();
+  }
+
+  public static void openMetadataDialog(AssetRequest request) {
+    Stage stage = Dialogs.createStudioDialogStage(AssetMetadataController.class, "dialog-asset-metadata.fxml", "Metadata for\"" + request.getName() + "\"");
+    AssetMetadataController controller = (AssetMetadataController) stage.getUserData();
+    controller.setData(request);
     stage.showAndWait();
   }
 

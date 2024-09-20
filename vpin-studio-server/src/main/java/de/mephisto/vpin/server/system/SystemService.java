@@ -337,7 +337,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        if (cmdName.toLowerCase().contains("Visual Pinball".toLowerCase()) || cmdName.toLowerCase().contains("VisualPinball".toLowerCase()) || cmdName.toLowerCase().contains("VPinball".toLowerCase())) {
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\")+1);
+        if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
+          LOG.info("Found active VPX process: " + fileName);
           return true;
         }
       }

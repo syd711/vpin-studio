@@ -4,9 +4,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.CommandOption;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,10 +49,10 @@ public class PupPackServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "puppacks/enabled/" + gameId, Boolean.class);
   }
 
-  public JobExecutionResult option(int gameId, String option) throws Exception {
+  public JobDescriptor option(int gameId, String option) throws Exception {
     CommandOption o = new CommandOption();
     o.setCommand(option);
-    return getRestClient().post(API + "puppacks/option/" + gameId, o, JobExecutionResult.class);
+    return getRestClient().post(API + "puppacks/option/" + gameId, o, JobDescriptor.class);
   }
 
   public UploadDescriptor uploadPupPack(File file, FileUploadProgressListener listener) throws Exception {

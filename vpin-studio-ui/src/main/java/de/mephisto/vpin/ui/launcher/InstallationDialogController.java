@@ -21,6 +21,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ResourceBundle;
 
 public class InstallationDialogController implements Initializable, DialogController {
@@ -90,7 +94,7 @@ public class InstallationDialogController implements Initializable, DialogContro
   }
 
   @FXML
-  private void onPopperFolderBtn() {
+  private void onInstallationFolderBtn() {
     DirectoryChooser directoryChooser = new DirectoryChooser();
     if (installationFolder != null && installationFolder.exists()) {
       if (!installationFolder.isDirectory()) {
@@ -172,31 +176,61 @@ public class InstallationDialogController implements Initializable, DialogContro
       return;
     }
 
+    String error = null;
+
     if (radioA.isSelected()) {
-      if (!hasValidExe("PinUpMenu.exe")) {
-        validationError.setVisible(true);
-        validationErrorLabel.setText("No PinPUP Popper installation found in this folder.");
-        return;
-      }
+      error = validatePopperInstallation();
+    }
+    else if (radioB.isSelected()) {
+      error = validatePinballXInstallation();
+    }
+    else if (radioC.isSelected()) {
+      error = validateStandaloneInstallation();
     }
 
-    if (radioB.isSelected()) {
-      if (!hasValidExe("Game Manager.exe")) {
-        validationError.setVisible(true);
-        validationErrorLabel.setText("No PinballX installation found in this folder.");
-        return;
-      }
-    }
-
-    if (radioC.isSelected()) {
-      if (!hasValidExe("VPinballX.exe") && !hasValidExe("VPinballX64.exe")) {
-        validationError.setVisible(true);
-        validationErrorLabel.setText("No Visual Pinball installation found in this folder.");
-        return;
-      }
+    if (error != null) {
+      validationError.setVisible(true);
+      validationErrorLabel.setText(error);
+      return;
     }
 
     installBtn.setDisable(false);
+  }
+
+  private String validatePopperInstallation() {
+    if (hasValidExe("PinUpMenu.exe")) {
+      // check database version
+      File db = new File(this.installationFolderField.getText(), "PUPDatabase.db");
+      String dbFilePath = db.getAbsolutePath().replaceAll("\\\\", "/");
+      String url = "jdbc:sqlite:" + dbFilePath;
+      try (Connection c = DriverManager.getConnection(url)) {
+        try (Statement statement = c.createStatement()) {
+          try (ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;")) {
+            int version = rs.next() ? rs.getInt("SQLVersion") : -1;
+            if (version < 64) {
+              return "Invalid PinUP Popper version. Please install version 1.5 or higher to use VPin Studio.";
+            }
+            // no problem detected, at least for the moment...
+            return null;
+          }
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error while connecting to PinUp Popper database", e);
+        return "Cannot connect to PinUP Popper database or get database version."; 
+      }
+    }
+    return "No PinUP Popper installation found in this folder.";
+  }
+
+  private String validatePinballXInstallation() {
+    return hasValidExe("Game Manager.exe") ? null : 
+      "No PinballX installation found in this folder.";
+  }
+
+  private String validateStandaloneInstallation() {
+    return hasValidExe("VPinballX.exe") || hasValidExe("VPinballX64.exe") ? null :
+      "No Visual Pinball installation found in this folder.";
   }
 
   private boolean hasValidExe(String s) {

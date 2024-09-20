@@ -29,8 +29,13 @@ public class DownloadJobDescriptor extends JobDescriptor {
     try {
       client.download(url, target);
       LOG.info("Download finished, written " + target.getAbsolutePath());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
+      setError(e.getMessage());
       LOG.error("Download failed: " + e.getMessage(), e);
     }
+
+    setProgress(1);
+    setGameId(getGameId());
   }
 }

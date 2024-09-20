@@ -27,6 +27,14 @@ public class NirCmd {
     LOG.info("NirCmd: " + String.join(" ", commands));
   }
 
+  public static void muteSystem(boolean mute) {
+    List<String> commands = Arrays.asList("nircmd.exe",  "mutesysvolume", mute ? "1" : "0");
+    SystemCommandExecutor executor = new SystemCommandExecutor(commands);
+    executor.setDir(new File("./resources"));
+    executor.executeCommandAsync();
+    LOG.info("NirCmd: " + String.join(" ", commands));
+  }
+
   public static void setVolume(int volume) {
     int vol = 65535 * volume / 100;
     List<String> commands = Arrays.asList("nircmd.exe",  "setvolume", "0", String.valueOf(vol), String.valueOf(vol));

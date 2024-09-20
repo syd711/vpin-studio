@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -157,6 +158,12 @@ public class SystemResource {
       LOG.error("Failed to read system info: " + e.getMessage());
     }
     return info;
+  }
+
+  @GetMapping("/mute/{mute}")
+  public boolean muteSystem(@PathVariable("mute") int mute) {
+    NirCmd.muteSystem(mute == 1);
+    return true;
   }
 
 

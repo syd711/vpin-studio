@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.preferences;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -53,7 +53,7 @@ public class DOFSyncProgressModel extends ProgressModel<String> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, String msg) {
     try {
-      JobExecutionResult sync = Studio.client.getDofService().sync(true);
+      JobDescriptor sync = Studio.client.getDofService().sync(true);
       progressResultModel.getResults().add(sync);
     } catch (Exception e) {
       progressResultModel.getResults().add("Error synchronizing DOF: " + e.getMessage());

@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,5 +181,29 @@ public class DirectB2SResource {
     finally {
       descriptor.finalizeUpload();
     }
+  }
+
+  @PostMapping("/uploadDmdImage")
+  public Boolean uploadDmdImage(@RequestParam(value = "file", required = false) MultipartFile file,
+                                @RequestParam("emuid") int emuId,
+                                @RequestParam("filename") String filename) {
+    if (file == null) {
+      LOG.error("Upload request did not contain a file object.");
+      return false;
+    }
+
+    try {
+      String base64 = DatatypeConverter.printBase64Binary(file.getBytes());
+      return backglassService.setDmdImage(emuId, filename, file.getOriginalFilename(), base64);
+    }
+    catch (IOException ioe) {
+      LOG.error("Error while converting image into base64 representation", ioe);
+      return false;
+    }
+  }
+
+  @PostMapping("/removeDmdImage")
+  public Boolean removeDmdImage(@RequestBody DirectB2S directB2S) {
+    return backglassService.setDmdImage(directB2S.getEmulatorId(), directB2S.getFileName(), null, null);
   }
 }

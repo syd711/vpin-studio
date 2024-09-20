@@ -1,19 +1,20 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
+import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.archiving.adapters.vpa.VpaArchiveSource;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +49,9 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     assertNotNull(archiveDescriptor);
 
     TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, buildGameEmulator());
-    JobExecutionResult result = adapter.installTable();
+    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL, UUID.randomUUID().toString());
+
+    adapter.installTable(result);
     assertNull(result.getError());
   }
 
@@ -58,8 +61,9 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     // change the GameEmulator aand use a test one
     game.setEmulator(buildGameEmulator());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
-    JobExecutionResult msg = adapter.createBackup();
-    assertNull(msg.getError());
+    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL, UUID.randomUUID().toString());
+    adapter.createBackup(result);
+    assertNull(result.getError());
 
     assertTrue(vpaFile.exists());
     assertTrue(ZipUtil.contains(vpaFile, "package-info.json") != null);
