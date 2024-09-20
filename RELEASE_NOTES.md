@@ -31,6 +31,7 @@
 - **Highscore Card Editor / Fonts**: Fixed rendering of fonts. This one has been a flow right from the beginning. You finally get what you see when you select a font from the font selector, including the font weight and style. The issue that not all true-type-fonts (ttf files) have been rendered properly has been fixed too.
 - **ALT Sound**: .ini files are not ignored anymore when installed via upload.
 - **Table Uploads**: Existing .vbs files are deleted on table replacements now.
+- **Studio Installation** : Added Popper version check on install.
 - **Notifications**: Fixed issue that the notifications were no shown anymore, because the check if VPX is runnning returned always true for some users.
 - **Smaller Screen Support**:
   - Fixed all views of the tables section to be useable for 1280x768 pixel.
