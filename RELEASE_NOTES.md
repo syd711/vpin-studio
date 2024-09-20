@@ -27,9 +27,9 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
 
-- **DMD Images in Backglass Manager**: Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop.
+- **Jobs Manager**: Re-implemented the jobs menu which is responsible for long running task like PUP pack extractions. The progress is (if possible) now properly displayed and cancelable. Finished job stay inside the menu until they are removed manually.  
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/jobs-menu.png" width="450" />
 
 - **Client Settings / Windows Network Share**: Added MacOS Support.
 - **System / Open Folder & Open File**: Added MacOS Support.
