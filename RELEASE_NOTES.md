@@ -27,7 +27,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
 
-- **Jobs Manager**: Re-implemented the jobs menu which is responsible for long running task like PUP pack extractions. The progress is (if possible) now properly displayed and cancelable. Finished job stay inside the menu until they are removed manually.  
+- **Jobs Menu**: Re-implemented the jobs menu which is responsible for long running task like PUP pack extractions. The progress is now properly displayed and cancelable (if possible). Finished jobs stay inside the menu until they are removed manually.  
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/jobs-menu.png" width="450" />
 
@@ -47,7 +47,7 @@
 - **Studio Installation** : Added Popper version check on install.
 - **Notifications**: Fixed issue that the notifications were no shown anymore, because the check if VPX is runnning returned always true for some users.
 - **Smaller Screen Support**:
-  - Fixed all views of the tables section to be useable for 1280x768 pixel.
+  - Fixed most views of the tables section to be useable for 1280x768 pixel (there are still open ends!).
   - The Studio window has a minimum allowed size of 1280x700 pixel now.
   - Fixed navigation and header toolbar to be useable on screen with smaller resolutions too.
 - **PinballX Frontend**: 
