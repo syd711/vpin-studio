@@ -630,9 +630,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           List<File> files = e.getDragboard().getFiles();
           if (files != null && files.size() == 1) {
             File selection = files.get(0);
-            DirectB2S b2s = tableData.toDirectB2S();
-            ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
-            refreshBackglass(b2s);
+            Platform.runLater(() -> {
+              DirectB2S b2s = tableData.toDirectB2S();
+              ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+              refreshBackglass(b2s);
+            });
           }
         });
   }
