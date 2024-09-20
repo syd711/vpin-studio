@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.assets.AssetMetaData;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -26,8 +25,8 @@ import de.mephisto.vpin.server.util.UploadUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.IOUtils;
+import org.apache.tika.exception.TikaException;
 import org.apache.tika.parser.ParseContext;
-import org.apache.tika.parser.mp3.LyricsHandler;
 import org.apache.tika.parser.mp3.Mp3Parser;
 import org.apache.tika.sax.BodyContentHandler;
 import org.slf4j.Logger;
@@ -35,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import org.xml.sax.SAXException;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -119,27 +119,8 @@ public class AssetService {
 
       File file = mediaItem.getFile();
       if (file.exists()) {
-        if(file.getName().endsWith(".mp3")) {
-          //detecting the file type
-          BodyContentHandler handler = new BodyContentHandler();
-          org.apache.tika.metadata.Metadata mp3Meta = new  org.apache.tika.metadata.Metadata();
-          FileInputStream inputstream = new FileInputStream(file);
-          ParseContext pcontext = new ParseContext();
-
-          //Mp3 parser
-          Mp3Parser Mp3Parser = new  Mp3Parser();
-          Mp3Parser.parse(inputstream, handler, mp3Meta, pcontext);
-          LyricsHandler lyrics = new LyricsHandler(inputstream,handler);
-
-          while(lyrics.hasLyrics()) {
-            System.out.println(lyrics.toString());
-          }
-          System.out.println("Metadata of the document:");
-          String[] metadataNames = mp3Meta.names();
-
-          for(String name : metadataNames) {
-            System.out.println(name + ": " + mp3Meta.get(name));
-          }
+        if (file.getName().endsWith(".mp3")) {
+          readMp3Metadata(file, metaData);
         }
         else {
           readVideoAndImageMetadata(file, metaData);
@@ -151,6 +132,23 @@ public class AssetService {
       request.setResult("Failed to read video metadata: " + e.getMessage());
     }
     return request;
+  }
+
+  private static void readMp3Metadata(File file, AssetMetaData metaData) throws IOException, SAXException, TikaException {
+    //detecting the file type
+    BodyContentHandler handler = new BodyContentHandler();
+    org.apache.tika.metadata.Metadata mp3Meta = new org.apache.tika.metadata.Metadata();
+    FileInputStream inputstream = new FileInputStream(file);
+    ParseContext pcontext = new ParseContext();
+
+    //Mp3 parser
+    Mp3Parser Mp3Parser = new Mp3Parser();
+    Mp3Parser.parse(inputstream, handler, mp3Meta, pcontext);
+    String[] metadataNames = mp3Meta.names();
+
+    for (String name : metadataNames) {
+      metaData.getData().put(name, mp3Meta.get(name));
+    }
   }
 
   private static void readVideoAndImageMetadata(File file, AssetMetaData metaData) throws ImageProcessingException, IOException {

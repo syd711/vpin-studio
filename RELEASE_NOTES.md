@@ -15,7 +15,11 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
 
-- **DMD Images in Backglass Manager**! Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop.
+- **Table Asset Manager** Added new "info" button which shows all metadata of images, videos and mp3 files.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-manager-asset-info.png" width="650" />
+
+- **DMD Images in Backglass Manager**: Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
 

@@ -269,7 +269,8 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if(selectedItem != null) {
       String name = selectedItem.getName();
-      client.getAssetService().getMetadata(game.getId(), screen, name);
+      AssetRequest metadata = client.getAssetService().getMetadata(game.getId(), screen, name);
+      TableDialogs.openMetadataDialog(metadata);
     }
   }
 
