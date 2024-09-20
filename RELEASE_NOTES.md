@@ -15,6 +15,10 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
 
+- **Table Asset Manager** Added option to call the video conversion scripts from the PinUP Poppper "Recordings" folder.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-manager-asset-video-conversion.png" width="650" />
+
 - **Table Asset Manager** Added new "info" button which shows all metadata of images, videos and mp3 files.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-manager-asset-info.png" width="650" />
@@ -27,6 +31,7 @@
 - **System / Open Folder & Open File**: Added MacOS Support.
 - **Table Overview / VPS Updates**: VPS update indicators are now shown even if the asset is not installed. Previously, the update arrow icon was only shown when there was an existing asset already available. This way, you get notified about additional ALT sound or PUP packages which are often released later on for existing tables.
 - **Table Overview / MAME Alias Mapping**: Added auto-sorting on save when then VPMAlias.txt file is edited.
+- **Table Overview**: Added "Date Updated" column.
 
 ## Bugfixes
 

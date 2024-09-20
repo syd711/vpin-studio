@@ -7,7 +7,7 @@
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-09-15 16:58:46</dateadded>
+    <dateadded>2024-09-20 12:32:51</dateadded>
   </game>
   <game name="Jaws">
     <description>Jaws</description>
@@ -17,7 +17,7 @@
     <hidetopper>True</hidetopper>
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
-    <dateadded>2024-09-15 16:58:46</dateadded>
+    <dateadded>2024-09-20 12:32:51</dateadded>
   </game>
   <game name="Twister (1996)">
     <description>Twister (1996)</description>
@@ -28,6 +28,6 @@
     <hidebackglass>True</hidebackglass>
     <enabled>True</enabled>
     <author>Test Osterone</author>
-    <dateadded>2024-09-15 16:58:46</dateadded>
+    <dateadded>2024-09-20 12:32:51</dateadded>
   </game>
 </menu>
