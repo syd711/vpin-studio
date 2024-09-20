@@ -305,9 +305,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
-      DirectB2S b2s = tableData.toDirectB2S();
-      ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
-      refreshBackglass(b2s);
+      updateDMDImage(selection);
     }
   }
 
@@ -328,9 +326,25 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image", 
       "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      DirectB2S b2s = tableData.toDirectB2S();
-      ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", b2s, null));
-      refreshBackglass(b2s);
+      deleteDMDImage();
+    }
+  }
+
+  private void updateDMDImage(File selection) {
+    DirectB2S b2s = tableData.toDirectB2S();
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+    refreshBackglass(b2s);
+    if (game != null) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
+    }
+  }
+
+  private void deleteDMDImage() {
+    DirectB2S b2s = tableData.toDirectB2S();
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", b2s, null));
+    refreshBackglass(b2s);
+    if (game != null) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 
@@ -631,9 +645,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           if (files != null && files.size() == 1) {
             File selection = files.get(0);
             Platform.runLater(() -> {
-              DirectB2S b2s = tableData.toDirectB2S();
-              ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
-              refreshBackglass(b2s);
+              updateDMDImage(selection);
             });
           }
         });
