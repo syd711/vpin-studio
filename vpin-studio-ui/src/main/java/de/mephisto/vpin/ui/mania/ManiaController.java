@@ -106,8 +106,6 @@ public class ManiaController implements Initializable, StudioFXController, Studi
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1);
     });
-
-    updateForTabSelection(0);
   }
 
   private void updateForTabSelection(Number index) {
