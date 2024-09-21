@@ -58,7 +58,8 @@ public class FrontendScreenController implements Initializable {
       else {
         showCentered(screenAsset, bounds);
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to media screen: " + e.getMessage(), e);
     }
   }
@@ -78,7 +79,7 @@ public class FrontendScreenController implements Initializable {
     screenStage.setX(bounds.getWidth() / 2 - image.getWidth() / 2);
     screenStage.setY(bounds.getHeight() / 2 - image.getHeight() / 2);
     screenStage.setHeight(image.getHeight() + 12);
-    screenStage.setWidth(image.getWidth() + 12);
+    screenStage.setWidth(image.getWidth());
 
     int targetRotation = asset.getRotation() + (-90);
     root.setRotate(targetRotation);
@@ -88,7 +89,7 @@ public class FrontendScreenController implements Initializable {
       screenStage.setX(bounds.getWidth() / 2 - image.getHeight() / 2);
       screenStage.setY(bounds.getHeight() / 2 - image.getWidth() / 2);
       screenStage.setWidth(image.getHeight() + 12);
-      screenStage.setHeight(image.getWidth() + 12);
+      screenStage.setHeight(image.getWidth());
 
       root.setPadding(new Insets(0, 0, image.getHeight() / 2 + image.getHeight() / 2 / 2 + 6, 0));
       if (targetRotation == 90) {

@@ -84,7 +84,8 @@ public class ServerFX extends Application {
       for (ServerFXListener listener : listeners) {
         listener.fxInitialized();
       }
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       e.printStackTrace();
     }
   }
@@ -108,7 +109,8 @@ public class ServerFX extends Application {
         Parent widgetRoot = loader.load();
         overlayController = loader.getController();
         root.setCenter(widgetRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to init dashboard: " + e.getMessage(), e);
       }
       new Thread(() -> {
@@ -142,7 +144,8 @@ public class ServerFX extends Application {
     try {
       Thread.sleep(TO_FRONT_DELAY);
       stages.forEach(s -> s.getScene().setCursor(Cursor.NONE));
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
     Platform.runLater(() -> {
@@ -214,7 +217,8 @@ public class ServerFX extends Application {
       Parent widgetRoot = loader.load();
       MaintenanceController controller = loader.getController();
       root.setCenter(widgetRoot);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to init dashboard: " + e.getMessage(), e);
     }
 
@@ -242,7 +246,8 @@ public class ServerFX extends Application {
     try {
       Thread.sleep(duration * 1000);
 
-    } catch (InterruptedException e) {
+    }
+    catch (InterruptedException e) {
       throw new RuntimeException(e);
     }
 
@@ -260,13 +265,15 @@ public class ServerFX extends Application {
   public void showHighscoreCard(@NonNull CardSettings cardSettings, @Nullable FrontendPlayerDisplay display, String mimeType, File file) {
     try {
       int notificationTime = cardSettings.getNotificationTime();
+      LOG.info("Showing highscore card " + file.getAbsolutePath() + " for " + notificationTime + "ms");
       if (notificationTime > 0) {
         int rotation = 0;
         String rotationValue = cardSettings.getNotificationRotation();
         if (rotationValue != null) {
           try {
             rotation = Integer.parseInt(rotationValue);
-          } catch (NumberFormatException e) {
+          }
+          catch (NumberFormatException e) {
             LOG.info("Error reading card rotation value: " + e.getMessage());
           }
         }
@@ -284,7 +291,8 @@ public class ServerFX extends Application {
       else {
         LOG.info("Skipping highscore card overlay, zero time set.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open highscore card notification: " + e.getMessage());
     }
   }
