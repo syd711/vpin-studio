@@ -15,6 +15,7 @@ import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.util.DismissalUtil;
 import de.mephisto.vpin.ui.util.LocalizedValidation;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -313,7 +314,8 @@ public class TablesSidebarPUPPackController implements Initializable {
       GameRepresentation game = g.get();
       TableDetails tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
-      pupPack = client.getPupPackService().getPupPack(game.getId());
+      ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new PupPackLoadProgressModel(game));
+      pupPack = (PupPackRepresentation) resultModel.getResults().get(0);
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
       screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());

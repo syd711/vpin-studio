@@ -227,8 +227,8 @@ public class Studio extends Application {
         scene.setFill(Paint.valueOf("#212529"));
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
-        stage.setMinWidth(1280);
-        stage.setMinHeight(700);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
 

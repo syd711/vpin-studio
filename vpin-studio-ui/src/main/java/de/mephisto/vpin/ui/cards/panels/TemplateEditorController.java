@@ -396,13 +396,76 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   @FXML
+  private void onFontTitleApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setTitleFontName(selection.getTitleFontName());
+        item.setTitleFontSize(selection.getTitleFontSize());
+        item.setTitleFontStyle(selection.getTitleFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
+  }
+
+  @FXML
   private void onFontTableSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "table", tableFontLabel);
   }
 
   @FXML
+  private void onFontTableApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setTableFontName(selection.getTableFontName());
+        item.setTableFontSize(selection.getTableFontSize());
+        item.setTableFontStyle(selection.getTableFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
+  }
+
+  @FXML
   private void onFontScoreSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
+  }
+
+  @FXML
+  private void onFontScoreApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setScoreFontName(selection.getScoreFontName());
+        item.setScoreFontSize(selection.getScoreFontSize());
+        item.setScoreFontStyle(selection.getScoreFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
   }
 
   public CardTemplate getCardTemplate() {
