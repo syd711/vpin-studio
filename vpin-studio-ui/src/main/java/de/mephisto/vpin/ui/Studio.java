@@ -20,6 +20,7 @@ import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
@@ -35,6 +36,7 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Screen;
@@ -45,7 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -169,16 +171,7 @@ public class Studio extends Application {
       Stage splash = createSplash();
 
       // run later to let the splash render properly
-      Platform.runLater(() -> {
-        Studio.stage = stage;
-        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
-
-        if (screenBounds.getWidth() > screenBounds.getHeight()) {
-          LOG.info("Window Mode: Landscape");
-        }
-        else {
-          LOG.info("Window Mode: Portrait");
-        }
+      JFXFuture.runAsync(() -> {
 
         //replace the OverlayFX client with the Studio one
         Studio.client = client;
@@ -199,10 +192,20 @@ public class Studio extends Application {
         client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
 
         //force pre-caching, this way, the table overview does not need to execute single GET requests
-        new Thread(() -> {
-          Studio.client.getVpsService().invalidateAll();
-          LOG.info("Pre-cached VPS tables");
-        }).start();
+        Studio.client.getVpsService().invalidateAll();
+        LOG.info("Pre-cached VPS tables");
+      })
+      .thenLater(() -> {
+        
+        Studio.stage = stage;
+        Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+
+        if (screenBounds.getWidth() > screenBounds.getHeight()) {
+          LOG.info("Window Mode: Landscape");
+        }
+        else {
+          LOG.info("Window Mode: Portrait");
+        }
 
         FXMLLoader loader = new FXMLLoader(Studio.class.getResource("scene-root.fxml"));
         Parent root = null;
@@ -222,16 +225,13 @@ public class Studio extends Application {
           width = position.getWidth();
           height = position.getHeight();
         }
-
-        Scene scene = new Scene(root, width, height);
-        scene.setFill(Paint.valueOf("#212529"));
+        Scene scene = new Scene(root, width, height, Paint.valueOf("#212529"));
         stage.getIcons().add(new Image(Studio.class.getResourceAsStream("logo-128.png")));
         stage.setScene(scene);
         stage.setMinWidth(1280);
         stage.setMinHeight(700);
         stage.setResizable(true);
         stage.initStyle(StageStyle.UNDECORATED);
-
 
         if (position.getX() != -1) {
           stage.setX(position.getX());
@@ -333,7 +333,10 @@ public class Studio extends Application {
     Image image = new Image(Studio.class.getResourceAsStream("splash.png"));
     FXMLLoader loader = new FXMLLoader(SplashScreenController.class.getResource("scene-splash.fxml"));
     StackPane root = loader.load();
-    Scene scene = new Scene(root, image.getWidth(), image.getHeight());
+    SplashScreenController controller = loader.getController();
+    controller.setImage(image);
+
+    Scene scene = new Scene(root, image.getWidth(), image.getHeight(), Color.TRANSPARENT);
     Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
     Stage stage = new Stage(StageStyle.UNDECORATED);
