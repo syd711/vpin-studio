@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.roms;
 
-import de.mephisto.vpin.restclient.JsonSettings;
 import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.util.ArrayList;

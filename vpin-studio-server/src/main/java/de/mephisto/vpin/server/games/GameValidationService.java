@@ -23,7 +23,6 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -137,6 +136,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_ROM)) {
       if (StringUtils.isEmpty(game.getRom())) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_ROM));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_ROM_INVALID)) {
+      if (!StringUtils.isEmpty(game.getRom()) && !mameService.isValidRom(game.getRom())) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_INVALID));
         if (findFirst) {
           return result;
         }

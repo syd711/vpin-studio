@@ -814,8 +814,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private void onReload(ActionEvent e) {
-    client.getFrontendService().reload();
-    client.getGameService().reload();
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
     this.doReload();
   }
 
@@ -1206,7 +1205,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
       }
-      else if(hasUpdate) {
+      else if (hasUpdate) {
         return WidgetFactory.createUpdateIcon("New PUP pack updates available");
       }
       return null;
