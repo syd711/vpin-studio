@@ -179,12 +179,6 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     }
   }
 
-  
-
-  public FilterSettings getFilterSettings() {
-    return filterSettings;
-  }
-
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     configurationFilters.managedProperty().bindBidirectional(configurationFilters.visibleProperty());

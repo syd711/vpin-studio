@@ -469,6 +469,7 @@ public class VPinStudioClient implements OverlayClient {
     getImageCache().clearCache();
     getGameService().clearCache();
     getSystemService().clearCache();
+    getMameService().clearCache();
     getPupPackService().clearCache();
     getDmdService().clearCache();
   }

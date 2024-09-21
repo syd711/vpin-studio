@@ -708,7 +708,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-
       GameRepresentation selectedGame = getSelection();
 
       GameRepresentationModel model = null;
