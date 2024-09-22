@@ -186,13 +186,13 @@ public class RepositoryController implements Initializable, StudioFXController, 
     }
   }
 
-//  @FXML
-//  private void onDownload() {
-//    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
-//    if (!selectedItems.isEmpty()) {
-//      Dialogs.openArchiveDownloadDialog(selectedItems);
-//    }
-//  }
+  @FXML
+  private void onDownload() {
+    ObservableList<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      TableDialogs.openArchiveDownloadDialog(selectedItems);
+    }
+  }
 
   @FXML
   private void onBundle() {
@@ -292,8 +292,11 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    //TODO maybe someday
 //    bundleBtn.managedProperty().bindBidirectional(bundleBtn.visibleProperty());
-//    bundleBtn.setVisible(false); //TODO maybe someday
+//    bundleBtn.setVisible(false);
+    copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
+    copyToRepositoryBtn.setVisible(false);
 
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 

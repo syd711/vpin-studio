@@ -19,7 +19,7 @@ public class DownloadJobDescriptor extends JobDescriptor {
   private final File target;
 
   public DownloadJobDescriptor(@NonNull String url, @NonNull File target) {
-    super(ARCHIVE_DOWNLOAD_TO_FILESYSTEM, UUID.randomUUID().toString());
+    super(ARCHIVE_DOWNLOAD_TO_FILESYSTEM);
     this.url = url;
     this.target = target;
   }
