@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.discord;
 
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.server.archiving.adapters.vpbm.VpbmService;
 import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
@@ -226,15 +225,6 @@ public class DiscordBotCommandResponseFactory {
       builder.append("\n");
     }
     builder.append("```");
-    return builder.toString();
-  }
-
-  public static String createVPBMStatusMessage(VpbmService vpbmService) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("VPBM " + vpbmService.getVersion());
-    builder.append("\n");
-    builder.append("Internal Host Id: ```" + vpbmService.getHostIds().getInternalHostId() + "```");
-    builder.append("\n");
     return builder.toString();
   }
 }

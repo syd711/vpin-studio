@@ -25,8 +25,4 @@ public class VpbmServiceClient extends VPinStudioClientService {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpbm/version", String.class);
   }
-
-  public VpbmHosts getHostIds() {
-    return getRestClient().get(API + "vpbm/hostids", VpbmHosts.class);
-  }
 }
