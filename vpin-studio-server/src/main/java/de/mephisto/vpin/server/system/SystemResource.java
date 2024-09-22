@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.system;
 
 import de.mephisto.vpin.commons.ServerInstallationUtil;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -159,6 +160,12 @@ public class SystemResource {
     return info;
   }
 
+  @GetMapping("/mute/{mute}")
+  public boolean muteSystem(@PathVariable("mute") int mute) {
+    NirCmd.muteSystem(mute == 1);
+    return true;
+  }
+
 
   @GetMapping("/resetnvrams")
   public NVRamsInfo resetNvRams() {
@@ -273,7 +280,7 @@ public class SystemResource {
 
   @GetMapping("/restart")
   public boolean restart() throws IOException {
-    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\nwscript server.vbs\nexit");
+    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\ncd /d %~dp0\nwscript server.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./"));

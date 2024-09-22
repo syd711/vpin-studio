@@ -4,6 +4,7 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
@@ -312,23 +313,29 @@
                      </tooltip>
                   </Button>
                   <Separator fx:id="folderSeparator" layoutX="212.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" text="Upload" textFill="WHITE">
+                  <Button fx:id="uploadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onMediaUpload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Upload a new asset." />
+                     </tooltip>
                   </Button>
-                  <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" text="Download" textFill="WHITE">
+                  <Button fx:id="downloadAssetBtn" layoutX="144.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAssetDownload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Download the selected asset." />
+                     </tooltip>
                   </Button>
-                  <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="311.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                   <Button fx:id="reloadBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -367,7 +374,28 @@
                         <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
                      </tooltip>
                   </Button>
-                  <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
+                  <Separator layoutX="267.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                  <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+                     </graphic>
+                  </MenuButton>
+                  <Button fx:id="infoBtn" layoutX="407.0" layoutY="11.0" mnemonicParsing="false" onAction="#onInfo" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-variant" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip prefWidth="350.0" text="Shows all metadata extracted from the selected asset." wrapText="true" />
+                     </tooltip>
+                  </Button>
+                  <Separator layoutX="328.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                  <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>

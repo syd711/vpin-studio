@@ -114,7 +114,7 @@
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="User External DMD (dll)" textFill="WHITE">
+                        <CheckBox fx:id="useExternalDmd" mnemonicParsing="false" text="Use External DMD (dll)" textFill="WHITE">
                            <font>
                               <Font size="14.0" />
                            </font>

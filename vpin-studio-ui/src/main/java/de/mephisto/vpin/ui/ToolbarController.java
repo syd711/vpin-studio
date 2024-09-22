@@ -1,6 +1,8 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
@@ -13,17 +15,22 @@ import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
+import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +44,8 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class ToolbarController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
 
   @FXML
   private Button updateBtn;
@@ -54,16 +63,19 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuItem dofSyncEntry;
 
   @FXML
+  private MenuItem muteSystemEntry;
+
+  @FXML
   private MenuItem frontendMenuItem;
 
   @FXML
   private ToggleButton maintenanceBtn;
 
   @FXML
-  private MenuButton messagesBtn;
+  private HBox toolbarHBox;
 
   @FXML
-  private HBox toolbarHBox;
+  private Label breadcrumb;
 
   @FXML
   private SplitMenuButton preferencesBtn;
@@ -72,6 +84,7 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private ProgressIndicator jobProgress;
 
   public static String newVersion;
+  public boolean muted = false;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -110,6 +123,21 @@ public class ToolbarController implements Initializable, StudioEventListener {
       Platform.runLater(() -> {
         runUpdateCheck();
       });
+    }
+  }
+
+  @FXML
+  private void onMute() {
+    client.getSystemService().mute(!muted);
+    muted = !muted;
+
+    if (muted) {
+      muteSystemEntry.setText("Unmute System");
+      muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-high"));
+    }
+    else {
+      muteSystemEntry.setText("Mute System");
+      muteSystemEntry.setGraphic(WidgetFactory.createIcon("mdi2v-volume-mute"));
     }
   }
 
@@ -212,18 +240,14 @@ public class ToolbarController implements Initializable, StudioEventListener {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
-    messagesBtn.managedProperty().bindBidirectional(messagesBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
     dropInsBtn.managedProperty().bindBidirectional(dropInsBtn.visibleProperty());
-
-    dropInsBtn.setVisible(Features.DROP_IN_FOLDER);
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
     frontendMenuBtn.setVisible(frontend.getAdminExe() != null);
     frontendMenuItem.setVisible(frontend.getFrontendExe() != null);
     frontendMenuItem.setText("Restart " + frontend.getName());
-    this.jobBtn.setDisable(true);
     this.jobProgress.setDisable(true);
     this.jobProgress.setProgress(0);
 
@@ -248,25 +272,34 @@ public class ToolbarController implements Initializable, StudioEventListener {
     }
 
 
-    this.messagesBtn.setVisible(false);
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
 
     JobPoller.destroy();
-    JobPoller.create(this.jobBtn, this.jobProgress, this.messagesBtn);
+    JobPoller.create(this.jobBtn, this.jobProgress);
 
     runUpdateCheck();
 
     JobPoller.getInstance().setPolling();
-
-    this.messagesBtn.setVisible(!client.getJobsService().getResults().isEmpty());
 
     preferencesChanged(PreferenceType.serverSettings);
 
 
     Platform.runLater(() -> {
       DropInManager.getInstance().init(dropInsBtn);
+    });
+
+    Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
+      @Override
+      public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+        debouncer.debounce("breadcrumb", () -> {
+          Platform.runLater(() -> {
+            double maxWidth = newValue.intValue() - 800;
+            breadcrumb.setMaxWidth(maxWidth);
+          });
+        }, DEBOUNCE_MS);
+      }
     });
   }
 }

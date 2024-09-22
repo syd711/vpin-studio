@@ -1,17 +1,17 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -33,8 +33,6 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   private final GameEmulator emulator;
 
   private File archiveFile;
-  private double progress;
-  private String status;
 
   public TableInstallerAdapterVpa(@NonNull GameService gameService,
                                   @NonNull FrontendService frontendService,
@@ -51,40 +49,31 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   @Override
-  public double getProgress() {
-    return progress;
-  }
-
-  @Override
-  public String getStatus() {
-    return status;
-  }
-
-  @Override
-  public JobExecutionResult execute() {
-    return installTable();
+  public void execute(JobDescriptor result) {
+    installTable(result);
   }
 
   @Nullable
   @Override
-  public JobExecutionResult installTable() {
-    JobExecutionResult result = new JobExecutionResult();
+  public void installTable(JobDescriptor result) {
     try {
       archiveFile = new File(archiveDescriptor.getSource().getLocation(), archiveDescriptor.getFilename());
       if (!archiveFile.exists()) {
         LOG.error("Failed to import " + archiveFile.getAbsolutePath() + ", file does not exist.");
-        return null;
+        result.setError("Failed to import " + archiveFile.getAbsolutePath() + ", file does not exist.");
+        return;
       }
 
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
-      status = "Extracting " + archiveFile.getAbsolutePath();
+      result.setStatus("Extracting " + archiveFile.getAbsolutePath());
       unzipArchive();
       LOG.info("Finished unzipping of " + archiveDescriptor.getFilename() + ", starting game import.");
 
       TableDetails manifest = VpaArchiveUtil.readTableDetails(archiveFile);
       if (StringUtils.isEmpty(manifest.getGameFileName())) {
         LOG.error("The archive manifest of " + archiveFile.getAbsolutePath() + " does not contain a game filename.");
-        return null;
+        result.setError("The archive manifest of " + archiveFile.getAbsolutePath() + " does not contain a game filename.");
+        return;
       }
 
       File gameFile = getGameFile(emulator, manifest);
@@ -96,10 +85,10 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       }
 
       Frontend frontend = frontendService.getFrontend();
-      status = "Importing Game to " + frontend.getName();
+      result.setStatus("Importing Game to " + frontend.getName());
       frontendService.saveTableDetails(game.getId(), manifest);
 
-      status = "Importing Highscores";
+      result.setStatus("Importing Highscores");
       importHighscore(game, archiveFile);
 
       LOG.info("Executing final table scan for " + game.getGameDisplayName());
@@ -110,7 +99,6 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
       LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
       result.setError("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage());
     }
-    return result;
   }
 
   private void importHighscore(Game game, File zipFile) {

@@ -164,6 +164,18 @@ public class WidgetFactory {
   }
 
 
+  public static Label createUpdateIcon(String tooltip) {
+    Label label = new Label();
+    label.setTooltip(new Tooltip(tooltip));
+    FontIcon fontIcon = new FontIcon();
+    fontIcon.setIconSize(18);
+    fontIcon.setIconColor(Paint.valueOf(UPDATE_COLOR));
+    fontIcon.setIconLiteral("mdi2a-arrow-up-thick");
+    label.setGraphic(createUpdateIcon());
+    return label;
+  }
+
+
   public static FontIcon createCheckIcon(@Nullable String color) {
     FontIcon fontIcon = new FontIcon();
     fontIcon.setIconSize(18);

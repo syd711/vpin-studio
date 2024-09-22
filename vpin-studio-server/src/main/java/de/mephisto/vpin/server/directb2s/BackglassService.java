@@ -22,12 +22,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -101,6 +105,23 @@ public class BackglassService {
     return null;
   }
 
+  public boolean setDmdImage(int emuId, String filename, String file, String dmdBase64) {
+    File b2sFile = getB2sFile(emuId, filename);
+    if (b2sFile.exists()) {
+      try {
+        DirectB2SDataUpdater updater = new DirectB2SDataUpdater();
+        updater.updateDmdImage(b2sFile, file, dmdBase64, false);
+        // clean cache
+        cacheDirectB2SData.remove(b2sFile.getPath());
+        return true;
+      }
+      catch (Exception e) {
+        LOG.error("Error while updating " + filename, e);
+      }
+    }
+    return false;
+  }
+
   public boolean deleteBackglass(int emuId, String filename) {
     File b2sFile = getB2sFile(emuId, filename);
     cacheDirectB2SData.remove(b2sFile.getPath());
@@ -113,11 +134,9 @@ public class BackglassService {
 
   public DirectB2SData getDirectB2SData(@NonNull DirectB2S directB2S) {
     String vpxName = directB2S.getName() + ".vpx";
-    List<Game> gamesByFilename = frontendService.getGamesByFilename(vpxName);
-    for (Game game : gamesByFilename) {
-      if (game.getEmulator().getId() == directB2S.getEmulatorId()) {
-        return getDirectB2SData(game.getId());
-      }
+    Game game = frontendService.getGameByFilename(directB2S.getEmulatorId(), vpxName);
+    if (game != null) {
+      return getDirectB2SData(game.getId());
     }
     File b2sFile = getB2sFile(directB2S.getEmulatorId(), directB2S.getFileName());
     return getDirectB2SData(b2sFile, directB2S.getEmulatorId(), directB2S.getFileName(), -1);
@@ -213,13 +232,13 @@ public class BackglassService {
       Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
       while (iter.hasNext()) {
         File file = iter.next();
-        String name = FilenameUtils.getBaseName(file.getName());
 
         DirectB2S directB2S = new DirectB2S();
         directB2S.setEmulatorId(gameEmulator.getId());
-        directB2S.setName(name);
         directB2S.setFileName(tablesPath.relativize(file.toPath()).toString());
-        directB2S.setVpxAvailable(new File(file.getParentFile(), name + ".vpx").exists());
+
+        String vpxFilename = FilenameUtils.getBaseName(file.getName()) + ".vpx";
+        directB2S.setVpxAvailable(new File(file.getParentFile(), vpxFilename).exists());
 
         result.add(directB2S);
       }

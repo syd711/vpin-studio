@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
@@ -22,11 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 @Service
@@ -136,7 +132,7 @@ public class UniversalUploadService {
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     switch (assetType) {
       case ALT_SOUND: {
-        JobExecutionResult jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
+        JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
         uploadDescriptor.setError(jobExecutionResult.getError());
         break;
       }
@@ -146,7 +142,7 @@ public class UniversalUploadService {
           altColorService.installAltColorFromArchive(analysis, game, tempFile);
           break;
         }
-        JobExecutionResult jobExecutionResult = altColorService.installAltColor(game, tempFile);
+        JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
         uploadDescriptor.setError(jobExecutionResult.getError());
         break;
       }

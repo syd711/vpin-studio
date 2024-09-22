@@ -1,13 +1,5 @@
 package de.mephisto.vpin.ui.tables.panels;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TablesController;
 import de.mephisto.vpin.ui.util.Keys;
@@ -25,6 +17,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   private final static Logger LOG = LoggerFactory.getLogger(BaseTableController.class);
@@ -40,7 +39,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   @FXML
   protected Label labelCount;
-  
+
   private String name;
   private String names;
 
@@ -97,7 +96,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       loader.load();
       filterController = loader.getController();
       filterController.setTableController(this);
-      filterController.setupDrawer(filterBtn, tableStack, tableView); 
+      filterController.setupDrawer(filterBtn, tableStack, tableView);
       filterController.bindSearchField(searchTextField);
     }
     catch (IOException e) {
@@ -127,7 +126,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
       for (M model : filteredModels) {
         if (model.getName().toLowerCase().startsWith(text.toLowerCase())) {
-          setSelection(model);
+          setSelection(model, true);
           break;
         }
       }
@@ -211,6 +210,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   //----------------------
 
+  public M getModel(T bean) {
+    return models.stream().filter(m -> m.sameBean(bean)).findFirst().orElse(null);
+  }
+
   public T getSelection() {
     M selection = tableView.getSelectionModel().getSelectedItem();
     return selection != null ? selection.getBean() : null;
@@ -223,19 +226,24 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void setSelection(T game) {
     clearSelection();
-    selectGameInModel(game);
+    selectBeanInModel(game, true);
   }
 
-  public void selectGameInModel(T game) {
-    Optional<M> model = models.stream().filter(m -> m.sameBean(game)).findFirst();
-     setSelection(model.orElse(null));
+  public void selectBeanInModel(T bean, boolean scrollToModel) {
+    Optional<M> model = models.stream().filter(m -> m.sameBean(bean)).findFirst();
+    setSelection(model.orElse(null), scrollToModel);
   }
 
-  public void setSelection(M model) {
-    clearSelection();
-    if (model != null) {
-      tableView.getSelectionModel().select(model);
-      tableView.scrollTo(model);
+  public void setSelection(M model, boolean scrollToModel) {
+    if(model == null) {
+      clearSelection();
+    }
+    else {
+      int index = tableView.getItems().indexOf(model);
+      tableView.getSelectionModel().clearAndSelect(index);
+      if(scrollToModel) {
+        tableView.scrollTo(model);
+      }
     }
   }
 

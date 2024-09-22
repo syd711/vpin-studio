@@ -1,22 +1,16 @@
 package de.mephisto.vpin.ui;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
-import de.mephisto.vpin.ui.jobs.JobPoller;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -24,16 +18,9 @@ import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 
 import java.net.URL;
-import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class HeaderResizeableController implements Initializable {
   private final Debouncer debouncer = new Debouncer();
@@ -66,45 +53,7 @@ public class HeaderResizeableController implements Initializable {
 
   @FXML
   private void onCloseClick() {
-    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-
-    if (!uiSettings.isHideFrontendLaunchQuestion()) {
-      Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
-      if (!confirmationResult.isApplyClicked()) {
-        client.getFrontendService().restartFrontend();
-      }
-
-      if (confirmationResult.isChecked()) {
-        uiSettings.setHideFrontendLaunchQuestion(true);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
-      }
-    }
-
-    AtomicBoolean polling = new AtomicBoolean(false);
-    try {
-      final ExecutorService executor = Executors.newFixedThreadPool(1);
-      final Future<?> future = executor.submit(() -> {
-        client.getSystemService().setMaintenanceMode(false);
-        polling.set(JobPoller.getInstance().isPolling());
-      });
-      future.get(2000, TimeUnit.MILLISECONDS);
-      executor.shutdownNow();
-    }
-    catch (Exception e) {
-      //ignore
-    }
-
-
-    if (polling.get()) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Jobs Running", "There are still jobs running.", "These jobs will continue after quitting.", "Got it, continue");
-      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-        System.exit(0);
-      }
-    }
-    else {
-      System.exit(0);
-    }
+    Studio.exit();
   }
 
   @FXML

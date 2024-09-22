@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.UploadUtil;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -165,8 +165,8 @@ public class ArchivesResource {
   }
 
   @PostMapping("/upload")
-  public JobExecutionResult uploadArchive(@RequestParam(value = "file", required = false) MultipartFile file,
-                                          @RequestParam("objectId") Integer repositoryId) {
+  public JobDescriptor uploadArchive(@RequestParam(value = "file", required = false) MultipartFile file,
+                                     @RequestParam("objectId") Integer repositoryId) {
     try {
       if (file == null) {
         LOG.error("Archive upload request did not contain a file object.");
@@ -188,9 +188,9 @@ public class ArchivesResource {
       }
     } catch (Exception e) {
       LOG.error("Archive upload failed: " + e.getMessage(), e);
-      return JobExecutionResultFactory.error("Archive upload failed: " + e.getMessage());
+      return JobDescriptorFactory.error("Archive upload failed: " + e.getMessage());
     }
-    return JobExecutionResultFactory.error(null);
+    return JobDescriptorFactory.error(null);
   }
 
   @PostMapping("/save")

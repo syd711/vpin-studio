@@ -50,24 +50,8 @@ public class HighscoreCardsServiceClient extends VPinStudioClientService {
     return getRestClient().get(API + "cards/generate/" + gameId, Boolean.class);
   }
 
-  public boolean generateHighscoreCardSample(GameRepresentation game) {
-    int gameId = game.getId();
-    return getRestClient().get(API + "cards/generatesample/" + gameId + "/" + (game.getTemplateId() != null ? String.valueOf(game.getTemplateId()) : "-1"), Boolean.class);
-  }
-
   public List<String> getHighscoreBackgroundImages() {
     return Arrays.asList(getRestClient().get(API + "cards/backgrounds", String[].class));
-  }
-
-  public ByteArrayInputStream getOverlayBackgroundImage(String name) {
-    if (!client.getImageCache().containsKey(name)) {
-      String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
-      byte[] bytes = getRestClient().readBinary(API + "overlay/background/" + encodedName);
-      client.getImageCache().put(name, bytes);
-    }
-
-    byte[] imageBytes = client.getImageCache().get(name);
-    return new ByteArrayInputStream(imageBytes);
   }
 
   public ByteArrayInputStream getHighscoreBackgroundImage(String name) {

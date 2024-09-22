@@ -39,7 +39,7 @@ public class AltSoundUtil {
         }
         else {
           String name = item.getPath().replaceAll("\\\\", "/");
-          if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
+          if (isValidAltSoundFile(name)) {
             final int[] hash = new int[] { 0 };
 
             // fix for Windows-created archives
@@ -77,7 +77,7 @@ public class AltSoundUtil {
         }
         else {
           String name = zipEntry.getName();
-          if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
+          if (isValidAltSoundFile(name)) {
             // fix for Windows-created archives
             if (name.contains("/")) {
               name = name.substring(name.lastIndexOf("/") + 1);
@@ -101,5 +101,9 @@ public class AltSoundUtil {
     } catch (Exception e) {
       LOG.error("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
+  }
+
+  private static boolean isValidAltSoundFile(String name) {
+    return name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv") || name.endsWith(".ini");
   }
 }

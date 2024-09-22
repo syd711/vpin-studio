@@ -1,10 +1,14 @@
 package de.mephisto.vpin.restclient.jobs;
 
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+
 public interface Job {
+  void execute(JobDescriptor jobDescriptor);
 
-  JobExecutionResult execute();
+  default void cancel(JobDescriptor jobDescriptor) {
+  }
 
-  double getProgress();
-
-  String getStatus();
+  default boolean isCancelable() {
+    return true;
+  }
 }

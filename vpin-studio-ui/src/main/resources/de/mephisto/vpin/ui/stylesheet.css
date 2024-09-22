@@ -328,15 +328,24 @@
     -fx-text-fill: #DDDDDD;
 }
 
-.navigation-button:hover {
+.navigation-button-small {
     -fx-min-width: 96px;
     -fx-max-width: 96px;
-    -fx-min-height: 76px;
-    -fx-max-height: 76px;
+    -fx-min-height: 56px;
+    -fx-max-height: 56px;
+    -fx-background-color: -fx-base-6;
+    -fx-border-style: solid solid solid solid;
+    -fx-border-color: transparent;
+    -fx-border-width: 1;
+    -fx-font-size: 10px;
+    -fx-border-color:-fx-base-6;
+    -fx-text-fill: #DDDDDD;
+}
+
+.navigation-button:hover, .navigation-button-small:hover {
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
-    -fx-font-size: 14px;
     -fx-border-radius: 6 6 6 6;
     -fx-border-color: #6666FF;
     -fx-text-fill: #fff8f8;
@@ -344,10 +353,6 @@
 }
 
 .navigation-button-selected {
-    -fx-min-width: 96px;
-    -fx-max-width: 96px;
-    -fx-min-height: 76px;
-    -fx-max-height: 76px;
     -fx-background-color: -fx-font-hover;
     -fx-border-style: solid solid solid solid;
     -fx-border-width: 1 1 1 1;
@@ -1146,6 +1151,10 @@
 .progress-bar > .track {
   -fx-text-box-border: #605E5E;
   -fx-control-inner-background: #FFFFFF;
+}
+
+.progress-bar .bar {
+    -fx-background-insets: 3px;
 }
 
 .green {

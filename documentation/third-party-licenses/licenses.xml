@@ -14,7 +14,6 @@
         <license>
           <name>GNU Lesser General Public License</name>
           <url>http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
-          <file>gnu lesser general public license - lgpl-2.1.html</file>
         </license>
       </licenses>
     </dependency>
@@ -28,6 +27,19 @@
           <url>https://www.apache.org/licenses/LICENSE-2.0</url>
           <distribution>repo</distribution>
           <file>apache 2.0 license - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>com.drewnoakes</groupId>
+      <artifactId>metadata-extractor</artifactId>
+      <version>2.19.0</version>
+      <licenses>
+        <license>
+          <name>The Apache Software License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>the apache software license, version 2.0 - license-2.0.txt</file>
         </license>
       </licenses>
     </dependency>
@@ -78,7 +90,6 @@
         <license>
           <name>GNU LESSER GENERAL PUBLIC LICENSE, Version 2.1</name>
           <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html</url>
-          <file>gnu lesser general public license, version 2.1 - lgpl-2.1.en.html</file>
         </license>
       </licenses>
     </dependency>
@@ -159,6 +170,19 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2.2</version>
+      <licenses>
+        <license>
+          <name>Apache License, Version 2.0</name>
+          <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>the apache software license, version 2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>commons-io</groupId>
       <artifactId>commons-io</artifactId>
       <version>2.15.1</version>
@@ -208,7 +232,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -216,7 +240,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -224,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -232,7 +256,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +272,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -264,7 +288,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.3.0</version>
+      <version>3.6.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -336,7 +360,6 @@
           <name>LGPL-2.1-or-later</name>
           <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
           <distribution>repo</distribution>
-          <file>lgpl-2.1-or-later - lgpl-2.1.html</file>
           <comments>Java Native Access (JNA) is licensed under the LGPL, version 2.1 or
         later, or the Apache License, version 2.0. You can freely decide which
         license you want to apply to the project.</comments>
@@ -361,7 +384,6 @@
           <name>LGPL-2.1-or-later</name>
           <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1</url>
           <distribution>repo</distribution>
-          <file>lgpl-2.1-or-later - lgpl-2.1.html</file>
           <comments>Java Native Access (JNA) is licensed under the LGPL, version 2.1 or
         later, or the Apache License, version 2.0. You can freely decide which
         license you want to apply to the project.</comments>
@@ -399,7 +421,6 @@
           <name>LGPL</name>
           <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
           <distribution>repo</distribution>
-          <file>lgpl - lgpl-2.1.html</file>
         </license>
         <license>
           <name>unRAR restriction</name>
@@ -417,7 +438,6 @@
           <name>LGPL</name>
           <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
           <distribution>repo</distribution>
-          <file>lgpl - lgpl-2.1.html</file>
         </license>
         <license>
           <name>unRAR restriction</name>
@@ -435,7 +455,6 @@
           <name>LGPL</name>
           <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
           <distribution>repo</distribution>
-          <file>lgpl - lgpl-2.1.html</file>
         </license>
         <license>
           <name>unRAR restriction</name>
@@ -536,6 +555,32 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-core</artifactId>
+      <version>2.9.2</version>
+      <licenses>
+        <license>
+          <name>Apache-2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>apache-2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.tika</groupId>
+      <artifactId>tika-parser-audiovideo-module</artifactId>
+      <version>2.9.2</version>
+      <licenses>
+        <license>
+          <name>Apache-2.0</name>
+          <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
+          <distribution>repo</distribution>
+          <file>apache-2.0 - license-2.0.txt</file>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>org.assertj</groupId>
       <artifactId>assertj-core</artifactId>
       <version>3.16.1</version>
@@ -602,7 +647,6 @@
           <name>GPLv2 with the Classpath Exception</name>
           <url>http://www.gnu.org/software/classpath/license.html</url>
           <distribution>repo</distribution>
-          <file>gplv2 with the classpath exception - license.html</file>
         </license>
       </licenses>
     </dependency>
@@ -825,6 +869,19 @@
     <dependency>
       <groupId>org.openjfx</groupId>
       <artifactId>javafx-fxml</artifactId>
+      <version>17.0.2</version>
+      <licenses>
+        <license>
+          <name>GPLv2+CE</name>
+          <url>https://openjdk.java.net/legal/gplv2+ce.html</url>
+          <distribution>repo</distribution>
+          <comments>GNU General Public License version 2 with the Classpath Exception</comments>
+        </license>
+      </licenses>
+    </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-graphics</artifactId>
       <version>17.0.2</version>
       <licenses>
         <license>

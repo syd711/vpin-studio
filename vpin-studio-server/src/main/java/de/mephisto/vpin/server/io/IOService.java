@@ -15,6 +15,7 @@ import de.mephisto.vpin.server.highscores.cards.CardService;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class IOService {
   private TableInstallerAdapterFactory tableInstallerAdapterFactory;
 
   @Autowired
-  private JobQueue jobQueue;
+  private JobService jobService;
 
   public boolean installArchive(@NonNull ArchiveRestoreDescriptor installDescriptor) {
     try {
@@ -61,15 +62,13 @@ public class IOService {
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
-      jobDescriptor.setDescription("Restoring table from \"" + archiveDescriptor.getFilename() + "\"");
 
       TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, emulator);
 
       ArchiveInstallerJob job = new ArchiveInstallerJob(adapter, archiveDescriptor, cardService, gameService, archiveService);
-      jobDescriptor.setDescription("Restoring \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
-      jobQueue.offer(jobDescriptor);
+      jobService.offer(jobDescriptor);
       LOG.info("Offered import job for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -87,11 +86,11 @@ public class IOService {
         bundleArchiveDescriptors.add(archiveDescriptor);
       }
 
-//      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
-//      jobDescriptor.setTitle("Archive Bundle");
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
+      jobDescriptor.setTitle("Archive Bundle");
 //
       BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, archiveBundleDescriptor, bundleArchiveDescriptors);
-      job.execute();
+      job.execute(jobDescriptor);
 
       return job.getTarget().getName();
 
@@ -112,10 +111,9 @@ public class IOService {
       jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
       CopyArchiveToRepositoryJob job = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, archiveCopyToRepositoryDescriptor.isOverwrite());
-      jobDescriptor.setDescription("Downloading \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
       jobDescriptor.setJob(job);
 
-      jobQueue.offer(jobDescriptor);
+      jobService.offer(jobDescriptor);
       LOG.info("Offered archive copying for \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
     } catch (Exception e) {
       LOG.error("Import failed: " + e.getMessage(), e);
@@ -146,19 +144,12 @@ public class IOService {
     JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
-    descriptor.setDescription("Creating backup of \"" + game.getGameDisplayName() + "\"");
 
     ArchiveSourceAdapter sourceAdapter = archiveService.getDefaultArchiveSourceAdapter();
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(sourceAdapter, game);
 
     descriptor.setJob(new TableBackupJob(frontendService, sourceAdapter, adapter, exportDescriptor, game.getId()));
-
-    FrontendMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-    if (mediaItem != null) {
-      descriptor.setImageUrl(mediaItem.getUri());
-    }
-
-    jobQueue.offer(descriptor);
+    jobService.offer(descriptor);
     LOG.info("Offered export job for '" + game.getGameDisplayName() + "'");
     return true;
   }

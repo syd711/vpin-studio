@@ -3,6 +3,9 @@ package de.mephisto.vpin.ui;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+
 import org.apache.commons.io.IOUtils;
 
 import java.net.URL;
@@ -12,6 +15,9 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SplashScreenController implements Initializable {
+
+  @FXML
+  private ImageView splashImage;
 
   @FXML
   private Label versionLabel;
@@ -31,5 +37,9 @@ public class SplashScreenController implements Initializable {
     } catch (Exception e) {
       throw new RuntimeException(e);
     }
+  }
+
+  public void setImage(Image image) {
+    splashImage.setImage(image);
   }
 }

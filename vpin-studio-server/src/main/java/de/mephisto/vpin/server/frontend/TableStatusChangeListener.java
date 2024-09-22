@@ -7,4 +7,8 @@ public interface TableStatusChangeListener {
   void tableLaunched(TableStatusChangedEvent event);
 
   void tableExited(TableStatusChangedEvent event);
+
+  default int getPriority() {
+    return -1;
+  }
 }

@@ -85,7 +85,7 @@ public class AutoFillSelectionController implements Initializable, DialogControl
         if (!results.isEmpty()) {
           if (results.size() == 1) {
             GameRepresentation game = (GameRepresentation) results.get(0);
-            EventManager.getInstance().notifyTableChange(game.getId(), null, null);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
           }
           else {
             EventManager.getInstance().notifyTablesChanged();
