@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -20,16 +21,26 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetDownloadProgressModel.class);
 
   private final Stage stage;
-  private final VPinScreen VPinScreen;
-  private final GameRepresentation game;
+  private final VPinScreen screen;
+  private PlaylistRepresentation playlist;
+  private GameRepresentation game;
   private final Iterator<TableAsset> iterator;
   private final boolean append;
 
   public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, GameRepresentation game, TableAsset tableAsset, boolean append) {
     super("Downloading " + tableAsset.getName());
     this.stage = stage;
-    this.VPinScreen = VPinScreen;
+    this.screen = VPinScreen;
     this.game = game;
+    this.iterator = Arrays.asList(tableAsset).iterator();
+    this.append = append;
+  }
+
+  public TableAssetDownloadProgressModel(Stage stage, VPinScreen VPinScreen, PlaylistRepresentation playlist, TableAsset tableAsset, boolean append) {
+    super("Downloading " + tableAsset.getName());
+    this.stage = stage;
+    this.screen = VPinScreen;
+    this.playlist = playlist;
     this.iterator = Arrays.asList(tableAsset).iterator();
     this.append = append;
   }
@@ -62,8 +73,14 @@ public class TableAssetDownloadProgressModel extends ProgressModel<TableAsset> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, TableAsset tableAsset) {
     try {
-      client.getGameMediaService().downloadTableAsset(tableAsset, this.VPinScreen, this.game, append);
-    } catch (Exception e) {
+      if (game != null) {
+        client.getGameMediaService().downloadTableAsset(tableAsset, this.screen, this.game, append);
+      }
+      else {
+        client.getPlaylistMediaService().downloadPlaylistAsset(tableAsset, this.screen, this.playlist, append);
+      }
+    }
+    catch (Exception e) {
       LOG.error("Asset download failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
         WidgetFactory.showAlert(stage, "Download Failed", "Table asset download failed: " + e.getMessage());

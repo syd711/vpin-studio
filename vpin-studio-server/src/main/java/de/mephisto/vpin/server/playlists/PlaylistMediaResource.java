@@ -1,10 +1,12 @@
 package de.mephisto.vpin.server.playlists;
 
+import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -42,6 +44,9 @@ public class PlaylistMediaResource {
   @Autowired
   private PlaylistService playlistService;
 
+  @Autowired
+  private TableAssetsService tableAssetsService;
+
 
   @GetMapping("/{playlistId}")
   public FrontendMedia getPlaylistMedia(@PathVariable("playlistId") int playlistId) {
@@ -51,6 +56,26 @@ public class PlaylistMediaResource {
   @DeleteMapping("/{playlistId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("playlistId") int playlistId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
     return playlistMediaService.deleteMedia(playlistId, screen, filename);
+  }
+
+
+  @PostMapping("/{playlistId}/{screen}/{append}")
+  public boolean downloadPlaylistAsset(@PathVariable("playlistId") int playlistId,
+                                       @PathVariable("screen") String screen,
+                                       @PathVariable("append") boolean append,
+                                       @RequestBody TableAsset asset) throws Exception {
+    VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
+    LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
+    Playlist playlist = playlistService.getPlaylist(playlistId);
+    if (playlist == null) {
+      LOG.error("No playlist for media upload.");
+      return false;
+    }
+
+    String suffix = FilenameUtils.getExtension(asset.getName());
+    File out = playlistMediaService.buildMediaAsset(playlist, vPinScreen, suffix, append);
+    tableAssetsService.download(asset, out);
+    return true;
   }
 
   @GetMapping("/{id}/{screen}/{name}")

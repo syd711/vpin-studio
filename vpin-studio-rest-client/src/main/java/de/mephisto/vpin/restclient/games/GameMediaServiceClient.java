@@ -50,7 +50,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     try {
       Map<String, Object> values = new HashMap<>();
       values.put("fullscreen", "true");
-      return getRestClient().put(API + API_SEGMENT_MEDIA +"/media/" + gameId + "/" + screen.name(), values);
+      return getRestClient().put(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name(), values);
     }
     catch (Exception e) {
       LOG.error("Applying fullscreen mode failed: " + e.getMessage(), e);
@@ -107,7 +107,6 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   //---------------- Assets---------------------------------------------------------------------------------------------
 
 
-
   public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {
     term = term.replaceAll("/", "");
     term = term.replaceAll("&", " ");
@@ -130,7 +129,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   public boolean downloadTableAsset(TableAsset tableAsset, VPinScreen screen, GameRepresentation game, boolean append) throws Exception {
     try {
-      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/download/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
+      return getRestClient().post(API + API_SEGMENT_MEDIA + "/assets/gamedownload/" + game.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
     }
     catch (Exception e) {
       LOG.error("Failed to download asset: " + e.getMessage(), e);
@@ -158,7 +157,7 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     if (url.startsWith("/")) {
       // add API and do an URK encoding that will be decoded by spring-boot
       url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/assets/d/" + tableAsset.getScreen() + "/" + gameId + "/"
-        + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
+          + URLEncoder.encode(url.substring(1), StandardCharsets.UTF_8);
     }
     return url;
   }

@@ -18,7 +18,6 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
-import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
@@ -267,7 +266,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   @FXML
   private void onInfo() {
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
-    if(selectedItem != null) {
+    if (selectedItem != null) {
       String name = selectedItem.getName();
       AssetRequest metadata = client.getAssetService().getMetadata(game.getId(), screen, name);
       TableDialogs.openMetadataDialog(metadata);
@@ -548,11 +547,15 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
       }
     }
 
-    if (tableAsset != null) {
+    if (isPlaylistMode()) {
+      ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, playlist, tableAsset, append));
+    }
+    else {
       ProgressDialog.createProgressDialog(stage, new TableAssetDownloadProgressModel(stage, screen, game, tableAsset, append));
-      refreshTableMediaView();
       EventManager.getInstance().notifyTableChange(game.getId(), null, game.getGameName());
     }
+
+    refreshTableMediaView();
   }
 
   @FXML
