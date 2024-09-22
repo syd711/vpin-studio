@@ -15,11 +15,11 @@ import de.mephisto.vpin.restclient.discord.DiscordBotStatus;
 import de.mephisto.vpin.restclient.discord.DiscordChannel;
 import de.mephisto.vpin.restclient.discord.DiscordCompetitionData;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
-import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.highscores.NVRamList;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.competitions.CompetitionsDialogHelper;
@@ -160,8 +160,8 @@ public class CompetitionDiscordDialogController implements Initializable, Dialog
     badgePreview.setImage(null);
 
     if (game != null) {
-      FrontendMediaRepresentation gameMedia = game.getGameMedia();
-      FrontendMediaItemRepresentation mediaItem = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      FrontendMediaItemRepresentation mediaItem = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (mediaItem != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);

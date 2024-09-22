@@ -65,7 +65,6 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   public boolean clearCache() {
     long l = System.currentTimeMillis();
     mameCache.clear();
-    romValidationCache.clear();
     List<String> romFolders = WinRegistry.getCurrentUserKeys(MAME_REG_FOLDER_KEY);
     LOG.info("Reading of " + romFolders.size() + " total mame options (" + (System.currentTimeMillis() - l) + "ms)");
 
@@ -80,6 +79,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
 
     l = System.currentTimeMillis();
+    romValidationCache.clear();
     List<GameEmulator> gameEmulators = frontendServie.getGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       validateRoms(gameEmulator);

@@ -7,6 +7,8 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -20,6 +22,7 @@ import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
@@ -61,6 +64,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private DiscordService discordService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   private ObjectMapper mapper;
 
@@ -145,6 +151,19 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public GameRepresentation getGameCached(int id) {
     return getGame(id);
+  }
+
+  @Override
+  public FrontendMediaRepresentation getFrontendMedia(int id) {
+    try {
+      Game game = gameService.getGame(id);
+      FrontendMedia frontendMedia = game.getGameMedia();
+      String s = mapper.writeValueAsString(frontendMedia);
+      return mapper.readValue(s, FrontendMediaRepresentation.class);
+    } catch (Exception e) {
+      LOG.error("Error during conversion: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   @Override

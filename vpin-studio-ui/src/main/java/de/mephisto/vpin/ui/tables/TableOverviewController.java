@@ -132,6 +132,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
 
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnLauncher;
 
   @FXML
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
@@ -1271,14 +1273,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return label;
     }, true);
 
-    BaseLoadingColumn.configureColumn(columnDateModified, (value, model) -> {
-      Label label = null;
-      if (value.getModified() != null) {
-        label = new Label(dateFormat.format(value.getModified()));
-      }
-      else {
-        label = new Label("-");
-      }
+    BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
+      Label label = new Label(model.getGame().getLauncher());
       label.getStyleClass().add("default-text");
       return label;
     }, true);
@@ -1335,19 +1331,20 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return box;
     }, true);
 
+
     List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
-    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
-    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
-    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
-    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
-    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
-    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
-    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
+    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
+    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
+    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, model, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
+    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, model, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
+    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, model, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
+    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, model, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
+    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
@@ -1380,8 +1377,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   //------------------------------
 
-  private Node createAssetStatus(GameRepresentation value, VPinScreen VPinScreen) {
-    FrontendMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
+  private Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen VPinScreen) {
+    FrontendMediaItemRepresentation defaultMediaItem = model.getFrontendMedia().getDefaultMediaItem(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
     boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());
@@ -1809,6 +1806,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
     columnDateModified.setVisible(!assetManagerMode && uiSettings.isColumnDateModified());
+    columnLauncher.setVisible(!assetManagerMode && uiSettings.isColumnLauncher());
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 
@@ -1894,6 +1892,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     GameEmulatorRepresentation gameEmulator;
 
+    FrontendMediaRepresentation frontendMedia;
+
     public GameRepresentationModel(GameRepresentation game) {
       super(game);
     }
@@ -1907,6 +1907,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return bean.getId() == other.getId();
     }
 
+    public FrontendMediaRepresentation getFrontendMedia() {
+      if (frontendMedia == null) {
+        frontendMedia = client.getFrontendMedia(bean.getId());
+      }
+      return frontendMedia;
+    }
 
     public VpsTable getVpsTable() {
       return vpsTable;

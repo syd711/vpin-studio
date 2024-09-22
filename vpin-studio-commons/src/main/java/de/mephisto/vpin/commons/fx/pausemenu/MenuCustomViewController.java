@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
@@ -59,7 +60,7 @@ public class MenuCustomViewController implements Initializable {
   private MenuCustomTileEntryController tile3Controller;
   private MenuCustomTileEntryController tile4Controller;
 
-  public void setGame(GameRepresentation game, GameStatus status, VpsTable tableById) {
+  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable tableById) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");
@@ -121,10 +122,11 @@ public class MenuCustomViewController implements Initializable {
         Pane row = loader.load();
         row.setPrefWidth(stats3Col.getPrefWidth() - 24);
         WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, score);
+        controller.setData(game, frontendMedia, score);
 
         stats3Col.getChildren().add(row);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load paused scores: " + e.getMessage(), e);
       }
     }

@@ -338,6 +338,11 @@ public class VPinStudioClient implements OverlayClient {
     return getGameService().getGame(id);
   }
 
+  @Override
+  public FrontendMediaRepresentation getFrontendMedia(int id) {
+    return getFrontendService().getFrontendMedia(id);
+  }
+
   /**
    * @param id
    * @return

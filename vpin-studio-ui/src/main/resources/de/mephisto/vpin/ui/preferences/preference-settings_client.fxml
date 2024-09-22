@@ -133,7 +133,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Last Update" textFill="WHITE">
+                              <CheckBox fx:id="columnDateModified" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Date Updated" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -157,6 +157,11 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                              <CheckBox fx:id="columnLauncher" layoutX="10.0" layoutY="63.0" mnemonicParsing="false" text="Launcher" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
                               <CheckBox fx:id="columnPlaylists" mnemonicParsing="false" text="Playlists" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -167,6 +172,10 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="6.0">
+                           <children>
                               <CheckBox fx:id="columnPov" mnemonicParsing="false" text=".pov File (Point of View)" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
@@ -177,10 +186,6 @@
                                     <Font size="14.0" />
                                  </font>
                               </CheckBox>
-                           </children>
-                        </VBox>
-                        <VBox spacing="6.0">
-                           <children>
                               <CheckBox fx:id="columnRes" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text=".res File" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />

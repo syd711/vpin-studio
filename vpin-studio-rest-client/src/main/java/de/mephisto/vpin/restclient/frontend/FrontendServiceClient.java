@@ -4,10 +4,7 @@ import de.mephisto.vpin.restclient.DatabaseLockException;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameList;
-import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -68,6 +65,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public GameEmulatorRepresentation getGameEmulator(int id) {
     List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
     return gameEmulators.stream().filter(e -> e.getId() == id).findFirst().orElse(null);
+  }
+
+  public FrontendMediaRepresentation getFrontendMedia(int gameId) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/media/" + gameId, FrontendMediaRepresentation.class);
   }
 
   public GameEmulatorRepresentation getDefaultGameEmulator() {

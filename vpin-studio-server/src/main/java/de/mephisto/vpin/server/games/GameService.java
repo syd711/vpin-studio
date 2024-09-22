@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
-  
+
   private static final double MATCHING_THRESHOLD = 0.1;
 
   @Autowired
@@ -168,6 +168,7 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   public List<Game> getKnownGames(int emulatorId) {
+    long start = System.currentTimeMillis();
     List<Game> games = new ArrayList<>();
     if (emulatorId == -1) {
       List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
@@ -189,6 +190,8 @@ public class GameService implements InitializingBean {
     }
     GameValidationService.metricFinished();
     games.sort(Comparator.comparing(Game::getGameDisplayName));
+    long duration = System.currentTimeMillis() - start;
+    LOG.info("Game fetch for emulator " + emulatorId + " took " + duration + "ms.");
     return games;
   }
 
@@ -553,6 +556,7 @@ public class GameService implements InitializingBean {
       return newGame;
     }
 
+    TableDetails tableDetails = null;
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 
@@ -565,7 +569,7 @@ public class GameService implements InitializingBean {
       String scannedRomName = scanResult.getRom();
       String scannedTableName = scanResult.getTableName();
 
-      TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+      tableDetails = frontendService.getTableDetails(game.getId());
       if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
@@ -588,6 +592,19 @@ public class GameService implements InitializingBean {
 
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
+    }
+
+    if (tableDetails == null) {
+      tableDetails = frontendService.getTableDetails(game.getId());
+    }
+
+    GameEmulator emulator = game.getEmulator();
+    if (emulator.isVpxEmulator() && emulator.getVPXExe().exists()) {
+      game.setLauncher(emulator.getVPXExe().getName());
+    }
+
+    if(!StringUtils.isEmpty(tableDetails.getAltLaunchExe()) && tableDetails.getAltLaunchExe().contains(".exe")) {
+      game.setLauncher(tableDetails.getAltLaunchExe());
     }
 
     //only apply legacy table name if the frontend fields are empty

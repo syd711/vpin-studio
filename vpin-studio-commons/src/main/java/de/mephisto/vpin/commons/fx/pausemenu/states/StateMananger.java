@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItem;
 import de.mephisto.vpin.commons.utils.controller.GameController;
 import de.mephisto.vpin.commons.utils.controller.GameControllerInputListener;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.frontend.FrontendControl;
@@ -116,9 +117,9 @@ public class StateMananger implements GameControllerInputListener {
     this.pauseMenuSettings = pauseMenuSettings;
   }
 
-  public void setGame(GameRepresentation game, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable table, VPinScreen cardScreen, FrontendPlayerDisplay tutorialDisplay, PauseMenuSettings pauseMenuSettings) {
     GameController.getInstance().addListener(StateMananger.getInstance());
-    menuController.setGame(game, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
+    menuController.setGame(game, frontendMedia, status, table, cardScreen, tutorialDisplay, pauseMenuSettings);
     running = true;
   }
 

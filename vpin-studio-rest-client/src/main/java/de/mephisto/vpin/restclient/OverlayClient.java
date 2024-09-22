@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.discord.DiscordServer;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
@@ -25,6 +26,8 @@ public interface OverlayClient {
   GameRepresentation getGame(int id);
 
   GameRepresentation getGameCached(int id);
+
+  FrontendMediaRepresentation getFrontendMedia(int id);
 
   InputStream getCachedUrlImage(String url);
 

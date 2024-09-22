@@ -130,6 +130,8 @@ public class ClientSettingsPreferencesController implements Initializable {
   @FXML
   private CheckBox columnDateModified;
   @FXML
+  private CheckBox columnLauncher;
+  @FXML
   private CheckBox columnHighscore;
   @FXML
   private CheckBox columnEmulator;
@@ -507,6 +509,13 @@ public class ClientSettingsPreferencesController implements Initializable {
     columnDateAdded.setSelected(uiSettings.isColumnDateAdded());
     columnDateAdded.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       uiSettings.setColumnDateAdded(t1);
+      PreferencesController.markDirty(PreferenceType.uiSettings);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    });
+
+    columnLauncher.setSelected(uiSettings.isColumnLauncher());
+    columnLauncher.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      uiSettings.setColumnLauncher(t1);
       PreferencesController.markDirty(PreferenceType.uiSettings);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
     });

@@ -60,7 +60,7 @@ public class CacheInvalidationProgressModel extends ProgressModel<String> {
     try {
       client.getFrontendService().reload();
       client.getGameService().reload();
-      client.getMameService().clearCache();
+//      client.getMameService().clearCache();
       client.getPupPackService().clearCache();
       client.getDmdService().clearCache();
       client.getSystemService().clearCache();

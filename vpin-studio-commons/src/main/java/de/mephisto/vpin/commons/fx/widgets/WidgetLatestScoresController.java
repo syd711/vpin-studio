@@ -2,6 +2,7 @@ package de.mephisto.vpin.commons.fx.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -93,6 +94,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
         else {
           for (ScoreRepresentation score : scores) {
             GameRepresentation game = ServerFX.client.getGameCached(score.getGameId());
+            FrontendMediaRepresentation frontendMedia = ServerFX.client.getFrontendMedia(score.getGameId());
             if (game == null) {
               continue;
             }
@@ -100,7 +102,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
             Pane row = loader.load();
             row.setPrefWidth(root.getPrefWidth() - 24);
             WidgetLatestScoreItemController controller = loader.getController();
-            controller.setData(game, score);
+            controller.setData(game, frontendMedia, score);
             scoresPanels.add(row);
           }
         }

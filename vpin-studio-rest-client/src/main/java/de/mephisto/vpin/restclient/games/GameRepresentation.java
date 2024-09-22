@@ -51,6 +51,7 @@ public class GameRepresentation {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
+  private String launcher;
   private int emulatorId;
   private String pupPackName;
   private Long templateId;
@@ -67,6 +68,14 @@ public class GameRepresentation {
   private String resPath;
   private String pupPackPath;
   private boolean altSoundAvailable;
+
+  public String getLauncher() {
+    return launcher;
+  }
+
+  public void setLauncher(String launcher) {
+    this.launcher = launcher;
+  }
 
   public boolean isEventLogAvailable() {
     return eventLogAvailable;
@@ -322,14 +331,6 @@ public class GameRepresentation {
 
   public void setTableName(String tableName) {
     this.tableName = tableName;
-  }
-
-  public FrontendMediaRepresentation getGameMedia() {
-    return gameMedia;
-  }
-
-  public void setGameMedia(FrontendMediaRepresentation gameMedia) {
-    this.gameMedia = gameMedia;
   }
 
   public List<Integer> getIgnoredValidations() {
