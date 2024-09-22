@@ -44,8 +44,8 @@ public class TablesAssetViewSidebarController implements Initializable {
     }
   }
 
-  public void setGame(TableOverviewController tableOverviewController, GameRepresentation game, VPinScreen VPinScreen) {
-    dialogController.setGame(Studio.stage, tableOverviewController, game, VPinScreen);
+  public void setGame(TableOverviewController tableOverviewController, GameRepresentation game, VPinScreen screen) {
+    dialogController.setGame(Studio.stage, tableOverviewController, game, screen);
   }
 
   public void refreshTableMediaView() {

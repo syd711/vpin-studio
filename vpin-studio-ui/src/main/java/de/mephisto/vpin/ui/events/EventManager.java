@@ -17,9 +17,16 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class EventManager {
 
-  private static EventManager instance = new EventManager();
+  private static EventManager instance;
 
   private List<StudioEventListener> listeners = new ArrayList<>();
+
+  /**
+   * Recreate a new EventManager each time studio starts
+   */
+  public static void initialize() {
+    instance = new EventManager();
+  }
 
   public static EventManager getInstance() {
     return instance;
@@ -145,4 +152,5 @@ public class EventManager {
   public void removeListener(StudioEventListener listener) {
     this.listeners.remove(listener);
   }
+
 }

@@ -54,7 +54,7 @@ public class PinVolService implements InitializingBean {
 
   private static void startPinVol() {
     try {
-      de.mephisto.vpin.commons.utils.FileUtils.writeBatch("./resources/PinVol.bat", "cd resources\nstart /min PinVol.exe\nexit\n");
+      de.mephisto.vpin.commons.utils.FileUtils.writeBatch("./resources/PinVol.bat", "cd /d %~dp0\ncd resources\nstart /min PinVol.exe\nexit\n");
       List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(new File("./resources"));

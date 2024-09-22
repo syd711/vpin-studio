@@ -1,5 +1,8 @@
 package de.mephisto.vpin.server.assets;
 
+import de.mephisto.vpin.restclient.assets.AssetMetaData;
+import de.mephisto.vpin.restclient.assets.AssetRequest;
+import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.util.RequestUtil;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -49,6 +52,11 @@ public class AssetsResource {
   public ResponseEntity<byte[]> getCompetitionBackground(@PathVariable("gameId") int gameId) {
     Asset competitionBackground = assetService.getCompetitionBackground(gameId);
     return serializeAsset(competitionBackground);
+  }
+
+  @PostMapping("/metadata")
+  public AssetRequest getMetaData(@RequestBody AssetRequest request) {
+    return assetService.getMetadata(request);
   }
 
   @GetMapping("/defaultbackground/{id}")

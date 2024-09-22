@@ -93,6 +93,11 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
     return bean.getEmulatorId();
   }
 
+  public int getGameId() {
+    return backglassData != null ? backglassData.getGameId() : -1;
+  }
+
+
   public String getFileName() {
     return bean.getFileName();
   }

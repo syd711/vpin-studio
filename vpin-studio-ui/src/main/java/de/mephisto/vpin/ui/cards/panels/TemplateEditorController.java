@@ -7,20 +7,17 @@ import de.mephisto.vpin.commons.utils.media.MediaPlayerListener;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.cards.HighscoreCardsController;
 import de.mephisto.vpin.ui.cards.HighscoreGeneratorProgressModel;
 import de.mephisto.vpin.ui.cards.TemplateAssigmentProgressModel;
-import de.mephisto.vpin.ui.util.FrontendUtil;
-import de.mephisto.vpin.ui.util.MediaUtil;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.util.*;
 import de.mephisto.vpin.ui.util.binding.BeanBinder;
 import de.mephisto.vpin.ui.util.binding.BindingChangedListener;
 import javafx.application.Platform;
@@ -396,13 +393,76 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
   }
 
   @FXML
+  private void onFontTitleApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setTitleFontName(selection.getTitleFontName());
+        item.setTitleFontSize(selection.getTitleFontSize());
+        item.setTitleFontStyle(selection.getTitleFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
+  }
+
+  @FXML
   private void onFontTableSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "table", tableFontLabel);
   }
 
   @FXML
+  private void onFontTableApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setTableFontName(selection.getTableFontName());
+        item.setTableFontSize(selection.getTableFontSize());
+        item.setTableFontStyle(selection.getTableFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
+  }
+
+  @FXML
   private void onFontScoreSelect() {
     templateBeanBinder.bindFontSelector(getCardTemplate(), "score", scoreFontLabel);
+  }
+
+  @FXML
+  private void onFontScoreApplyAll() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Apply To All", "Apply selected font settings to all templates?");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      ObservableList<CardTemplate> items = templateCombo.getItems();
+      CardTemplate selection = getCardTemplate();
+      for (CardTemplate item : items) {
+        item.setScoreFontName(selection.getScoreFontName());
+        item.setScoreFontSize(selection.getScoreFontSize());
+        item.setScoreFontStyle(selection.getScoreFontStyle());
+        try {
+          client.getHighscoreCardTemplatesClient().save(item);
+        }
+        catch (Exception e) {
+          LOG.error("Failed to update template font: " + e.getMessage(), e);
+        }
+      }
+      WidgetFactory.showConfirmation(stage, "Update Finished", "Updated " + items.size() + " templates.");
+    }
   }
 
   public CardTemplate getCardTemplate() {
@@ -735,7 +795,9 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
 
     if (this.gameRepresentation.isPresent() && getCardTemplate().getOverlayScreen() != null) {
       VPinScreen overlayScreen = VPinScreen.valueOf(getCardTemplate().getOverlayScreen());
-      FrontendMediaItemRepresentation defaultMediaItem = this.gameRepresentation.get().getGameMedia().getDefaultMediaItem(overlayScreen);
+
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(this.gameRepresentation.get().getId());
+      FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(overlayScreen);
       if (defaultMediaItem != null) {
         assetMediaPlayer = WidgetFactory.addMediaItemToBorderPane(client, defaultMediaItem, previewOverlayPanel, this);
         //images do not have a media player

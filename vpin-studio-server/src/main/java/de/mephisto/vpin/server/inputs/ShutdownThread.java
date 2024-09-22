@@ -38,7 +38,7 @@ public class ShutdownThread extends Thread {
 
           if (idlePreference > 0 && idlePreference <= idleMinutes) {
             if (!queue.isEmpty()) {
-              LOG.info("Cancelled shutdown, because job queue is still executing " + queue.status().size() + " jobs.");
+              LOG.info("Cancelled shutdown, because job queue is still executing " + queue.size() + " jobs.");
             }
             else {
               LOG.info("Executing shutdown after being idle for " + idleMinutes + " minutes");

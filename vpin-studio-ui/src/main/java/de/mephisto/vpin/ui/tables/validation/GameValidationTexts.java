@@ -51,6 +51,11 @@ public class GameValidationTexts {
         text = "Dismiss this message if this table does not require a ROM. Otherwise upload the required ROM in the \"Script Details\" section.";
         break;
       }
+      case CODE_ROM_INVALID: {
+        label = "ROM file is invalid.";
+        text = "The VPinMAME ROM check failed for this ROM. Upload a correct ROM file for this table.";
+        break;
+      }
       case CODE_NVOFFSET_MISMATCH: {
         label = "\"NVOffset\" mismatch found.";
         text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" set, but table \"" + state.getOptions().get(0) + "\" has the NVOffset value \"" + state.getOptions().get(2) + "\".";

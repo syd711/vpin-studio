@@ -1,15 +1,16 @@
 package de.mephisto.vpin.server.mame;
 
+import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -53,9 +55,10 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   public final static String MAME_REG_FOLDER_KEY = "SOFTWARE\\Freeware\\Visual PinMame\\";
 
   private final Map<String, MameOptions> mameCache = new ConcurrentHashMap<>();
+  private final Map<String, Boolean> romValidationCache = new ConcurrentHashMap<>();
 
   @Autowired
-  private FrontendService pinupConnector;
+  private FrontendService frontendServie;
 
   private ApplicationContext applicationContext;
 
@@ -74,7 +77,25 @@ public class MameService implements InitializingBean, ApplicationContextAware {
       }
     }
     LOG.info("Read " + this.mameCache.size() + " mame options (" + (System.currentTimeMillis() - l) + "ms)");
+
+    l = System.currentTimeMillis();
+    romValidationCache.clear();
+    List<GameEmulator> gameEmulators = frontendServie.getGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      validateRoms(gameEmulator);
+    }
+    LOG.info("ROM validation took " + (System.currentTimeMillis() - l) + "ms.");
+
     return true;
+  }
+
+  public boolean clearCacheFor(@Nullable String rom) {
+    if (!StringUtils.isEmpty(rom)) {
+      mameCache.remove(rom);
+      getOptions(rom);
+      return true;
+    }
+    return false;
   }
 
   @NonNull
@@ -88,8 +109,8 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     options.setRom(rom);
     options.setExistInRegistry(romFolders.contains(rom.toLowerCase()));
 
-    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY + 
-      (options.isExistInRegistry()? rom: MameOptions.DEFAULT_KEY));
+    Map<String, Object> values = WinRegistry.getCurrentUserValues(MAME_REG_FOLDER_KEY +
+        (options.isExistInRegistry() ? rom : MameOptions.DEFAULT_KEY));
 
     options.setSkipPinballStartupTest(getBoolean(values, KEY_SKIP_STARTUP_TEST));
     options.setUseSound(getBoolean(values, KEY_USE_SOUND));
@@ -152,17 +173,91 @@ public class MameService implements InitializingBean, ApplicationContextAware {
   }
 
   public void installRom(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.ZIP, gameEmulator.getRomFolder());
   }
 
   public void installNvRam(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.NV, gameEmulator.getNvramFolder());
   }
 
+  public boolean isValidRom(String name) {
+    return !romValidationCache.containsKey(name);
+  }
+
+  public boolean validateRom(GameEmulator gameEmulator, String name) {
+    try {
+      File romFolder = gameEmulator.getRomFolder();
+      File romFile = new File(romFolder, name + ".zip");
+      if (romFile.exists()) {
+        File mameExe = getMameExe(gameEmulator);
+        if (mameExe != null) {
+          List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms", name);
+          LOG.info("Executing ROM validation: " + String.join(" ", cmds));
+          SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
+          executor.setDir(mameExe.getParentFile());
+          executor.executeCommand();
+          StringBuilder out = executor.getStandardOutputFromCommand();
+          if (out != null) {
+            String result = out.toString();
+            return result.contains("1 were OK");
+          }
+
+          LOG.error("MAME command failed: " + executor.getStandardErrorFromCommand());
+        }
+        else {
+          LOG.error("MAME exe \"" + mameExe.getAbsolutePath() + "\" not found.");
+          return false;
+        }
+      }
+      else {
+        LOG.error("ROM file \"" + romFile.getAbsolutePath() + "\" not found.");
+        return false;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("ROM validation failed: " + e.getMessage(), e);
+      return false;
+    }
+    return false;
+  }
+
+  public void validateRoms(GameEmulator gameEmulator) {
+    try {
+      File mameExe = getMameExe(gameEmulator);
+      if (mameExe != null) {
+        List<String> cmds = Arrays.asList(mameExe.getName(), "-verifyroms");
+        LOG.info("Executing ROM validation: " + String.join(" ", cmds));
+        SystemCommandExecutor executor = new SystemCommandExecutor(cmds);
+        executor.setDir(mameExe.getParentFile());
+        executor.executeCommand();
+        StringBuilder out = executor.getStandardOutputFromCommand();
+        if (out != null) {
+          String result = out.toString();
+          String[] split = result.split("\n");
+          for (String s : split) {
+            if (s.contains("romset") && s.contains("is bad") && s.contains("[")) {
+              String rom = s.substring("romset".length() + 1, s.lastIndexOf("[") - 2);
+              romValidationCache.put(rom, false);
+            }
+          }
+          LOG.info("MAME rom validation finished: " + romValidationCache.size() + " invalid ROMs found: " + String.join(",", romValidationCache.keySet()));
+        }
+
+//        StringBuilder err = executor.getStandardErrorFromCommand();
+//        if (err != null && !StringUtils.isEmpty(err.toString())) {
+//          LOG.error("MAME command failed: " + err);
+//        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("ROM validation failed: " + e.getMessage(), e);
+    }
+  }
+
   public void installCfg(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis) throws IOException {
-    GameEmulator gameEmulator = pinupConnector.getGameEmulator(uploadDescriptor.getEmulatorId());
+    GameEmulator gameEmulator = frontendServie.getGameEmulator(uploadDescriptor.getEmulatorId());
     installMameFile(uploadDescriptor, tempFile, analysis, AssetType.CFG, gameEmulator.getCfgFolder());
   }
 
@@ -190,25 +285,25 @@ public class MameService implements InitializingBean, ApplicationContextAware {
     }
   }
 
+  @Nullable
+  private File getMameExe(GameEmulator emulator) {
+    File exe = new File(emulator.getMameFolder(), "PinMAME64.exe");
+    if (!exe.exists()) {
+      exe = new File(emulator.getMameFolder(), "PinMAME32.exe");
+    }
+    return exe.exists() ? exe : null;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
+  }
+
   @Override
   public void afterPropertiesSet() {
     new Thread(() -> {
       Thread.currentThread().setName("MAME Initializer");
       clearCache();
     }).start();
-  }
-
-  public boolean clearCacheFor(@Nullable String rom) {
-    if (!StringUtils.isEmpty(rom)) {
-      mameCache.remove(rom);
-      getOptions(rom);
-      return true;
-    }
-    return false;
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
   }
 }

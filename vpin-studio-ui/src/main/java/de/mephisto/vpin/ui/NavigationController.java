@@ -196,7 +196,9 @@ public class NavigationController implements Initializable, StudioEventListener,
     NavigationView navigationView = navigationItemMap.get(item);
     if (activeNavigation != null) {
       activeNavigation.getNavigationButton().getStyleClass().remove("navigation-button-selected");
-      activeNavigation.getController().onViewDeactivated();
+      if (activeNavigation.getController() != null) {
+        activeNavigation.getController().onViewDeactivated();
+      }
     }
 
     activeNavigation = navigationView;

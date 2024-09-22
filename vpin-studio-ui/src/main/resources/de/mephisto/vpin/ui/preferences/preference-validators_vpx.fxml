@@ -27,6 +27,8 @@
                   <Label layoutX="34.0" layoutY="258.0" styleClass="checkbox-description" text="If a table has set an NVOffset, all tables using the same ROM must have set it." textFill="WHITE" />
                   <CheckBox fx:id="pref_3" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM File Check" />
                   <Label styleClass="checkbox-description" text="Checks if a ROM file for the selected table was found." textFill="WHITE" />
+                  <CheckBox fx:id="pref_6" layoutX="34.0" layoutY="280.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPin MAME ROM Check" />
+                  <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="Checks via VPin MAME if the existing ROM file is valid." textFill="WHITE" />
                   <CheckBox fx:id="pref_1" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ROM Name Check" />
                   <Label styleClass="checkbox-description" text="Checks if a ROM name was resolved for the table." textFill="WHITE" />
                   <CheckBox fx:id="pref_4" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="VPX File Check" />
@@ -72,7 +74,7 @@
                      </VBox.margin>
                   </Label>
                   <Label layoutX="34.0" layoutY="198.0" styleClass="preference-description" text="Several validators checking the integrity of the media files and bundles." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn of the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="630.0" styleClass="preference-description" text="You can turn off the missing file checks if you are not planning to fix PUP or ALT sound bundles." textFill="WHITE" />
                   <CheckBox fx:id="pref_51" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="ALT Sound Files Missing" />
                   <Label styleClass="checkbox-description" text="Checks if audio files for ALT Sound packages are missing." textFill="WHITE" />
                   <VBox fx:id="pupPackValidator">

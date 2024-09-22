@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.jobs;
 
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,17 +21,9 @@ public class JobsResource {
   @Autowired
   private JobService jobService;
 
-  @Autowired
-  private JobQueue jobQueue;
-
   @GetMapping
-  public List<JobDescriptor> getStatus() {
-    return jobQueue.status();
-  }
-
-  @GetMapping("/results")
-  public List<JobExecutionResult> results() {
-    return jobService.getJobResults();
+  public List<JobDescriptor> getJobs() {
+    return jobService.getJobs();
   }
 
   @GetMapping("/dismiss")
@@ -44,6 +35,12 @@ public class JobsResource {
   @GetMapping("/dismiss/{uuid}")
   public boolean dismiss(@PathVariable("uuid") String uuid) {
     jobService.dismiss(uuid);
+    return true;
+  }
+
+  @GetMapping("/cancel/{uuid}")
+  public boolean cancel(@PathVariable("uuid") String uuid) {
+    jobService.cancel(uuid);
     return true;
   }
 }

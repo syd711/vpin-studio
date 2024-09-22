@@ -376,13 +376,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     addSection(dataRoot, "Sound", game.get(), VpsDiffTypes.sound, vpsTable.getSoundFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsSound());
 
-    FrontendMediaRepresentation gameMedia = game.get().getGameMedia();
-    List<FrontendMediaItemRepresentation> items = gameMedia.getMediaItems(VPinScreen.Topper);
+
+    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.get().getId());
+    List<FrontendMediaItemRepresentation> items = frontendMedia.getMediaItems(VPinScreen.Topper);
     if (!doFilter || items.isEmpty()) {
       addSection(dataRoot, "Topper", game.get(), VpsDiffTypes.topper, vpsTable.getTopperFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsToppper());
     }
 
-    items = gameMedia.getMediaItems(VPinScreen.Wheel);
+    items = frontendMedia.getMediaItems(VPinScreen.Wheel);
     if (!doFilter || items.isEmpty()) {
       addSection(dataRoot, "Wheel Art", game.get(), VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsWheel());
     }

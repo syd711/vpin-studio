@@ -38,6 +38,7 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
   public void start(Stage overlayStage) {
     Locale.setDefault(Locale.ENGLISH);
     VPinStudioApp.client = new VPinStudioClient("localhost");
+    ServerFX.client = VPinStudioApp.client;
 
 
     try {
@@ -73,10 +74,12 @@ public class VPinStudioApp extends Application implements GameControllerInputLis
       String resource = ServerFX.resolveDashboard(value);
       FXMLLoader overlayLoader = new FXMLLoader(OverlayController.class.getResource(resource));
       Parent widgetRoot = overlayLoader.load();
+      OverlayController controller = overlayLoader.getController();
       root.setCenter(widgetRoot);
 
       GameController.getInstance().addListener(this);
 
+      controller.refreshData();
       overlayStage.show();
     }
     catch (Exception e) {

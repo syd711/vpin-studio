@@ -75,8 +75,6 @@ public class TournamentsService implements InitializingBean, TableStatusChangeLi
   @Override
   public void tableExited(TableStatusChangedEvent event) {
     if (Features.MANIA_ENABLED) {
-      Game game = event.getGame();
-      Thread.currentThread().setName("Tournament Synchronizer for " + game.getGameDisplayName());
       tournamentSynchronizer.synchronizeTournaments();
     }
   }

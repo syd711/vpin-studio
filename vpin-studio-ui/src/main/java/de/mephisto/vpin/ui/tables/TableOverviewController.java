@@ -71,8 +71,8 @@ import static de.mephisto.vpin.commons.utils.WidgetFactory.DISABLED_COLOR;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel> 
-  implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+public class TableOverviewController extends BaseTableController<GameRepresentation, GameRepresentationModel>
+    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
 
@@ -129,6 +129,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateAdded;
 
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDateModified;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnLauncher;
 
   @FXML
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
@@ -257,7 +262,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
-  private final SimpleDateFormat dateAddedDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+  private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
   private UISettings uiSettings;
   private ServerSettings serverSettings;
@@ -269,9 +274,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private TableOverviewContextMenu contextMenuController;
   private IgnoredValidationSettings ignoredValidations;
 
-  
+
   private GameEmulatorChangeListener gameEmulatorChangeListener;
   private GameStatus status;
+  private VPinScreen assetScreenSelection;
 
   // Add a public no-args constructor
   public TableOverviewController() {
@@ -294,7 +300,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     Platform.runLater(() -> {
       if (assetManagerMode) {
-        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), VPinScreen.Wheel);
+        tablesController.getAssetViewSideBarController().setGame(this.tablesController.getTableOverviewController(), getSelection(), assetScreenSelection == null ? VPinScreen.Wheel : assetScreenSelection);
         assetManagerViewBtn.getStyleClass().add("toggle-selected");
         if (!assetManagerViewBtn.getStyleClass().contains("toggle-button-selected")) {
           assetManagerViewBtn.getStyleClass().add("toggle-button-selected");
@@ -311,7 +317,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       GameRepresentation selectedItem = getSelection();
       clearSelection();
       if (selectedItem != null) {
-        selectGameInModel(selectedItem);
+        selectBeanInModel(selectedItem, false);
       }
     });
   }
@@ -639,19 +645,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onImport() {
-    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
-    if (emulatorSelection == null) {
-      WidgetFactory.showInformation(stage, "No emulator selected.", "Select a specific emulator to import tables from.");
-      return;
-    }
-
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        TableDialogs.openTableImportDialog(emulatorSelection);
+        TableDialogs.openTableImportDialog();
       }
     }
     else {
-      TableDialogs.openTableImportDialog(emulatorSelection);
+      TableDialogs.openTableImportDialog();
     }
   }
 
@@ -710,7 +710,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-
       GameRepresentation selectedGame = getSelection();
 
       GameRepresentationModel model = null;
@@ -816,8 +815,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private void onReload(ActionEvent e) {
-    client.getFrontendService().reload();
-    client.getGameService().reload();
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
     this.doReload();
   }
 
@@ -858,19 +856,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         GameRepresentation selection = getSelection();
         GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
         GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-        int id = value != null? value.getId() : ALL_VPX_ID;
+        int id = value != null ? value.getId() : ALL_VPX_ID;
 
         if (clearCache) {
           if (id == ALL_VPX_ID) {
             client.getGameService().clearVpxCache();
-          } 
+          }
           else {
             client.getGameService().clearCache(id);
           }
         }
-        
-        this.data = id == ALL_VPX_ID 
-            ? client.getGameService().getVpxGamesCached() 
+
+        this.data = id == ALL_VPX_ID
+            ? client.getGameService().getVpxGamesCached()
             : client.getGameService().getGamesByEmulator(id);
 
         // as the load of tables could take some time, users may have switched to another emulators in between
@@ -1116,13 +1114,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnB2S, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s);
       if (value.getDirectB2SPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsBackglass() && value.getVpsUpdates().contains(VpsDiffTypes.b2s)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New backglass updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getDirectB2SPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New backglass updates available");
       }
       return null;
     }, true);
@@ -1133,13 +1135,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
 
     BaseLoadingColumn.configureColumn(columnPOV, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov);
       if (value.getPovPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPOV() && value.getVpsUpdates().contains(VpsDiffTypes.pov)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New POV updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPovPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New POV updates available");
       }
       return null;
     }, true);
@@ -1159,37 +1165,49 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltSound, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound);
       if (value.isAltSoundAvailable()) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltSound() && value.getVpsUpdates().contains(VpsDiffTypes.altSound)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT sound updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT sound updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnAltColor, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor);
       if (value.getAltColorType() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsAltColor() && value.getVpsUpdates().contains(VpsDiffTypes.altColor)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New ALT color updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value));
         }
       }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New ALT color updates available");
+      }
       return null;
     }, true);
 
     BaseLoadingColumn.configureColumn(columnPUPPack, (value, model) -> {
+      boolean hasUpdate = this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack);
       if (value.getPupPackPath() != null) {
-        if (this.showVpsUpdates && uiSettings.isVpsPUPPack() && value.getVpsUpdates().contains(VpsDiffTypes.pupPack)) {
+        if (hasUpdate) {
           return WidgetFactory.createCheckAndUpdateIcon("New PUP pack updates available");
         }
         else {
           return WidgetFactory.createCheckboxIcon(getIconColor(value), value.getPupPackPath());
         }
+      }
+      else if (hasUpdate) {
+        return WidgetFactory.createUpdateIcon("New PUP pack updates available");
       }
       return null;
     }, true);
@@ -1220,13 +1238,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         icon.setIconSize(16);
         graphics.getChildren().add(0, icon);
 
-        if (notes.contains("//ERROR")) {
+        if (notes.toLowerCase().contains("//error")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.ERROR_COLOR));
         }
-        else if (notes.contains("//TODO")) {
+        else if (notes.toLowerCase().contains("//todo")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.TODO_COLOR));
         }
-        else if (notes.contains("//OUTDATED")) {
+        else if (notes.toLowerCase().contains("//outdated")) {
           icon.setIconColor(Paint.valueOf(WidgetFactory.OUTDATED_COLOR));
         }
       }
@@ -1246,11 +1264,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnDateAdded, (value, model) -> {
       Label label = null;
       if (value.getDateAdded() != null) {
-        label = new Label(dateAddedDateFormat.format(value.getDateAdded()));
+        label = new Label(dateFormat.format(value.getDateAdded()));
       }
       else {
         label = new Label("-");
       }
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnLauncher, (value, model) -> {
+      Label label = new Label(model.getGame().getLauncher());
       label.getStyleClass().add("default-text");
       return label;
     }, true);
@@ -1307,19 +1331,20 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return box;
     }, true);
 
+
     List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
-    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
-    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
-    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
-    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
-    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
-    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
-    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
+    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
+    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
+    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, model, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
+    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, model, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
+    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, model, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
+    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, model, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
+    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
     tableView.getSelectionModel().getSelectedItems().addListener(this);
@@ -1348,12 +1373,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           return row;
         });
 
- }
+  }
 
   //------------------------------
 
-  private Node createAssetStatus(GameRepresentation value, VPinScreen VPinScreen) {
-    FrontendMediaItemRepresentation defaultMediaItem = value.getGameMedia().getDefaultMediaItem(VPinScreen);
+  private Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen VPinScreen) {
+    FrontendMediaItemRepresentation defaultMediaItem = model.getFrontendMedia().getDefaultMediaItem(VPinScreen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
     boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());
@@ -1447,15 +1472,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return btn;
   }
 
-  private void showAssetDetails(GameRepresentation game, VPinScreen VPinScreen) {
-    tableView.getSelectionModel().clearSelection();
-    selectGameInModel(game);
+  private void showAssetDetails(GameRepresentation game, VPinScreen screen) {
+    assetScreenSelection = screen;
+    selectBeanInModel(game, false);
+
     Platform.runLater(() -> {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, VPinScreen);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     });
   }
-
-  // filterGames() moved to TableOverviewPredicateFactory
 
   private void refreshView(Optional<GameRepresentation> g) {
     dismissBtn.setVisible(true);
@@ -1465,7 +1489,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationErrorText.setText("");
 
     if (assetManagerMode) {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), null);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), assetScreenSelection);
     }
     else {
       this.tablesController.getTablesSideBarController().setGame(g);
@@ -1730,6 +1754,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     refreshColumns();
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
+
+    Platform.runLater(() -> {
+      getTableFilterController().refreshFilters();
+    });
   }
 
   private void refreshViewForEmulator() {
@@ -1777,6 +1805,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
     columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible(!assetManagerMode && uiSettings.isColumnDateModified());
+    columnLauncher.setVisible(!assetManagerMode && uiSettings.isColumnLauncher());
     columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 
@@ -1862,9 +1892,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     GameEmulatorRepresentation gameEmulator;
 
+    FrontendMediaRepresentation frontendMedia;
+
     public GameRepresentationModel(GameRepresentation game) {
       super(game);
     }
+
     public GameRepresentation getGame() {
       return getBean();
     }
@@ -1874,6 +1907,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return bean.getId() == other.getId();
     }
 
+    public FrontendMediaRepresentation getFrontendMedia() {
+      if (frontendMedia == null) {
+        frontendMedia = client.getFrontendMedia(bean.getId());
+      }
+      return frontendMedia;
+    }
 
     public VpsTable getVpsTable() {
       return vpsTable;

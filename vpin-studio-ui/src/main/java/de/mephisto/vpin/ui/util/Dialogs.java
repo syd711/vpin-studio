@@ -57,10 +57,10 @@ public class Dialogs {
       FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
       Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();
-    }
 
-    uiSettings.setHideUpdateInfo(true);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+      uiSettings.setHideUpdateInfo(true);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+    }
   }
 
   public static boolean openUpdateDialog() {

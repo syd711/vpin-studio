@@ -41,11 +41,15 @@ public class GamesServiceClient extends VPinStudioClientService {
    * a status map to avoid multiple loads in parallel, check getGamesCached()
    */
   private final Map<Integer, Boolean> loadingFlags = new HashMap<>();
+  private List<Integer> ignoredEmulatorIds = new ArrayList<>();
 
   public GamesServiceClient(VPinStudioClient client) {
     super(client);
   }
 
+  public void setIgnoredEmulatorIds(List<Integer> ignoredEmulatorIds) {
+    this.ignoredEmulatorIds = ignoredEmulatorIds;
+  }
 
   public void clearCache() {
     this.allGames.clear();
@@ -360,6 +364,10 @@ public class GamesServiceClient extends VPinStudioClientService {
       List<GameRepresentation> games = new ArrayList<>();
       List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
       for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+        if (ignoredEmulatorIds.contains(gameEmulator.getId())) {
+          continue;
+        }
+
         games.addAll(getGamesCached(gameEmulator.getId()));
       }
       return games;

@@ -18,9 +18,12 @@ public class FrontendMediaRepresentation {
   }
 
   public List<FrontendMediaItemRepresentation> getMediaItems(VPinScreen screen) {
-    List<FrontendMediaItemRepresentation> mediaItemRepresentations = this.media.get(screen.name());
-    Collections.sort(mediaItemRepresentations, Comparator.comparing(FrontendMediaItemRepresentation::getName));
-    return mediaItemRepresentations;
+    if (media.containsKey(screen.name())) {
+      List<FrontendMediaItemRepresentation> mediaItemRepresentations = this.media.get(screen.name());
+      Collections.sort(mediaItemRepresentations, Comparator.comparing(FrontendMediaItemRepresentation::getName));
+      return mediaItemRepresentations;
+    }
+    return Collections.emptyList();
   }
 
   @Nullable

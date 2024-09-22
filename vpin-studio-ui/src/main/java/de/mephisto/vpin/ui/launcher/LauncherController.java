@@ -181,7 +181,8 @@ public class LauncherController implements Initializable {
 
       if (found) {
         WidgetFactory.showAlert(stage, "A VPin Studio Connection already exists for '" + host + "'.");
-      } else {
+      }
+      else {
         refreshBtn.setDisable(true);
         connectBtn.setDisable(true);
         newConnectionBtn.setDisable(true);
@@ -217,7 +218,11 @@ public class LauncherController implements Initializable {
 
     if (serverVersion != null) {
       if (!serverVersion.equals(clientVersion)) {
-        WidgetFactory.showAlert(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please start the updater.");
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Incompatible Version", "The VPin Server you are connecting to has version " + serverVersion + ".", "Please update your client.", "Install Update");
+        if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+          Dialogs.openUpdateDialog();
+        }
+        return;
       }
 
       stage.close();

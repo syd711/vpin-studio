@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.adapters.TableInstallerAdapter;
 import de.mephisto.vpin.server.games.Game;
@@ -23,8 +23,6 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
   private final GameEmulator emulator;
 
   private File archiveFile;
-  private double progress;
-  private String status;
 
   public TableInstallerAdapterVpbm(@NonNull GameService gameService,
                                    @NonNull VpbmService vpbmService,
@@ -37,18 +35,8 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
   }
 
   @Override
-  public double getProgress() {
-    return progress;
-  }
-
-  @Override
-  public String getStatus() {
-    return status;
-  }
-
-  @Override
-  public JobExecutionResult execute() {
-    return installTable();
+  public void execute(JobDescriptor result) {
+    installTable(result);
   }
 
   @NonNull
@@ -59,22 +47,22 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
 
   @NonNull
   @Override
-  public JobExecutionResult installTable() {
-    JobExecutionResult result = new JobExecutionResult();
+  public void installTable(JobDescriptor result) {
     try {
       LOG.info("Starting import of " + archiveDescriptor.getFilename());
 
       archiveFile = new File(archiveDescriptor.getSource().getLocation(), archiveDescriptor.getFilename());
       if (!archiveFile.exists()) {
         LOG.error("Failed to import " + archiveFile.getAbsolutePath() + ", file does not exist.");
-        return null;
+        result.setError("Failed to import " + archiveFile.getAbsolutePath() + ", file does not exist.");
+        return;
       }
 
-      status = "Extracting " + archiveFile.getAbsolutePath();
+      result.setStatus("Extracting " + archiveFile.getAbsolutePath());
       String msg = vpbmService.restore(archiveFile.getAbsolutePath());
       if(msg.contains("ERROR")) {
         result.setError(msg);
-        return result;
+        return;
       }
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
@@ -82,12 +70,11 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
       LOG.info("Executing final table scan for " + game.getGameDisplayName());
       gameService.scanGame(game.getId());
 
-      this.progress = 100;
+      result.setProgress(1);
       result.setGameId(game.getId());
     } catch (Exception e) {
       LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
       result.setError("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage());
     }
-    return result;
   }
 }

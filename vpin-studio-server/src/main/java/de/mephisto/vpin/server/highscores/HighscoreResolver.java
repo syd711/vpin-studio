@@ -103,7 +103,7 @@ class HighscoreResolver {
     return metadata;
   }
 
-  private String readHSFileHighscore(Game game, HighscoreMetadata metadata) throws IOException {
+  private String readHSFileHighscore(@NonNull Game game, @NonNull HighscoreMetadata metadata) throws IOException {
     File hsFile = game.getHighscoreTextFile();
     if ((hsFile == null || !hsFile.exists())) {
       hsFile = game.getAlternateHighscoreTextFile(game.getTableName());
@@ -123,7 +123,7 @@ class HighscoreResolver {
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
-      return TextHighscoreConverters.convertTextFileTextToMachineReadable(scoringDB, hsFile);
+      return TextHighscoreConverters.convertTextFileTextToMachineReadable(metadata, scoringDB, hsFile);
     }
     return null;
   }

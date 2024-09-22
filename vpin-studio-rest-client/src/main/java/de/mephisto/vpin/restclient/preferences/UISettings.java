@@ -68,6 +68,8 @@ public class UISettings extends JsonSettings {
   private boolean columnAltSound = true;
   private boolean columnBackglass = true;
   private boolean columnDateAdded = false;
+  private boolean columnDateModified = false;
+  private boolean columnLauncher = false;
   private boolean columnHighscore = true;
   private boolean columnEmulator = false;
   private boolean columnIni = true;
@@ -287,6 +289,22 @@ public class UISettings extends JsonSettings {
 
   public void setColumnDateAdded(boolean columnDateAdded) {
     this.columnDateAdded = columnDateAdded;
+  }
+
+  public boolean isColumnLauncher() {
+    return columnLauncher;
+  }
+
+  public void setColumnLauncher(boolean columnLauncher) {
+    this.columnLauncher = columnLauncher;
+  }
+
+  public boolean isColumnDateModified() {
+    return columnDateModified;
+  }
+
+  public void setColumnDateModified(boolean columnDateModified) {
+    this.columnDateModified = columnDateModified;
   }
 
   public boolean isColumnHighscore() {

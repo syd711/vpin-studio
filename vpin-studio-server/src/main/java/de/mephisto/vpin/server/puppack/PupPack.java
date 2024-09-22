@@ -2,10 +2,10 @@ package de.mephisto.vpin.server.puppack;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -198,7 +198,7 @@ public class PupPack {
   }
 
   @NonNull
-  public JobExecutionResult executeOption(String option) {
+  public JobDescriptor executeOption(String option) {
     File file = getOptionFile(option);
     if (file.exists()) {
       try {
@@ -226,18 +226,18 @@ public class PupPack {
         String err = executor.getStandardErrorFromCommand().toString();
         if (!StringUtils.isEmpty(err)) {
           LOG.error("Error executing PUP option " + file.getAbsolutePath() + ": " + err);
-          return JobExecutionResultFactory.error(err, out);
+          return JobDescriptorFactory.error(err);
         }
-        return JobExecutionResultFactory.ok(out, -1);
+        return JobDescriptorFactory.ok(-1);
       }
       catch (Exception e) {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
-        return JobExecutionResultFactory.error("Error executing shutdown: " + e.getMessage());
+        return JobDescriptorFactory.error("Error executing shutdown: " + e.getMessage());
       } finally {
         this.load();
       }
     }
-    return JobExecutionResultFactory.error("Option command file " + file.getAbsolutePath() + " not found.");
+    return JobDescriptorFactory.error("Option command file " + file.getAbsolutePath() + " not found.");
   }
 
   public String getSelectedOption() {

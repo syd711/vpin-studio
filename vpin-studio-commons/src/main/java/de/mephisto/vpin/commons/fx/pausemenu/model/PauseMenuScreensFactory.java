@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.FrontendScreensManager;
 import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -22,17 +23,17 @@ import java.util.List;
 public class PauseMenuScreensFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuScreensFactory.class);
 
-  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<FrontendPlayerDisplay> displays) {
+  public static List<FrontendScreenAsset> createAssetScreens(@NonNull GameRepresentation game, @NonNull VPinStudioClient client, List<FrontendPlayerDisplay> displays, FrontendMediaRepresentation frontendMedia) {
     List<FrontendScreenAsset> screens = new ArrayList<>();
-    FrontendScreenAsset screenStage = createScreenStage(client, game, displays, VPinScreen.GameHelp);
+    FrontendScreenAsset screenStage = createScreenStage(client, game, displays, VPinScreen.GameHelp, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    screenStage = createScreenStage(client, game, displays, VPinScreen.GameInfo);
+    screenStage = createScreenStage(client, game, displays, VPinScreen.GameInfo, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
-    screenStage = createScreenStage(client, game, displays, VPinScreen.Other2);
+    screenStage = createScreenStage(client, game, displays, VPinScreen.Other2, frontendMedia);
     if (screenStage != null) {
       screens.add(screenStage);
     }
@@ -40,8 +41,8 @@ public class PauseMenuScreensFactory {
   }
 
   @Nullable
-  private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    FrontendMediaItemRepresentation defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+  private static FrontendScreenAsset createScreenStage(VPinStudioClient client, GameRepresentation game, List<FrontendPlayerDisplay> displays, VPinScreen screen, FrontendMediaRepresentation frontendMedia) {
+    FrontendMediaItemRepresentation defaultMediaItem = frontendMedia.getDefaultMediaItem(screen);
     if (defaultMediaItem != null) {
       InputStream imageStream = PauseMenu.client.getGameMediaItem(game.getId(), screen);
       if (imageStream != null) {

@@ -218,21 +218,36 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="titleFontLabel" prefHeight="20.0" prefWidth="170.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTitleSelect" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                             </graphic>
-                                          </Button>
+                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#onFontTitleSelect">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTitleApplyAll">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Apply selected font settings to all templates" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </right>
                                     </BorderPane>
                                     <Label text="Table Font" textFill="WHITE">
@@ -245,21 +260,36 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="tableFontLabel" prefHeight="20.0" prefWidth="150.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontTableSelect" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
-                                             </graphic>
-                                          </Button>
+                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#onFontTableSelect">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" onDragDetected="#onFontTableSelect" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontTableApplyAll">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" onDragDetected="#onFontTableSelect" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Apply selected font settings to all templates" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </right>
                                     </BorderPane>
                                     <Label text="Score Font" textFill="WHITE">
@@ -272,21 +302,36 @@
                                     </Label>
                                     <BorderPane>
                                        <left>
-                                          <Label fx:id="scoreFontLabel" prefWidth="200.0" textFill="WHITE" BorderPane.alignment="CENTER">
+                                          <Label fx:id="scoreFontLabel" prefWidth="150.0" textFill="WHITE" BorderPane.alignment="CENTER">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
                                           </Label>
                                        </left>
                                        <right>
-                                          <Button mnemonicParsing="false" onAction="#onFontScoreSelect" BorderPane.alignment="CENTER">
-                                             <font>
-                                                <Font size="14.0" />
-                                             </font>
-                                             <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
-                                             </graphic>
-                                          </Button>
+                                          <HBox spacing="3.0" BorderPane.alignment="CENTER">
+                                             <children>
+                                                <Button mnemonicParsing="false" onAction="#onFontScoreSelect">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="bi-fonts" />
+                                                   </graphic>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onFontScoreApplyAll">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2c-check-all" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Apply selected font settings to all templates" />
+                                                   </tooltip>
+                                                </Button>
+                                             </children>
+                                          </HBox>
                                        </right>
                                     </BorderPane>
                                     <Label text="Font Color" textFill="WHITE">

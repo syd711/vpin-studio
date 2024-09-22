@@ -69,12 +69,21 @@ public class Game {
   private String extTableVersionId;
   private String extVersion;
   private String notes;
+  private String launcher;
   private VPSChanges vpsChanges = new VPSChanges();
 
   private boolean foundControllerStop = false;
   private boolean foundTableExit = false;
 
   public Game() {
+  }
+
+  public String getLauncher() {
+    return launcher;
+  }
+
+  public void setLauncher(String launcher) {
+    this.launcher = launcher;
   }
 
   public boolean isEventLogAvailable() {
@@ -257,7 +266,7 @@ public class Game {
   }
 
   public String getPupPackPath() {
-    if(pupPack != null && pupPack.getPupPackFolder().exists()) {
+    if (pupPack != null && pupPack.getPupPackFolder().exists()) {
       return pupPack.getPupPackFolder().getAbsolutePath();
     }
     return null;
@@ -344,7 +353,8 @@ public class Game {
   @JsonIgnore
   @NonNull
   public File getMediaFolder(@NonNull VPinScreen screen) {
-    return this.emulator.getGameMediaFolder(FilenameUtils.getBaseName(gameFileName), screen);
+    String baseName = FilenameUtils.getBaseName(gameFileName);
+    return this.emulator.getGameMediaFolder(baseName, screen);
   }
 
   @NonNull
@@ -363,6 +373,7 @@ public class Game {
     return Collections.emptyList();
   }
 
+  @JsonIgnore
   @NonNull
   public FrontendMedia getGameMedia() {
     FrontendMedia frontendMedia = new FrontendMedia();

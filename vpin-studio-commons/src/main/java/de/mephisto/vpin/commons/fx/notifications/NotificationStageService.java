@@ -37,6 +37,10 @@ public class NotificationStageService extends Application {
     if (poll) {
       pollNotifications();
     }
+    else {
+      LOG.info("Queued " + notification);
+      SLOG.info("Queued " + notification);
+    }
   }
 
   public void pollNotifications() {

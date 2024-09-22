@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
@@ -18,7 +19,7 @@ import de.mephisto.vpin.restclient.vpu.VPUSettings;
 
 public class VpsInstallerTest {
 
-  @Test
+  @Ignore
   public void testInstallVPF() throws IOException {
 
     String url = "https://www.vpforums.org/index.php?app=downloads&showfile=16563";
@@ -53,7 +54,7 @@ public class VpsInstallerTest {
     }
   }
 
-  @Test
+  @Ignore
   public void testInstallVPU() throws IOException {
     String url = "https://vpuniverse.com/files/file/9442-vikings-static-wheel";
 

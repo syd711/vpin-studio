@@ -12,10 +12,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.StackPane;
 
 public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
-  
+
   BackglassManagerController controller;
 
-  private final List<String> suffixes = Arrays.asList( "zip", "rar", "directb2s" );
+  private final List<String> suffixes = Arrays.asList("zip", "rar", "directb2s");
 
   public BackglassManagerDragDropHandler(BackglassManagerController controller, TableView<?> directb2sList, StackPane tableStack) {
     super(directb2sList, tableStack, true);

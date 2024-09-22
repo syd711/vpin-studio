@@ -32,7 +32,8 @@ public class AssetServiceClient extends VPinStudioClientService {
       new RestTemplate().exchange(url, HttpMethod.POST, upload, Boolean.class);
       finalizeUpload(upload);
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Default background upload failed: " + e.getMessage(), e);
       throw e;
     }
@@ -42,7 +43,8 @@ public class AssetServiceClient extends VPinStudioClientService {
     try {
       getRestClient().delete(API + "assets/background/" + gameId);
       return true;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Default background deletion failed: " + e.getMessage(), e);
       throw e;
     }
@@ -76,7 +78,8 @@ public class AssetServiceClient extends VPinStudioClientService {
       if (bytes != null) {
         return new ByteArrayInputStream(bytes);
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error reading game media item for " + id + " and " + screen + ": " + e.getMessage(), e);
     }
     return null;
@@ -88,10 +91,25 @@ public class AssetServiceClient extends VPinStudioClientService {
       LOG.info("HTTP POST " + url);
       ResponseEntity<AssetRepresentation> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(file, -1, null, assetType, listener), AssetRepresentation.class);
       return exchange.getBody();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Asset upload failed: " + e.getMessage(), e);
       throw e;
     }
+  }
+
+  public AssetRequest getMetadata(int gameId, VPinScreen screen, String name) {
+    try {
+      AssetRequest request = new AssetRequest();
+      request.setScreen(screen);
+      request.setGameId(gameId);
+      request.setName(name);
+      return getRestClient().post(API + "assets/metadata", request, AssetRequest.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to convert video: " + e.getMessage(), e);
+    }
+    return null;
   }
 
   @Nullable

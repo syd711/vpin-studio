@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>vpin-studio-server</artifactId>
-    <version>3.5.1</version>
+    <version>3.6.0</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -48,6 +48,26 @@
             <artifactId>htmlunit</artifactId>
             <version>4.4.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.drewnoakes</groupId>
+            <artifactId>metadata-extractor</artifactId>
+            <version>2.19.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-core</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tika</groupId>
+            <artifactId>tika-parser-audiovideo-module</artifactId>
+            <version>2.9.2</version>
+        </dependency>
+
+
+
+
 
         <dependency>
             <groupId>net.java.dev.jna</groupId>

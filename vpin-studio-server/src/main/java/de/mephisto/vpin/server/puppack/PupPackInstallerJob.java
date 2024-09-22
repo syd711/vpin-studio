@@ -1,11 +1,9 @@
 package de.mephisto.vpin.server.puppack;
 
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
-import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.util.UnzipChangeListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 
@@ -27,19 +25,27 @@ public class PupPackInstallerJob implements Job {
   }
 
   @Override
-  public JobExecutionResult execute() {
-    JobExecutionResult unzip = PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom);
+  public void execute(JobDescriptor result) {
+    PupPackUtil.unpack(pupTmpArchive, pupVideosFolder, pupPackFolderInArchive, rom, new UnzipChangeListener() {
+      @Override
+      public boolean unzipping(String name, int index, int total) {
+        double progress = (double) (100 * index / total) / 100;
+        result.setProgress(progress);
+        result.setStatus("Unpacking " + index + " of " + total);
+
+        boolean cancelled = result.isCancelled();
+        return !cancelled;
+      }
+
+      @Override
+      public void onError(String error) {
+        result.setError(error);
+      }
+    });
+
+    if (!result.isCancelled()) {
+      result.setProgress(1);
+    }
     pupPacksService.loadPupPack(rom);
-    return unzip;
-  }
-
-  @Override
-  public double getProgress() {
-    return 0;
-  }
-
-  @Override
-  public String getStatus() {
-    return "Unpacking PUP pack";
   }
 }

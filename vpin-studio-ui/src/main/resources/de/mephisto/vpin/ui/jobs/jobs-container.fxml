@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="450.0" minHeight="-Infinity" minWidth="450.0" prefWidth="450.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.jobs.JobsContainerController">
+   <center>
+      <BorderPane prefHeight="74.0" BorderPane.alignment="TOP_LEFT">
+         <BorderPane.margin>
+            <Insets left="6.0" />
+         </BorderPane.margin>
+         <center>
+            <VBox fx:id="dataPanel" prefWidth="350.0">
+               <children>
+                  <Label fx:id="nameLabel" text="file name" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="3.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label fx:id="infoLabel" layoutX="10.0" layoutY="10.0" text="info label" textFill="WHITE">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin></Label>
+                  <HBox alignment="CENTER_LEFT">
+                     <children>
+                        <ProgressBar fx:id="progressBar" maxHeight="13.0" prefWidth="360.0" progress="0.0" />
+                        <Label fx:id="statusLabel" styleClass="default-text" text="size label" textFill="WHITE">
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="bi-check-circle" iconSize="18" />
+                           </graphic></Label>
+                     </children>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+               <BorderPane.margin>
+                  <Insets bottom="6.0" left="6.0" right="6.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+      </BorderPane>
+   </center>
+   <right>
+      <ToolBar fx:id="actionToolbar" styleClass="floating-toolbar" BorderPane.alignment="CENTER">
+         <items>
+            <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen">
+               <font>
+                  <Font size="13.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2p-pencil" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open VPX tables folder" />
+               </tooltip>
+            </Button>
+            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Stop Job" />
+               </tooltip>
+            </Button>
+         </items>
+         <BorderPane.margin>
+            <Insets right="12.0" />
+         </BorderPane.margin>
+      </ToolBar>
+   </right>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="accordion-container" />
+   </styleClass>
+   <top>
+      <BorderPane BorderPane.alignment="TOP_RIGHT">
+         <BorderPane.margin>
+            <Insets left="3.0" right="3.0" top="3.0" />
+         </BorderPane.margin>
+         <right>
+            <Button fx:id="removeBtn" mnemonicParsing="false" onAction="#onRemove" BorderPane.alignment="CENTER">
+               <font>
+                  <Font size="10.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2c-close" iconSize="13" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Open VPX tables folder" />
+               </tooltip>
+            </Button>
+         </right>
+      </BorderPane>
+   </top>
+</BorderPane>

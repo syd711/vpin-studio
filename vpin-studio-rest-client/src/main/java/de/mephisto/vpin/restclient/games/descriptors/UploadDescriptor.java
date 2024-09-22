@@ -58,6 +58,10 @@ public class UploadDescriptor {
 
   public void upload() throws Exception {
     String name = FilenameUtils.getBaseName(getOriginalUploadFileName());
+    //temp filenames must be larger 3 chars
+    if (name.length() < 3) {
+      name = name + "_temp";
+    }
     String suffix = FilenameUtils.getExtension(getOriginalUploadFileName());
     File uploadTempFile = File.createTempFile(name, "." + suffix);
 

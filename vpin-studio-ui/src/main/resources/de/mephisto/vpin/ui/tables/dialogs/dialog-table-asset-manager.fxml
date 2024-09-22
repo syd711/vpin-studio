@@ -5,6 +5,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
@@ -410,22 +411,49 @@
                                                    </graphic>
                                                 </Button>
                                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
+                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
                                                       <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                                    </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Delete Asset" />
+                                                   </tooltip>
                                                 </Button>
-                                                <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" text="Help" textFill="WHITE">
+                                                <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>
                                                    <graphic>
                                                       <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
                                                    </graphic>
+                                                   <tooltip>
+                                                      <Tooltip text="Open Help" />
+                                                   </tooltip>
                                                 </Button>
+                                                <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="0.0" />
+                                                <MenuButton fx:id="conversionMenu" mnemonicParsing="false" text=" " textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-rotate-3d-variant" iconSize="18" />
+                                                   </graphic>
+                                                </MenuButton>
+                                                <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#onInfo" textFill="WHITE">
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <graphic>
+                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2i-information-variant" iconSize="18" />
+                                                   </graphic>
+                                                   <tooltip>
+                                                      <Tooltip prefWidth="350.0" text="Shows all metadata extracted from the selected asset." wrapText="true" />
+                                                   </tooltip>
+                                                </Button>
+                                                <Separator layoutX="566.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="0.0" />
                                                 <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" text="Fullscreen" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
@@ -437,7 +465,7 @@
                                                       <Tooltip prefWidth="350.0" text="Adds a blank media so that the selected media is played in full screen." wrapText="true" />
                                                    </tooltip>
                                                 </Button>
-                                                <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" text="Blank Media" textFill="WHITE">
+                                                <Button fx:id="addAudioBlank" layoutX="643.0" layoutY="10.0" mnemonicParsing="false" onAction="#onAudioBlank" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />
                                                    </font>

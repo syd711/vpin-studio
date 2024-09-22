@@ -3,10 +3,8 @@ package de.mephisto.vpin.server.dof;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.server.jobs.JobQueue;
+import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -33,13 +31,14 @@ public class DOFService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private JobQueue jobQueue;
+  private JobService jobService;
 
   public DOFSettings saveSettings(DOFSettings settings) {
     try {
       preferencesService.savePreference(PreferenceNames.DOF_SETTINGS, settings);
       return getSettings();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Saving dof settings failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Saving dof settings failed: " + e.getMessage());
     }
@@ -51,31 +50,32 @@ public class DOFService implements InitializingBean {
       settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
       settings.setValidDOFFolder32(StringUtils.isEmpty(settings.getInstallationPath32()) || new File(settings.getInstallationPath32(), "DirectOutput.dll").exists());
       return settings;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Getting dof settings failed: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, "Get of settings failed: " + e.getMessage());
     }
   }
 
-  public JobExecutionResult asyncSync() {
-    DOFSynchronizationJob job = new DOFSynchronizationJob(this, getSettings());
+  public JobDescriptor asyncSync() {
+    DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings());
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC, UUID.randomUUID().toString());
-
     jobDescriptor.setTitle("Synchronizing DOF Settings");
-    jobDescriptor.setDescription("Synchronizing with http://configtool.vpuniverse.com");
     jobDescriptor.setJob(job);
-    jobDescriptor.setStatus(job.getStatus());
 
-    jobQueue.offer(jobDescriptor);
+    jobService.offer(jobDescriptor);
     LOG.info("Offered DOF Sync job.");
-
-    return JobExecutionResultFactory.empty();
+    return jobDescriptor;
   }
 
-  public JobExecutionResult sync(boolean wait) {
+  public JobDescriptor sync(boolean wait) {
     if (wait) {
-      DOFSynchronizationJob job = new DOFSynchronizationJob(this, getSettings());
-      return job.execute();
+      DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings());
+      JobDescriptor result = new JobDescriptor();
+      result.setTitle("Synchronizing DOF Settings");
+      result.setJob(job);
+      job.execute(result);
+      return result;
     }
 
     return asyncSync();
@@ -122,7 +122,8 @@ public class DOFService implements InitializingBean {
             LOG.info("DOF Synchronizer finished, took " + (System.currentTimeMillis() - start) + "ms.");
           }
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to synchronize DOF settings: " + e.getMessage(), e);
       }
     }).start();

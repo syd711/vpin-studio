@@ -1,13 +1,12 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResult;
-import de.mephisto.vpin.restclient.jobs.JobExecutionResultFactory;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -59,6 +58,12 @@ public class FrontendResource {
     return frontendStatusService.saveSettings(settings);
   }
 
+  @GetMapping("/media/{gameId}")
+  public FrontendMedia getKnownGames(@PathVariable("gameId") int gameId) {
+    //TODO the frontend connector getGame method does not work here
+    return gameService.getGame(gameId).getGameMedia();
+  }
+
   @GetMapping("/version")
   public int getVersion() {
     return frontendStatusService.getVersion();
@@ -70,7 +75,7 @@ public class FrontendResource {
   }
 
   @PostMapping("/import")
-  public JobExecutionResult importTable(@RequestBody GameListItem item) {
+  public JobDescriptor importTable(@RequestBody GameListItem item) {
     File tableFile = new File(item.getFileName());
     if (tableFile.exists()) {
       int result = frontendStatusService.importVPXGame(tableFile, true, -1, item.getEmuId());
@@ -78,7 +83,7 @@ public class FrontendResource {
         gameService.scanGame(result);
       }
     }
-    return JobExecutionResultFactory.ok("Imported " + item.getFileName(), -1);
+    return JobDescriptorFactory.ok( -1);
   }
 
   @GetMapping("/pincontrol/{screen}")

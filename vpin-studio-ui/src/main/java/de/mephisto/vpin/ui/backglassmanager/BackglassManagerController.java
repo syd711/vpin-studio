@@ -14,6 +14,7 @@ import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
@@ -21,7 +22,10 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.FileDragEventHandler;
 import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.StudioFolderChooser;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import javafx.application.Platform;
@@ -38,6 +42,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import org.apache.commons.io.FilenameUtils;
@@ -67,7 +73,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
  *
  */
 public class BackglassManagerController extends BaseTableController<DirectB2S, DirectB2SModel>
-  implements Initializable, StudioFXController {
+  implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
@@ -120,6 +126,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Label modificationDateLabel;
 
   @FXML
+  private Pane loaderStackImages;
+
+  @FXML
   private BorderPane thumbnailImagePane;
 
   @FXML
@@ -135,7 +144,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button downloadBackglassBtn;
 
   @FXML
+  private Button uploadDMDBtn;
+  @FXML
   private Button downloadDMDBtn;
+  @FXML
+  private Button deleteDMDBtn;
 
   //-- Editors
 
@@ -235,6 +248,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
+  private FileDragEventHandler fileDragEventHandler;
 
   @FXML
   private void onUpload(ActionEvent e) {
@@ -252,16 +266,21 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   public void refreshBackglass() {
-    try {
-      DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
-      if (selection != null) {
-        selection.reload();
-        refresh(selection.getBacklass());
+    refreshBackglass(getSelection());
+  }
+  public void refreshBackglass(DirectB2S directB2s) {
+    if (directB2s != null) {
+      try {
+        DirectB2SModel selection = getModel(directB2s);
+        if (selection != null) {
+          selection.reload();
+          refresh(selection.getBacklass());
+        }
       }
-    }
-    catch (Exception ex) {
-      LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
-      WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
+      catch (Exception ex) {
+        LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
+        WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
+      }
     }
   }
 
@@ -278,6 +297,19 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   @FXML
+  private void onDMDUpload() {
+    StudioFileChooser fileChooser = new StudioFileChooser();
+    fileChooser.setTitle("Select DMD Image");
+    fileChooser.getExtensionFilters().addAll(
+      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+
+    File selection = fileChooser.showOpenDialog(stage);
+    if (selection != null) {
+      updateDMDImage(selection);
+    }
+  }
+
+  @FXML
   private void onDMDDownload() {
     if (tableData.isDmdImageAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
@@ -286,6 +318,33 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       catch (IOException ioe) {
         LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
       }
+    }
+  }
+
+  @FXML
+  private void onDMDDelete() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image", 
+      "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      deleteDMDImage();
+    }
+  }
+
+  private void updateDMDImage(File selection) {
+    DirectB2S b2s = tableData.toDirectB2S();
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
+    refreshBackglass(b2s);
+    if (game != null) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
+    }
+  }
+
+  private void deleteDMDImage() {
+    DirectB2S b2s = tableData.toDirectB2S();
+    ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", b2s, null));
+    refreshBackglass(b2s);
+    if (game != null) {
+      EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
   }
 
@@ -419,6 +478,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
+
+    EventManager.getInstance().addListener(this);
 
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
     if (gameEmulators.isEmpty()) {
@@ -576,6 +637,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     // add the overlay for drag and drop
     new BackglassManagerDragDropHandler(this, tableView, tableStack);
+
+    // add the overlay for DMD image drag    
+    fileDragEventHandler = FileDragEventHandler.install(loaderStackImages, dmdThumbnailImagePane, true, "png", "jpg", "jpeg")
+        .setOnDragDropped(e -> {
+          List<File> files = e.getDragboard().getFiles();
+          if (files != null && files.size() == 1) {
+            File selection = files.get(0);
+            Platform.runLater(() -> {
+              updateDMDImage(selection);
+            });
+          }
+        });
   }
 
   @Override
@@ -676,11 +749,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     return ratio < 3.0;
   }
 
-  private JFXFuture refresh(@Nullable DirectB2S newValue) {
+  private JFXFuture<Void> refresh(@Nullable DirectB2S newValue) {
     if (newValue != null) {
+      fileDragEventHandler.setDisabled(false);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
     }
     else {
+      fileDragEventHandler.setDisabled(true);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
     }
 
@@ -711,7 +786,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     downloadBackglassBtn.setDisable(true);
+    uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
+    deleteDMDBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -841,7 +918,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       });
     }
     else {
-      return new JFXFuture(CompletableFuture.completedFuture(null));
+      return new JFXFuture<Void>(CompletableFuture.completedFuture(null));
     }
   }
 
@@ -899,10 +976,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     final Image _dmdThumbnail = dmdThumbnail;
     final String _dmdThumbnailError = dmdThumbnailError;
     Platform.runLater(() -> {
+      uploadDMDBtn.setDisable(false);
       if (_dmdThumbnail != null) {
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
+        deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
       }
@@ -983,6 +1062,38 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   public GameRepresentation getGame() {
     return game;
+  }
+
+
+  //------------------------------------------------
+  // Implementation of StudioEventListener
+
+  @Override
+  public void tableChanged(int id, String rom, String gameName) {
+    DirectB2SModel selection = tableView.getSelectionModel().getSelectedItem();
+
+    if (id > 0) {
+      GameRepresentation refreshedGame = client.getGameService().getGame(id);
+      reload(refreshedGame);
+    }
+    
+    if (selection != null && selection.getGameId() == id) {
+      refresh(selection.getBacklass());
+    }
+  }
+
+  private void reload(GameRepresentation refreshedGame) {
+    // tab should have been initiliazed to support reload
+    if (refreshedGame != null && models != null) {
+      for (DirectB2SModel model : models)  {
+        if (model.getGameId() == refreshedGame.getId()) {
+          model.getBacklass().setFileName(refreshedGame.getGameFileName());
+          model.reload();
+        }
+      }
+      // force refresh the view for elements not observed by the table
+      tableView.refresh();
+    }
   }
 
   //------------------------------------------------
