@@ -190,12 +190,11 @@ public class PupPacksService implements InitializingBean {
     LOG.info("Starting PUP pack extraction for ROM '" + rom + "'");
     PupPackInstallerJob job = new PupPackInstallerJob(this, tempFile, pupVideosFolder, analysis.getPupPackRootDirectory(), rom);
     if (!async) {
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
       job.execute(jobDescriptor);
     }
     else {
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL, UUID.randomUUID().toString());
-
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.PUP_INSTALL);
       jobDescriptor.setTitle("Installing PUP pack \"" + uploadDescriptor.getOriginalUploadFileName() + "\"");
       jobDescriptor.setJob(job);
 

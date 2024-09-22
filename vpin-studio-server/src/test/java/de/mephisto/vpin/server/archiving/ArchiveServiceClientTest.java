@@ -49,7 +49,7 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     assertNotNull(archiveDescriptor);
 
     TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, buildGameEmulator());
-    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL, UUID.randomUUID().toString());
+    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL);
 
     adapter.installTable(result);
     assertNull(result.getError());
@@ -61,7 +61,7 @@ public class ArchiveServiceClientTest extends AbstractVPinServerTest {
     // change the GameEmulator aand use a test one
     game.setEmulator(buildGameEmulator());
     TableBackupAdapter adapter = tableBackupAdapterFactory.createAdapter(archiveService.getDefaultArchiveSourceAdapter(), game);
-    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL, UUID.randomUUID().toString());
+    JobDescriptor result = new JobDescriptor(JobType.ARCHIVE_INSTALL);
     adapter.createBackup(result);
     assertNull(result.getError());
 

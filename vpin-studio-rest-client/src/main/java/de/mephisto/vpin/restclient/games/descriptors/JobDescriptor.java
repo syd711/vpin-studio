@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.jobs.JobType;
 
+import java.util.UUID;
+
 public class JobDescriptor {
   private String uuid;
   private String title;
@@ -55,9 +57,9 @@ public class JobDescriptor {
     this.error = error;
   }
 
-  public JobDescriptor(JobType jobType, String uuid) {
+  public JobDescriptor(JobType jobType) {
     this.jobType = jobType;
-    this.uuid = uuid;
+    this.uuid = UUID.randomUUID().toString();
   }
 
   public int getGameId() {

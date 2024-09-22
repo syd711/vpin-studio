@@ -43,10 +43,7 @@ public class Preferences {
   private String discordBotToken;
 
   private String discordBotAllowList;
-
-  private String vpbmInternalHostId;
-
-  private String vpbmExternalHostId;
+  private String backupSettings;
 
   private String rankingPoints;
 
@@ -102,6 +99,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getBackupSettings() {
+    return backupSettings;
+  }
+
+  public void setBackupSettings(String backupSettings) {
+    this.backupSettings = backupSettings;
+  }
 
   public String getVpuSettings() {
     return vpuSettings;
@@ -254,22 +259,6 @@ public class Preferences {
 
   public void setDiscordCategoryId(String discordCategoryId) {
     this.discordCategoryId = discordCategoryId;
-  }
-
-  public String getVpbmInternalHostId() {
-    return vpbmInternalHostId;
-  }
-
-  public void setVpbmInternalHostId(String vpbmInternalHostId) {
-    this.vpbmInternalHostId = vpbmInternalHostId;
-  }
-
-  public String getVpbmExternalHostId() {
-    return vpbmExternalHostId;
-  }
-
-  public void setVpbmExternalHostId(String vpbmExternalHostId) {
-    this.vpbmExternalHostId = vpbmExternalHostId;
   }
 
   public boolean isDiscordBotCommandsEnabled() {

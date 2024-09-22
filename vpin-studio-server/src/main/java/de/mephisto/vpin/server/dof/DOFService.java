@@ -59,7 +59,7 @@ public class DOFService implements InitializingBean {
 
   public JobDescriptor asyncSync() {
     DOFSynchronizationJob job = new DOFSynchronizationJob(getSettings());
-    JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC, UUID.randomUUID().toString());
+    JobDescriptor jobDescriptor = new JobDescriptor(JobType.DOF_SYNC);
     jobDescriptor.setTitle("Synchronizing DOF Settings");
     jobDescriptor.setJob(job);
 
