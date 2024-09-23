@@ -6,6 +6,7 @@ public class VPinConnection {
   private String host;
   private String name;
   private Image avatar;
+  private boolean discovered = false;
 
   public String getHost() {
     return host;
@@ -29,6 +30,14 @@ public class VPinConnection {
 
   public void setAvatar(Image avatar) {
     this.avatar = avatar;
+  }
+
+  public boolean getDiscovered() {
+    return discovered;
+  }
+
+  public void setDiscovered(boolean discovered) {
+    this.discovered = discovered;
   }
 
   @Override

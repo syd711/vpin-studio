@@ -7,6 +7,7 @@
 - **Table Overview / Reload**: A manual reload in the table overview results in full cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
 - **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
+- **VPin Studio Server**: Add server discovery.
 
 ## Bugfixes
   
