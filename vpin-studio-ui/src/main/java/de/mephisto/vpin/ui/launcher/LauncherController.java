@@ -122,7 +122,7 @@ public class LauncherController implements Initializable {
     }
 
     if (!dotNetInstalled) {
-      WidgetFactory.showAlert(stage, "Error", "No .net framework > 3.5 found.", "The .net framework is required for some server operations.");
+      WidgetFactory.showAlert(stage, "Error", "No .NET framework > 3.5 found.", "The .NET framework is required for some server operations.");
       return;
     }
 

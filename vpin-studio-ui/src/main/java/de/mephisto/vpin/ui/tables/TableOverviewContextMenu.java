@@ -7,14 +7,20 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,13 +30,15 @@ public class TableOverviewContextMenu {
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewContextMenu.class);
 
   private final TableOverviewController tableOverviewController;
+  private ContextMenu ctxMenu;
 
   public TableOverviewContextMenu(TableOverviewController tableOverviewController) {
     this.tableOverviewController = tableOverviewController;
   }
 
   public void refreshContextMenu(TableView<GameRepresentationModel> tableView, ContextMenu ctxMenu, GameRepresentation game) {
-    ctxMenu.getItems().clear();
+    this.ctxMenu = ctxMenu;
+    this.ctxMenu.getItems().clear();
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
     Image image3 = new Image(Studio.class.getResourceAsStream("popper-media.png"));
@@ -67,16 +75,22 @@ public class TableOverviewContextMenu {
 
 
     MenuItem dataItem = new MenuItem("Edit Table Data");
+    KeyCombination dataItemKey = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);
+    dataItem.setAccelerator(dataItemKey);
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
 
     if (frontendType.supportMedias()) {
       MenuItem assetsItem = new MenuItem("Edit Table Assets");
       assetsItem.setGraphic(iconMedia);
+      KeyCombination assetsItemKey = new KeyCodeCombination(KeyCode.I, KeyCombination.CONTROL_DOWN);
+      assetsItem.setAccelerator(assetsItemKey);
       assetsItem.setOnAction(actionEvent -> tableOverviewController.onMediaEdit());
       ctxMenu.getItems().add(assetsItem);
 
       MenuItem assetsViewItem = new MenuItem("Toggle Asset Management View");
+      KeyCombination assetsViewItemKey = new KeyCodeCombination(KeyCode.M, KeyCombination.CONTROL_DOWN);
+      assetsViewItem.setAccelerator(assetsViewItemKey);
       assetsViewItem.setGraphic(iconAssetView);
       assetsViewItem.setOnAction(actionEvent -> tableOverviewController.onAssetView());
       ctxMenu.getItems().add(assetsViewItem);
@@ -86,6 +100,8 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem vpsItem = new MenuItem("Open VPS Entry");
+      KeyCombination vpsItemKey = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
+      vpsItem.setAccelerator(vpsItemKey);
       vpsItem.setOnAction(actionEvent -> tableOverviewController.onVps());
       vpsItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
       vpsItem.setGraphic(iconVps);
@@ -100,6 +116,8 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem eventLogItem = new MenuItem("Event Log");
+      KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+      eventLogItem.setAccelerator(eventLogItemKey);
       eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
       eventLogItem.setDisable(!game.isEventLogAvailable());
       eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
@@ -108,11 +126,15 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem scanItem = new MenuItem("Scan");
+      KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
+      scanItem.setAccelerator(scanItemKey);
       scanItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search-outline"));
       scanItem.setOnAction(actionEvent -> tableOverviewController.onTablesScan());
       ctxMenu.getItems().add(scanItem);
 
       MenuItem scanAllItem = new MenuItem("Scan All");
+//      KeyCombination scanAllItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN, KeyCombination.ALT_DOWN);
+//      scanAllItem.setAccelerator(scanAllItemKey);
       scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
       scanAllItem.setOnAction(actionEvent -> tableOverviewController.onTablesScanAll());
       ctxMenu.getItems().add(scanAllItem);
@@ -125,7 +147,7 @@ public class TableOverviewContextMenu {
         importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
         ctxMenu.getItems().add(importsItem);
       }
-      
+
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem b2sItem = new MenuItem("Open Backglass Manager");
@@ -137,10 +159,14 @@ public class TableOverviewContextMenu {
 
       MenuItem uploadAndImportTableItem = new MenuItem("Upload and Import Table");
       uploadAndImportTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
+      KeyCombination uploadAndImportTableItemKey = new KeyCodeCombination(KeyCode.U, KeyCombination.CONTROL_DOWN);
+      uploadAndImportTableItem.setAccelerator(uploadAndImportTableItemKey);
       uploadAndImportTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndImport));
       ctxMenu.getItems().add(uploadAndImportTableItem);
 
       MenuItem uploadAndReplaceTableItem = new MenuItem("Upload and Replace Table");
+      KeyCombination uploadAndReplaceTableItemKey = new KeyCodeCombination(KeyCode.R, KeyCombination.CONTROL_DOWN);
+      uploadAndReplaceTableItem.setAccelerator(uploadAndReplaceTableItemKey);
       uploadAndReplaceTableItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       uploadAndReplaceTableItem.setOnAction(actionEvent -> tableOverviewController.openUploadDialogWithCheck(TableUploadType.uploadAndReplace));
       ctxMenu.getItems().add(uploadAndReplaceTableItem);
@@ -247,6 +273,9 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem launchItem = new MenuItem("Launch");
+      KeyCombination launchKey = new KeyCodeCombination(KeyCode.L, KeyCombination.CONTROL_DOWN);
+      launchItem.setAccelerator(launchKey);
+
       launchItem.setGraphic(WidgetFactory.createGreenIcon("mdi2p-play"));
       launchItem.setOnAction(actionEvent -> tableOverviewController.onPlay());
       ctxMenu.getItems().add(launchItem);
@@ -279,10 +308,24 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
       MenuItem removeItem = new MenuItem("Delete");
+      KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
+      removeItem.setAccelerator(removeItemKey);
       removeItem.setOnAction(actionEvent -> tableOverviewController.onDelete());
       removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
       ctxMenu.getItems().add(removeItem);
 
+    }
+  }
+
+  public void handleKeyEvent(KeyEvent event) {
+    if (!event.isConsumed()) {
+      List<MenuItem> items = new ArrayList<>(ctxMenu.getItems());
+      for (MenuItem item : items) {
+        if (item.getAccelerator() != null && item.getAccelerator().match(event)) {
+          item.getOnAction().handle(null);
+          event.consume();
+        }
+      }
     }
   }
 }

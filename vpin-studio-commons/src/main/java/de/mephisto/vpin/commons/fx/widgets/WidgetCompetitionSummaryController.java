@@ -151,7 +151,6 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
 
     GameRepresentation game = ServerFX.client.getGame(competition.getGameId());
     FrontendMediaRepresentation frontendMedia = ServerFX.client.getFrontendMedia(game.getId());
-
     if (game != null) {
       if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
         durationLabel.setText("Table Subscription");
@@ -254,6 +253,7 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         scoreLabel5.setFont(getCompetitionScoreFont());
         scoreLabel5.setText(score5.getScore());
       }
+
 
       FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {

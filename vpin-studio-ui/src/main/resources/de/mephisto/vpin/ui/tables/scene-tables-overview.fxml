@@ -236,7 +236,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Asset Manager" />
+                  <Tooltip text="Asset Manager View (Ctrl+M)" />
                </tooltip>
             </Button>
             <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
@@ -247,7 +247,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Asset Manager" />
+                  <Tooltip text="Asset Manager (Ctrl+I)" />
                </tooltip>
             </Button>
             <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
@@ -258,7 +258,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Edit Table Data" />
+                  <Tooltip text="Edit Table Data (Ctrl+O)" />
                </tooltip>
             </Button>
             <Separator fx:id="importSeparator" layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
@@ -359,7 +359,7 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Delete table and assets" />
+                  <Tooltip text="Delete table and assets (Delete)" />
                </tooltip>
             </Button>
             <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
@@ -401,7 +401,7 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                </graphic>
                <tooltip>
-                     <Tooltip text="Kill all VPX and [Frontend] processes." />
+                     <Tooltip text="Kill all VPX and [Frontend] processes (Ctrl + K)" />
                </tooltip>
             </Button>
             <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">

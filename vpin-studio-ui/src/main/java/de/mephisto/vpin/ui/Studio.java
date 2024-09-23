@@ -4,8 +4,8 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
@@ -14,26 +14,23 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
-import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.launcher.LauncherController;
 import de.mephisto.vpin.ui.tables.TableReloadProgressModel;
 import de.mephisto.vpin.ui.tables.vbsedit.VBSManager;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.HostServices;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.ButtonType;
 import javafx.scene.image.Image;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
@@ -47,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.Desktop;
+import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +62,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Studio extends Application {
   private final static Logger LOG = LoggerFactory.getLogger(Studio.class);
-  public static final double SCALING_DIFF = 0.05;
 
   public static Stage stage;
 
@@ -74,7 +70,6 @@ public class Studio extends Application {
 
   private static HostServices hostServices;
 
-  private static double scaling = 1;
   private ServerSocket ss;
 
   public static void main(String[] args) {
@@ -246,75 +241,7 @@ public class Studio extends Application {
         FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
         stage.setUserData(fxResizeHelper);
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
-          public void handle(KeyEvent ke) {
-            if (ke.getCode() == KeyCode.U && ke.isAltDown() && ke.isControlDown()) {
-              Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), true);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.MINUS && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              if (scaling < SCALING_DIFF) {
-                return;
-              }
-              scaling = scaling - SCALING_DIFF;
-              stage.setWidth(stage.getWidth() * scaling);
-              stage.setHeight(stage.getHeight() * scaling);
-
-              r.setScaleX(scaling);
-              r.setScaleY(scaling);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.PLUS && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              if (scaling > (1 - SCALING_DIFF)) {
-                return;
-              }
-              scaling = scaling + SCALING_DIFF;
-              r.setScaleX(scaling);
-              r.setScaleY(scaling);
-              stage.setWidth(stage.getWidth() * scaling);
-              stage.setHeight(stage.getHeight() * scaling);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.H && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              scaling = 1;
-              stage.setWidth(1920);
-              stage.setHeight(1080);
-              r.setScaleX(1);
-              r.setScaleY(1);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.S && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              scaling = 1;
-              stage.setWidth(1280);
-              stage.setHeight(720);
-              r.setScaleX(1);
-              r.setScaleY(1);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.W && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              scaling = 1;
-              stage.setWidth(2560);
-              stage.setHeight(1440);
-              r.setScaleX(1);
-              r.setScaleY(1);
-              ke.consume();
-            }
-            if (ke.getCode() == KeyCode.C && ke.isAltDown() && ke.isControlDown()) {
-              Parent r = stage.getScene().getRoot();
-              scaling = 1;
-              stage.setWidth(1024);
-              stage.setHeight(600);
-              r.setScaleX(1);
-              r.setScaleY(1);
-              ke.consume();
-            }
-          }
-        });
+        scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
 
         client.setErrorHandler(errorHandler);
         stage.show();

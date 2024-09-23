@@ -192,6 +192,10 @@ public class NavigationController implements Initializable, StudioEventListener,
     navigateTo(item, null);
   }
 
+  public static StudioFXController getActiveNavigationController() {
+    return activeNavigation.getController();
+  }
+
   public static void navigateTo(NavigationItem item, NavigationOptions options) {
     NavigationView navigationView = navigationItemMap.get(item);
     if (activeNavigation != null) {

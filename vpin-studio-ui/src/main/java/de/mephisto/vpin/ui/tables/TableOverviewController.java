@@ -43,9 +43,12 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -1360,7 +1363,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
           row.itemProperty().addListener((obs, oldItem, newItem) -> {
             if (newItem == null) {
-              menu.getItems().clear();
+//              menu.getItems().clear();
             }
             else {
               contextMenuController.refreshContextMenu(tableView, menu, newItem.getGame());
@@ -1948,6 +1951,31 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
         setText(" " + item.toString());
       }
+    }
+  }
+
+  @Override
+  public void onKeyEvent(KeyEvent event) {
+    contextMenuController.handleKeyEvent(event);
+
+    if (event.isConsumed()) {
+      return;
+    }
+
+    if (event.getCode() == KeyCode.K && event.isControlDown()) {
+      onStop();
+      event.consume();
+    }
+    else if (event.getCode() == KeyCode.F && event.isControlDown()) {
+      searchTextField.requestFocus();
+      searchTextField.selectAll();
+      event.consume();
+    }
+    else if (event.getCode() == KeyCode.ESCAPE) {
+      if (searchTextField.isFocused()) {
+        searchTextField.setText("");
+      }
+      event.consume();
     }
   }
 }
