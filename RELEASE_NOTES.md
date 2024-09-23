@@ -8,6 +8,7 @@
 - **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
 - **Shortcuts**: Introduced shortcuts. You can see the key bindings on hover of the corresponding buttons or via the context menu. You also can press Ctrl+F now to focus the search field to search for tables. The different tabs of the "Tables" can be switched using the function key too.
+- **VPin Studio Server**: Add server discovery.
 
 ## Bugfixes
   
