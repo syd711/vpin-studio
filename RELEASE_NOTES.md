@@ -4,8 +4,8 @@
   
 - **Splash Screen**: Fixed rendering of splash screen for Linux clients.
 - **Table Uploads**: Fixed file filter which had a missing wildcard for .rar files.
-- **Table Overview***: Fixed filtered table refresh after changes have been made that affect the currently filtered tables. 
-- **Server Installer***: Fixed invalid .NET version check.
+- **Table Overview**: Fixed filtered table refresh after changes have been made that affect the currently filtered tables. 
+- **Server Installer**: Fixed invalid .NET version check.
 
 
 ## Release Notes 3.6.0
