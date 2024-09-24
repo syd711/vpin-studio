@@ -64,7 +64,10 @@
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="emulatorCombo" prefWidth="150.0" />
+                        <ComboBox fx:id="emulatorCombo" prefWidth="250.0">
+                           <HBox.margin>
+                              <Insets left="6.0" />
+                           </HBox.margin></ComboBox>
                      </children>
                      <VBox.margin>
                         <Insets bottom="12.0" />

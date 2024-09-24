@@ -650,11 +650,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onImport() {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        TableDialogs.openTableImportDialog();
+        TableDialogs.openTableImportDialog(this.emulatorCombo.getValue());
       }
     }
     else {
-      TableDialogs.openTableImportDialog();
+      TableDialogs.openTableImportDialog(this.emulatorCombo.getValue());
     }
   }
 

@@ -7,6 +7,7 @@
 - **Table Overview / Reload**: A manual reload in the table overview results in full cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
 - **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
 - **Table Overview / Highscores**: Switched order of highscore graph and highscore card.
+- **iScored Integration**: Added the additional tag support for **vps:singlescore**. If you apply this tag to a table in iScored, the VPin Studio will only submit a highscore to iScored if the user has not posted any other score for that table yet - no matter if the new score is higher or not.
 - **Pause Menu**: Added additional info about the highscore data (if supported or not).
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
 - **Shortcuts**: Introduced shortcuts. You can see the key bindings on hover of the corresponding buttons or via the context menu. You also can press Ctrl+F now to focus the search field to search for tables. The different tabs of the "Tables" can be switched using the function key too.
