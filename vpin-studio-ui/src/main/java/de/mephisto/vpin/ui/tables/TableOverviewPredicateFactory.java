@@ -78,13 +78,13 @@ public class TableOverviewPredicateFactory {
           if (noteType.equals(NoteType.Any) && StringUtils.isEmpty(game.getNotes())) {
             return false;
           }
-          if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//ERROR"))) {
+          if (noteType.equals(NoteType.Errors) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//error"))) {
             return false;
           }
-          if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//OUTDATED"))) {
+          if (noteType.equals(NoteType.Outdated) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//outdated"))) {
             return false;
           }
-          if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().contains("//TODO"))) {
+          if (noteType.equals(NoteType.Todos) && (StringUtils.isEmpty(game.getNotes()) || !game.getNotes().toLowerCase().contains("//todo"))) {
             return false;
           }
         }
