@@ -150,6 +150,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     // mind that it can be called by threads before data is even initialized
     if (this.filteredModels != null) {
       this.filteredModels.setPredicate(filterController.buildPredicate());
+      // update data count
+      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
     }
   }
 
@@ -185,10 +187,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
     // Wrap games in a FilteredList
     this.filteredModels = new FilteredList<>(models);
-    // When predicate change, update data count
-    this.filteredModels.predicateProperty().addListener((o, oldP, newP) -> {
-      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
-    });
 
     // Wrap the FilteredList in a SortedList
     SortedList<M> sortedData = new SortedList<>(this.filteredModels);

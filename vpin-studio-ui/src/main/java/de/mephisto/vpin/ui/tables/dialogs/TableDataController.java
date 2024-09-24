@@ -81,7 +81,9 @@ public class TableDataController implements Initializable, DialogController, Aut
   private final static TableStatus STATUS_MATURE = new TableStatus(2, "Visible (Mature/Hidden)");
   private final static TableStatus STATUS_WIP = new TableStatus(3, "Work In Progress");
 
-  public final static List<TableStatus> TABLE_STATUSES = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public final static List<TableStatus> TABLE_STATUSES_FULL = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL, STATUS_MATURE, STATUS_WIP));
+  public final static List<TableStatus> TABLE_STATUSES_MINI = new ArrayList<>(Arrays.asList(STATUS_DISABLED, STATUS_NORMAL));
+
   public static final int MIN_HEIGHT = 712;
   public static int lastTab = 0;
 
@@ -817,9 +819,10 @@ public class TableDataController implements Initializable, DialogController, Aut
       //---------------
       // TAB Meta Data
 
-      statusCombo.setItems(FXCollections.observableList(TABLE_STATUSES));
+      List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+      statusCombo.setItems(FXCollections.observableList(statuses));
       if (tableDetails.getStatus() >= 0 && tableDetails.getStatus() <= 3) {
-        TableStatus tableStatus = TABLE_STATUSES.get(tableDetails.getStatus());
+        TableStatus tableStatus = statuses.get(tableDetails.getStatus());
         statusCombo.setValue(tableStatus);
       }
       statusCombo.valueProperty().addListener((observableValue, tableStatus, t1) -> {
@@ -1183,5 +1186,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
     refreshVersionsCombo(selectedEntry.orElseGet(null));
     this.tableVersionsCombo.valueProperty().addListener(this);
+  }
+
+  public static List<TableStatus> supportedStatuses(FrontendType frontendType) {
+      return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
   }
 }

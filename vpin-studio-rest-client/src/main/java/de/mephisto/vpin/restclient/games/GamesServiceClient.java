@@ -114,16 +114,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
-    try {
-      return new ArrayList<>(Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class)));
-    }
-    catch (Exception e) {
-      LOG.error("Failed to filter games: " + e.getMessage(), e);
-    }
-    return null;
-  }
-
   public List<GameRepresentation> getGamesByRom(String rom) {
     List<GameRepresentation> gameList = this.getVpxGamesCached();
     List<GameRepresentation> result = new ArrayList<>();
