@@ -38,6 +38,8 @@ public class Preferences {
 
   private String discordChannelId;
 
+  private String discordUpdatesChannelId;
+
   private String discordCategoryId;
 
   private String discordBotToken;
@@ -99,6 +101,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getDiscordUpdatesChannelId() {
+    return discordUpdatesChannelId;
+  }
+
+  public void setDiscordUpdatesChannelId(String discordUpdatesChannelId) {
+    this.discordUpdatesChannelId = discordUpdatesChannelId;
+  }
 
   public String getBackupSettings() {
     return backupSettings;

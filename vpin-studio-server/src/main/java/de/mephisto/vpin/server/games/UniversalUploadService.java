@@ -1,20 +1,29 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
+import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.mame.MameService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.vps.VpsService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,8 +31,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.*;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.Optional;
 
 @Service
 public class UniversalUploadService {
@@ -55,6 +66,12 @@ public class UniversalUploadService {
 
   @Autowired
   private VpsService vpsService;
+
+  @Autowired
+  private DiscordService discordService;
+
+  @Autowired
+  private PreferencesService preferencesService;
 
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
@@ -160,7 +177,7 @@ public class UniversalUploadService {
       }
       case MUSIC: {
         String rom = null;
-        if(game != null) {
+        if (game != null) {
           rom = game.getRom();
         }
         vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
@@ -189,16 +206,16 @@ public class UniversalUploadService {
     String originalFilename = uploadDescriptor.getOriginalUploadFileName();
     if (originalFilename.endsWith(VpsInstallLink.VPS_INSTALL_LINK_PREFIX)) {
 
-      originalFilename = StringUtils.substring(originalFilename, 0, - VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+      originalFilename = StringUtils.substring(originalFilename, 0, -VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
       uploadDescriptor.setOriginalUploadFileName(originalFilename);
 
       File tempFile = new File(uploadDescriptor.getTempFilename());
       try (InputStream in = new FileInputStream(tempFile)) {
         String content = new String(in.readAllBytes(), StandardCharsets.UTF_8);
-        String link  = StringUtils.substringBeforeLast(content, "@");
-        String order  = StringUtils.substringAfterLast(content, "@");
+        String link = StringUtils.substringBeforeLast(content, "@");
+        String order = StringUtils.substringAfterLast(content, "@");
 
-        String tempFilename = StringUtils.substring(uploadDescriptor.getTempFilename(), 0, - VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
+        String tempFilename = StringUtils.substring(uploadDescriptor.getTempFilename(), 0, -VpsInstallLink.VPS_INSTALL_LINK_PREFIX.length());
         uploadDescriptor.setTempFilename(tempFilename);
         try (FileOutputStream fout = new FileOutputStream(tempFilename)) {
           vpsService.downloadLink(fout, link, Integer.parseInt(order));
@@ -218,5 +235,50 @@ public class UniversalUploadService {
 
     org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
     LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+  }
+
+
+  /**
+   * Responsible for emitting updates about the newly installed table.
+   * Right now this is kept simply, some event bus might be used in the future here.
+   *
+   * @param uploadDescriptor
+   */
+  public void notifyUpdates(UploadDescriptor uploadDescriptor) {
+    Long serverId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_GUILD_ID, -1);
+    Long channelId = preferencesService.getPreferenceValueLong(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID, -1);
+    if (channelId > 0 && serverId > 0) {
+      Game game = gameService.scanGame(uploadDescriptor.getGameId());
+      if (game != null) {
+        EmbedBuilder embed = new EmbedBuilder();
+        String url = null;
+        String imgUrl = null;
+        if (!StringUtils.isEmpty(game.getExtTableId())) {
+          url = VPS.getVpsTableUrl(game.getExtTableId());
+          VpsTable table = vpsService.getTableById(game.getExtTableId());
+          if (table != null) {
+            Optional<VpsTableVersion> first = table.getTableFiles().stream().filter(t -> t.getImgUrl() != null).findFirst();
+            if (first.isPresent()) {
+              imgUrl = first.get().getImgUrl();
+            }
+          }
+        }
+
+        embed.setTitle(game.getGameDisplayName(), url);
+        if (imgUrl != null) {
+          embed.setImage(imgUrl);
+        }
+        if (uploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+          embed.addField("New Table Installed", "", false);
+        }
+        else {
+          embed.addField("Table Updated", "", false);
+        }
+        embed.setColor(Color.GREEN);
+        MessageEmbed build = embed.build();
+
+        discordService.sendMessage(serverId, channelId, build);
+      }
+    }
   }
 }

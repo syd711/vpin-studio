@@ -37,6 +37,7 @@ public interface PreferenceNames {
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";
+  String DISCORD_UPDATES_CHANNEL_ID = "discordUpdatesChannelId";
   String DISCORD_CATEGORY_ID = "discordCategoryId";
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";

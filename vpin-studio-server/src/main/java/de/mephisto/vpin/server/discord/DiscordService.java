@@ -17,6 +17,7 @@ import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.Category;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -208,6 +209,14 @@ public class DiscordService implements InitializingBean, PreferenceChangedListen
   }
 
   public long sendMessage(long serverId, long channelId, String message) {
+    if (this.discordClient != null) {
+      SLOG.info("Sending discord message to channel " + channelId);
+      return this.discordClient.sendMessage(serverId, channelId, message);
+    }
+    return -1;
+  }
+
+  public long sendMessage(long serverId, long channelId, MessageEmbed message) {
     if (this.discordClient != null) {
       SLOG.info("Sending discord message to channel " + channelId);
       return this.discordClient.sendMessage(serverId, channelId, message);
