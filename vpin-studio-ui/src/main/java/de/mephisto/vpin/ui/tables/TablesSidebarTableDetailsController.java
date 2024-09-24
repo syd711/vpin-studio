@@ -326,7 +326,8 @@ public class TablesSidebarTableDetailsController implements Initializable {
       }
 
       if (tableDetails.getStatus() >= 0) {
-        Optional<TableStatus> first = TableDataController.TABLE_STATUSES.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
+        List<TableStatus> statuses = TableDataController.supportedStatuses(frontendType);
+        Optional<TableStatus> first = statuses.stream().filter(status -> status.value == tableDetails.getStatus()).findFirst();
         if (first.isPresent()) {
           status.setText(first.get().label);
         }
