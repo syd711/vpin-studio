@@ -36,22 +36,28 @@ public class WinRegistry {
     LOG.info("Found .net registry entries: " + String.join(", ", localMachineKeys));
     for (String localMachineKey : localMachineKeys) {
       if (localMachineKey.startsWith("v")) {
-        String formatted = localMachineKey.replaceAll("\\.", "");
-        String versionId = formatted.substring(1);
-        if (versionId.length() == 1) {
-          versionId = "0" + versionId;
-        }
-        else if (versionId.length() > 2) {
-          versionId = versionId.substring(0, 2);
-        }
-
-        int i = Integer.parseInt(versionId);
-        if (i > 30) {
-          LOG.info("Found .net framework " + localMachineKey);
+        if (isValidDotNetVersion(localMachineKey)) {
           return true;
         }
-
       }
+    }
+    return false;
+  }
+
+  public static boolean isValidDotNetVersion(String localMachineKey) {
+    String formatted = localMachineKey.replaceAll("\\.", "");
+    String versionId = formatted.substring(1);
+    if (versionId.length() == 1) {
+      versionId = versionId + "0";
+    }
+    else if (versionId.length() > 2) {
+      versionId = versionId.substring(0, 2);
+    }
+
+    int i = Integer.parseInt(versionId);
+    if (i > 30) {
+      LOG.info("Found .net framework " + localMachineKey);
+      return true;
     }
     return false;
   }
