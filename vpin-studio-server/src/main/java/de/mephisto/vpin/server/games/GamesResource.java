@@ -32,17 +32,9 @@ public class GamesResource {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private GameFilterService gameFilterService;
-
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
-  }
-
-  @PostMapping("/filter")
-  public List<Integer> getGamesFiltered(@RequestBody FilterSettings filterSettings) {
-    return gameFilterService.filterGames(gameService, filterSettings);
   }
 
   @GetMapping("/ids")

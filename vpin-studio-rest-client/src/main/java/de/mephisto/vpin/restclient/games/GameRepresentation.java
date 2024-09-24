@@ -38,6 +38,13 @@ public class GameRepresentation {
   private Date modified;
   private FrontendMediaRepresentation gameMedia;
   private ValidationState validationState;
+  private boolean hasMissingAssets;
+  private boolean hasOtherIssues;
+  private boolean validScoreConfiguration;
+
+  private boolean played;
+  private int gameStatus;
+
   private String hsFileName;
   private String scannedHsFileName;
   private boolean romExists;
@@ -91,6 +98,20 @@ public class GameRepresentation {
 
   public void setCardDisabled(boolean cardDisabled) {
     this.cardDisabled = cardDisabled;
+  }
+
+  public boolean isPlayed() {
+    return played;
+  }
+  public void setPlayed(boolean played) {
+    this.played = played;
+  }
+
+  public int getGameStatus() {
+    return gameStatus;
+  }
+  public void setGameStatus(int gameStatus) {
+    this.gameStatus = gameStatus;
   }
 
   public String getDirectB2SPath() {
@@ -368,9 +389,29 @@ public class GameRepresentation {
   public ValidationState getValidationState() {
     return validationState;
   }
-
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
+  }
+
+  public boolean isHasMissingAssets() {
+    return hasMissingAssets;
+  }
+  public void setHasMissingAssets(boolean hasMissingAssets) {
+    this.hasMissingAssets = hasMissingAssets;
+  }
+
+  public boolean isHasOtherIssues() {
+    return hasOtherIssues;
+  }
+  public void setHasOtherIssues(boolean hasOtherIssues) {
+    this.hasOtherIssues = hasOtherIssues;
+  }
+
+  public boolean isValidScoreConfiguration() {
+    return validScoreConfiguration;
+  }
+  public void setValidScoreConfiguration(boolean validScoreConfiguration) {
+    this.validScoreConfiguration = validScoreConfiguration;
   }
 
   public String getRom() {

@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.puppack.PupPack;
-import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -47,12 +46,19 @@ public class Game {
   private String scannedHsFileName;
   private boolean cardDisabled;
 
+  private boolean played;
+  private int gameStatus;
+
   private GameEmulator emulator;
   private int emulatorId;
 
   private File gameFile;
 
   private ValidationState validationState;
+  private boolean hasMissingAssets;
+  private boolean hasOtherIssues;
+  private boolean validScoreConfiguration;
+
   private List<Integer> ignoredValidations = new ArrayList<>();
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
@@ -301,6 +307,20 @@ public class Game {
 
   public void setTableName(String tableName) {
     this.tableName = tableName;
+  }
+
+  public boolean isPlayed() {
+    return played;
+  }
+  public void setPlayed(boolean played) {
+    this.played = played;
+  }
+
+  public int getGameStatus() {
+    return gameStatus;
+  }
+  public void setGameStatus(int gameStatus) {
+    this.gameStatus = gameStatus;
   }
 
   @NonNull
@@ -575,9 +595,29 @@ public class Game {
   public ValidationState getValidationState() {
     return validationState;
   }
-
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
+  }
+
+  public boolean isHasMissingAssets() {
+    return hasMissingAssets;
+  }
+  public void setHasMissingAssets(boolean hasMissingAssets) {
+    this.hasMissingAssets = hasMissingAssets;
+  }
+
+  public boolean isHasOtherIssues() {
+    return hasOtherIssues;
+  }
+  public void setHasOtherIssues(boolean hasOtherIssues) {
+    this.hasOtherIssues = hasOtherIssues;
+  }
+
+  public boolean isValidScoreConfiguration() {
+    return validScoreConfiguration;
+  }
+  public void setValidScoreConfiguration(boolean validScoreConfiguration) {
+    this.validScoreConfiguration = validScoreConfiguration;
   }
 
   @Nullable

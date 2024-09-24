@@ -552,6 +552,8 @@ public class GameService implements InitializingBean {
         validate.add(GameValidationStateFactory.empty());
       }
       game.setValidationState(validate.get(0));
+      game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
+    
       game.setNotes(gameDetails.getNotes());
       return newGame;
     }
@@ -606,6 +608,11 @@ public class GameService implements InitializingBean {
     if(!StringUtils.isEmpty(tableDetails.getAltLaunchExe()) && tableDetails.getAltLaunchExe().contains(".exe")) {
       game.setLauncher(tableDetails.getAltLaunchExe());
     }
+
+    //add info from TableDetails for Game filtering
+    boolean played = tableDetails == null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
+    game.setPlayed(played);
+    game.setGameStatus(tableDetails != null ? tableDetails.getStatus(): -1);
 
     //only apply legacy table name if the frontend fields are empty
     if (StringUtils.isEmpty(game.getTableName())) {
@@ -690,6 +697,11 @@ public class GameService implements InitializingBean {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
+    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
+    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
+
+    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
+    game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
 
     return newGame;
   }

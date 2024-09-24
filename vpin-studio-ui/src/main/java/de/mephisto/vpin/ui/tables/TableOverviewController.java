@@ -557,7 +557,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   public void refreshFilters() {
-    getTableFilterController().refreshFilters();
+    getTableFilterController().applyFilters();
   }
 
   public void refreshUploadResult(UploadDescriptor uploadResult) {
@@ -1759,7 +1759,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     assetManagerViewBtn.managedProperty().bindBidirectional(assetManagerViewBtn.visibleProperty());
 
     Platform.runLater(() -> {
-      getTableFilterController().refreshFilters();
+      getTableFilterController().applyFilters();
     });
   }
 
@@ -1875,7 +1875,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       Platform.runLater(() -> {
         reloadConsumers.add(selection -> {
           refreshViewForEmulator();
-          getTableFilterController().refreshFilters();
+          getTableFilterController().applyFilters();
         });
         // just reload from cache
         onSwitchFromCache();
