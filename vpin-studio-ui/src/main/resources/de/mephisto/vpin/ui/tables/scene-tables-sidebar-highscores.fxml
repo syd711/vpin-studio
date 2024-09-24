@@ -207,6 +207,23 @@
                                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                     </padding>
                                 </VBox>
+                                <VBox fx:id="scoreGraphWrapper">
+                                    <VBox.margin>
+                                        <Insets top="24.0" />
+                                    </VBox.margin>
+                                    <children>
+                                        <Label fx:id="formattedTitleLabel1" text="Score Graph" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <BorderPane fx:id="scoreGraph">
+                                            <VBox.margin>
+                                                <Insets right="24.0" top="12.0" />
+                                            </VBox.margin>
+                                        </BorderPane>
+                                    </children>
+                                </VBox>
                         <Label fx:id="rawTitleLabel1" layoutX="10.0" layoutY="232.0" text="Highscore Card Preview" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
@@ -227,23 +244,6 @@
                               </ImageView>
                            </children>
                         </VBox>
-                                <VBox fx:id="scoreGraphWrapper">
-                                    <VBox.margin>
-                                        <Insets top="24.0" />
-                                    </VBox.margin>
-                                    <children>
-                                        <Label fx:id="formattedTitleLabel1" text="Score Graph" textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <BorderPane fx:id="scoreGraph">
-                                            <VBox.margin>
-                                                <Insets top="12.0" />
-                                            </VBox.margin>
-                                        </BorderPane>
-                                    </children>
-                                </VBox>
                      </children>
                   </VBox>
                       </children>

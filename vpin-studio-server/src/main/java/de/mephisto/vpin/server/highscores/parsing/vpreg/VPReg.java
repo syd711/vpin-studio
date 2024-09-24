@@ -60,13 +60,16 @@ public class VPReg {
           result.add(entries.next().getName());
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read VPReg: " + e.getMessage());
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -80,13 +83,16 @@ public class VPReg {
       fs = new POIFSFileSystem(vpregFile, false);
       DirectoryEntry root = fs.getRoot();
       return getGameDirectory(root) != null;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read VPReg: " + e.getMessage());
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -109,13 +115,16 @@ public class VPReg {
         fs.writeFilesystem();
         return true;
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       throw new RuntimeException(e);
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -148,13 +157,16 @@ public class VPReg {
       ObjectMapper objectMapper = new ObjectMapper();
       objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
       return objectMapper.writeValueAsString(target);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -191,13 +203,16 @@ public class VPReg {
       }
 
       fs.writeFilesystem();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -218,13 +233,16 @@ public class VPReg {
           }
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read VPReg.stg: " + e.getMessage(), e);
-    } finally {
+    }
+    finally {
       if (fs != null) {
         try {
           fs.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
           //ignore
         }
       }
@@ -243,8 +261,16 @@ public class VPReg {
       return (DirectoryEntry) root.getEntry(rom);
     }
 
+    if (root.hasEntry(rom.toLowerCase())) {
+      return (DirectoryEntry) root.getEntry(rom.toLowerCase());
+    }
+
     if (tablename != null && root.hasEntry(tablename)) {
       return (DirectoryEntry) root.getEntry(tablename);
+    }
+
+    if (tablename != null && root.hasEntry(tablename.toLowerCase())) {
+      return (DirectoryEntry) root.getEntry(tablename.toLowerCase());
     }
 
     return null;

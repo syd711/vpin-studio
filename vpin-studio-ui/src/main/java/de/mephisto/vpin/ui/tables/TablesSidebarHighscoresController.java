@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.ScoreGraphUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.highscores.*;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.ui.NavigationController;
@@ -15,6 +16,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import eu.hansolo.tilesfx.Tile;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -159,7 +161,7 @@ public class TablesSidebarHighscoresController implements Initializable {
 
   @FXML
   private void onScan() {
-    this.refreshView(game, true);
+    this.refreshView(game);
   }
 
   @FXML
@@ -219,7 +221,7 @@ public class TablesSidebarHighscoresController implements Initializable {
         if (!Studio.client.getGameService().resetHighscore(g.getId())) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Reset Failed", "Check the log files for details and make sure that no process is blocking the highscore file.");
         }
-        this.refreshView(this.game, true);
+        this.refreshView(this.game);
       }
     }
   }
@@ -227,10 +229,21 @@ public class TablesSidebarHighscoresController implements Initializable {
   public void setGame(Optional<GameRepresentation> game) {
     this.highscoreBackups = new ArrayList<>();
     this.game = game;
-    this.refreshView(game, false);
+
+    Platform.runLater(() -> {
+      this.refreshView(game);
+    });
   }
 
-  public void refreshView(Optional<GameRepresentation> g, boolean forceRescan) {
+  public void refreshView(Optional<GameRepresentation> g) {
+    HighscoreMetadataRepresentation metadata = null;
+    if(g.isPresent()) {
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(g.get())));
+      if (!progressDialog.getResults().isEmpty()) {
+        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
+      }
+    }
+
     rawScoreLabel.setText("");
     formattedScoreLabel.setText("");
 
@@ -299,13 +312,6 @@ public class TablesSidebarHighscoresController implements Initializable {
         if (!highscoreBackups.isEmpty()) {
           restoreBtn.setText("Restore (" + highscoreBackups.size() + ")");
         }
-      }
-
-
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableHighscoresScanProgressModel(Arrays.asList(game)));
-      HighscoreMetadataRepresentation metadata = null;
-      if (!progressDialog.getResults().isEmpty()) {
-        metadata = (HighscoreMetadataRepresentation) progressDialog.getResults().get(0);
       }
 
       boolean hasHighscore = metadata != null && metadata.getStatus() == null && !StringUtils.isEmpty(metadata.getRaw());
@@ -409,7 +415,6 @@ public class TablesSidebarHighscoresController implements Initializable {
           try {
             game.get().setCardDisabled(!newValue);
             client.getGameService().saveGame(game.get());
-            EventManager.getInstance().notifyTableChange(game.get().getId(), null);
           }
           catch (Exception e) {
             LOG.error("Failed to save game: " + e.getMessage());

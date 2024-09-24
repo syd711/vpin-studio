@@ -8,10 +8,21 @@
 - **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
 - **Shortcuts**: Introduced shortcuts. You can see the key bindings on hover of the corresponding buttons or via the context menu. You also can press Ctrl+F now to focus the search field to search for tables. The different tabs of the "Tables" can be switched using the function key too.
-- **VPin Studio Server**: Add server discovery.
+- **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />
+
+- **Discord Maintenance Updates**: You can now select a Discord channel where updates are posted when you upload new tables or replace existing ones. If you share your VPin with a bunch of people, you can let them know this way if there are new tables available.  
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates-channel.png" width="550" />
+
+  The channel is configurable for the Discord BOT in the preferences.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates.png" width="650" />
 
 ## Bugfixes
   
 - **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
 - **Uploader**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
+- **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
