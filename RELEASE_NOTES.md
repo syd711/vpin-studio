@@ -6,6 +6,8 @@
 - **Highscore Card Editor**: Added "Apply to all" button for the font selection which will apply the selected font to all available templates.
 - **Table Overview / Reload**: A manual reload in the table overview results in full cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
 - **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
+- **Table Overview / Highscores**: Switched order of highscore graph and highscore card.
+- **Pause Menu**: Added additional info about the highscore data (if supported or not).
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
 - **Shortcuts**: Introduced shortcuts. You can see the key bindings on hover of the corresponding buttons or via the context menu. You also can press Ctrl+F now to focus the search field to search for tables. The different tabs of the "Tables" can be switched using the function key too.
 - **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!

@@ -16,7 +16,10 @@
             <ImageView fx:id="wheelImage" fitHeight="200.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true" BorderPane.alignment="CENTER">
                <image>
                   <Image url="@rules.png" />
-               </image></ImageView>
+               </image>
+               <BorderPane.margin>
+                  <Insets left="24.0" />
+               </BorderPane.margin></ImageView>
          </left>
          <center>
             <VBox prefHeight="200.0" prefWidth="100.0" spacing="3.0" BorderPane.alignment="CENTER">
@@ -26,7 +29,7 @@
                <children>
                   <Label fx:id="nameLabel" text="Label" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font size="54.0" />
+                        <Font size="36.0" />
                      </font>
                   </Label>
                   <Label fx:id="versionLabel" layoutX="10.0" layoutY="104.0" text="Label" textFill="WHITE" wrapText="true">
@@ -36,7 +39,12 @@
                   </Label>
                   <Label fx:id="authorsLabel" layoutX="10.0" layoutY="10.0" text="Label" textFill="WHITE" wrapText="true">
                      <font>
-                        <Font size="18.0" />
+                        <Font size="24.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="scoreInfoLabel" layoutX="10.0" layoutY="105.0" text="Label" textFill="WHITE" wrapText="true">
+                     <font>
+                        <Font size="16.0" />
                      </font>
                   </Label>
                </children>
