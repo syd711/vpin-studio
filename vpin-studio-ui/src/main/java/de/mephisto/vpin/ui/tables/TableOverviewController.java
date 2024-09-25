@@ -21,6 +21,7 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
@@ -43,7 +44,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -55,7 +55,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -1958,6 +1957,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onKeyEvent(KeyEvent event) {
     contextMenuController.handleKeyEvent(event);
 
+    List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(g -> g.getBean()).collect(Collectors.toList());
+
     if (event.isConsumed()) {
       return;
     }
@@ -1976,6 +1977,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         searchTextField.setText("");
       }
       event.consume();
+    }
+    else if (!games.isEmpty() && BulkActions.consume(games, event)) {
+      //done
     }
   }
 }

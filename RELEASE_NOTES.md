@@ -10,7 +10,7 @@
 - **iScored Integration**: Added the additional tag support for **vps:singlescore**. If you apply this tag to a table in iScored, the VPin Studio will only submit a highscore to iScored if the user has not posted any other score for that table yet - no matter if the new score is higher or not.
 - **Pause Menu**: Added additional info about the highscore data (if supported or not).
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
-- **Shortcuts**: Introduced shortcuts. You can see the key bindings on hover of the corresponding buttons or via the context menu. You also can press Ctrl+F now to focus the search field to search for tables. The different tabs of the "Tables" can be switched using the function key too.
+- **Shortcuts**: Several shortcuts have been introduced to improve the accessibility of the Studio. You find an overview of all available shortcuts in the "Help & Support" section of the preferences. 
 - **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />

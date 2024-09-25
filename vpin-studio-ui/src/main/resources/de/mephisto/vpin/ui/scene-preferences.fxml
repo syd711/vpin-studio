@@ -144,6 +144,7 @@
                                     <Insets top="24.0" />
                                  </VBox.margin>
                               </Label>
+                              <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="28.0" layoutY="1331.0" mnemonicParsing="false" onAction="#onShortcuts" styleClass="preference-button" text="Shortcuts" />
                               <Button alignment="BASELINE_LEFT" contentDisplay="RIGHT" layoutX="34.0" layoutY="1004.0" mnemonicParsing="false" onAction="#onSupport" styleClass="preference-button" text="Submit a Bug Report" />
                            </children>
                            <opaqueInsets>

@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.ShortcutsPreferencesController">
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
+         <content>
+            <VBox fx:id="preferenceList" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" styleClass="subpanel">
+               <children>
+                  <Label styleClass="preference-title" text="HELP &amp; SUPPORT" textFill="WHITE" />
+                  <Label styleClass="preference-subtitle" text="Shortcuts">
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                  </Label>
+                  <Label styleClass="preference-description" text="This page gives an overview about the available shortcuts." textFill="WHITE">
+                     <VBox.margin>
+                        <Insets bottom="6.0" top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Tables Shortcuts" />
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="550.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                     <children>
+                        <Label styleClass="default-headline" text="Shortcut" GridPane.rowIndex="1" />
+                        <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="18.0" styleClass="default-text" text="Ctrl+O" GridPane.rowIndex="8" />
+                        <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Open the table details dialog." GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                        <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="Ctrl+I" GridPane.rowIndex="9" />
+                        <Label layoutX="317.0" layoutY="52.0" styleClass="default-text" text="Open the table assets dialog." GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                        <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="Ctrl+M" GridPane.rowIndex="10" />
+                        <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Toggles between the asset and table management view." GridPane.columnIndex="1" GridPane.rowIndex="10" />
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="Ctrl+D" GridPane.rowIndex="11" />
+                        <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Open the Virtual Pinball Spreadsheet website for the selected table." GridPane.columnIndex="1" GridPane.rowIndex="11" />
+                        <Label layoutX="10.0" layoutY="152.0" styleClass="default-text" text="Ctrl+T" GridPane.rowIndex="12" />
+                        <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Perform table scan." GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                        <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="Ctrl+U" GridPane.rowIndex="14" />
+                        <Label layoutX="10.0" layoutY="220.0" styleClass="default-text" text="Ctrl+R" GridPane.rowIndex="15" />
+                        <Label layoutX="247.0" layoutY="186.0" styleClass="default-text" text="Upload and import table." GridPane.columnIndex="1" GridPane.rowIndex="14" />
+                        <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Upload and replace table." GridPane.columnIndex="1" GridPane.rowIndex="15" />
+                        <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+L" GridPane.rowIndex="16" />
+                        <Label layoutX="247.0" layoutY="253.0" styleClass="default-text" text="Launches the table." GridPane.columnIndex="1" GridPane.rowIndex="16" />
+                        <Label layoutX="10.0" layoutY="288.0" styleClass="default-text" text="Delete" GridPane.rowIndex="17" />
+                        <Label layoutX="247.0" layoutY="288.0" styleClass="default-text" text="Delete the table." GridPane.columnIndex="1" GridPane.rowIndex="17" />
+                        <Label layoutX="10.0" layoutY="321.0" styleClass="default-text" text="Ctrl+Shit+D" GridPane.rowIndex="19" />
+                        <Label layoutX="247.0" layoutY="321.0" styleClass="default-text" text="De-activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="19" />
+                        <Label layoutX="10.0" layoutY="355.0" styleClass="default-text" text="Ctrl+Shit+A" GridPane.rowIndex="18" />
+                        <Label layoutX="247.0" layoutY="355.0" styleClass="default-text" text="Activates the selected tables." GridPane.columnIndex="1" GridPane.rowIndex="18" />
+                        <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="F2" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="52.0" styleClass="default-text" text="F3" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="F4" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="120.0" styleClass="default-text" text="F6" GridPane.rowIndex="6" />
+                        <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="F5" GridPane.rowIndex="5" />
+                        <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Select &quot;All Tables&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label layoutX="247.0" layoutY="52.0" styleClass="default-text" text="Select &quot;Backglasses&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Select &quot;VPS Tables&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Select &quot;Table Statistics&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Select &quot;Table Repository&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                        <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+F" GridPane.rowIndex="7" />
+                        <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="Search table (focus the search text field)." GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="Ctrl+K" GridPane.rowIndex="13" />
+                        <Label layoutX="133.0" layoutY="388.0" styleClass="default-text" text="Kills all cabinet frontend and VPX processes (Stop Action)." GridPane.columnIndex="1" GridPane.rowIndex="13" />
+                     </children>
+                  </GridPane>
+                  <HBox fx:id="htmlRoot" alignment="BASELINE_RIGHT" prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label layoutX="34.0" layoutY="144.0" styleClass="preference-subtitle" text="Miscellaneous Shortcuts" />
+                  <GridPane hgap="3.0" layoutX="34.0" layoutY="183.0" vgap="3.0">
+                     <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="120.0" />
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="550.0" />
+                     </columnConstraints>
+                     <rowConstraints>
+                        <RowConstraints />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                     </rowConstraints>
+                     <children>
+                        <Label styleClass="default-headline" text="Shortcut" GridPane.rowIndex="1" />
+                        <Label layoutX="164.0" layoutY="15.0" styleClass="default-headline" text="Description" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="186.0" styleClass="default-text" text="Ctrl+Alt+U" GridPane.rowIndex="2" />
+                        <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="Ctrl+Alt+H" GridPane.rowIndex="3" />
+                        <Label layoutX="247.0" layoutY="220.0" styleClass="default-text" text="Open latest releases notes dialog again." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Resize Studio Client window to FullHD (1920x1080)." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="86.0" styleClass="default-text" text="Ctrl+Alt+W" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="120.0" prefWidth="68.0" styleClass="default-text" text="Ctrl+Alt+S" GridPane.rowIndex="5" />
+                        <Label layoutX="170.0" layoutY="86.0" styleClass="default-text" text="Resize Studio Client window to WQHD (2560x1440)." GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label layoutX="170.0" layoutY="120.0" styleClass="default-text" text="Resize Studio Client window to HD ready (1280x720)." GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                     </children>
+                  </GridPane>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

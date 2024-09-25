@@ -208,6 +208,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onShortcuts(ActionEvent event) throws IOException {
+    load("preference-shortcuts.fxml", event);
+  }
+
+  @FXML
   private void onVPXValidation(ActionEvent event) throws IOException {
     load("preference-validators_vpx.fxml", event);
   }
