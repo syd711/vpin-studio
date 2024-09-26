@@ -35,15 +35,15 @@ public class VpxComponent implements ComponentFacade {
   @NotNull
   @Override
   public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
-    return gameEmulator.getTablesFolder()!=null? gameEmulator.getTablesFolder().getParentFile(): null;
+    return gameEmulator.getInstallationFolder();
   }
 
   @Nullable
   @Override
   public Date getModificationDate(@NonNull GameEmulator gameEmulator) {
-    File setupExe = new File(gameEmulator.getTablesFolder().getParentFile(), "VPinballX64.exe");
+    File setupExe = new File(gameEmulator.getInstallationFolder(), "VPinballX64.exe");
     if (!setupExe.exists()) {
-      setupExe = new File(gameEmulator.getTablesFolder().getParentFile(), "VPinballX.exe");
+      setupExe = new File(gameEmulator.getInstallationFolder(), "VPinballX.exe");
     }
     if (setupExe.exists()) {
       return new Date(setupExe.lastModified());
