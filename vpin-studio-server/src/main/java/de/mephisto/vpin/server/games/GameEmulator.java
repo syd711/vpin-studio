@@ -54,7 +54,7 @@ public class GameEmulator {
   private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
-  public GameEmulator(@NonNull Emulator emulator, @NonNull MediaAccessStrategy mediaStrategy) {
+  public GameEmulator(@NonNull Emulator emulator, @Nullable MediaAccessStrategy mediaStrategy) {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
@@ -327,7 +327,7 @@ public class GameEmulator {
   @NonNull
   @JsonIgnore
   public File getGameMediaFolder(@NonNull String gameFileName, @NonNull VPinScreen screen) {
-    return mediaStrategy != null ? mediaStrategy.buildMediaFolder(new File(mediaDirectory), gameFileName, screen) : null;
+    return mediaStrategy != null ? mediaStrategy.getScreenMediaFolder(new File(mediaDirectory), gameFileName, screen) : null;
   }
 
   @NonNull

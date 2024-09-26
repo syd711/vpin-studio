@@ -49,27 +49,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private static Map<Integer, VPinScreen> mediaCodeToScreen = new HashMap<>();
 
-  private static long start = 0;
-  private static long end = 0;
-  private static long total = 0;
-
   private Frontend frontend;
-
-  public static void metricsStart() {
-    start = System.currentTimeMillis();
-  }
-
-  public static void metricsEnd() {
-    long duration = System.currentTimeMillis() - start;
-    total += duration;
-  }
-
-  public static void metricFinished() {
-    LOG.info("Validation Service took " + total + "ms.");
-    start = 0;
-    end = 0;
-    total = 0;
-  }
 
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, VPinScreen.Audio);
@@ -120,7 +100,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private IgnoredValidationSettings ignoredValidationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
-    GameValidationService.metricsStart();
     List<ValidationState> result = new ArrayList<>();
     boolean isVPX = game.isVpxGame();
 
@@ -258,8 +237,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
         }
       }
     }
-
-    GameValidationService.metricsEnd();
     return result;
   }
 
@@ -374,10 +351,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return null;
   }
 
-  private boolean validScreenAssets(Game game, VPinScreen VPinScreen) {
-    List<File> screenAssets = game.getMediaFiles(VPinScreen);
+  private boolean validScreenAssets(Game game, VPinScreen screen) {
+    List<File> screenAssets = game.getMediaFiles(screen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
     if (!screenAssets.isEmpty()) {
       if (config.getOption().equals(ValidatorOption.empty)) {
         return false;

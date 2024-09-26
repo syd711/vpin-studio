@@ -1,15 +1,15 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
+
 import java.io.File;
 
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-
-public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
+public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
   // TODO support several folders for flyers ?
   @Override
-  public File buildMediaFolder(File mediaDirectory, String gameFileName, VPinScreen screen) {
+  public File getScreenMediaFolder(File mediaDirectory, String gameFileName, VPinScreen screen) {
     switch (screen) {
       case Audio:
         return new File(mediaDirectory, "Table Audio");
@@ -54,7 +54,7 @@ public class PinballXMediaAccessStrategy implements MediaAccessStrategy {
         firstFolder = mediafolder;
       }
       File[] files = mediafolder.listFiles((dir, name) -> name.startsWith(gameFileName));
-      if (files!=null && files.length > 0) {
+      if (files != null && files.length > 0) {
         return mediafolder;
       }
     }

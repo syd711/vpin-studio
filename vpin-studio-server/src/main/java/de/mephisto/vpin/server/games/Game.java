@@ -4,10 +4,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.puppack.PupPack;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -20,11 +21,15 @@ import org.apache.commons.lang3.StringUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class Game {
+
+  @Nullable
+  private MediaAccessStrategy mediaStrategy;
 
   private String rom;
   private String romAlias;
@@ -86,6 +91,10 @@ public class Game {
   private boolean foundTableExit = false;
 
   public Game() {
+  }
+
+  public void setMediaStrategy(@Nullable MediaAccessStrategy mediaStrategy) {
+    this.mediaStrategy = mediaStrategy;
   }
 
   public boolean isPlayed() {
@@ -399,16 +408,8 @@ public class Game {
 
   @NonNull
   public List<File> getMediaFiles(@NonNull VPinScreen screen) {
-    String baseFilename = getGameName();
-    File mediaFolder = getMediaFolder(screen);
-    //keep null check for serialization
-    if (mediaFolder != null && mediaFolder.exists()) {
-      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
-      if (mediaFiles != null) {
-        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
-        Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
-        return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
-      }
+    if (mediaStrategy != null) {
+      return mediaStrategy.getScreenMediaFiles(this, getMediaFolder(screen), screen);
     }
     return Collections.emptyList();
   }

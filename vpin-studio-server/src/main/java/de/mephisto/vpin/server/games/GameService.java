@@ -188,7 +188,6 @@ public class GameService implements InitializingBean {
         killFrontend = true;
       }
     }
-    GameValidationService.metricFinished();
     games.sort(Comparator.comparing(Game::getGameDisplayName));
     long duration = System.currentTimeMillis() - start;
     long avg = 0;

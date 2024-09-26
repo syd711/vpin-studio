@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -34,7 +34,6 @@ public class GameMediaService {
     for (VPinScreen value : values) {
       List<String> filesForScreen = analysis.getPopperMediaFiles(value);
 
-      boolean limit = false;
       int maxAssets = 3;
       for (String mediaFile : filesForScreen) {
         if (mediaFile.toLowerCase().contains("macosx")) {
@@ -52,7 +51,7 @@ public class GameMediaService {
         }
 
         maxAssets--;
-        if (maxAssets == 0 && limit) {
+        if (maxAssets == 0) {
           break;
         }
       }

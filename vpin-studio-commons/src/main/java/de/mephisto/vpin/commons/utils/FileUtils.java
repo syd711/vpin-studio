@@ -3,6 +3,7 @@ package de.mephisto.vpin.commons.utils;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,6 +24,13 @@ public class FileUtils {
       }
     }
     return name;
+  }
+
+  public static boolean isTempFile(File file) {
+    String filename = file.getName();
+    return StringUtils.endsWithIgnoreCase(filename, "tmp")
+        || StringUtils.endsWithIgnoreCase(filename, "crdownload")
+        || StringUtils.startsWith(filename, ".");
   }
 
   public static boolean deleteIfTempFile(@Nullable File file) {

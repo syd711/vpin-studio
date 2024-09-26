@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -17,7 +19,6 @@ import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FileUtils;
@@ -27,9 +28,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -41,27 +39,36 @@ import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
 
 @Service("PinballX")
 public class PinballXConnector extends BaseConnector {
+  private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
+
   public final static String PINBALL_X = FrontendType.PinballX.name();
 
   @Autowired
   private SystemService systemService;
 
-  private final static Logger LOG = LoggerFactory.getLogger(PinballXConnector.class);
 
   @Autowired
   //private PinballXAssetsAdapter assetsAdapter;
   private PinballXAssetsIndexAdapter assetsAdapter;
+
+  private PinballXMediaAccessStrategy pinballXMediaAccessStrategy;
 
   @Autowired
   private PreferencesService preferencesService;
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
-  /** A cache of Playlists indexed by their id */
+  /**
+   * A cache of Playlists indexed by their id
+   */
   private Map<Integer, Playlist> playlists;
-  /** map between gameId and stat */
+  /**
+   * map between gameId and stat
+   */
   private Map<Integer, TableAlxEntry> gameStats;
-  /** set of favorite gameId */
+  /**
+   * set of favorite gameId
+   */
   private Set<Integer> gameFavs;
 
   @Override
@@ -357,12 +364,14 @@ public class PinballXConnector extends BaseConnector {
 
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
-    return new PinballXMediaAccessStrategy();
+    if (pinballXMediaAccessStrategy == null) {
+      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy();
+    }
+    return pinballXMediaAccessStrategy;
   }
 
   @Override
   public TableAssetsAdapter getTableAssetAdapter() {
-    //return new CacheTableAssetsAdapter(assetsAdapter);
     return assetsAdapter;
   }
 
@@ -422,7 +431,7 @@ public class PinballXConnector extends BaseConnector {
           File fileconf = getPlaylistConfFile(p.getId());
           Map<String, ?> playlistConf = getPlaylistConf(fileconf);
           p.setMenuColor((Integer) playlistConf.get("menuColor"));
-          
+
           PinballXTableParser parser = new PinballXTableParser();
           List<String> _games = new ArrayList<>();
           Map<String, TableDetails> _tabledetails = new HashMap<>();
@@ -472,7 +481,8 @@ public class PinballXConnector extends BaseConnector {
       try {
         String content = Files.readString(playlistConfFile.toPath(), Charset.forName("UTF-8"));
         // convert JSON string to Map
-        return new ObjectMapper().readValue(content, new TypeReference<>() {});
+        return new ObjectMapper().readValue(content, new TypeReference<>() {
+        });
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
@@ -492,7 +502,7 @@ public class PinballXConnector extends BaseConnector {
       }
     }
   }
-  
+
   private PlaylistGame toPlaylistGame(int gameId) {
     PlaylistGame pg = new PlaylistGame();
     pg.setId(gameId);
@@ -538,17 +548,20 @@ public class PinballXConnector extends BaseConnector {
         pl.getGames().add(toPlaylistGame(gameId));
       }
       savePlaylist(pl);
-    } else {
+    }
+    else {
       gameFavs.add(gameId);
       saveFavorite(gameId, true);
     }
   }
+
   @Override
   public void deleteFromPlaylists(int gameId) {
     for (Integer playlistId : playlists.keySet()) {
       deleteFromPlaylist(playlistId, gameId);
     }
   }
+
   @Override
   public void deleteFromPlaylist(int playlistId, int gameId) {
     if (playlistId >= 0) {
@@ -591,7 +604,7 @@ public class PinballXConnector extends BaseConnector {
     List<TableAlxEntry> stats = new ArrayList<>();
     Set<Integer> favs = new HashSet<>();
     parser.getAlxData(stats, favs);
-    
+
     // refresh cache of stats
     gameStats = new HashMap<>();
     for (TableAlxEntry stat : stats) {

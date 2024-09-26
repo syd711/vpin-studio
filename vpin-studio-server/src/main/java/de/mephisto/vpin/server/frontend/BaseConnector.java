@@ -3,7 +3,8 @@ package de.mephisto.vpin.server.frontend;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.server.games.Game;
+
+import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -180,7 +181,6 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public Game getGameByFilename(int emuId, String filename) {
-
     if (gamesByEmu.get(emuId).contains(filename)) {
 
       Emulator emu = emulators.get(emuId);
@@ -191,6 +191,7 @@ public abstract class BaseConnector implements FrontendConnector {
       String gameName = FilenameUtils.getBaseName(filename);
 
       Game game = new Game();
+      game.setMediaStrategy(getMediaAccessStrategy());
       game.setEmulatorId(emuId);
       game.setId(id);
       game.setGameName(details != null ? details.getGameName() : gameName);
@@ -232,7 +233,6 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public Game getGameByName(int emuId, String gameName) {
     return getGameByFilename(emuId, gameName);
-    //return getGames().stream().filter(g -> g.getGameName()==gameName).findFirst().orElse(null);
   }
 
   @Override
