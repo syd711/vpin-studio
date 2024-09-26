@@ -37,6 +37,12 @@
       "rom": "Gemini",
       "tableName": "",
       "textFile": ""
+    },
+    {
+      "scannedRom": "johnwick",
+      "rom": "JPsIT",
+      "tableName": "",
+      "textFile": ""
     }
   ],
   "ignoredTextFiles": [
