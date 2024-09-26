@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -22,7 +23,6 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -191,7 +191,11 @@ public class GameService implements InitializingBean {
     GameValidationService.metricFinished();
     games.sort(Comparator.comparing(Game::getGameDisplayName));
     long duration = System.currentTimeMillis() - start;
-    LOG.info("Game fetch for emulator " + emulatorId + " took " + duration + "ms.");
+    long avg = 0;
+    if (!games.isEmpty()) {
+      avg = duration / games.size();
+    }
+    LOG.info("Game fetch for emulator " + emulatorId + " took " + duration + "ms / " + games.size() + " games / " + avg + "ms avg.");
     return games;
   }
 
@@ -553,7 +557,7 @@ public class GameService implements InitializingBean {
       }
       game.setValidationState(validate.get(0));
       game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
-    
+
       game.setNotes(gameDetails.getNotes());
       return newGame;
     }
@@ -596,23 +600,15 @@ public class GameService implements InitializingBean {
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
     }
 
-    if (tableDetails == null) {
-      tableDetails = frontendService.getTableDetails(game.getId());
-    }
-
     GameEmulator emulator = game.getEmulator();
     if (emulator.isVpxEmulator() && emulator.getVPXExe().exists()) {
       game.setLauncher(emulator.getVPXExe().getName());
     }
 
-    if(!StringUtils.isEmpty(tableDetails.getAltLaunchExe()) && tableDetails.getAltLaunchExe().contains(".exe")) {
-      game.setLauncher(tableDetails.getAltLaunchExe());
+    //apply the alt launcher exe as actually used one
+    if (!StringUtils.isEmpty(game.getAltLauncherExe()) && game.getAltLauncherExe().contains(".exe")) {
+      game.setLauncher(game.getAltLauncherExe());
     }
-
-    //add info from TableDetails for Game filtering
-    boolean played = tableDetails == null || (tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0);
-    game.setPlayed(played);
-    game.setGameStatus(tableDetails != null ? tableDetails.getStatus(): -1);
 
     //only apply legacy table name if the frontend fields are empty
     if (StringUtils.isEmpty(game.getTableName())) {

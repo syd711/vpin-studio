@@ -46,7 +46,6 @@ public class Game {
   private String scannedHsFileName;
   private boolean cardDisabled;
 
-  private boolean played;
   private int gameStatus;
 
   private GameEmulator emulator;
@@ -76,12 +75,39 @@ public class Game {
   private String extVersion;
   private String notes;
   private String launcher;
+  private Long numberPlayed;
+
+  //internal value not exposed
+  private String altLauncherExe;
+
   private VPSChanges vpsChanges = new VPSChanges();
 
   private boolean foundControllerStop = false;
   private boolean foundTableExit = false;
 
   public Game() {
+  }
+
+  public boolean isPlayed() {
+    return numberPlayed != null && numberPlayed > 0;
+  }
+
+  @JsonIgnore
+  public long getNumberPlayed() {
+    return numberPlayed;
+  }
+
+  public void setNumberPlayed(long numberPlayed) {
+    this.numberPlayed = numberPlayed;
+  }
+
+  @JsonIgnore
+  public String getAltLauncherExe() {
+    return altLauncherExe;
+  }
+
+  public void setAltLauncherExe(String altLauncherExe) {
+    this.altLauncherExe = altLauncherExe;
   }
 
   public String getLauncher() {
@@ -309,16 +335,10 @@ public class Game {
     this.tableName = tableName;
   }
 
-  public boolean isPlayed() {
-    return played;
-  }
-  public void setPlayed(boolean played) {
-    this.played = played;
-  }
-
   public int getGameStatus() {
     return gameStatus;
   }
+
   public void setGameStatus(int gameStatus) {
     this.gameStatus = gameStatus;
   }
@@ -595,6 +615,7 @@ public class Game {
   public ValidationState getValidationState() {
     return validationState;
   }
+
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
   }
@@ -602,6 +623,7 @@ public class Game {
   public boolean isHasMissingAssets() {
     return hasMissingAssets;
   }
+
   public void setHasMissingAssets(boolean hasMissingAssets) {
     this.hasMissingAssets = hasMissingAssets;
   }
@@ -609,6 +631,7 @@ public class Game {
   public boolean isHasOtherIssues() {
     return hasOtherIssues;
   }
+
   public void setHasOtherIssues(boolean hasOtherIssues) {
     this.hasOtherIssues = hasOtherIssues;
   }
@@ -616,6 +639,7 @@ public class Game {
   public boolean isValidScoreConfiguration() {
     return validScoreConfiguration;
   }
+
   public void setValidScoreConfiguration(boolean validScoreConfiguration) {
     this.validScoreConfiguration = validScoreConfiguration;
   }

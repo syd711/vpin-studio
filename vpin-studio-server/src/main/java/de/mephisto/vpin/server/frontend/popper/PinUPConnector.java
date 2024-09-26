@@ -20,7 +20,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -124,8 +123,8 @@ public class PinUPConnector implements FrontendConnector {
     Game info = null;
     try {
       PreparedStatement statement = connect.prepareStatement(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID where g.GameID = ?");
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID where g.GameID = ?");
 
       statement.setInt(1, id);
       ResultSet rs = statement.executeQuery();
@@ -143,6 +142,11 @@ public class PinUPConnector implements FrontendConnector {
     return info;
   }
 
+  /**
+   * Not used anymore.
+   * I assume this one was used to show additional .exe files for the launcher dialog.
+   * Since we read these from the actual emulator, there is no necessity for this.
+   */
   @NonNull
   public List<String> getAltExeList() {
     Connection connect = connect();
@@ -444,8 +448,8 @@ public class PinUPConnector implements FrontendConnector {
       String gameName = filename.replaceAll("'", "''");
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID "
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID "
               + " where g.EMUID = " + emulatorId
               + " and (g.GameFileName = '" + gameName + "' OR g.GameFileName LIKE '%\\" + gameName + "');");
       while (rs.next()) {
@@ -470,8 +474,8 @@ public class PinUPConnector implements FrontendConnector {
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID"
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
               + " where g.EMUID = " + emulatorId);
       while (rs.next()) {
         result.add(createGame(rs));
@@ -497,8 +501,8 @@ public class PinUPConnector implements FrontendConnector {
       String gameName = filename.replaceAll("'", "''");
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID"
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
               + " where GameFileName LIKE '%" + gameName + "%';");
       while (rs.next()) {
         Game game = createGame(rs);
@@ -524,8 +528,8 @@ public class PinUPConnector implements FrontendConnector {
       gameName = gameName.replaceAll("'", "''");
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID"
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
               + " where g.EMUID = " + emulatorId
               + " and GameName = '" + gameName + "';");
       while (rs.next()) {
@@ -816,16 +820,6 @@ public class PinUPConnector implements FrontendConnector {
     }
     return -1;
   }
-
-// no more used
-//  public boolean deleteGame(String name) {
-//    Game gameByFilename = getGameByFilename(name);
-//    if (gameByFilename != null) {
-//      return deleteGame(gameByFilename.getId());
-//    }
-//    LOG.error("Failed to delete " + name + ": no game entry has been found for this name.");
-//    return false;
-//  }
 
   @Override
   public boolean deleteGame(int id) {
@@ -1638,7 +1632,6 @@ public class PinUPConnector implements FrontendConnector {
 
   @Nullable
   private Game createGame(@NonNull ResultSet rs) throws SQLException {
-
     int emuId = rs.getInt("EMUID");
     boolean emuVisible = rs.getInt("EmuVisible") == 1;
 
@@ -1669,6 +1662,13 @@ public class PinUPConnector implements FrontendConnector {
     game.setDateUpdated(getDate(rs, "DateUpdated"));
 
     game.setVersion(rs.getString("GAMEVER"));
+    game.setAltLauncherExe(rs.getString("ALTEXE"));
+    game.setNumberPlayed(rs.getInt("NumberPlays"));
+
+    game.setGameStatus(rs.getInt("Visible"));
+    if (rs.wasNull()) {
+      game.setGameStatus(-1);
+    }
 
     String dirGame = rs.getString("DirGames");
     File vpxFile = new File(dirGame, gameFileName);
