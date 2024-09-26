@@ -29,3 +29,4 @@
 - **Uploader**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
+- **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
