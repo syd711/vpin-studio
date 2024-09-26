@@ -9,6 +9,7 @@
 - **Table Overview / Highscores**: Switched order of highscore graph and highscore card.
 - **iScored Integration**: Added the additional tag support for **vps:singlescore**. If you apply this tag to a table in iScored, the VPin Studio will only submit a highscore to iScored if the user has not posted any other score for that table yet - no matter if the new score is higher or not.
 - **Pause Menu**: Added additional info about the highscore data (if supported or not).
+- **PinVol 2.2**: Added PinVol version 2.2. The new .exe file will automatically be downloaded by the server.
 - **VPBM 3.3**: Updated to VPBM 3.3, including some performance optimizations and support of multiple external host ids.
 - **Shortcuts**: Several shortcuts have been introduced to improve the accessibility of the Studio. You find an overview of all available shortcuts in the "Help & Support" section of the preferences. 
 - **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
@@ -30,3 +31,6 @@
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
 - **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
+- **Backglass Data Exporter**:
+  - Fixed wrong DMD image information (the data was always read from the backglass image).
+  - Added additional data from the backglass settings.

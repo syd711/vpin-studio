@@ -31,6 +31,7 @@ public class ServerUpdatePreProcessing {
         runJvmCheck();
         runScriptCheck();
         runResourcesCheck();
+        runPinVolUpdateCheck();
         synchronizeNVRams(false);
         LOG.info("Finished resource updates check.");
       }
@@ -38,6 +39,18 @@ public class ServerUpdatePreProcessing {
         LOG.error("Server update failed: " + e.getMessage(), e);
       }
     }).start();
+  }
+
+  private static void runPinVolUpdateCheck() {
+    long expectedSize = 1103872;
+    File check = new File(SystemService.RESOURCES, "PinVol.exe");
+    if (check.exists()) {
+      long size = check.length();
+      if (expectedSize != size) {
+        LOG.info("Outdated PinVol.exe found, updating...");
+        Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/PinVol.exe", check);
+      }
+    }
   }
 
   private static void runScriptCheck() {
@@ -121,7 +134,7 @@ public class ServerUpdatePreProcessing {
       for (String nvRam : nvRams) {
         File nvramFile = new File(nvramFolder, nvRam + ".nv");
         if (nvramFile.exists() && deleteAll) {
-          if(nvramFile.delete()) {
+          if (nvramFile.delete()) {
             LOG.info("Deleted " + nvramFile.getAbsolutePath());
           }
         }
