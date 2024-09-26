@@ -31,7 +31,7 @@ public class VPS {
 
   private final List<VpsSheetChangedListener> listeners = new ArrayList<>();
 
-  private List<VpsTable> tables;
+  private List<VpsTable> tables = new ArrayList<>();
 
   public void addChangeListener(VpsSheetChangedListener listener) {
     this.listeners.add(listener);
@@ -69,7 +69,10 @@ public class VPS {
   }
 
   public VpsTable getTableById(String id) {
-    return this.tables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst().orElse(null);
+    if (this.tables != null) {
+      return this.tables.stream().filter(t -> t.getId() != null && t.getId().equals(id)).findFirst().orElse(null);
+    }
+    return null;
   }
 
   public List<VpsTable> getTables() {
@@ -211,7 +214,7 @@ public class VPS {
     // save old tables
     List<VpsTable> oldTables = this.tables;
 
-    if (reload()) {
+    if (reload() && !oldTables.isEmpty() && !this.tables.isEmpty()) {
       List<VpsDiffer> diffs = this.diff(oldTables, this.tables);
       if (!diffs.isEmpty()) {
         LOG.info("VPS download detected " + diffs.size() + " changes, notifying " + listeners.size() + " listeners...");
