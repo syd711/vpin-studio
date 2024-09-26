@@ -206,7 +206,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public boolean isPupPackDisabled(Game game) {
     if (game != null) {
-      return getFrontendConnector().isPupPackDisabled(game);
+      return game.isPupPackDisabled();
     }
     return false;
   }

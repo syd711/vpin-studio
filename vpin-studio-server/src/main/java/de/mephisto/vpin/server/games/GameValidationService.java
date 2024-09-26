@@ -139,23 +139,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
-      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
-          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
-            if (otherGame != null) {
-              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
-              if (findFirst) {
-                return result;
-              }
-            }
-          }
-        }
-      }
-    }
-
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));
@@ -226,12 +209,28 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       HighscoreType highscoreType = game.getHighscoreType();
       if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
         File romFile = game.getRomFile();
-        File nvRamFile = game.getNvRamFile();
         if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
             result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
             if (findFirst) {
               return result;
+            }
+          }
+        }
+      }
+    }
+
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
+      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+              if (findFirst) {
+                return result;
+              }
             }
           }
         }
@@ -505,7 +504,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.getPupPackPath() != null && !game.getPupPack().getMissingResources().isEmpty()) {
+      if (game.getPupPack() != null && !game.getPupPack().getMissingResources().isEmpty()) {
         ValidationState validationState = GameValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
         result.add(validationState);
       }

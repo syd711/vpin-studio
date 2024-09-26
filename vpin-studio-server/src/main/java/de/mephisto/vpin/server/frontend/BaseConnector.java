@@ -366,11 +366,6 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public boolean isPupPackDisabled(@NonNull Game game) {
-    return false;
-  }
-
-  @Override
   public void setPupPackEnabled(@NonNull Game game, boolean enable) {
   }
 

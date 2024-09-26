@@ -691,36 +691,36 @@ public class PinUPConnector implements FrontendConnector {
     }
   }
 
-  @Nullable
-  public boolean isPupPackDisabled(@NonNull Game game) {
-    String effectiveRom = game.getRom();
-    if (StringUtils.isEmpty(effectiveRom)) {
-      return false;
-    }
-
-    Connection connect = this.connect();
-    try {
-      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
-      statement.setInt(1, game.getId());
-      ResultSet rs = statement.executeQuery();
-      String rom = null;
-      String custom = null;
-      if (rs.next()) {
-        rom = rs.getString("ROM");
-        custom = rs.getString("LaunchCustomVar");
-        return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
-      }
-      rs.close();
-      statement.close();
-    }
-    catch (SQLException e) {
-      LOG.error("Failed to read \"LaunchCustomVar\": " + e.getMessage(), e);
-    }
-    finally {
-      this.disconnect(connect);
-    }
-    return false;
-  }
+//  @Nullable
+//  public boolean isPupPackDisabled(@NonNull Game game) {
+//    String effectiveRom = game.getRom();
+//    if (StringUtils.isEmpty(effectiveRom)) {
+//      return false;
+//    }
+//
+//    Connection connect = this.connect();
+//    try {
+//      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
+//      statement.setInt(1, game.getId());
+//      ResultSet rs = statement.executeQuery();
+//      String rom = null;
+//      String custom = null;
+//      if (rs.next()) {
+//        rom = rs.getString("ROM");
+//        custom = rs.getString("LaunchCustomVar");
+//        return rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP");
+//      }
+//      rs.close();
+//      statement.close();
+//    }
+//    catch (SQLException e) {
+//      LOG.error("Failed to read \"LaunchCustomVar\": " + e.getMessage(), e);
+//    }
+//    finally {
+//      this.disconnect(connect);
+//    }
+//    return false;
+//  }
 
   @Override
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
@@ -1704,6 +1704,9 @@ public class PinUPConnector implements FrontendConnector {
     game.setRom(rom);
     String tableName = rs.getString("ROMALT");
     game.setTableName(tableName);
+
+    String custom = rs.getString("LaunchCustomVar");
+    game.setPupPackDisabled(rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP"));
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);

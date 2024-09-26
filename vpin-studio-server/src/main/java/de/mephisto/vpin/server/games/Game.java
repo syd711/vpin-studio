@@ -84,6 +84,7 @@ public class Game {
 
   //internal value not exposed
   private String altLauncherExe;
+  private boolean pupPackDisabled;
 
   private VPSChanges vpsChanges = new VPSChanges();
 
@@ -99,6 +100,15 @@ public class Game {
 
   public boolean isPlayed() {
     return numberPlayed != null && numberPlayed > 0;
+  }
+
+  @JsonIgnore
+  public boolean isPupPackDisabled() {
+    return pupPackDisabled;
+  }
+
+  public void setPupPackDisabled(boolean pupPackDisabled) {
+    this.pupPackDisabled = pupPackDisabled;
   }
 
   @JsonIgnore

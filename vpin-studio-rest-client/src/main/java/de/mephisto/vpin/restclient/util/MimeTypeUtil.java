@@ -20,7 +20,7 @@ public class MimeTypeUtil {
       }
       return mimeType;
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Failed to determine mimetype for " + file.getAbsolutePath() + ": " + e.getMessage(), e);
       return "image/png";
     }

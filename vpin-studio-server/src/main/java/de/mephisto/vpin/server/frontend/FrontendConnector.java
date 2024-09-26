@@ -92,8 +92,6 @@ public interface FrontendConnector {
    */
   MediaAccessStrategy getMediaAccessStrategy();
 
-  boolean isPupPackDisabled(@NonNull Game game);
-
   void setPupPackEnabled(@NonNull Game game, boolean enable);
 
   List<FrontendPlayerDisplay> getFrontendPlayerDisplays();
