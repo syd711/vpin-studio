@@ -118,7 +118,7 @@ public class VpbmService implements InitializingBean {
 
   public String restore(String tableId) {
     String tableFilename = "\"" + tableId + "\"";
-    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename));
+    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename, "--disable-delete-checks"));
     return systemCommandOutput.getStdOut();
   }
 

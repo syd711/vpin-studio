@@ -318,7 +318,7 @@ public class TableOverviewContextMenu {
   }
 
   public void handleKeyEvent(KeyEvent event) {
-    if (!event.isConsumed()) {
+    if (!event.isConsumed() && ctxMenu != null) {
       List<MenuItem> items = new ArrayList<>(ctxMenu.getItems());
       for (MenuItem item : items) {
         if (item.getAccelerator() != null && item.getAccelerator().match(event)) {

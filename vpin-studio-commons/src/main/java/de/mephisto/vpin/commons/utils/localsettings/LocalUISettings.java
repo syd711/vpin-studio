@@ -93,7 +93,7 @@ public class LocalUISettings {
   }
 
   public static void saveLocation(String id, int x, int y, int width, int height) {
-    if (y >= 0) {
+    if (y >= 0 && id != null) {
       store.set(id + "x", x);
       store.set(id + "y", y);
       store.set(id + ".x", x);

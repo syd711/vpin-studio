@@ -292,17 +292,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    //TODO maybe someday
-//    bundleBtn.managedProperty().bindBidirectional(bundleBtn.visibleProperty());
-//    bundleBtn.setVisible(false);
-    copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
-    copyToRepositoryBtn.setVisible(false);
-
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 
     vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
-    bundleBtn.managedProperty().bindBidirectional(bundleBtn.visibleProperty());
-    bundleBtn.setVisible(false);
 
     systemSummary = client.getSystemService().getSystemSummary();
     vpbmBtbn.setVisible(systemSummary.getArchiveType().equals(ArchiveType.VPBM));

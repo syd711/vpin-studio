@@ -88,15 +88,12 @@ public class IOService {
 
       JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING);
       jobDescriptor.setTitle("Archive Bundle");
-//
+
       BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, archiveBundleDescriptor, bundleArchiveDescriptors);
       job.execute(jobDescriptor);
+//      jobService.offer(jobDescriptor);
 
       return job.getTarget().getName();
-
-//      jobDescriptor.setDescription("Creating bundle of " + bundleArchiveDescriptors.size() + " archived table(s).");
-//      jobDescriptor.setJob(job);
-//      JobQueue.getInstance().offer(jobDescriptor);
     } catch (Exception e) {
       LOG.error("Bundling failed: " + e.getMessage(), e);
     }
