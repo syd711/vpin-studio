@@ -4,7 +4,7 @@
 
 - **Refactored Game Media Access**: TLTR: the peformance has been optimized here.
   - The main reason for the slow table reload was that the all media files of all tables have been checked on reload in order to run the validation checks. A new caching layer has been introduced here which **significantly reduces the loading time of all tables**.
-  - In addition to that, the table media information is requested separately now, which reduces the table data approx. by 30 percent. 
+  - In addition to that, the table media information is requested separately now, which reduces the table data approx. by more than 30 percent. 
 - **Table Validators**: Introduced new validator **VPinMAME ROM Validation**. The validator uses the results from the VPinMAME ROM tester to indicate possibly broken ROM files. The new validator is enabled by default.
 - **Highscore Card Editor**: Added "Apply to all" button for the font selection which will apply the selected font to all available templates.
 - **Table Overview / Reload**: A manual reload in the table overview results in additional cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
@@ -19,7 +19,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />
 
-- **Discord Maintenance Updates**: You can now select a Discord channel where updates are posted when you upload new tables or replace existing ones on your cabinet. If you share your VPin with a bunch of people, you can let them know this way if there are new tables available.  
+- **Discord Maintenance Updates**: You can now select a Discord channel where updates are posted when you upload new tables or replace existing ones on your cabinet. If you share your VPin with a bunch of people (like I do), you can let them know this way if there are new tables available.  
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates-channel.png" width="550" />
 
@@ -27,10 +27,14 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates.png" width="650" />
 
+- **Toolbar**: Added **System Shutdown** menu item to the header toolbar menu. Note that the item is only visible when you work remote.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="450" />
+
 ## Bugfixes
   
 - **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
-- **Uploader**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
+- **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
 - **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.

@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
@@ -38,14 +39,7 @@
             <ToolBar BorderPane.alignment="CENTER">
               <items>
                   <ComboBox fx:id="sourceCombo" prefHeight="30.0" prefWidth="220.0" />
-                  <Separator layoutX="475.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                  <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="190.0" promptText="Search Repository...">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </TextField>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -53,6 +47,25 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                      </graphic>
                   </Button>
+                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <StackPane alignment="CENTER_RIGHT">
+                     <children>
+                        <TextField fx:id="searchTextField" prefHeight="30.0" prefWidth="200.0" promptText="Search Repository...">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </StackPane>
+                  <Separator layoutX="571.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="vpbmBtbn" layoutX="553.0" layoutY="11.0" mnemonicParsing="false" onAction="#onVPBM" styleClass="external-component" text="VPBM" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -64,6 +77,9 @@
                            </image>
                         </ImageView>
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Open the VPBM user interface." />
+                     </tooltip>
                   </Button>
                   <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="restoreBtn" layoutX="198.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRestore" text="Restore" textFill="WHITE">
@@ -73,6 +89,9 @@
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-file-restore-outline" iconSize="18" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Restores the tables from the selected archives." />
+                     </tooltip>
                   </Button>
                   <Separator layoutX="637.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="addArchiveBtn" layoutX="298.0" layoutY="10.0" mnemonicParsing="false" onAction="#onArchiveAdd" text="Upload" textFill="WHITE">
@@ -82,14 +101,20 @@
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Uploads an archive bundle so it can be installed afterwards." />
+                     </tooltip>
                   </Button>
-                  <Button fx:id="bundleBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Bundle" textFill="WHITE">
+                  <Button fx:id="bundleBtn" layoutX="376.0" layoutY="10.0" mnemonicParsing="false" onAction="#onBundle" text="Download" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                      <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-package-variant" iconSize="18" />
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="18" />
                      </graphic>
+                     <tooltip>
+                        <Tooltip text="Creates a zip bundle from the selected archives and downloads it." />
+                     </tooltip>
                   </Button>
                   <Separator layoutX="1022.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="copyToRepositoryBtn" disable="true" layoutX="915.0" layoutY="11.0" mnemonicParsing="false" onAction="#onToRepositoryCopy" text="Copy" textFill="WHITE">
@@ -100,7 +125,6 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2c-content-copy" iconSize="18" />
                      </graphic>
                   </Button>
-                  <Separator layoutX="282.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="6.0" />
                   <Button fx:id="deleteBtn" layoutX="379.0" layoutY="11.0" mnemonicParsing="false" onAction="#onDelete" text="Delete" textFill="#ff3333">
                      <font>
                         <Font size="14.0" />

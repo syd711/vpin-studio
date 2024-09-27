@@ -83,8 +83,6 @@ public class VpbmService implements InitializingBean {
     Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
-      File exportFile = new File(getExportFolder(), tablename);
-
       if (!backupFile.exists()) {
         backup(game.getId());
       }
@@ -97,18 +95,15 @@ public class VpbmService implements InitializingBean {
       if (backupSettings.getVpbmExternalHostId2() != null) {
         ids.add(backupSettings.getVpbmExternalHostId2().trim());
       }
-      if (backupSettings.getVpbmExternalHostId3() != null) {
-        ids.add(backupSettings.getVpbmExternalHostId3().trim());
-      }
 
       if (ids.isEmpty()) {
         LOG.warn("No export host set, skipping export");
         return null;
       }
 
-      executeVPBM(Arrays.asList("-e", String.valueOf(game.getId()), "--set-alt-hosts=" + String.join(";", ids)));
+      executeVPBM(Arrays.asList("--set-alt-hosts=" + String.join(";", ids)));
 
-      return exportFile;
+      return backupFile;
     }
     else {
       LOG.warn("Game not found for VPX filename " + vpxName);
@@ -152,7 +147,7 @@ public class VpbmService implements InitializingBean {
 
   private SystemCommandOutput executeVPBM(List<String> options) {
     SystemCommandOutput out = new SystemCommandOutput();
-
+    long start = System.currentTimeMillis();
     try {
       File dir = new File(RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
@@ -177,6 +172,9 @@ public class VpbmService implements InitializingBean {
     catch (Exception e) {
       out.setErrOut("Failed to execute VPBM: " + e.getMessage());
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
+    }
+    finally {
+      LOG.info("VPBM command \"vPinBackupManager.exe " + String.join(" ", options) + "\" took " + (System.currentTimeMillis()-start) + " ms.");
     }
     return out;
   }

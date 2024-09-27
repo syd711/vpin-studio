@@ -69,6 +69,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
   private MenuItem frontendMenuItem;
 
   @FXML
+  private MenuItem shutdownMenuItem;
+
+  @FXML
   private ToggleButton maintenanceBtn;
 
   @FXML
@@ -123,6 +126,15 @@ public class ToolbarController implements Initializable, StudioEventListener {
       Platform.runLater(() -> {
         runUpdateCheck();
       });
+    }
+  }
+
+  @FXML
+  private void onShutdown() {
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Shutdown Remote System?", "Shutdown the remote system and exit Studio?", null, "Shutdown and exit");
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getSystemService().systemShutdown();
+      System.exit(0);
     }
   }
 
@@ -268,6 +280,9 @@ public class ToolbarController implements Initializable, StudioEventListener {
 
     if (frontend.getFrontendExe() == null) {
       preferencesBtn.getItems().remove(frontendMenuItem);
+    }
+    if (client.getSystemService().isLocal()) {
+      preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
 

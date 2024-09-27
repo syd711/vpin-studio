@@ -29,6 +29,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -114,6 +115,9 @@ public class RepositoryController implements Initializable, StudioFXController, 
   @FXML
   private StackPane tableStack;
 
+  @FXML
+  private Button clearBtn;
+
   private Parent loadingOverlay;
 
 
@@ -125,6 +129,11 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   // Add a public no-args constructor
   public RepositoryController() {
+  }
+
+  @FXML
+  private void onClear() {
+    searchTextField.setText("");
   }
 
   @FXML
@@ -146,7 +155,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
     Platform.runLater(() -> {
       try {
         Thread.sleep(2000);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       vpbmBtbn.setDisable(false);
@@ -241,7 +251,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
     tableView.setVisible(false);
 
-    if(!tableStack.getChildren().contains(loadingOverlay)) {
+    if (!tableStack.getChildren().contains(loadingOverlay)) {
       tableStack.getChildren().add(loadingOverlay);
     }
 
@@ -275,14 +285,21 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @FXML
   private void onDelete() {
-    ArchiveDescriptorRepresentation selection = tableView.getSelectionModel().getSelectedItem();
-    if (selection != null) {
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Archive \"" + selection.getFilename() + "\"?", null, null, "Delete");
+    List<ArchiveDescriptorRepresentation> selectedItems = tableView.getSelectionModel().getSelectedItems();
+    if (!selectedItems.isEmpty()) {
+      String title = "Delete the " + selectedItems.size() + " selected archives?";
+      if (selectedItems.size() == 1) {
+        title = "Delete Archive \"" + selectedItems.get(0).getFilename() + "\"?";
+      }
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, title, null, null, "Delete");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getArchiveService().deleteArchive(selection.getSource().getId(), selection.getFilename());
-        } catch (Exception e) {
-          WidgetFactory.showAlert(stage, "Error", "Error deleting \"" + selection.getFilename() + "\": " + e.getMessage());
+          for (ArchiveDescriptorRepresentation selectedItem : selectedItems) {
+            client.getArchiveService().deleteArchive(selectedItem.getSource().getId(), selectedItem.getFilename());
+          }
+        }
+        catch (Exception e) {
+          WidgetFactory.showAlert(stage, "Error", "Error deleting archives: " + e.getMessage());
         }
         tableView.getSelectionModel().clearSelection();
         doReload();
@@ -292,6 +309,11 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    clearBtn.setVisible(false);
+    sourceCombo.managedProperty().bindBidirectional(sourceCombo.visibleProperty());
+    sourceCombo.setVisible(false);
+    copyToRepositoryBtn.managedProperty().bindBidirectional(copyToRepositoryBtn.visibleProperty());
+    copyToRepositoryBtn.setVisible(false);
     tableView.setPlaceholder(new Label("The list of archived tables is shown here."));
 
     vpbmBtbn.managedProperty().bindBidirectional(vpbmBtbn.visibleProperty());
@@ -305,7 +327,8 @@ public class RepositoryController implements Initializable, StudioFXController, 
       loadingOverlay = loader.load();
       WaitOverlayController ctrl = loader.getController();
       ctrl.setLoadingMessage("Loading Archives...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -448,6 +471,7 @@ public class RepositoryController implements Initializable, StudioFXController, 
     });
 
     searchTextField.textProperty().addListener((observableValue, s, filterValue) -> {
+      clearBtn.setVisible(filterValue != null && filterValue.length() > 0);
       tableView.getSelectionModel().clearSelection();
 
       List<ArchiveDescriptorRepresentation> filtered = filterArchives(this.archives);

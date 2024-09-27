@@ -207,13 +207,6 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
-            <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
-               <font>
-                     <Font size="14.0" />
-               </font>
-            </TextField>
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                <font>
                      <Font size="14.0" />
@@ -225,7 +218,26 @@
                   <Tooltip text="Reload all table data" />
                </tooltip>
             </Button>
+            <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <StackPane alignment="CENTER_RIGHT">
+               <children>
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                     <font>
+                           <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+            </StackPane>
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
             <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
             <Separator fx:id="playlistSplitter" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
             <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">

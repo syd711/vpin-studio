@@ -30,6 +30,11 @@ public class FXResizeHelper {
 
   private boolean mIsMaximized = false;
   private double mWidthStore, mHeightStore, mXStore, mYStore;
+  private boolean verticalOnly;
+
+  public FXResizeHelper(Stage stage, int dt, int rt) {
+    this(stage, dt, rt, false);
+  }
 
   /**
    * Create an FXResizeHelper for undecoreated JavaFX Stages.
@@ -39,7 +44,8 @@ public class FXResizeHelper {
    * @param dt    - The area (in px) where the user can drag the window.
    * @param rt    - The area (in px) where the user can resize the window.
    */
-  public FXResizeHelper(Stage stage, int dt, int rt) {
+  public FXResizeHelper(Stage stage, int dt, int rt, boolean verticalOnly) {
+    this.verticalOnly = verticalOnly;
     this.TR = rt;
     this.TM = dt + rt;
     this.STAGE = stage;
@@ -100,62 +106,65 @@ public class FXResizeHelper {
   }
 
   private void createListener() {
-    LISTENER.put(Cursor.NW_RESIZE, event -> {
+    if (!verticalOnly) {
+      LISTENER.put(Cursor.NW_RESIZE, event -> {
+        double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
+        double newHeight = mPresStageH - (event.getScreenY() - mPresScreeY);
+        if (newHeight > STAGE.getMinHeight()) {
+          STAGE.setY(event.getScreenY() - mPresSceneY);
+          STAGE.setHeight(newHeight);
+        }
+        if (newWidth > STAGE.getMinWidth()) {
+          STAGE.setX(event.getScreenX() - mPresSceneX);
+          STAGE.setWidth(newWidth);
+        }
+      });
 
-      double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
-      double newHeight = mPresStageH - (event.getScreenY() - mPresScreeY);
-      if (newHeight > STAGE.getMinHeight()) {
-        STAGE.setY(event.getScreenY() - mPresSceneY);
-        STAGE.setHeight(newHeight);
-      }
-      if (newWidth > STAGE.getMinWidth()) {
-        STAGE.setX(event.getScreenX() - mPresSceneX);
-        STAGE.setWidth(newWidth);
-      }
-    });
+      LISTENER.put(Cursor.NE_RESIZE, event -> {
+        double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
+        double newHeight = mPresStageH + (event.getScreenY() - mPresScreeY);
+        if (newHeight > STAGE.getMinHeight()) STAGE.setHeight(newHeight);
+        if (newWidth > STAGE.getMinWidth()) {
+          STAGE.setX(event.getScreenX() - mPresSceneX);
+          STAGE.setWidth(newWidth);
+        }
+      });
 
-    LISTENER.put(Cursor.NE_RESIZE, event -> {
+      LISTENER.put(Cursor.SW_RESIZE, event -> {
+        double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
+        double newHeight = mPresStageH - (event.getScreenY() - mPresScreeY);
+        if (newHeight > STAGE.getMinHeight()) {
+          STAGE.setHeight(newHeight);
+          STAGE.setY(event.getScreenY() - mPresSceneY);
+        }
+        if (newWidth > STAGE.getMinWidth()) {
+          STAGE.setWidth(newWidth);
+        }
+      });
 
-      double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
-      double newHeight = mPresStageH + (event.getScreenY() - mPresScreeY);
-      if (newHeight > STAGE.getMinHeight()) STAGE.setHeight(newHeight);
-      if (newWidth > STAGE.getMinWidth()) {
-        STAGE.setX(event.getScreenX() - mPresSceneX);
-        STAGE.setWidth(newWidth);
-      }
-    });
+      LISTENER.put(Cursor.SE_RESIZE, event -> {
+        double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
+        double newHeight = mPresStageH + (event.getScreenY() - mPresScreeY);
+        if (newHeight > STAGE.getMinHeight()) STAGE.setHeight(newHeight);
+        if (newWidth > STAGE.getMinWidth()) STAGE.setWidth(newWidth);
+      });
+    }
 
-    LISTENER.put(Cursor.SW_RESIZE, event -> {
-      double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
-      double newHeight = mPresStageH - (event.getScreenY() - mPresScreeY);
-      if (newHeight > STAGE.getMinHeight()) {
-        STAGE.setHeight(newHeight);
-        STAGE.setY(event.getScreenY() - mPresSceneY);
-      }
-      if (newWidth > STAGE.getMinWidth()) {
-        STAGE.setWidth(newWidth);
-      }
-    });
+    if (!verticalOnly) {
+      LISTENER.put(Cursor.E_RESIZE, event -> {
+        double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
+        if (newWidth > STAGE.getMinWidth()) {
+          STAGE.setX(event.getScreenX() - mPresSceneX);
+          STAGE.setWidth(newWidth);
+        }
+      });
 
-    LISTENER.put(Cursor.SE_RESIZE, event -> {
-      double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
-      double newHeight = mPresStageH + (event.getScreenY() - mPresScreeY);
-      if (newHeight > STAGE.getMinHeight()) STAGE.setHeight(newHeight);
-      if (newWidth > STAGE.getMinWidth()) STAGE.setWidth(newWidth);
-    });
+      LISTENER.put(Cursor.W_RESIZE, event -> {
+        double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
+        if (newWidth > STAGE.getMinWidth()) STAGE.setWidth(newWidth);
+      });
+    }
 
-    LISTENER.put(Cursor.E_RESIZE, event -> {
-      double newWidth = mPresStageW - (event.getScreenX() - mPresScreeX);
-      if (newWidth > STAGE.getMinWidth()) {
-        STAGE.setX(event.getScreenX() - mPresSceneX);
-        STAGE.setWidth(newWidth);
-      }
-    });
-
-    LISTENER.put(Cursor.W_RESIZE, event -> {
-      double newWidth = mPresStageW + (event.getScreenX() - mPresScreeX);
-      if (newWidth > STAGE.getMinWidth()) STAGE.setWidth(newWidth);
-    });
 
     LISTENER.put(Cursor.N_RESIZE, event -> {
       double newHeight = mPresStageH - (event.getScreenY() - mPresScreeY);
@@ -198,22 +207,22 @@ public class FXResizeHelper {
       boolean u_trigger = sy < SCENE.getHeight() && sy > SCENE.getHeight() - TR;
       boolean d_trigger = sy > 0 && sy < TR;
 
-      if (l_trigger && d_trigger) {
+      if (l_trigger && d_trigger && !verticalOnly) {
         fireAction(Cursor.NW_RESIZE);
       }
-      else if (l_trigger && u_trigger) {
+      else if (l_trigger && u_trigger && !verticalOnly) {
         fireAction(Cursor.NE_RESIZE);
       }
-      else if (r_trigger && d_trigger) {
+      else if (r_trigger && d_trigger && !verticalOnly) {
         fireAction(Cursor.SW_RESIZE);
       }
-      else if (r_trigger && u_trigger) {
+      else if (r_trigger && u_trigger && !verticalOnly) {
         fireAction(Cursor.SE_RESIZE);
       }
-      else if (l_trigger) {
+      else if (l_trigger && !verticalOnly) {
         fireAction(Cursor.E_RESIZE);
       }
-      else if (r_trigger) {
+      else if (r_trigger && !verticalOnly) {
         fireAction(Cursor.W_RESIZE);
       }
       else if (d_trigger) {
@@ -237,4 +246,7 @@ public class FXResizeHelper {
     else SCENE.setOnMouseDragged(null);
   }
 
+  public void setVerticalOnly() {
+    verticalOnly = true;
+  }
 }

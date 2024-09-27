@@ -44,9 +44,6 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
   private TextField exportHostId2;
 
   @FXML
-  private TextField exportHostId3;
-
-  @FXML
   private Button downloadBtn;
 
   @FXML
@@ -71,7 +68,6 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
       archiveBundleDescriptor.setArchiveSourceId(archiveDescriptors.get(0).getSource().getId());
       archiveBundleDescriptor.setExportHostId1(this.exportHostId1.getText());
       archiveBundleDescriptor.setExportHostId2(this.exportHostId2.getText());
-      archiveBundleDescriptor.setExportHostId3(this.exportHostId3.getText());
 
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
         archiveBundleDescriptor.getArchiveNames().add(selectedItem.getFilename());
@@ -119,17 +115,12 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
     String value1 = backupSettings.getVpbmExternalHostId1();
     String value2 = backupSettings.getVpbmExternalHostId1();
-    String value3 = backupSettings.getVpbmExternalHostId1();
     if (!StringUtils.isEmpty(value1)) {
       exportHostId1.setText(value1);
     }
 
     if (!StringUtils.isEmpty(value2)) {
       exportHostId2.setText(value2);
-    }
-
-    if (!StringUtils.isEmpty(value3)) {
-      exportHostId3.setText(value3);
     }
 
     if(VpbmArchiveBundleDialogController.lastFolderSelection != null) {

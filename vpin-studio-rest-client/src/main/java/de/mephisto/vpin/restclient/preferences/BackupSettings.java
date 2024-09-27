@@ -7,7 +7,6 @@ public class BackupSettings extends JsonSettings {
   private String vpbmInternalHostId;
   private String vpbmExternalHostId1;
   private String vpbmExternalHostId2;
-  private String vpbmExternalHostId3;
 
   public String getVpbmInternalHostId() {
     return vpbmInternalHostId;
@@ -31,13 +30,5 @@ public class BackupSettings extends JsonSettings {
 
   public void setVpbmExternalHostId2(String vpbmExternalHostId2) {
     this.vpbmExternalHostId2 = vpbmExternalHostId2;
-  }
-
-  public String getVpbmExternalHostId3() {
-    return vpbmExternalHostId3;
-  }
-
-  public void setVpbmExternalHostId3(String vpbmExternalHostId3) {
-    this.vpbmExternalHostId3 = vpbmExternalHostId3;
   }
 }

@@ -60,11 +60,6 @@
                                           <Font size="14.0" />
                                        </font>
                                     </MenuButton>
-                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="230.0" promptText="Search Table...">
-                                       <font>
-                                          <Font size="14.0" />
-                                       </font>
-                                    </TextField>
                                     <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReloadPressed" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -76,6 +71,13 @@
                                           <Tooltip text="Reload all table data" />
                                        </tooltip>
                                     </Button>
+                                    <Separator layoutX="388.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+                                    <TextField fx:id="searchField" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                    </TextField>
+                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                                     <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
@@ -87,7 +89,6 @@
                                           <Tooltip text="Open Table in Table Overview" />
                                        </tooltip>
                                     </Button>
-                                    <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
                                     <Button fx:id="tableSettingsBtn" mnemonicParsing="false" onAction="#onHighscoreSettings">
                                        <font>
                                           <Font size="14.0" />

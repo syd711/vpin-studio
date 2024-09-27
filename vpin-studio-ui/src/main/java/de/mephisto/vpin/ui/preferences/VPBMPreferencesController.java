@@ -30,8 +30,6 @@ public class VPBMPreferencesController implements Initializable {
   private TextField externalHostText1;
   @FXML
   private TextField externalHostText2;
-  @FXML
-  private TextField externalHostText3;
 
   @FXML
   private TextField thisHostText;
@@ -61,9 +59,6 @@ public class VPBMPreferencesController implements Initializable {
     if (backupSettings.getVpbmExternalHostId2() != null) {
       this.externalHostText2.setText(backupSettings.getVpbmExternalHostId2());
     }
-    if (backupSettings.getVpbmExternalHostId3() != null) {
-      this.externalHostText3.setText(backupSettings.getVpbmExternalHostId3());
-    }
 
     if (backupSettings.getVpbmInternalHostId() != null) {
       this.thisHostText.setText(backupSettings.getVpbmInternalHostId());
@@ -75,10 +70,6 @@ public class VPBMPreferencesController implements Initializable {
     }, 500));
     externalHostText2.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
       backupSettings.setVpbmExternalHostId2(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
-    }, 500));
-    externalHostText3.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
-      backupSettings.setVpbmExternalHostId3(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
     }, 500));
 

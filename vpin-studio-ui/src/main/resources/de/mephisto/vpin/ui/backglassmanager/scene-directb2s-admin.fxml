@@ -40,11 +40,6 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="184.0" promptText="Search Backglass...">
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </TextField>
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -56,7 +51,25 @@
                   <Tooltip text="Reload all table data" />
                </tooltip>
             </Button>
-            <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" />
+            <Separator layoutX="281.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
+            <StackPane alignment="CENTER_RIGHT">
+               <children>
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Backglass...">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+            </StackPane>
+            <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             
             <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
                <font>

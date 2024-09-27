@@ -1955,27 +1955,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @Override
   public void onKeyEvent(KeyEvent event) {
-    contextMenuController.handleKeyEvent(event);
-
-    List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(g -> g.getBean()).collect(Collectors.toList());
-
+    super.onKeyEvent(event);
     if (event.isConsumed()) {
       return;
     }
 
+    contextMenuController.handleKeyEvent(event);
+
+    List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(g -> g.getBean()).collect(Collectors.toList());
+
+
+
     if (event.getCode() == KeyCode.K && event.isControlDown()) {
       onStop();
-      event.consume();
-    }
-    else if (event.getCode() == KeyCode.F && event.isControlDown()) {
-      searchTextField.requestFocus();
-      searchTextField.selectAll();
-      event.consume();
-    }
-    else if (event.getCode() == KeyCode.ESCAPE) {
-      if (searchTextField.isFocused()) {
-        searchTextField.setText("");
-      }
       event.consume();
     }
     else if (!games.isEmpty() && BulkActions.consume(games, event)) {

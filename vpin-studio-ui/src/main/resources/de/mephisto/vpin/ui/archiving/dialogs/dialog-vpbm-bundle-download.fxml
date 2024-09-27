@@ -24,7 +24,7 @@
                   <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
                </BorderPane.margin>
                <children>
-                  <Label fx:id="titleLabel" text="Bundle" textFill="WHITE">
+                  <Label fx:id="titleLabel" text="Download Bundle" textFill="WHITE">
                      <font>
                         <Font size="18.0" />
                      </font>
@@ -32,7 +32,7 @@
                         <Insets bottom="12.0" />
                      </VBox.margin>
                   </Label>
-                  <Label styleClass="preference-description" text="Bundles can be extracted into the &quot;resources/vpbm/backup&quot; folder of other VPins, " textFill="WHITE">
+                  <Label styleClass="preference-description" text="Downloaded bundles can be extracted into the &quot;resources/vpbm/backup&quot; folder of other VPins, " textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -55,12 +55,11 @@
                            <rowConstraints>
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                              <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                               <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                              <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                  <children>
                                     <TextField fx:id="fileNameField" editable="false" prefWidth="350.0">
                                        <HBox.margin>
@@ -80,7 +79,7 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <Label text="Target Folder:" textFill="WHITE" GridPane.rowIndex="4">
+                              <Label text="Target Folder:" textFill="WHITE" GridPane.rowIndex="3">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -100,17 +99,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </TextField>
-                              <TextField fx:id="exportHostId3" layoutX="110.0" layoutY="44.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
                               <Label layoutX="10.0" layoutY="15.0" text="Export Host Id 2:" textFill="WHITE" GridPane.rowIndex="1">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label layoutX="10.0" layoutY="49.0" text="Export Host Id 3:" textFill="WHITE" GridPane.rowIndex="2">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

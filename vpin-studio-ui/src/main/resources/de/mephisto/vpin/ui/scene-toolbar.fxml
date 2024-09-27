@@ -103,6 +103,11 @@
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2v-volume-mute" iconSize="18" />
                                  </graphic>
                               </MenuItem>
+                              <MenuItem fx:id="shutdownMenuItem" mnemonicParsing="false" onAction="#onShutdown" text="Shutdown System">
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2l-laptop-off" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
                               <MenuItem fx:id="dofSyncEntry" mnemonicParsing="false" onAction="#onDOFSyn" text="Synchronize DOF">
                                  <graphic>
                                     <FontIcon iconColor="WHITE" iconLiteral="mdi2f-folder-sync-outline" iconSize="18" />

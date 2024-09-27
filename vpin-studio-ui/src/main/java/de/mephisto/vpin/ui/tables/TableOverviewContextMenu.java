@@ -283,7 +283,7 @@ public class TableOverviewContextMenu {
       if (frontendType.supportArchive()) {
         ctxMenu.getItems().add(new SeparatorMenuItem());
 
-        MenuItem exportItem = new MenuItem("Export");
+        MenuItem exportItem = new MenuItem("Backup Table");
         exportItem.setGraphic(WidgetFactory.createIcon("mdi2e-export"));
         exportItem.setOnAction(actionEvent -> tableOverviewController.onBackup());
         ctxMenu.getItems().add(exportItem);

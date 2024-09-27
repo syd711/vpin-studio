@@ -489,6 +489,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
     }
 
+    this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.uploadBtn.setDisable(true);

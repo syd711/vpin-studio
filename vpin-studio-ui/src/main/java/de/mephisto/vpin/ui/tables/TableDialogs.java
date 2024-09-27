@@ -591,7 +591,7 @@ public class TableDialogs {
       TableDataController controller = (TableDataController) stage.getUserData();
       controller.setGame(stage, overviewController, game, tab);
 
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6, true);
       stage.setUserData(fxResizeHelper);
       stage.setMinWidth(812);
       stage.setMaxWidth(812);

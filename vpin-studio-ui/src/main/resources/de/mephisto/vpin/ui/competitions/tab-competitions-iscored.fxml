@@ -35,13 +35,7 @@
             <top>
                 <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="iScored Subscription Search...">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </TextField>
-                        <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                        <Button fx:id="reloadBtn" layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -49,6 +43,12 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="iScored Subscription Search...">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </TextField>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
                             <font>
