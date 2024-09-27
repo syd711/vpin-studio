@@ -37,6 +37,8 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
@@ -592,4 +594,18 @@ public class RepositoryController implements Initializable, StudioFXController, 
     this.tablesController = tablesController;
   }
 
+  @Override
+  public void onKeyEvent(KeyEvent event) {
+    if (event.getCode() == KeyCode.F && event.isControlDown()) {
+      searchTextField.requestFocus();
+      searchTextField.selectAll();
+      event.consume();
+    }
+    else if (event.getCode() == KeyCode.ESCAPE) {
+      if (searchTextField.isFocused()) {
+        searchTextField.setText("");
+      }
+      event.consume();
+    }
+  }
 }

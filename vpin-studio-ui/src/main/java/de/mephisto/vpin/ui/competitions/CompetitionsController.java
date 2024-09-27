@@ -23,6 +23,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.web.WebEngine;
@@ -430,7 +431,8 @@ public class CompetitionsController implements Initializable, StudioFXController
                 DiscordUserEntryController controller = loader.getController();
                 controller.setData(player);
                 membersBox.getChildren().add(playerPanel);
-              } catch (IOException e) {
+              }
+              catch (IOException e) {
                 LOG.error("Failed to load discord player list: " + e.getMessage(), e);
               }
             }
@@ -447,7 +449,8 @@ public class CompetitionsController implements Initializable, StudioFXController
       offlineController = loader.getController();
       offlineController.setCompetitionsController(this);
       offlineTab.setContent(parent);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load offline: " + e.getMessage(), e);
     }
 
@@ -457,7 +460,8 @@ public class CompetitionsController implements Initializable, StudioFXController
       discordController = loader.getController();
       discordController.setCompetitionsController(this);
       onlineTab.setContent(parent);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load online: " + e.getMessage(), e);
     }
 
@@ -467,7 +471,8 @@ public class CompetitionsController implements Initializable, StudioFXController
       tableSubscriptionsController = loader.getController();
       tableSubscriptionsController.setCompetitionsController(this);
       tableSubscriptionsTab.setContent(parent);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("failed to load subscriptions: " + e.getMessage(), e);
     }
 
@@ -478,7 +483,8 @@ public class CompetitionsController implements Initializable, StudioFXController
         iScoredSubscriptionsController = loader.getController();
         iScoredSubscriptionsController.setCompetitionsController(this);
         iScoredSubscriptionsTab.setContent(parent);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("failed to load subscriptions: " + e.getMessage(), e);
       }
     }
@@ -497,5 +503,33 @@ public class CompetitionsController implements Initializable, StudioFXController
     });
     dashboardStatusLabel.managedProperty().bindBidirectional(dashboardStatusLabel.visibleProperty());
     checkTitledPanes(CompetitionType.OFFLINE);
+  }
+
+
+  private StudioFXController getActiveController() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    switch (selectedIndex) {
+      case 0: {
+        return offlineController;
+      }
+      case 1: {
+        return discordController;
+      }
+      case 2: {
+        return tableSubscriptionsController;
+      }
+      case 3: {
+        return iScoredSubscriptionsController;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void onKeyEvent(KeyEvent event) {
+    StudioFXController activeController = getActiveController();
+    if (activeController != null) {
+      activeController.onKeyEvent(event);
+    }
   }
 }

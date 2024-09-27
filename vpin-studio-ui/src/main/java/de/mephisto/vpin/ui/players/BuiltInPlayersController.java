@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.WaitOverlayController;
 import de.mephisto.vpin.ui.util.AvatarFactory;
@@ -24,6 +25,7 @@ import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.layout.StackPane;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +37,7 @@ import java.util.*;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
-public class BuiltInPlayersController implements Initializable, PreferenceChangeListener {
+public class BuiltInPlayersController extends BasePlayersController implements Initializable, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(BuiltInPlayersController.class);
 
   @FXML
@@ -43,9 +45,6 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @FXML
   private Button deleteBtn;
-
-  @FXML
-  private TextField searchTextField;
 
   @FXML
   private TableView<PlayerRepresentation> tableView;
@@ -207,6 +206,7 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Build-In Players"));
     tableView.setPlaceholder(new Label("          No one want's to play with you?\n" +
         "Add new players or connect a Discord server."));
@@ -338,5 +338,10 @@ public class BuiltInPlayersController implements Initializable, PreferenceChange
         tournamentColumn.setVisible(settings.isEnabled());
       }
     }
+  }
+
+  @Override
+  public void onViewActivated(@Nullable NavigationOptions options) {
+
   }
 }

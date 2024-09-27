@@ -44,11 +44,23 @@
                             </graphic>
                         </Button>
                   <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="iScored Subscription Search...">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </TextField>
+                  <StackPane alignment="CENTER_RIGHT">
+                     <children>
+                              <TextField fx:id="textfieldSearch" prefWidth="200.0" promptText="Subscription Search...">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button fx:id="addBtn" layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
                             <font>

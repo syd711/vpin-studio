@@ -6,6 +6,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.players.PlayerDomain;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,6 +18,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -24,9 +26,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class DiscordPlayersController implements Initializable {
-  @FXML
-  private TextField searchTextField;
+public class DiscordPlayersController extends BasePlayersController implements Initializable {
 
   @FXML
   private CheckBox validPlayersCheckbox;
@@ -63,6 +63,7 @@ public class DiscordPlayersController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Members"));
     tableView.setPlaceholder(new Label("                           No one wants to play with you?\n" +
         "Edit your preferences to connect a Discord server with your VPin."));
@@ -193,5 +194,10 @@ public class DiscordPlayersController implements Initializable {
 
   public int getCount() {
     return this.players.size();
+  }
+
+  @Override
+  public void onViewActivated(@Nullable NavigationOptions options) {
+
   }
 }

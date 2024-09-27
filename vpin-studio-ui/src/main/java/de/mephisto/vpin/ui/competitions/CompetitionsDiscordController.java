@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionsDiscordController implements Initializable, StudioFXController {
+public class CompetitionsDiscordController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsDiscordController.class);
 
   @FXML
@@ -114,9 +114,6 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   private Button joinBtn;
 
   @FXML
-  private TextField textfieldSearch;
-
-  @FXML
   private BorderPane competitionWidget;
 
   @FXML
@@ -163,7 +160,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
   @FXML
   private void onCompetitionValidateAll() {
     List<CompetitionRepresentation> competitionRepresentations = client.getCompetitionService().getDiscordCompetitions().stream().filter(d -> !d.isFinished()).collect(Collectors.toList());
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize "+ competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Synchronize " + competitionRepresentations.size() + " Competitions?", "This will re-check your local highscores against the Discord server data.");
     if (result.get().equals(ButtonType.OK)) {
       ProgressDialog.createProgressDialog(new CompetitionSyncProgressModel("Synchronizing Competition", competitionRepresentations));
       this.onReload();
@@ -183,7 +180,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
             tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
           });
         });
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
     }
@@ -203,7 +201,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
             onReload();
             tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
           });
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -228,7 +227,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
         ProgressResultModel resultModel = ProgressDialog.createProgressDialog(new CompetitionSavingProgressModel("Joining Competition", Arrays.asList(c)));
         onReload();
         tableView.getSelectionModel().select((CompetitionRepresentation) resultModel.results.get(0));
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
     }
@@ -248,7 +248,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -375,6 +376,7 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
@@ -383,7 +385,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -550,7 +553,8 @@ public class CompetitionsDiscordController implements Initializable, StudioFXCon
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
 
       competitionWidgetRoot.managedProperty().bindBidirectional(competitionWidget.visibleProperty());
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 
