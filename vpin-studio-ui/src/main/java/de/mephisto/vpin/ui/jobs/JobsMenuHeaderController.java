@@ -25,7 +25,7 @@ public class JobsMenuHeaderController implements Initializable {
 
   @FXML
   private void onClearAll() {
-    client.getJobsService().dismissAll();
+    jobPoller.dismissAll();
     jobPoller.refreshJobsUI();
   }
 

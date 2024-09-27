@@ -153,7 +153,7 @@ public class JobPoller implements StudioEventListener {
       //remove dismissed jobs
       List<MenuItem> items = new ArrayList<>(jobMenu.getItems());
       for (MenuItem item : items) {
-        if(item.getUserData() == null) {
+        if (item.getUserData() == null) {
           continue;
         }
 
@@ -196,6 +196,20 @@ public class JobPoller implements StudioEventListener {
     jobs.addAll(client.getJobsService().getJobs());
     jobs.addAll(clientJobs);
     return jobs;
+  }
+
+  public void dismissAll() {
+    client.getJobsService().dismissAll();
+    for (JobDescriptor clientJob : new ArrayList<>(clientJobs)) {
+      if (clientJob.isFinished()) {
+        clientJobs.remove(clientJob);
+      }
+    }
+  }
+
+
+  public void dismiss(JobDescriptor job) {
+    clientJobs.remove(job);
   }
 
   public void queueJob(JobDescriptor jobDescriptor) {
