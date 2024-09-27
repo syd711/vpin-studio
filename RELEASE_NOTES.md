@@ -2,9 +2,7 @@
 
 ## Changes
 
-- **Refactored Game Media Access**: TLTR: the peformance has been optimized here.
-  - The main reason for the slow table reload was that the all media files of all tables have been checked on reload in order to run the validation checks. A new caching layer has been introduced here which **significantly reduces the loading time of all tables**.
-  - In addition to that, the table media information is requested separately now, which reduces the table data approx. by more than 30 percent. 
+- **Refactored Game Media Access**: For performance optimization, the media access has been refactored widely. As a result, the table (re)load should be noticeable faster. 
 - **Table Validators**: Introduced new validator **VPinMAME ROM Validation**. The validator uses the results from the VPinMAME ROM tester to indicate possibly broken ROM files. The new validator is enabled by default.
 - **Highscore Card Editor**: Added "Apply to all" button for the font selection which will apply the selected font to all available templates.
 - **Table Overview / Reload**: A manual reload in the table overview results in additional cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.

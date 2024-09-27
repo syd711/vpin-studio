@@ -12,7 +12,7 @@ public class VpsEntryComment extends HBox {
     this.setAlignment(Pos.BASELINE_LEFT);
     this.setStyle("-fx-padding: 0 0 3px 0;");
 
-    this.getChildren().add(spacer(80));
+    this.getChildren().add(spacer(100));
 
     Label commentLabel = WidgetFactory.createDefaultLabel(comment.trim());
     commentLabel.setStyle("-fx-font-size: 12px;-fx-font-color: #B0ABAB;-fx-text-fill: #B0ABAB;");

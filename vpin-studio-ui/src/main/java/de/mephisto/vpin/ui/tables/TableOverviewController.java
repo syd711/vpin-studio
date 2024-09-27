@@ -884,6 +884,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
           setItems();
 
+          refreshFilters();
+
           if (selection != null) {
             final Optional<GameRepresentation> updatedGame = this.data.stream().filter(g -> g.getId() == selection.getId()).findFirst();
             if (updatedGame.isPresent()) {
