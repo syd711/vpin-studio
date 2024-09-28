@@ -122,7 +122,6 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   private Parent loadingOverlay;
   private Account account;
   private ManiaController maniaController;
-  private Tile turnoverTile;
   private RankedAccount rankedAccount;
 
   // Add a public no-args constructor
@@ -131,7 +130,11 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
 
   public void onViewActivated(@Nullable NavigationOptions options) {
-    if (options == null || options.getModel() == null || this.account == null) {
+    if (options == null || options.getModel() == null) {
+      if (this.account != null) {
+        return;
+      }
+
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
       if (defaultPlayer.getTournamentUserUuid() == null) {
         return;
@@ -322,6 +325,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       });
     }
     catch (Exception e) {
+      this.reloadBtn.setDisable(false);
       LOG.error("Failed to refresh player stats: " + e.getMessage(), e);
     }
   }
