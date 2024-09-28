@@ -9,8 +9,10 @@
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
@@ -19,14 +21,64 @@
         <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
     </padding>
     <top>
-        <Label fx:id="titleLabel" styleClass="widget-title" text="Player Statistics" textFill="WHITE" BorderPane.alignment="TOP_LEFT">
-            <font>
-                <Font size="14.0" />
-            </font>
+      <BorderPane BorderPane.alignment="TOP_LEFT">
          <BorderPane.margin>
             <Insets bottom="12.0" />
          </BorderPane.margin>
-        </Label>
+         <center>
+            <VBox>
+               <children>
+                    <Label fx:id="titleLabel" styleClass="widget-title" text="Player Statistics" textFill="WHITE">
+                        <font>
+                            <Font size="14.0" />
+                        </font>
+                     <VBox.margin>
+                        <Insets />
+                     </VBox.margin>
+                    </Label>
+                  <Label fx:id="sub1Label" layoutX="22.0" layoutY="10.0" text="-" textFill="WHITE">
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="subScore1Label" layoutX="10.0" layoutY="50.0" text="-" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="subScore2Label" layoutX="10.0" layoutY="88.0" text="-" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="subScore3Label" layoutX="10.0" layoutY="108.0" text="-" textFill="WHITE">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
+               </children>
+               <BorderPane.margin>
+                  <Insets left="12.0" />
+               </BorderPane.margin>
+            </VBox>
+         </center>
+         <left>
+            <VBox fx:id="avatarPane" alignment="TOP_CENTER" prefHeight="150.0" prefWidth="150.0" style="-fx-background-radius: 12px;" styleClass="media-container" BorderPane.alignment="CENTER">
+               <children>
+                  <ImageView fx:id="avatarView" fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Label fx:id="rankLabel" text="Label">
+                     <font>
+                        <Font name="System Bold" size="24.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </left>
+      </BorderPane>
     </top>
    <center>
       <BorderPane BorderPane.alignment="CENTER">

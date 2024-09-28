@@ -39,8 +39,15 @@
 - **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
+- **Highscore Parsing**: Added support for "Aladdin's Castle".
 - **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
 - **Table Data Manager**: Fixed dialog sizing issues.
 - **Backglass Data Exporter**:
   - Fixed wrong DMD image information (the data was always read from the backglass image).
   - Added additional data from the backglass settings.
+
+## VPin Mania 
+
+- **Player Ranking**: Added pagination to the players view, so the list is not limited to 100 anymore.
+- **Navigation**: Fixed several navigation issues.
+- **Player Statistics Tab**: The view has become a small revamp, showing the players rank now too.
