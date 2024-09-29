@@ -68,7 +68,7 @@
                               <Tooltip text="Table Statistics (F5)" />
                            </tooltip>
                                 </Tab>
-                                <Tab fx:id="tableRepositoryTab" text=" Table Repository">
+                                <Tab fx:id="tableRepositoryTab" text=" Table Backups">
                                     <content>
                                         <BorderPane />
                                     </content>
@@ -76,7 +76,7 @@
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                                     </graphic>
                            <tooltip>
-                              <Tooltip text="Table Repository (F6)" />
+                              <Tooltip text="Table Backups (F6)" />
                            </tooltip>
                                 </Tab>
                             </tabs>

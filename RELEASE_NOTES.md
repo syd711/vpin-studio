@@ -12,11 +12,12 @@
 - **Pause Menu**: Added additional info about the highscore data (if supported or not).
 - **PinVol 2.2**: Added PinVol version 2.2. The new .exe file will automatically be downloaded by the server.
 - **VPBM 3.3**: Updated to VPBM 3.3 (finally).
+  - Renamed **Table Repository** to **Table Backups**. VPBM does not need additional exports anymore, so this renaming should make the whole usage more intuitive.
   - Applied some performance optimizations from VBPM to the Studio integration.
-  - Added support for the additoinal external host ids.
-  - Streamlined the Studio UI for VPBM a bit: Added missing button tooltips and changed labels.
+  - Added support for the additional external host ids.
+  - Added missing button tooltips and changed labels.
 - **Shortcuts**: Several shortcuts have been introduced to improve the accessibility of the Studio. You find an overview in the "Help & Support" section of the preferences.
-- **Studio Window**: The toolbar design has been streamlined. The reload and filter buttons and search inputs have all the same order and size now. 
+- **Studio Toolbar Design**: The toolbar design has been streamlined. The reload and filter buttons and search inputs have all the same order and size now. Also search input fields support Strg+F and ESC inputs for a better accessibility. 
 - **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />

@@ -97,6 +97,7 @@ public class TextHighscoreConverters {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
+          LOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\"");
           SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\"");
           return adapter.convert(file, lines);
         }
