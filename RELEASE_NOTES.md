@@ -48,6 +48,7 @@
   - Fixed wrong DMD image information (the data was always read from the backglass image).
   - Added additional data from the backglass settings.
 - **ALT Sound**: Added missing cache invalidation after deletion of ALT sound packages.
+- **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
 
 ## VPin Mania 
 
