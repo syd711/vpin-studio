@@ -2,12 +2,11 @@ package de.mephisto.vpin.server.highscores;
 
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.ScoreParsingSummary;
 import de.mephisto.vpin.server.highscores.parsing.nvram.NvRamHighscoreToRawConverter;
-import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreConverters;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -16,23 +15,25 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-class HighscoreResolver {
+@Service
+public class HighscoreResolver implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreResolver.class);
   public static final String NO_SCORE_FOUND_MSG = "No nvram file, VPReg.stg entry or highscore text file found.";
 
-  private final SystemService systemService;
-  private final ScoringDB scoringDB;
+  @Autowired
+  private SystemService systemService;
 
-  public HighscoreResolver(@NonNull SystemService systemService) {
-    this.systemService = systemService;
-    this.scoringDB = systemService.getScoringDatabase();
-  }
+  @Autowired
+  private TextHighscoreAdapters textHighscoreAdapters;
 
   public boolean deleteTextScore(Game game) {
     File hsFile = game.getHighscoreTextFile();
@@ -42,7 +43,7 @@ class HighscoreResolver {
 
     if ((hsFile == null || !hsFile.exists())) {
       if (!StringUtils.isEmpty(game.getRom())) {
-        ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+        ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
         if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
           hsFile = game.getAlternateHighscoreTextFile(highscoreMapping.getTextFile());
         }
@@ -50,7 +51,7 @@ class HighscoreResolver {
     }
 
     if (hsFile != null && hsFile.exists()) {
-      return TextHighscoreConverters.resetHighscores(scoringDB, hsFile);
+      return textHighscoreAdapters.resetHighscores(systemService.getScoringDatabase(), hsFile);
     }
     return false;
   }
@@ -111,7 +112,7 @@ class HighscoreResolver {
 
     if ((hsFile == null || !hsFile.exists())) {
       if (!StringUtils.isEmpty(game.getRom())) {
-        ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+        ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
         if (highscoreMapping != null && !StringUtils.isEmpty(highscoreMapping.getTextFile())) {
           hsFile = game.getAlternateHighscoreTextFile(highscoreMapping.getTextFile());
         }
@@ -123,7 +124,7 @@ class HighscoreResolver {
       metadata.setFilename(hsFile.getCanonicalPath());
       metadata.setModified(new Date(hsFile.lastModified()));
 
-      return TextHighscoreConverters.convertTextFileTextToMachineReadable(metadata, scoringDB, hsFile);
+      return textHighscoreAdapters.convertTextFileTextToMachineReadable(metadata, systemService.getScoringDatabase(), hsFile);
     }
     return null;
   }
@@ -132,18 +133,18 @@ class HighscoreResolver {
    * We use the manual set rom name to find the highscore in the "/User/VPReg.stg" file.
    */
   private String readVPRegHighscore(Game game, HighscoreMetadata metadata) throws IOException {
-    if (game.getRom() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getRom())) {
+    if (game.getRom() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getRom())) {
       SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
       return null;
     }
 
-    if (game.getTableName() != null && scoringDB.getIgnoredVPRegEntries().contains(game.getTableName())) {
+    if (game.getTableName() != null && systemService.getScoringDatabase().getIgnoredVPRegEntries().contains(game.getTableName())) {
       SLOG.info("\"" + game.getGameDisplayName() + "\" was marked as to be ignored for VPReg.stg highscores.");
       return null;
     }
 
     String tableName = game.getTableName();
-    ScoringDBMapping highscoreMapping = scoringDB.getHighscoreMapping(game.getRom());
+    ScoringDBMapping highscoreMapping = systemService.getScoringDatabase().getHighscoreMapping(game.getRom());
     if (StringUtils.isEmpty(tableName) && highscoreMapping != null) {
       tableName = highscoreMapping.getTableName();
     }
@@ -196,7 +197,7 @@ class HighscoreResolver {
       metadata.setModified(new Date(nvRam.lastModified()));
 
       List<String> supportedNvRams = systemService.getScoringDatabase().getSupportedNvRams();
-      if (!supportedNvRams.contains(nvRamName) || scoringDB.getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
+      if (!supportedNvRams.contains(nvRamName) || systemService.getScoringDatabase().getNotSupported().contains(FilenameUtils.getBaseName(nvRamName))) {
         String msg = "The NV ram file \"" + nvRamName + ".nv\" is not supported by PINemHi.";
         SLOG.info(msg);
         metadata.setStatus(msg);
@@ -223,5 +224,10 @@ class HighscoreResolver {
     catch (Exception e) {
       throw e;
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    //nothing
   }
 }

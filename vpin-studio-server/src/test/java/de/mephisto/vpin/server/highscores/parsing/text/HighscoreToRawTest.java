@@ -2,7 +2,6 @@ package de.mephisto.vpin.server.highscores.parsing.text;
 
 
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
-import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
@@ -19,11 +18,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Date;
 import java.util.List;
 
-import static de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreConverters.adapters;
+import static de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters.adapters;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HighscoreToRawTest {
@@ -40,7 +38,7 @@ public class HighscoreToRawTest {
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
+      String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
       System.out.println(raw);
 
@@ -68,7 +66,12 @@ public class HighscoreToRawTest {
       try {
         fileInputStream = new FileInputStream(entry);
         List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
-        String resettedTemplate = FileUtils.readFileToString(new File(entry.getParentFile(), entry.getName() + ".reset"), StandardCharsets.UTF_8.name());
+        File resetFile = new File(entry.getParentFile(), entry.getName() + ".reset");
+        if(!resetFile.exists()) {
+          System.out.println("No reset file found for " + resetFile.getAbsolutePath());
+        }
+        assertTrue(resetFile.exists());
+        String resettedTemplate = FileUtils.readFileToString(resetFile, StandardCharsets.UTF_8.name());
 
         for (ScoreTextFileAdapter adapter : adapters) {
           if (adapter.isApplicable(entry, lines)) {
@@ -101,9 +104,9 @@ public class HighscoreToRawTest {
   @Test
   public void testSingle() {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "MountainClimbingHS.txt");
+    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "TeachersPet_65VPX.txt");
     System.out.println("Reading '" + entry.getName() + "'");
-    String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
+    String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
     System.out.println(raw);
 

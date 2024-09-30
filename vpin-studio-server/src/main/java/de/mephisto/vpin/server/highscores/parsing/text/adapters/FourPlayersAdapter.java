@@ -1,0 +1,84 @@
+package de.mephisto.vpin.server.highscores.parsing.text.adapters;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+public class FourPlayersAdapter implements ScoreTextFileAdapter {
+  private String name;
+  private int start = 1;
+
+  private int lineCount;
+
+  public FourPlayersAdapter(int start) {
+    this.start = start;
+  }
+
+  public FourPlayersAdapter(String name, int start) {
+    this.name = name;
+    this.start = start;
+  }
+
+  @Override
+  public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
+    if (file.getName().equals(name)) {
+      return true;
+    }
+    return lines.size() == lineCount;
+  }
+
+  @Override
+  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+    List<String> newScoreText = new ArrayList<>();
+
+    for (int i = 0; i < lines.size(); i++) {
+      String line = lines.get(i);
+      if (i >= start && i < start + 4) {
+        newScoreText.add("0");
+        continue;
+      }
+      newScoreText.add(line);
+    }
+    return newScoreText;
+  }
+
+  @Override
+  public String convert(@NotNull File file, @NotNull List<String> lines) {
+    StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
+    String score1 = lines.get(start);
+    String score2 = lines.get(start + 1);
+    String score3 = lines.get(start + 2);
+    String score4 = lines.get(start + 3);
+    builder.append("#1");
+    builder.append(" ");
+    builder.append("???");
+    builder.append("   ");
+    builder.append(score1);
+    builder.append("\n");
+
+    builder.append("#2");
+    builder.append(" ");
+    builder.append("???");
+    builder.append("   ");
+    builder.append(score2);
+    builder.append("\n");
+
+    builder.append("#3");
+    builder.append(" ");
+    builder.append("???");
+    builder.append("   ");
+    builder.append(score3);
+    builder.append("\n");
+
+    builder.append("#4");
+    builder.append(" ");
+    builder.append("???");
+    builder.append("   ");
+    builder.append(score4);
+    builder.append("\n");
+
+    return builder.toString();
+  }
+}

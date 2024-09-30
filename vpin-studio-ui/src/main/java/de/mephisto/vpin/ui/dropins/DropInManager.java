@@ -163,7 +163,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   @Override
   public void notifyFolderChange(@NonNull File folder, @Nullable File file) {
-    if (FileUtils.isTempFile(file)) {
+    if (file == null || FileUtils.isTempFile(file)) {
       return;
     }
 

@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.CompetitionsRepository;
 import de.mephisto.vpin.server.competitions.RankedPlayer;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
@@ -16,8 +17,6 @@ import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
-import de.mephisto.vpin.server.players.PlayerService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -66,11 +65,9 @@ public class HighscoreService implements InitializingBean {
   private ScoreFilter scoreFilter;
 
   @Autowired
-  private PlayerService playerService;
+  private HighscoreResolver highscoreResolver;
 
   private boolean pauseHighscoreEvents;
-
-  private HighscoreResolver highscoreResolver;
 
   private final List<HighscoreChangeListener> listeners = new ArrayList<>();
   private final List<String> vpRegEntries = new ArrayList<>();
@@ -668,7 +665,6 @@ public class HighscoreService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    this.highscoreResolver = new HighscoreResolver(systemService);
     this.refreshVPRegEntries();
     this.refreshHighscoreFiles();
   }

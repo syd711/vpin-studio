@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.Score;
-import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreConverters;
+import de.mephisto.vpin.server.highscores.parsing.text.TextHighscoreAdapters;
 import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
     for (File entry : files) {
       HighscoreMetadata highscoreMetadata = new HighscoreMetadata();
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
+      String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
       assertNull(highscoreMetadata.getStatus());
       if (raw != null) {
         List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);
@@ -54,7 +54,7 @@ public class TextParsingTest extends AbstractVPinServerTest {
       HighscoreMetadata highscoreMetadata = new HighscoreMetadata();
       if(entry.getName().equals("Route66.txt")) {
         System.out.println("Reading '" + entry.getName() + "'");
-        String raw = TextHighscoreConverters.convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
+        String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(highscoreMetadata, scoringDB, entry);
         assertNull(highscoreMetadata.getStatus());
         if (raw != null) {
           List<Score> scores = highscoreParsingService.parseScores(new Date(entry.lastModified()), raw, -1, -1);

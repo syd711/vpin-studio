@@ -10,9 +10,10 @@ import java.util.List;
 
 public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl {
 
-  private final int lineCount;
   private final int start;
   private final int entryCount;
+  private int lineCount;
+  private String name;
 
   public AlteringScoreInitialsLinesAdapter(int lineCount, int start, int entryCount) {
     this.lineCount = lineCount;
@@ -20,8 +21,18 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
     this.entryCount = entryCount;
   }
 
+
+  public AlteringScoreInitialsLinesAdapter(String name, int start, int entryCount) {
+    this.name = name;
+    this.start = start;
+    this.entryCount = entryCount;
+  }
+
   @Override
   public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
+    if(name != null && name.equalsIgnoreCase(file.getName())) {
+      return true;
+    }
     return lines.size() == lineCount;
   }
 

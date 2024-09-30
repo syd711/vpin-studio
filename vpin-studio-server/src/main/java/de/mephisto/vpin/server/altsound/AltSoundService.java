@@ -55,7 +55,9 @@ public class AltSoundService implements InitializingBean {
       if (folder.exists()) {
         altSoundFolder2AltSound.remove(game.getAltSoundFolder().getAbsolutePath());
         LOG.info("Deleting ALTSound folder " + folder.getAbsolutePath());
-        return FileUtils.deleteFolder(folder);
+        if (FileUtils.deleteFolder(folder)) {
+          return clearCache();
+        }
       }
     }
     return false;
