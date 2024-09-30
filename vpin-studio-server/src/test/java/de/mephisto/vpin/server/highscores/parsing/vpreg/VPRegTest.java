@@ -46,6 +46,17 @@ public class VPRegTest {
   public void testAllHighscores() {
     ScoringDB scoringDB = ScoringDB.load();
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
+    testVpRegFile(vpRegFile, scoringDB);
+  }
+
+  @Test
+  public void testAllHighscores2() {
+    ScoringDB scoringDB = ScoringDB.load();
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-gorgatron.stg");
+    testVpRegFile(vpRegFile, scoringDB);
+  }
+
+  private static void testVpRegFile(File vpRegFile, ScoringDB scoringDB) {
     VPReg reg = new VPReg(vpRegFile);
     List<String> entries = reg.getEntries();
     int count = 0;
@@ -58,7 +69,6 @@ public class VPRegTest {
         continue;
       }
 
-      System.out.println("Reading '" + entry + "'");
       VPReg regEntry = new VPReg(vpRegFile, entry, null);
       ScoreParsingSummary vpRegScoreSummary = regEntry.readHighscores();
       assertNotNull(vpRegScoreSummary, "Reading failed for " + entry);
@@ -86,8 +96,8 @@ public class VPRegTest {
 
   @Test
   public void testSingleInitialsHighscores() {
-    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-local.stg");
-    VPReg reg = new VPReg(vpRegFile, "Aloha", null);
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-gorgatron.stg");
+    VPReg reg = new VPReg(vpRegFile, "Heatw", null);
     ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
     assertNotNull(vpRegScoreSummary);
     assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");

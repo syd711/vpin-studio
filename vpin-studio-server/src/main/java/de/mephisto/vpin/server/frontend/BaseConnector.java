@@ -420,12 +420,14 @@ public abstract class BaseConnector implements FrontendConnector {
   protected List<Playlist> loadPlayLists() {
     return null;
   }
+
   protected void savePlaylist(Playlist playlist) {
   }
 
   public Set<Integer> loadFavorites() {
-    return null;
+    return new HashSet<>();
   }
+
   protected void saveFavorite(int gameId, boolean favorite) {
   }
 

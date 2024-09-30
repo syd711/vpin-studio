@@ -1423,8 +1423,8 @@ public class PinUPConnector implements FrontendConnector {
     try {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery(
-          "SELECT g.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
-              + " left join Emulators e on g.EMUID=e.EMUID");
+          "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
+              + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID ");
       while (rs.next()) {
         Game info = createGame(rs);
         if (info == null) {

@@ -10,8 +10,23 @@ import java.io.IOException;
 
 public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAdapterImpl {
 
+  private String gameName;
+  private String key;
+
+  public SingleEntryAnonymousVPRegHighscoreAdapter(String gameName, String key) {
+    this.gameName = gameName;
+    this.key = key;
+  }
+
+  public SingleEntryAnonymousVPRegHighscoreAdapter() {
+  }
+
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) throws IOException {
+    if (gameName != null) {
+      return gameFolder.getName().equalsIgnoreCase(gameName);
+    }
+
     if (getHighscoreEntry(gameFolder) != null && !gameFolder.hasEntry("hsa1") && !gameFolder.hasEntry("HSA1") && !gameFolder.hasEntry("Initial1")) {
       return true;
     }
@@ -31,6 +46,15 @@ public class SingleEntryAnonymousVPRegHighscoreAdapter extends VPRegHighscoreAda
     summary.getScores().add(score);
 
     return summary;
+  }
+
+  @Override
+  protected DocumentNode getHighscoreEntry(DirectoryEntry gameFolder) throws IOException {
+    if(key != null && gameName != null) {
+      return (DocumentNode) gameFolder.getEntry(key);
+    }
+
+    return super.getHighscoreEntry(gameFolder);
   }
 
   @Override

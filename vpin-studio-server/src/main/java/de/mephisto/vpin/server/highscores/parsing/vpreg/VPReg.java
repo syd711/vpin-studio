@@ -33,7 +33,9 @@ public class VPReg {
     adapters.put("numericList", new NumericListVPRegHighscoreAdapter());
     adapters.put("numericList2", new NumericList2VPRegHighscoreAdapter("HSName%s", "HSPoints%s" ));
     adapters.put("numericList3", new NumericList2VPRegHighscoreAdapter("HighscoreInits(%s)", "Highscore(%s)" ));
-    adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter());
+    adapters.put("numericList4", new NumericList2VPRegHighscoreAdapter("Name%s", "High%s" , 1));
+    adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter("Heatw", "HS"));
+    adapters.put("singleAnonymousEntry2", new SingleEntryAnonymousVPRegHighscoreAdapter());
     adapters.put("singleWithLettersEntry", new SingleEntryWithLettersVPRegHighscoreAdapter());
     adapters.put("numericListAnonymous", new NumericListAnonymousVPRegHighscoreAdapter());
   }

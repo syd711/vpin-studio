@@ -12,10 +12,16 @@ public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscore
 
   private final String namePrefix;
   private final String highscorePrefix;
+  private int startIndex = 0;
 
   public NumericList2VPRegHighscoreAdapter(String namePrefix, String highscorePrefix) {
     this.namePrefix = namePrefix;
     this.highscorePrefix = highscorePrefix;
+  }
+
+  public NumericList2VPRegHighscoreAdapter(String namePrefix, String highscorePrefix, int startIndex) {
+    this(namePrefix, highscorePrefix);
+    this.startIndex = startIndex;
   }
 
   @Override
@@ -42,7 +48,7 @@ public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscore
 
   @Override
   protected int getStartIndex() {
-    return 0;
+    return startIndex;
   }
 
   protected String getNameKey(int index) {
