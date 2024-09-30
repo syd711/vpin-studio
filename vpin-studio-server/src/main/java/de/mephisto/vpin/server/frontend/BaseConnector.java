@@ -13,8 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -111,8 +112,10 @@ public abstract class BaseConnector implements FrontendConnector {
       for (Playlist playlist : loadedPlaylists) {
         playlists.put(playlist.getId(), playlist);
         // get color if set
-        Map<String, ?> playlistConf = getPlaylistConf(playlist);
-        playlist.setMenuColor((Integer) playlistConf.get("menuColor"));
+        JsonObject playlistConf = getPlaylistConf(playlist);
+        if (playlistConf != null && playlistConf.has("menuColor")) {
+          playlist.setMenuColor(playlistConf.get("menuColor").getAsInt());
+        }
       }
     }
 
@@ -523,8 +526,8 @@ public abstract class BaseConnector implements FrontendConnector {
     Playlist playlist = getPlayList(playlistId);
     if (playlist != null) {
       playlist.setMenuColor((int) color);
-      Map<String, Object> playlistConf = getPlaylistConf(playlist);
-      playlistConf.put("menuColor", color);
+      JsonObject playlistConf = getPlaylistConf(playlist);
+      playlistConf.addProperty("menuColor", color);
       savePlaylistConf(playlist, playlistConf);
     }
   }
@@ -534,32 +537,40 @@ public abstract class BaseConnector implements FrontendConnector {
     return new File(pinballXFolder, "/Databases/playlists.json");
   }
 
-  private Map<String, Object> getPlaylistConf(Playlist playlist) {
+  private JsonObject getPlaylistConf() {
     File playlistConfFile = getPlaylistConfFile();
     if (playlistConfFile != null && playlistConfFile.exists()) {
       try {
         String content = Files.readString(playlistConfFile.toPath(), Charset.forName("UTF-8"));
-        // convert JSON string to Map
-        Map<String, Object>[] confs = new ObjectMapper().readValue(content, new TypeReference<>() {
-        });
-        for (Map<String, Object> conf : confs) {
-          if (playlist.getName().equals(conf.get("name"))) {
-            return conf;
-          }
+        JsonElement e = JsonParser.parseString(content);
+        if (e.isJsonObject()) {
+          return (JsonObject) e;
         }
       }
       catch (IOException ioe) {
         LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
       }
     }
-    return new HashMap<>();
+    return new JsonObject();
   }
 
-  private void savePlaylistConf(Playlist playlist, Map<String, ?> playlistConf) {
+  private JsonObject getPlaylistConf(Playlist playlist) {
+    JsonObject conf = getPlaylistConf();
+    JsonObject playlistConf = conf.getAsJsonObject(playlist.getName());
+    if (playlistConf == null) {    
+      return new JsonObject();
+    }
+    return playlistConf;
+  }
+
+  private void savePlaylistConf(Playlist playlist,JsonObject playlistConf) {
+    JsonObject o = getPlaylistConf();
+    o.add(playlist.getName(), playlistConf);
+
     File playlistConfFile = getPlaylistConfFile();
     if (playlistConfFile != null) {
       try {
-        String content = new ObjectMapper().writeValueAsString(playlistConf);
+        String content = o.toString();
         Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
       }
       catch (IOException ioe) {
