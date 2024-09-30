@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -145,6 +144,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       GameEmulator emulator = emulators.get(game.getEmulatorId());
       if (emulator != null) {
         game.setEmulator(emulator);
+      }
+
+      FrontendMediaItem frontendMediaItem = getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
+      if (frontendMediaItem != null) {
+        game.setWheelImage(frontendMediaItem.getFile());
       }
     }
     return game;
@@ -502,6 +506,58 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     }
 
     preferencesService.addChangeListener(this);
+  }
+
+  @NonNull
+  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen) {
+    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
+    return game.getEmulator().getGameMediaFolder(baseName, screen);
+  }
+
+  @NonNull
+  public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    if (mediaStrategy != null) {
+      return mediaStrategy.getScreenMediaFiles(game, getMediaFolder(game, screen), screen);
+    }
+    return Collections.emptyList();
+  }
+
+  public FrontendMediaItem getMediaItem(@NonNull Game game, @NonNull VPinScreen screen, String name) {
+    FrontendMedia media = getGameMedia(game);
+    return media.getMediaItem(screen, name);
+  }
+
+  @NonNull
+  public List<FrontendMediaItem> getMediaItems(@NonNull Game game, @NonNull VPinScreen screen) {
+    FrontendMedia media = getGameMedia(game);
+    return media.getMediaItems(screen);
+  }
+
+  @NonNull
+  public FrontendMedia getGameMedia(int gameId) {
+    Game game = getGame(gameId);
+    return getGameMedia(game);
+  }
+  @NonNull
+  public FrontendMedia getGameMedia(Game game) {
+    FrontendMedia frontendMedia = new FrontendMedia();
+
+    List<VPinScreen> screens = getFrontend().getSupportedScreens();
+    for (VPinScreen screen : screens) {
+      List<FrontendMediaItem> itemList = new ArrayList<>();
+      List<File> mediaFiles = getMediaFiles(game, screen);
+      for (File file : mediaFiles) {
+        FrontendMediaItem item = new FrontendMediaItem(game.getId(), screen, file);
+        itemList.add(item);
+      }
+      frontendMedia.getMedia().put(screen.name(), itemList);
+    }
+    return frontendMedia;
+  }
+
+  public FrontendMediaItem getDefaultMediaItem(Game game, VPinScreen screen) {
+    return getGameMedia(game).getDefaultMediaItem(screen);
   }
 
   public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {

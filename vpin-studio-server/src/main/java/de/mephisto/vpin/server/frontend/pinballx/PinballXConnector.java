@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,7 +43,6 @@ public class PinballXConnector extends BaseConnector {
   @Autowired
   private SystemService systemService;
 
-
   @Autowired
   //private PinballXAssetsAdapter assetsAdapter;
   private PinballXAssetsIndexAdapter assetsAdapter;
@@ -58,18 +54,6 @@ public class PinballXConnector extends BaseConnector {
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
-  /**
-   * A cache of Playlists indexed by their id
-   */
-  private Map<Integer, Playlist> playlists;
-  /**
-   * map between gameId and stat
-   */
-  private Map<Integer, TableAlxEntry> gameStats;
-  /**
-   * set of favorite gameId
-   */
-  private Set<Integer> gameFavs;
 
   @Override
   public void initializeConnector() {
@@ -321,12 +305,6 @@ public class PinballXConnector extends BaseConnector {
     return super.importGame(emulatorId, gameNameFromFileName, gameFileName, gameDisplayName, launchCustomVar, dateFileUpdated);
   }
 
-  @Override
-  protected void loadStats() {
-    // load statistics, method is also caching data
-    getAlxData();
-  }
-
   //---------------------------------------------------
 
   public static String compose(int emuId, String game) {
@@ -402,15 +380,11 @@ public class PinballXConnector extends BaseConnector {
   // Playlist management
 
   @Override
-  public List<Playlist> getPlayLists() {
+  public List<Playlist> loadPlayLists() {
     File pinballXFolder = getInstallationFolder();
 
     List<Playlist> result = new ArrayList<>();
 
-    Playlist favs = getFavPlaylist();
-    result.add(favs);
-
-    this.playlists = new HashMap<>();
     int id = 1;
     for (Emulator emu : emulators.values()) {
       File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
@@ -424,14 +398,6 @@ public class PinballXConnector extends BaseConnector {
           p.setName(playlistname);
           // don't set mediaName, studio will use the name
 
-          // now cache playlist
-          playlists.put(p.getId(), p);
-
-          // get color if set
-          File fileconf = getPlaylistConfFile(p.getId());
-          Map<String, ?> playlistConf = getPlaylistConf(fileconf);
-          p.setMenuColor((Integer) playlistConf.get("menuColor"));
-
           PinballXTableParser parser = new PinballXTableParser();
           List<String> _games = new ArrayList<>();
           Map<String, TableDetails> _tabledetails = new HashMap<>();
@@ -443,145 +409,13 @@ public class PinballXConnector extends BaseConnector {
           p.setGames(pg);
 
           result.add(p);
-
         }
       }
     }
     return result;
   }
 
-  private Playlist getFavPlaylist() {
-    Playlist favs = new Playlist();
-    favs.setId(-1);
-    favs.setName("Favorites");
-    List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
-    favs.setGames(favspg);
-    return favs;
-  }
-
-  @NonNull
   @Override
-  public Playlist getPlayList(int id) {
-    return id == -1 ? getFavPlaylist() : playlists.get(id);
-  }
-
-  private File getPlaylistConfFile(int playlistId) {
-    Playlist playlist = getPlayList(playlistId);
-    if (playlist != null && playlist.getEmulatorId() != null) {
-      Emulator emu = getEmulator(playlist.getEmulatorId());
-      File pinballXFolder = getInstallationFolder();
-      File dbfolder = new File(pinballXFolder, "/Databases/" + emu.getName());
-      return new File(dbfolder, playlist.getName() + ".json");
-    }
-    return null;
-  }
-
-  private Map<String, Object> getPlaylistConf(File playlistConfFile) {
-    if (playlistConfFile != null && playlistConfFile.exists()) {
-      try {
-        String content = Files.readString(playlistConfFile.toPath(), Charset.forName("UTF-8"));
-        // convert JSON string to Map
-        return new ObjectMapper().readValue(content, new TypeReference<>() {
-        });
-      }
-      catch (IOException ioe) {
-        LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
-      }
-    }
-    return new HashMap<>();
-  }
-
-  private void savePlaylistConf(File playlistConfFile, Map<String, ?> playlistConf) {
-    if (playlistConfFile != null) {
-      try {
-        String content = new ObjectMapper().writeValueAsString(playlistConf);
-        Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
-      }
-      catch (IOException ioe) {
-        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
-      }
-    }
-  }
-
-  private PlaylistGame toPlaylistGame(int gameId) {
-    PlaylistGame pg = new PlaylistGame();
-    pg.setId(gameId);
-
-    TableAlxEntry gamestat = gameStats.get(gameId);
-    if (gamestat != null) {
-      pg.setPlayed(true);
-      pg.setFav(gameFavs.contains(gameId));
-      pg.setGlobalFav(false);
-    }
-    else {
-      pg.setPlayed(false);
-    }
-
-    return pg;
-  }
-
-  @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
-    File pinballXFolder = getInstallationFolder();
-    // not standard but why not...
-    File mediaDir = new File(pinballXFolder, "Media/Playlists");
-    return new File(mediaDir, screen.getSegment());
-  }
-
-  @Override
-  public void setPlaylistColor(int playlistId, long color) {
-    Playlist playlist = getPlayList(playlistId);
-    if (playlist != null) {
-      playlist.setMenuColor((int) color);
-      File fileconf = getPlaylistConfFile(playlistId);
-      Map<String, Object> playlistConf = getPlaylistConf(fileconf);
-      playlistConf.put("menuColor", color);
-      savePlaylistConf(fileconf, playlistConf);
-    }
-  }
-
-  @Override
-  public void addToPlaylist(int playlistId, int gameId, int favMode) {
-    if (playlistId >= 0) {
-      Playlist pl = playlists.get(playlistId);
-      if (!pl.containsGame(gameId)) {
-        pl.getGames().add(toPlaylistGame(gameId));
-      }
-      savePlaylist(pl);
-    }
-    else {
-      gameFavs.add(gameId);
-      saveFavorite(gameId, true);
-    }
-  }
-
-  @Override
-  public void deleteFromPlaylists(int gameId) {
-    for (Integer playlistId : playlists.keySet()) {
-      deleteFromPlaylist(playlistId, gameId);
-    }
-  }
-
-  @Override
-  public void deleteFromPlaylist(int playlistId, int gameId) {
-    if (playlistId >= 0) {
-      Playlist pl = playlists.get(playlistId);
-      if (pl.removeGame(gameId)) {
-        savePlaylist(pl);
-      }
-    }
-    else {
-      if (gameFavs.remove(gameId)) {
-        saveFavorite(gameId, false);
-      }
-    }
-  }
-
-  private void saveFavorite(int gameId, boolean favorite) {
-    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
-    parser.writeAlxData(getGame(gameId), favorite);
-  }
-
   protected void savePlaylist(Playlist pl) {
     if (pl.getEmulatorId() != null) {
       Emulator emu = getEmulator(pl.getEmulatorId());
@@ -595,47 +429,45 @@ public class PinballXConnector extends BaseConnector {
   }
 
   //----------------------------------
-  // Statistics
+  // Favorites
 
-  @NonNull
   @Override
-  public List<TableAlxEntry> getAlxData() {
+  public Set<Integer> loadFavorites() {
     PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
-    List<TableAlxEntry> stats = new ArrayList<>();
     Set<Integer> favs = new HashSet<>();
-    parser.getAlxData(stats, favs);
-
-    // refresh cache of stats
-    gameStats = new HashMap<>();
-    for (TableAlxEntry stat : stats) {
-      gameStats.put(stat.getGameId(), stat);
-    }
-    gameFavs = favs;
-
-    return stats;
+    parser.getAlxData(emulators.values(), null, favs);
+    return favs;
   }
 
-  /**
-   * Leverage cache instead of callling PinballXTableParser.getAlxData(gameId)
-   */
   @Override
-  public List<TableAlxEntry> getAlxData(int gameId) {
+  protected void saveFavorite(int gameId, boolean favorite) {
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    parser.writeFavorite(getGame(gameId), favorite);
+  }
+
+  //----------------------------------
+  // Statistics
+
+  @Override
+  public List<TableAlxEntry> loadStats() {
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
     List<TableAlxEntry> stats = new ArrayList<>();
-    TableAlxEntry stat = gameStats.get(gameId);
-    if (stat != null) {
-      stats.add(stat);
-    }
+    parser.getAlxData(emulators.values(), stats, null);
     return stats;
   }
 
   @Override
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
-    return true;//TODO
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    parser.writeNumberOfPlayed(getGame(gameId), value);
+    return super.updateNumberOfPlaysForGame(gameId, value);
   }
 
   @Override
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
-    return true;//TODO
+    PinballXStatisticsParser parser = new PinballXStatisticsParser(this);
+    parser.writeSecondsPlayed(getGame(gameId), seconds);
+    return super.updateSecondsPlayedForGame(gameId, seconds);
   }
 
   //----------------------------------

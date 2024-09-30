@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -20,17 +21,17 @@ public class GameMediaService {
   private final static Logger LOG = LoggerFactory.getLogger(GameMediaService.class);
 
   @Autowired
-  private GameService gameService;
+  private FrontendService frontendService;
 
-  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis) throws Exception {
+  public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis<?> analysis) throws Exception {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis(tempFile);
+      analysis = new UploaderAnalysis<>(tempFile);
       analysis.analyze();
     }
 
-    Game game = gameService.getGame(uploadDescriptor.getGameId());
-    VPinScreen[] values = VPinScreen.values();
+    Game game = frontendService.getGame(uploadDescriptor.getGameId());
+    List<VPinScreen> values = frontendService.getFrontend().getSupportedScreens();
     for (VPinScreen value : values) {
       List<String> filesForScreen = analysis.getPopperMediaFiles(value);
 
@@ -75,7 +76,7 @@ public class GameMediaService {
   }
 
   public File buildMediaAsset(Game game, VPinScreen screen, String suffix, boolean append) {
-    File out = new File(game.getMediaFolder(screen), game.getGameName() + "." + suffix);
+    File out = new File(frontendService.getMediaFolder(game, screen), game.getGameName() + "." + suffix);
     if (append) {
       int index = 1;
       while (out.exists()) {

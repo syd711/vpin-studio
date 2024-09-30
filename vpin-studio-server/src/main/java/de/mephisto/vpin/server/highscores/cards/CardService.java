@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.cards.CardTemplate;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.Highscore;
 import de.mephisto.vpin.server.highscores.HighscoreChangeEvent;
@@ -41,6 +42,9 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
 
   @Autowired
   private DefaultPictureService directB2SService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -174,7 +178,7 @@ public class CardService implements InitializingBean, HighscoreChangeListener {
   @NonNull
   private File getCardFile(@NonNull Game game, @NonNull String screenName) {
     VPinScreen screen = VPinScreen.valueOf(screenName);
-    File mediaFolder = game.getMediaFolder(screen);
+    File mediaFolder = frontendService.getMediaFolder(game, screen);
     return new File(mediaFolder, game.getGameName() + ".png");
   }
 

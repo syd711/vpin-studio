@@ -51,6 +51,9 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   private GameService gameService;
 
   @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
   private CompetitionService competitionService;
 
   @Autowired
@@ -64,9 +67,6 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
 
   @Autowired
   private DiscordService discordService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   private ObjectMapper mapper;
 
@@ -156,8 +156,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public FrontendMediaRepresentation getFrontendMedia(int id) {
     try {
-      Game game = gameService.getGame(id);
-      FrontendMedia frontendMedia = game.getGameMedia();
+      FrontendMedia frontendMedia = frontendService.getGameMedia(id);
       String s = mapper.writeValueAsString(frontendMedia);
       return mapper.readValue(s, FrontendMediaRepresentation.class);
     } catch (Exception e) {
@@ -208,8 +207,7 @@ public class OverlayClientImpl implements OverlayClient, InitializingBean {
   @Override
   public ByteArrayInputStream getGameMediaItem(int id, VPinScreen screen) {
     try {
-      Game game = gameService.getGame(id);
-      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+      FrontendMediaItem defaultMediaItem = frontendService.getGameMedia(id).getDefaultMediaItem(screen);
       if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
         File file = defaultMediaItem.getFile();
         FileInputStream fileInputStream = new FileInputStream(file);

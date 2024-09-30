@@ -31,7 +31,7 @@ public class TableBackupAdapterFactory {
 
     switch (archiveType) {
       case VPA: {
-        return new TableBackupAdapterVpa(systemService, archiveSourceAdapter, game, tableDetails);
+        return new TableBackupAdapterVpa(frontendService, archiveSourceAdapter, game, tableDetails);
       }
       case VPBM: {
         return new TableBackupAdapterVpbm(vpbmService, archiveSourceAdapter, game, tableDetails);

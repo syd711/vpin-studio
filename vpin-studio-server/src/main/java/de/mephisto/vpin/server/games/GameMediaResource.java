@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
@@ -55,7 +56,7 @@ public class GameMediaResource {
   private final static Logger LOG = LoggerFactory.getLogger(FrontendStatusEventsResource.class);
 
   @Autowired
-  private GameService gameService;
+  private FrontendService frontendService;
 
   @Autowired
   private UniversalUploadService universalUploadService;
@@ -70,16 +71,16 @@ public class GameMediaResource {
 
   @GetMapping("/{id}")
   public FrontendMedia getGameMedia(@PathVariable("id") int id) {
-    Game game = gameService.getGame(id);
+    Game game = frontendService.getGame(id);
     if (game == null) {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
-    return game.getGameMedia();
+    return frontendService.getGameMedia(game);
   }
 
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
-    Game game = gameService.getGame(search.getGameId());
+    Game game = frontendService.getGame(search.getGameId());
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
     List<TableAsset> result = tableAssetsService.search(emulatorType, search.getScreen(), search.getTerm());
@@ -94,8 +95,8 @@ public class GameMediaResource {
                                     @RequestBody TableAsset asset) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
-    Game game = gameService.getGame(gameId);
-    File mediaFolder = game.getMediaFolder(vPinScreen);
+    Game game = frontendService.getGame(gameId);
+    File mediaFolder = frontendService.getMediaFolder(game, vPinScreen);
     File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniqueAsset(target);
@@ -119,7 +120,7 @@ public class GameMediaResource {
                                                       @PathVariable("gameId") int gameId,
                                                       @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Game game = gameService.getGame(gameId);
+    Game game = frontendService.getGame(gameId);
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
 
     String decode = URLDecoder.decode(url, StandardCharsets.UTF_8);
@@ -142,9 +143,9 @@ public class GameMediaResource {
   @GetMapping("/{id}/{screen}/{name}")
   public ResponseEntity<Resource> handleRequestWithName(@PathVariable("id") int id, @PathVariable("screen") String screen, @PathVariable("name") String name) throws IOException {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
-    Game game = gameService.getGame(id);
+    Game game = frontendService.getGame(id);
     if (game != null) {
-      FrontendMedia frontendMedia = game.getGameMedia();
+      FrontendMedia frontendMedia = frontendService.getGameMedia(game);
       FrontendMediaItem frontendMediaItem = frontendMedia.getDefaultMediaItem(vPinScreen);
       if (!StringUtils.isEmpty(name)) {
         name = name.replaceAll("%(?![0-9a-fA-F]{2})", "%25");
@@ -189,7 +190,7 @@ public class GameMediaResource {
         return JobDescriptorFactory.error("Upload request did not contain a file object.");
       }
 
-      Game game = gameService.getGame(gameId);
+      Game game = frontendService.getGame(gameId);
       if (game == null) {
         LOG.error("No game found for media upload.");
         return JobDescriptorFactory.error("No game found for media upload.");
@@ -228,8 +229,8 @@ public class GameMediaResource {
 
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
-    Game game = gameService.getGame(gameId);
-    File mediaFolder = game.getMediaFolder(screen);
+    Game game = frontendService.getGame(gameId);
+    File mediaFolder = frontendService.getMediaFolder(game, screen);
     File media = new File(mediaFolder, filename);
     if (media.exists()) {
       return media.delete();
@@ -258,8 +259,8 @@ public class GameMediaResource {
   }
 
   private boolean renameAsset(int gameId, VPinScreen screen, String oldName, String newName) {
-    Game game = gameService.getGame(gameId);
-    List<File> mediaFiles = game.getMediaFiles(screen);
+    Game game = frontendService.getGame(gameId);
+    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
     for (File file : mediaFiles) {
       if (file.getName().equals(oldName)) {
         File renamed = new File(file.getParentFile(), newName);
@@ -273,8 +274,8 @@ public class GameMediaResource {
   }
 
   private boolean toFullscreenMedia(int gameId, VPinScreen screen) throws IOException {
-    Game game = gameService.getGame(gameId);
-    List<File> mediaFiles = game.getMediaFiles(screen);
+    Game game = frontendService.getGame(gameId);
+    List<File> mediaFiles = frontendService.getMediaFiles(game, screen);
     if (mediaFiles.size() == 1) {
       File mediaFile = mediaFiles.get(0);
       String name = mediaFile.getName();
@@ -303,7 +304,7 @@ public class GameMediaResource {
   }
 
   private boolean addBlank(int gameId, VPinScreen screen) throws IOException {
-    Game game = gameService.getGame(gameId);
+    Game game = frontendService.getGame(gameId);
     File target = gameMediaService.uniqueMediaAsset(game, screen);
     FileOutputStream out = new FileOutputStream(target);
     //copy base64 asset

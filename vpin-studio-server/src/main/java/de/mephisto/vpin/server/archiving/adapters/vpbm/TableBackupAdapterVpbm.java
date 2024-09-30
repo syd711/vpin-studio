@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.archiving.adapters.vpbm;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
@@ -58,11 +56,7 @@ public class TableBackupAdapterVpbm implements TableBackupAdapter, Job {
     ArchiveDescriptor archiveDescriptor = new ArchiveDescriptor();
     archiveDescriptor.setSource(archiveSourceAdapter.getArchiveSource());
 
-    File wheelIcon = null;
-    FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-    if (frontendMediaItem != null) {
-      wheelIcon = frontendMediaItem.getFile();
-    }
+    File wheelIcon = game.getWheelImage();
 
     ArchivePackageInfo packageInfo = VpbmArchiveUtil.generatePackageInfo(archiveFile, wheelIcon);
 

@@ -15,10 +15,10 @@ import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
 import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.parsing.vpreg.VPReg;
-import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FilenameUtils;
@@ -42,17 +42,21 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   private final ObjectMapper objectMapper;
   private final TableDetails tableDetails;
 
+  private final FrontendService frontendService;
+
   private long totalSizeExpected;
   private File tempFile;
   private JobDescriptor result;
 
 
-  public TableBackupAdapterVpa(@NonNull SystemService systemService,
+  public TableBackupAdapterVpa(@NonNull FrontendService frontendService,
                                @NonNull ArchiveSourceAdapter archiveSourceAdapter,
                                @NonNull Game game,
                                @NonNull TableDetails tableDetails) {
     this.game = game;
     this.tableDetails = tableDetails;
+
+    this.frontendService = frontendService;
 
     objectMapper = new ObjectMapper();
     objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
@@ -254,7 +258,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
     VPinScreen[] values = VPinScreen.values();
     for (VPinScreen value : values) {
-      List<FrontendMediaItem> items = game.getGameMedia().getMediaItems(value);
+      List<FrontendMediaItem> items = frontendService.getMediaItems(game, value);
       for (FrontendMediaItem mediaItem : items) {
         totalSizeExpected += mediaItem.getFile().length();
       }
@@ -308,11 +312,10 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
 
   private void zipPackageInfo(ZipOutputStream zipOut, ArchivePackageInfo packageInfo) throws IOException {
     //store wheel icon as archive preview
-    FrontendMediaItem mediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-    if (mediaItem != null) {
-      File mediaFile = mediaItem.getFile();
+    File mediaFile = game.getWheelImage();
+    if (mediaFile != null && mediaFile.exists()) {
       //do not archive augmented icons
-      WheelAugmenter augmenter = new WheelAugmenter(mediaItem.getFile());
+      WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
       if (augmenter.getBackupWheelIcon().exists()) {
         mediaFile = augmenter.getBackupWheelIcon();
       }
@@ -323,7 +326,7 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
       byte[] bytes = ImageUtil.toBytes(resizedImage);
       packageInfo.setThumbnail(Base64.getEncoder().encodeToString(bytes));
 
-      byte[] original = Files.readAllBytes(mediaItem.getFile().toPath());
+      byte[] original = Files.readAllBytes(game.getWheelImage().toPath());
       packageInfo.setIcon(Base64.getEncoder().encodeToString(original));
     }
 

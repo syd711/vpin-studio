@@ -24,12 +24,13 @@ public class MediaMonitor implements FolderChangeListener {
 
   public MediaMonitor(@NonNull File folder) {
     this.folder = folder;
+    if (folder.exists()) {
+      FolderMonitoringThread monitoringThread = new FolderMonitoringThread(this, true);
+      monitoringThread.setFolder(folder);
+      monitoringThread.startMonitoring();
 
-    FolderMonitoringThread monitoringThread = new FolderMonitoringThread(this, true);
-    monitoringThread.setFolder(folder);
-    monitoringThread.startMonitoring();
-
-    notifyFolderChange(folder, null);
+      notifyFolderChange(folder, null);
+    }
   }
 
   @Override

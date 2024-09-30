@@ -13,11 +13,20 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
@@ -36,6 +45,22 @@ public abstract class BaseConnector implements FrontendConnector {
    */
   private Map<Integer, GameEntry> mapFilenames = new HashMap<>();
 
+  /**
+   * set of favorite gameId
+   */
+  private Set<Integer> gameFavs = new HashSet<>();
+
+  /**
+   * A cache of Playlists indexed by their id
+   */
+  private Map<Integer, Playlist> playlists = new HashMap<>();
+
+    /**
+   * map between gameId and stat
+   */
+  private Map<Integer, TableAlxEntry> gameStats = new HashMap<>();
+
+
   class GameEntry {
     GameEntry(int emuId, String filename) {
       this.emuId = emuId;
@@ -50,6 +75,8 @@ public abstract class BaseConnector implements FrontendConnector {
     this.emulators.clear();
     this.gamesByEmu.clear();
     this.mapFilenames.clear();
+    this.playlists.clear();
+    this.gameFavs.clear();
   }
 
   /**
@@ -75,12 +102,27 @@ public abstract class BaseConnector implements FrontendConnector {
       LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
     }
 
-    loadStats();
+    // force initialisation of cache
+    getAlxData();
+
+    // load and cache playlists
+    List<Playlist> loadedPlaylists = loadPlayLists();
+    if (loadedPlaylists != null) {
+      for (Playlist playlist : loadedPlaylists) {
+        playlists.put(playlist.getId(), playlist);
+        // get color if set
+        Map<String, ?> playlistConf = getPlaylistConf(playlist);
+        playlist.setMenuColor((Integer) playlistConf.get("menuColor"));
+      }
+    }
+
+    // load and cache favorites
+    gameFavs = loadFavorites();
 
     return loaded;
   }
 
-  protected int filenameToId(int emuId, String filename) {
+  public int filenameToId(int emuId, String filename) {
     return (emuId + "@" + filename).hashCode() & Integer.MAX_VALUE;
   }
   private int findIdFromFilename(int emuId, String filename) {
@@ -125,12 +167,6 @@ public abstract class BaseConnector implements FrontendConnector {
   protected abstract List<String> loadGames(Emulator emu);
 
   /**
-   * To be implemented by parent to complete load
-   */
-  protected abstract void loadStats();
-
-
-  /**
    * Get from the connector a game from DB
    */
   protected abstract TableDetails getGameFromDb(int emuId, String filename);
@@ -155,7 +191,6 @@ public abstract class BaseConnector implements FrontendConnector {
   public Emulator getEmulator(int emulatorId) {
     return emulators.get(emulatorId);
   }
-
 
   @NonNull
   @Override
@@ -191,12 +226,13 @@ public abstract class BaseConnector implements FrontendConnector {
       String gameName = FilenameUtils.getBaseName(filename);
 
       Game game = new Game();
-      game.setMediaStrategy(getMediaAccessStrategy());
+      //game.setMediaStrategy(getMediaAccessStrategy());
       game.setEmulatorId(emuId);
       game.setId(id);
       game.setGameName(details != null ? details.getGameName() : gameName);
       game.setGameFileName(details != null ? details.getGameFileName() : filename);
       game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
+      game.setGameStatus(details != null ? details.getStatus(): 1);
       game.setDisabled(details != null ? details.getStatus() == 0 : false);
       game.setVersion(details != null ? details.getGameVersion() : null);
 
@@ -205,6 +241,12 @@ public abstract class BaseConnector implements FrontendConnector {
 
       game.setDateAdded(details != null ? details.getDateAdded() : null);
       game.setDateUpdated(details != null ? details.getDateModified() : null);
+
+      TableAlxEntry stat = getGameStat(id);
+      if (stat != null) {
+        game.setNumberPlayed(stat.getNumberOfPlays());
+      }
+
       return game;
     }
     return null;
@@ -240,9 +282,13 @@ public abstract class BaseConnector implements FrontendConnector {
     return gamesByEmu.get(emuId).size();
   }
 
+  public List<String> getGameFilenames(int emuId) {
+    return gamesByEmu.get(emuId);
+  }
+
   @Override
   public List<Integer> getGameIds(int emuId) {
-    return gamesByEmu.get(emuId).stream().map(f -> findIdFromFilename(emuId, f)).collect(Collectors.toList());
+    return getGameFilenames(emuId).stream().map(f -> findIdFromFilename(emuId, f)).collect(Collectors.toList());
   }
 
   //------------------------------------------------------------
@@ -371,97 +417,220 @@ public abstract class BaseConnector implements FrontendConnector {
 
   //----------------------------
 
+  protected List<Playlist> loadPlayLists() {
+    return null;
+  }
+  protected void savePlaylist(Playlist playlist) {
+  }
+
+  public Set<Integer> loadFavorites() {
+    return null;
+  }
+  protected void saveFavorite(int gameId, boolean favorite) {
+  }
+
+  private Playlist getFavPlaylist() {
+    Playlist favs = new Playlist();
+    favs.setId(-1);
+    favs.setName("Favorites");
+    List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
+    favs.setGames(favspg);
+    return favs;
+  }
+ 
   @NonNull
   @Override
   public Playlist getPlayList(int id) {
-    Playlist playlist = new Playlist();
-    playlist.setId(id);
-    playlist.setName("name");
-    //playlist.setPlayListSQL("sql");
-    //playlist.setMenuColor(rs.getInt("MenuColor"));
-    //playlist.setSqlPlayList(sqlPlaylist);
-    return playlist;
-  }
-
-  @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
-    return null;
+    return id == -1 ? getFavPlaylist() : playlists.get(id);
   }
 
   @Override
   public List<Playlist> getPlayLists() {
     List<Playlist> result = new ArrayList<>();
+
+    Playlist favs = getFavPlaylist();
+    result.add(favs);
+
+    for (Map.Entry<Integer, Playlist> playlist : playlists.entrySet()) {
+      result.add(playlist.getValue());
+    }
+
     return result;
   }
 
+  protected PlaylistGame toPlaylistGame(int gameId) {
+    PlaylistGame pg = new PlaylistGame();
+    pg.setId(gameId);
+
+    TableAlxEntry gamestat = gameStats.get(gameId);
+    if (gamestat != null) {
+      pg.setPlayed(gamestat.getNumberOfPlays() > 0);
+      pg.setFav(gameFavs.contains(gameId));
+      pg.setGlobalFav(false);
+    }
+    else {
+      pg.setPlayed(false);
+    }
+
+    return pg;
+  }
+
   @Override
-  public void setPlaylistColor(int playlistId, long color) {
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+    File pinballXFolder = getInstallationFolder();
+    // not standard but why not...
+    File mediaDir = new File(pinballXFolder, "Media/Playlists");
+    return new File(mediaDir, screen.getSegment());
   }
 
   @Override
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
+    if (playlistId >= 0) {
+      Playlist pl = playlists.get(playlistId);
+      if (!pl.containsGame(gameId)) {
+        pl.getGames().add(toPlaylistGame(gameId));
+      }
+      savePlaylist(pl);
+    }
+    else {
+      gameFavs.add(gameId);
+      saveFavorite(gameId, true);
+    }
   }
 
   @Override
   public void updatePlaylistGame(int playlistId, int gameId, int favMode) {
+    // not used
   }
 
   @Override
   public void deleteFromPlaylists(int gameId) {
+    for (Integer playlistId : playlists.keySet()) {
+      deleteFromPlaylist(playlistId, gameId);
+    }
   }
 
   @Override
   public void deleteFromPlaylist(int playlistId, int gameId) {
+    if (playlistId >= 0) {
+      Playlist pl = playlists.get(playlistId);
+      if (pl.removeGame(gameId)) {
+        savePlaylist(pl);
+      }
+    }
+    else {
+      if (gameFavs.remove(gameId)) {
+        saveFavorite(gameId, false);
+      }
+    }
   }
 
-  //-------------------------
+  @Override
+  public void setPlaylistColor(int playlistId, long color) {
+    Playlist playlist = getPlayList(playlistId);
+    if (playlist != null) {
+      playlist.setMenuColor((int) color);
+      Map<String, Object> playlistConf = getPlaylistConf(playlist);
+      playlistConf.put("menuColor", color);
+      savePlaylistConf(playlist, playlistConf);
+    }
+  }
+
+  private File getPlaylistConfFile() {
+    File pinballXFolder = getInstallationFolder();
+    return new File(pinballXFolder, "/Databases/playlists.json");
+  }
+
+  private Map<String, Object> getPlaylistConf(Playlist playlist) {
+    File playlistConfFile = getPlaylistConfFile();
+    if (playlistConfFile != null && playlistConfFile.exists()) {
+      try {
+        String content = Files.readString(playlistConfFile.toPath(), Charset.forName("UTF-8"));
+        // convert JSON string to Map
+        Map<String, Object>[] confs = new ObjectMapper().readValue(content, new TypeReference<>() {
+        });
+        for (Map<String, Object> conf : confs) {
+          if (playlist.getName().equals(conf.get("name"))) {
+            return conf;
+          }
+        }
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot read file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+    return new HashMap<>();
+  }
+
+  private void savePlaylistConf(Playlist playlist, Map<String, ?> playlistConf) {
+    File playlistConfFile = getPlaylistConfFile();
+    if (playlistConfFile != null) {
+      try {
+        String content = new ObjectMapper().writeValueAsString(playlistConf);
+        Files.write(playlistConfFile.toPath(), content.getBytes(Charset.forName("UTF-8")));
+      }
+      catch (IOException ioe) {
+        LOG.error("Ignored error, cannot write file " + playlistConfFile.getAbsolutePath(), ioe);
+      }
+    }
+  }
+
+  //------------------------- STATISTICS --------------
+
+  /**
+   * To be implemented by parent to complete load
+   */
+  protected List<TableAlxEntry> loadStats() {
+    return null;
+  }
+
+  protected TableAlxEntry getGameStat(int gameId) {
+    return gameStats.get(gameId);
+  }
 
   @Override
   public java.util.Date getStartDate() {
     return null;
   }
 
-  @NonNull
   @Override
-  public List<TableAlxEntry> getAlxData() {
-    List<TableAlxEntry> result = new ArrayList<>();
-        /*
-        TableAlxEntry e = new TableAlxEntry();
-        e.setDisplayName(rs.getString("GameDisplay"));
-        e.setGameId(rs.getInt("GameId"));
-        e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
-        e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
-        e.setNumberOfPlays(rs.getInt("NumberPlays"));
-        result.add(e);
-        */
-    return result;
+  public final List<TableAlxEntry> getAlxData() {
+    List<TableAlxEntry> stats = loadStats();
+    if (stats != null) {
+      // refresh cache of stats
+      gameStats = new HashMap<>();
+      for (TableAlxEntry stat : stats) {
+        gameStats.put(stat.getGameId(), stat);
+      }
+      return stats;
+    }
+    return Collections.emptyList();
   }
 
   @Override
-  public List<TableAlxEntry> getAlxData(int gameId) {
+  public final List<TableAlxEntry> getAlxData(int gameId) {
     List<TableAlxEntry> result = new ArrayList<>();
-        /*
-        TableAlxEntry e = new TableAlxEntry();
-        e.setDisplayName(rs.getString("GameDisplay"));
-        e.setGameId(rs.getInt("GameId"));
-        e.setUniqueId(rs.getInt("UniqueId"));
-        e.setLastPlayed(rs.getDate("LastPlayed"));
-        e.setTimePlayedSecs(rs.getInt("TimePlayedSecs"));
-        e.setNumberOfPlays(rs.getInt("NumberPlays"));
-        result.add(e);
-        */
+    TableAlxEntry stat = getGameStat(gameId);
+    if (stat != null) {
+      result.add(stat);
+    }
     return result;
   }
 
   @Override
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
-    return false;
+    // update internal cache
+    TableAlxEntry stat = gameStats.get(gameId);
+    stat.setNumberOfPlays((int) value); 
+    return true;
   }
 
   @Override
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
-    return false;
+    // update internal cache
+    TableAlxEntry stat = gameStats.get(gameId);
+    stat.setTimePlayedSecs((int) seconds); 
+    return true;
   }
 
   //-------------------------

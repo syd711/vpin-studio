@@ -355,7 +355,7 @@ public class GameService implements InitializingBean {
               LOG.info("Deleting screen assets for \"" + game.getGameDisplayName() + "\"");
               VPinScreen[] values = VPinScreen.values();
               for (VPinScreen originalScreenValue : values) {
-                List<FrontendMediaItem> frontendMediaItem = game.getGameMedia().getMediaItems(originalScreenValue);
+                List<FrontendMediaItem> frontendMediaItem = frontendService.getMediaItems(game, originalScreenValue);
                 for (FrontendMediaItem mediaItem : frontendMediaItem) {
                   File mediaFile = mediaItem.getFile();
 
