@@ -11,7 +11,6 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.playlists.Playlist;
-import de.mephisto.vpin.server.playlists.PlaylistService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,9 +39,6 @@ public class FrontendResource {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private PlaylistService playlistService;
-
   @GetMapping
   public Frontend getFrontend() {
     return frontendService.getFrontend();
@@ -59,9 +55,8 @@ public class FrontendResource {
   }
 
   @GetMapping("/media/{gameId}")
-  public FrontendMedia getKnownGames(@PathVariable("gameId") int gameId) {
-    //TODO the frontend connector getGame method does not work here
-    return gameService.getGame(gameId).getGameMedia();
+  public FrontendMedia getGameMedia(@PathVariable("gameId") int gameId) {
+    return frontendService.getGameMedia(gameId);
   }
 
   @GetMapping("/version")
@@ -145,7 +140,7 @@ public class FrontendResource {
       emu = frontendService.getDefaultGameEmulator();
     }
     else {
-      Game game = gameService.getGame(gameId);
+      Game game = frontendService.getGame(gameId);
       gamefilename = game.getGameFileName();
       emu = frontendService.getGameEmulator(game.getEmulatorId());
     }

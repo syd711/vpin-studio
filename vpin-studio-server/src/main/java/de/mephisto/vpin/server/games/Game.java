@@ -3,33 +3,20 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
-import de.mephisto.vpin.restclient.frontend.FrontendMedia;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.validation.ValidationState;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.puppack.PupPack;
-import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.embed.swing.SwingFXUtils;
-import javafx.scene.image.Image;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 public class Game {
-
-  @Nullable
-  private MediaAccessStrategy mediaStrategy;
 
   private String rom;
   private String romAlias;
@@ -57,6 +44,8 @@ public class Game {
   private int emulatorId;
 
   private File gameFile;
+
+  private File wheelImageFile;
 
   private ValidationState validationState;
   private boolean hasMissingAssets;
@@ -92,10 +81,6 @@ public class Game {
   private boolean foundTableExit = false;
 
   public Game() {
-  }
-
-  public void setMediaStrategy(@Nullable MediaAccessStrategy mediaStrategy) {
-    this.mediaStrategy = mediaStrategy;
   }
 
   public boolean isPlayed() {
@@ -291,6 +276,16 @@ public class Game {
   }
 
   @JsonIgnore
+  public File getWheelImage() {
+   return wheelImageFile;
+  }
+
+  public void setWheelImage(File wheelFile) {
+    this.wheelImageFile = wheelFile;
+  }
+
+   /*
+  @JsonIgnore
   public Image getWheelImage() {
     FrontendMediaItem frontendMediaItem = getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
     Image image = null;
@@ -305,6 +300,7 @@ public class Game {
     }
     return image;
   }
+  */
 
   @JsonIgnore
   @Nullable
@@ -409,6 +405,7 @@ public class Game {
     return null;
   }
 
+  /*
   @JsonIgnore
   @NonNull
   public File getMediaFolder(@NonNull VPinScreen screen) {
@@ -428,6 +425,8 @@ public class Game {
   @NonNull
   public FrontendMedia getGameMedia() {
     FrontendMedia frontendMedia = new FrontendMedia();
+    
+   
     VPinScreen[] screens = VPinScreen.values();
     for (VPinScreen screen : screens) {
       List<FrontendMediaItem> itemList = new ArrayList<>();
@@ -440,6 +439,7 @@ public class Game {
     }
     return frontendMedia;
   }
+  */
 
   @JsonIgnore
   @Nullable

@@ -4,8 +4,6 @@ import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
@@ -214,9 +212,9 @@ public class TournamentSynchronizer {
   private void finishTable(TournamentTableInfo tournamentTableInfo) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-      if (frontendMediaItem != null) {
-        WheelAugmenter augmenter = new WheelAugmenter(frontendMediaItem.getFile());
+      File wheelFile = game.getWheelImage();
+      if (wheelFile != null && wheelFile.exists()) {
+        WheelAugmenter augmenter = new WheelAugmenter(wheelFile);
         augmenter.deAugment();
       }
     }
@@ -228,12 +226,12 @@ public class TournamentSynchronizer {
   private void startTable(Tournament tournament, TournamentTableInfo tournamentTableInfo, TournamentMetaData metaData) {
     Game game = gameService.getGameByVpsTable(tournamentTableInfo.getVpsTableId(), tournamentTableInfo.getVpsTableVersionId());
     if (game != null) {
-      FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-      if (frontendMediaItem != null) {
+      File wheelFile = game.getWheelImage();
+      if (wheelFile != null && wheelFile.exists()) {
         if (!StringUtils.isEmpty(metaData.getBadge())) {
           File badgeFile = systemService.getBadgeFile(metaData.getBadge());
           if (badgeFile.exists()) {
-            WheelAugmenter augmenter = new WheelAugmenter(frontendMediaItem.getFile());
+            WheelAugmenter augmenter = new WheelAugmenter(wheelFile);
             augmenter.augment(badgeFile);
           }
         }

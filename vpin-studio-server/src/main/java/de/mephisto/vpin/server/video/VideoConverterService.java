@@ -41,7 +41,7 @@ public class VideoConverterService implements InitializingBean {
         return "No game found for " + converterParams.getGameId();
       }
 
-      FrontendMediaItem mediaItem = game.getGameMedia().getMediaItem(converterParams.getScreen(), converterParams.getName());
+      FrontendMediaItem mediaItem = frontendService.getMediaItem(game, converterParams.getScreen(), converterParams.getName());
       if (mediaItem == null) {
         LOG.info("No media item found for " + converterParams.getName());
         return "No media item found for " + converterParams.getName();

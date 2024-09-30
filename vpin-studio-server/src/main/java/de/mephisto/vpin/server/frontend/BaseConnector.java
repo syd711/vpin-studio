@@ -226,12 +226,13 @@ public abstract class BaseConnector implements FrontendConnector {
       String gameName = FilenameUtils.getBaseName(filename);
 
       Game game = new Game();
-      game.setMediaStrategy(getMediaAccessStrategy());
+      //game.setMediaStrategy(getMediaAccessStrategy());
       game.setEmulatorId(emuId);
       game.setId(id);
       game.setGameName(details != null ? details.getGameName() : gameName);
       game.setGameFileName(details != null ? details.getGameFileName() : filename);
       game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
+      game.setGameStatus(details != null ? details.getStatus(): 1);
       game.setDisabled(details != null ? details.getStatus() == 0 : false);
       game.setVersion(details != null ? details.getGameVersion() : null);
 

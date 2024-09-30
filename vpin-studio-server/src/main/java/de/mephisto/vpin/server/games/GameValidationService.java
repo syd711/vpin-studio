@@ -351,7 +351,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   }
 
   private boolean validScreenAssets(Game game, VPinScreen screen) {
-    List<File> screenAssets = game.getMediaFiles(screen);
+    List<File> screenAssets = frontendService.getMediaFiles(game, screen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
     if (!screenAssets.isEmpty()) {

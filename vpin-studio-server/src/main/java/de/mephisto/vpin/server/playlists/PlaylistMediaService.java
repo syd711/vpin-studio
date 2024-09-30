@@ -40,7 +40,7 @@ public class PlaylistMediaService {
     }
     
     FrontendMedia frontendMedia = new FrontendMedia();
-    VPinScreen[] screens = VPinScreen.values();
+    List<VPinScreen> screens = frontendService.getFrontend().getSupportedScreens();
     for (VPinScreen screen : screens) {
       List<FrontendMediaItem> itemList = new ArrayList<>();
       List<File> mediaFiles = getPlaylistMediaFiles(playlist, screen);

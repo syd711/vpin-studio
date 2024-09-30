@@ -36,7 +36,6 @@ public class GameRepresentation {
   private int id;
   private String notes;
   private Date modified;
-  private FrontendMediaRepresentation gameMedia;
   private ValidationState validationState;
   private boolean hasMissingAssets;
   private boolean hasOtherIssues;

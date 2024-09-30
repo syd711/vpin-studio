@@ -1689,7 +1689,7 @@ public class PinUPConnector implements FrontendConnector {
     ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
     Game game = new Game();
-    game.setMediaStrategy(pinUPMediaAccessStrategy);
+    //game.setMediaStrategy(pinUPMediaAccessStrategy);
     game.setEmulatorId(emuId);
 
     int id = rs.getInt("GameID");

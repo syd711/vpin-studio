@@ -4,7 +4,6 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.TableManagerSettings;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
@@ -488,7 +487,7 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   public void augmentWheel(Game game, String badge) {
-    FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
     if (frontendMediaItem != null) {
       File wheelIcon = frontendMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
@@ -501,7 +500,7 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   public void deAugmentWheel(Game game) {
-    FrontendMediaItem frontendMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaItem frontendMediaItem = frontendService.getGameMedia(game).getDefaultMediaItem(VPinScreen.Wheel);
     if (frontendMediaItem != null) {
       File wheelIcon = frontendMediaItem.getFile();
       WheelAugmenter augmenter = new WheelAugmenter(wheelIcon);
@@ -513,12 +512,12 @@ public class FrontendStatusService implements InitializingBean {
     VPinScreen[] values = VPinScreen.values();
     for (VPinScreen originalScreenValue : values) {
       try {
-        List<FrontendMediaItem> frontendMediaItems = original.getGameMedia().getMediaItems(originalScreenValue);
+        List<FrontendMediaItem> frontendMediaItems = frontendService.getGameMedia(original).getMediaItems(originalScreenValue);
         for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
           if (frontendMediaItem.getFile().exists()) {
             File mediaFile = frontendMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(clone.getMediaFolder(originalScreenValue), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;
@@ -543,7 +542,7 @@ public class FrontendStatusService implements InitializingBean {
     VPinScreen[] values = VPinScreen.values();
     int assetRenameCounter = 0;
     for (VPinScreen screen : values) {
-      List<FrontendMediaItem> frontendMediaItems = game.getGameMedia().getMediaItems(screen);
+      List<FrontendMediaItem> frontendMediaItems = frontendService.getGameMedia(game).getMediaItems(screen);
       for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
         File gameMediaFile = frontendMediaItem.getFile();
         if (gameMediaFile.exists()) {

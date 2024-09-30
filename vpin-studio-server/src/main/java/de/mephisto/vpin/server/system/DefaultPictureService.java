@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.directb2s.DirectB2SDataExtractor;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageExporter;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -39,6 +40,9 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private PupPacksService pupPackService;
@@ -79,7 +83,7 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
       }
     }
 
-    FrontendMediaItem backGlassItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.BackGlass);
+    FrontendMediaItem backGlassItem = frontendService.getDefaultMediaItem(game, VPinScreen.BackGlass);
     if (backGlassItem != null && backGlassItem.getFile().exists()) {
       String name = backGlassItem.getFile().getName();
       if (name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg")) {

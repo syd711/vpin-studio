@@ -110,7 +110,7 @@ public class AssetService {
         return request;
       }
 
-      FrontendMediaItem mediaItem = game.getGameMedia().getMediaItem(request.getScreen(), request.getName());
+      FrontendMediaItem mediaItem = frontendService.getMediaItem(game, request.getScreen(), request.getName());
       if (mediaItem == null) {
         LOG.info("No media item found for " + request.getName());
         request.setResult("No media item found for " + request.getName());

@@ -1,8 +1,6 @@
 package de.mephisto.vpin.server.highscores.cards;
 
 import de.mephisto.vpin.restclient.cards.CardTemplate;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.highscores.HighscoreCardResolution;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.DirectB2SImageRatio;
@@ -289,10 +287,9 @@ public class CardGraphics {
     if (template.isRenderWheelIcon()) {
       //draw wheel icon
       int wheelY = currentY + template.getRowMargin();
-      FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-      if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
-        File wheelIconFile = defaultMediaItem.getFile();
-        WheelAugmenter augmenter = new WheelAugmenter(defaultMediaItem.getFile());
+      File wheelIconFile = game.getWheelImage();
+      if (wheelIconFile != null && wheelIconFile.exists()) {
+        WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
         if (augmenter.getBackupWheelIcon().exists()) {
           wheelIconFile = augmenter.getBackupWheelIcon();
         }
@@ -379,9 +376,8 @@ public class CardGraphics {
 
     int x = 0;
     //file exists && there is place to render it
-    FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(VPinScreen.Wheel);
-    if (defaultMediaItem != null && defaultMediaItem.getFile().exists() && template.isRenderWheelIcon()) {
-      File wheelIconFile = defaultMediaItem.getFile();
+    File wheelIconFile = game.getWheelImage();
+    if (wheelIconFile != null && wheelIconFile.exists() && template.isRenderWheelIcon()) {
       WheelAugmenter augmenter = new WheelAugmenter(wheelIconFile);
       if (augmenter.getBackupWheelIcon().exists()) {
         wheelIconFile = augmenter.getBackupWheelIcon();

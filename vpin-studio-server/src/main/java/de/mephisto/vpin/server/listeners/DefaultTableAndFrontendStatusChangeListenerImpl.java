@@ -103,7 +103,7 @@ public class DefaultTableAndFrontendStatusChangeListenerImpl implements Initiali
       String popperScreen = cardSettings.getPopperScreen();
       if (popperScreen != null && !popperScreen.isEmpty()) {
         VPinScreen screen = VPinScreen.valueOf(popperScreen);
-        FrontendMediaItem defaultMediaItem = game.getGameMedia().getDefaultMediaItem(screen);
+        FrontendMediaItem defaultMediaItem = frontendService.getDefaultMediaItem(game, screen);
         if (defaultMediaItem != null && defaultMediaItem.getFile().exists()) {
           Platform.runLater(() -> {
             FrontendPlayerDisplay pupPlayerDisplay = null;

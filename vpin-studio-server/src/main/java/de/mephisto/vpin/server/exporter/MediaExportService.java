@@ -3,15 +3,10 @@ package de.mephisto.vpin.server.exporter;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.util.DateUtil;
-import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.highscores.Score;
 import org.apache.commons.csv.CSVPrinter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,9 +24,9 @@ public class MediaExportService extends ExporterService {
       StringBuilder builder = new StringBuilder();
       List<String> headers = new ArrayList<>(Arrays.asList("gameId", "gameDisplayName"));
 
-      VPinScreen[] values = VPinScreen.values();
-      for (VPinScreen value : values) {
-        headers.add(value.name());
+      List<VPinScreen> screens = frontendService.getFrontend().getSupportedScreens();
+      for (VPinScreen screen : screens) {
+        headers.add(screen.name());
       }
 
       CSVPrinter printer = createPrinter(customQuery, headers, builder);
@@ -51,8 +46,7 @@ public class MediaExportService extends ExporterService {
             records.add(String.valueOf(game.getId()));
             records.add(game.getGameDisplayName());
 
-            FrontendMedia gameMedia = game.getGameMedia();
-            VPinScreen[] screens = VPinScreen.values();
+            FrontendMedia gameMedia = frontendService.getGameMedia(game);
 
             for (VPinScreen screen : screens) {
               List<FrontendMediaItem> mediaItems = gameMedia.getMediaItems(screen);
