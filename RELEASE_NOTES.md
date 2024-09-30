@@ -48,6 +48,7 @@
 - **Backglass Data Exporter**:
   - Fixed wrong DMD image information (the data was always read from the backglass image).
   - Added additional data from the backglass settings.
+- **Backglass images to media assets**: Ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
 
 ## VPin Mania 
 
