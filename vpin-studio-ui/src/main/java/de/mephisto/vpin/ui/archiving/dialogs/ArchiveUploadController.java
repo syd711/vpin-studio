@@ -87,7 +87,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
 
-    List<String> filters = Arrays.asList("*.vpinzip", "*.zip");
+    List<String> filters = Arrays.asList("*.vpinzip");
     if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
       filters = Arrays.asList("*.vpa");
     }

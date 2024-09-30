@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.preferences;
 
+import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.PreferenceBindingUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -20,11 +20,16 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class VPBMPreferencesController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VPBMPreferencesController.class);
+  public static Debouncer debouncer = new Debouncer();
 
   @FXML
-  private TextField externalHostText;
+  private TextField externalHostText1;
+  @FXML
+  private TextField externalHostText2;
 
   @FXML
   private TextField thisHostText;
@@ -47,14 +52,26 @@ public class VPBMPreferencesController implements Initializable {
     updateBtn.setDisable(true);
     versionLabel.setText("Version: ???");
 
-    VpbmHosts hostIds = Studio.client.getVpbmService().getHostIds();
-    if (hostIds != null) {
-      this.externalHostText.setText(hostIds.getExternalHostId());
-      this.thisHostText.setText(hostIds.getInternalHostId());
+    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+    if (backupSettings.getVpbmExternalHostId1() != null) {
+      this.externalHostText1.setText(backupSettings.getVpbmExternalHostId1());
+    }
+    if (backupSettings.getVpbmExternalHostId2() != null) {
+      this.externalHostText2.setText(backupSettings.getVpbmExternalHostId2());
     }
 
-    PreferenceBindingUtil.bindTextField(externalHostText, PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, "");
-    PreferenceBindingUtil.bindTextField(thisHostText, PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, "");
+    if (backupSettings.getVpbmInternalHostId() != null) {
+      this.thisHostText.setText(backupSettings.getVpbmInternalHostId());
+    }
+
+    externalHostText1.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
+      backupSettings.setVpbmExternalHostId1(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
+    }, 500));
+    externalHostText2.textProperty().addListener((observableValue, s, t1) -> debouncer.debounce("value", () -> {
+      backupSettings.setVpbmExternalHostId2(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
+    }, 500));
 
     new Thread(() -> {
       Platform.runLater(() -> {
@@ -63,9 +80,6 @@ public class VPBMPreferencesController implements Initializable {
 
         boolean canUpdate = Studio.client.getSystemService().isLocal() && Studio.client.getVpbmService().isUpdateAvailable();
         updateBtn.setDisable(!canUpdate);
-
-        //current .net check not applicable
-//        validationError.setVisible(!Studio.client.getSystemService().isDotNetInstalled());
       });
     }).start();
   }
@@ -96,7 +110,8 @@ public class VPBMPreferencesController implements Initializable {
           Thread.sleep(5000);
 
           versionLabel.setText(Studio.client.getVpbmService().getVersion());
-        } catch (InterruptedException e) {
+        }
+        catch (InterruptedException e) {
           LOG.error("Failed to execute VPBM update: " + e.getMessage(), e);
         }
         finally {
@@ -124,7 +139,8 @@ public class VPBMPreferencesController implements Initializable {
     Platform.runLater(() -> {
       try {
         Thread.sleep(2000);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       vpbmBtbn.setDisable(false);

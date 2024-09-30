@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.exporter;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
+import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.directb2s.BackglassService;
@@ -45,6 +46,10 @@ public class BackglassExportService extends ExporterService {
       List<String> headers = new ArrayList<>();
       headers.add("gameId");
       headers.add("vpxFile");
+      headers.add("backglassHidden");
+      headers.add("dmdHidden");
+      headers.add("startInBackground");
+      headers.add("hideGrill");
 
       PropertyDescriptor[] propertyDescriptors = BeanUtils.getPropertyDescriptors(DirectB2SData.class);
       for (PropertyDescriptor propertyDescriptor : propertyDescriptors) {
@@ -79,10 +84,24 @@ public class BackglassExportService extends ExporterService {
 
 
             DirectB2SData directB2SData = backglassService.getDirectB2SData(game.getId());
+            DirectB2STableSettings tableSettings = backglassService.getTableSettings(game.getId());
             if (directB2SData != null) {
               List<String> records = new ArrayList<>();
               records.add(String.valueOf(game.getId()));
               records.add(game.getGameFileName());
+
+              if (tableSettings != null) {
+                records.add(String.valueOf(tableSettings.isHideB2SBackglass()));
+                records.add(String.valueOf(tableSettings.isHideB2SDMD()));
+                records.add(String.valueOf(tableSettings.isStartBackground()));
+                records.add(String.valueOf(tableSettings.getHideGrill()));
+              }
+              else {
+                records.add("");
+                records.add("");
+                records.add("");
+                records.add("");
+              }
 
               for (int i = 2; i < headers.size() - 4; i++) {
                 String header = headers.get(i);
@@ -116,7 +135,7 @@ public class BackglassExportService extends ExporterService {
                 records.add(String.valueOf(0));
               }
 
-              String dmdBase64 = backglassService.getBackgroundBase64(emulatorId, filename);
+              String dmdBase64 = backglassService.getDmdBase64(emulatorId, filename);
               if (dmdBase64 != null) {
                 byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
                 Image dmdImage = new Image(new ByteArrayInputStream(dmdData));

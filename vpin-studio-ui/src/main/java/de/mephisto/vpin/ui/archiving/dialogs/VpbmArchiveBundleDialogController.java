@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.descriptors.ArchiveBundleDescriptor;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -31,12 +32,16 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class VpbmArchiveBundleDialogController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(VpbmArchiveBundleDialogController.class);
+  private static File lastFolderSelection;
 
   @FXML
   private TextField fileNameField;
 
   @FXML
-  private TextField exportHostId;
+  private TextField exportHostId1;
+
+  @FXML
+  private TextField exportHostId2;
 
   @FXML
   private Button downloadBtn;
@@ -61,20 +66,22 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
     try {
       ArchiveBundleDescriptor archiveBundleDescriptor = new ArchiveBundleDescriptor();
       archiveBundleDescriptor.setArchiveSourceId(archiveDescriptors.get(0).getSource().getId());
-      archiveBundleDescriptor.setExportHostId(this.exportHostId.getText());
+      archiveBundleDescriptor.setExportHostId1(this.exportHostId1.getText());
+      archiveBundleDescriptor.setExportHostId2(this.exportHostId2.getText());
 
       for (ArchiveDescriptorRepresentation selectedItem : archiveDescriptors) {
         archiveBundleDescriptor.getArchiveNames().add(selectedItem.getFilename());
       }
 
-      Platform.runLater(()-> {
+      Platform.runLater(() -> {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
       });
 
       ProgressDialog.createProgressDialog(new BundleProgressModel("Bundle Creation", this.targetFolder, archiveBundleDescriptor));
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Download failed: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Downloading archive files failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     }
@@ -84,8 +91,12 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
   private void onFileSelect() {
     DirectoryChooser chooser = new DirectoryChooser();
     chooser.setTitle("Select Target Folder");
+    if (VpbmArchiveBundleDialogController.lastFolderSelection != null) {
+      chooser.setInitialDirectory(VpbmArchiveBundleDialogController.lastFolderSelection);
+    }
     this.targetFolder = chooser.showDialog(stage);
     if (this.targetFolder != null) {
+      VpbmArchiveBundleDialogController.lastFolderSelection = this.targetFolder;
       this.fileNameField.setText(this.targetFolder.getAbsolutePath());
     }
     else {
@@ -99,12 +110,24 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
     this.result = false;
 
     this.downloadBtn.setDisable(true);
+
+    BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> downloadBtn.setDisable(StringUtils.isEmpty(t1)));
-    PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
-    String value = preference.getValue();
-    if (!StringUtils.isEmpty(value)) {
-      exportHostId.setText(value);
+    String value1 = backupSettings.getVpbmExternalHostId1();
+    String value2 = backupSettings.getVpbmExternalHostId1();
+    if (!StringUtils.isEmpty(value1)) {
+      exportHostId1.setText(value1);
     }
+
+    if (!StringUtils.isEmpty(value2)) {
+      exportHostId2.setText(value2);
+    }
+
+    if(VpbmArchiveBundleDialogController.lastFolderSelection != null) {
+      this.targetFolder = VpbmArchiveBundleDialogController.lastFolderSelection;
+      fileNameField.setText(VpbmArchiveBundleDialogController.lastFolderSelection.getAbsolutePath());
+    }
+    validateInput();
   }
 
   private void validateInput() {
@@ -114,7 +137,7 @@ public class VpbmArchiveBundleDialogController implements Initializable, DialogC
       return;
     }
 
-    if (StringUtils.isEmpty(this.exportHostId.getText())) {
+    if (StringUtils.isEmpty(this.exportHostId1.getText())) {
       return;
     }
 

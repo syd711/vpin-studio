@@ -44,7 +44,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class IScoredSubscriptionsController implements Initializable, StudioFXController {
+public class IScoredSubscriptionsController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(IScoredSubscriptionsController.class);
 
   @FXML
@@ -73,9 +73,6 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @FXML
   private Button reloadBtn;
-
-  @FXML
-  private TextField textfieldSearch;
 
   @FXML
   private BorderPane competitionWidget;
@@ -215,6 +212,7 @@ public class IScoredSubscriptionsController implements Initializable, StudioFXCo
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("         No iScored subscription found.\nClick the '+' button to create a new one."));
 

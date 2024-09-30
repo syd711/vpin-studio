@@ -4,12 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.frontend.FrontendMedia;
-import de.mephisto.vpin.restclient.highscores.HighscoreType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.highscores.HighscoreType;
+import de.mephisto.vpin.restclient.validation.ValidationState;
+import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.puppack.PupPack;
-import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -21,11 +21,15 @@ import org.apache.commons.lang3.StringUtils;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 public class Game {
+
+  @Nullable
+  private MediaAccessStrategy mediaStrategy;
 
   private String rom;
   private String romAlias;
@@ -47,12 +51,18 @@ public class Game {
   private String scannedHsFileName;
   private boolean cardDisabled;
 
+  private int gameStatus;
+
   private GameEmulator emulator;
   private int emulatorId;
 
   private File gameFile;
 
   private ValidationState validationState;
+  private boolean hasMissingAssets;
+  private boolean hasOtherIssues;
+  private boolean validScoreConfiguration;
+
   private List<Integer> ignoredValidations = new ArrayList<>();
   private HighscoreType highscoreType;
   private boolean altSoundAvailable;
@@ -69,12 +79,62 @@ public class Game {
   private String extTableVersionId;
   private String extVersion;
   private String notes;
+  private String launcher;
+  private Long numberPlayed;
+
+  //internal value not exposed
+  private String altLauncherExe;
+  private boolean pupPackDisabled;
+
   private VPSChanges vpsChanges = new VPSChanges();
 
   private boolean foundControllerStop = false;
   private boolean foundTableExit = false;
 
   public Game() {
+  }
+
+  public void setMediaStrategy(@Nullable MediaAccessStrategy mediaStrategy) {
+    this.mediaStrategy = mediaStrategy;
+  }
+
+  public boolean isPlayed() {
+    return numberPlayed != null && numberPlayed > 0;
+  }
+
+  @JsonIgnore
+  public boolean isPupPackDisabled() {
+    return pupPackDisabled;
+  }
+
+  public void setPupPackDisabled(boolean pupPackDisabled) {
+    this.pupPackDisabled = pupPackDisabled;
+  }
+
+  @JsonIgnore
+  public long getNumberPlayed() {
+    return numberPlayed;
+  }
+
+  public void setNumberPlayed(long numberPlayed) {
+    this.numberPlayed = numberPlayed;
+  }
+
+  @JsonIgnore
+  public String getAltLauncherExe() {
+    return altLauncherExe;
+  }
+
+  public void setAltLauncherExe(String altLauncherExe) {
+    this.altLauncherExe = altLauncherExe;
+  }
+
+  public String getLauncher() {
+    return launcher;
+  }
+
+  public void setLauncher(String launcher) {
+    this.launcher = launcher;
   }
 
   public boolean isEventLogAvailable() {
@@ -257,7 +317,7 @@ public class Game {
   }
 
   public String getPupPackPath() {
-    if(pupPack != null && pupPack.getPupPackFolder().exists()) {
+    if (pupPack != null && pupPack.getPupPackFolder().exists()) {
       return pupPack.getPupPackFolder().getAbsolutePath();
     }
     return null;
@@ -292,6 +352,14 @@ public class Game {
 
   public void setTableName(String tableName) {
     this.tableName = tableName;
+  }
+
+  public int getGameStatus() {
+    return gameStatus;
+  }
+
+  public void setGameStatus(int gameStatus) {
+    this.gameStatus = gameStatus;
   }
 
   @NonNull
@@ -344,25 +412,19 @@ public class Game {
   @JsonIgnore
   @NonNull
   public File getMediaFolder(@NonNull VPinScreen screen) {
-    return this.emulator.getGameMediaFolder(FilenameUtils.getBaseName(gameFileName), screen);
+    String baseName = FilenameUtils.getBaseName(gameFileName);
+    return this.emulator.getGameMediaFolder(baseName, screen);
   }
 
   @NonNull
   public List<File> getMediaFiles(@NonNull VPinScreen screen) {
-    String baseFilename = getGameName();
-    File mediaFolder = getMediaFolder(screen);
-    //keep null check for serialization
-    if (mediaFolder != null && mediaFolder.exists()) {
-      File[] mediaFiles = mediaFolder.listFiles((dir, name) -> name.toLowerCase().startsWith(baseFilename.toLowerCase()));
-      if (mediaFiles != null) {
-        Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");
-        Pattern screenMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\(.*\\)\\.[a-zA-Z0-9]*");
-        return Arrays.stream(mediaFiles).filter(f -> plainMatcher.matcher(f.getName()).matches() || screenMatcher.matcher(f.getName()).matches()).collect(Collectors.toList());
-      }
+    if (mediaStrategy != null) {
+      return mediaStrategy.getScreenMediaFiles(this, getMediaFolder(screen), screen);
     }
     return Collections.emptyList();
   }
 
+  @JsonIgnore
   @NonNull
   public FrontendMedia getGameMedia() {
     FrontendMedia frontendMedia = new FrontendMedia();
@@ -567,6 +629,30 @@ public class Game {
 
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
+  }
+
+  public boolean isHasMissingAssets() {
+    return hasMissingAssets;
+  }
+
+  public void setHasMissingAssets(boolean hasMissingAssets) {
+    this.hasMissingAssets = hasMissingAssets;
+  }
+
+  public boolean isHasOtherIssues() {
+    return hasOtherIssues;
+  }
+
+  public void setHasOtherIssues(boolean hasOtherIssues) {
+    this.hasOtherIssues = hasOtherIssues;
+  }
+
+  public boolean isValidScoreConfiguration() {
+    return validScoreConfiguration;
+  }
+
+  public void setValidScoreConfiguration(boolean validScoreConfiguration) {
+    this.validScoreConfiguration = validScoreConfiguration;
   }
 
   @Nullable

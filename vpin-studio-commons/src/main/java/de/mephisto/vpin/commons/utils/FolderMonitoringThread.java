@@ -1,4 +1,4 @@
-package de.mephisto.vpin.ui.dropins;
+package de.mephisto.vpin.commons.utils;
 
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
@@ -10,25 +10,26 @@ import java.io.RandomAccessFile;
 import java.nio.file.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-public class DropInMonitoringThread {
-
-  private final static Logger LOG = LoggerFactory.getLogger(DropInMonitoringThread.class);
+public class FolderMonitoringThread {
+  private final static Logger LOG = LoggerFactory.getLogger(FolderMonitoringThread.class);
   private final AtomicBoolean running = new AtomicBoolean(false);
 
-  private DropInManager dropInManager;
+  private FolderChangeListener listener;
+  private final boolean modifyEvents;
 
   private Thread monitorThread;
-  private File dropinsFolder;
+  private File folder;
   private WatchService watchService;
 
 
-  public DropInMonitoringThread(DropInManager dropInManager) {
-    this.dropInManager = dropInManager;
+  public FolderMonitoringThread(FolderChangeListener listener, boolean modifyEvents) {
+    this.listener = listener;
+    this.modifyEvents = modifyEvents;
   }
 
 
   public void startMonitoring() {
-    if (this.monitorThread == null && dropinsFolder != null) {
+    if (this.monitorThread == null && folder != null) {
       startMonitor();
     }
   }
@@ -55,28 +56,32 @@ public class DropInMonitoringThread {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
     monitorThread = new Thread(() -> {
-      Thread.currentThread().setName("Drop-In Monitoring Thread for \"" + dropinsFolder.getAbsolutePath() + "\"");
+      Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder.getAbsolutePath() + "\"");
       LOG.info("Launched " + Thread.currentThread().getName());
       try {
-        final Path path = dropinsFolder.toPath();
-        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE);
+        final Path path = folder.toPath();
+        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
         while (running.get()) {
           try {
             final WatchKey wk = watchService.take();
             for (WatchEvent<?> event : wk.pollEvents()) {
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                 final Path filedropped = (Path) event.context();
-                File f = new File(dropinsFolder, filedropped.toString());
-                if (dropInManager.isNotTempFile(f)) {
+                File f = new File(folder, filedropped.toString());
+                if (FileUtils.isTempFile(f)) {
                   waitABit(f, 3000);
-                  // still exists ?
-                  if (f.exists()) {
-                    notifyUpdates(f);
-                  }
+                }
+                // still exists ?
+                if (f.exists()) {
+                  notifyUpdates(f);
                 }
               }
               else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
                 notifyUpdates(null);
+              }
+              else if (modifyEvents && event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+                final Path f = (Path) event.context();
+                notifyUpdates(f.toFile());
               }
             }
             wk.reset();
@@ -85,15 +90,15 @@ public class DropInMonitoringThread {
             LOG.info("Terminated closed watch service.");
           }
         }
-        LOG.info("Terminated Drop-In Monitoring Thread");
+        LOG.info("Terminated: " + Thread.currentThread().getName());
       }
       catch (Exception e) {
-        LOG.info("Drop-in monitor failed: " + e.getMessage(), e);
+        LOG.info("Folder monitor failed: " + e.getMessage(), e);
       }
       finally {
         LOG.info(Thread.currentThread().getName() + " terminated.");
       }
-    }, "Drop-in folder monitor");
+    }, "Folder Monitor (" + folder.getAbsolutePath() + ")");
     monitorThread.start();
   }
 
@@ -128,12 +133,11 @@ public class DropInMonitoringThread {
   }
 
   private void notifyUpdates(@Nullable File file) {
-    LOG.info("Noticed drop-in folder update.");
-    dropInManager.notifyDropInUpdates(file);
+    listener.notifyFolderChange(folder, file);
   }
 
-  public void setDropInFolder(@Nullable File dropinsFolder) {
-    this.dropinsFolder = dropinsFolder;
+  public void setFolder(@Nullable File folder) {
+    this.folder = folder;
 
     if (monitorThread != null) {
       stopMonitoring();

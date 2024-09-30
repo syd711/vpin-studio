@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
@@ -199,11 +200,12 @@ public class PauseMenu extends Application {
 
         visible = true;
         GameRepresentation game = client.getGameService().getGame(status.getGameId());
+        FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
 
         String extTableId = game.getExtTableId();
         VpsTable tableById = client.getVpsService().getTableById(extTableId);
 
-        StateMananger.getInstance().setGame(game, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
+        StateMananger.getInstance().setGame(game, frontendMedia, status, tableById, cardScreen, tutorialDisplay, pauseMenuSettings);
         stage.getScene().setCursor(Cursor.NONE);
 
         new Thread(() -> {
@@ -216,7 +218,7 @@ public class PauseMenu extends Application {
               }
 
               if (style.equals(PauseMenuStyle.popperScreens) || style.equals(PauseMenuStyle.embeddedAutoStartTutorial)) {
-                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getFrontendService().getScreenDisplays()));
+                screenAssets.addAll(PauseMenuScreensFactory.createAssetScreens(game, client, client.getFrontendService().getScreenDisplays(), frontendMedia));
 
                 List<VpsTutorialUrls> videoTutorials = PauseMenuItemsFactory.getVideoTutorials(game, pauseMenuSettings);
                 if (!videoTutorials.isEmpty()) {

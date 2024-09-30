@@ -66,7 +66,16 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   @FXML
   protected TextField searchTextField;
 
+  @FXML
+  protected Button clearBtn;
+
   protected BaseFilterController<T, M> filterController;
+
+  @FXML
+  private void onClear() {
+    searchTextField.setText("");
+  }
+
 
   //----------------------
   // Key Pressed
@@ -86,6 +95,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.names = names;
 
     loadingOverlay = new WaitOverlay(loaderStack, null);
+    this.clearBtn.setVisible(false);
 
     registerKeyPressed();
   }
@@ -97,7 +107,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       filterController = loader.getController();
       filterController.setTableController(this);
       filterController.setupDrawer(filterBtn, tableStack, tableView);
-      filterController.bindSearchField(searchTextField);
+      filterController.bindSearchField(searchTextField, clearBtn);
     }
     catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
@@ -150,6 +160,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     // mind that it can be called by threads before data is even initialized
     if (this.filteredModels != null) {
       this.filteredModels.setPredicate(filterController.buildPredicate());
+      // update data count
+      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
     }
   }
 
@@ -185,10 +197,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
     // Wrap games in a FilteredList
     this.filteredModels = new FilteredList<>(models);
-    // When predicate change, update data count
-    this.filteredModels.predicateProperty().addListener((o, oldP, newP) -> {
-      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
-    });
 
     // Wrap the FilteredList in a SortedList
     SortedList<M> sortedData = new SortedList<>(this.filteredModels);
@@ -235,13 +243,13 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   }
 
   public void setSelection(M model, boolean scrollToModel) {
-    if(model == null) {
+    if (model == null) {
       clearSelection();
     }
     else {
       int index = tableView.getItems().indexOf(model);
       tableView.getSelectionModel().clearAndSelect(index);
-      if(scrollToModel) {
+      if (scrollToModel) {
         tableView.scrollTo(model);
       }
     }
@@ -249,5 +257,19 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void clearSelection() {
     tableView.getSelectionModel().clearSelection();
+  }
+
+  public void onKeyEvent(KeyEvent event) {
+    if (event.getCode() == KeyCode.F && event.isControlDown()) {
+      searchTextField.requestFocus();
+      searchTextField.selectAll();
+      event.consume();
+    }
+    else if (event.getCode() == KeyCode.ESCAPE) {
+      if (searchTextField.isFocused()) {
+        searchTextField.setText("");
+      }
+      event.consume();
+    }
   }
 }

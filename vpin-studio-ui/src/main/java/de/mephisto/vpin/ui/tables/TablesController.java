@@ -12,12 +12,12 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.archiving.RepositoryController;
 import de.mephisto.vpin.ui.archiving.RepositorySidebarController;
+import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.tables.alx.AlxController;
-import de.mephisto.vpin.ui.backglassmanager.BackglassManagerController;
 import de.mephisto.vpin.ui.vps.VpsTablesController;
 import de.mephisto.vpin.ui.vps.VpsTablesSidebarController;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -476,7 +476,54 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void tableUploaded(UploadDescriptor uploadeDescription) {
     Platform.runLater(() -> {
-        tableOverviewController.refreshUploadResult(uploadeDescription);
+      tableOverviewController.refreshUploadResult(uploadeDescription);
     });
+  }
+
+  @Override
+  public void onKeyEvent(KeyEvent ke) {
+    if (ke.getCode() == KeyCode.F2) {
+      tabPane.getSelectionModel().select(0);
+    }
+    else if (ke.getCode() == KeyCode.F3) {
+      tabPane.getSelectionModel().select(1);
+    }
+    else if (ke.getCode() == KeyCode.F4) {
+      tabPane.getSelectionModel().select(2);
+    }
+    else if (ke.getCode() == KeyCode.F5) {
+      tabPane.getSelectionModel().select(3);
+    }
+    else if (ke.getCode() == KeyCode.F6) {
+      tabPane.getSelectionModel().select(4);
+    }
+
+    if (ke.isConsumed()) {
+      return;
+    }
+
+    StudioFXController activeController = getActiveController();
+    if (activeController != null) {
+      activeController.onKeyEvent(ke);
+    }
+  }
+
+  private StudioFXController getActiveController() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    switch (selectedIndex) {
+      case 0: {
+        return tableOverviewController;
+      }
+      case 1: {
+        return backglassManagerController;
+      }
+      case 2: {
+        return vpsTablesController;
+      }
+      case 4: {
+        return repositoryController;
+      }
+    }
+    return null;
   }
 }

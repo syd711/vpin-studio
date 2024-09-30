@@ -11,6 +11,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Accordion;
 import javafx.scene.control.Label;
 import javafx.scene.control.TitledPane;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
@@ -193,16 +194,20 @@ public class RepositorySidebarController implements Initializable, StudioFXContr
     registryIcon.setVisible(false);
 
     filenameLabel.setText("-");
+    filenameLabel.setTooltip(null);
     fileSizeLabel.setText("-");
     lastModifiedLabel.setText("-");
     sourceLabel.setText("-");
+    sourceLabel.setTooltip(null);
 
     if (selection.isPresent()) {
       ArchiveDescriptorRepresentation descriptorRepresentation = selection.get();
       filenameLabel.setText(descriptorRepresentation.getFilename());
+      filenameLabel.setTooltip(new Tooltip(descriptorRepresentation.getFilename()));
       fileSizeLabel.setText(descriptorRepresentation.getSize() > 0 ? FileUtils.readableFileSize(descriptorRepresentation.getSize()) : "-");
       lastModifiedLabel.setText(SimpleDateFormat.getDateTimeInstance().format(descriptorRepresentation.getCreatedAt()));
       sourceLabel.setText(descriptorRepresentation.getSource().getLocation());
+      sourceLabel.setTooltip(new Tooltip(descriptorRepresentation.getSource().getLocation()));
 
       ArchivePackageInfo packageInfo = descriptorRepresentation.getPackageInfo();
 

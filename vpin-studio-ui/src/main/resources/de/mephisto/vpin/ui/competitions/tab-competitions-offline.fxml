@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import org.kordamp.ikonli.javafx.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
 <BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.competitions.CompetitionsOfflineController">
         <center>
 
@@ -28,13 +37,7 @@
             <top>
                 <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                     <items>
-                        <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="250.0" promptText="Competition Search...">
-                            <font>
-                                <Font size="14.0" />
-                            </font>
-                        </TextField>
-                        <Separator layoutX="320.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-                        <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" text="Reload" textFill="WHITE">
+                        <Button layoutX="280.0" layoutY="12.0" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                             <font>
                                 <Font size="14.0" />
                             </font>
@@ -42,6 +45,24 @@
                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                             </graphic>
                         </Button>
+                  <Separator layoutX="264.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <StackPane alignment="CENTER_RIGHT">
+                     <children>
+                              <TextField fx:id="textfieldSearch" prefHeight="26.0" prefWidth="200.0" promptText="Competition Search...">
+                                  <font>
+                                      <Font size="14.0" />
+                                  </font>
+                              </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <graphic>
+                              <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                           </graphic>
+                        </Button>
+                     </children>
+                  </StackPane>
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                         <Button layoutX="280.0" layoutY="11.0" mnemonicParsing="false" onAction="#onCompetitionCreate" text="Add" textFill="WHITE">
                             <font>

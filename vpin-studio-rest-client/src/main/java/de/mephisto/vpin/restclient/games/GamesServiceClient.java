@@ -2,7 +2,6 @@ package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
-import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
@@ -14,8 +13,6 @@ import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreListRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
-import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
-import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import org.apache.commons.lang3.StringUtils;
@@ -115,16 +112,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     catch (Exception e) {
       LOG.error("Failed to delete games " + descriptor.getGameIds() + ": " + e.getMessage(), e);
     }
-  }
-
-  public List<Integer> filterGames(@NonNull FilterSettings filterSettings) {
-    try {
-      return new ArrayList<>(Arrays.asList(getRestClient().post(API + "games/filter", filterSettings, Integer[].class)));
-    }
-    catch (Exception e) {
-      LOG.error("Failed to filter games: " + e.getMessage(), e);
-    }
-    return null;
   }
 
   public List<GameRepresentation> getGamesByRom(String rom) {

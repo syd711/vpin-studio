@@ -38,6 +38,13 @@ public class GameRepresentation {
   private Date modified;
   private FrontendMediaRepresentation gameMedia;
   private ValidationState validationState;
+  private boolean hasMissingAssets;
+  private boolean hasOtherIssues;
+  private boolean validScoreConfiguration;
+
+  private boolean played;
+  private int gameStatus;
+
   private String hsFileName;
   private String scannedHsFileName;
   private boolean romExists;
@@ -51,6 +58,7 @@ public class GameRepresentation {
   private String extTableId;
   private String extTableVersionId;
   private String extVersion;
+  private String launcher;
   private int emulatorId;
   private String pupPackName;
   private Long templateId;
@@ -68,6 +76,14 @@ public class GameRepresentation {
   private String pupPackPath;
   private boolean altSoundAvailable;
 
+  public String getLauncher() {
+    return launcher;
+  }
+
+  public void setLauncher(String launcher) {
+    this.launcher = launcher;
+  }
+
   public boolean isEventLogAvailable() {
     return eventLogAvailable;
   }
@@ -82,6 +98,20 @@ public class GameRepresentation {
 
   public void setCardDisabled(boolean cardDisabled) {
     this.cardDisabled = cardDisabled;
+  }
+
+  public boolean isPlayed() {
+    return played;
+  }
+  public void setPlayed(boolean played) {
+    this.played = played;
+  }
+
+  public int getGameStatus() {
+    return gameStatus;
+  }
+  public void setGameStatus(int gameStatus) {
+    this.gameStatus = gameStatus;
   }
 
   public String getDirectB2SPath() {
@@ -324,14 +354,6 @@ public class GameRepresentation {
     this.tableName = tableName;
   }
 
-  public FrontendMediaRepresentation getGameMedia() {
-    return gameMedia;
-  }
-
-  public void setGameMedia(FrontendMediaRepresentation gameMedia) {
-    this.gameMedia = gameMedia;
-  }
-
   public List<Integer> getIgnoredValidations() {
     return ignoredValidations;
   }
@@ -367,9 +389,29 @@ public class GameRepresentation {
   public ValidationState getValidationState() {
     return validationState;
   }
-
   public void setValidationState(ValidationState validationState) {
     this.validationState = validationState;
+  }
+
+  public boolean isHasMissingAssets() {
+    return hasMissingAssets;
+  }
+  public void setHasMissingAssets(boolean hasMissingAssets) {
+    this.hasMissingAssets = hasMissingAssets;
+  }
+
+  public boolean isHasOtherIssues() {
+    return hasOtherIssues;
+  }
+  public void setHasOtherIssues(boolean hasOtherIssues) {
+    this.hasOtherIssues = hasOtherIssues;
+  }
+
+  public boolean isValidScoreConfiguration() {
+    return validScoreConfiguration;
+  }
+  public void setValidScoreConfiguration(boolean validScoreConfiguration) {
+    this.validScoreConfiguration = validScoreConfiguration;
   }
 
   public String getRom() {

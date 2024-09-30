@@ -1,9 +1,9 @@
 package de.mephisto.vpin.ui;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -21,14 +21,13 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -97,8 +96,8 @@ public class DnDOverlayController implements Initializable {
       tableLabel.setVisible(true);
       tableWheelImage.setVisible(true);
 
-      FrontendMediaRepresentation gameMedia = game.getGameMedia();
-      FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         tableWheelImage.setImage(new Image(gameMediaItem));

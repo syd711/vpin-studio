@@ -4,11 +4,11 @@ import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -23,6 +23,7 @@ import java.text.DateFormat;
 import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFont;
+import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.maniaClient;
 
 public class WidgetPlayerScoreController extends WidgetController implements Initializable {
@@ -58,8 +59,8 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
   }
 
   public void setData(GameRepresentation game, ScoreRepresentation score) {
-    FrontendMediaRepresentation gameMedia = game.getGameMedia();
-    FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+    FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+    FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (item != null) {
       ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(score.getGameId(), VPinScreen.Wheel);
       Image image = new Image(gameMediaItem);
@@ -94,8 +95,8 @@ public class WidgetPlayerScoreController extends WidgetController implements Ini
       wheelImageView.setImage(wheel);
     }
     else {
-      FrontendMediaRepresentation gameMedia = game.getGameMedia();
-      FrontendMediaItemRepresentation item = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
+      FrontendMediaRepresentation frontendMedia = client.getFrontendService().getFrontendMedia(game.getId());
+      FrontendMediaItemRepresentation item = frontendMedia.getDefaultMediaItem(VPinScreen.Wheel);
       if (item != null) {
         ByteArrayInputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
         Image image = new Image(gameMediaItem);

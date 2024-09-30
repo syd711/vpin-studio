@@ -208,6 +208,14 @@
     -fx-pref-width: 260;
 }
 
+.ghost-icon-button {
+    -fx-font-color: -fx-base-1;
+    -fx-font-size : 12px;
+    -fx-background-color: transparent;
+    -fx-border-style: hidden hidden hidden hidden;
+    -fx-text-fill: -fx-font-2;
+}
+
 .ghost-button {
     -fx-font-color: -fx-font-2;
     -fx-font-size : 32px;

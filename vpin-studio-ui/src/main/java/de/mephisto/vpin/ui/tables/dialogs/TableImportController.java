@@ -168,6 +168,10 @@ public class TableImportController implements Initializable, DialogController {
     }
   }
 
+  public void setData(GameEmulatorRepresentation emulatorRepresentation) {
+    this.emulatorCombo.setValue(emulatorRepresentation);
+  }
+
 
   @Override
   public void onDialogCancel() {

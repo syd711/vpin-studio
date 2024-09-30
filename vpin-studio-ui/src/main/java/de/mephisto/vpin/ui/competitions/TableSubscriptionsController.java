@@ -48,7 +48,7 @@ import java.util.*;
 import static de.mephisto.vpin.commons.utils.WidgetFactory.ERROR_STYLE;
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableSubscriptionsController implements Initializable, StudioFXController {
+public class TableSubscriptionsController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(TableSubscriptionsController.class);
 
   @FXML
@@ -86,9 +86,6 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @FXML
   private Button clearCacheBtn;
-
-  @FXML
-  private TextField textfieldSearch;
 
   @FXML
   private BorderPane competitionWidget;
@@ -296,6 +293,7 @@ public class TableSubscriptionsController implements Initializable, StudioFXCont
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server.games;
 
+import de.mephisto.vpin.restclient.frontend.FrontendMedia;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
@@ -31,17 +32,9 @@ public class GamesResource {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private GameFilterService gameFilterService;
-
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
-  }
-
-  @PostMapping("/filter")
-  public List<Integer> getGamesFiltered(@RequestBody FilterSettings filterSettings) {
-    return gameFilterService.filterGames(gameService, filterSettings);
   }
 
   @GetMapping("/ids")

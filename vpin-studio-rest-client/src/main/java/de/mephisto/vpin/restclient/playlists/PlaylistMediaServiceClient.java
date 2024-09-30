@@ -1,10 +1,12 @@
 package de.mephisto.vpin.restclient.playlists;
 
+import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.slf4j.Logger;
@@ -35,6 +37,16 @@ public class PlaylistMediaServiceClient extends VPinStudioClientService {
 
   public boolean deleteMedia(int gameId, VPinScreen screen, String name) {
     return getRestClient().delete(API + "playlistmedia/" + gameId + "/" + screen.name() + "/" + name);
+  }
+
+  public boolean downloadPlaylistAsset(TableAsset tableAsset, VPinScreen screen, PlaylistRepresentation playlist, boolean append) throws Exception {
+    try {
+      return getRestClient().post(API + "playlistmedia/" + playlist.getId() + "/" + screen.name() + "/" + append, tableAsset, Boolean.class);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to download asset: " + e.getMessage(), e);
+      throw e;
+    }
   }
 
   public boolean addBlank(int gameId, VPinScreen screen) throws Exception {

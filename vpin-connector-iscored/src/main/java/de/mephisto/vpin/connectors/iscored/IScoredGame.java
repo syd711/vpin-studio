@@ -14,6 +14,10 @@ public class IScoredGame {
     return tags.contains("vps:disabled");
   }
 
+  public boolean isSingleScore() {
+    return tags.contains("vps:singlescore");
+  }
+
   public List<String> getTags() {
     return tags;
   }

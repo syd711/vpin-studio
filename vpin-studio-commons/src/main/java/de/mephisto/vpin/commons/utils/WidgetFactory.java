@@ -449,8 +449,12 @@ public class WidgetFactory {
         stage.setX(position.getX());
         stage.setY(position.getY());
 
-        stage.setWidth(position.getWidth());
-        stage.setHeight(position.getHeight());
+        if(position.getWidth() > 0 && position.getWidth() < owner.getWidth()) {
+          stage.setWidth(position.getWidth());
+        }
+        if(position.getHeight() > 0) {
+          stage.setHeight(position.getHeight());
+        }
       }
     }
 

@@ -407,6 +407,44 @@ public class DiscordClient {
     return -1;
   }
 
+  public long sendMessage(long serverId, long channelId, MessageEmbed msg) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
+      if (textChannel != null) {
+        Message complete = textChannel.sendMessage("").addEmbeds(msg).complete();
+        this.messageCacheById.put(complete.getIdLong(), complete);
+        return complete.getIdLong();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
+    }
+    return -1;
+  }
+
+  public long sendEmbeddedMessage(long serverId, long channelId, String msg) {
+    Guild guild = getGuild(serverId);
+    if (guild != null) {
+      TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
+      if (textChannel != null) {
+        Message complete = textChannel.sendMessage(msg).complete();
+        this.messageCacheById.put(complete.getIdLong(), complete);
+        return complete.getIdLong();
+      }
+      else {
+        LOG.error("No discord channel found for id '" + channelId + "'");
+      }
+    }
+    else {
+      throw new UnsupportedOperationException("No guild found for default guildId '" + serverId + "'");
+    }
+    return -1;
+  }
+
   public long sendMessage(long serverId, long channelId, String msg, byte[] image, String name, String imageText) {
     Guild guild = getGuild(serverId);
     if (guild != null) {

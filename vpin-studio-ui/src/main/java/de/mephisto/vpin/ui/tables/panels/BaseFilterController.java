@@ -48,11 +48,12 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
     this.tableController = tableController;
   }
 
-  public void bindSearchField(TextField textfieldSearch) {
+  public void bindSearchField(TextField textfieldSearch, Button clearBtn) {
     textfieldSearch.textProperty().addListener((observableValue, s, filterValue) -> {
       tableController.clearSelection();
       searchTerm = filterValue;
       tableController.applyFilter();
+      clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
     });
   }
 

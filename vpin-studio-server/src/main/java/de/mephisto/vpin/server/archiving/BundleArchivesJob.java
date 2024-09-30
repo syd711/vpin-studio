@@ -50,6 +50,8 @@ public class BundleArchivesJob implements Job {
     ZipOutputStream zipOut = null;
     long start = System.currentTimeMillis();
 
+    double progress = 0;
+
     String prefix = FilenameUtils.getBaseName(archiveDescriptors.get(0).getFilename()).replaceAll(" ", "-");
     String targetName = prefix + "-bundle-" + System.currentTimeMillis() + ".zip";
     target = new File(archiveService.getArchivesFolder(), targetName);
@@ -65,8 +67,13 @@ public class BundleArchivesJob implements Job {
       zipOut = new ZipOutputStream(fos);
       File descriptorFolder = new File(archiveDescriptors.get(0).getSource().getLocation());
 
+      int count = 0;
       for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
         boolean doContinue = doArchive(result, archiveDescriptor, zipOut, descriptorFolder, exportedDescriptors);
+        count++;
+        progress = count / archiveDescriptor.getSize();
+        result.setProgress(progress);
+
         if (!doContinue) {
           break;
         }
@@ -115,10 +122,10 @@ public class BundleArchivesJob implements Job {
       LOG.error("Final renaming export file to " + target.getAbsolutePath() + " failed.");
       jobDescriptor.setError("Final renaming export file to " + target.getAbsolutePath() + " failed.");
     }
+    result.setProgress(1);
   }
 
   private boolean doArchive(JobDescriptor result, ArchiveDescriptor archiveDescriptor, ZipOutputStream zipOut, File descriptorFolder, List<ArchiveDescriptor> exportedDescriptors) throws IOException {
-    setProgress();
     result.setStatus("Adding " + archiveDescriptor.getFilename() + " to bundle.");
 
     File exportedArchive = archiveService.export(archiveDescriptor);
@@ -142,15 +149,5 @@ public class BundleArchivesJob implements Job {
 
   public File getTarget() {
     return target;
-  }
-
-  public void setProgress() {
-    if (processed == 0) {
-      jobDescriptor.setProgress(0);
-      return;
-    }
-    long currentSize = processed;
-    double progress = currentSize * 100d / archiveDescriptors.size() / 100;
-    jobDescriptor.setProgress(progress);
   }
 }

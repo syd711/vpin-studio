@@ -208,6 +208,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onShortcuts(ActionEvent event) throws IOException {
+    load("preference-shortcuts.fxml", event);
+  }
+
+  @FXML
   private void onVPXValidation(ActionEvent event) throws IOException {
     load("preference-validators_vpx.fxml", event);
   }
@@ -403,7 +408,8 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
-    repositoriesBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(false);
+//    repositoriesBtn.setVisible(frontendType.supportArchive());
 
     // activation of custom options according to installed frontend
     frontendPreferences.setVisible(frontendType.isNotStandalone());

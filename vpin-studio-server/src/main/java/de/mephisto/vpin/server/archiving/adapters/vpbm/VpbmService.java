@@ -7,11 +7,11 @@ import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.SystemCommandOutput;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.vpbm.VpbmHosts;
+import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.server.archiving.adapters.vpbm.config.VPinBackupManagerConfig;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.GithubUtil;
@@ -69,7 +69,7 @@ public class VpbmService implements InitializingBean {
   }
 
   public String backup(int tableId) {
-    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-b", String.valueOf(tableId)));
+    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-b", String.valueOf(tableId), "--disable-delete-checks"));
     if (!StringUtils.isEmpty(systemCommandOutput.getErrOut())) {
       return systemCommandOutput.getErrOut();
     }
@@ -83,16 +83,27 @@ public class VpbmService implements InitializingBean {
     Game game = frontendService.getGameByFilename(defaultEmu.getId(), vpxName);
     if (game != null) {
       File backupFile = new File(getArchiveFolder(), tablename);
-      File exportFile = new File(getExportFolder(), tablename);
-
       if (!backupFile.exists()) {
         backup(game.getId());
       }
 
-      String exportHostId = (String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER);
-      executeVPBM(Arrays.asList("-e", String.valueOf(game.getId()), "-x", exportHostId));
+      BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+      List<String> ids = new ArrayList<>();
+      if (backupSettings.getVpbmExternalHostId1() != null) {
+        ids.add(backupSettings.getVpbmExternalHostId1().trim());
+      }
+      if (backupSettings.getVpbmExternalHostId2() != null) {
+        ids.add(backupSettings.getVpbmExternalHostId2().trim());
+      }
 
-      return exportFile;
+      if (ids.isEmpty()) {
+        LOG.warn("No export host set, skipping export");
+        return null;
+      }
+
+      executeVPBM(Arrays.asList("--set-alt-hosts=" + String.join(";", ids)));
+
+      return backupFile;
     }
     else {
       LOG.warn("Game not found for VPX filename " + vpxName);
@@ -102,7 +113,7 @@ public class VpbmService implements InitializingBean {
 
   public String restore(String tableId) {
     String tableFilename = "\"" + tableId + "\"";
-    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename));
+    SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename, "--disable-delete-checks"));
     return systemCommandOutput.getStdOut();
   }
 
@@ -134,16 +145,9 @@ public class VpbmService implements InitializingBean {
     return "Unable to determine version, check log for details.";
   }
 
-  public VpbmHosts getHostIds() {
-    VpbmHosts ids = new VpbmHosts();
-    ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_EXTERNAL_HOST_IDENTIFIER, ""));
-    ids.setInternalHostId((String) preferencesService.getPreferenceValue(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER));
-    return ids;
-  }
-
   private SystemCommandOutput executeVPBM(List<String> options) {
     SystemCommandOutput out = new SystemCommandOutput();
-
+    long start = System.currentTimeMillis();
     try {
       File dir = new File(RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
@@ -168,6 +172,9 @@ public class VpbmService implements InitializingBean {
     catch (Exception e) {
       out.setErrOut("Failed to execute VPBM: " + e.getMessage());
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
+    }
+    finally {
+      LOG.info("VPBM command \"vPinBackupManager.exe " + String.join(" ", options) + "\" took " + (System.currentTimeMillis()-start) + " ms.");
     }
     return out;
   }
@@ -254,11 +261,12 @@ public class VpbmService implements InitializingBean {
         LOG.info("Written updated VPBM config " + configJsonFile.getAbsolutePath());
       }
 
-      String internalHostId = preferencesService.getPreferences().getVpbmInternalHostId();
-      if (StringUtils.isEmpty(internalHostId) || internalHostId.contains("ERROR")) {
+      BackupSettings backupSettings = preferencesService.getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
+      if (StringUtils.isEmpty(backupSettings.getVpbmInternalHostId()) || backupSettings.getVpbmInternalHostId().contains("ERROR")) {
         String hostId = executeVPBM(Arrays.asList("-h")).getStdOut();
         if (hostId != null) {
-          preferencesService.savePreference(PreferenceNames.VPBM_INTERNAL_HOST_IDENTIFIER, hostId.trim());
+          backupSettings.setVpbmInternalHostId(hostId.trim());
+          preferencesService.savePreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
           LOG.info("Updated internal host id to '" + hostId.trim() + "'");
         }
       }

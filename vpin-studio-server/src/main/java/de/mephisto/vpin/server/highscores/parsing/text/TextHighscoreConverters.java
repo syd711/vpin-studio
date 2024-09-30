@@ -38,6 +38,7 @@ public class TextHighscoreConverters {
     adapters.add(new AlteringScoreInitialsBlocksAdapter("WorldSeries_72VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("MountainClimbingHS.txt", 3, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("jungleprincess_1977_v2a.txt", 0, 5));
+    adapters.add(new AlteringScoreInitialsBlocksAdapter("LittleJoe_71VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(31, 0, 5));
@@ -97,6 +98,7 @@ public class TextHighscoreConverters {
       List<String> lines = IOUtils.readLines(fileInputStream, Charset.defaultCharset());
       for (ScoreTextFileAdapter adapter : adapters) {
         if (adapter.isApplicable(file, lines)) {
+          LOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\"");
           SLOG.info("Converted score with converter class name \"" + adapter.getClass().getSimpleName() + "\"");
           return adapter.convert(file, lines);
         }

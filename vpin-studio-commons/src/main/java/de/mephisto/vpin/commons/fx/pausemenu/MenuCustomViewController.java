@@ -6,11 +6,13 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.alx.AlxSummary;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -21,6 +23,7 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +49,9 @@ public class MenuCustomViewController implements Initializable {
   private Label authorsLabel;
 
   @FXML
+  private Label scoreInfoLabel;
+
+  @FXML
   private VBox stats1Col;
 
   @FXML
@@ -59,10 +65,11 @@ public class MenuCustomViewController implements Initializable {
   private MenuCustomTileEntryController tile3Controller;
   private MenuCustomTileEntryController tile4Controller;
 
-  public void setGame(GameRepresentation game, GameStatus status, VpsTable tableById) {
+  public void setGame(GameRepresentation game, FrontendMediaRepresentation frontendMedia, GameStatus status, VpsTable tableById) {
     this.nameLabel.setText(game.getGameDisplayName());
     this.versionLabel.setText("");
     this.authorsLabel.setText("");
+    this.scoreInfoLabel.setText("");
 
     // when game is mapped to VPS Table
     if (tableById != null) {
@@ -80,6 +87,22 @@ public class MenuCustomViewController implements Initializable {
         List<String> designers = tableById.getDesigners();
         if (designers != null && !designers.isEmpty()) {
           this.authorsLabel.setText(String.join(", ", designers));
+        }
+      }
+    }
+
+    GameScoreValidation scoreValidation = PauseMenu.client.getGameService().getGameScoreValidation(game.getId());
+    boolean valid = scoreValidation.isValidScoreConfiguration();
+    if (!StringUtils.isEmpty(game.getRom())) {
+      if (scoreValidation.getRomStatus() == null & scoreValidation.getHighscoreFilenameStatus() == null) {
+        scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (supported)");
+      }
+      else {
+        if(scoreValidation.getHighscoreFilenameStatus() != null) {
+          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getHighscoreFilenameStatus() + ")");
+        }
+        else {
+          scoreInfoLabel.setText("ROM: \"" + game.getRom() + "\" (" + scoreValidation.getRomStatus() + ")");
         }
       }
     }
@@ -121,10 +144,11 @@ public class MenuCustomViewController implements Initializable {
         Pane row = loader.load();
         row.setPrefWidth(stats3Col.getPrefWidth() - 24);
         WidgetLatestScoreItemController controller = loader.getController();
-        controller.setData(game, score);
+        controller.setData(game, frontendMedia, score);
 
         stats3Col.getChildren().add(row);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load paused scores: " + e.getMessage(), e);
       }
     }

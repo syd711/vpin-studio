@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
@@ -22,7 +23,6 @@ import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 @Service
 public class GameService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(GameService.class);
-  
+
   private static final double MATCHING_THRESHOLD = 0.1;
 
   @Autowired
@@ -168,6 +168,7 @@ public class GameService implements InitializingBean {
 
   @SuppressWarnings("unused")
   public List<Game> getKnownGames(int emulatorId) {
+    long start = System.currentTimeMillis();
     List<Game> games = new ArrayList<>();
     if (emulatorId == -1) {
       List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
@@ -187,8 +188,13 @@ public class GameService implements InitializingBean {
         killFrontend = true;
       }
     }
-    GameValidationService.metricFinished();
     games.sort(Comparator.comparing(Game::getGameDisplayName));
+    long duration = System.currentTimeMillis() - start;
+    long avg = 0;
+    if (!games.isEmpty()) {
+      avg = duration / games.size();
+    }
+    LOG.info("Game fetch for emulator " + emulatorId + " took " + duration + "ms / " + games.size() + " games / " + avg + "ms avg.");
     return games;
   }
 
@@ -549,10 +555,13 @@ public class GameService implements InitializingBean {
         validate.add(GameValidationStateFactory.empty());
       }
       game.setValidationState(validate.get(0));
+      game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
+
       game.setNotes(gameDetails.getNotes());
       return newGame;
     }
 
+    TableDetails tableDetails = null;
     if (gameDetails == null || forceScan) {
       ScanResult scanResult = romService.scanGameFile(game);
 
@@ -565,7 +574,7 @@ public class GameService implements InitializingBean {
       String scannedRomName = scanResult.getRom();
       String scannedTableName = scanResult.getTableName();
 
-      TableDetails tableDetails = frontendService.getTableDetails(game.getId());
+      tableDetails = frontendService.getTableDetails(game.getId());
       if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
         scannedRomName = tableDetails.getRomName();
       }
@@ -588,6 +597,16 @@ public class GameService implements InitializingBean {
 
       gameDetailsRepository.saveAndFlush(gameDetails);
       LOG.info("Created GameDetails for " + game.getGameDisplayName() + ", was forced: " + forceScan);
+    }
+
+    GameEmulator emulator = game.getEmulator();
+    if (emulator.isVpxEmulator() && emulator.getVPXExe().exists()) {
+      game.setLauncher(emulator.getVPXExe().getName());
+    }
+
+    //apply the alt launcher exe as actually used one
+    if (!StringUtils.isEmpty(game.getAltLauncherExe()) && game.getAltLauncherExe().contains(".exe")) {
+      game.setLauncher(game.getAltLauncherExe());
     }
 
     //only apply legacy table name if the frontend fields are empty
@@ -673,6 +692,11 @@ public class GameService implements InitializingBean {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
+    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
+    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
+
+    GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
+    game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());
 
     return newGame;
   }

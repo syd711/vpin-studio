@@ -56,14 +56,13 @@ public class WidgetLatestScoreItemController extends WidgetController implements
   public void initialize(URL url, ResourceBundle resourceBundle) {
   }
 
-  public void setData(GameRepresentation game, ScoreRepresentation score) {
+  public void setData(GameRepresentation game, FrontendMediaRepresentation gameMedia, ScoreRepresentation score) {
     InputStream gameMediaItem = ServerFX.client.getGameMediaItem(game.getId(), VPinScreen.Wheel);
     if (gameMediaItem == null) {
       gameMediaItem = ServerFX.class.getResourceAsStream("avatar-blank.png");
     }
     Image image = new Image(gameMediaItem);
 
-    FrontendMediaRepresentation gameMedia = game.getGameMedia();
     FrontendMediaItemRepresentation wheelMedia = gameMedia.getDefaultMediaItem(VPinScreen.Wheel);
     if (wheelMedia == null) {
       image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));

@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.pausemenu.PauseMenu;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTutorialUrls;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
@@ -26,7 +27,7 @@ import java.util.List;
 public class PauseMenuItemsFactory {
   private final static Logger LOG = LoggerFactory.getLogger(PauseMenuItemsFactory.class);
 
-  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable VPinScreen cardScreen) {
+  public static List<PauseMenuItem> createPauseMenuItems(@NonNull GameRepresentation game, @NonNull PauseMenuSettings pauseMenuSettings, @Nullable VPinScreen cardScreen, @NonNull FrontendMediaRepresentation frontendMedia) {
     List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
     PauseMenuItem item = new PauseMenuItem(PauseMenuItemTypes.exit, "Continue", "Continue Game", new Image(PauseMenu.class.getResourceAsStream("continue.png")));
     pauseMenuItems.add(item);
@@ -41,13 +42,13 @@ public class PauseMenuItemsFactory {
       }
 
       if (cardScreen == null || !cardScreen.equals(VPinScreen.GameInfo)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, "Instructions", "Info Card", "infocard.png", "infovideo.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.GameInfo, frontendMedia, "Instructions", "Info Card", "infocard.png", "infovideo.png");
       }
       if (cardScreen == null || !cardScreen.equals(VPinScreen.Other2)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, "Instructions", "Info", "infocard.png", "infovideo.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.info, VPinScreen.Other2, frontendMedia, "Instructions", "Info", "infocard.png", "infovideo.png");
       }
       if (cardScreen == null || !cardScreen.equals(VPinScreen.GameHelp)) {
-        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, "Rules", "Table Rules", "rules.png", "rules.png");
+        loadMedia(game, pauseMenuItems, PauseMenuItemTypes.help, VPinScreen.GameHelp, frontendMedia, "Rules", "Table Rules", "rules.png", "rules.png");
       }
     }
 
@@ -122,8 +123,8 @@ public class PauseMenuItemsFactory {
     return true;
   }
 
-  private static void loadMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, VPinScreen screen, String title, String text, String pictureImage, String videoImage) {
-    List<FrontendMediaItemRepresentation> mediaItems = game.getGameMedia().getMediaItems(screen);
+  private static void loadMedia(GameRepresentation game, List<PauseMenuItem> pauseMenuItems, PauseMenuItemTypes pauseType, VPinScreen screen, FrontendMediaRepresentation frontendMedia, String title, String text, String pictureImage, String videoImage) {
+    List<FrontendMediaItemRepresentation> mediaItems = frontendMedia.getMediaItems(screen);
     for (FrontendMediaItemRepresentation mediaItem : mediaItems) {
       String mimeType = mediaItem.getMimeType();
       String baseType = mimeType.split("/")[0];

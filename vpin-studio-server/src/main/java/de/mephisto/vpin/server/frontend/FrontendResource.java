@@ -58,6 +58,12 @@ public class FrontendResource {
     return frontendStatusService.saveSettings(settings);
   }
 
+  @GetMapping("/media/{gameId}")
+  public FrontendMedia getKnownGames(@PathVariable("gameId") int gameId) {
+    //TODO the frontend connector getGame method does not work here
+    return gameService.getGame(gameId).getGameMedia();
+  }
+
   @GetMapping("/version")
   public int getVersion() {
     return frontendStatusService.getVersion();

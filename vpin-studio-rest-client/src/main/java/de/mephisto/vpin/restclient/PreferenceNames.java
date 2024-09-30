@@ -37,6 +37,7 @@ public interface PreferenceNames {
   String DISCORD_BOT_TOKEN = "discordBotToken";
   String DISCORD_GUILD_ID = "discordGuildId";
   String DISCORD_CHANNEL_ID = "discordChannelId";
+  String DISCORD_UPDATES_CHANNEL_ID = "discordUpdatesChannelId";
   String DISCORD_CATEGORY_ID = "discordCategoryId";
   String DISCORD_DYNAMIC_SUBSCRIPTIONS = "discordDynamicSubscriptions";
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
@@ -49,6 +50,5 @@ public interface PreferenceNames {
   String PINVOL_AUTOSTART_ENABLED = "pinVolAutoStartEnabled";
   String PINEMHI_AUTOSTART_ENABLED = "pinemhiAutoStartEnabled";
 
-  String VPBM_INTERNAL_HOST_IDENTIFIER = "vpbmInternalHostId";
-  String VPBM_EXTERNAL_HOST_IDENTIFIER = "vpbmExternalHostId";
+  String BACKUP_SETTINGS = "backupSettings";
 }

@@ -156,6 +156,12 @@ public class IScored {
     for (Score score : scores) {
       if (score.getName() != null && (score.getName().equals(playerName) || score.getName().equals(playerInitials))) {
         try {
+          if (game.isSingleScore()) {
+            LOG.info("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
+            result.setMessage("Found existing iScored score and skipped submission of new score value, because single score mode is enabled.");
+            return result;
+          }
+
           long l = Long.parseLong(score.getScore());
           if (l > highscore) {
             LOG.info("Found existing iScored score: " + score + " and skipped submission of new score value of " + highscore);
@@ -210,6 +216,7 @@ public class IScored {
         int responseCode = conn.getResponseCode();
         LOG.info("iScored returned: " + responseCode);
         result.setReturnCode(responseCode);
+        result.setSent(true);
       }
       catch (IOException e) {
         //ignore

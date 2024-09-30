@@ -51,8 +51,6 @@
                               <Label fx:id="statusLabel11112" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- If the table scan resolves the wrong or no ROM name," wrapText="true" />
                               <Label fx:id="statusLabel111121" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="  set the correct one in the &quot;Table Data Manager&quot; for field &quot;ROM Name&quot;." wrapText="true" />
                               <Label fx:id="statusLabel11111" layoutX="23.0" layoutY="96.0" styleClass="default-text" text="- Note that not all solid state (SS) tables are supported." wrapText="true" />
-                              <Label fx:id="statusLabel111111" layoutX="23.0" layoutY="116.0" styleClass="default-text" text="- For textfile based highscores, check if the correct value for &quot;Score .txt Filename&quot; is set" wrapText="true" />
-                              <Label fx:id="statusLabel1111111" layoutX="23.0" layoutY="136.0" styleClass="default-text" text="  in the &quot;Script Details&quot; section." wrapText="true" />
                               <Label fx:id="statusLabel11111111" layoutX="23.0" layoutY="156.0" styleClass="default-text" text="- Compare the name of the textfile written in the &quot;\VisualPinball\User&quot; folder" wrapText="true" />
                               <Label fx:id="statusLabel111111111" layoutX="23.0" layoutY="196.0" styleClass="default-text" text="  with the value of the &quot;Highscore Filename&quot; field in the Table Data Manager." wrapText="true" />
                            </children>
@@ -207,6 +205,23 @@
                                         <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />
                                     </padding>
                                 </VBox>
+                                <VBox fx:id="scoreGraphWrapper">
+                                    <VBox.margin>
+                                        <Insets top="24.0" />
+                                    </VBox.margin>
+                                    <children>
+                                        <Label fx:id="formattedTitleLabel1" text="Score Graph" textFill="WHITE">
+                                            <font>
+                                                <Font name="System Bold" size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <BorderPane fx:id="scoreGraph">
+                                            <VBox.margin>
+                                                <Insets right="24.0" top="12.0" />
+                                            </VBox.margin>
+                                        </BorderPane>
+                                    </children>
+                                </VBox>
                         <Label fx:id="rawTitleLabel1" layoutX="10.0" layoutY="232.0" text="Highscore Card Preview" textFill="WHITE">
                            <font>
                               <Font name="System Bold" size="14.0" />
@@ -227,23 +242,6 @@
                               </ImageView>
                            </children>
                         </VBox>
-                                <VBox fx:id="scoreGraphWrapper">
-                                    <VBox.margin>
-                                        <Insets top="24.0" />
-                                    </VBox.margin>
-                                    <children>
-                                        <Label fx:id="formattedTitleLabel1" text="Score Graph" textFill="WHITE">
-                                            <font>
-                                                <Font name="System Bold" size="14.0" />
-                                            </font>
-                                        </Label>
-                                        <BorderPane fx:id="scoreGraph">
-                                            <VBox.margin>
-                                                <Insets top="12.0" />
-                                            </VBox.margin>
-                                        </BorderPane>
-                                    </children>
-                                </VBox>
                      </children>
                   </VBox>
                       </children>

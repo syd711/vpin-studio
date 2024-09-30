@@ -591,7 +591,7 @@ public class TableDialogs {
       TableDataController controller = (TableDataController) stage.getUserData();
       controller.setGame(stage, overviewController, game, tab);
 
-      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6, true);
       stage.setUserData(fxResizeHelper);
       stage.setMinWidth(812);
       stage.setMaxWidth(812);
@@ -612,9 +612,10 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static void openTableImportDialog() {
+  public static void openTableImportDialog(GameEmulatorRepresentation emulatorRepresentation) {
     Stage stage = Dialogs.createStudioDialogStage(TableImportController.class, "dialog-table-import.fxml", "Table Importer");
     TableImportController controller = (TableImportController) stage.getUserData();
+    controller.setData(emulatorRepresentation);
     stage.showAndWait();
   }
 

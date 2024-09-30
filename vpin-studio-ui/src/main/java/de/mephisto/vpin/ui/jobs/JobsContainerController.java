@@ -59,6 +59,7 @@ public class JobsContainerController implements Initializable {
   private void onRemove() {
     if (job.isFinished()) {
       client.getJobsService().dismiss(job.getUuid());
+      poller.dismiss(job);
       removeBtn.setDisable(true);
       poller.refreshJobsUI();
     }

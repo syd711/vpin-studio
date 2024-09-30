@@ -46,6 +46,7 @@
                                  <TableColumn fx:id="columnRom" minWidth="10.4000244140625" prefWidth="140.0" style="-fx-alignment: BASELINE_LEFT;" text="ROM" />
                                  <TableColumn fx:id="columnHSType" minWidth="10.4000244140625" prefWidth="115.0" style="-fx-alignment: BASELINE_LEFT;" text="Highscore Type" />
                                  <TableColumn fx:id="columnEmulator" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Emulator" />
+                        <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Launcher" />
                                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
                                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
                                  <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Wheel">
@@ -206,13 +207,6 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
                </graphic>
             </Button>
-            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
-            <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="215.0" promptText="Table Search...">
-               <font>
-                     <Font size="14.0" />
-               </font>
-            </TextField>
             <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                <font>
                      <Font size="14.0" />
@@ -224,7 +218,26 @@
                   <Tooltip text="Reload all table data" />
                </tooltip>
             </Button>
+            <Separator layoutX="467.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <StackPane alignment="CENTER_RIGHT">
+               <children>
+                  <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                     <font>
+                           <Font size="14.0" />
+                     </font>
+                  </TextField>
+                  <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                     </graphic>
+                  </Button>
+               </children>
+            </StackPane>
             <Separator orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
             <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
             <Separator fx:id="playlistSplitter" layoutX="277.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
             <Button fx:id="assetManagerViewBtn" layoutX="578.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAssetView" textFill="WHITE">
@@ -235,7 +248,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Asset Manager" />
+                  <Tooltip text="Asset Manager View (Ctrl+M)" />
                </tooltip>
             </Button>
             <Button fx:id="assetManagerBtn" mnemonicParsing="false" onAction="#onMediaEdit" textFill="WHITE">
@@ -246,7 +259,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Asset Manager" />
+                  <Tooltip text="Asset Manager (Ctrl+I)" />
                </tooltip>
             </Button>
             <Button fx:id="tableEditBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
@@ -257,7 +270,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Edit Table Data" />
+                  <Tooltip text="Edit Table Data (Ctrl+O)" />
                </tooltip>
             </Button>
             <Separator fx:id="importSeparator" layoutX="643.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
@@ -358,29 +371,10 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" text="󰧧" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Delete table and assets" />
+                  <Tooltip text="Delete table and assets (Delete)" />
                </tooltip>
             </Button>
             <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
-               <items>
-                  <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-               </items>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Scans the selected tables to extract metadata" />
-               </tooltip>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </SplitMenuButton>
-            <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
             <SplitMenuButton fx:id="playBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -400,9 +394,28 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                </graphic>
                <tooltip>
-                     <Tooltip text="Kill all VPX and [Frontend] processes." />
+                     <Tooltip text="Kill all VPX and [Frontend] processes (Ctrl + K)" />
                </tooltip>
             </Button>
+            <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+               <items>
+                  <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                     </graphic>
+                  </MenuItem>
+               </items>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Scans the selected tables to extract metadata" />
+               </tooltip>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </SplitMenuButton>
             <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
                <items>
                   <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">

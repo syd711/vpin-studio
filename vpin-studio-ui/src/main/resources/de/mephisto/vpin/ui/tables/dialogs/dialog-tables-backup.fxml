@@ -41,7 +41,7 @@
             <VBox BorderPane.alignment="CENTER">
                <children>
                   <Label layoutX="36.0" layoutY="36.0" styleClass="preference-description" text="The selected table(s) will be archived and will be available" />
-                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="in the &quot;Table Repository&quot; section when finished." />
+                  <Label layoutX="10.0" layoutY="10.0" styleClass="preference-description" text="in the &quot;Table Backups&quot; section when finished." />
                   <CheckBox fx:id="removeFromPlaylistCheckbox" mnemonicParsing="false" text="Remove from all playlists" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

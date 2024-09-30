@@ -5,23 +5,20 @@ package de.mephisto.vpin.restclient.frontend;
  * Use feature control to activate or not components in the tool 
  */
 public enum FrontendType {
+  Standalone(SupportType.NONE, SupportType.NONE, false, SupportType.NONE, false, false, false, false, false, false),
+  Popper    (SupportType.FULL, SupportType.FULL, false, SupportType.FULL, true, false, true, true, true, true),
+  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false);
 
-  Standalone(false, false, false, false, false, false, false, false, false, false, false),
-  Popper(true, true, true, true, false, true, false, true, true, true, true),
+  enum SupportType {NONE, MINI, FULL}
 
-  // playlist not activated yet but will be supported
-  PinballX(true, false, true, false, true, true, true, false, true, false, false);
-
-  FrontendType(boolean supportStandardFields, boolean supportExtendedFields, 
-          boolean supportPlaylists, boolean supportExtendedPlaylists, boolean supportPlaylistsCrud, 
-          boolean supportMedias, boolean supportMediaCache,
+  FrontendType(SupportType supportFields, SupportType supportPlaylists, boolean supportPlaylistsCrud, 
+          SupportType supportStatuses, boolean supportMedias, boolean supportMediaCache,
           boolean supportPupPacks, boolean supportStatistics, boolean supportArchive,
           boolean supportControls) {
-    this.supportStandardFields = supportStandardFields;
-    this.supportExtendedFields = supportExtendedFields;
+    this.supportFields = supportFields;
     this.supportPlaylists = supportPlaylists;
-    this.supportExtendedPlaylists = supportExtendedPlaylists;
     this.supportPlaylistsCrud = supportPlaylistsCrud;
+    this.supportStatuses = supportStatuses;
     this.supportMedias = supportMedias;
     this.supportMediaCache = supportMediaCache;
     this.supportPupPacks = supportPupPacks;
@@ -30,17 +27,22 @@ public enum FrontendType {
     this.supportControls = supportControls;
   }
 
-  /** Whether stantard vpin metadata are supported (gametype, year, manufacturer, nbPlayers, rating author, theme, IPDB */
-  private boolean supportStandardFields;
-  /** Whther extended set of fields are supported (cf all popper fields) */
-  private boolean supportExtendedFields;
-  /** Whether Playlists are supported or not */
-  private boolean supportPlaylists;
+  /** Whether stantard vpin metadata are supported (gametype, year, manufacturer, nbPlayers, rating author, theme, IPDB,
+   * or Whether extended set of fields are supported (cf all popper fields) */
+  private SupportType supportFields;
+
+  /** Whether Playlists are supported or not
+   * MINI ie pinballX way, one level of favorites managed globally
+   * FULL is the pinup way of managing favorites : local and global favorites support + management at playlist level */
+  private SupportType supportPlaylists;
   /** Whether Playlists creation / update / deletion are supported or not */
   private boolean supportPlaylistsCrud;
-  /** pinup way of managing favorites : local and global favorites support + management at playlist level
-   * If false, ie pinballX way, one level of favorites managed globally */
-  private boolean supportExtendedPlaylists;
+
+  /** Whether frontend support statuses or not
+   * MINI : just active / inactive 
+   * FILL : MINI + additional popper status (MATURE + WIP) */
+  private SupportType supportStatuses;
+
   /** Whether medias are supported by the frontend */
   private boolean supportMedias;
   /** Whether a media cache is supported by the frontend */
@@ -57,20 +59,29 @@ public enum FrontendType {
   //----------
 
   public boolean supportStandardFields() {
-    return supportStandardFields;
+    return !supportFields.equals(SupportType.NONE);
   }
   public boolean supportExtendedFields() {
-    return supportExtendedFields;
+    return supportFields.equals(SupportType.FULL);
   }
+
   public boolean supportPlaylists() {
-    return supportPlaylists;
+    return !supportPlaylists.equals(SupportType.NONE);
+  }
+  public boolean supportExtendedPlaylists() {
+    return supportPlaylists.equals(SupportType.FULL);
   }
   public boolean supportPlaylistsCrud() {
     return supportPlaylistsCrud;
   }
-  public boolean supportExtendedPlaylists() {
-    return supportExtendedPlaylists;
+
+  public boolean supportStatuses() {
+    return !supportStatuses.equals(SupportType.NONE);
   }
+  public boolean supportExtendedStatuses() {
+    return supportStatuses.equals(SupportType.FULL);
+  }
+
   public boolean supportMedias() {
     return supportMedias;
   }

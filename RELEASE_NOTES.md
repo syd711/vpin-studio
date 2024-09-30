@@ -1,66 +1,56 @@
-# Release Notes 3.6.1
+## Release Notes 3.7.0
 
-### Bugfixes
-  
-- **Splash Screen**: Fixed rendering of splash screen for Linux clients.
-- **Table Uploads**: Fixed file filter which had a missing wildcard for .rar files.
-- **Table Overview**: Fixed filtered table refresh after changes have been made that affect the currently filtered tables. 
-- **Server Installer**: Fixed invalid .NET version check.
+## Changes
 
+- **Refactored Game Media Access**: For performance optimization, the media access has been refactored widely. As a result, the table (re)load should be noticeable faster. 
+- **Table Validators**: Introduced new validator **VPinMAME ROM Validation**. The validator uses the results from the VPinMAME ROM tester to indicate possibly broken ROM files. The new validator is enabled by default.
+- **Highscore Card Editor**: Added "Apply to all" button for the font selection which will apply the selected font to all available templates.
+- **Table Overview / Reload**: A manual reload in the table overview results in additional cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
+- **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
+- **Table Overview / Highscores**: Switched order of highscore graph and highscore card.
+- **iScored Integration**: Added the additional tag support for **vps:singlescore**. If you apply this tag to a table in iScored, the VPin Studio will only submit a highscore to iScored if the user has not posted any other score for that table yet - no matter if the new score is higher or not.
+- **Pause Menu**: Added additional info about the highscore data (if supported or not).
+- **PinVol 2.2**: Added PinVol version 2.2. The new .exe file will automatically be downloaded by the server.
+- **VPBM 3.3**: Updated to VPBM 3.3 (finally).
+  - Renamed **Table Repository** to **Table Backups**. VPBM does not need additional exports anymore, so this renaming should make the whole usage more intuitive.
+  - Removed "Repositories" from the settings. The idea to support multiple sources or targets for backups was not bad, but the implementation was not mature enough. It may be picked up again in the future. 
+  - Applied some performance optimizations from VBPM to the Studio integration.
+  - Added support for the additional external host ids.
+  - Added missing button tooltips and changed labels.
+- **Shortcuts**: Several shortcuts have been introduced to improve the accessibility of the Studio. You find an overview in the "Help & Support" section of the preferences.
+- **Studio Toolbar Design**: The toolbar design has been streamlined. The reload and filter buttons and search inputs have all the same order and size now. Also search input fields support Strg+F and ESC inputs for a better accessibility. 
+- **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
 
-## Release Notes 3.6.0
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />
 
-### Changes
+- **Discord Maintenance Updates**: You can now select a Discord channel where updates are posted when you upload new tables or replace existing ones on your cabinet. If you share your VPin with a bunch of people (like I do), you can let them know this way if there are new tables available.  
 
-- **Data Exporter**: Added a new headless API (without UI) to export data in CSV format from the VPin Studio server. The usage of the API is documented here: https://github.com/syd711/vpin-studio/wiki/Data-Export. Note that this API is a first draft and likely to change, so don't consider it as stable yet in case you build your own tools based on it. Right now, it includes the following endpoints:
-    - **Table Data Exporter**: Exports all table metadata of the selected tables.
-    - **Highscore Exporter**: Exports all highscores of the selected tables.
-    - **Backglass Exporter**: Exports the backglass metadata of the selected .directb2s files.
-    - **Table Media Exporter**: Exports the number of media for available for every screen of the selected tables.
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates-channel.png" width="550" />
 
-- **Highscore Card**: The canvas is centered automatically now  when no left/right margins are set.
-- **Highscore Card**: The non-raw highscore list is centered automatically now when no left/right margins are set.
-- **Windows VPin Studio Server Tray**: Added option to launch the Studio. The action is also executed on double-click on the tray icon.
-- **Studio Client Toolbar**: Added mute/unmute option to system preferences drop-down menu.
+  The channel is configurable for the Discord BOT in the preferences.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/mute-btn.png" width="350" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates.png" width="650" />
 
-- **Table Asset Manager** Added option to call the video conversion scripts from the PinUP Poppper "Recordings" folder.
+- **Toolbar**: Added **System Shutdown** menu item to the header toolbar menu. Note that the item is only visible when you work remote.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-manager-video-conversion.png" width="680" />
-
-- **Table Asset Manager** Added new "info" button which shows all metadata of images, videos and mp3 files.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-manager-asset-info.png" width="650" />
-
-- **DMD Images in Backglass Manager**: Added ability to add/replace/remove a full dmd image to a backglass. The DMD image zone also supports drag and drop.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/backglass-manager-dmd-upload.png" width="650" />
-
-- **Jobs Menu**: Re-implemented the jobs menu which is responsible for long running task like PUP pack extractions. The progress is now properly displayed and cancelable (if possible). Finished jobs stay inside the menu until they are removed manually.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/jobs-menu.png" width="450" />
-
-- **Client Settings / Windows Network Share**: Added MacOS Support.
-- **System / Open Folder & Open File**: Added MacOS Support.
-- **Table Overview / VPS Updates**: VPS update indicators are now shown even if the asset is not installed. Previously, the update arrow icon was only shown when there was an existing asset already available. This way, you get notified about additional ALT sound or PUP packages which are often released later on for existing tables.
-- **Table Overview / MAME Alias Mapping**: Added auto-sorting on save when then VPMAlias.txt file is edited.
-- **Table Overview**: Added "Date Updated" column.
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="450" />
 
 ## Bugfixes
-
-- **Table Overview / Backglass Manager**: Missing sync between VPX filename changes and backglass manager.
-- **Highscore Card Editor / Performance**: Fixed performance issue that the view caused to load all available games.
-- **Highscore Card Editor / Fonts**: Fixed rendering of fonts. This one has been a flow right from the beginning. You finally get what you see when you select a font from the font selector, including the font weight and style. The issue that not all true-type-fonts (ttf files) have been rendered properly has been fixed too.
-- **ALT Sound**: .ini files are not ignored anymore when installed via upload.
-- **Table Uploads**: Existing .vbs files are deleted on table replacements now.
-- **Studio Installation** : Added Popper version check on install.
-- **Notifications**: Fixed issue that the notifications were no shown anymore, because the check if VPX is runnning returned always true for some users.
-- **Smaller Screen Support**:
-    - Fixed most views of the tables section to be useable for 1280x768 pixel (there are still open ends!).
-    - The Studio window has a minimum allowed size of 1280x700 pixel now.
-    - Fixed navigation and header toolbar to be useable on screen with smaller resolutions too.
-- **PinballX Frontend**:
-    - Fix small issues in Stats and Favorites.
-    - Full support of pinballX.ini in UTF-8 or UTF-16.
   
+- **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
+- **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
+- **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
+- **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
+- **Highscore Parsing**: Added support for "Aladdin's Castle".
+- **Highscore Parsing**: Added support for "Little Joe".
+- **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
+- **Table Data Manager**: Fixed dialog sizing issues.
+- **Backglass Data Exporter**:
+  - Fixed wrong DMD image information (the data was always read from the backglass image).
+  - Added additional data from the backglass settings.
+
+## VPin Mania 
+
+- **Player Ranking**: Added pagination to the players view, so the list is not limited to 100 anymore.
+- **Navigation**: Fixed several navigation issues.
+- **Player Statistics Tab**: The view has become a small revamp, showing the players rank now too.

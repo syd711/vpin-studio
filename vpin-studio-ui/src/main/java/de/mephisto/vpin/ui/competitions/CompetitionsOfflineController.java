@@ -39,7 +39,7 @@ import java.util.*;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class CompetitionsOfflineController implements Initializable, StudioFXController {
+public class CompetitionsOfflineController extends BaseCompetitionController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(CompetitionsOfflineController.class);
 
   @FXML
@@ -68,14 +68,12 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   @FXML
   private Button deleteBtn;
+
   @FXML
   private Button finishBtn;
 
   @FXML
   private Button duplicateBtn;
-
-  @FXML
-  private TextField textfieldSearch;
 
   @FXML
   private BorderPane competitionWidget;
@@ -113,7 +111,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       CompetitionRepresentation newCmp = null;
       try {
         newCmp = client.getCompetitionService().saveCompetition(c);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         WidgetFactory.showAlert(Studio.stage, e.getMessage());
       }
       onReload();
@@ -132,7 +131,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -149,7 +149,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
           CompetitionRepresentation newCmp = client.getCompetitionService().saveCompetition(c);
           onReload();
           tableView.getSelectionModel().select(newCmp);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           WidgetFactory.showAlert(Studio.stage, e.getMessage());
         }
       }
@@ -174,7 +175,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       }
 
       Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Competition '" + selection.getName() + "'?",
-        help, help2);
+          help, help2);
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         tableView.getSelectionModel().clearSelection();
         client.getCompetitionService().deleteCompetition(selection);
@@ -243,6 +244,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize();
     NavigationController.setBreadCrumb(Arrays.asList("Competitions"));
     tableView.setPlaceholder(new Label("            No competitions found.\nClick the '+' button to create a new one."));
 
@@ -251,7 +253,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       loadingOverlay = loader.load();
       loaderController = loader.getController();
       loaderController.setLoadingMessage("Loading Competitions...");
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
     }
 
@@ -344,7 +347,7 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
     });
 
     tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
-      "Create a new competition by pressing the '+' button."));
+        "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 
       refreshView(Optional.ofNullable(newSelection));
@@ -355,7 +358,8 @@ public class CompetitionsOfflineController implements Initializable, StudioFXCon
       competitionWidgetRoot = loader.load();
       competitionWidgetController = loader.getController();
       competitionWidgetRoot.setMaxWidth(Double.MAX_VALUE);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to load c-widget: " + e.getMessage(), e);
     }
 

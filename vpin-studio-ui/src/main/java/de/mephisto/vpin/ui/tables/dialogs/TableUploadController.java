@@ -304,7 +304,7 @@ public class TableUploadController implements Initializable, DialogController {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
     if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
-      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, game.getGameDisplayName(), MATCHING_PERCENTAGE);
+      boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName.replaceAll("_", " "), game.getGameDisplayName(), MATCHING_PERCENTAGE);
       if (!similarAtLeastToPercent) {
         similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
       }

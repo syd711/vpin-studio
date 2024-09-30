@@ -338,6 +338,11 @@ public class VPinStudioClient implements OverlayClient {
     return getGameService().getGame(id);
   }
 
+  @Override
+  public FrontendMediaRepresentation getFrontendMedia(int id) {
+    return getFrontendService().getFrontendMedia(id);
+  }
+
   /**
    * @param id
    * @return
@@ -469,6 +474,7 @@ public class VPinStudioClient implements OverlayClient {
     getImageCache().clearCache();
     getGameService().clearCache();
     getSystemService().clearCache();
+    getMameService().clearCache();
     getPupPackService().clearCache();
     getDmdService().clearCache();
   }

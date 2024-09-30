@@ -5,12 +5,13 @@ import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemTypes;
 import de.mephisto.vpin.commons.fx.pausemenu.model.PauseMenuItemsFactory;
 import de.mephisto.vpin.commons.fx.pausemenu.states.StateMananger;
 import de.mephisto.vpin.commons.utils.FXUtil;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.animation.ParallelTransition;
@@ -32,7 +33,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
-import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -87,6 +87,7 @@ public class MenuController implements Initializable {
   private FrontendPlayerDisplay tutorialScreen;
   private PauseMenuSettings pauseMenuSettings;
   private GameRepresentation game;
+  private FrontendMediaRepresentation frontendMedia;
   private PauseMenuItem activeSelection;
 
   private final List<PauseMenuItem> pauseMenuItems = new ArrayList<>();
@@ -110,13 +111,19 @@ public class MenuController implements Initializable {
     }
   }
 
-  public void setGame(@NonNull GameRepresentation game, GameStatus gameStatus, VpsTable vpsTable,
-                      @Nullable VPinScreen cardScreen, @Nullable FrontendPlayerDisplay tutorialScreen, PauseMenuSettings pauseMenuSettings) {
+  public void setGame(@NonNull GameRepresentation game,
+                      @NonNull FrontendMediaRepresentation frontendMedia,
+                      GameStatus gameStatus,
+                      VpsTable vpsTable,
+                      @Nullable VPinScreen cardScreen,
+                      @Nullable FrontendPlayerDisplay tutorialScreen,
+                      @NonNull PauseMenuSettings pauseMenuSettings) {
     this.game = game;
+    this.frontendMedia = frontendMedia;
     this.cardScreen = cardScreen;
     this.tutorialScreen = tutorialScreen;
     this.pauseMenuSettings = pauseMenuSettings;
-    this.customViewController.setGame(game, gameStatus, vpsTable);
+    this.customViewController.setGame(game, frontendMedia, gameStatus, vpsTable);
     enterMenuItemSelection();
   }
 
@@ -364,7 +371,7 @@ public class MenuController implements Initializable {
 
   private void loadMenuItems() {
     pauseMenuItems.clear();
-    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, cardScreen));
+    pauseMenuItems.addAll(PauseMenuItemsFactory.createPauseMenuItems(game, pauseMenuSettings, cardScreen, frontendMedia));
 
     menuItemsRow.getChildren().clear();
     selectionIndex = 0;

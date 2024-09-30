@@ -23,7 +23,6 @@ import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
-import de.mephisto.vpin.server.roms.ScanResult;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -50,27 +49,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
 
   private static Map<Integer, VPinScreen> mediaCodeToScreen = new HashMap<>();
 
-  private static long start = 0;
-  private static long end = 0;
-  private static long total = 0;
-
   private Frontend frontend;
-
-  public static void metricsStart() {
-    start = System.currentTimeMillis();
-  }
-
-  public static void metricsEnd() {
-    long duration = System.currentTimeMillis() - start;
-    total += duration;
-  }
-
-  public static void metricFinished() {
-    LOG.info("Validation Service took " + total + "ms.");
-    start = 0;
-    end = 0;
-    total = 0;
-  }
 
   static {
     mediaCodeToScreen.put(CODE_NO_AUDIO, VPinScreen.Audio);
@@ -121,7 +100,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   private IgnoredValidationSettings ignoredValidationSettings;
 
   public List<ValidationState> validate(@NonNull Game game, boolean findFirst) {
-    GameValidationService.metricsStart();
     List<ValidationState> result = new ArrayList<>();
     boolean isVPX = game.isVpxGame();
 
@@ -143,28 +121,20 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
-      if (!game.isRomExists() && game.isRomRequired()) {
-        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
+    if (isVPX && isValidationEnabled(game, CODE_ROM_INVALID)) {
+      if (!StringUtils.isEmpty(game.getRom()) && !mameService.isValidRom(game.getRom())) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_INVALID));
         if (findFirst) {
           return result;
         }
       }
     }
 
-    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
-      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
-        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
-        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
-          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
-            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
-            if (otherGame != null) {
-              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
-              if (findFirst) {
-                return result;
-              }
-            }
-          }
+    if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_ROM_NOT_EXISTS)) {
+      if (!game.isRomExists() && game.isRomRequired()) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_ROM_NOT_EXISTS));
+        if (findFirst) {
+          return result;
         }
       }
     }
@@ -239,7 +209,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       HighscoreType highscoreType = game.getHighscoreType();
       if (highscoreType == null || highscoreType.equals(HighscoreType.NVRam)) {
         File romFile = game.getRomFile();
-        File nvRamFile = game.getNvRamFile();
         if (romFile != null && romFile.exists()) {
           if (game.isFoundTableExit() && !game.isFoundControllerStop()) {
             result.add(GameValidationStateFactory.create(GameValidationCode.CODE_SCRIPT_CONTROLLER_STOP_MISSING));
@@ -251,7 +220,22 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
-    GameValidationService.metricsEnd();
+    if (isVPX && isValidationEnabled(game, CODE_NVOFFSET_MISMATCH)) {
+      if (game.getNvOffset() > 0 && !StringUtils.isEmpty(game.getRom())) {
+        List<GameDetails> otherGameDetailsWithSameRom = new ArrayList<>(gameDetailsRepository.findByRomName(game.getRom())).stream().filter(g -> g.getRomName() != null && g.getPupId() != game.getId() && g.getRomName().equalsIgnoreCase(game.getRom())).collect(Collectors.toList());
+        for (GameDetails otherGameDetails : otherGameDetailsWithSameRom) {
+          if (otherGameDetails.getNvOffset() == 0 || otherGameDetails.getNvOffset() == game.getNvOffset()) {
+            Game otherGame = frontendService.getGame(otherGameDetails.getPupId());
+            if (otherGame != null) {
+              result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NVOFFSET_MISMATCH, otherGame.getGameDisplayName(), String.valueOf(game.getNvOffset()), String.valueOf(otherGameDetails.getNvOffset())));
+              if (findFirst) {
+                return result;
+              }
+            }
+          }
+        }
+      }
+    }
     return result;
   }
 
@@ -366,10 +350,10 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return null;
   }
 
-  private boolean validScreenAssets(Game game, VPinScreen VPinScreen) {
-    List<File> screenAssets = game.getMediaFiles(VPinScreen);
+  private boolean validScreenAssets(Game game, VPinScreen screen) {
+    List<File> screenAssets = game.getMediaFiles(screen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
     if (!screenAssets.isEmpty()) {
       if (config.getOption().equals(ValidatorOption.empty)) {
         return false;
@@ -520,7 +504,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
   public List<ValidationState> validatePupPack(Game game) {
     List<ValidationState> result = new ArrayList<>();
     if (isValidationEnabled(game, CODE_PUP_PACK_FILE_MISSING)) {
-      if (game.getPupPackPath() != null && !game.getPupPack().getMissingResources().isEmpty()) {
+      if (game.getPupPack() != null && !game.getPupPack().getMissingResources().isEmpty()) {
         ValidationState validationState = GameValidationStateFactory.create(CODE_PUP_PACK_FILE_MISSING, game.getPupPack().getMissingResources());
         result.add(validationState);
       }

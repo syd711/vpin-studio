@@ -125,6 +125,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <Label prefHeight="20.0" styleClass="preference-label" text="Default Server:" textFill="WHITE">
@@ -139,13 +140,13 @@
                         </Label>
                         <ComboBox fx:id="channelCombo" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <ComboBox fx:id="serverCombo" layoutX="212.0" layoutY="72.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" />
-                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Subscriptions Category:" textFill="WHITE" GridPane.rowIndex="2">
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Subscriptions Category:" textFill="WHITE" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </Label>
-                        <ComboBox fx:id="categoryCombo" layoutX="208.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate Settings" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <ComboBox fx:id="categoryCombo" layoutX="208.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Button fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" text="Validate Settings" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
@@ -155,7 +156,14 @@
                         </Button>
                         <Label styleClass="preference-description" text="Only servers with your bots admin privileges shown here." textFill="WHITE" GridPane.columnIndex="2" />
                         <Label layoutX="468.0" layoutY="14.0" styleClass="preference-description" text="This channel will be used for all highscore updates." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="New subscriptions will be created here." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label layoutX="468.0" layoutY="48.0" styleClass="preference-description" text="New subscriptions will be created here." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="46.0" prefHeight="20.0" styleClass="preference-label" text="Table Updates Channel:" textFill="WHITE" GridPane.rowIndex="2">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                        <ComboBox fx:id="tableUpdatesCombo" layoutX="210.0" layoutY="44.0" prefHeight="30.0" prefWidth="240.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label layoutX="474.0" layoutY="48.0" styleClass="preference-description" text="This channel will be used for table updates." textFill="WHITE" GridPane.columnIndex="2" GridPane.rowIndex="2" />
                      </children>
                      <VBox.margin>
                         <Insets top="6.0" />

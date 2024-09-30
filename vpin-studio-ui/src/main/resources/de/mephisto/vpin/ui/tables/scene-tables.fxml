@@ -26,11 +26,14 @@
                             <tabs>
                                 <Tab fx:id="tablesTab" closable="false" text="All Tables">
                                     <content>
-                                        <BorderPane/>
+                                        <BorderPane />
                                     </content>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-bulleted-square" iconSize="18" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="All Tables (F2)" />
+                           </tooltip>
                                 </Tab>
                                 <Tab fx:id="backglassManagerTab" closable="false" text="Backglasses">
                                     <content>
@@ -39,14 +42,20 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-alpha-b-box-outline" iconSize="18" text="" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Backglasses (F3)" />
+                           </tooltip>
                                 </Tab>
                                 <Tab fx:id="vpsTablesTab" closable="false" text="VPS Tables">
                                     <content>
-                                        <BorderPane/>
+                                        <BorderPane />
                                     </content>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2f-format-list-checkbox" iconSize="18" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Visual Pinball Spreadsheet (F4)" />
+                           </tooltip>
                                 </Tab>
                                 <Tab fx:id="tablesStatisticsTab" closable="false" text=" Table Statistics">
                                     <content>
@@ -55,14 +64,20 @@
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="bi-graph-up" iconSize="18" text="" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Table Statistics (F5)" />
+                           </tooltip>
                                 </Tab>
-                                <Tab fx:id="tableRepositoryTab" text=" Table Repository">
+                                <Tab fx:id="tableRepositoryTab" text=" Table Backups">
                                     <content>
-                                        <BorderPane/>
+                                        <BorderPane />
                                     </content>
                                     <graphic>
                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2a-archive-outline" iconSize="18" />
                                     </graphic>
+                           <tooltip>
+                              <Tooltip text="Table Backups (F6)" />
+                           </tooltip>
                                 </Tab>
                             </tabs>
                         </TabPane>

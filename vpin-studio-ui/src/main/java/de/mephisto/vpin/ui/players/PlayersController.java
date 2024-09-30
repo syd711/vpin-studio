@@ -17,6 +17,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -196,6 +197,27 @@ public class PlayersController implements Initializable, StudioFXController {
       NavigationController.setBreadCrumb(Arrays.asList("Players", "Discord Players"));
       Optional<PlayerRepresentation> selection = discordPlayersController.getSelection();
       updateSelection(selection);
+    }
+  }
+
+  private StudioFXController getActiveController() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    switch (selectedIndex) {
+      case 0: {
+        return builtInPlayersController;
+      }
+      case 1: {
+        return discordPlayersController;
+      }
+    }
+    return null;
+  }
+
+  @Override
+  public void onKeyEvent(KeyEvent event) {
+    StudioFXController activeController = getActiveController();
+    if (activeController != null) {
+      activeController.onKeyEvent(event);
     }
   }
 

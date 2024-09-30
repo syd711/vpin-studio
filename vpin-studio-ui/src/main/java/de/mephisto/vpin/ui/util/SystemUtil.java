@@ -26,6 +26,11 @@ public class SystemUtil {
     publicUrl = jsonPreference.getWinNetworkShare();
   }
 
+  public static long getMemorySize(String value) {
+    long size = 8 * (int) ((((value.length()) * 2) + 45) / 8);
+    return size;
+  }
+
   public static boolean isFolderActionSupported() {
     return isLocal() || (!StringUtils.isEmpty(publicUrl) && (isWindows() || isMac()));
   }
@@ -72,7 +77,8 @@ public class SystemUtil {
       try {
         if (folder.exists()) {
           openFolderWithOS(folder.getAbsolutePath());
-        } else if (fallback.exists()) {
+        }
+        else if (fallback.exists()) {
           openFolderWithOS(fallback.getAbsolutePath());
         }
       }
@@ -103,15 +109,17 @@ public class SystemUtil {
    * file explorer.
    *
    * @param absolutePath The absolute path of the folder to open typically from getAbsolutePath().
-   * @throws IOException If an I/O error occurs.
+   * @throws IOException                   If an I/O error occurs.
    * @throws UnsupportedOperationException If the operating system is not supported.
    */
   private static void openFolderWithOS(String absolutePath) throws IOException {
     if (isWindows()) {
       new ProcessBuilder("explorer.exe", absolutePath).start();
-    } else if (isMac()) {
+    }
+    else if (isMac()) {
       new ProcessBuilder("open", absolutePath).start();  // macOS command
-    } else {
+    }
+    else {
       throw new UnsupportedOperationException("Unsupported operating system: " + System.getProperty("os.name"));
     }
   }
@@ -121,15 +129,17 @@ public class SystemUtil {
    * file explorer, selecting the file if possible.
    *
    * @param absolutePath The absolute path of the file to open typically from getAbsolutePath().
-   * @throws IOException If an I/O error occurs.
+   * @throws IOException                   If an I/O error occurs.
    * @throws UnsupportedOperationException If the operating system is not supported.
    */
   private static void openFileWithOS(String absolutePath) throws IOException {
     if (isWindows()) {
       new ProcessBuilder("explorer.exe", "/select,", absolutePath).start();
-    } else if (isMac()) {
+    }
+    else if (isMac()) {
       new ProcessBuilder("open", "-R", absolutePath).start();
-    } else {
+    }
+    else {
       throw new UnsupportedOperationException("Unsupported operating system: " + System.getProperty("os.name"));
     }
   }
@@ -151,8 +161,10 @@ public class SystemUtil {
 
       // Handle both Windows UNC and macOS SMB paths
       if (isWindows() && base.startsWith("\\\\")) {
-        return resolveNetworkPath(base, path, "\\", "\\\\");
-      } else if (isMac() && base.startsWith("smb://")) {
+        //TODO cheap workaround to fix issue
+        return resolveWindowsNetworkPath(base, path);
+      }
+      else if (isMac() && base.startsWith("smb://")) {
         // Convert Windows backslashes to forward slashes for SMB paths
         path = path.replace("\\", "/");
         return resolveNetworkPath(base, path, "/", "/");
@@ -160,7 +172,8 @@ public class SystemUtil {
 
       // Return null if no matching OS condition was met
       return null;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to resolve network path: " + e.getMessage(), e);
     }
     return path;
@@ -170,9 +183,9 @@ public class SystemUtil {
    * Resolves a network path by combining the base and path using the given
    * separator. Removes unnecessary separators and matches segments case-insensitively.
    *
-   * @param base The base network path.
-   * @param path The target path to resolve relative to the base.
-   * @param separator The file separator used by the operating system.
+   * @param base       The base network path.
+   * @param path       The target path to resolve relative to the base.
+   * @param separator  The file separator used by the operating system.
    * @param splitRegex The regular expression used to split the base path.
    * @return The resolved network path or null if no matching segment is found.
    */
@@ -202,6 +215,34 @@ public class SystemUtil {
 
     // Return null if no matching segment is found
     return null;
+  }
+
+  public static String resolveWindowsNetworkPath(String base, String path) {
+    try {
+      String url = base;
+      if (url == null) {
+        return path;
+      }
+
+      while (url.endsWith("\\")) {
+        url = url.substring(0, url.lastIndexOf("\\"));
+      }
+
+      String[] split = base.split("\\\\");
+      if (split.length > 0) {
+        String segment = split[split.length - 1];
+        if (path.toLowerCase().contains(segment.toLowerCase())) {
+          path = path.toLowerCase().substring(path.toLowerCase().indexOf(segment.toLowerCase()) + segment.length());
+
+          return url + path;
+        }
+      }
+      return null;
+    }
+    catch (Exception e) {
+      LOG.error("Failed to resolve network path: " + e.getMessage(), e);
+    }
+    return path;
   }
 
   private static boolean isLocal() {

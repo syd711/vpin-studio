@@ -60,7 +60,7 @@ public class IOService {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(installDescriptor.getArchiveSourceId(), installDescriptor.getFilename());
       GameEmulator emulator = frontendService.getGameEmulator(installDescriptor.getEmulatorId());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL, installDescriptor.getFilename());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_INSTALL);
       jobDescriptor.setTitle("Restoring \"" + archiveDescriptor.getFilename() + "\"");
 
       TableInstallerAdapter adapter = tableInstallerAdapterFactory.createAdapter(archiveDescriptor, emulator);
@@ -86,17 +86,14 @@ public class IOService {
         bundleArchiveDescriptors.add(archiveDescriptor);
       }
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING, UUID.randomUUID().toString());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_BUNDLING);
       jobDescriptor.setTitle("Archive Bundle");
-//
+
       BundleArchivesJob job = new BundleArchivesJob(archiveService, systemService, archiveBundleDescriptor, bundleArchiveDescriptors);
       job.execute(jobDescriptor);
+//      jobService.offer(jobDescriptor);
 
       return job.getTarget().getName();
-
-//      jobDescriptor.setDescription("Creating bundle of " + bundleArchiveDescriptors.size() + " archived table(s).");
-//      jobDescriptor.setJob(job);
-//      JobQueue.getInstance().offer(jobDescriptor);
     } catch (Exception e) {
       LOG.error("Bundling failed: " + e.getMessage(), e);
     }
@@ -107,7 +104,7 @@ public class IOService {
     try {
       ArchiveDescriptor archiveDescriptor = archiveService.getArchiveDescriptor(archiveCopyToRepositoryDescriptor.getArchiveSourceId(), archiveCopyToRepositoryDescriptor.getFilename());
 
-      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY, archiveCopyToRepositoryDescriptor.getFilename());
+      JobDescriptor jobDescriptor = new JobDescriptor(JobType.ARCHIVE_DOWNLOAD_TO_REPOSITORY);
       jobDescriptor.setTitle("Download of \"" + archiveDescriptor.getTableDetails().getGameDisplayName() + "\"");
 
       CopyArchiveToRepositoryJob job = new CopyArchiveToRepositoryJob(archiveService, archiveDescriptor, archiveCopyToRepositoryDescriptor.isOverwrite());
@@ -141,7 +138,7 @@ public class IOService {
   }
 
   private boolean backupTable(@NonNull Game game, @NonNull BackupDescriptor exportDescriptor) {
-    JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP, UUID.randomUUID().toString());
+    JobDescriptor descriptor = new JobDescriptor(JobType.TABLE_BACKUP);
     descriptor.setTitle("Backup of \"" + game.getGameDisplayName() + "\"");
     descriptor.setGameId(game.getId());
 

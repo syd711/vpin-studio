@@ -51,6 +51,9 @@ public class DiscordBotPreferencesController implements Initializable {
   private ComboBox<DiscordChannel> channelCombo;
 
   @FXML
+  private ComboBox<DiscordChannel> tableUpdatesCombo;
+
+  @FXML
   private ComboBox<DiscordCategory> categoryCombo;
 
   @FXML
@@ -137,6 +140,7 @@ public class DiscordBotPreferencesController implements Initializable {
     serverCombo.setDisable(true);
     channelCombo.setDisable(true);
     categoryCombo.setDisable(true);
+    tableUpdatesCombo.setDisable(true);
     resetBtn.setDisable(true);
 
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_BOT_TOKEN);
@@ -180,6 +184,15 @@ public class DiscordBotPreferencesController implements Initializable {
       }
       else {
         client.getPreferenceService().setPreference(PreferenceNames.DISCORD_CHANNEL_ID, "");
+      }
+    });
+
+    tableUpdatesCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      if (newValue != null) {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID, newValue.getId());
+      }
+      else {
+        client.getPreferenceService().setPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID, "");
       }
     });
 
@@ -232,6 +245,7 @@ public class DiscordBotPreferencesController implements Initializable {
     PreferenceEntryRepresentation preference = client.getPreference(PreferenceNames.DISCORD_GUILD_ID);
     PreferenceEntryRepresentation defaultChannelPreference = client.getPreference(PreferenceNames.DISCORD_CHANNEL_ID);
     PreferenceEntryRepresentation categoryPreference = client.getPreference(PreferenceNames.DISCORD_CATEGORY_ID);
+    PreferenceEntryRepresentation updatesPreference = client.getPreference(PreferenceNames.DISCORD_UPDATES_CHANNEL_ID);
 
     botNameLabel.setText("-");
     DiscordBotStatus status = client.getDiscordService().validateSettings();
@@ -252,12 +266,16 @@ public class DiscordBotPreferencesController implements Initializable {
       DiscordServer discordServer = client.getDiscordServer(serverId);
       if (discordServer != null) {
         channelCombo.setDisable(false);
+        tableUpdatesCombo.setDisable(false);
         categoryCombo.setDisable(false);
 
         serverCombo.setValue(discordServer);
 
         List<DiscordChannel> discordChannels = client.getDiscordService().getDiscordChannels(discordServer.getId());
-        channelCombo.setItems(FXCollections.observableArrayList(discordChannels));
+        List<DiscordChannel> updatedList = new ArrayList<>(discordChannels);
+        updatedList.add(0, null);
+        channelCombo.setItems(FXCollections.observableArrayList(updatedList));
+        tableUpdatesCombo.setItems(FXCollections.observableArrayList(updatedList));
 
         long defaultChannelId = defaultChannelPreference.getLongValue();
         if (defaultChannelId > 0) {
@@ -266,6 +284,17 @@ public class DiscordBotPreferencesController implements Initializable {
             DiscordChannel selectedValue = channelCombo.getValue();
             if (selectedValue == null || !selectedValue.equals(first.get())) {
               channelCombo.setValue(first.get());
+            }
+          }
+        }
+
+        long updatedChannelId = updatesPreference.getLongValue();
+        if (updatedChannelId > 0) {
+          Optional<DiscordChannel> first = discordChannels.stream().filter(channel -> channel.getId() == updatedChannelId).findFirst();
+          if (first.isPresent()) {
+            DiscordChannel selectedValue = tableUpdatesCombo.getValue();
+            if (selectedValue == null || !selectedValue.equals(first.get())) {
+              tableUpdatesCombo.setValue(first.get());
             }
           }
         }
@@ -295,6 +324,8 @@ public class DiscordBotPreferencesController implements Initializable {
     this.serverCombo.setValue(null);
     this.channelCombo.setDisable(true);
     this.channelCombo.setValue(null);
+    this.tableUpdatesCombo.setDisable(true);
+    this.tableUpdatesCombo.setValue(null);
     this.categoryCombo.setDisable(true);
     this.categoryCombo.setValue(null);
     this.validateBtn.setDisable(true);
