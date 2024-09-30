@@ -93,7 +93,7 @@ public class NvRamOutToRawTest {
     Emulator emulator = new Emulator();
     emulator.setName("VPX");
     emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
-    GameEmulator gameEmulator = new GameEmulator(emulator, null);
+    GameEmulator gameEmulator = new GameEmulator(emulator);
     return gameEmulator;
   }
 }

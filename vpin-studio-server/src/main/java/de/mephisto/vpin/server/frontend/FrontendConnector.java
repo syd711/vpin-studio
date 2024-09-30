@@ -115,8 +115,6 @@ public interface FrontendConnector {
 
   void deleteFromPlaylist(int playlistId, int gameId);
 
-  File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen);
-
   //----------------------------------
   // Statistics management
 

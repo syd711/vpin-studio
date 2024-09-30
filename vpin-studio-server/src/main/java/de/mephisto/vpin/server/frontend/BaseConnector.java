@@ -475,13 +475,6 @@ public abstract class BaseConnector implements FrontendConnector {
     return pg;
   }
 
-  @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
-    File pinballXFolder = getInstallationFolder();
-    // not standard but why not...
-    File mediaDir = new File(pinballXFolder, "Media/Playlists");
-    return new File(mediaDir, screen.getSegment());
-  }
 
   @Override
   public void addToPlaylist(int playlistId, int gameId, int favMode) {

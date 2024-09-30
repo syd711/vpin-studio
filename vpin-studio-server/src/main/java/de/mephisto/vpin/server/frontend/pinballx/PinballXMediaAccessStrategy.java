@@ -2,63 +2,115 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.DefaultMediaAccessStrategy;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.playlists.Playlist;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.commons.io.FilenameUtils;
+import org.springframework.util.StringUtils;
 
 public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
 
-  // TODO support several folders for flyers ?
-  @Override
-  public File getScreenMediaFolder(File mediaDirectory, String gameFileName, VPinScreen screen) {
-    switch (screen) {
-      case Audio:
-        return new File(mediaDirectory, "Table Audio");
-      case AudioLaunch:
-        return new File(mediaDirectory, "Launch Audio");
-      case GameInfo:
-        return selectFolder(mediaDirectory, gameFileName, "../Flyer Images/Front", "../Flyer Images/Back",
-            "../Flyer Images/Inside1", "../Flyer Images/Inside2", "../Flyer Images/Inside3", "../Flyer Images/Inside4", "../Flyer Images/Inside5", "../Flyer Images/Inside6");
-      case GameHelp:
-        return new File(mediaDirectory, "../Instruction Cards");
-      case Topper:
-        return selectFolder(mediaDirectory, gameFileName, "Topper Videos", "Topper Images");
-      case BackGlass:
-        return selectFolder(mediaDirectory, gameFileName, "Backglass Videos", "Backglass Images");
-      case Other2:
-        return null;
-      case Menu:
-        return new File(mediaDirectory, "FullDMD Videos");
-      case DMD:
-        return selectFolder(mediaDirectory, gameFileName, "DMD Videos", "DMD Images");
-      case Loading:
-        return new File(mediaDirectory, "../Loading Videos");
-      case Wheel:
-        return new File(mediaDirectory, "Wheel Images");
-      case PlayField:
-        return selectFolder(mediaDirectory, gameFileName, "Table Videos", "Table Images");
-      default:
-        return null;
-    }
+  private File pinballXFolder;
+
+  private Map<VPinScreen, String[]> folders;
+  private Set<VPinScreen> hasVideosOrImages;
+  private Set<String> imageExtensions;
+
+  public PinballXMediaAccessStrategy(File pinballXFolder) {
+    this.pinballXFolder = pinballXFolder;
+
+    imageExtensions = new HashSet<>();
+      imageExtensions.add("png");
+      imageExtensions.add("jpg");
+      imageExtensions.add("jpeg");
+
+    folders = new HashMap<>();
+      folders.put(VPinScreen.Audio, new String[] { "Table Audio" });
+      folders.put(VPinScreen.AudioLaunch, new String[] { "Launch Audio" });
+      folders.put(VPinScreen.BackGlass, new String[] { "Backglass Videos", "Backglass Images" });
+      folders.put(VPinScreen.DMD, new String[] { "DMD Videos", "DMD Images" });
+      folders.put(VPinScreen.GameInfo, new String[] { "../Flyer Images/Front", "../Flyer Images/Back",
+            "../Flyer Images/Inside1", "../Flyer Images/Inside2", "../Flyer Images/Inside3", 
+            "../Flyer Images/Inside4", "../Flyer Images/Inside5", "../Flyer Images/Inside6" });
+      folders.put(VPinScreen.GameHelp, new String[] { "../Instruction Cards" });
+      folders.put(VPinScreen.Loading, new String[] { "../Loading Videos" });
+      folders.put(VPinScreen.Menu, new String[] { "FullDMD Videos" });
+      //folders.put(VPinScreen.Other2, null);
+      folders.put(VPinScreen.PlayField, new String[] { "Table Videos", "Table Images" });
+      folders.put(VPinScreen.Topper, new String[] { "Topper Videos", "Topper Images" });
+      folders.put(VPinScreen.Wheel, new String[] { "Wheel Images" });
+
+    hasVideosOrImages = new HashSet<>();
+      hasVideosOrImages.add(VPinScreen.Topper);
+      hasVideosOrImages.add(VPinScreen.BackGlass);
+      hasVideosOrImages.add(VPinScreen.DMD);
+      hasVideosOrImages.add(VPinScreen.PlayField);
   }
 
-  private File selectFolder(File mediaDirectory, String gameFileName, String... folders) {
-    File firstFolder = null;
-    for (String folder : folders) {
-      File mediafolder = new File(mediaDirectory, folder);
-      // no file to search, return first folder
-      if (gameFileName == null) {
-        return mediafolder;
-      }
-      // keep first folder found in case no folder contains our game
-      if (firstFolder == null) {
-        firstFolder = mediafolder;
-      }
-      File[] files = mediafolder.listFiles((dir, name) -> name.startsWith(gameFileName));
-      if (files != null && files.length > 0) {
-        return mediafolder;
+  @Override
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+    // not standard but why not...
+    File mediaDir = new File(pinballXFolder, "Media/Playlists");
+    return getMediaFolder(mediaDir.getAbsolutePath(), screen, null);
+  }
+
+  @Override
+  public File getEmulatorMediaFolder(@NonNull GameEmulator emu, VPinScreen screen) {
+    String mediaDirectory = emu.getMediaDirectory();
+    return getMediaFolder(mediaDirectory, screen, null);
+  }
+
+  @Override
+  public File getGameMediaFolder(Game game, VPinScreen screen, String extension) {
+    String mediaDirectory = game.getEmulator().getMediaDirectory();
+    return getMediaFolder(mediaDirectory, screen, extension);
+  }
+
+  private File getMediaFolder(String mediaDirectory, VPinScreen screen, String extension) {
+    String[] _folders = folders.get(screen);
+    if (_folders == null) {
+      return null;
+    }
+    if (extension == null || !hasVideosOrImages.contains(screen)) {
+      return new File(mediaDirectory, _folders[0]);
+    }
+
+    // check from extension 
+    return imageExtensions.contains(extension.toLowerCase())? 
+      new File(mediaDirectory, _folders[1]) : 
+      new File(mediaDirectory, _folders[0]);
+  }
+
+  //---------------------------
+  @Override
+  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
+    String mediaDirectory = game.getEmulator().getMediaDirectory();
+    String gameFileName = FilenameUtils.getBaseName(game.getGameFileName());
+
+    ArrayList<File> lists = new ArrayList<>();
+    String[] _folders = folders.get(screen);
+    if (_folders != null) {
+      for (String folder : _folders) {
+        File parent = new File(mediaDirectory, folder);
+        File[] files = parent.listFiles((dir, name) -> StringUtils.startsWithIgnoreCase(name, gameFileName));
+        if (files != null && files.length > 0) {
+          for (File f : files) {
+            lists.add(f);
+          }
+        }
       }
     }
-    // return first folder as no folder contains our game
-    return firstFolder;
+    return lists;
   }
+
 }

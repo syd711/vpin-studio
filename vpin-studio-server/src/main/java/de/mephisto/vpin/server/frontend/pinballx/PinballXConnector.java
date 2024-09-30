@@ -343,7 +343,7 @@ public class PinballXConnector extends BaseConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (pinballXMediaAccessStrategy == null) {
-      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy();
+      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy(getInstallationFolder());
     }
     return pinballXMediaAccessStrategy;
   }

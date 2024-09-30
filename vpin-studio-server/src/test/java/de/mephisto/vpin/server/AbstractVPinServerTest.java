@@ -119,7 +119,7 @@ abstract public class AbstractVPinServerTest {
     emulator.setDirGames("../testsystem/vPinball/VisualPinball/Tables/");
     emulator.setGamesExt("vpx");
 
-    return new GameEmulator(emulator, null);
+    return new GameEmulator(emulator);
   }
 
   public void setupSystem(FrontendType frontendType) {

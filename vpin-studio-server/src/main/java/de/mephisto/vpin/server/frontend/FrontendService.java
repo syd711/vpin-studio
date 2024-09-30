@@ -416,7 +416,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           emulator.setDirB2S(b2sFolder.getAbsolutePath());
         }
 
-        GameEmulator gameEmulator = new GameEmulator(emulator, getFrontendConnector().getMediaAccessStrategy());
+        GameEmulator gameEmulator = new GameEmulator(emulator);
         emulators.put(emulator.getId(), gameEmulator);
 
         LOG.info("Loaded Emulator: " + gameEmulator);
@@ -508,17 +508,27 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     preferencesService.addChangeListener(this);
   }
 
-  @NonNull
-  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen) {
-    String baseName = FilenameUtils.getBaseName(game.getGameFileName());
-    return game.getEmulator().getGameMediaFolder(baseName, screen);
+  public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
+    GameEmulator emu = getDefaultGameEmulator();
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    return mediaStrategy != null ? mediaStrategy.getEmulatorMediaFolder(emu, screen) : null;
+  }
+
+  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen) : null;
+  }
+
+  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, String extension) {
+    MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
+    return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension) : null;
   }
 
   @NonNull
   public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
     if (mediaStrategy != null) {
-      return mediaStrategy.getScreenMediaFiles(game, getMediaFolder(game, screen), screen);
+      return mediaStrategy.getScreenMediaFiles(game, screen);
     }
     return Collections.emptyList();
   }
@@ -526,6 +536,11 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public FrontendMediaItem getMediaItem(@NonNull Game game, @NonNull VPinScreen screen, String name) {
     FrontendMedia media = getGameMedia(game);
     return media.getMediaItem(screen, name);
+  }
+
+  public FrontendMediaItem getDefaultMediaItem(Game game, VPinScreen screen) {
+    FrontendMedia media = getGameMedia(game);
+    return media.getDefaultMediaItem(screen);
   }
 
   @NonNull
@@ -554,14 +569,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       frontendMedia.getMedia().put(screen.name(), itemList);
     }
     return frontendMedia;
-  }
-
-  public FrontendMediaItem getDefaultMediaItem(Game game, VPinScreen screen) {
-    return getGameMedia(game).getDefaultMediaItem(screen);
-  }
-
-  public File getPlaylistMediaFolder(@NonNull Playlist playList, @NonNull VPinScreen screen) {
-    return getFrontendConnector().getPlaylistMediaFolder(playList, screen);
   }
 
   @Override

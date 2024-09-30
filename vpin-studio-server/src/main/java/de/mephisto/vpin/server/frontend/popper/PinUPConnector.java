@@ -961,11 +961,6 @@ public class PinUPConnector implements FrontendConnector {
     return result;
   }
 
-  @Override
-  public File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen) {
-    File defaultMedia = new File(getInstallationFolder(), "POPMedia/Default");
-    return new File(defaultMedia, screen.getSegment());
-  }
 
   private Map<Integer, PlaylistGame> updateSQLPlaylist(String sql, Map<Integer, PlaylistGame> playlistGameMap) {
     if (StringUtils.isEmpty(sql)) {
@@ -1943,7 +1938,7 @@ public class PinUPConnector implements FrontendConnector {
   @Override
   public MediaAccessStrategy getMediaAccessStrategy() {
     if (this.pinUPMediaAccessStrategy == null) {
-      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy();
+      this.pinUPMediaAccessStrategy = new PinUPMediaAccessStrategy(getInstallationFolder());
     }
     return pinUPMediaAccessStrategy;
   }

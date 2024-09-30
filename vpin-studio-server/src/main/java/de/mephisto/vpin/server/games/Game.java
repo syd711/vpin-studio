@@ -405,42 +405,6 @@ public class Game {
     return null;
   }
 
-  /*
-  @JsonIgnore
-  @NonNull
-  public File getMediaFolder(@NonNull VPinScreen screen) {
-    String baseName = FilenameUtils.getBaseName(gameFileName);
-    return this.emulator.getGameMediaFolder(baseName, screen);
-  }
-
-  @NonNull
-  public List<File> getMediaFiles(@NonNull VPinScreen screen) {
-    if (mediaStrategy != null) {
-      return mediaStrategy.getScreenMediaFiles(this, getMediaFolder(screen), screen);
-    }
-    return Collections.emptyList();
-  }
-
-  @JsonIgnore
-  @NonNull
-  public FrontendMedia getGameMedia() {
-    FrontendMedia frontendMedia = new FrontendMedia();
-    
-   
-    VPinScreen[] screens = VPinScreen.values();
-    for (VPinScreen screen : screens) {
-      List<FrontendMediaItem> itemList = new ArrayList<>();
-      List<File> mediaFiles = getMediaFiles(screen);
-      for (File file : mediaFiles) {
-        FrontendMediaItem item = new FrontendMediaItem(this.getId(), screen, file);
-        itemList.add(item);
-      }
-      frontendMedia.getMedia().put(screen.name(), itemList);
-    }
-    return frontendMedia;
-  }
-  */
-
   @JsonIgnore
   @Nullable
   public File getHighscoreTextFile() {

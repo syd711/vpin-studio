@@ -76,7 +76,7 @@ public class GameMediaService {
   }
 
   public File buildMediaAsset(Game game, VPinScreen screen, String suffix, boolean append) {
-    File out = new File(frontendService.getMediaFolder(game, screen), game.getGameName() + "." + suffix);
+    File out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
     if (append) {
       int index = 1;
       while (out.exists()) {
