@@ -13,6 +13,7 @@
 - **PinVol 2.2**: Added PinVol version 2.2. The new .exe file will automatically be downloaded by the server.
 - **VPBM 3.3**: Updated to VPBM 3.3 (finally).
   - Renamed **Table Repository** to **Table Backups**. VPBM does not need additional exports anymore, so this renaming should make the whole usage more intuitive.
+  - Removed "Repositories" from the settings. The idea to support multiple sources or targets for backups was not bad, but the implementation was not mature enough. It may be picked up again in the future. 
   - Applied some performance optimizations from VBPM to the Studio integration.
   - Added support for the additional external host ids.
   - Added missing button tooltips and changed labels.
@@ -41,6 +42,7 @@
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
 - **Highscore Parsing**: Added support for "Aladdin's Castle".
+- **Highscore Parsing**: Added support for "Little Joe".
 - **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
 - **Table Data Manager**: Fixed dialog sizing issues.
 - **Backglass Data Exporter**:
