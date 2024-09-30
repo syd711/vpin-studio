@@ -375,25 +375,6 @@
                </tooltip>
             </Button>
             <Separator fx:id="deleteSeparator" layoutX="682.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
-            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
-               <items>
-                  <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
-                     <graphic>
-                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
-                     </graphic>
-                  </MenuItem>
-               </items>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Scans the selected tables to extract metadata" />
-               </tooltip>
-               <font>
-                  <Font size="14.0" />
-               </font>
-            </SplitMenuButton>
-            <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
             <SplitMenuButton fx:id="playBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" textFill="WHITE">
                <font>
                   <Font size="14.0" />
@@ -416,6 +397,25 @@
                      <Tooltip text="Kill all VPX and [Frontend] processes (Ctrl + K)" />
                </tooltip>
             </Button>
+            <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />
+            <SplitMenuButton fx:id="scanBtn" mnemonicParsing="false" onAction="#onTablesScan">
+               <items>
+                  <MenuItem fx:id="scanAllBtn" mnemonicParsing="false" onAction="#onTablesScanAll" text="Scan All">
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search" iconSize="18" />
+                     </graphic>
+                  </MenuItem>
+               </items>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-map-search-outline" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Scans the selected tables to extract metadata" />
+               </tooltip>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </SplitMenuButton>
             <SplitMenuButton fx:id="validateBtn" mnemonicParsing="false" onAction="#onValidate" textFill="WHITE">
                <items>
                   <MenuItem fx:id="validateAllBtn" mnemonicParsing="false" onAction="#onValidateAll" text="Validate All">

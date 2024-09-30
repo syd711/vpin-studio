@@ -2,19 +2,19 @@ package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
 import de.mephisto.vpin.commons.fx.ServerFX;
+import de.mephisto.vpin.commons.fx.UIDefaults;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.connectors.mania.model.RankedAccount;
+import de.mephisto.vpin.connectors.mania.model.RankedAccountPagingResult;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.mania.ManiaHighscoreSyncResult;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
-import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -58,25 +58,25 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   private BorderPane root;
 
   @FXML
-  private TableView<RankedPlayer> tableView;
+  private TableView<RankedAccount> tableView;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnRank;
+  private TableColumn<RankedAccount, String> columnRank;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnPoints;
+  private TableColumn<RankedAccount, String> columnPoints;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnName;
+  private TableColumn<RankedAccount, String> columnName;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnFirst;
+  private TableColumn<RankedAccount, String> columnFirst;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnSecond;
+  private TableColumn<RankedAccount, String> columnSecond;
 
   @FXML
-  private TableColumn<RankedPlayer, String> columnThird;
+  private TableColumn<RankedAccount, String> columnThird;
 
   @FXML
   private StackPane tableStack;
@@ -90,13 +90,23 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   @FXML
   private Button synchronizeBtn;
 
+  @FXML
+  private Button nextBtn;
+
+  @FXML
+  private Button previousBtn;
+
+  @FXML
+  private Label pagingInfo;
+
   private Parent loadingOverlay;
-  private List<RankedPlayer> rankedPlayers;
 
 
+  private int page = 0;
   private ManiaController maniaController;
 
   private Map<String, Image> rankedPlayersAvatarCache = new HashMap<>();
+  private RankedAccountPagingResult searchResult;
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerRankController() {
@@ -104,9 +114,9 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onPlayerView() {
-    RankedPlayer selectedItem = tableView.getSelectionModel().getSelectedItem();
-    if (selectedItem != null && selectedItem.getAccount() != null) {
-      String uuid = selectedItem.getAccount().getUuid();
+    RankedAccount selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null && selectedItem.getUuid() != null) {
+      String uuid = selectedItem.getUuid();
       Account accountByUuid = maniaClient.getAccountClient().getAccountByUuid(uuid);
       maniaController.selectPlayer(accountByUuid);
     }
@@ -173,7 +183,6 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
   @FXML
   private void onReload() {
-    maniaClient.getAccountClient().resetRankedAccountsCache();
     rankedPlayersAvatarCache.clear();
     refresh();
   }
@@ -183,21 +192,90 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     Studio.browse("https://github.com/syd711/vpin-studio/wiki/Mania#Player-Ranking");
   }
 
+  @FXML
+  private void onNext() {
+    page = searchResult.getPage() + 1;
+    doSearch();
+  }
+
+  @FXML
+  private void onPrevious() {
+    page = page - searchResult.getPage();
+    doSearch();
+  }
+
+  private void doSearch() {
+    Platform.runLater(() -> {
+      try {
+        this.synchronizeBtn.setDisable(true);
+        this.reloadBtn.setDisable(true);
+        this.tableView.setVisible(false);
+        if (!tableStack.getChildren().contains(loadingOverlay)) {
+          tableStack.getChildren().add(loadingOverlay);
+        }
+
+        searchResult = maniaClient.getAccountClient().getRankedAccounts(page, UIDefaults.PLAYERS_PAGE_SIZE);
+        List<RankedAccount> rankedAccounts = searchResult.getResults();
+
+        int from = searchResult.getPage() * UIDefaults.PLAYERS_PAGE_SIZE;
+        int to = from + UIDefaults.PLAYERS_PAGE_SIZE;
+        if (to > searchResult.getTotal()) {
+          to = searchResult.getTotal();
+        }
+
+        pagingInfo.setText((from + 1) + " to " + to + " of " + searchResult.getTotal());
+        pagingInfo.setVisible(searchResult.getTotal() > 0);
+        previousBtn.setDisable(true);
+        nextBtn.setDisable(true);
+
+        if (!rankedAccounts.isEmpty()) {
+          boolean hasNext = to < searchResult.getTotal();
+          boolean hasPrevious = searchResult.getPage() > 0;
+          nextBtn.setDisable(!hasNext);
+          previousBtn.setDisable(!hasPrevious);
+        }
+
+        Platform.runLater(() -> {
+          tableStack.getChildren().remove(loadingOverlay);
+          tableView.setVisible(true);
+
+          ObservableList<RankedAccount> data = FXCollections.observableList(rankedAccounts);
+          tableView.setItems(data);
+          tableView.refresh();
+        });
+      }
+      catch (Exception e) {
+        LOG.error("Player fetch failed: " + e.getMessage(), e);
+        WidgetFactory.showAlert(Studio.stage, "Error", "Player fetch failed: " + e.getMessage());
+      }
+      finally {
+        Platform.runLater(() -> {
+          tableStack.getChildren().remove(loadingOverlay);
+          tableView.setVisible(true);
+
+          this.reloadBtn.setDisable(false);
+          this.synchronizeBtn.setDisable(false);
+        });
+      }
+    });
+  }
+
+
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     tableView.setPlaceholder(new Label("                     No players listed here?\nCreate players to match their initials with highscores."));
 
     columnRank.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label("#" + (rankedPlayers.indexOf(value) + 1));
+      Label label = new Label("#" +  value.getRanking());
       label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
     });
 
     columnPoints.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
       Label label = new Label(String.valueOf(value.getPoints()));
       label.getStyleClass().add("default-text-color");
@@ -206,7 +284,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     });
 
     columnName.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       HBox hBox = new HBox();
 
       Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
@@ -239,7 +317,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     });
 
     columnFirst.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getPlace1()));
       label.getStyleClass().add("default-text-color");
@@ -248,7 +326,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     });
 
     columnSecond.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getPlace2()));
       label.getStyleClass().add("default-text-color");
@@ -257,7 +335,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     });
 
     columnThird.setCellValueFactory(cellData -> {
-      RankedPlayer value = cellData.getValue();
+      RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.NORMAL, 18);
       Label label = new Label(String.valueOf(value.getPlace3()));
       label.getStyleClass().add("default-text-color");
@@ -267,9 +345,9 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
 
 
     this.showPlayerBtn.setDisable(true);
-    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RankedPlayer>() {
+    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<RankedAccount>() {
       @Override
-      public void changed(ObservableValue<? extends RankedPlayer> observable, RankedPlayer oldValue, RankedPlayer newValue) {
+      public void changed(ObservableValue<? extends RankedAccount> observable, RankedAccount oldValue, RankedAccount newValue) {
         showPlayerBtn.setDisable(newValue == null);
       }
     });
@@ -285,7 +363,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     }
   }
 
-  private Image getAvatarImage(RankedPlayer value) {
+  private Image getAvatarImage(RankedAccount value) {
     Image avatarImage = null;
     if (rankedPlayersAvatarCache.containsKey(value.getUuid())) {
       return rankedPlayersAvatarCache.get(value.getUuid());
@@ -304,116 +382,11 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   }
 
   public void refresh() {
-    this.synchronizeBtn.setDisable(true);
-    this.reloadBtn.setDisable(true);
-    this.tableView.setVisible(false);
-    if (!tableStack.getChildren().contains(loadingOverlay)) {
-      tableStack.getChildren().add(loadingOverlay);
-    }
-
-    new Thread(() -> {
-      try {
-        List<RankedAccount> rankedAccounts = maniaClient.getAccountClient().getRankedAccounts();
-        LOG.info("Loaded " + rankedAccounts.size() + " ranked accounts.");
-        if (rankedAccounts != null) {
-          rankedPlayers = rankedAccounts.stream().map(r -> new RankedPlayer(r)).collect(Collectors.toList());
-          Collections.sort(rankedPlayers, new Comparator<RankedPlayer>() {
-            @Override
-            public int compare(RankedPlayer o1, RankedPlayer o2) {
-              return o2.points - o1.getPoints();
-            }
-          });
-
-          Platform.runLater(() -> {
-            tableStack.getChildren().remove(loadingOverlay);
-            tableView.setVisible(true);
-
-            ObservableList<RankedPlayer> data = FXCollections.observableList(rankedPlayers);
-            tableView.setItems(data);
-            tableView.refresh();
-          });
-        }
-        else {
-          LOG.error("Failed to load player stats.");
-        }
-      }
-      catch (Exception e) {
-        LOG.error("Failed to load player stats: " + e.getMessage(), e);
-      }
-      finally {
-        Platform.runLater(() -> {
-          tableStack.getChildren().remove(loadingOverlay);
-          tableView.setVisible(true);
-
-          this.reloadBtn.setDisable(false);
-          this.synchronizeBtn.setDisable(false);
-        });
-      }
-    }).start();
+    this.page= 0;
+    doSearch();
   }
 
   public void setManiaController(ManiaController maniaController) {
     this.maniaController = maniaController;
-  }
-
-  static class RankedPlayer {
-    private final int points;
-    private final RankedAccount account;
-    private final String displayName;
-    private final String uuid;
-    private final int place1;
-    private final int place2;
-    private final int place3;
-
-    RankedPlayer(RankedAccount account) {
-      this.account = account;
-      this.points = account.getPlace1() * 4 + account.getPlace2() * 2 + account.getPlace3();
-      this.displayName = account.getDisplayName();
-      this.uuid = account.getUuid();
-      this.place1 = account.getPlace1();
-      this.place2 = account.getPlace2();
-      this.place3 = account.getPlace3();
-    }
-
-    public String getDisplayName() {
-      return displayName;
-    }
-
-    public String getUuid() {
-      return uuid;
-    }
-
-    public int getPlace1() {
-      return place1;
-    }
-
-    public int getPlace2() {
-      return place2;
-    }
-
-    public int getPlace3() {
-      return place3;
-    }
-
-    public int getPoints() {
-      return points;
-    }
-
-    public RankedAccount getAccount() {
-      return account;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      RankedPlayer that = (RankedPlayer) o;
-      return points == that.points && place1 == that.place1 && place2 == that.place2 && place3 == that.place3 && Objects.equals(account, that.account) && Objects.equals(displayName, that.displayName) && Objects.equals(uuid, that.uuid);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(points, account, displayName, uuid, place1, place2, place3);
-    }
   }
 }

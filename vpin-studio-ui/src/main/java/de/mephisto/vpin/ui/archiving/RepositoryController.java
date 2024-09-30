@@ -56,6 +56,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
 
 public class RepositoryController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(RepositoryController.class);
+  public static final String TAB_NAME = "Table Backups";
 
   @FXML
   private Button deleteBtn;
@@ -504,18 +505,18 @@ public class RepositoryController implements Initializable, StudioFXController, 
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
+    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
     ArchiveDescriptorRepresentation archiveDescriptor = tableView.getSelectionModel().getSelectedItem();
     if (archiveDescriptor != null) {
-      NavigationController.setBreadCrumb(Arrays.asList("Table Repository", archiveDescriptor.getFilename()));
+      NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, archiveDescriptor.getFilename()));
     }
   }
 
   private void updateSelection(Optional<ArchiveDescriptorRepresentation> newSelection) {
-    NavigationController.setBreadCrumb(Arrays.asList("Table Repository"));
+    NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME));
     if (newSelection.isPresent()) {
       ArchiveDescriptorRepresentation descriptorRepresentation = newSelection.get();
-      NavigationController.setBreadCrumb(Arrays.asList("Table Repository", descriptorRepresentation.getFilename()));
+      NavigationController.setBreadCrumb(Arrays.asList(TAB_NAME, descriptorRepresentation.getFilename()));
     }
     tablesController.getRepositorySideBarController().setArchiveDescriptor(newSelection);
   }

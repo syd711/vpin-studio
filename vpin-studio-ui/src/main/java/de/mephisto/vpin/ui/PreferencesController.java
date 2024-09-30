@@ -408,7 +408,8 @@ public class PreferencesController implements Initializable, StudioEventListener
 
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     vpbmBtn.setVisible(frontendType.supportArchive());
-    repositoriesBtn.setVisible(frontendType.supportArchive());
+    repositoriesBtn.setVisible(false);
+//    repositoriesBtn.setVisible(frontendType.supportArchive());
 
     // activation of custom options according to installed frontend
     frontendPreferences.setVisible(frontendType.isNotStandalone());

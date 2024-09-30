@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.mania.widgets;
 
 import de.mephisto.vpin.commons.fx.LoadingOverlayController;
+import de.mephisto.vpin.commons.fx.ServerFX;
 import de.mephisto.vpin.commons.fx.widgets.WidgetController;
+import de.mephisto.vpin.commons.utils.CommonImageUtil;
 import de.mephisto.vpin.connectors.mania.model.Account;
+import de.mephisto.vpin.connectors.mania.model.RankedAccount;
 import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
@@ -18,6 +21,11 @@ import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import eu.hansolo.tilesfx.Tile;
+import eu.hansolo.tilesfx.TileBuilder;
+import eu.hansolo.tilesfx.events.TileEvent;
+import eu.hansolo.tilesfx.tools.Rank;
+import eu.hansolo.tilesfx.tools.Ranking;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -41,6 +49,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import org.jetbrains.annotations.Nullable;
@@ -50,6 +60,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.*;
 
 import static de.mephisto.vpin.commons.utils.WidgetFactory.getScoreFontSmall;
@@ -89,9 +100,29 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   @FXML
   private Label titleLabel;
 
+  @FXML
+  private Label sub1Label;
+
+  @FXML
+  private Label subScore1Label;
+  @FXML
+  private Label subScore2Label;
+  @FXML
+  private Label subScore3Label;
+
+  @FXML
+  private VBox avatarPane;
+
+  @FXML
+  private Label rankLabel;
+
+  @FXML
+  private ImageView avatarView;
+
   private Parent loadingOverlay;
   private Account account;
   private ManiaController maniaController;
+  private RankedAccount rankedAccount;
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerStatsController() {
@@ -100,6 +131,10 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
   public void onViewActivated(@Nullable NavigationOptions options) {
     if (options == null || options.getModel() == null) {
+      if (this.account != null) {
+        return;
+      }
+
       PlayerRepresentation defaultPlayer = client.getPlayerService().getDefaultPlayer();
       if (defaultPlayer.getTournamentUserUuid() == null) {
         return;
@@ -111,7 +146,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       return;
     }
 
-    if (options.getModel() != null && options.getModel() instanceof Account) {
+    if (options != null && options.getModel() != null && options.getModel() instanceof Account) {
       this.account = (Account) options.getModel();
       refresh();
     }
@@ -119,8 +154,11 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
 
   @FXML
   private void onPlayerSearch() {
-    this.account = ManiaDialogs.openAccountSearchDialog();
-    setData(this.account);
+    Account account = ManiaDialogs.openAccountSearchDialog();
+    if (account != null) {
+      this.account = account;
+      setData(this.account);
+    }
   }
 
   @FXML
@@ -234,11 +272,43 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
         return;
       }
 
+      rankedAccount = null;
+      Image image = new Image(ServerFX.class.getResourceAsStream("avatar-blank.png"));
+      avatarView.setImage(image);
+      int rank = 0;
+      new Thread(() -> {
+        try {
+          rankedAccount = maniaClient.getAccountClient().getRankedAccount(account.getUuid());
+        }
+        catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+        InputStream in = ServerFX.client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(account.getUuid()));
+        if (in == null) {
+          in = ServerFX.class.getResourceAsStream("avatar-blank.png");
+        }
+        final InputStream data = in;
+        if (data != null) {
+          Platform.runLater(() -> {
+            Image i = new Image(data);
+            avatarView.setImage(i);
+            if (rankedAccount != null) {
+              rankLabel.setText("#" + rankedAccount.getRanking());
+            }
+            CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
+          });
+        }
+      }).start();
+
       this.reloadBtn.setDisable(true);
       this.tableView.setVisible(false);
 
       List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
-      titleLabel.setText("Player Statistics for \"" + account.getDisplayName() + "\" [" + account.getInitials() + "] - (" + highscoresByAccount.size() + " scores)");
+      titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
+      sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
+      subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
+      subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
+      subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 
@@ -255,6 +325,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       });
     }
     catch (Exception e) {
+      this.reloadBtn.setDisable(false);
       LOG.error("Failed to refresh player stats: " + e.getMessage(), e);
     }
   }
@@ -263,7 +334,11 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     this.account = account;
     if (account == null) {
       tableView.setPlaceholder(new Label("No player selected."));
-      titleLabel.setText("Player Statistics");
+      titleLabel.setText("-");
+      sub1Label.setText("");
+      subScore1Label.setText("");
+      subScore2Label.setText("");
+      subScore3Label.setText("");
       tableView.setItems(FXCollections.emptyObservableList());
       return;
     }

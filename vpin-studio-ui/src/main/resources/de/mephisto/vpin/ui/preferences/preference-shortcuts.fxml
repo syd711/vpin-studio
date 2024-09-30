@@ -91,7 +91,7 @@
                               <Label layoutX="247.0" layoutY="52.0" styleClass="default-text" text="Select &quot;Backglasses&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <Label layoutX="247.0" layoutY="86.0" styleClass="default-text" text="Select &quot;VPS Tables&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="4" />
                               <Label layoutX="247.0" layoutY="120.0" styleClass="default-text" text="Select &quot;Table Statistics&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Select &quot;Table Repository&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <Label layoutX="247.0" layoutY="152.0" styleClass="default-text" text="Select &quot;Table Backups&quot; tab." GridPane.columnIndex="1" GridPane.rowIndex="6" />
                               <Label layoutX="10.0" layoutY="253.0" styleClass="default-text" text="Ctrl+F" GridPane.rowIndex="7" />
                               <Label layoutX="133.0" layoutY="186.0" styleClass="default-text" text="Search table (focus the search text field)." GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <Label layoutX="10.0" layoutY="388.0" styleClass="default-text" text="Ctrl+K" GridPane.rowIndex="13" />

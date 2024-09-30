@@ -10,6 +10,14 @@ import java.io.IOException;
 
 public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscoreAdapter {
 
+  private final String namePrefix;
+  private final String highscorePrefix;
+
+  public NumericList2VPRegHighscoreAdapter(String namePrefix, String highscorePrefix) {
+    this.namePrefix = namePrefix;
+    this.highscorePrefix = highscorePrefix;
+  }
+
   @Override
   public boolean isApplicable(DirectoryEntry gameFolder) {
     if (gameFolder.hasEntry(getScoreKey(getStartIndex())) && gameFolder.hasEntry(getNameKey(getStartIndex()))) {
@@ -38,18 +46,18 @@ public class NumericList2VPRegHighscoreAdapter extends NumericListVPRegHighscore
   }
 
   protected String getNameKey(int index) {
-    return getNamePrefix() + index;
+    return String.format(getNamePrefix(), String.valueOf(index));
   }
 
   protected String getScoreKey(int index) {
-    return getHighScorePrefix() + index;
+    return String.format(getHighScorePrefix(), String.valueOf(index));
   }
 
   protected String getHighScorePrefix() {
-    return "HSPoints";
+    return highscorePrefix;
   }
 
   protected String getNamePrefix() {
-    return "HSName";
+    return namePrefix;
   }
 }
