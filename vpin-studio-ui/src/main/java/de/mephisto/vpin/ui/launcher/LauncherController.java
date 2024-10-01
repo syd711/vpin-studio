@@ -131,6 +131,7 @@ public class LauncherController implements Initializable {
 
   @FXML
   private void onConnectionRefresh() {
+    LOG.info("refresh Connections");
     refreshBtn.setDisable(true);
     connectBtn.setDisable(true);
     newConnectionBtn.setDisable(true);
@@ -139,6 +140,7 @@ public class LauncherController implements Initializable {
     new Thread(() -> {
       List<VPinConnection> result = new ArrayList<>();
 
+      LOG.info("Checking connection to localhost");
       VPinConnection connection = checkConnection("localhost");
       if (connection != null) {
         result.add(connection);
@@ -417,16 +419,16 @@ public class LauncherController implements Initializable {
       return null;
     });
 
-    executor.shutdownNow();
-
+    VPinConnection connection = null;
     try {
-      return future.get(3000, TimeUnit.MILLISECONDS);
+      connection = future.get(3000, TimeUnit.MILLISECONDS);
+      LOG.info("connection to {} can be established", host);
     }
     catch (Exception e) {
-      //
+      LOG.info("connection to {} took too long to answer", host);
     }
-
-    return null;
+    executor.shutdownNow();
+    return connection;
   }
 
   private Thread broadcastListenerThread;
