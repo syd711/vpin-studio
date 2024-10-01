@@ -589,7 +589,6 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     GameScoreValidation validation = new GameScoreValidation();
     validation.setValidScoreConfiguration(true);
 
-    boolean played = tableDetails == null || tableDetails.getNumberPlays() != null && tableDetails.getNumberPlays() > 0;
     ScoringDB scoringDB = systemService.getScoringDatabase();
     List<String> vpRegEntries = highscoreService.getVPRegEntries();
     List<String> highscoreFiles = highscoreService.getHighscoreFiles();
@@ -639,7 +638,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //not played and no highscore file found
-    if (!played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+    if (!game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
       validation.setHighscoreFilenameIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setHighscoreFilenameIconColor(GameScoreValidation.OK_COLOR);
       validation.setHighscoreFilenameStatus(GameScoreValidation.STATUS_NOT_PLAYED_HSFILE_NOT_FOUND);
@@ -647,7 +646,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //not played and the ROM VPReg.stg entry not found
-    if (!played && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
+    if (!game.isPlayed() && !vpRegEntries.contains(String.valueOf(rom)) && !vpRegEntries.contains(rom) && !game.getNvRamFile().exists()) {
       validation.setRomIcon(GameScoreValidation.UNPLAYED_ICON);
       validation.setRomIconColor(GameScoreValidation.OK_COLOR);
       validation.setRomStatus(GameScoreValidation.STATUS_NOT_PLAYED_NO_MATCH_FOUND);
@@ -682,7 +681,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the text file has not been generated
-    if (played && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
+    if (game.isPlayed() && !StringUtils.isEmpty(hsName) && !highscoreFiles.contains(hsName)) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);
@@ -691,7 +690,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     }
 
     //game has been played, but the .nvram or VPReg has not been found
-    if (played && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
+    if (game.isPlayed() && !StringUtils.isEmpty(rom) && !vpRegEntries.contains(rom) && !vpRegEntries.contains(tableName) && !game.getNvRamFile().exists()) {
       validation.setValidScoreConfiguration(false);
       validation.setRomIcon(GameScoreValidation.ERROR_ICON);
       validation.setRomIconColor(GameScoreValidation.ERROR_COLOR);

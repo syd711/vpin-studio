@@ -201,6 +201,9 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   @FXML
   private void onPrevious() {
     page = page - searchResult.getPage();
+    if (page < 0) {
+      page = 0;
+    }
     doSearch();
   }
 
@@ -268,7 +271,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
     columnRank.setCellValueFactory(cellData -> {
       RankedAccount value = cellData.getValue();
       Font defaultFont = Font.font(Font.getDefault().getFamily(), FontWeight.BOLD, 18);
-      Label label = new Label("#" +  value.getRanking());
+      Label label = new Label("#" + value.getRanking());
       label.getStyleClass().add("default-text-color");
       label.setFont(defaultFont);
       return new SimpleObjectProperty(label);
@@ -382,7 +385,7 @@ public class ManiaWidgetPlayerRankController extends WidgetController implements
   }
 
   public void refresh() {
-    this.page= 0;
+    this.page = 0;
     doSearch();
   }
 

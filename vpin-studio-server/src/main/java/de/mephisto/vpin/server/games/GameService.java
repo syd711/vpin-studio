@@ -688,12 +688,13 @@ public class GameService implements InitializingBean {
 
     //run validations at the end!!!
     List<ValidationState> validate = gameValidationService.validate(game, true);
+    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
+    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
+
     if (validate.isEmpty()) {
       validate.add(GameValidationStateFactory.empty());
     }
     game.setValidationState(validate.get(0));
-    game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
-    game.setHasOtherIssues(gameValidationService.hasOtherIssues(validate));
 
     GameScoreValidation scoreValidation = gameValidationService.validateHighscoreStatus(game, gameDetails, tableDetails);
     game.setValidScoreConfiguration(scoreValidation.isValidScoreConfiguration());

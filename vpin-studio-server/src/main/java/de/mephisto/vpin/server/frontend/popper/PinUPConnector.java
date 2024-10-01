@@ -479,6 +479,7 @@ public class PinUPConnector implements FrontendConnector {
 
   @NonNull
   public List<Game> getGamesByEmulator(int emulatorId) {
+    long start = System.currentTimeMillis();
     Connection connect = this.connect();
     List<Game> result = new ArrayList<>();
     try {
@@ -499,6 +500,7 @@ public class PinUPConnector implements FrontendConnector {
     }
     finally {
       this.disconnect(connect);
+      LOG.info("Game fetch for emulatorId '" + emulatorId + "' took " + (System.currentTimeMillis()-start) + "ms.");
     }
     return result;
   }
