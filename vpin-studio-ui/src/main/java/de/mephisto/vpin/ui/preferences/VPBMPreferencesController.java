@@ -52,6 +52,8 @@ public class VPBMPreferencesController implements Initializable {
     updateBtn.setDisable(true);
     versionLabel.setText("Version: ???");
 
+    client.getVpbmService().clearCache();
+
     BackupSettings backupSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.BACKUP_SETTINGS, BackupSettings.class);
     if (backupSettings.getVpbmExternalHostId1() != null) {
       this.externalHostText1.setText(backupSettings.getVpbmExternalHostId1());

@@ -69,12 +69,12 @@ public class BundleArchivesJob implements Job {
 
       int count = 0;
       for (ArchiveDescriptor archiveDescriptor : archiveDescriptors) {
-        boolean doContinue = doArchive(result, archiveDescriptor, zipOut, descriptorFolder, exportedDescriptors);
+        boolean isCancelled = doArchive(result, archiveDescriptor, zipOut, descriptorFolder, exportedDescriptors);
         count++;
         progress = count / archiveDescriptor.getSize();
         result.setProgress(progress);
 
-        if (!doContinue) {
+        if (isCancelled) {
           break;
         }
         processed++;

@@ -114,7 +114,11 @@ public class VpbmService implements InitializingBean {
   public String restore(String tableId) {
     String tableFilename = "\"" + tableId + "\"";
     SystemCommandOutput systemCommandOutput = executeVPBM(Arrays.asList("-i", tableFilename, "--disable-delete-checks"));
-    return systemCommandOutput.getStdOut();
+    String stdOut = systemCommandOutput.getStdOut();
+    String errorOut = systemCommandOutput.getErrOut();
+    LOG.info("VPBM restore std out result:\n" + stdOut);
+    LOG.info("VPBM restore err out result:\n" + errorOut);
+    return stdOut + "\n" + errorOut;
   }
 
   public void refresh() {
@@ -174,7 +178,7 @@ public class VpbmService implements InitializingBean {
       LOG.error("Failed to execute VPBM: " + e.getMessage(), e);
     }
     finally {
-      LOG.info("VPBM command \"vPinBackupManager.exe " + String.join(" ", options) + "\" took " + (System.currentTimeMillis()-start) + " ms.");
+      LOG.info("VPBM command \"vPinBackupManager.exe " + String.join(" ", options) + "\" took " + (System.currentTimeMillis() - start) + " ms.");
     }
     return out;
   }
@@ -269,6 +273,9 @@ public class VpbmService implements InitializingBean {
           preferencesService.savePreference(PreferenceNames.BACKUP_SETTINGS, backupSettings);
           LOG.info("Updated internal host id to '" + hostId.trim() + "'");
         }
+        else {
+          LOG.error("VPBM did not return a host id during setup!");
+        }
       }
       LOG.info("Finished VPBM configuration check, took " + (System.currentTimeMillis() - start) + "ms.");
     }
@@ -276,5 +283,10 @@ public class VpbmService implements InitializingBean {
       String msg = "Failed to run configuration check for vpbm: " + e.getMessage();
       LOG.error(msg, e);
     }
+  }
+
+  public boolean clearCache() {
+    refreshConfig();
+    return true;
   }
 }

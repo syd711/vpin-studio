@@ -67,7 +67,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
         });
 
         ArchiveSourceRepresentation selectedItem = this.repositoryCombo.getSelectionModel().getSelectedItem();
-        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Repository Upload", selectedItem.getId(), selection);
+        ArchiveUploadProgressModel model = new ArchiveUploadProgressModel("Backup Upload", selectedItem.getId(), selection);
         ProgressResultModel progressResult = ProgressDialog.createProgressDialog(model);
 
         // Cancelling the upload progress doesn't actually cancel the HTTP request, however we still do not want to continue to the next step.
@@ -87,7 +87,7 @@ public class ArchiveUploadController implements Initializable, DialogController 
 
     SystemSummary systemSummary = client.getSystemService().getSystemSummary();
 
-    List<String> filters = Arrays.asList("*.vpinzip");
+    List<String> filters = Arrays.asList("*.vpinzip", "*.zip");
     if (systemSummary.getArchiveType().equals(ArchiveType.VPA)) {
       filters = Arrays.asList("*.vpa");
     }

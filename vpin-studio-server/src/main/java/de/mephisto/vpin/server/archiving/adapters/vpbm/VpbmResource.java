@@ -24,6 +24,11 @@ public class VpbmResource {
     return vpbmService.update();
   }
 
+  @GetMapping("/clearCache")
+  public Boolean clearCache() {
+    return vpbmService.clearCache();
+  }
+
   @GetMapping("/updateavailable")
   public Boolean updateavailable() {
     return vpbmService.isUpdateAvailable();

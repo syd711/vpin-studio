@@ -60,19 +60,25 @@ public class TableInstallerAdapterVpbm implements TableInstallerAdapter, Job {
 
       result.setStatus("Extracting " + archiveFile.getAbsolutePath());
       String msg = vpbmService.restore(archiveFile.getAbsolutePath());
-      if(msg.contains("ERROR")) {
+      if (msg.contains("ERROR") || msg.contains("bad password")) {
         result.setError(msg);
         return;
       }
 
       String baseName = FilenameUtils.getBaseName(archiveDescriptor.getFilename());
       Game game = gameService.getGameByName(emulator.getId(), baseName);
+      if (game == null) {
+        result.setError("Imported table \"" + baseName + "\" not found. Check the VPBM logs for details.");
+        return;
+      }
+
       LOG.info("Executing final table scan for " + game.getGameDisplayName());
       gameService.scanGame(game.getId());
 
       result.setProgress(1);
       result.setGameId(game.getId());
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage(), e);
       result.setError("Import of \"" + archiveFile.getName() + "\" failed: " + e.getMessage());
     }

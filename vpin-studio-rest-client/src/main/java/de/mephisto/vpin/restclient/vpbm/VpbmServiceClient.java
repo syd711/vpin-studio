@@ -25,4 +25,8 @@ public class VpbmServiceClient extends VPinStudioClientService {
     final RestTemplate restTemplate = new RestTemplate();
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpbm/version", String.class);
   }
+
+  public void clearCache() {
+    getRestClient().get(API + "vpbm/clearCache", Boolean.class);
+  }
 }
