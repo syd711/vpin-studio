@@ -547,10 +547,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void doReload() {
     startReload("Loading Backglasses...");
 
-    JFXFuture.runAsync(() -> {
-      this.data = client.getBackglassServiceClient().getBackglasses();
-    }).thenLater(() -> {
-      setItems();
+    JFXFuture.supplyAsync(() -> {
+      return client.getBackglassServiceClient().getBackglasses();
+    }).thenAcceptLater(data -> {
+      setItems(data);
       endReload();
     });
   }
@@ -746,7 +746,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
     // first time activation 
-    if (this.data == null) {
+    if (this.models == null) {
       doReload();
 
       if (this.tableView.getItems().isEmpty()) {
@@ -1094,7 +1094,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
 
       // at calling time, the list may not have been populated so register a listener in that case
-      if (data != null) {
+      if (models != null) {
         selectGame(gameBaseName);
       }
       else {

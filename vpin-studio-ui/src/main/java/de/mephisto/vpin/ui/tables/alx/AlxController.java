@@ -182,17 +182,14 @@ public class AlxController implements Initializable, StudioFXController, StudioE
             }
             return alxSummary;
           })
+          .onErrorSupply(e -> {
+            LOG.error("Failed to load ALX dashboard: " + e.getMessage(), e);
+            Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Cannot load Statistics to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this."));
+            return new AlxSummary();
+          })
           .thenAcceptLater(alxSummary -> {
             refreshAlxData(alxSummary);
             waitOverlay.hide();
-          })
-          .onErrorLater(e -> {
-            waitOverlay.hide();
-            LOG.error("Failed to load ALX dashboard: " + e.getMessage(), e);
-            WidgetFactory.showAlert(Studio.stage, "Error", "Cannot load Statistics to initialize dashboard: " + e.getMessage(), "Please submit a bug report with log files on github for this.");
-            // only reload button is re-activated, to permit retry retrieving data
-            reloadBtn.setDisable(false);
-            return null;
           });
     }
     catch (Exception e) {
@@ -236,7 +233,8 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
     refreshEmulators();
-    refreshAlxData();
+    // OLE don't call as refreshEmulators() select first item that triggers a refresh of data already
+    //refreshAlxData();
   }
 
   @Override

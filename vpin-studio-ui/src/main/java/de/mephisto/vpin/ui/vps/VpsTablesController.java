@@ -192,15 +192,15 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     //-----------
     // load tables in parallel
-    JFXFuture.runAsync(()-> {
+    JFXFuture.supplyAsync(()-> {
       // get all tables and filter by format
       VpsTableFormat value = emulatorCombo.getValue();
       String tableFormat = value.getAbbrev();
-      this.data = ListUtils.select(client.getVpsService().getTables(), t -> t.getAvailableTableFormats().contains(tableFormat));
+      return ListUtils.select(client.getVpsService().getTables(), t -> t.getAvailableTableFormats().contains(tableFormat));
 
-    }).thenLater(() -> {
+    }).thenAcceptLater(data -> {
 
-      setItems();
+      setItems(data);
 
       VpsTableModel.loadAllThenLater(models, () -> {
         applyFilter();
