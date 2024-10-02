@@ -80,6 +80,7 @@ public class DropInContainerController implements Initializable {
         WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
       }
     }
+    DropInManager.getInstance().reload();
   }
 
   @FXML
@@ -103,9 +104,12 @@ public class DropInContainerController implements Initializable {
       this.installBtn.setVisible(!hidden);
       this.installSeparator.setVisible(!hidden);
       try {
-        imageView.setImage(new Image(new FileInputStream(file)));
+        FileInputStream fileInputStream = new FileInputStream(file);
+        Image image = new Image(fileInputStream);
+        fileInputStream.close();
+        imageView.setImage(image);
       }
-      catch (FileNotFoundException e) {
+      catch (Exception e) {
         LOG.error("Failed to set image: " + e, e);
       }
       dataPanel.setPrefWidth(dataPanel.getPrefWidth() + 70);

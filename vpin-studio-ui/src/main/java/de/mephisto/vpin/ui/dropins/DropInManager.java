@@ -79,7 +79,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   /**
    * Should run on JavaFX Thread !
    */
-  private void reload() {
+  public void reload() {
     this.dropInsBtn.getItems().clear();
 
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {

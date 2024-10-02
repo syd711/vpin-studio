@@ -83,7 +83,7 @@ import static de.mephisto.vpin.ui.Studio.stage;
  *
  */
 public class BackglassManagerController extends BaseTableController<DirectB2S, DirectB2SModel>
-  implements Initializable, StudioFXController, StudioEventListener {
+    implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(BackglassManagerController.class);
 
@@ -282,6 +282,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void refreshBackglass() {
     refreshBackglass(getSelection());
   }
+
   public void refreshBackglass(DirectB2S directB2s) {
     if (directB2s != null) {
       try {
@@ -310,12 +311,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
- @FXML
+  @FXML
   private void onDMDUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMD Image");
     fileChooser.getExtensionFilters().addAll(
-      new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
+        new FileChooser.ExtensionFilter("Image", "*.png", "*.jpg", "*.jpeg"));
 
     File selection = fileChooser.showOpenDialog(stage);
     if (selection != null) {
@@ -338,17 +339,29 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onBackglassUseAsMedia() {
     if (tableData.isBackgroundAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+      InputStream in = null;
+      try {
+        in =  client.getBackglassServiceClient().getDirectB2sBackground(tableData);
         Image img = new Image(in);
         if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
           PixelReader reader = img.getPixelReader();
           img = new WritableImage(reader, 0, 0, (int) img.getWidth(), (int) (img.getHeight() - tableData.getGrillHeight()));
-        } 
+        }
 
         uploadImageAsMedia(VPinScreen.BackGlass, "Backglass", img);
       }
       catch (IOException ioe) {
         LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
+      }
+      finally {
+        if(in != null) {
+          try {
+            in.close();
+          }
+          catch (IOException e) {
+            //ignore
+          }
+        }
       }
     }
   }
@@ -356,18 +369,29 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onDMDUseAsMedia() {
     if (tableData.isDmdImageAvailable()) {
-      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
+      InputStream in = null;
+      try {
+        in = client.getBackglassServiceClient().getDirectB2sDmd(tableData);
         Image img = new Image(in);
         uploadImageAsMedia(VPinScreen.Menu, "DMD", img);
       }
       catch (IOException ioe) {
         LOG.error("Cannot download DMD and set as DMD media image for game " + tableData.getGameId(), ioe);
       }
+      finally {
+        if (in != null) {
+          try {
+            in.close();
+          }
+          catch (IOException e) {
+            //ignore
+          }
+        }
+      }
     }
   }
 
   private void uploadImageAsMedia(VPinScreen screen, String screenName, Image img) throws IOException {
-
     Path tmp = Files.createTempFile("tmp_" + screen, ".png");
     RenderedImage renderedImage = SwingFXUtils.fromFXImage(img, null);
     ImageIO.write(renderedImage, "png", tmp.toFile());
@@ -403,8 +427,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private void onDMDDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image", 
-      "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete DMD Image",
+        "Delete DMD image from backglass \"" + tableData.getFilename() + "\"?", null, "Delete");
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       deleteDMDImage();
     }
@@ -1042,7 +1066,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         thumbnailImage.setImage(_thumbnail);
         thumbnailImagePane.setCenter(thumbnailImage);
         downloadBackglassBtn.setDisable(false);
-        useAsMediaBackglassBtn.setDisable(game==null);
+        useAsMediaBackglassBtn.setDisable(game == null);
         resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
       }
       else {
@@ -1074,7 +1098,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
-        useAsMediaDMDBtn.setDisable(game==null);
+        useAsMediaDMDBtn.setDisable(game == null);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
@@ -1101,7 +1125,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         ChangeListener<ObservableList<DirectB2SModel>> listener = new ChangeListener<ObservableList<DirectB2SModel>>() {
           @Override
           public void changed(ObservableValue<? extends ObservableList<DirectB2SModel>> observable,
-              ObservableList<DirectB2SModel> oldValue, ObservableList<DirectB2SModel> newValue) {
+                              ObservableList<DirectB2SModel> oldValue, ObservableList<DirectB2SModel> newValue) {
             selectGame(gameBaseName);
             tableView.itemsProperty().removeListener(this);
           }
@@ -1170,7 +1194,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       GameRepresentation refreshedGame = client.getGameService().getGame(id);
       reload(refreshedGame);
     }
-    
+
     if (selection != null && selection.getGameId() == id) {
       refresh(selection.getBacklass());
     }
@@ -1179,7 +1203,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void reload(GameRepresentation refreshedGame) {
     // tab should have been initiliazed to support reload
     if (refreshedGame != null && models != null) {
-      for (DirectB2SModel model : models)  {
+      for (DirectB2SModel model : models) {
         if (model.getGameId() == refreshedGame.getId()) {
           model.getBacklass().setFileName(refreshedGame.getGameFileName());
           model.reload();
