@@ -35,6 +35,10 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="250" />
 
+- **Backglass Manager**: Added additional option to use backglass assets as screen media.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/backglass-manager-assets.png" width="250" />
+
 ## Bugfixes
   
 - **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
@@ -49,6 +53,7 @@
   - Added additional data from the backglass settings.
 - **ALT Sound**: Added missing cache invalidation after deletion of ALT sound packages.
 - **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
+- **Drop-In Menu**: Fixed file lock and refresh issues.
 - **Backglass images to media assets**: Ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
 
 ## VPin Mania 
