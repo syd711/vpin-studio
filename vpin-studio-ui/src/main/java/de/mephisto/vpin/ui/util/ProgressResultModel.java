@@ -67,6 +67,11 @@ public class ProgressResultModel {
     return results.stream().map(o -> (T) o).collect(Collectors.toList());
   }
 
+  @SuppressWarnings("unchecked")
+  public <T> T getFirstTypedResult() {
+    return results.size() > 0 ? (T) results.get(0) : null;
+  }
+
   public void addSkipped() {
     this.skipped++;
   }

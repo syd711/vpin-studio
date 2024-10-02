@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
@@ -166,7 +165,7 @@ public class TableUploadController implements Initializable, DialogController {
   private GameEmulatorRepresentation emulatorRepresentation;
 
   private UploadDescriptor tableUploadDescriptor = UploadDescriptorFactory.create();
-  private UploaderAnalysis uploaderAnalysis;
+  private UploaderAnalysis<?> uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
 
@@ -185,7 +184,6 @@ public class TableUploadController implements Initializable, DialogController {
       }
 
       uploadBtn.setDisable(true);
-
 
       try {
         String subFolder = this.subfolderText.getText();
@@ -225,7 +223,6 @@ public class TableUploadController implements Initializable, DialogController {
             });
             return;
           }
-
 
           uploadDescriptor.setSubfolderName(subFolder);
           uploadDescriptor.setFolderBasedImport(useSubFolder);
@@ -320,7 +317,14 @@ public class TableUploadController implements Initializable, DialogController {
     //suggest table match
     if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
       try {
-        GameRepresentation game = client.getGameService().findMatch(fileName);
+        ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s, 
+          new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
+            return client.getGameService().findMatch(fileName);
+          }));
+        if (checkResult.isCancelled()) {
+          return false;
+        }
+        GameRepresentation game = checkResult.getFirstTypedResult();
         if (game != null) {
           Optional<ButtonType> result = WidgetFactory.showConfirmation(s, "Potential Table Match Found", "The selected file \"" + selection.getName() + "\" seems to match with the table \"" + game.getGameDisplayName() + "\".",
               "Would you like to proceed adding a new table?", "Yes, upload as new table");

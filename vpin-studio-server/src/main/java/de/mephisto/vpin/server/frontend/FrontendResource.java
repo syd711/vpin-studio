@@ -132,24 +132,20 @@ public class FrontendResource {
     return frontendService.getFrontendPlayerDisplays();
   }
 
-  @GetMapping("/mediadir/{gameId}/{name}")
-  public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("name") String name) {
-    GameEmulator emu;
-    String gamefilename = null;
+  @GetMapping("/mediadir/{gameId}/{screenName}")
+  public File getMediaDirectory(@PathVariable("gameId") int gameId, @PathVariable("screenName") String screenName) {
+    VPinScreen screen = VPinScreen.valueOf(screenName);
     if (gameId < 0) {
-      emu = frontendService.getDefaultGameEmulator();
+      return frontendService.getDefaultMediaFolder(screen);
     }
     else {
       Game game = frontendService.getGame(gameId);
-      gamefilename = game.getGameFileName();
-      emu = frontendService.getGameEmulator(game.getEmulatorId());
+      return frontendService.getMediaFolder(game, screen, null);
     }
-    VPinScreen screen = VPinScreen.valueOf(name);
-    return emu.getGameMediaFolder(gamefilename, screen);
   }
 
-  @GetMapping("/playlistmediadir/{playlistId}/{name}")
-  public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("name") String name) {
+  @GetMapping("/playlistmediadir/{playlistId}/{screenName}")
+  public File getPlaylistMediaDirectory(@PathVariable("playlistId") int playlistId, @PathVariable("screenName") String name) {
     VPinScreen screen = VPinScreen.valueOf(name);
     Playlist playList = frontendService.getPlayList(playlistId);
     return frontendService.getPlaylistMediaFolder(playList, screen);

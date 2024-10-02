@@ -7,6 +7,9 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
@@ -17,6 +20,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
+import de.mephisto.vpin.ui.tables.dialogs.FrontendMediaUploadProgressModel;
 import de.mephisto.vpin.ui.tables.models.B2SGlowing;
 import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
@@ -33,6 +37,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -42,6 +47,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelReader;
 import javafx.scene.image.WritableImage;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -53,10 +59,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.InputStream;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +74,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.CompletableFuture;
 
 import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -142,11 +152,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Button downloadBackglassBtn;
+  @FXML
+  private Button useAsMediaBackglassBtn;
 
   @FXML
   private Button uploadDMDBtn;
   @FXML
   private Button downloadDMDBtn;
+  @FXML
+  private Button useAsMediaDMDBtn;
   @FXML
   private Button deleteDMDBtn;
 
@@ -296,7 +310,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
-  @FXML
+ @FXML
   private void onDMDUpload() {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMD Image");
@@ -319,6 +333,72 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         LOG.error("Cannot download DMD image for game " + tableData.getGameId(), ioe);
       }
     }
+  }
+
+  @FXML
+  private void onBackglassUseAsMedia() {
+    if (tableData.isBackgroundAvailable()) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
+        Image img = new Image(in);
+        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
+          PixelReader reader = img.getPixelReader();
+          img = new WritableImage(reader, 0, 0, (int) img.getWidth(), (int) (img.getHeight() - tableData.getGrillHeight()));
+        } 
+
+        uploadImageAsMedia(VPinScreen.BackGlass, "Backglass", img);
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
+      }
+    }
+  }
+
+  @FXML
+  private void onDMDUseAsMedia() {
+    if (tableData.isDmdImageAvailable()) {
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
+        Image img = new Image(in);
+        uploadImageAsMedia(VPinScreen.Menu, "DMD", img);
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot download DMD and set as DMD media image for game " + tableData.getGameId(), ioe);
+      }
+    }
+  }
+
+  private void uploadImageAsMedia(VPinScreen screen, String screenName, Image img) throws IOException {
+
+    Path tmp = Files.createTempFile("tmp_" + screen, ".png");
+    RenderedImage renderedImage = SwingFXUtils.fromFXImage(img, null);
+    ImageIO.write(renderedImage, "png", tmp.toFile());
+
+    FrontendMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
+    boolean append = false;
+    if (!medias.getMediaItems(screen).isEmpty()) {
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace " + screenName + " Media ?",
+          "A " + screenName + " media asset already exists.",
+          "Append new asset or overwrite existing asset?", "Overwrite", "Append");
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+      }
+      else if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
+        append = true;
+      }
+      else {
+        return;
+      }
+    }
+    else {
+      Optional<ButtonType> buttonType = WidgetFactory.showConfirmation(Studio.stage, "Copy in " + screenName + " Media ?",
+          "Add the " + screenName + " image as media asset.", null, "Copy");
+      if (buttonType.isPresent() && buttonType.get().equals(ButtonType.OK)) {
+      }
+      else {
+        return;
+      }
+    }
+    FrontendMediaUploadProgressModel model = new FrontendMediaUploadProgressModel(game,
+        screenName + " Media Upload", Arrays.asList(tmp.toFile()), screen, append);
+    ProgressDialog.createProgressDialog(model);
   }
 
   @FXML
@@ -467,10 +547,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void doReload() {
     startReload("Loading Backglasses...");
 
-    JFXFuture.runAsync(() -> {
-      this.data = client.getBackglassServiceClient().getBackglasses();
-    }).thenLater(() -> {
-      setItems();
+    JFXFuture.supplyAsync(() -> {
+      return client.getBackglassServiceClient().getBackglasses();
+    }).thenAcceptLater(data -> {
+      setItems(data);
       endReload();
     });
   }
@@ -496,6 +576,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     this.duplicateBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
     this.reloadBackglassBtn.setDisable(true);
+
+    FrontendType frontendType = Studio.client.getFrontendService().getFrontendType();
+    if (!frontendType.supportMedias()) {
+      HBox bgtoolbar = (HBox) this.useAsMediaBackglassBtn.getParent();
+      bgtoolbar.getChildren().remove(useAsMediaBackglassBtn);
+
+      HBox dmdtoolbar = (HBox) this.useAsMediaDMDBtn.getParent();
+      dmdtoolbar.getChildren().remove(useAsMediaDMDBtn);
+    }
 
     this.openBtn.setVisible(false); //TODO
 
@@ -657,7 +746,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     NavigationController.setBreadCrumb(Arrays.asList("Backglasses"));
 
     // first time activation 
-    if (this.data == null) {
+    if (this.models == null) {
       doReload();
 
       if (this.tableView.getItems().isEmpty()) {
@@ -787,8 +876,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     thumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     dmdThumbnailImage.setImage(new Image(Studio.class.getResourceAsStream("empty-preview.png")));
     downloadBackglassBtn.setDisable(true);
+    useAsMediaBackglassBtn.setDisable(true);
     uploadDMDBtn.setDisable(true);
     downloadDMDBtn.setDisable(true);
+    useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
@@ -832,7 +923,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           this.tableData = new DirectB2SData();
         }
 
-        loadImages(tableSettings);
+        loadImages();
 
       }).thenLater(() -> {
 
@@ -924,13 +1015,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
 
-  private void loadImages(DirectB2STableSettings tmpTableSettings) {
+  private void loadImages() {
     Image thumbnail = null;
     String thumbnailError = null;
     if (tableData.isBackgroundAvailable()) {
       try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         thumbnail = new Image(in);
-        if (tableData.getGrillHeight() > 0 && tmpTableSettings != null && tmpTableSettings.getHideGrill() == 1) {
+        if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
           PixelReader reader = thumbnail.getPixelReader();
           thumbnail = new WritableImage(reader, 0, 0, (int) thumbnail.getWidth(), (int) (thumbnail.getHeight() - tableData.getGrillHeight()));
         }
@@ -951,6 +1042,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         thumbnailImage.setImage(_thumbnail);
         thumbnailImagePane.setCenter(thumbnailImage);
         downloadBackglassBtn.setDisable(false);
+        useAsMediaBackglassBtn.setDisable(game==null);
         resolutionLabel.setText("Resolution: " + (int) _thumbnail.getWidth() + " x " + (int) _thumbnail.getHeight());
       }
       else {
@@ -982,6 +1074,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         dmdThumbnailImage.setImage(_dmdThumbnail);
         dmdThumbnailImagePane.setCenter(dmdThumbnailImage);
         downloadDMDBtn.setDisable(false);
+        useAsMediaDMDBtn.setDisable(game==null);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
         fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
@@ -1001,7 +1094,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       String gameBaseName = FilenameUtils.getBaseName(game.getGameFileName());
 
       // at calling time, the list may not have been populated so register a listener in that case
-      if (data != null) {
+      if (models != null) {
         selectGame(gameBaseName);
       }
       else {

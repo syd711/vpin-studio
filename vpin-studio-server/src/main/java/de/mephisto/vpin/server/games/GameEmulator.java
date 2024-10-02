@@ -3,8 +3,6 @@ package de.mephisto.vpin.server.games;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +41,6 @@ public class GameEmulator {
   private final String mameDirectory;
   private final String userDirectory;
   private final String mediaDirectory;
-  private final MediaAccessStrategy mediaStrategy;
   private final int id;
   private final boolean visible;
   private final String vpxExeName;
@@ -54,7 +51,7 @@ public class GameEmulator {
   private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
-  public GameEmulator(@NonNull Emulator emulator, @Nullable MediaAccessStrategy mediaStrategy) {
+  public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
@@ -67,7 +64,6 @@ public class GameEmulator {
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
     this.backglassServerFolder = StringUtils.defaultString(emulator.getDirB2S(), emulator.getDirGames());
-    this.mediaStrategy = mediaStrategy;
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
@@ -322,12 +318,6 @@ public class GameEmulator {
   @JsonIgnore
   public File getInstallationFolder() {
     return installationFolder;
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getGameMediaFolder(@NonNull String gameFileName, @NonNull VPinScreen screen) {
-    return mediaStrategy != null ? mediaStrategy.getScreenMediaFolder(new File(mediaDirectory), gameFileName, screen) : null;
   }
 
   @NonNull

@@ -49,6 +49,7 @@
   - Added additional data from the backglass settings.
 - **ALT Sound**: Added missing cache invalidation after deletion of ALT sound packages.
 - **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
+- **Backglass images to media assets**: Ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
 
 ## VPin Mania 
 

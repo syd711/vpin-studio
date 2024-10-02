@@ -39,8 +39,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 import static de.mephisto.vpin.server.util.RequestUtil.CONTENT_LENGTH;
@@ -66,8 +64,6 @@ public class GameMediaResource {
 
   @Autowired
   private TableAssetsService tableAssetsService;
-
-  private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
   @GetMapping("/{id}")
   public FrontendMedia getGameMedia(@PathVariable("id") int id) {
@@ -96,7 +92,7 @@ public class GameMediaResource {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     LOG.info("Starting download of " + asset.getName() + "(appending: " + append + ")");
     Game game = frontendService.getGame(gameId);
-    File mediaFolder = frontendService.getMediaFolder(game, vPinScreen);
+    File mediaFolder = frontendService.getMediaFolder(game, vPinScreen, asset.getFileSuffix());
     File target = new File(mediaFolder, game.getGameName() + "." + asset.getFileSuffix());
     if (target.exists() && append) {
       target = FileUtils.uniqueAsset(target);
@@ -230,7 +226,8 @@ public class GameMediaResource {
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
     Game game = frontendService.getGame(gameId);
-    File mediaFolder = frontendService.getMediaFolder(game, screen);
+    String suffix = FilenameUtils.getExtension(filename);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
     File media = new File(mediaFolder, filename);
     if (media.exists()) {
       return media.delete();

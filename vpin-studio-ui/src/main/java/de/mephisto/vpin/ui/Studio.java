@@ -80,6 +80,7 @@ public class Studio extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
+    LOG.info("-------------- Studio Starts -------------");
     try {
       ss = new ServerSocket(1044);
     } catch (IOException e) {
@@ -124,6 +125,7 @@ public class Studio extends Application {
   }
 
   public static void loadLauncher(Stage stage) {
+    LOG.info("load launcher...");
     try {
       Studio.stage = stage;
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();
@@ -150,6 +152,7 @@ public class Studio extends Application {
   }
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
+    LOG.info("load Studio...");
     try {
       try {
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
@@ -164,6 +167,12 @@ public class Studio extends Application {
       }
 
       Stage splash = createSplash();
+
+      //force pre-caching, this way, the table overview does not need to execute single GET requests
+      new Thread(() -> {
+        Studio.client.getVpsService().invalidateAll();
+        LOG.info("Pre-cached VPS tables");
+      }, "Pre-cached VPS tables Thread").start();
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
@@ -185,10 +194,6 @@ public class Studio extends Application {
 
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
-
-        //force pre-caching, this way, the table overview does not need to execute single GET requests
-        Studio.client.getVpsService().invalidateAll();
-        LOG.info("Pre-cached VPS tables");
       })
       .thenLater(() -> {
         

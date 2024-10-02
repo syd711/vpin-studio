@@ -517,7 +517,7 @@ public class FrontendStatusService implements InitializingBean {
           if (frontendMediaItem.getFile().exists()) {
             File mediaFile = frontendMediaItem.getFile();
             String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue), clone.getGameName() + "." + suffix);
+            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix), clone.getGameName() + "." + suffix);
             if (mediaFile.getName().equals(cloneTarget.getName())) {
               LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
               return;

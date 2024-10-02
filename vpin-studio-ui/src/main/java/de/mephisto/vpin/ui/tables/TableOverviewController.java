@@ -21,6 +21,7 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import de.mephisto.vpin.ui.tables.TableOverviewController.PlaylistBackgroundImageListCell;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
@@ -560,34 +561,29 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   public void refreshUploadResult(UploadDescriptor uploadResult) {
-    //required for new table that may or may not be part of the filtered view
-    refreshFilters();
-
     if (uploadResult != null && uploadResult.getGameId() != -1) {
       //the cache miss will result in caching the new table
-      client.getGameService().getGame(uploadResult.getGameId());
+      GameRepresentation game = client.getGameService().getGame(uploadResult.getGameId());
+      reload(game);
 
-      Consumer<GameRepresentation> showTableDialogConsumer = gameRepresentation -> {
-        Optional<GameRepresentation> match = this.data.stream().filter(g -> g.getId() == uploadResult.getGameId()).findFirst();
-        if (match.isPresent()) {
-          Platform.runLater(() -> {
-            setSelection(match.get());
-          });
+      //required for new table that may or may not be part of the filtered view
+      refreshFilters();
 
-          if (assetManagerMode) {
-            onAssetView();
-          }
+      // select game if not already selected
+      GameRepresentation selected = getSelection();
+      if (selected == null || selected.getId() != game.getId()) {
+        setSelection(game);
+      }
 
-          if (uiSettings.isAutoEditTableData()) {
-            Platform.runLater(() -> {
-              TableDialogs.openTableDataDialog(this, match.get());
-            });
-          }
-        }
-      };
-      reloadConsumers.add(showTableDialogConsumer);
-      //TODO not sure
-      doReload(false);
+      if (assetManagerMode) {
+        onAssetView();
+      }
+
+      if (uiSettings.isAutoEditTableData()) {
+        Platform.runLater(() -> {
+          TableDialogs.openTableDataDialog(this, game);
+        });
+      }
     }
   }
 
@@ -614,8 +610,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
       }
 
+      TableDialogs.openTableDeleteDialog(this, selectedGames, getData());
       tableView.getSelectionModel().clearSelection();
-      TableDialogs.openTableDeleteDialog(this, selectedGames, this.data);
     }
   }
 
@@ -639,7 +635,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onTablesScanAll() {
-    boolean scanned = TableDialogs.openScanAllDialog(this.data);
+    boolean scanned = TableDialogs.openScanAllDialog(getData());
     if (scanned) {
       this.doReload();
     }
@@ -665,7 +661,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onValidateAll() {
-    boolean done = TableDialogs.openValidationDialog(this.data, true);
+    boolean done = TableDialogs.openValidationDialog(getData(), true);
     if (done) {
       doReload();
     }
@@ -712,23 +708,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-      GameRepresentation selectedGame = getSelection();
+      Optional<GameRepresentationModel> optmodel = models.stream().filter(m -> m.getGameId() == refreshedGame.getId()).findFirst();
+      if (optmodel.isPresent()) {
+        GameRepresentationModel model = optmodel.get();
+        model.setBean(refreshedGame);
+        model.reload();
 
-      GameRepresentationModel model = null;
-      int index = data.indexOf(refreshedGame);
-      if (index != -1) {
-        data.remove(index);
-        data.add(index, refreshedGame);
-        // also change the model that triggers a screen refresh
-        model = new GameRepresentationModel(refreshedGame);
-        models.remove(index);
-        models.add(index, model);
-
-        // re-select if it was selected
-        if (selectedGame != null && selectedGame.getId() == model.getGame().getId()) {
-          tableView.getSelectionModel().clearSelection();
-          tableView.getSelectionModel().select(model);
+        // refresh views too if the game is selected
+        GameRepresentation selected = getSelection();
+        if (selected != null && selected.getId() == refreshedGame.getId()) {
+          refreshView(Optional.of(refreshedGame));
         }
+      }
+      else {
+        // new table, add it to the list 
+        models.add(new GameRepresentationModel(refreshedGame));
       }
 
       // force refresh the view for elements not observed by the table
@@ -853,94 +847,86 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setDisable(true);
     this.stopBtn.setDisable(true);
 
-    new Thread(() -> {
-      try {
-        GameRepresentation selection = getSelection();
-        GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
-        GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-        int id = value != null ? value.getId() : ALL_VPX_ID;
+    GameRepresentation selection = getSelection();
+    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    int id = value != null ? value.getId() : ALL_VPX_ID;
 
-        if (clearCache) {
-          if (id == ALL_VPX_ID) {
-            client.getGameService().clearVpxCache();
-          }
-          else {
-            client.getGameService().clearCache(id);
-          }
+    JFXFuture.supplyAsync(() -> {
+
+      if (clearCache) {
+        if (id == ALL_VPX_ID) {
+          client.getGameService().clearVpxCache();
         }
-
-        this.data = id == ALL_VPX_ID
-            ? client.getGameService().getVpxGamesCached()
-            : client.getGameService().getGamesByEmulator(id);
-
-        // as the load of tables could take some time, users may have switched to another emulators in between
-        // if this is the case, do not refresh the UI with the results
-        GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-        if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
-          return;
+        else {
+          client.getGameService().clearCache(id);
         }
-
-        Platform.runLater(() -> {
-
-          setItems();
-
-          refreshFilters();
-
-          if (selection != null) {
-            final Optional<GameRepresentation> updatedGame = this.data.stream().filter(g -> g.getId() == selection.getId()).findFirst();
-            if (updatedGame.isPresent()) {
-              GameRepresentation gameRepresentation = updatedGame.get();
-              //tableView.getSelectionModel().select(gameRepresentation);
-              this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
-            }
-          }
-
-          if (!data.isEmpty()) {
-            this.validateBtn.setDisable(false);
-            this.deleteBtn.setDisable(false);
-            this.tableEditBtn.setDisable(false);
-          }
-          else {
-            Frontend frontend = client.getFrontendService().getFrontendCached();
-            this.validationErrorLabel.setText("No tables found");
-            this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
-                + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
-          }
-
-          this.importBtn.setDisable(false);
-          this.stopBtn.setDisable(false);
-          this.searchTextField.setDisable(false);
-          this.reloadBtn.setDisable(false);
-          this.scanBtn.setDisable(false);
-          this.scanAllBtn.setDisable(false);
-          this.uploadTableBtn.setDisable(false);
-
-          tableView.requestFocus();
-
-          if (selectedItem == null) {
-            tableView.getSelectionModel().select(0);
-          }
-          else {
-            tableView.getSelectionModel().select(selectedItem);
-          }
-
-          for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-            reloadConsumer.accept(selection);
-          }
-          reloadConsumers.clear();
-
-          endReload();
-        });
-      }
-      catch (Exception e) {
-        LOG.error("Failed to load tables: " + e.getMessage(), e);
-        Platform.runLater(() -> {
-          WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage());
-          endReload();
-        });
       }
 
-    }).start();
+      return id == ALL_VPX_ID
+          ? client.getGameService().getVpxGamesCached()
+          : client.getGameService().getGamesByEmulator(id);
+    })
+    .onErrorSupply(e -> {
+      Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+      return Collections.emptyList();
+    })
+    .thenAcceptLater(data -> {
+      // as the load of tables could take some time, users may have switched to another emulators in between
+      // if this is the case, do not refresh the UI with the results
+      GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+      if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
+        return;
+      }
+
+      setItems(data);      
+      refreshFilters();
+
+      if (selection != null) {
+        final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
+        if (updatedGame.isPresent()) {
+          GameRepresentation gameRepresentation = updatedGame.get().getBean();
+          //tableView.getSelectionModel().select(gameRepresentation);
+          this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
+        }
+      }
+
+      if (!data.isEmpty()) {
+        this.validateBtn.setDisable(false);
+        this.deleteBtn.setDisable(false);
+        this.tableEditBtn.setDisable(false);
+      }
+      else {
+        Frontend frontend = client.getFrontendService().getFrontendCached();
+        this.validationErrorLabel.setText("No tables found");
+        this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
+            + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+      }
+
+      this.importBtn.setDisable(false);
+      this.stopBtn.setDisable(false);
+      this.searchTextField.setDisable(false);
+      this.reloadBtn.setDisable(false);
+      this.scanBtn.setDisable(false);
+      this.scanAllBtn.setDisable(false);
+      this.uploadTableBtn.setDisable(false);
+
+      tableView.requestFocus();
+
+      if (selectedItem == null) {
+        tableView.getSelectionModel().select(0);
+      }
+      else {
+        tableView.getSelectionModel().select(selectedItem);
+      }
+
+      for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+        reloadConsumer.accept(selection);
+      }
+      reloadConsumers.clear();
+
+      endReload();
+    });
   }
 
   public void updatePlaylist(PlaylistRepresentation playlist) {
@@ -1559,7 +1545,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   public List<GameRepresentation> getGames() {
-    return data;
+    return getData();
   }
 
   @Override
@@ -1904,6 +1890,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     public GameRepresentation getGame() {
       return getBean();
+    }
+
+    public int getGameId() {
+      return bean.getId();
     }
 
     @Override

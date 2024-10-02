@@ -63,15 +63,13 @@ public class JFXFuture<T> {
     return thenAcceptLater(res, c);
   }
     
-  //-----------
-
-  public static <U> JFXFuture<U> onErrorLater(CompletableFuture<U> future, Function<Throwable, ? extends U> fn) {
-    Function<Throwable, ? extends U> f2 = (ex) -> { Platform.runLater(() -> fn.apply(ex)); return null; };
+  public static <U> JFXFuture<U> onErrorSupply(CompletableFuture<U> future, Function<Throwable, ? extends U> fn) {
+    Function<Throwable, ? extends U> f2 = (ex) -> { return fn.apply(ex); };
     return new JFXFuture<U>(future.exceptionally(f2));
   }
 
-  public JFXFuture<T> onErrorLater(Function<Throwable, ? extends T> fn) {
-    return onErrorLater(res, fn);
+  public JFXFuture<T> onErrorSupply(Function<Throwable, ? extends T> fn) {
+    return onErrorSupply(res, fn);
   }
 
 }

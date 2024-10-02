@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.frontend;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,9 @@ public class FrontendMedia {
   }
 
   public List<FrontendMediaItem> getMediaItems(VPinScreen screen) {
+    if (!media.containsKey(screen.name())) {
+      return Collections.emptyList();
+    }
     return media.get(screen.name());
   }
 

@@ -27,12 +27,15 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
   /**
    * The logic here is the same as for all but can be adapted for frontends.
    * @param game
-   * @param mediaDirectory
    * @param screen
    * @return
    */
-  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull File mediaDirectory, @NonNull VPinScreen screen) {
-    List<File> allFiles = getMediaFiles(mediaDirectory);
+  @Override
+  public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
+
+    File screenMediaFolder = getGameMediaFolder(game, screen, null);
+    List<File> allFiles = getMediaFiles(screenMediaFolder);
+
     String baseFilename = game.getGameName();
     List<File> mediaFiles = allFiles.stream().filter(f -> f.getName().toLowerCase().startsWith(baseFilename.toLowerCase())).collect(Collectors.toList());
     Pattern plainMatcher = Pattern.compile(Pattern.quote(baseFilename) + "\\d{0,2}\\.[a-zA-Z0-9]*");

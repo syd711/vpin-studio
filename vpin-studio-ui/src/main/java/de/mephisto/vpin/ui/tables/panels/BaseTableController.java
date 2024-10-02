@@ -46,8 +46,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   protected TablesController tablesController;
 
-  protected List<T> data;
   protected ObservableList<M> models;
+
   protected FilteredList<M> filteredModels;
 
   private BaseColumnSorter<M> columnSorter;
@@ -188,7 +188,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   //----------------------
 
-  protected void setItems() {
+  protected void setItems(List<T> data) {
 
     this.models = FXCollections.observableArrayList();
     for (T bean : data) {
@@ -220,6 +220,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public M getModel(T bean) {
     return models.stream().filter(m -> m.sameBean(bean)).findFirst().orElse(null);
+  }
+
+  public List<T> getData() {
+    return models.stream().map(m -> m.getBean()).collect(Collectors.toList());
   }
 
   public T getSelection() {

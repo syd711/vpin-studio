@@ -210,11 +210,21 @@
                                                 <Label fx:id="resolutionLabel" textFill="WHITE" BorderPane.alignment="CENTER" />
                                              </left>
                                              <right>
-                                                <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" textFill="WHITE" BorderPane.alignment="CENTER">
-                                                   <graphic>
-                                                      <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
-                                                   </graphic>
-                                                </Button>
+                                                <HBox spacing="3.0">
+                                                   <Button fx:id="downloadBackglassBtn" mnemonicParsing="false" onAction="#onBackglassDownload" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
+                                                      </graphic>
+                                                   </Button>
+                                                   <Button fx:id="useAsMediaBackglassBtn" mnemonicParsing="false" onAction="#onBackglassUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                      </graphic>
+                                                      <tooltip>
+                                                         <Tooltip prefWidth="400.0" text="Export the backglass image and use it as a backglass media asset in your frontend." wrapText="true" />
+                                                      </tooltip>
+                                                   </Button>
+                                                </HBox>
                                              </right>
                                           </BorderPane>
                                        </bottom>
@@ -270,6 +280,14 @@
                                                       <graphic>
                                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2d-download" iconSize="14" />
                                                       </graphic>
+                                                   </Button>
+                                                   <Button fx:id="useAsMediaDMDBtn" mnemonicParsing="false" onAction="#onDMDUseAsMedia" textFill="WHITE" BorderPane.alignment="CENTER">
+                                                      <graphic>
+                                                         <FontIcon iconColor="WHITE" iconLiteral="mdi2i-image-plus" iconSize="14" />
+                                                      </graphic>
+                                                      <tooltip>
+                                                         <Tooltip prefWidth="400.0" text="Export the DMD image and use it as a DMD media asset in your frontend." wrapText="true" />
+                                                      </tooltip>
                                                    </Button>
                                                    <Button fx:id="deleteDMDBtn" mnemonicParsing="false" onAction="#onDMDDelete" textFill="WHITE" BorderPane.alignment="CENTER">
                                                       <graphic>
@@ -634,7 +652,7 @@
                                              </font>
                                           </Label>
       
-                                                                              <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
+                                          <Label text="Number of Players:" textFill="WHITE" GridPane.rowIndex="10">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -645,7 +663,7 @@
                                              </font>
                                           </Label>
       
-                                                                              <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
+                                          <Label text="File Size:" textFill="WHITE" GridPane.rowIndex="11">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -656,7 +674,7 @@
                                              </font>
                                           </Label>
       
-                                                                              <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
+                                          <Label text="Modification Date:" textFill="WHITE" GridPane.rowIndex="12">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>
@@ -667,7 +685,7 @@
                                              </font>
                                           </Label>
       
-                                                                           </children>
+                                       </children>
                                        <VBox.margin>
                                           <Insets top="24.0" />
                                        </VBox.margin>
