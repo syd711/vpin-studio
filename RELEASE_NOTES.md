@@ -35,9 +35,9 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="250" />
 
-- **Backglass Manager**: Added additional option to use backglass assets as screen media.
+- **Backglass Manager / Backglass images to media assets**: Added the ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/backglass-manager-assets.png" width="250" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/backglass-manager-assets.png" width="500" />
 
 ## Bugfixes
   
@@ -45,7 +45,7 @@
 - **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
 - **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
 - **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
-- **Highscore Parsing**: Added test coverage for over 50 new text file and VPReg.stg file based highscores (thanks to @gorgatron) and added the missing parsing support for some of them.
+- **Highscore Parsing**: Added test coverage for over 50 new text file and VPReg.stg file based highscores (thanks to @gorgatron) and added an applicable parser if missing.
 - **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
 - **Table Data Manager**: Fixed dialog sizing issues.
 - **Backglass Data Exporter**:
@@ -54,7 +54,6 @@
 - **ALT Sound**: Added missing cache invalidation after deletion of ALT sound packages.
 - **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
 - **Drop-In Menu**: Fixed file lock and refresh issues.
-- **Backglass images to media assets**: Ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
 
 ## VPin Mania 
 
