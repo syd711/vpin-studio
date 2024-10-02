@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.commons.utils.localsettings.LocalUISettings;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.*;
@@ -61,13 +62,14 @@ public class ROMUploadController implements Initializable, DialogController {
     if (selection != null && !selection.isEmpty()) {
       result = true;
       try {
-        Platform.runLater(()-> {
+        Platform.runLater(() -> {
           Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
           stage.close();
         });
         RomUploadProgressModel model = new RomUploadProgressModel("ROM Upload", selection, emulatorRepresentation.getId());
         ProgressDialog.createProgressDialog(model);
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
         WidgetFactory.showAlert(stage, "Uploading ROM failed", "Please check the log file for details", "Error: " + e.getMessage());
       }
@@ -84,6 +86,10 @@ public class ROMUploadController implements Initializable, DialogController {
         new FileChooser.ExtensionFilter("ROM", "*.zip"));
 
     this.selection = fileChooser.showOpenMultipleDialog(stage);
+    if (this.selection != null && !this.selection.isEmpty()) {
+      LocalUISettings.saveLastFolderLocation(this.selection.get(0));
+    }
+
     refreshSelection();
   }
 
@@ -131,7 +137,7 @@ public class ROMUploadController implements Initializable, DialogController {
   }
 
   public void setFile(File file) {
-    if(file != null) {
+    if (file != null) {
       this.selection = Arrays.asList(file);
       refreshSelection();
     }

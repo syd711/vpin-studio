@@ -101,7 +101,7 @@ public class TableDialogs {
     List<File> files = fileChooser.showOpenMultipleDialog(stage);
     if (files != null && !files.isEmpty()) {
       Platform.runLater(() -> {
-      
+
         FrontendMediaRepresentation medias = client.getPlaylistMediaService().getPlaylistMedia(playlist.getId());
         boolean append = false;
         if (medias.getMediaItems(screen).size() > 0) {
@@ -148,19 +148,9 @@ public class TableDialogs {
   }
 
   public static void onRomUploads(File file) {
-    if (client.getFrontendService().isFrontendRunning()) {
-      if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        boolean uploaded = TableDialogs.openRomUploadDialog(file);
-        if (uploaded) {
-          EventManager.getInstance().notifyTablesChanged();
-        }
-      }
-    }
-    else {
-      boolean uploaded = TableDialogs.openRomUploadDialog(file);
-      if (uploaded) {
-        EventManager.getInstance().notifyTablesChanged();
-      }
+    boolean uploaded = TableDialogs.openRomUploadDialog(file);
+    if (uploaded) {
+      EventManager.getInstance().notifyTablesChanged();
     }
   }
 
@@ -454,7 +444,7 @@ public class TableDialogs {
       return false;
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload for \"" + game.getGameDisplayName() + "\"");
+    Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
     controller.setFile(file);

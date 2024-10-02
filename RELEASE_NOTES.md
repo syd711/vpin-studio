@@ -33,7 +33,7 @@
 
 - **Toolbar**: Added **System Shutdown** menu item to the header toolbar menu. Note that the item is only visible when you work remote.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="450" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="250" />
 
 ## Bugfixes
   

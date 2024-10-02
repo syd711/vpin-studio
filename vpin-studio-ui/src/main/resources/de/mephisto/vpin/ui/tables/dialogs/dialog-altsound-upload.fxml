@@ -62,7 +62,7 @@
                               </TextField>
                            </children>
                         </HBox>
-                        <Label styleClass="default-text" text="ALTSound Bundle:" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="ALT Sound Bundle:" GridPane.rowIndex="1" />
                         <Label layoutX="10.0" layoutY="45.0" styleClass="default-text" text="Emulator:" />
                         <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="310.0" GridPane.columnIndex="1" />
                         <Label fx:id="titleLabel11" text="Resolved ROM Name:" textFill="WHITE" GridPane.rowIndex="2">
