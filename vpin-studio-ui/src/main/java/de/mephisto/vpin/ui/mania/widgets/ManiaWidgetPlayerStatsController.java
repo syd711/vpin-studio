@@ -296,6 +296,10 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
               rankLabel.setText("#" + rankedAccount.getRanking());
             }
             CommonImageUtil.setClippedImage(avatarView, (int) (avatarView.getFitHeight()));
+
+            subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
+            subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
+            subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
           });
         }
       }).start();
@@ -306,9 +310,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       List<TableScore> highscoresByAccount = new ArrayList<>(maniaClient.getHighscoreClient().getHighscoresByAccount(account.getId()));
       titleLabel.setText("\"" + account.getDisplayName() + "\" [" + account.getInitials() + "]");
       sub1Label.setText("Recorded Scores: " + highscoresByAccount.size());
-      subScore1Label.setText("#1 Places: " + rankedAccount.getPlace1());
-      subScore2Label.setText("#2 Places: " + rankedAccount.getPlace2());
-      subScore3Label.setText("#3 Places: " + rankedAccount.getPlace3());
+
 
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(new TableScoreLoadingProgressModel(account, highscoresByAccount));
 
