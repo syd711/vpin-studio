@@ -185,6 +185,9 @@ public class Studio extends Application {
         // reinitialize a new EventManager each time application starts
         EventManager.initialize();
         LocalUISettings.initialize();
+      })
+      .thenLater(() -> {
+        Studio.stage = stage;
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
@@ -194,10 +197,7 @@ public class Studio extends Application {
 
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
-      })
-      .thenLater(() -> {
-        
-        Studio.stage = stage;
+
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
         if (screenBounds.getWidth() > screenBounds.getHeight()) {
