@@ -169,7 +169,7 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
 
   protected abstract void resetFilters();
 
-  protected void applyFilters() {
+  public void applyFilters() {
     toggleFilterButton(hasFilter());
     if (updatesDisabled) {
       return;

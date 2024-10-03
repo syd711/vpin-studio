@@ -1,0 +1,316 @@
+package de.mephisto.vpin.ui.recorder;
+
+import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.WaitOverlay;
+import de.mephisto.vpin.ui.tables.*;
+import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.JFXFuture;
+import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.Initializable;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
+import org.apache.commons.collections4.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
+import static de.mephisto.vpin.ui.Studio.stage;
+import static de.mephisto.vpin.ui.tables.TableOverviewController.ALL_VPX_ID;
+import static de.mephisto.vpin.ui.tables.TableOverviewController.createAssetStatus;
+
+public class RecorderController extends BaseTableController<GameRepresentation, GameRepresentationModel>
+    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+  private final static Logger LOG = LoggerFactory.getLogger(RecorderController.class);
+  private final Debouncer debouncer = new Debouncer();
+  public static final int DEBOUNCE_MS = 200;
+
+  @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
+
+  @FXML
+  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
+
+  @FXML
+  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
+
+  @FXML
+  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
+
+  @FXML
+  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
+
+  @FXML
+  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
+
+  @FXML
+  private StackPane loaderStack;
+
+  @FXML
+  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+
+  @FXML
+  private BorderPane root;
+
+  @FXML
+  private Button reloadBtn;
+
+
+  private List<Integer> ignoredEmulators = null;
+
+  private GameEmulatorChangeListener gameEmulatorChangeListener;
+
+  // Add a public no-args constructor
+  public RecorderController() {
+  }
+
+  @FXML
+  private void onReload() {
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+    this.doReload();
+  }
+
+
+  @FXML
+  private void onReload(ActionEvent e) {
+    ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
+    this.doReload();
+  }
+
+  public void doReload() {
+    client.getGameService().clearCache();
+    doReload(true);
+  }
+
+  @FXML
+  private void onDelete() {
+  }
+
+  public void doReload(boolean clearCache) {
+    startReload("Loading Tables...");
+
+    refreshEmulators();
+
+    this.searchTextField.setDisable(true);
+    this.reloadBtn.setDisable(true);
+
+    GameRepresentation selection = getSelection();
+    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    int id = value != null ? value.getId() : ALL_VPX_ID;
+
+    JFXFuture.supplyAsync(() -> {
+          if (clearCache) {
+            if (id == ALL_VPX_ID) {
+              client.getGameService().clearVpxCache();
+            }
+            else {
+              client.getGameService().clearCache(id);
+            }
+          }
+
+          return id == ALL_VPX_ID
+              ? client.getGameService().getVpxGamesCached()
+              : client.getGameService().getGamesByEmulator(id);
+        })
+        .onErrorSupply(e -> {
+          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(data -> {
+          // as the load of tables could take some time, users may have switched to another emulators in between
+          // if this is the case, do not refresh the UI with the results
+          GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+          if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
+            return;
+          }
+
+          setItems(data);
+          refreshFilters();
+
+          if (data.isEmpty()) {
+            tableView.setPlaceholder(new Label("No tables found"));
+          }
+          this.searchTextField.setDisable(false);
+          this.reloadBtn.setDisable(false);
+          tableView.requestFocus();
+
+          if (selectedItem == null) {
+            tableView.getSelectionModel().select(0);
+          }
+          else {
+            tableView.getSelectionModel().select(selectedItem);
+          }
+          endReload();
+        });
+  }
+
+  public GameEmulatorRepresentation getEmulatorSelection() {
+    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+    return selectedEmu == null || selectedEmu.getId() == ALL_VPX_ID ? null : selectedEmu;
+  }
+
+  public void refreshFilters() {
+    getFilterController().applyFilters();
+  }
+
+
+  private BaseFilterController getFilterController() {
+    return filterController;
+  }
+
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+        //TODO
+      }
+    }
+  }
+
+
+  @Override
+  protected GameRepresentationModel toModel(GameRepresentation game) {
+    return new GameRepresentationModel(game);
+  }
+
+  private void refreshEmulators() {
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
+    GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+
+    this.emulatorCombo.setDisable(true);
+    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+
+    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
+    allVpx.setId(ALL_VPX_ID);
+    allVpx.setName("All VPX Tables");
+    allVpx.setVpxEmulator(true);
+    filtered.add(0, allVpx);
+
+    this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+    this.emulatorCombo.setDisable(false);
+
+    if (selectedEmu == null) {
+      this.emulatorCombo.getSelectionModel().selectFirst();
+    }
+
+    this.emulatorCombo.valueProperty().addListener(gameEmulatorChangeListener);
+  }
+
+  public void setTablesController(TablesController tablesController) {
+    this.tablesController = tablesController;
+  }
+
+
+  @Override
+  public void onViewActivated(NavigationOptions options) {
+    NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
+    refreshEmulators();
+  }
+
+  @Override
+  public void onChanged(Change<? extends GameRepresentationModel> c) {
+
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    // refresh emulators only when they have been loaded first time
+    if (PreferenceNames.UI_SETTINGS.equals(key)) {
+      UISettings uiSettings = (UISettings) value;
+      if (!ListUtils.isEqualList(ignoredEmulators, uiSettings.getIgnoredEmulatorIds())) {
+        this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
+        refreshEmulators();
+      }
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("table", "tables", new RecorderColumnSorter(this));
+
+    UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
+
+    gameEmulatorChangeListener = new GameEmulatorChangeListener();
+
+    this.emulatorCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      //TODO
+    });
+
+    client.getPreferenceService().addListener(this);
+    NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
+
+    super.loadFilterPanel("scene-recorder-filter.fxml");
+
+    BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
+      Label label = new Label(value.getGameDisplayName());
+      label.getStyleClass().add("default-text");
+      label.setStyle(TableOverviewController.getLabelCss(value));
+
+      String tooltip = value.getGameFilePath();
+      if (value.getGameFilePath() != null) {
+        label.setTooltip(new Tooltip(tooltip));
+      }
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
+      //TODO
+    }), true);
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass, event -> {
+      //TODO
+    }), true);
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD, event -> {
+      //TODO
+    }), true);
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper, event -> {
+      //TODO
+    }), true);
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu, event -> {
+      //TODO
+    }), true);
+  }
+
+  class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
+    @Override
+    public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
+      // callback to filter tables, once the data has been reloaded
+      Platform.runLater(() -> {
+        // just reload from cache
+        doReload(false);
+      });
+    }
+  }
+}

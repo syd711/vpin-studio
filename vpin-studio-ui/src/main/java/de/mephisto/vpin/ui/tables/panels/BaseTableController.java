@@ -189,7 +189,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   //----------------------
 
   protected void setItems(List<T> data) {
-
     this.models = FXCollections.observableArrayList();
     for (T bean : data) {
       models.add(toModel(bean));
