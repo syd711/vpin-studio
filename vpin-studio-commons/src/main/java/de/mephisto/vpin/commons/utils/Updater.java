@@ -197,7 +197,7 @@ public class Updater {
         return latestVersion;
       }
     } catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: " + e.getMessage(), e);
     }
     return null;
   }
