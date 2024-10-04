@@ -952,6 +952,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void refreshPlaylists() {
 
+    PlaylistRepresentation selected = this.playlistCombo.getSelectionModel().getSelectedItem();
     this.playlistCombo.setDisable(true);
 
     JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
@@ -991,10 +992,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       pl.add(0, null);
 
       playlistCombo.setItems(FXCollections.observableList(pl));
+      
+      // reselect same playlist
+      if (selected != null) {
+        selectItem(playlistCombo, p -> p.getId() == selected.getId());
+      }
       this.playlistCombo.setDisable(false);
     });
   }
-
 
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);

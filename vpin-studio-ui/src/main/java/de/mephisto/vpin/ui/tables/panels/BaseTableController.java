@@ -11,6 +11,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -23,6 +24,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
@@ -261,6 +263,17 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void clearSelection() {
     tableView.getSelectionModel().clearSelection();
+  }
+
+  /**
+   * Select items of a Combo base on Predicate applied on its items
+   */
+  public <I> void selectItem(ComboBox<I> combo, Predicate<I> p) {
+    for (I item : combo.getItems()) {
+      if (item != null && p.test(item)) {
+        combo.getSelectionModel().select(item);
+      }
+    }
   }
 
   public void onKeyEvent(KeyEvent event) {
