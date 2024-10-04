@@ -1980,6 +1980,7 @@ public class PinUPConnector implements FrontendConnector {
     frontend.setAdminExe("PinUpMenuSetup.exe");
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.BackGlass, VPinScreen.Topper, VPinScreen.Menu, VPinScreen.DMD, VPinScreen.PlayField));
     frontend.setAssetSearchEnabled(true);
     frontend.setAssetSearchLabel("PinUP Popper Assets Search");
 

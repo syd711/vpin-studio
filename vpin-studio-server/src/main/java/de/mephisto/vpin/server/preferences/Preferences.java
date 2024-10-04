@@ -66,6 +66,8 @@ public class Preferences {
 
   private String notificationSettings;
 
+  private String recorderSettings;
+
   private String uiSettings;
 
   private String serverSettings;
@@ -101,6 +103,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getRecorderSettings() {
+    return recorderSettings;
+  }
+
+  public void setRecorderSettings(String recorderSettings) {
+    this.recorderSettings = recorderSettings;
+  }
 
   public String getDiscordUpdatesChannelId() {
     return discordUpdatesChannelId;

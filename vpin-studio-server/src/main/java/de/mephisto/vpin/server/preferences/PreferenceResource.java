@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.preferences.BackupSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.restclient.validation.IgnoredValidationSettings;
 import de.mephisto.vpin.restclient.validation.ValidationSettings;
@@ -92,6 +93,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.BACKUP_SETTINGS: {
           return preferencesService.getJsonPreference(key, BackupSettings.class);
+        }
+        case PreferenceNames.RECORDER_SETTINGS: {
+          return preferencesService.getJsonPreference(key, RecorderSettings.class);
         }
         default: {
           throw new UnsupportedOperationException("JSON format not supported for preference '" + key + "'");

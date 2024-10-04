@@ -849,7 +849,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     int id = value != null ? value.getId() : ALL_VPX_ID;
 
     JFXFuture.supplyAsync(() -> {
-
       if (clearCache) {
         if (id == ALL_VPX_ID) {
           client.getGameService().clearVpxCache();
@@ -875,6 +874,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return;
       }
 
+      tableView.getSelectionModel().getSelectedItems().removeListener(this);
       setItems(data);
       refreshFilters();
 
@@ -909,6 +909,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       tableView.requestFocus();
 
+      tableView.getSelectionModel().getSelectedItems().addListener(this);
       if (selectedItem == null) {
         tableView.getSelectionModel().select(0);
       }
@@ -1357,9 +1358,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }), supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
-    tableView.getSelectionModel().getSelectedItems().addListener(this);
-    //tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
-
     tableView.setRowFactory(
         tableView -> {
           final TableRow<GameRepresentationModel> row = new TableRow<>();

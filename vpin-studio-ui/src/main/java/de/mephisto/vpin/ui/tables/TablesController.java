@@ -256,7 +256,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
       LOG.error("failed to load VPS table tab: " + e.getMessage(), e);
     }
 
-    if (Features.RECORDER) {
+    if (Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty()) {
       try {
         FXMLLoader loader = new FXMLLoader(RecorderController.class.getResource("scene-recorder.fxml"));
         Parent repositoryRoot = loader.load();
