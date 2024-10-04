@@ -35,6 +35,8 @@ public class NVRamSynchronizer {
       "| Table | ROM | Available | Submitted By |\n" +
       "| ----- | --- | --------- |--------------|\n";
 
+  private static String AUTHOR = "DoXer";
+
   public static void main(String[] args) throws Exception {
     synchonizeNVRamRepo();
   }
@@ -82,7 +84,7 @@ public class NVRamSynchronizer {
         //copy file anyway
         readmeLine = readMeLines.stream().filter(l -> l.contains(nvram.getKey())).findFirst().get();
         if (!readmeLine.contains("YES")) {
-          readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " | YES | gorgatron |";
+          readmeLine = "| " + nvram.getValue() + " | " + nvram.getKey() + " | YES | " + AUTHOR + " |";
         }
         File target = new File(targetFolder, nvram.getKey());
         if (target.exists()) {
