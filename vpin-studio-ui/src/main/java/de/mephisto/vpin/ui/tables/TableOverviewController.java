@@ -1281,15 +1281,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean fav = false;
       boolean globalFav = false;
 
-      for (PlaylistRepresentation playlist : playlists) {
-        if (playlist.containsGame(value.getId())) {
-          if (!fav && playlist.isFavGame(value.getId())) {
-            fav = true;
+      if (playlists != null) {
+        for (PlaylistRepresentation playlist : playlists) {
+          if (playlist.containsGame(value.getId())) {
+            if (!fav && playlist.isFavGame(value.getId())) {
+              fav = true;
+            }
+            if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
+              globalFav = true;
+            }
+            matches.add(playlist);
           }
-          if (!globalFav && playlist.isGlobalFavGame(value.getId())) {
-            globalFav = true;
-          }
-          matches.add(playlist);
         }
       }
 

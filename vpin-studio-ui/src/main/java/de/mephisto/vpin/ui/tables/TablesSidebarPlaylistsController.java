@@ -346,7 +346,7 @@ public class TablesSidebarPlaylistsController implements Initializable {
         }
 
         if (playlist.isSqlPlayList()) {
-          Label label = new Label("(SQL Playlist)");
+          Label label = new Label("(Dynamic Playlist)");
 
           label.getStyleClass().add("default-text");
           label.setStyle("-fx-font-size: 12px;");
