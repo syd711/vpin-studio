@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -39,7 +40,7 @@ public class BackglassManagerPredicateFactory {
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<DirectB2SModel> buildPredicate(String searchTerm) {
+  public Predicate<DirectB2SModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     return new Predicate<DirectB2SModel>() {
       @Override
       public boolean test(DirectB2SModel model) {
@@ -48,6 +49,11 @@ public class BackglassManagerPredicateFactory {
         if (emulatorIds!=null && !emulatorIds.isEmpty() && !emulatorIds.contains(backglass.getEmulatorId())) {
           return false;
         }
+
+        if (playlist != null && !playlist.containsGame(model.getGameId())) {
+          return false;
+        }
+
         if (StringUtils.isNotEmpty(searchTerm) && !StringUtils.containsIgnoreCase(backglass.getName(), searchTerm)) {
           return false;
         }

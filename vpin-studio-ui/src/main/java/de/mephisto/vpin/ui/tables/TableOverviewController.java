@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.frontend.PlaylistGame;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -21,7 +20,6 @@ import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
-import de.mephisto.vpin.ui.tables.TableOverviewController.PlaylistBackgroundImageListCell;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
@@ -56,7 +54,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -223,10 +220,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private SplitMenuButton uploadTableBtn;
 
   @FXML
-  private ComboBox<PlaylistRepresentation> playlistCombo;
-
-  @FXML
-  private Separator playlistSplitter;
+  private Separator assetManagerSeparator;
 
   @FXML
   private MenuItem backglassUploadItem;
@@ -260,8 +254,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private Hyperlink dismissBtn;
-
-  private List<PlaylistRepresentation> playlists;
 
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
@@ -929,78 +921,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
   }
 
-  public void updatePlaylist(PlaylistRepresentation playlist) {
-
-    int idx = ListUtils.indexOf(this.playlistCombo.getItems(), p -> p != null && p.getId() == playlist.getId());
-    if (idx >= 0) {
-      boolean selected = this.playlistCombo.getSelectionModel().isSelected(idx);
-
-      this.playlistCombo.getItems().remove(idx);
-      this.playlistCombo.getItems().add(idx, playlist);
-
-      int idx2 = ListUtils.indexOf(playlists, p -> p.getId() == playlist.getId());
-      if (idx2 >= 0) {
-        this.playlists.remove(idx2);
-        this.playlists.add(idx2, playlist);
-      }
-
-      if (selected) {
-        this.playlistCombo.getSelectionModel().select(playlist);
-      }
-    }
-  }
-
-  public void refreshPlaylists() {
-
-    PlaylistRepresentation selected = this.playlistCombo.getSelectionModel().getSelectedItem();
-    this.playlistCombo.setDisable(true);
-
-    JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
-
-      this.playlists = playlists;
-      List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
-
-      FrontendType frontendType = client.getFrontendService().getFrontendType();
-
-      if (frontendType.supportExtendedPlaylists()) {
-        List<PlaylistGame> localFavs = new ArrayList<>();
-        List<PlaylistGame> globalFavs = new ArrayList<>();
-        for (PlaylistRepresentation playlistRepresentation : pl) {
-          List<PlaylistGame> games1 = playlistRepresentation.getGames();
-          for (PlaylistGame playlistGame : games1) {
-            if (playlistGame.isFav()) {
-              localFavs.add(playlistGame);
-            }
-            if (playlistGame.isGlobalFav()) {
-              globalFavs.add(playlistGame);
-            }
-          }
-        }
-        PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
-        favsPlaylist.setGames(localFavs);
-        favsPlaylist.setId(-1);
-        favsPlaylist.setName("Local Favorites");
-
-        PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
-        globalFavsPlaylist.setGames(globalFavs);
-        globalFavsPlaylist.setId(-2);
-        globalFavsPlaylist.setName("Global Favorites");
-
-        pl.add(0, globalFavsPlaylist);
-        pl.add(0, favsPlaylist);
-      }
-      pl.add(0, null);
-
-      playlistCombo.setItems(FXCollections.observableList(pl));
-      
-      // reselect same playlist
-      if (selected != null) {
-        selectItem(playlistCombo, p -> p.getId() == selected.getId());
-      }
-      this.playlistCombo.setDisable(false);
-    });
-  }
-
   private void refreshEmulators(UISettings uiSettings) {
     this.emulatorCombo.valueProperty().removeListener(gameEmulatorChangeListener);
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
@@ -1281,9 +1201,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       boolean fav = false;
       boolean globalFav = false;
 
+      List<PlaylistRepresentation> playlists = getPlaylists();
       if (playlists != null) {
         for (PlaylistRepresentation playlist : playlists) {
-          if (playlist.containsGame(value.getId())) {
+          if (playlist != null && playlist.containsGame(value.getId())) {
             if (!fav && playlist.isFavGame(value.getId())) {
               fav = true;
             }
@@ -1651,18 +1572,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     deleteSeparator.managedProperty().bindBidirectional(this.deleteSeparator.visibleProperty());
 
-    this.playlistSplitter.managedProperty().bindBidirectional(playlistSplitter.visibleProperty());
-    this.playlistCombo.managedProperty().bindBidirectional(this.playlistCombo.visibleProperty());
-    this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
     this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
+    this.assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
     this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
     this.assetManagerViewBtn.managedProperty().bindBidirectional(this.assetManagerViewBtn.visibleProperty());
     this.tableEditBtn.managedProperty().bindBidirectional(this.tableEditBtn.visibleProperty());
     this.importSeparator.managedProperty().bindBidirectional(this.importSeparator.visibleProperty());
+    this.importBtn.managedProperty().bindBidirectional(this.importBtn.visibleProperty());
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
@@ -1684,24 +1604,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.assetManagerBtn.setVisible(false);
       this.assetManagerViewBtn.setVisible(false);
     }
-    if (!frontendType.supportPlaylists()) {
-      playlistCombo.setVisible(false);
-      importSeparator.setVisible(false);
-      playlistSplitter.setVisible(false);
-    }
 
     super.loadFilterPanel("scene-tables-overview-filter.fxml");
 
-    validationError.setVisible(false);
+    super.loadPlaylistCombo();    
 
-    playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell());
-    playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell());
-    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
-      @Override
-      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation playlist, PlaylistRepresentation t1) {
-        getTableFilterController().setFilterPlaylist(t1);
-      }
-    });
+    validationError.setVisible(false);
 
     new TableOverviewDragDropHandler(this, tableView, loaderStack);
 
@@ -1935,22 +1843,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
   }
 
-  public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
-    public PlaylistBackgroundImageListCell() {
-    }
-
-    protected void updateItem(PlaylistRepresentation item, boolean empty) {
-      super.updateItem(item, empty);
-      setGraphic(null);
-      setText(null);
-      if (item != null) {
-        Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
-        setGraphic(playlistIcon);
-
-        setText(" " + item.toString());
-      }
-    }
-  }
 
   @Override
   public void onKeyEvent(KeyEvent event) {

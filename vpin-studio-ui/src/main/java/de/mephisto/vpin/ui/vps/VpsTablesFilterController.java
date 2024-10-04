@@ -9,6 +9,7 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.fxml.FXML;
@@ -115,7 +116,7 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   }
 
   @Override
-  public Predicate<VpsTableModel> buildPredicate(String searchTerm) {
+  public Predicate<VpsTableModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
     return predicateFactory.buildPredicate(noVPX, searchTerm);
   }

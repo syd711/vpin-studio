@@ -69,6 +69,9 @@
                   </Button>
                </children>
             </StackPane>
+            
+            <ComboBox fx:id="playlistCombo" prefHeight="30.0" prefWidth="200.0" />
+
             <Separator layoutX="394.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
             
             <Button fx:id="uploadBtn" mnemonicParsing="false" onAction="#onUpload" text="Upload" textFill="WHITE">
