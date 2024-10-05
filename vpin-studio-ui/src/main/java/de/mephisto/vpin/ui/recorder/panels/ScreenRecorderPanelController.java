@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.recorder.panels;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.recorder.RecordMode;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
@@ -47,6 +48,12 @@ public class ScreenRecorderPanelController implements Initializable {
   private Label screenName;
 
   @FXML
+  private Label previewTitle;
+
+  @FXML
+  private Label previewLabel;
+
+  @FXML
   private CheckBox enabledCheckbox;
 
   @FXML
@@ -81,8 +88,17 @@ public class ScreenRecorderPanelController implements Initializable {
     }
 
     recordModeComboBox.setValue(option.getRecordMode());
-    enabledCheckbox.setSelected(option.isEnabled());
+    recordModeComboBox.valueProperty().addListener(new ChangeListener<RecordMode>() {
+      @Override
+      public void changed(ObservableValue<? extends RecordMode> observable, RecordMode oldValue, RecordMode newValue) {
+        RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+        option2.setRecordMode(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+      }
+    });
 
+    enabledCheckbox.setSelected(option.isEnabled());
     enabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -91,6 +107,7 @@ public class ScreenRecorderPanelController implements Initializable {
         option.setEnabled(newValue);
 
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+        recorderController.refreshSelection();
         refresh();
       }
     });
@@ -114,6 +131,8 @@ public class ScreenRecorderPanelController implements Initializable {
   }
 
   public void refresh() {
+    previewTitle.setText("Screen Preview (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
+
     preview.setVisible(Studio.stage.widthProperty().intValue() > 1500);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
@@ -129,13 +148,13 @@ public class ScreenRecorderPanelController implements Initializable {
     if (preview.isVisible()) {
       double w = preview.widthProperty().get();
       double h = preview.heightProperty().get();
-      if (h > 350) {
-        h = 350;
+      if (h > 300) {
+        h = 300;
         w = h * 16 / 9;
       }
 
-      if (w > 600) {
-        w = 600;
+      if (w > 500) {
+        w = 500;
         h = w * 9 / 16;
       }
 
@@ -150,11 +169,16 @@ public class ScreenRecorderPanelController implements Initializable {
       imageView.setFitHeight(height);
 
       imageView.setVisible(option.isEnabled());
+      previewLabel.setVisible(!option.isEnabled());
       if (option.isEnabled()) {
         if (imageCached == null) {
           imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/preview/" + recordingScreen.getScreen().name());
         }
         imageView.setImage(imageCached);
+      }
+      else {
+        previewLabel.setText("Recording not enabled");
+        previewLabel.setStyle(WidgetFactory.MEDIA_CONTAINER_LABEL);
       }
     }
   }
@@ -162,5 +186,7 @@ public class ScreenRecorderPanelController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     preview.managedProperty().bindBidirectional(preview.visibleProperty());
+    previewLabel.managedProperty().bindBidirectional(previewLabel.visibleProperty());
+    imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
   }
 }

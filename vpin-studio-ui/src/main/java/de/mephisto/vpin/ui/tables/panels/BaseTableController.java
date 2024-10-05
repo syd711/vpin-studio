@@ -161,8 +161,12 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     if (this.filteredModels != null) {
       this.filteredModels.setPredicate(filterController.buildPredicate());
       // update data count
-      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
+      applyTableCount();
     }
+  }
+
+  protected void applyTableCount() {
+    labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
   }
 
   public void startReload(String message) {

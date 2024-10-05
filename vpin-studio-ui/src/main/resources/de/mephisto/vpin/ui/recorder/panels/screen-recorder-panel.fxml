@@ -12,6 +12,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
@@ -71,17 +72,22 @@
          <center>
             <BorderPane fx:id="preview" BorderPane.alignment="CENTER">
                <center>
-                  <BorderPane styleClass="media-container">
-                     <center>
-                        <ImageView fx:id="imageView" fitHeight="120.0" fitWidth="214.0" pickOnBounds="true" preserveRatio="true" styleClass="media-container" />
-                     </center>
-                     <padding>
-                        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
-                     </padding>
-                     <top>
-                        <Label styleClass="default-text" text="Screen Preview" BorderPane.alignment="CENTER" />
-                     </top>
-                  </BorderPane>
+                  <StackPane>
+                     <children>
+                        <BorderPane styleClass="media-container">
+                           <center>
+                              <ImageView fx:id="imageView" fitHeight="120.0" fitWidth="214.0" pickOnBounds="true" preserveRatio="true" styleClass="media-container" />
+                           </center>
+                           <padding>
+                              <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+                           </padding>
+                           <top>
+                              <Label fx:id="previewTitle" styleClass="default-text" text="Screen Preview" BorderPane.alignment="CENTER" />
+                           </top>
+                        </BorderPane>
+                        <Label fx:id="previewLabel" text="Label" />
+                     </children>
+                  </StackPane>
                </center>
                <BorderPane.margin>
                   <Insets bottom="6.0" left="6.0" right="6.0" top="6.0" />

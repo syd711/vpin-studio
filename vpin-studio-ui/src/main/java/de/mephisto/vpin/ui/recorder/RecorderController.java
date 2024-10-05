@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
@@ -26,6 +27,7 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -58,6 +60,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   public static final int DEBOUNCE_MS = 200;
 
   @FXML
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnSelection;
+
+  @FXML
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
   @FXML
@@ -74,6 +79,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
+
+  @FXML
+  private CheckBox selectAllCheckbox;
 
   @FXML
   private StackPane loaderStack;
@@ -110,6 +118,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private Thread screenRefresher;
   private boolean active = false;
+
+  private List<GameRepresentation> selection = new ArrayList<>();
 
   // Add a public no-args constructor
   public RecorderController() {
@@ -365,6 +375,25 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       return label;
     }, true);
 
+    BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
+      CheckBox columnCheckbox = new CheckBox();
+      columnCheckbox.setUserData(value);
+      columnCheckbox.setSelected(selection.contains(value));
+      columnCheckbox.getStyleClass().add("default-text");
+      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          if (!newValue) {
+            selection.remove(value);
+          }
+          else if (!selection.contains(value)) {
+            selection.add(value);
+          }
+          refreshSelection();
+        }
+      });
+      return columnCheckbox;
+    }, true);
     BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
       TableOverviewController overviewController = tablesController.getTableOverviewController();
       TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.PlayField);
@@ -414,6 +443,48 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
       }, 300);
     });
+
+    selectAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+          selection.clear();
+        }
+        else {
+          selection.clear();
+
+          ObservableList<GameRepresentationModel> items = tableView.getItems();
+          selection.addAll(items.stream().map(GameRepresentationModel::getGame).collect(Collectors.toList()));
+        }
+        refreshSelection();
+      }
+    });
+
+    this.recordBtn.setDisable(true);
+    this.stopBtn.setDisable(true);
+    labelCount.setText("No tables selected");
+  }
+
+  @Override
+  protected void applyTableCount() {
+    //ignore
+  }
+
+  public void refreshSelection() {
+    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    boolean hasEnabledRecording = settings.getRecordingScreenOptions().stream().anyMatch(RecordingScreenOptions::isEnabled);
+
+    this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
+    labelCount.setText("No tables selected");
+    if (!this.selection.isEmpty()) {
+      if (this.selection.size() == 1) {
+        labelCount.setText(this.selection.size() + " table selected");
+      }
+      else {
+        labelCount.setText(this.selection.size() + " tables selected");
+      }
+    }
+    tableView.refresh();
   }
 
   private void refreshScreens() {
