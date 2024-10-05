@@ -3,21 +3,22 @@ package de.mephisto.vpin.ui.recorder;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
-import de.mephisto.vpin.ui.WaitOverlay;
+import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
@@ -27,19 +28,22 @@ import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
@@ -81,16 +85,46 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private BorderPane root;
 
   @FXML
+  private VBox recordingOptions;
+
+  @FXML
+  private Button stopBtn;
+
+  @FXML
+  private Button recordBtn;
+
+  @FXML
   private Button reloadBtn;
 
+  @FXML
+  private Spinner<Integer> refreshInterval;
+
+  private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
 
   private List<Integer> ignoredEmulators = null;
 
   private GameEmulatorChangeListener gameEmulatorChangeListener;
 
+  private TablesController tablesController;
+  private ScreenSizeChangeListener screenSizeChangeListener;
+
+  private Thread screenRefresher;
+  private boolean active = false;
+
   // Add a public no-args constructor
   public RecorderController() {
   }
+
+  @FXML
+  private void onStop() {
+
+  }
+
+  @FXML
+  private void onRecord() {
+
+  }
+
 
   @FXML
   private void onReload() {
@@ -105,9 +139,16 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     this.doReload();
   }
 
+  @FXML
+  private void onVideoSettings() {
+
+  }
+
   public void doReload() {
     client.getGameService().clearCache();
     doReload(true);
+
+    refreshScreens();
   }
 
   @FXML
@@ -232,11 +273,48 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     this.tablesController = tablesController;
   }
 
-
   @Override
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
     refreshEmulators();
+
+    if (tableView.getItems().isEmpty()) {
+      doReload();
+    }
+
+    Studio.stage.widthProperty().addListener(screenSizeChangeListener);
+    Studio.stage.heightProperty().addListener(screenSizeChangeListener);
+
+    Platform.runLater(() -> {
+      refreshScreens();
+    });
+
+    this.active = true;
+    screenRefresher = new Thread(() -> {
+      try {
+        LOG.info("Launched preview refresh thread.");
+        while (active) {
+          invalidateScreens();
+          RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          Thread.sleep(recorderSettings.getRefreshInterval() * 1000);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error in screen refresh thread: " + e.getMessage(), e);
+      }
+      finally {
+        LOG.info("Exited preview refresh thread.");
+      }
+    });
+    screenRefresher.start();
+  }
+
+  @Override
+  public void onViewDeactivated() {
+    Studio.stage.widthProperty().removeListener(screenSizeChangeListener);
+    Studio.stage.heightProperty().removeListener(screenSizeChangeListener);
+
+    this.active = false;
   }
 
   @Override
@@ -259,6 +337,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("table", "tables", new RecorderColumnSorter(this));
+    recordingOptions.setFillWidth(true);
 
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     this.ignoredEmulators = uiSettings.getIgnoredEmulatorIds();
@@ -287,20 +366,75 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }, true);
 
     BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
-      //TODO
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.PlayField);
     }), true);
     BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass, event -> {
-      //TODO
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.BackGlass);
     }), true);
     BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD, event -> {
-      //TODO
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.DMD);
     }), true);
     BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper, event -> {
-      //TODO
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.Topper);
     }), true);
     BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu, event -> {
-      //TODO
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.Menu);
     }), true);
+
+
+    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
+    for (RecordingScreen recordingScreen : recordingScreens) {
+      try {
+        FXMLLoader loader = new FXMLLoader(ScreenRecorderPanelController.class.getResource("screen-recorder-panel.fxml"));
+        Parent panelRoot = loader.load();
+        ScreenRecorderPanelController screenPanelController = loader.getController();
+        screenRecorderPanelControllers.add(screenPanelController);
+        screenPanelController.setData(this, recordingScreen);
+        recordingOptions.getChildren().add(panelRoot);
+      }
+      catch (IOException e) {
+        LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
+      }
+    }
+
+    screenSizeChangeListener = new ScreenSizeChangeListener();
+
+    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, settings.getRefreshInterval());
+    refreshInterval.setValueFactory(factory);
+    refreshInterval.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("refresh", () -> {
+        refreshScreens();
+        settings.setRefreshInterval(newValue.intValue());
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+      }, 300);
+    });
+  }
+
+  private void refreshScreens() {
+    for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
+      screenRecorderPanelController.refresh();
+    }
+  }
+
+  private void invalidateScreens() {
+    for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
+      screenRecorderPanelController.invalidate();
+    }
+    refreshScreens();
+  }
+
+
+  class ScreenSizeChangeListener implements ChangeListener<Number> {
+    @Override
+    public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+      refreshScreens();
+    }
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {

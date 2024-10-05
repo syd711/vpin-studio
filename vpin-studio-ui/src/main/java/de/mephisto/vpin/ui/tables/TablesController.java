@@ -122,7 +122,6 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @Override
   public void onViewActivated(NavigationOptions options) {
-    refreshTabSelection(tabPane.getSelectionModel().getSelectedIndex());
     if (options != null) {
       tabPane.getSelectionModel().select(0);
       tableOverviewController.selectGameInModel(options.getGameId());
@@ -152,6 +151,10 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       case 4: {
         PreferencesController.open("vpbm");
+        break;
+      }
+      case 5: {
+        PreferencesController.open("settings_client");
         break;
       }
       default: {
@@ -272,8 +275,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
     }
 
 
-    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
-      refreshTabSelection(t1);
+    tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, oldValue, newValue) -> {
+      refreshTabSelection(oldValue, newValue);
     });
 
     tablesSideBarController.setVisible(true);
@@ -331,9 +334,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
   }
 
 
-  private void refreshTabSelection(Number t1) {
+  private void refreshTabSelection(Number oldValue, Number newValue) {
+    StudioFXController controller = getController(oldValue.intValue());
+    if (controller != null) {
+      controller.onViewDeactivated();
+    }
+
     Platform.runLater(() -> {
-      if (t1.intValue() == TAB_TABLE) {
+      if (newValue.intValue() == TAB_TABLE) {
         tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -341,7 +349,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == TAB_BACKGLASS) {
+      else if (newValue.intValue() == TAB_BACKGLASS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -349,7 +357,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (t1.intValue() == TAB_VPS) {
+      else if (newValue.intValue() == TAB_VPS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
@@ -357,7 +365,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == TAB_STATISTICS) {
+      else if (newValue.intValue() == TAB_STATISTICS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -365,7 +373,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (t1.intValue() == TAB_REPOSITORY) {
+      else if (newValue.intValue() == TAB_REPOSITORY) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
@@ -373,11 +381,12 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (t1.intValue() == TAB_RECORDER) {
+      else if (newValue.intValue() == TAB_RECORDER) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
-        alxController.onViewActivated(null);
+        recorderController.setTablesController(this);
+        recorderController.onViewActivated(null);
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
@@ -537,15 +546,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
       return;
     }
 
-    StudioFXController activeController = getActiveController();
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    StudioFXController activeController = getController(selectedIndex);
     if (activeController != null) {
       activeController.onKeyEvent(ke);
     }
   }
 
-  private StudioFXController getActiveController() {
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    switch (selectedIndex) {
+  private StudioFXController getController(int index) {
+    switch (index) {
       case 0: {
         return tableOverviewController;
       }
@@ -557,6 +566,9 @@ public class TablesController implements Initializable, StudioFXController, Stud
       }
       case 4: {
         return repositoryController;
+      }
+      case 5: {
+        return recorderController;
       }
     }
     return null;

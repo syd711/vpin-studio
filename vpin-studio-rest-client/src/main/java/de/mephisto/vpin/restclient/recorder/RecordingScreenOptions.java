@@ -4,6 +4,15 @@ public class RecordingScreenOptions {
   private String displayName;
   private int recordingDuration;
   private RecordMode recordMode;
+  private boolean enabled = true;
+
+  public boolean isEnabled() {
+    return enabled;
+  }
+
+  public void setEnabled(boolean enabled) {
+    this.enabled = enabled;
+  }
 
   public String getDisplayName() {
     return displayName;

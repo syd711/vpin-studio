@@ -3,6 +3,8 @@ package de.mephisto.vpin.restclient.recorder;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
+import java.util.Objects;
+
 public class RecordingScreen {
   private VPinScreen screen;
   private FrontendPlayerDisplay display;
@@ -21,5 +23,23 @@ public class RecordingScreen {
 
   public void setDisplay(FrontendPlayerDisplay display) {
     this.display = display;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+    RecordingScreen that = (RecordingScreen) object;
+    return screen == that.screen && Objects.equals(display, that.display);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(screen, display);
+  }
+
+  @Override
+  public String toString() {
+    return "Recording Screen '" + screen.name() + "'";
   }
 }

@@ -60,7 +60,8 @@ public class ImageUtil {
     }
     try {
       return ImageIO.read(file);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to read " + file.getAbsolutePath() + ": " + e.getMessage(), e);
       throw e;
     }
@@ -198,7 +199,7 @@ public class ImageUtil {
     return out.toByteArray();
   }
 
-  private static void writeJPG(BufferedImage image, File file) throws IOException {
+  public static void writeJPG(BufferedImage image, File file) throws IOException {
     FileOutputStream fileOutputStream = null;
     try {
       long writeDuration = System.currentTimeMillis();
@@ -208,10 +209,20 @@ public class ImageUtil {
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
       LOG.info("Writing \"" + file.getAbsolutePath() + "\" took " + duration + "ms.");
-    } finally {
+    }
+    finally {
       if (fileOutputStream != null) {
         fileOutputStream.close();
       }
+    }
+  }
+
+  public static void writeJPG(BufferedImage image, OutputStream out) throws IOException {
+    try {
+      ImageIO.write(image, "JPG", out);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to stream image: " + e.getMessage(), e);
     }
   }
 
@@ -225,7 +236,8 @@ public class ImageUtil {
       imageOutputStream.close();
       long duration = System.currentTimeMillis() - writeDuration;
       LOG.info("Writing " + file.getAbsolutePath() + " took " + duration + "ms.");
-    } finally {
+    }
+    finally {
       if (fileOutputStream != null) {
         fileOutputStream.close();
       }

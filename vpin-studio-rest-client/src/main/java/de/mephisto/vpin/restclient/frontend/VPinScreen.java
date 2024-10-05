@@ -53,6 +53,12 @@ public enum VPinScreen {
     if (Topper.name().equalsIgnoreCase(name)) {
       return Topper;
     }
+    if (DMD.name().equalsIgnoreCase(name)) {
+      return DMD;
+    }
+    if (PlayField.name().equalsIgnoreCase(name)) {
+      return PlayField;
+    }
     return null;
   }
 
