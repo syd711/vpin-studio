@@ -879,7 +879,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return;
       }
 
-      setItems(data);      
+      tableView.getSelectionModel().getSelectedItems().removeListener(this);
+      setItems(data);
       refreshFilters();
 
       if (selection != null) {
@@ -913,6 +914,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       tableView.requestFocus();
 
+      tableView.getSelectionModel().getSelectedItems().addListener(this);
       if (selectedItem == null) {
         tableView.getSelectionModel().select(0);
       }
@@ -1337,9 +1339,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
-    tableView.getSelectionModel().getSelectedItems().addListener(this);
-    //tableView.setSortPolicy(tableView -> tableOverviewColumnSorter.sort(tableView));
-
     tableView.setRowFactory(
         tableView -> {
           final TableRow<GameRepresentationModel> row = new TableRow<>();
@@ -1471,7 +1470,15 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
   }
 
-  private void refreshView(Optional<GameRepresentation> g) {
+  /**
+   * //TODO
+   * The synchronized is a cheap workaround here to fix a possible client deadlock.
+   * When the client is loaded the first time, the selection is toggled twice and the media for the first
+   * selection is fetched twice in asynchronously. This seems to result in a deadlock for some users, so we try to avoid this here.
+   *
+   * @param g
+   */
+  private synchronized void refreshView(Optional<GameRepresentation> g) {
     dismissBtn.setVisible(true);
 
     validationError.setVisible(false);

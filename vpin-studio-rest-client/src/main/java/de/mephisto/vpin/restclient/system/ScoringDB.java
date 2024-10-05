@@ -14,6 +14,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 public class ScoringDB {
   private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
@@ -102,6 +103,8 @@ public class ScoringDB {
 
   private String pinemhiVersion;
 
+  private List<Map<String,Object>> highscoreTextParsers = new ArrayList<>();
+
   private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();
 
   private List<String> supportedNvRams = new ArrayList<>();
@@ -134,6 +137,15 @@ public class ScoringDB {
 
   public void setPinemhiVersion(String pinemhiVersion) {
     this.pinemhiVersion = pinemhiVersion;
+  }
+
+
+  public List<Map<String, Object>> getHighscoreTextParsers() {
+    return highscoreTextParsers;
+  }
+
+  public void setHighscoreTextParsers(List<Map<String, Object>> highscoreTextParsers) {
+    this.highscoreTextParsers = highscoreTextParsers;
   }
 
   public void setIgnoredVPRegEntries(List<String> ignoredVPRegEntries) {

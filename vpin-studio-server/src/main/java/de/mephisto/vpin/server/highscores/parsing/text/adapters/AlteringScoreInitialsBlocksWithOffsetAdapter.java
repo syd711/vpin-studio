@@ -26,36 +26,65 @@ import java.util.List;
  * 50000000
  * 1
  * 1
- *
+ * <p>
  * BountyHunter.txt
  */
 public class AlteringScoreInitialsBlocksWithOffsetAdapter extends ScoreTextFileAdapterImpl {
 
   private int lineCount;
-  private String name;
+  private List<String> fileNames;
 
-  private final int start;
-  private final int size;
-  private final int offset;
+  private int start;
+  private int size;
+  private int offset;
 
-  public AlteringScoreInitialsBlocksWithOffsetAdapter(int lineCount, int start, int size, int offset) {
-    this.lineCount = lineCount;
-    this.start = start;
-    this.size = size;
-    this.offset = offset;
+  public AlteringScoreInitialsBlocksWithOffsetAdapter() {
   }
 
-  public AlteringScoreInitialsBlocksWithOffsetAdapter(String name, int start, int size, int offset) {
-    this.name = name;
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
+  }
+
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
     this.start = start;
+  }
+
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
     this.size = size;
+  }
+
+  public int getOffset() {
+    return offset;
+  }
+
+  public void setOffset(int offset) {
     this.offset = offset;
   }
 
   @Override
   public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
-    if (name != null) {
-      return file.getName().equals(name);
+    if (fileNames != null) {
+      return fileNames.contains(file.getName());
     }
     return lines.size() == lineCount;
   }
@@ -87,7 +116,7 @@ public class AlteringScoreInitialsBlocksWithOffsetAdapter extends ScoreTextFileA
       if (i >= start && i < start + size) {
         line = "0";
       }
-      else if (i >= start + size + offset && i < (start + size +size + offset)) {
+      else if (i >= start + size + offset && i < (start + size + size + offset)) {
         line = "???";
       }
       newScoreText.add(line);

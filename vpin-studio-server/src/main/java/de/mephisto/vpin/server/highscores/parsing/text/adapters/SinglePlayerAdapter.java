@@ -1,32 +1,41 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SinglePlayerScoreAdapter extends ScoreTextFileAdapterImpl {
+public class SinglePlayerAdapter extends ScoreTextFileAdapterImpl {
 
-  private String name;
+  private List<String> fileNames;
   private int scoreLine;
 
-  public SinglePlayerScoreAdapter(String name, int scoreLine) {
-    this.name = name;
-    this.scoreLine = scoreLine;
+  public SinglePlayerAdapter() {
+
   }
 
-  public SinglePlayerScoreAdapter() {
+  public List<String> getFileNames() {
+    return fileNames;
+  }
 
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getScoreLine() {
+    return scoreLine;
+  }
+
+  public void setScoreLine(int scoreLine) {
+    this.scoreLine = scoreLine;
   }
 
   @Override
   public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
-    if (name != null) {
-      return file.getName().equals(name);
+    if (fileNames != null) {
+      return fileNames.contains(file.getName()) || file.getName().toLowerCase().endsWith("postit.txt");
     }
     return lines.size() == 1;
   }

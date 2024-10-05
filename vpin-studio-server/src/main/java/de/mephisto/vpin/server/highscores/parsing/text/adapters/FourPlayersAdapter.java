@@ -7,23 +7,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FourPlayersAdapter implements ScoreTextFileAdapter {
-  private String name;
+  private List<String> fileNames;
   private int start = 1;
 
   private int lineCount;
 
-  public FourPlayersAdapter(int start) {
+  public FourPlayersAdapter() {
+  }
+
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
     this.start = start;
   }
 
-  public FourPlayersAdapter(String name, int start) {
-    this.name = name;
-    this.start = start;
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
   }
 
   @Override
   public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
-    if (file.getName().equals(name)) {
+    if (fileNames != null && fileNames.contains(file.getName())) {
       return true;
     }
     return lines.size() == lineCount;

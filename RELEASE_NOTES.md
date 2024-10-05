@@ -1,6 +1,16 @@
-## Release Notes 3.7.0
+## Release Notes 3.7.1
 
-## Changes
+## Bugfixes
+
+- **Highscore Parsing**: Refactored text parsers and moved all parsing information into the **scoringdb.json** file which is updated on every server startup. This way, all text file based highscores can now be updated without a separate Studio update.
+- **Table Overview**: Fixed initial selection. Because the initial selection is done multiple times (the first row of the table), this resulted into a client crash for some users.
+- **Table Overview**: Added sorting for the "Launcher" column.
+- **VPin Mania** Fixed broken table based highscore synchronization where no VPin Mania account was found.
+
+
+### Release Notes 3.7.0
+
+### Changes
 
 - **Refactored Game Media Access**: For performance optimization, the media access has been refactored widely. As a result, the table (re)load should be noticeable faster. 
 - **Table Validators**: Introduced new validator **VPinMAME ROM Validation**. The validator uses the results from the VPinMAME ROM tester to indicate possibly broken ROM files. The new validator is enabled by default.
@@ -39,7 +49,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/backglass-manager-assets.png" width="500" />
 
-## Bugfixes
+### Bugfixes
   
 - **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
 - **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
@@ -55,7 +65,7 @@
 - **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
 - **Drop-In Menu**: Fixed file lock and refresh issues.
 
-## VPin Mania 
+### VPin Mania 
 
 - **Player Ranking**: Added pagination to the players view, so the list is not limited to 100 anymore.
 - **Navigation**: Fixed several navigation issues.

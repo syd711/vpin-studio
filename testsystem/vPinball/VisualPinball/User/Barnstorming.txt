@@ -1,0 +1,13 @@
+0
+Credits=0
+6895
+6000
+5000
+4000
+3000
+DAD
+BTN
+AOG
+RRC
+NMO
+Flipper Config=1

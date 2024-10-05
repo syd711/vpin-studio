@@ -32,14 +32,16 @@ public class HighscoreToRawTest {
     File folder = new File("../testsystem/vPinball/VisualPinball/User/");
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt") && !FilenameUtils.getBaseName(name).endsWith("LUT"));
     int count = 0;
+
+    TextHighscoreAdapters ad = new TextHighscoreAdapters();
+    ad.loadParsers(scoringDB);
     for (File entry : files) {
       if (scoringDB.getIgnoredTextFiles().contains(entry.getName())) {
         continue;
       }
 
       System.out.println("Reading '" + entry.getName() + "'");
-      String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
-
+      String raw = ad.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
       System.out.println(raw);
 
       assertNotNull(raw);
@@ -55,6 +57,9 @@ public class HighscoreToRawTest {
   @Test
   public void testResetting() {
     ScoringDB scoringDB = ScoringDB.load();
+    TextHighscoreAdapters ad = new TextHighscoreAdapters();
+    ad.loadParsers(scoringDB);
+
     File folder = new File("../testsystem/vPinball/VisualPinball/User/");
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".txt") && !FilenameUtils.getBaseName(name).endsWith("LUT"));
     int count = 0;
@@ -69,6 +74,7 @@ public class HighscoreToRawTest {
         File resetFile = new File(entry.getParentFile(), entry.getName() + ".reset");
         if(!resetFile.exists()) {
           System.out.println("No reset file found for " + resetFile.getAbsolutePath());
+          continue;
         }
         assertTrue(resetFile.exists());
         String resettedTemplate = FileUtils.readFileToString(resetFile, StandardCharsets.UTF_8.name());
@@ -104,9 +110,11 @@ public class HighscoreToRawTest {
   @Test
   public void testSingle() {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "Cabaret.txt");
+    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "4Queens70.txt");
     System.out.println("Reading '" + entry.getName() + "'");
-    String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
+    TextHighscoreAdapters ad = new TextHighscoreAdapters();
+    ad.loadParsers(scoringDB);
+    String raw = ad.convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
     System.out.println(raw);
 
