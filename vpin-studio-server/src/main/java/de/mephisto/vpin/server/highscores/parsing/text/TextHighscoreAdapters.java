@@ -50,6 +50,7 @@ public class TextHighscoreAdapters implements InitializingBean {
     adapters.add(new SinglePlayerScoreAdapter("aztec.txt", 1));
     adapters.add(new FourPlayersAdapter("GetSmart.txt", 1));
     adapters.add(new ThreePlayersAdapter("Jackpot.txt", 2));
+    adapters.add(new ThreePlayersAdapter("Cabaret.txt", 2));
     adapters.add(new AlteringScoreInitialsBlocksAdapter("TeachersPet_65VPX.txt", 6, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(33, 0, 5));
     adapters.add(new AlteringScoreInitialsBlocksAdapter(32, 0, 5));

@@ -104,7 +104,7 @@ public class HighscoreToRawTest {
   @Test
   public void testSingle() {
     ScoringDB scoringDB = ScoringDB.load();
-    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "TeachersPet_65VPX.txt");
+    File entry = new File("../testsystem/vPinball/VisualPinball/User/", "Cabaret.txt");
     System.out.println("Reading '" + entry.getName() + "'");
     String raw = new TextHighscoreAdapters().convertTextFileTextToMachineReadable(new HighscoreMetadata(), scoringDB, entry);
 
