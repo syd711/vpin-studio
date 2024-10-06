@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -341,7 +342,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     if (tableData.isBackgroundAvailable()) {
       InputStream in = null;
       try {
-        in =  client.getBackglassServiceClient().getDirectB2sBackground(tableData);
+        in = client.getBackglassServiceClient().getDirectB2sBackground(tableData);
         Image img = new Image(in);
         if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
           PixelReader reader = img.getPixelReader();
@@ -354,7 +355,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
       }
       finally {
-        if(in != null) {
+        if (in != null) {
           try {
             in.close();
           }
@@ -398,7 +399,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     FrontendMediaRepresentation medias = client.getGameMediaService().getGameMedia(game.getId());
     boolean append = false;
-    if (!medias.getMediaItems(screen).isEmpty()) {
+
+    Optional<FrontendMediaItemRepresentation> existingImage = medias.getMediaItems(screen).stream().filter(m -> m.getMimeType().contains("image")).findAny();
+    if (existingImage.isPresent()) {
       Optional<ButtonType> buttonType = WidgetFactory.showConfirmationWithOption(Studio.stage, "Replace " + screenName + " Media ?",
           "A " + screenName + " media asset already exists.",
           "Append new asset or overwrite existing asset?", "Overwrite", "Append");
