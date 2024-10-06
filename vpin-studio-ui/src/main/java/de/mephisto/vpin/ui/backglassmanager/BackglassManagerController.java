@@ -35,6 +35,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
@@ -65,7 +66,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -255,8 +255,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private DirectB2ServerSettings serverSettings;
   private FileDragEventHandler fileDragEventHandler;
 
-  private List<DirectB2S> loadedData;
-
   @FXML
   private void onUpload(ActionEvent e) {
     if (game != null) {
@@ -279,10 +277,16 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void refreshBackglass(DirectB2S directB2s) {
     if (directB2s != null) {
       try {
-        DirectB2SModel selection = getModel(directB2s);
-        if (selection != null) {
-          selection.reload();
-          refresh(selection.getBacklass());
+        DirectB2SModel model = getModel(directB2s);
+        if (model != null) {
+          model.setBean(directB2s);
+          model.reload();
+
+          // refresh views too if the directB2s is selected
+          DirectB2S selected = getSelection();
+          if (selected != null && model.sameBean(selected)) {
+            refresh(model.getBacklass());
+          }
         }
       }
       catch (Exception ex) {
@@ -332,9 +336,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onBackglassUseAsMedia() {
     if (tableData.isBackgroundAvailable()) {
-      InputStream in = null;
-      try {
-        in = client.getBackglassServiceClient().getDirectB2sBackground(tableData);
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sBackground(tableData)) {
         Image img = new Image(in);
         if (tableData.getGrillHeight() > 0 && tableSettings != null && tableSettings.getHideGrill() == 1) {
           PixelReader reader = img.getPixelReader();
@@ -346,40 +348,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       catch (IOException ioe) {
         LOG.error("Cannot download backglass and set as backglass media image for game " + tableData.getGameId(), ioe);
       }
-      finally {
-        if (in != null) {
-          try {
-            in.close();
-          }
-          catch (IOException e) {
-            //ignore
-          }
-        }
-      }
     }
   }
 
   @FXML
   private void onDMDUseAsMedia() {
     if (tableData.isDmdImageAvailable()) {
-      InputStream in = null;
-      try {
-        in = client.getBackglassServiceClient().getDirectB2sDmd(tableData);
+      try (InputStream in = client.getBackglassServiceClient().getDirectB2sDmd(tableData)) {
         Image img = new Image(in);
         uploadImageAsMedia(VPinScreen.Menu, "DMD", img);
       }
       catch (IOException ioe) {
         LOG.error("Cannot download DMD and set as DMD media image for game " + tableData.getGameId(), ioe);
-      }
-      finally {
-        if (in != null) {
-          try {
-            in.close();
-          }
-          catch (IOException e) {
-            //ignore
-          }
-        }
       }
     }
   }
@@ -481,11 +461,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   @FXML
-  private void onRename(ActionEvent e) {
-    DirectB2S selectedItem = getSelection();
-    if (selectedItem != null) {
-      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      String newName = WidgetFactory.showInputDialog(stage, "Rename Backglass", "Enter new name for backglass file \"" + selectedItem.getFileName() + "\"", null, null, selectedItem.getName());
+  protected void onRename(Event e) {
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      String newName = WidgetFactory.showInputDialog(Studio.stage, "Rename Backglass", "Enter new name for backglass file \"" + selection.getFileName() + "\"", null, null, selection.getName());
       if (newName != null) {
         if (!FileUtils.isValidFilename(newName)) {
           WidgetFactory.showAlert(stage, "Invalid Filename", "The specified file name contains invalid characters.");
@@ -496,64 +476,74 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           if (!newName.endsWith(".directb2s")) {
             newName = newName + ".directb2s";
           }
-          client.getBackglassServiceClient().renameBackglass(selectedItem, newName);
+          DirectB2S b2s = client.getBackglassServiceClient().renameBackglass(selection.getBacklass(), newName);
+          if (b2s != null) {
+            selection.setBean(b2s);
+            selection.reload();
+
+            applyFilter();
+
+            // then notify changes
+            if (game != null) {
+              EventManager.getInstance().notifyTableChange(game.getId(), null);
+            }
+          }
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
         }
-        onReload();
       }
     }
   }
 
   @FXML
   private void onDuplicate(ActionEvent e) {
-    DirectB2S selectedItem = getSelection();
-    if (selectedItem != null) {
-      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Duplicate Backglass", "Duplicate backglass file \"" + selectedItem.getFileName() + "\"?", null, "Duplicate");
+    DirectB2SModel selection = getSelectedModel();
+    if (selection != null) {
+      //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Duplicate Backglass", "Duplicate backglass file \"" + selection.getFileName() + "\"?", null, "Duplicate");
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         try {
-          client.getBackglassServiceClient().duplicateBackglass(selectedItem);
+          DirectB2S b2s = client.getBackglassServiceClient().duplicateBackglass(selection.getBacklass());
+          if (b2s != null) {
+            int idx = models.indexOf(selection);
+            models.add(idx + 1, toModel(b2s));
+
+            applyFilter();
+          }
         }
         catch (Exception ex) {
           WidgetFactory.showAlert(Studio.stage, "Error", "Failed to dupliate backglass: " + ex.getMessage());
         }
-        onReload();
       }
     }
   }
 
-  @FXML
-  private void onDelete(ActionEvent e) {
+  @Override
+  protected void onDelete(Event e) {
     try {
-      DirectB2S selectedItem = getSelection();
-      if (selectedItem != null) {
-        Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-        Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Backglass", "Delete backglass file \"" + selectedItem.getFileName() + "\"?", null, "Delete");
+      DirectB2SModel selection = getSelectedModel();
+      if (selection != null) {
+        //Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+        Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete Backglass", "Delete backglass file \"" + selection.getFileName() + "\"?", null, "Delete");
         if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-          client.getBackglassServiceClient().deleteBackglass(selectedItem);
-          if (game != null) {
-            EventManager.getInstance().notifyTableChange(game.getId(), null);
-          }
+          if (client.getBackglassServiceClient().deleteBackglass(selection.getBacklass())) {
+            // remove from the list if successfully deleted
+            models.remove(selection);
+            
+            applyFilter();
 
-          clearSelection();
-          loadedData.remove(selectedItem);
-          setItems(loadedData);
+            // then notify changes
+            if (game != null) {
+              EventManager.getInstance().notifyTableChange(game.getId(), null);
+            }
+          }
         }
       }
     }
     catch (Exception ex) {
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to delete backglass file: " + ex.getMessage());
     }
-  }
-
-  @FXML
-  private void onReload() {
-    this.refreshing = true;
-    client.getBackglassServiceClient().clearCache();
-
-    doReload();
   }
 
   @FXML
@@ -565,12 +555,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
   }
 
+  @FXML
+  private void onReload() {
+    client.getBackglassServiceClient().clearCache();
+    doReload();
+  }
+
   public void doReload() {
     startReload("Loading Backglasses...");
 
     JFXFuture.supplyAsync(() -> {
-      loadedData = new ArrayList<>(client.getBackglassServiceClient().getBackglasses());
-      return loadedData;
+      return client.getBackglassServiceClient().getBackglasses();
     }).thenAcceptLater(data -> {
       setItems(data);
       endReload();
@@ -861,7 +856,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     return ratio < 3.0;
   }
 
-  private JFXFuture<Void> refresh(@Nullable DirectB2S newValue) {
+  private void refresh(@Nullable DirectB2S newValue) {
     if (newValue != null) {
       fileDragEventHandler.setDisabled(false);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
@@ -924,6 +919,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     bulbsLabel.setDisable(disable);
     usedLEDType.setDisable(disable);
 
+    this.refreshing = false;
+
     game = null;
     tableSettings = null;
 
@@ -931,7 +928,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       thumbnailImagePane.setCenter(new ProgressIndicator());
       dmdThumbnailImagePane.setCenter(new ProgressIndicator());
 
-      return JFXFuture.runAsync(() -> {
+      JFXFuture.runAsync(() -> {
         try {
           this.tableData = client.getBackglassServiceClient().getDirectB2SData(newValue);
           if (this.tableData.getGameId() > 0) {
@@ -948,6 +945,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         loadImages();
 
       }).thenLater(() -> {
+
+        this.refreshing = true;
 
         if (game != null) {
           gameLabel.setText(game.getGameDisplayName());
@@ -1031,11 +1030,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         this.refreshing = false;
       });
     }
-    else {
-      return new JFXFuture<Void>(CompletableFuture.completedFuture(null));
-    }
   }
-
 
   private void loadImages() {
     Image thumbnail = null;
@@ -1162,12 +1157,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         //DirectB2SModel selectedItem = getSelection();
         //if (selectedItem != null) {
         Platform.runLater(() -> {
-          //JFXFuture future = this.refresh(selectedItem.getBacklass());
-          //future.thenLater(() -> {
+          //this.refresh(selectedItem.getBacklass());
           EventManager.getInstance().notifyTableChange(game.getId(), null);
-          //});
         });
-        //}
       }
       catch (Exception e) {
         LOG.error("Failed to save B2STableSettings.xml: " + e.getMessage());
@@ -1201,14 +1193,23 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void reload(GameRepresentation refreshedGame) {
     // tab should have been initiliazed to support reload
     if (refreshedGame != null && models != null) {
-      for (DirectB2SModel model : models) {
-        if (model.getGameId() == refreshedGame.getId()) {
-          model.getBacklass().setFileName(refreshedGame.getGameFileName());
-          model.reload();
+      DirectB2SData b2sdata = client.getBackglassServiceClient().getDirectB2SData(refreshedGame.getId());
+      if (b2sdata != null) {
+        DirectB2S b2s = b2sdata.toDirectB2S();
+        // forced to true as this b2s comes from a game
+        b2s.setVpxAvailable(true);
+
+        DirectB2SModel model = getModel(b2s);
+        if (model != null) {
+          model.setBean(b2s);
         }
+        else {
+          model = toModel(b2s);
+          models.add(model);
+        }
+        // simulate reload as we have data already
+        model.load(b2sdata);
       }
-      // force refresh the view for elements not observed by the table
-      tableView.refresh();
     }
   }
 

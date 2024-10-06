@@ -310,7 +310,7 @@ public class TableOverviewContextMenu {
       MenuItem removeItem = new MenuItem("Delete");
       KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
       removeItem.setAccelerator(removeItemKey);
-      removeItem.setOnAction(actionEvent -> tableOverviewController.onDelete());
+      removeItem.setOnAction(tableOverviewController::onDelete);
       removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
       ctxMenu.getItems().add(removeItem);
 

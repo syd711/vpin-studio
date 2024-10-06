@@ -8,6 +8,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Button;
@@ -71,12 +72,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   protected BaseFilterController<T, M> filterController;
 
-  @FXML
-  private void onClear() {
-    searchTextField.setText("");
-  }
-
-
   //----------------------
   // Key Pressed
 
@@ -114,10 +109,20 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     }
   }
 
+  @FXML
+  protected void onDelete(Event e) {}
+
   protected void registerKeyPressed() {
 
     tableView.setOnKeyPressed(event -> {
       if (Keys.isSpecial(event)) {
+        KeyCode code = event.getCode();
+        switch (code) {
+          case DELETE:
+            //onDelete(event);
+            break;
+          default:
+        }
         return;
       }
 
@@ -149,6 +154,11 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       tableView.getSelectionModel().select(0);
       tableView.requestFocus();
     }
+  }
+
+  @FXML
+  private void onClear() {
+    searchTextField.setText("");
   }
 
   @FXML
@@ -226,8 +236,11 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     return models.stream().map(m -> m.getBean()).collect(Collectors.toList());
   }
 
+  public M getSelectedModel() {
+    return tableView.getSelectionModel().getSelectedItem();
+  }
   public T getSelection() {
-    M selection = tableView.getSelectionModel().getSelectedItem();
+    M selection = getSelectedModel();
     return selection != null ? selection.getBean() : null;
   }
 
