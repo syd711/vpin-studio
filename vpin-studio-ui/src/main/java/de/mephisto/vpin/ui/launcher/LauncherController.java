@@ -489,28 +489,30 @@ public class LauncherController implements Initializable {
   }
 
   public synchronized void stopBroadcastListener() {
-    if (broadcastListenerThread == null) {
-      LOG.info("Broadcast listener not running");
-      return;
-    }
+    new Thread( () -> {
+      if (broadcastListenerThread == null) {
+        LOG.info("Broadcast listener not running");
+        return;
+      }
 
-    shouldListen = false;
+      shouldListen = false;
 
-    try {
-      broadcastListenerThread.join(); // Wait for the listener thread to stop
-    } catch (InterruptedException e) {
-      LOG.error("Failed to stop broadcast listener: {}", e.getMessage(), e);
-    }
+      try {
+        broadcastListenerThread.join(); // Wait for the listener thread to stop
+      } catch (InterruptedException e) {
+        LOG.error("Failed to stop broadcast listener: {}", e.getMessage(), e);
+      }
 
-    // Close the DatagramSocket to release the port
-    if (socket != null && !socket.isClosed()) {
-      socket.close();
-    }
+      // Close the DatagramSocket to release the port
+      if (socket != null && !socket.isClosed()) {
+        socket.close();
+      }
 
-    LOG.info("Broadcast listener stopped");
-    broadcastListenerThread = null;
+      LOG.info("Broadcast listener stopped");
+      broadcastListenerThread = null;
 
-    stopStaleEntriesRemover();
+      stopStaleEntriesRemover();
+    }).start();
   }
 
   private void onBroadcastDataChanged() {
