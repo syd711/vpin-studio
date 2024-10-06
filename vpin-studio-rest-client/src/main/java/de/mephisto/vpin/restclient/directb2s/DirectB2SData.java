@@ -1,6 +1,7 @@
 package de.mephisto.vpin.restclient.directb2s;
 
 import java.util.Date;
+import java.util.Objects;
 
 public class DirectB2SData {
   private String filename;
@@ -180,4 +181,16 @@ public class DirectB2SData {
     return b2s;
   }
 
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+    DirectB2SData that = (DirectB2SData) object;
+    return emulatorId == that.emulatorId && gameId == that.gameId && tableType == that.tableType && numberOfPlayers == that.numberOfPlayers && grillHeight == that.grillHeight && b2sElements == that.b2sElements && filesize == that.filesize && backgroundAvailable == that.backgroundAvailable && dmdImageAvailable == that.dmdImageAvailable && illuminations == that.illuminations && scores == that.scores && Objects.equals(filename, that.filename) && Objects.equals(name, that.name) && Objects.equals(artwork, that.artwork) && Objects.equals(author, that.author) && Objects.equals(modificationDate, that.modificationDate);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(filename, emulatorId, gameId, name, tableType, numberOfPlayers, artwork, author, grillHeight, b2sElements, filesize, modificationDate, backgroundAvailable, dmdImageAvailable, illuminations, scores);
+  }
 }
