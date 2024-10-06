@@ -27,12 +27,7 @@ import de.mephisto.vpin.ui.tables.models.B2SLedType;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
-import de.mephisto.vpin.ui.util.FileDragEventHandler;
-import de.mephisto.vpin.ui.util.JFXFuture;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import de.mephisto.vpin.ui.util.StudioFolderChooser;
-import de.mephisto.vpin.ui.util.SystemUtil;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -52,30 +47,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import javax.annotation.Nullable;
+import javax.imageio.ImageIO;
 import java.awt.image.RenderedImage;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
-
-import javax.annotation.Nullable;
-import javax.imageio.ImageIO;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -264,6 +254,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private GameRepresentation game;
   private DirectB2ServerSettings serverSettings;
   private FileDragEventHandler fileDragEventHandler;
+
+  private List<DirectB2S> loadedData;
 
   @FXML
   private void onUpload(ActionEvent e) {
@@ -544,8 +536,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           if (game != null) {
             EventManager.getInstance().notifyTableChange(game.getId(), null);
           }
+
           clearSelection();
-          onReload();
+          loadedData.remove(selectedItem);
+          setItems(loadedData);
         }
       }
     }
@@ -575,7 +569,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     startReload("Loading Backglasses...");
 
     JFXFuture.supplyAsync(() -> {
-      return client.getBackglassServiceClient().getBackglasses();
+      loadedData = new ArrayList<>(client.getBackglassServiceClient().getBackglasses());
+      return loadedData;
     }).thenAcceptLater(data -> {
       setItems(data);
       endReload();
