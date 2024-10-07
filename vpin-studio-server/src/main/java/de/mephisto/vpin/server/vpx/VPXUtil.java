@@ -33,9 +33,16 @@ public class VPXUtil {
         }
         index++;
       }
-      byte[] scriptData = Arrays.copyOfRange(content, indexes.get(indexes.size() - 2) + 12, indexes.get(indexes.size() - 1));
-      return new String(scriptData);
-    } catch (Exception e) {
+
+      int start = indexes.get(indexes.size() - 2) + 12;
+      int end = indexes.get(indexes.size() - 1);
+      if (start < end) {
+        byte[] scriptData = Arrays.copyOfRange(content, start, end);
+        return new String(scriptData);
+      }
+      return new String(content);
+    }
+    catch (Exception e) {
       return String.valueOf(e.getMessage());
     }
   }
@@ -56,15 +63,18 @@ public class VPXUtil {
         return infoContent;
       }
       return null;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
       throw new Exception("Reading table screenshot failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
-    } finally {
+    }
+    finally {
       try {
         if (fs != null) {
           fs.close();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
@@ -102,15 +112,18 @@ public class VPXUtil {
           result.put(infoEntry, new String(primitive, StandardCharsets.UTF_8));
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
       throw new Exception("Reading table info failed for " + file.getAbsolutePath() + ", cause: " + e.getMessage());
-    } finally {
+    }
+    finally {
       try {
         if (fs != null) {
           fs.close();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
@@ -133,15 +146,18 @@ public class VPXUtil {
       documentInputStream.read(content);
       documentInputStream.close();
 
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
       throw new Exception("Reading script failed for " + file.getAbsolutePath() + " failed: " + e.getMessage());
-    } finally {
+    }
+    finally {
       try {
         if (fs != null) {
           fs.close();
         }
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to close vpx file stream: " + e.getMessage(), e);
       }
     }
@@ -167,7 +183,8 @@ public class VPXUtil {
       if (!keepVbsFile && !vbsFile.delete()) {
         LOG.error("Failed to delete VBS import file " + vbsFile.getAbsolutePath());
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Importing VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
   }
@@ -190,7 +207,8 @@ public class VPXUtil {
         LOG.error("Failed to delete VBS export file " + vbsFile.getAbsolutePath());
       }
       return script;
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Exporting VBS failed for " + vpxFile.getAbsolutePath() + ": " + e.getMessage(), e);
     }
     return vps;
