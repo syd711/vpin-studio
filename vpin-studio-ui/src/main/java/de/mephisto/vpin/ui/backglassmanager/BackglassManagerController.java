@@ -611,130 +611,103 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setHideGrill(t1.getId()));
       }
-      tableSettings.setHideGrill(t1.getId());
-      save();
     });
 
     hideB2SDMD.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setHideB2SDMD(newValue));
       }
-      tableSettings.setHideB2SDMD(newValue);
-      save();
     });
 
     hideB2SBackglass.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setHideB2SBackglass(newValue));
       }
-      tableSettings.setHideB2SBackglass(newValue);
-      save();
     });
 
     hideDMD.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideDMD.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setHideDMD(t1.getId()));
       }
-      tableSettings.setHideDMD(t1.getId());
-      save();
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipLampFrames.setValueFactory(factory);
     skipLampFrames.valueProperty().addListener((observableValue, integer, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        debounceAndSave("skipLampFrames", () -> tableSettings.setLampsSkipFrames(t1));
       }
-      debounceAndSave("skipLampFrames", () -> tableSettings.setLampsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipGIFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        debounceAndSave("skipGIFrames", () -> tableSettings.setGiStringsSkipFrames(t1));
       }
-      debounceAndSave("skipGIFrames", () -> tableSettings.setGiStringsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipSolenoidFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        debounceAndSave("skipSolenoidFrames", () -> tableSettings.setSolenoidsSkipFrames(t1));
       }
-      debounceAndSave("skipSolenoidFrames", () -> tableSettings.setSolenoidsSkipFrames(t1));
     });
 
     factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 100, 0);
     skipLEDFrames.setValueFactory(factory);
     factory.valueProperty().addListener((observableValue, integer, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        debounceAndSave("skipLEDFrames", () -> tableSettings.setLedsSkipFrames(t1));
       }
-      debounceAndSave("skipLEDFrames", () -> tableSettings.setLedsSkipFrames(t1));
     });
 
     glowing.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.GLOWINGS));
     glowing.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setGlowIndex(t1.getId()));
       }
-      tableSettings.setGlowIndex(t1.getId());
-      save();
     });
 
     startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setStartAsEXE(newValue? newValue : null));
       }
-      if (newValue) {
-        tableSettings.setStartAsEXE(newValue);
-      }
-      else {
-        tableSettings.setStartAsEXE(null);
-      }
-      save();
     });
 
     lightBulbOn.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setGlowBulbOn(newValue));
       }
-      tableSettings.setGlowBulbOn(newValue);
-      save();
     });
 
     usedLEDType.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.LED_TYPES));
     usedLEDType.valueProperty().addListener((observableValue, aBoolean, t1) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> {
+          tableSettings.setUsedLEDType(t1 != null ? t1.getId() : 0);
+          glowing.setDisable(t1 != null ? t1.getId() == 1 : true);
+          lightBulbOn.setDisable(t1 != null ? t1.getId() == 1 : true);
+          lightBulbOn.setSelected(false);
+        });
       }
-      tableSettings.setUsedLEDType(t1 != null ? t1.getId() : 0);
-      glowing.setDisable(t1 != null ? t1.getId() == 1 : true);
-      lightBulbOn.setDisable(t1 != null ? t1.getId() == 1 : true);
-      lightBulbOn.setSelected(false);
-      save();
     });
 
     startBackground.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setStartBackground(newValue));
       }
-      tableSettings.setStartBackground(newValue);
-      save();
     });
 
     bringBGFromTop.selectedProperty().addListener((observable, oldValue, newValue) -> {
-      if (tableSettings == null) {
-        return;
+      if (!refreshing && tableSettings != null) {
+        save(() -> tableSettings.setFormToFront(newValue));
       }
-      tableSettings.setFormToFront(newValue);
-      save();
     });
 
     // Install the handler for backglass selection
@@ -1139,20 +1112,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   }
 
   private void debounceAndSave(String debounceKey, Runnable r) {
-    if (refreshing) {
-      r.run();
-    }
-    else {
-      debouncer.debounce(debounceKey, () -> {
-        r.run();
-        save();
-      }, DEBOUNCE_MS);
-    }
+    debouncer.debounce(debounceKey, () -> {
+      save(r);
+    }, DEBOUNCE_MS);
   }
 
-  private void save() {
-    if (!this.refreshing && this.game != null) {
+  private void save(Runnable r) {
+    if (this.game != null) {
       try {
+        r.run();
         client.getBackglassServiceClient().saveTableSettings(game.getId(), this.tableSettings);
         //DirectB2SModel selectedItem = getSelection();
         //if (selectedItem != null) {
