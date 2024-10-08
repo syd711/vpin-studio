@@ -54,6 +54,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public static final String COMPETITION_BADGES = "competition-badges";
 
+  public static final String RAW_MEDIA_FOLDER = "media-raw/";
+  public static final String CROPPED_MEDIA_FOLDER = "media-cropped/";
+
   public static String ARCHIVES_FOLDER = RESOURCES + "archives";
 
   public static final String DEFAULT_BACKGROUND = "background.png";
@@ -107,17 +110,17 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         frontendType = FrontendType.Popper;
       }
 
-      if (!getB2SImageExtractionFolder().exists()) {
-        boolean mkdirs = getB2SImageExtractionFolder().mkdirs();
+      if (!getRawImageExtractionFolder().exists()) {
+        boolean mkdirs = getRawImageExtractionFolder().mkdirs();
         if (!mkdirs) {
-          LOG.error("Failed to create b2s image directory " + getB2SImageExtractionFolder().getAbsolutePath());
+          LOG.error("Failed to create b2s image directory " + getRawImageExtractionFolder().getAbsolutePath());
         }
       }
 
-      if (!getB2SCroppedImageFolder().exists()) {
-        boolean mkdirs = getB2SCroppedImageFolder().mkdirs();
+      if (!getCroppedImageFolder().exists()) {
+        boolean mkdirs = getCroppedImageFolder().mkdirs();
         if (!mkdirs) {
-          LOG.error("Failed to create b2s crops directory " + getB2SCroppedImageFolder().getAbsolutePath());
+          LOG.error("Failed to create b2s crops directory " + getCroppedImageFolder().getAbsolutePath());
         }
       }
 
@@ -156,8 +159,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
     }
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
-    LOG.info(formatPathLog("B2S Extraction Folder", this.getB2SImageExtractionFolder()));
-    LOG.info(formatPathLog("B2S Cropped Folder", this.getB2SCroppedImageFolder()));
+    LOG.info(formatPathLog("B2S Extraction Folder", this.getRawImageExtractionFolder()));
+    LOG.info(formatPathLog("B2S Cropped Folder", this.getCroppedImageFolder()));
     LOG.info(formatPathLog("Service Version", VPinStudioServer.class.getPackage().getImplementationVersion()));
     LOG.info("*******************************************************************************************************");
   }
@@ -170,12 +173,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }
 
-  public File getB2SImageExtractionFolder() {
-    return new File(RESOURCES, "b2s-raw/");
+  public File getRawImageExtractionFolder() {
+    return new File(RESOURCES, RAW_MEDIA_FOLDER);
   }
 
-  public File getB2SCroppedImageFolder() {
-    return new File(RESOURCES, "b2s-cropped/");
+  public File getCroppedImageFolder() {
+    return new File(RESOURCES, CROPPED_MEDIA_FOLDER);
   }
 
   public File getBackupFolder() {
