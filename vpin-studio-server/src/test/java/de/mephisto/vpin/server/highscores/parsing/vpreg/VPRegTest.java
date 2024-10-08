@@ -56,6 +56,14 @@ public class VPRegTest {
     testVpRegFile(vpRegFile, scoringDB);
   }
 
+
+  @Test
+  public void testAllHighscores3() {
+    ScoringDB scoringDB = ScoringDB.load();
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-iamondiscord.stg");
+    testVpRegFile(vpRegFile, scoringDB);
+  }
+
   private static void testVpRegFile(File vpRegFile, ScoringDB scoringDB) {
     VPReg reg = new VPReg(vpRegFile);
     List<String> entries = reg.getEntries();
