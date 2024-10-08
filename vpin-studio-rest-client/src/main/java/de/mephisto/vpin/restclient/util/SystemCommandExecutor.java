@@ -112,6 +112,8 @@ public class SystemCommandExecutor {
     int exitValue = -99;
 
     try {
+      LOG.info("System Command: " + (this.dir != null ? dir.getAbsolutePath() : "") +  "> " + String.join(" ", commandInformation));
+
       ProcessBuilder pb = new ProcessBuilder(commandInformation);
 
       if (dir != null) {

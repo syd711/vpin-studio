@@ -51,15 +51,10 @@ public class ChromeLauncher {
         cmds = new ArrayList<>(cmds);
         cmds.add("--kiosk");
       }
-
-      String commandString = String.join(" ", cmds);
-      LOG.info("Chrome Command: " + commandString);
-
       SystemCommandExecutor executor = new SystemCommandExecutor(cmds, false);
       executor.setDir(chromeExe.getParentFile());
       executor.enableLogging(true);
       executor.executeCommandAsync();
-      LOG.info(String.join(" ", cmds));
 
       if (useToTop) {
         new Thread(() -> {
