@@ -112,7 +112,7 @@ public class DirectB2SResource {
   }
 
   @PutMapping
-  public boolean updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
+  public DirectB2S updateBackglass(@RequestBody Map<String, Object> values) throws IOException {
     int emulatorId = (Integer) values.get("emulatorId");
     String fileName = (String) values.get("fileName");
     String newName = (String) values.get("newName");
@@ -123,7 +123,7 @@ public class DirectB2SResource {
     if (values.containsKey("duplicate")) {
       return backglassService.duplicate(emulatorId, fileName);
     }
-    return false;
+    return null;
   }
 
   @GetMapping

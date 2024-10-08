@@ -232,14 +232,7 @@ public class BackglassService {
       Iterator<File> iter = org.apache.commons.io.FileUtils.iterateFiles(tablesFolder, filter, DirectoryFileFilter.DIRECTORY);
       while (iter.hasNext()) {
         File file = iter.next();
-
-        DirectB2S directB2S = new DirectB2S();
-        directB2S.setEmulatorId(gameEmulator.getId());
-        directB2S.setFileName(tablesPath.relativize(file.toPath()).toString());
-
-        String vpxFilename = FilenameUtils.getBaseName(file.getName()) + ".vpx";
-        directB2S.setVpxAvailable(new File(file.getParentFile(), vpxFilename).exists());
-
+        DirectB2S directB2S = getDirectB2S(gameEmulator, tablesPath, file);
         result.add(directB2S);
       }
     }
@@ -247,26 +240,45 @@ public class BackglassService {
     return result;
   }
 
-  public boolean rename(int emuId, String filename, String newName) {
-    File b2sFile = getB2sFile(emuId, filename);
-    if (b2sFile.exists() && b2sFile.renameTo(new File(b2sFile.getParentFile(), newName))) {
+  private DirectB2S getDirectB2S(GameEmulator gameEmulator, File file) {
+    File tablesFolder = gameEmulator.getTablesFolder();
+    Path tablesPath = tablesFolder.toPath();
+    return getDirectB2S(gameEmulator, tablesPath, file);
+  }
+  private DirectB2S getDirectB2S(GameEmulator gameEmulator, Path tablesPath, File file) {
+    DirectB2S directB2S = new DirectB2S();
+    directB2S.setEmulatorId(gameEmulator.getId());
+    directB2S.setFileName(tablesPath.relativize(file.toPath()).toString());
+
+    String vpxFilename = FilenameUtils.getBaseName(file.getName()) + ".vpx";
+    directB2S.setVpxAvailable(new File(file.getParentFile(), vpxFilename).exists());
+    return directB2S;
+  }
+
+  public DirectB2S rename(int emuId, String filename, String newName) {
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    File b2sFile = new File(emulator.getTablesDirectory(), filename);
+    File b2sNewFile = new File(b2sFile.getParentFile(), newName);
+    if (b2sFile.exists() && b2sFile.renameTo(b2sNewFile)) {
       if (cacheDirectB2SData.containsKey(b2sFile.getPath())) {
         cacheDirectB2SData.remove(b2sFile.getPath());
       }
-      LOG.info("Renamed \"" + b2sFile.getName() + "\" to \"" + newName + "\"");
-      return true;
+      LOG.info("Renamed \"" + filename + "\" to \"" + newName + "\"");
+      
+      return getDirectB2S(emulator, b2sNewFile);
     }
-    return false;
+    return null;
   }
 
-  public boolean duplicate(int emuId, String filename) throws IOException {
-    File b2sFile = getB2sFile(emuId, filename);
+  public DirectB2S duplicate(int emuId, String filename) throws IOException {
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    File b2sFile = new File(emulator.getTablesDirectory(), filename);
     try {
       File target = new File(b2sFile.getParentFile(), b2sFile.getName());
       target = FileUtils.uniqueFile(target);
       org.apache.commons.io.FileUtils.copyFile(b2sFile, target);
-      LOG.info("Copied \"" + b2sFile.getName() + "\" to \"" + target.getAbsolutePath() + "\"");
-      return true;
+      LOG.info("Copied \"" + filename + "\" to \"" + target.getAbsolutePath() + "\"");
+      return getDirectB2S(emulator, target);
     }
     catch (IOException e) {
       LOG.error("Failed to duplicate backglass " + b2sFile.getAbsolutePath() + ": " + e.getMessage(), e);

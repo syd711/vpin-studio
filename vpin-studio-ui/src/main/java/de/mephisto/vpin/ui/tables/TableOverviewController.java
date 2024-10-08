@@ -39,6 +39,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -588,7 +589,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
-  public void onDelete() {
+  protected void onDelete(Event e) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         deleteSelection();
@@ -708,9 +709,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-      Optional<GameRepresentationModel> optmodel = models.stream().filter(m -> m.getGameId() == refreshedGame.getId()).findFirst();
-      if (optmodel.isPresent()) {
-        GameRepresentationModel model = optmodel.get();
+      GameRepresentationModel model = getModel(refreshedGame);
+      if (model != null) {
         model.setBean(refreshedGame);
         model.reload();
 
