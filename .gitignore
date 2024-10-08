@@ -138,3 +138,5 @@ vpin-studio-logs.zip
 /resources/cache/**
 /resources/vpin-studio.db
 /resources/PinVol.bat
+/resources/media-cropped/
+/resources/media-raw/
