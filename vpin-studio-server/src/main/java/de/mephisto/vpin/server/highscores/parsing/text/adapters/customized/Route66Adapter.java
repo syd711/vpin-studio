@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters.customized;
 
 import de.mephisto.vpin.server.highscores.parsing.text.adapters.ScoreTextFileAdapter;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,12 +15,12 @@ import java.util.List;
  */
 public class Route66Adapter implements ScoreTextFileAdapter {
   @Override
-  public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
     return file.getName().equals("Route66.txt");
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines) {
+  public String convert(@NonNull File file, @NonNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     for (int i = 1; i < lines.size(); i++) {
       String line = lines.get(i);
@@ -50,7 +50,7 @@ public class Route66Adapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
     List<String> newScoreText = new ArrayList<>();
     for (String line : lines) {
       if (!StringUtils.isEmpty(line) && line.startsWith("Score=")) {

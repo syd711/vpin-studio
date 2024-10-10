@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,15 +14,16 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class FlexDMDComponent implements ComponentFacade {
 
-  @NotNull
+  @NonNull
   @Override
   public String[] getDiffList() {
     return new String[]{".dll", ".exe"};
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getReleasesUrl() {
     return "https://github.com/vbousquet/flexdmd/releases";
@@ -33,9 +34,9 @@ public class FlexDMDComponent implements ComponentFacade {
     return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source")));
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
+  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
     return gameEmulator.getMameFolder();
   }
 

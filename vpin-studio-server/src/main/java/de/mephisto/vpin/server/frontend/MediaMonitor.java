@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class MediaMonitor implements FolderChangeListener {
   }
 
   @Override
-  public void notifyFolderChange(@NotNull File folder, @Nullable File file) {
+  public void notifyFolderChange(@NonNull File folder, @Nullable File file) {
 //    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
     File[] list = folder.listFiles(new FilenameFilter() {
       @Override

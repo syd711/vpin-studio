@@ -115,6 +115,7 @@ public class ComponentsResource {
     representation.setLatestReleaseVersion(component.getLatestReleaseVersion());
     representation.setLastCheck(component.getLastCheck());
     representation.setExclusions(componentFacade.getExclusionList());
+    representation.setInstalled(componentFacade.isInstalled());
 
     GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     if (defaultGameEmulator != null) {

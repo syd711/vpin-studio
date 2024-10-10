@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class PinballXStatisticsParser {
     this.connector = connector;
   }
 
-  @NotNull
+  @NonNull
   private File getPinballXStatisticsIni() {
     File pinballXFolder = connector.getInstallationFolder();
     return new File(pinballXFolder, "/Databases/Statistics.ini");

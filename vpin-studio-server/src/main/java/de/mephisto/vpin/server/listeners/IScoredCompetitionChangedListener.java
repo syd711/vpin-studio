@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -30,7 +30,7 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
   private HighscoreService highscoreService;
 
   @Override
-  public void competitionCreated(@NotNull Competition competition) {
+  public void competitionCreated(@NonNull Competition competition) {
     Game game = gameService.getGame(competition.getGameId());
     if (game == null) {
       LOG.info("No game found for id " + competition.getGameId() + ", the iScord subscription was created without an existing table.");
@@ -43,7 +43,7 @@ public class IScoredCompetitionChangedListener extends DefaultCompetitionChangeL
   }
 
   @Override
-  public void competitionDeleted(@NotNull Competition competition) {
+  public void competitionDeleted(@NonNull Competition competition) {
     super.runCheckedDeAugmentation(competitionService, gameService, frontendStatusService);
   }
 

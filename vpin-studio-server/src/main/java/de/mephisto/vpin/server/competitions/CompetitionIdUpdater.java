@@ -6,9 +6,9 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,12 +32,12 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   private DiscordService discordService;
 
   @Override
-  public void competitionStarted(@NotNull Competition competition) {
+  public void competitionStarted(@NonNull Competition competition) {
     setGamesTournamentId(competition);
   }
 
   @Override
-  public void competitionCreated(@NotNull Competition competition) {
+  public void competitionCreated(@NonNull Competition competition) {
     CompetitionType type = CompetitionType.valueOf(competition.getType());
     switch (type) {
       case SUBSCRIPTION: {
@@ -54,21 +54,21 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   @Override
-  public void competitionChanged(@NotNull Competition competition) {
+  public void competitionChanged(@NonNull Competition competition) {
     //ignore
   }
 
   @Override
-  public void competitionFinished(@NotNull Competition competition, @Nullable Player winner, @NotNull ScoreSummary scoreSummary) {
+  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     unsetGamesTournamentId(competition);
   }
 
   @Override
-  public void competitionDeleted(@NotNull Competition competition) {
+  public void competitionDeleted(@NonNull Competition competition) {
     unsetGamesTournamentId(competition);
   }
 
-  private void setGamesTournamentId(@NotNull Competition competition) {
+  private void setGamesTournamentId(@NonNull Competition competition) {
     TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
     if (tableDetails != null) {
       boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
@@ -95,7 +95,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
     }
   }
 
-  private void unsetGamesTournamentId(@NotNull Competition competition) {
+  private void unsetGamesTournamentId(@NonNull Competition competition) {
     TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
     if (tableDetails != null) {
       boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));

@@ -51,6 +51,8 @@ public class Preferences {
 
   private String dofSettings;
 
+  private String dofLinxSettings;
+
   private String pinballXSettings;
 
   @Column(length = 1024)
@@ -101,6 +103,14 @@ public class Preferences {
 
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
+
+  public String getDofLinxSettings() {
+    return dofLinxSettings;
+  }
+
+  public void setDofLinxSettings(String dofLinxSettings) {
+    this.dofLinxSettings = dofLinxSettings;
+  }
 
   public String getDiscordUpdatesChannelId() {
     return discordUpdatesChannelId;

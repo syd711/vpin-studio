@@ -21,7 +21,7 @@ public interface ComponentFacade {
 
   List<GithubRelease> loadReleases() throws IOException;
 
-  @NonNull
+  @Nullable
   File getTargetFolder(@NonNull GameEmulator gameEmulator);
 
   @Nullable
@@ -31,6 +31,10 @@ public interface ComponentFacade {
   List<String> getExclusionList();
 
   List<String> getRootFolderIndicators();
+
+  default boolean isInstalled() {
+    return true;
+  }
 
   default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 

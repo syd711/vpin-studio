@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class BackglassComponent implements ComponentFacade {
 
   @NonNull
@@ -22,7 +23,7 @@ public class BackglassComponent implements ComponentFacade {
     return new String[]{".dll", ".cmd", ".exe"};
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getReleasesUrl() {
     return "https://github.com/vpinball/b2s-backglass/releases";
@@ -33,7 +34,7 @@ public class BackglassComponent implements ComponentFacade {
     return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Source")));
   }
 
-  @NonNull
+  @Nullable
   @Override
   public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
     return gameEmulator.getBackglassServerDirectory();
