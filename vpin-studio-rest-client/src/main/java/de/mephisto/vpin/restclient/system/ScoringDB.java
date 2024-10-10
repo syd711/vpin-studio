@@ -105,6 +105,16 @@ public class ScoringDB {
 
   private List<Map<String,Object>> highscoreTextParsers = new ArrayList<>();
 
+  private List<Map<String,Object>> highscoreVPRegParsers = new ArrayList<>();
+
+  public List<Map<String, Object>> getHighscoreVPRegParsers() {
+    return highscoreVPRegParsers;
+  }
+
+  public void setHighscoreVPRegParsers(List<Map<String, Object>> highscoreVPRegParsers) {
+    this.highscoreVPRegParsers = highscoreVPRegParsers;
+  }
+
   private List<ScoringDBMapping> highscoreMappings = new ArrayList<>();
 
   private List<String> supportedNvRams = new ArrayList<>();

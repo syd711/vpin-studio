@@ -56,12 +56,22 @@ public class VPRegTest {
     testVpRegFile(vpRegFile, scoringDB);
   }
 
-
   @Test
   public void testAllHighscores3() {
     ScoringDB scoringDB = ScoringDB.load();
     File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-iamondiscord.stg");
+
     testVpRegFile(vpRegFile, scoringDB);
+  }
+
+  @Test
+  public void testSingleInitialsHighscores() {
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-iamondiscord.stg");
+    VPReg reg = new VPReg(vpRegFile, "nobs", null);
+    ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
+    System.out.println(vpRegScoreSummary.toRaw());
+    assertNotNull(vpRegScoreSummary);
+    assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");
   }
 
   private static void testVpRegFile(File vpRegFile, ScoringDB scoringDB) {
@@ -86,28 +96,20 @@ public class VPRegTest {
 
       RawScoreParser parser = new RawScoreParser(vpRegScoreSummary.toRaw(), new Date(), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
       List<Score> parse = parser.parse();
-      assertFalse(parse.isEmpty());
+      assertFalse(parse.isEmpty(), "No scores parsed for " + entry);
     }
     System.out.println("Tested " + count + " entries");
   }
 
   @Test
   public void testSingleHighscores() {
-    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg2.stg");
+    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-iamondiscord.stg");
 
-    VPReg reg = new VPReg(vpRegFile, "volkan", null);
+    VPReg reg = new VPReg(vpRegFile, "Mariner", null);
     ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
+    System.out.println(vpRegScoreSummary.toRaw());
     assertNotNull(vpRegScoreSummary);
     assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");
   }
 
-
-  @Test
-  public void testSingleInitialsHighscores() {
-    File vpRegFile = new File("../testsystem/vPinball/VisualPinball/User/VPReg-gorgatron.stg");
-    VPReg reg = new VPReg(vpRegFile, "Heatw", null);
-    ScoreParsingSummary vpRegScoreSummary = reg.readHighscores();
-    assertNotNull(vpRegScoreSummary);
-    assertFalse(vpRegScoreSummary.getScores().isEmpty(), "No score entry found for");
-  }
 }

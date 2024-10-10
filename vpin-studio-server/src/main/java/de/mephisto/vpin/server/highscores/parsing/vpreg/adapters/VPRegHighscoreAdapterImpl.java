@@ -13,7 +13,6 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
   protected String getNameString(DocumentEntry nameEntry) throws IOException {
     DocumentInputStream nameEntryStream = new DocumentInputStream(nameEntry);
     byte[] nameContent = new byte[nameEntryStream.available()];
-//    System.out.println("name:'" + new Base64Encoder().encode(nameContent) + "'");
     nameEntryStream.read(nameContent);
     nameEntryStream.close();
 
@@ -25,7 +24,6 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
   protected String getScoreEntry(DocumentEntry scoreEntry) throws IOException {
     DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
     byte[] scoreContent = new byte[scoreEntryStream.available()];
-//    System.out.println("score:'" + new Base64Encoder().encode(scoreContent) + "'");
     scoreEntryStream.read(scoreContent);
     scoreEntryStream.close();
 
@@ -52,6 +50,16 @@ abstract public class VPRegHighscoreAdapterImpl implements VPRegHighscoreAdapter
     }
     if (gameFolder.hasEntry("DBHiScore")) {
       return (DocumentNode) gameFolder.getEntry("DBHiScore");
+    }
+    return null;
+  }
+
+  protected DocumentNode getHighscoreEntry(DirectoryEntry gameFolder, int index) throws IOException {
+    if (gameFolder.hasEntry("Highscore(" + index + ")")) {
+      return (DocumentNode) gameFolder.getEntry("Highscore(" + index + ")");
+    }
+    if (gameFolder.hasEntry("HighScore(" + index + ")")) {
+      return (DocumentNode) gameFolder.getEntry("HighScore(" + index + ")");
     }
     return null;
   }
