@@ -97,7 +97,7 @@ public class TableExporterService extends ExporterService {
       return builder.toString();
     }
     catch (Exception e) {
-      LOG.error("Export failed: " +e.getMessage(), e);
+      LOG.error("Export failed: " + e.getMessage(), e);
       return "Export failed: " + e.getMessage();
     }
   }
@@ -113,6 +113,7 @@ public class TableExporterService extends ExporterService {
         else {
           property = ExportEntityConverter.convert(header, property);
         }
+        property = String.valueOf(property).replaceAll(delimiter, ",");
         records.add(property);
       }
       catch (Exception e) {
@@ -120,7 +121,7 @@ public class TableExporterService extends ExporterService {
     }
   }
 
-  private static void exportGame(Game knownGame, List<String> studioFieldHeaders, List<Object> records) {
+  private void exportGame(Game knownGame, List<String> studioFieldHeaders, List<Object> records) {
     for (String header : studioFieldHeaders) {
       try {
         Object property = PropertyUtils.getProperty(knownGame, header);
@@ -130,6 +131,7 @@ public class TableExporterService extends ExporterService {
         else {
           property = ExportEntityConverter.convert(header, property);
         }
+        property = String.valueOf(property).replaceAll(delimiter, escape + delimiter);
         records.add(property);
       }
       catch (Exception e) {
