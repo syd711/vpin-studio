@@ -355,7 +355,7 @@ public class TableUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar", "*.7z"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     setSelection(true);
@@ -548,7 +548,7 @@ public class TableUploadController implements Initializable, DialogController {
     assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
     assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
 
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", "zip", "rar"));
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
       setSelection(true);

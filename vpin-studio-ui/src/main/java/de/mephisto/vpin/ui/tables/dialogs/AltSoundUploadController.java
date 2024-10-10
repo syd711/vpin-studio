@@ -95,7 +95,7 @@ public class AltSoundUploadController implements Initializable, DialogController
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select ALT Sound");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ALT Sound Package", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("ALT Sound Package", "*.zip", "*.rar", "*.7z"));
 
     this.selection = fileChooser.showOpenDialog(stage);
     this.uploadBtn.setDisable(selection == null);

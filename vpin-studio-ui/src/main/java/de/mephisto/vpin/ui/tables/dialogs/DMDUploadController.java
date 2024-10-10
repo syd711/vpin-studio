@@ -89,7 +89,7 @@ public class DMDUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select DMD Bundle");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("DMD Bundle", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("DMD Bundle", "*.zip", "*.rar", "*.7z"));
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       refreshSelection(stage);
