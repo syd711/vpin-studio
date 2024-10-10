@@ -14,6 +14,10 @@
 - **CSV Exporter: Backglasses**: Fixed export errors caused by the wrong media index and improved the performance there.
 - **Highscore Parsing**: Increased support of VPReg.stg file based highscores. A few more highscore patterns are supported now, mainly used from seventies EM tables. 
 - **Table Overview / Table Importer Dialog**: Fixed initialization of the emulator combobox. 
+- **Table Overview / Table Uploads**: Fixed issue that newly uploaded tables do not appear for the "Just Added" playlist. 
+- **Table Overview / Table Uploads**: Fixed issue that media has been duplicated instead of replaced when "replace" was selected as upload option. 
+- **Drop-in Folder**: The delete action moves files to the trash-bin now, instead of deleting them irrecoverably.
+- **Table Uploads**: Fixed issue that nvram files have not been extracted when uploaded as part of a bundle, e.g. "Big Bang Bar".
 
 
   
