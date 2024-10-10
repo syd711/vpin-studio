@@ -9,6 +9,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -28,9 +29,18 @@ public interface ComponentFacade {
   Date getModificationDate(@NonNull GameEmulator gameEmulator);
 
   @NonNull
-  List<String> getExclusionList();
+  List<String> getExcludedFilenames();
 
-  List<String> getRootFolderIndicators();
+  /**
+   * Is stronger than the exclusions
+   * @return
+   */
+  @NonNull
+  default List<String> getIncludedFilenames() {
+    return Collections.emptyList();
+  }
+
+  List<String> getRootFolderInArchiveIndicators();
 
   default boolean isInstalled() {
     return true;

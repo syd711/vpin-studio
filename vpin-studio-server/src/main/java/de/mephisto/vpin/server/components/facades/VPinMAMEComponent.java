@@ -54,12 +54,12 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Arrays.asList("VPMAlias.txt");
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("VPMAlias.txt");
   }
 }

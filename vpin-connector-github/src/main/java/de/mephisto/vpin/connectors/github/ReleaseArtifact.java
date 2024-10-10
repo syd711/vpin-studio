@@ -41,7 +41,7 @@ public class ReleaseArtifact {
     return name;
   }
 
-  public ReleaseArtifactActionLog diff(@NonNull File sourceArchive, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull String... names) {
+  public ReleaseArtifactActionLog diff(@NonNull File sourceArchive, @NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles,  @NonNull String... names) {
     long start = System.currentTimeMillis();
     ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(false, true);
     try {
@@ -54,7 +54,7 @@ public class ReleaseArtifact {
         throw new UnsupportedOperationException("Archive download failed for " + this + " failed, cancelling diff.");
       }
 
-      ArchiveHandler handler = new ArchiveHandler(sourceArchive, installLog, rootFileIndicators, excludedFiles);
+      ArchiveHandler handler = new ArchiveHandler(sourceArchive, installLog, rootFileIndicators, excludedFiles, includedFiles);
       handler.diff(targetFolder);
       long duration = System.currentTimeMillis() - start;
 
@@ -104,15 +104,15 @@ public class ReleaseArtifact {
     return installLog;
   }
 
-  public ReleaseArtifactActionLog simulateInstall(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles) {
-    return install(targetFolder, true, rootFileIndicators, excludedFiles);
+  public ReleaseArtifactActionLog simulateInstall(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(targetFolder, true, rootFileIndicators, excludedFiles, includedFiles);
   }
 
-  public ReleaseArtifactActionLog install(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles) {
-    return install(targetFolder, false, rootFileIndicators, excludedFiles);
+  public ReleaseArtifactActionLog install(@NonNull File targetFolder, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
+    return install(targetFolder, false, rootFileIndicators, excludedFiles, includedFiles);
   }
 
-  private ReleaseArtifactActionLog install(@NonNull File targetFolder, boolean simulate, @NonNull List<String> rootFileIndicators, List<String> excludedFiles) {
+  private ReleaseArtifactActionLog install(@NonNull File targetFolder, boolean simulate, @NonNull List<String> rootFileIndicators, List<String> excludedFiles, List<String> includedFiles) {
     ReleaseArtifactActionLog installLog = new ReleaseArtifactActionLog(simulate, false);
     try {
       File archive = new Downloader(this.getUrl(), installLog).download(null);
@@ -121,7 +121,7 @@ public class ReleaseArtifact {
         throw new UnsupportedOperationException("Archive download failed for " + this + " failed, cancelling installation.");
       }
 
-      ArchiveHandler handler = new ArchiveHandler(archive, installLog, rootFileIndicators, excludedFiles);
+      ArchiveHandler handler = new ArchiveHandler(archive, installLog, rootFileIndicators, excludedFiles, includedFiles);
       if (simulate) {
         handler.simulate(targetFolder);
       }

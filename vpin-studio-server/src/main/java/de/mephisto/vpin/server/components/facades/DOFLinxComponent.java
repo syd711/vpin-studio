@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -64,12 +65,18 @@ public class DOFLinxComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
-    return Collections.emptyList();
+  public List<String> getExcludedFilenames() {
+    return Arrays.asList(".ini", ".INI", ".log");
+  }
+
+  @NotNull
+  @Override
+  public List<String> getIncludedFilenames() {
+    return Arrays.asList("Sample INI files/");
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
-    return Arrays.asList("DOFLinx.exe");
+  public List<String> getRootFolderInArchiveIndicators() {
+    return Arrays.asList("HELP.txt", "DOFLinx.vbs");
   }
 }

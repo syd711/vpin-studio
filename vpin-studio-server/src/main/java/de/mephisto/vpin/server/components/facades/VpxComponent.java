@@ -54,12 +54,12 @@ public class VpxComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Collections.emptyList();
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("VPinballX64.exe", "VPinballX.exe", "VPinballX_GL.exe");
   }
 }

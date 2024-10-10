@@ -52,12 +52,12 @@ public class FlexDMDComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Arrays.asList("FlexDMD.log.config");
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("FlexDMDUI.exe");
   }
 }

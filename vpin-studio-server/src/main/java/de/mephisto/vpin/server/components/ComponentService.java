@@ -141,7 +141,7 @@ public class ComponentService implements InitializingBean {
             artifactArchive.delete();
           }
 
-          install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList(), componentFacade.getDiffList());
+          install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
           boolean diff = install.isDiffering();
           if (!diff) {
             component.setInstalledVersion(githubRelease.getTag());
@@ -197,11 +197,11 @@ public class ComponentService implements InitializingBean {
       ComponentFacade componentFacade = getComponentFacade(type);
       File targetFolder = componentFacade.getTargetFolder(emulator);
       if (simulate) {
-        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
+        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       }
 
       //we have a real installation from here on
-      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
+      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       if (install.getStatus() == null) {
         //unzipping was successful
         component.setInstalledVersion(githubRelease.getTag());

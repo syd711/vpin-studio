@@ -54,12 +54,12 @@ public class FreezyComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Arrays.asList("DmdDevice.log.config", "DmdDevice.ini", "dmdext.log.config");
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("DmdDevice.ini");
   }
 }
