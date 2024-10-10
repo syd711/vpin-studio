@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.utils;
 
 import de.mephisto.vpin.commons.fx.pausemenu.ChromeLauncher;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,7 +17,6 @@ public class NirCmd {
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./resources"));
     executor.executeCommandAsync();
-    LOG.info("NirCmd: " + String.join(" ", commands));
   }
 
   public static void setTopMost(String title) {
@@ -24,7 +24,6 @@ public class NirCmd {
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./resources"));
     executor.executeCommandAsync();
-    LOG.info("NirCmd: " + String.join(" ", commands));
   }
 
   public static void muteSystem(boolean mute) {
@@ -32,7 +31,6 @@ public class NirCmd {
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./resources"));
     executor.executeCommandAsync();
-    LOG.info("NirCmd: " + String.join(" ", commands));
   }
 
   public static void setVolume(int volume) {
@@ -41,6 +39,5 @@ public class NirCmd {
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./resources"));
     executor.executeCommandAsync();
-    LOG.info("NirCmd: " + String.join(" ", commands));
   }
 }

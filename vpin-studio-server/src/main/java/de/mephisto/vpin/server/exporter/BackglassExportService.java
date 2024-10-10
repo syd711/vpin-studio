@@ -43,7 +43,7 @@ public class BackglassExportService extends ExporterService {
   @Autowired
   private DefaultPictureService defaultPictureService;
 
-  private final boolean forceBackglassExtraction = true;
+  private final boolean forceBackglassExtraction = false;
 
   public String export(Map<String, String> customQuery) throws IOException {
     try {
@@ -129,7 +129,7 @@ public class BackglassExportService extends ExporterService {
             }
 
             exportBackgroundData(game, records, game.getEmulatorId());
-            exportDMDData(game, records, game.getEmulatorId());
+            exportDMDData(game, directB2SData, records, game.getEmulatorId());
 
             printer.printRecord(records);
             LOG.info("Finished backglass export of " + game);
@@ -151,12 +151,12 @@ public class BackglassExportService extends ExporterService {
   private void exportBackgroundData(Game game, List<String> records, int emulatorId) throws IOException {
     if (!forceBackglassExtraction) {
       File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-      if (rawDefaultPicture == null || !rawDefaultPicture.exists()) {
+      if (!rawDefaultPicture.exists()) {
         defaultPictureService.extractDefaultPicture(game);
         rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
       }
 
-      if (rawDefaultPicture != null && rawDefaultPicture.exists()) {
+      if (rawDefaultPicture.exists()) {
         BufferedImage image = ImageUtil.loadImage(rawDefaultPicture);
         int backgroundWidth = (int) image.getWidth();
         int backgroundHeight = (int) image.getHeight();
@@ -186,10 +186,10 @@ public class BackglassExportService extends ExporterService {
     }
   }
 
-  private void exportDMDData(Game game, List<String> records, int emulatorId) throws IOException {
+  private void exportDMDData(Game game, DirectB2SData data, List<String> records, int emulatorId) throws IOException {
     if (!forceBackglassExtraction) {
       File picture = defaultPictureService.getDMDPicture(game);
-      if (picture != null && picture.exists()) {
+      if (picture.exists()) {
         BufferedImage image = ImageUtil.loadImage(picture);
         int backgroundWidth = (int) image.getWidth();
         int backgroundHeight = (int) image.getHeight();
@@ -201,7 +201,7 @@ public class BackglassExportService extends ExporterService {
         records.add(String.valueOf(0));
       }
     }
-    else {
+    else if (data.isDmdImageAvailable()) {
       String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
 
       String dmdBase64 = backglassService.getDmdBase64(emulatorId, filename);

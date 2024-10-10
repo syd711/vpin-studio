@@ -1,11 +1,16 @@
-## Release Notes 3.7.1
+## Release Notes 3.7.2
+
+**Note that a progress dialog will come up once you update is finished, see notes below!!!**
 
 ## Bugfixes
 
-- **Highscore Parsing**: Refactored text parsers and moved all parsing information into the **scoringdb.json** file which is updated on every server startup. This way, all text file based highscores can now be updated without a separate Studio update. This work required a LOT(!) copy'n paste, so I hope it did not break any of the previously working highscores here. 
-- **Table Overview**: Fixed initial selection. Because the initial selection is done multiple times (the first row of the table), this resulted into a client crash for some users.
-- **Table Overview**: Added sorting for the "Launcher" column.
-- **VPin Mania**: Fixed broken table based highscore synchronization where no VPin Mania account was found.
-- **VPin Studio Launcher**: Added asynchronous shutdown of broadcast thread which was looking for clients and may have caused a delayed Studio client startup.
-- **VPin Studio Client**: Fixed initialization routine which prohibited the update of the VPS database when connected from remote.
-- **Backglass Manager**: Fixed "Replace Media" option which did not check if a video or image is overwritten.
+- **Media Cache**: For generating highscore cards and backglass previews, the Studio extracts the data from backglasses and other sources. Unfortunately the generation of these assets were stored with non-unique names, so this index must be regenerated. **You can do that manually in the server settings but the Studio will also regenerate once after the release notes dialog.**
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/media-cache.png" width="650" />
+
+- **VPin Studio Server Tray**: Fixed the "Launch Studio" action from the context menu of the tray icon.
+- **Table Parser**: Fixed issue in the VPX table analyzer which caused the missing resolving for highscore textfile names.
+- **CSV Exporter: Tables**: Added missing escaping of delimiteres.
+- **CSV Exporter: Backglasses**: Fixed export errors caused by the wrong media index and improved the performance there.
+
+  

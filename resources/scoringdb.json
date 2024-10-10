@@ -97,6 +97,14 @@
     {
       "parser": "AlteringScoreInitialsBlocks",
       "fileNames": [
+        "ShortCircuitRB.txt"
+      ],
+      "start": 0,
+      "size": 4
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
         "Rockmakers(Bally1968)v0.60.txt"
       ],
       "start": 0,

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.server;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.restclient.system.NVRamsInfo;
 import de.mephisto.vpin.restclient.system.ScoringDB;
@@ -17,6 +18,8 @@ import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
+import static de.mephisto.vpin.commons.SystemInfo.RESOURCES;
+
 public class ServerUpdatePreProcessing {
   private final static Logger LOG = LoggerFactory.getLogger(ServerUpdatePreProcessing.class);
   private final static List<String> resources = Arrays.asList("PinVol.exe", "nircmd.exe", "vpxtool.exe", "maintenance.jpg", ScoringDB.SCORING_DB_NAME);
@@ -30,6 +33,7 @@ public class ServerUpdatePreProcessing {
         Thread.currentThread().setName("ServerUpdatePreProcessing");
         runJvmCheck();
         runScriptCheck();
+        runDeletionChecks();
         runResourcesCheck();
         runPinVolUpdateCheck();
         synchronizeNVRams(false);
@@ -41,9 +45,23 @@ public class ServerUpdatePreProcessing {
     }).start();
   }
 
+  private static void runDeletionChecks() {
+    File b2sRaw = new File(RESOURCES, "b2s-raw");
+    if (b2sRaw.exists() && b2sRaw.isDirectory()) {
+      FileUtils.deleteFolder(b2sRaw);
+      LOG.info("Deleted " + b2sRaw.getAbsolutePath());
+    }
+
+    File b2sCropped = new File(RESOURCES, "b2s-cropped");
+    if (b2sCropped.exists() && b2sCropped.isDirectory()) {
+      FileUtils.deleteFolder(b2sCropped);
+      LOG.info("Deleted " + b2sCropped.getAbsolutePath());
+    }
+  }
+
   private static void runPinVolUpdateCheck() {
     long expectedSize = 1103872;
-    File check = new File(SystemService.RESOURCES, "PinVol.exe");
+    File check = new File(RESOURCES, "PinVol.exe");
     if (check.exists()) {
       long size = check.length();
       if (expectedSize != size) {
@@ -55,7 +73,7 @@ public class ServerUpdatePreProcessing {
 
   private static void runScriptCheck() {
     try {
-      File scriptFolder = new File(SystemService.RESOURCES, "scripts/");
+      File scriptFolder = new File(RESOURCES, "scripts/");
       scriptFolder.mkdirs();
 
       File emulatorLaunchScript = new File(scriptFolder, "emulator-launch.bat");
@@ -107,7 +125,7 @@ public class ServerUpdatePreProcessing {
 
   private static void runResourcesCheck() {
     for (String resource : resources) {
-      File check = new File(SystemService.RESOURCES, resource);
+      File check = new File(RESOURCES, resource);
       if (!check.exists()) {
         LOG.info("Downloading missing resource file " + check.getAbsolutePath());
         Updater.download("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/" + resource, check);
@@ -118,7 +136,7 @@ public class ServerUpdatePreProcessing {
   public static NVRamsInfo synchronizeNVRams(boolean deleteAll) {
     NVRamsInfo info = new NVRamsInfo();
     try {
-      File nvRamIndex = new File(SystemService.RESOURCES, "index.txt");
+      File nvRamIndex = new File(RESOURCES, "index.txt");
       Updater.download("https://raw.githubusercontent.com/syd711/nvrams/main/index.txt", nvRamIndex, true);
 
       FileInputStream in = new FileInputStream(nvRamIndex);
@@ -126,7 +144,7 @@ public class ServerUpdatePreProcessing {
       in.close();
       nvRamIndex.delete();
 
-      File nvramFolder = new File(SystemService.RESOURCES, "nvrams/");
+      File nvramFolder = new File(RESOURCES, "nvrams/");
       if (!nvramFolder.exists()) {
         nvramFolder.mkdirs();
       }

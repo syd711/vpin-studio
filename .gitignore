@@ -67,6 +67,8 @@ hs_err_pid*
 /resources/vpin-studio.sqbpro
 /resources/b2s-raw/*
 /resources/b2s-cropped/*
+/resources/media-raw/*
+/resources/media-cropped/*
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
@@ -136,3 +138,5 @@ vpin-studio-logs.zip
 /resources/cache/**
 /resources/vpin-studio.db
 /resources/PinVol.bat
+/resources/media-cropped/
+/resources/media-raw/

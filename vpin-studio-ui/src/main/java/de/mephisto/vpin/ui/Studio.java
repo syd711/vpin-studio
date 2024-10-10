@@ -81,14 +81,17 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     LOG.info("-------------- Studio Starts -------------");
+    LOG.info("Locale: "  + Locale.getDefault().getDisplayName());
+    LOG.info("OS: "  + System.getProperty("os.name"));
+    LOG.info("------------------------------------------");
     try {
       ss = new ServerSocket(1044);
     }
     catch (IOException e) {
       LOG.error("Application already running!");
+      WidgetFactory.showAlert(stage, "Another VPin Studio client is already running!");
       System.exit(-1);
     }
-
 
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
@@ -153,7 +156,7 @@ public class Studio extends Application {
   }
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
-    LOG.info("load Studio...");
+    LOG.info("Launching Studio...");
     try {
       try {
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");

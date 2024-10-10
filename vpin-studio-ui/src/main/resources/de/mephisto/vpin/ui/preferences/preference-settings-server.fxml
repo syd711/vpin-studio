@@ -153,6 +153,21 @@
                         <Insets />
                      </opaqueInsets>
                   </GridPane>
+                  <Label layoutX="34.0" layoutY="426.0" styleClass="preference-subtitle" text="Media Assets">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="288.0" styleClass="preference-description" text="For generating highscore cards, backglass previews and competition backgrounds, the Studio extracts images" textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="452.0" styleClass="preference-description" text="that are cached. You can rebuild this cache here and clear old data this way." textFill="WHITE" />
+                  <Button layoutX="34.0" layoutY="596.0" mnemonicParsing="false" onAction="#onMediaIndex" text="Regenerate Media Cache">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Button>
                   <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Backup">
                      <VBox.margin>
                         <Insets top="12.0" />
