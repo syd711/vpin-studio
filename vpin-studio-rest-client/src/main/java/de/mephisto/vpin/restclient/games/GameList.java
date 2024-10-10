@@ -7,6 +7,10 @@ public class GameList {
 
   private List<GameListItem> items = new ArrayList<>();
 
+  public void addItems(List<GameListItem> items) {
+    this.items.addAll(items);
+  }
+
   public List<GameListItem> getItems() {
     return items;
   }

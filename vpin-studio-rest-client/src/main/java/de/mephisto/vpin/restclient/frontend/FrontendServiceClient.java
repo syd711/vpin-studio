@@ -6,6 +6,8 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 public class FrontendServiceClient extends VPinStudioClientService {
   private final static Logger LOG = LoggerFactory.getLogger(VPinStudioClient.class);
   private static final String API_SEGMENT_FRONTEND = "frontend";
+
+  private static final int ALL_VPX_ID = -10;
 
   private FrontendType frontendType;
 
@@ -42,6 +46,18 @@ public class FrontendServiceClient extends VPinStudioClientService {
       frontendType = getFrontendCached().getFrontendType();
     }
     return frontendType;
+  }
+
+  public GameList getImportableTablesVpx() {
+    GameList games = new GameList();
+    List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getGameEmulators();
+    for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
+      if (gameEmulator.isVpxEmulator()) {
+        GameList l = getImportableTables(gameEmulator.getId());
+        games.addItems(l.getItems());
+      }
+    }
+    return games;
   }
 
   public GameList getImportableTables(int emulatorId) {
@@ -91,6 +107,26 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {
     List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
     return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  }
+
+  public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
+    List<GameEmulatorRepresentation> emulators = getGameEmulatorsUncached();
+    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
+    filtered.add(0, createAllVpx());
+
+    return filtered;
+  }
+
+  public GameEmulatorRepresentation createAllVpx() {
+    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
+    allVpx.setId(ALL_VPX_ID);
+    allVpx.setName("All VPX Tables");
+    allVpx.setVpxEmulator(true);
+    return allVpx;
+  }
+  
+  public boolean isAllVpx(GameEmulatorRepresentation emu) {
+    return emu != null ? emu.getId() == ALL_VPX_ID : true;
   }
 
   public List<GameEmulatorRepresentation> getGameEmulatorsUncached() {
