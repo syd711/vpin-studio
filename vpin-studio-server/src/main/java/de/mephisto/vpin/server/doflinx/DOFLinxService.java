@@ -73,9 +73,9 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
 
   private void startDOFLinx() {
     try {
-      String installationFolder = dofLinxSettings.getInstallationFolder();
-      if (!StringUtils.isEmpty(installationFolder)) {
-        File folder = new File(installationFolder);
+      if (isValid()) {
+        LOG.info("DOFLinx service launches DOFLink.exe");
+        File folder = new File(dofLinxSettings.getInstallationFolder());
         SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("DOFLinx.exe"));
         executor.setDir(folder);
         executor.executeCommandAsync();
