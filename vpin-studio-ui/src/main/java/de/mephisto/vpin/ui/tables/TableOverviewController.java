@@ -1734,6 +1734,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
+
     });
 
     columnPlayfield.setVisible(false);

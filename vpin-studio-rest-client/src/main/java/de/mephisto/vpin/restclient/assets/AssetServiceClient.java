@@ -98,6 +98,11 @@ public class AssetServiceClient extends VPinStudioClientService {
     }
   }
 
+  public boolean isMediaIndexAvailable() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "assets/index/exists", Boolean.class);
+  }
+
   public AssetRequest getMetadata(int gameId, VPinScreen screen, String name) {
     try {
       AssetRequest request = new AssetRequest();

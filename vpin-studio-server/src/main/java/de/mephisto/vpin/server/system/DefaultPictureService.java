@@ -225,6 +225,12 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
     return null;
   }
 
+  public boolean isMediaIndexAvailable() {
+    return systemService.getCroppedImageFolder().exists()
+        && systemService.getRawImageExtractionFolder().exists()
+        && !FileUtils.listFiles(systemService.getRawImageExtractionFolder(), null, false).isEmpty();
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (PreferenceNames.HIGHSCORE_CARD_SETTINGS.equalsIgnoreCase(propertyName)) {
@@ -257,5 +263,4 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   public File getRawDefaultPicture(Game game) {
     return new File(systemService.getRawImageExtractionFolder(), game.getId() + "_" + SystemService.DEFAULT_BACKGROUND);
   }
-
 }
