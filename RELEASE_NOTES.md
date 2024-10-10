@@ -10,7 +10,8 @@
 
 - **VPin Studio Server Tray**: Fixed the "Launch Studio" action from the context menu of the tray icon.
 - **Table Parser**: Fixed issue in the VPX table analyzer which caused the missing resolving for highscore textfile names.
-- **CSV Exporter: Tables**: Added missing escaping of delimiteres.
+- **CSV Exporter: Tables**: Added missing escaping of delimiters.
 - **CSV Exporter: Backglasses**: Fixed export errors caused by the wrong media index and improved the performance there.
+- **Highscore Parsing**: Increased support of VPReg.stg file based highscores. A few more highscore patterns are supported now, mainly used from seventies EM tables. 
 
   
