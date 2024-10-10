@@ -211,7 +211,7 @@ public class PinballXConnector extends BaseConnector {
     }
 
     // check presence of [internal] section
-    SubnodeConfiguration s = iniConfiguration.getSection("internal");
+    SubnodeConfiguration s = iniConfiguration.getSection("Display");
     return s.isEmpty() ? null : iniConfiguration;
   }
 
