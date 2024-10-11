@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UnzipChangeListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
