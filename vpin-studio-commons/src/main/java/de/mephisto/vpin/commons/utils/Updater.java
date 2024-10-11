@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -197,7 +198,7 @@ public class Updater {
         return latestVersion;
       }
     } catch (Exception e) {
-      LOG.error("Update check failed: " + e.getMessage());
+      LOG.error("Update check failed: " + e.getMessage(), e);
     }
     return null;
   }

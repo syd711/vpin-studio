@@ -28,16 +28,21 @@ public enum AssetType {
   VPX,
   ZIP,
   RAR,
+  SEVENZIP,
   ARCHIVE,
   DEFAULT_BACKGROUND,
   CARD_BACKGROUND;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-    ZIP, RAR, RES, INI, POV, DIRECTB2S, VNI, VPX, PAL, PAC, CRZ, CFG, NV
+    ZIP, RAR, SEVENZIP, RES, INI, POV, DIRECTB2S, VNI, VPX, PAL, PAC, CRZ, CFG, NV
   };
 
   public static AssetType fromExtension(String extension) {
     try {
+      if(extension.equalsIgnoreCase("7z")) {
+        return SEVENZIP;
+      }
+
       return AssetType.valueOf(extension.toUpperCase());
     }
     catch (IllegalArgumentException e) {

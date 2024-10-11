@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.highscores.parsing.nvram.adapters.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;

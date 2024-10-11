@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.inputs;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferencesService;

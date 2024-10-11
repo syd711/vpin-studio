@@ -77,20 +77,20 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return getRestClient().post(API + "directb2s/delete", directB2S, Boolean.class);
   }
  
-  public boolean renameBackglass(DirectB2S directB2S, String newName) throws Exception {
+  public DirectB2S renameBackglass(DirectB2S directB2S, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("newName", newName);
     params.put("emulatorId", directB2S.getEmulatorId());
     params.put("fileName", directB2S.getFileName());
-    return getRestClient().put(API + "directb2s", params, Boolean.class);
+    return getRestClient().put(API + "directb2s", params, DirectB2S.class);
   }
 
-  public boolean duplicateBackglass(DirectB2S directB2S) throws Exception {
+  public DirectB2S duplicateBackglass(DirectB2S directB2S) throws Exception {
     Map<String, Object> params = new HashMap<>();
     params.put("duplicate", true);
     params.put("emulatorId", directB2S.getEmulatorId());
     params.put("fileName", directB2S.getFileName());
-    return getRestClient().put(API + "directb2s", params, Boolean.class);
+    return getRestClient().put(API + "directb2s", params, DirectB2S.class);
   }
 
   public List<DirectB2S> getBackglasses() {

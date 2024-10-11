@@ -81,13 +81,17 @@ public class Studio extends Application {
   @Override
   public void start(Stage stage) throws IOException {
     LOG.info("-------------- Studio Starts -------------");
+    LOG.info("Locale: "  + Locale.getDefault().getDisplayName());
+    LOG.info("OS: "  + System.getProperty("os.name"));
+    LOG.info("------------------------------------------");
     try {
       ss = new ServerSocket(1044);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Application already running!");
+      WidgetFactory.showAlert(stage, "Another VPin Studio client is already running!");
       System.exit(-1);
     }
-
 
     Studio.stage = stage;
     Studio.hostServices = getHostServices();
@@ -152,7 +156,7 @@ public class Studio extends Application {
   }
 
   public static void loadStudio(Stage stage, VPinStudioClient client) {
-    LOG.info("load Studio...");
+    LOG.info("Launching Studio...");
     try {
       try {
         File sevenZipTempFolder = new File(System.getProperty("java.io.tmpdir"), "sevenZip/");
@@ -168,23 +172,26 @@ public class Studio extends Application {
 
       Stage splash = createSplash();
 
-      //force pre-caching, this way, the table overview does not need to execute single GET requests
-      new Thread(() -> {
-        Studio.client.getVpsService().invalidateAll();
-        LOG.info("Pre-cached VPS tables");
-      }, "Pre-cached VPS tables Thread").start();
+      //replace the OverlayFX client with the Studio one
+      Studio.client = client;
+      ServerFX.client = Studio.client;
 
       // run later to let the splash render properly
       JFXFuture.runAsync(() -> {
+        //force pre-caching, this way, the table overview does not need to execute single GET requests
+        new Thread(() -> {
+          Studio.client.getVpsService().invalidateAll();
+          LOG.info("Pre-cached VPS tables");
+        }, "Pre-cached VPS tables Thread").start();
 
-        //replace the OverlayFX client with the Studio one
-        Studio.client = client;
         createManiaClient();
-        ServerFX.client = Studio.client;
 
         // reinitialize a new EventManager each time application starts
         EventManager.initialize();
         LocalUISettings.initialize();
+      })
+      .thenLater(() -> {
+        Studio.stage = stage;
 
         List<Integer> unknownGameIds = client.getGameService().getUnknownGameIds();
         if (unknownGameIds != null && !unknownGameIds.isEmpty()) {
@@ -194,10 +201,7 @@ public class Studio extends Application {
 
         UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
         client.getGameService().setIgnoredEmulatorIds(uiSettings.getIgnoredEmulatorIds());
-      })
-      .thenLater(() -> {
-        
-        Studio.stage = stage;
+
         Rectangle2D screenBounds = Screen.getPrimary().getBounds();
 
         if (screenBounds.getWidth() > screenBounds.getHeight()) {
@@ -326,7 +330,7 @@ public class Studio extends Application {
           }
         }
       }
-      else if(osName.toLowerCase().contains("nux")) {
+      else if (osName.toLowerCase().contains("nux")) {
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", url});
         }
@@ -334,7 +338,8 @@ public class Studio extends Application {
           LOG.error("Error opening browser: " + e.getMessage(), e);
           WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
-      } else {
+      }
+      else {
         WidgetFactory.showAlert(Studio.stage, "Error", "Failed to determine operating system for name \"" + osName + "\".");
       }
     }
@@ -371,7 +376,7 @@ public class Studio extends Application {
           WidgetFactory.showAlert(Studio.stage, "Error", "Error opening browser: " + e.getMessage());
         }
       }
-      else if(osName.toLowerCase().contains("nux")){
+      else if (osName.toLowerCase().contains("nux")) {
         try {
           Runtime.getRuntime().exec(new String[]{"xdg-open", file.getAbsolutePath()});
         }

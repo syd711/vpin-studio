@@ -1,10 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.Studio;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
@@ -308,7 +308,7 @@ public class TableOverviewContextMenu {
       MenuItem removeItem = new MenuItem("Delete");
       KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
       removeItem.setAccelerator(removeItemKey);
-      removeItem.setOnAction(actionEvent -> tableOverviewController.onDelete());
+      removeItem.setOnAction(tableOverviewController::onDelete);
       removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
       ctxMenu.getItems().add(removeItem);
 

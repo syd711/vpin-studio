@@ -149,7 +149,8 @@ public class UploadAnalysisDispatcher {
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
         return (UploaderAnalysis<?>) results.get(0);
-      } else {
+      }
+      else {
         WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
       }
     }
@@ -202,7 +203,7 @@ public class UploadAnalysisDispatcher {
 
   private static ProgressModel<?> createProgressModel(File file) throws IOException {
     String suffix = FilenameUtils.getExtension(file.getName());
-    if (suffix.equalsIgnoreCase("rar")) {
+    if (suffix.equalsIgnoreCase("rar") || suffix.equalsIgnoreCase("7z")) {
       return new UploadDispatchAnalysisRarProgressModel(file);
     }
     if (suffix.equalsIgnoreCase("zip")) {

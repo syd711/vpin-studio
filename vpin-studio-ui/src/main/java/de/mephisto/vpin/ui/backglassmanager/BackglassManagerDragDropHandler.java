@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+import de.mephisto.vpin.commons.utils.PackageUtil;
+import javafx.scene.layout.Pane;
 import org.apache.commons.io.FilenameUtils;
 
 import de.mephisto.vpin.ui.tables.BaseDragDropHandler;
@@ -15,7 +17,7 @@ public class BackglassManagerDragDropHandler extends BaseDragDropHandler {
 
   BackglassManagerController controller;
 
-  private final List<String> suffixes = Arrays.asList("zip", "rar", "directb2s");
+  private final List<String> suffixes = Arrays.asList(PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z, "directb2s");
 
   public BackglassManagerDragDropHandler(BackglassManagerController controller, TableView<?> directb2sList, StackPane tableStack) {
     super(directb2sList, tableStack, true);

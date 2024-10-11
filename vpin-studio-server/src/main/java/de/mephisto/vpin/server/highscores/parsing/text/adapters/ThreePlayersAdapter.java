@@ -7,23 +7,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ThreePlayersAdapter implements ScoreTextFileAdapter {
-  private String name;
+  private List<String> fileNames;
   private int start = 1;
-
   private int lineCount;
 
-  public ThreePlayersAdapter(int start) {
+  public ThreePlayersAdapter() {
+  }
+
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
     this.start = start;
   }
 
-  public ThreePlayersAdapter(String name, int start) {
-    this.name = name;
-    this.start = start;
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
   }
 
   @Override
   public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
-    if (file.getName().equals(name)) {
+    if (fileNames != null && fileNames.contains(file.getName())) {
       return true;
     }
     return lines.size() == lineCount;
@@ -35,7 +52,7 @@ public class ThreePlayersAdapter implements ScoreTextFileAdapter {
 
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (i >= start && i < start+3) {
+      if (i >= start && i < start + 3) {
         newScoreText.add("0");
         continue;
       }
@@ -48,8 +65,8 @@ public class ThreePlayersAdapter implements ScoreTextFileAdapter {
   public String convert(@NotNull File file, @NotNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(start);
-    String score2 = lines.get(start+1);
-    String score3 = lines.get(start+2);
+    String score2 = lines.get(start + 1);
+    String score3 = lines.get(start + 2);
     builder.append("#1");
     builder.append(" ");
     builder.append("???");

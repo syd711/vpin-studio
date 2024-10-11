@@ -56,7 +56,9 @@ Source: "..\..\..\Output\Vpin-Studio\VPin-Studio-Server.l4j.ini"; DestDir: "{app
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autoprograms}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\VPin-Studio\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
+Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server.exe"; Filename: "{app}\VPin-Studio-Server.exe";
+Name: "{autoprograms}\VPin-Studio\VPin-Studio-Server"; Filename: "{app}\VPin-Studio-Server.bat"; Flags: runminimized
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: desktopicon
 Name: "{autodesktop}\{#MyAppNameVPBM}"; Filename: "{app}\resources\vpbm\{#MyAppExeNameVPBM}"; Tasks: desktopiconVPBM
 
@@ -75,4 +77,4 @@ Type: filesandordirs; Name: "{app}\config"
 Type: filesandordirs; Name: "{app}"
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{app}\VPin-Studio-Server.bat"""; Flags: uninsdeletevalue
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{autoprograms}\VPin-Studio\VPin-Studio-Server.lnk"""; Flags: uninsdeletevalue

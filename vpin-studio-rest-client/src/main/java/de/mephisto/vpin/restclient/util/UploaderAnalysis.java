@@ -60,11 +60,23 @@ public class UploaderAnalysis<T> {
   public String getRomFromPupPack() {
     String contains = containsWithPath("scriptonly.txt");
     if (contains == null) {
-      contains = containsWithPath(".bat");
+      String batPath = containsWithPath(".bat");
+      String pupPath = containsWithPath(".pup");
+
+      if (batPath != null && pupPath == null) {
+        contains = batPath;
+      }
+      if (batPath == null && pupPath != null) {
+        contains = pupPath;
+      }
+
+      if (batPath != null && pupPath != null) {
+        String[] batSegments = batPath.split("/");
+        String[] pupSegments = pupPath.split("/");
+        contains = pupSegments.length <= batSegments.length ? pupPath : batPath;
+      }
     }
-    if (contains == null) {
-      contains = containsWithPath(".pup");
-    }
+
     if (contains != null) {
       String rom = contains;
       if (rom.contains("/")) {
@@ -156,7 +168,7 @@ public class UploaderAnalysis<T> {
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
       analyzeZip();
     }
-    else if (suffix.equalsIgnoreCase(AssetType.RAR.name())) {
+    else if (suffix.equalsIgnoreCase(AssetType.RAR.name()) || suffix.equalsIgnoreCase("7z")) {
       analyzeRar();
     }
   }
@@ -176,10 +188,12 @@ public class UploaderAnalysis<T> {
       }
       zis.close();
       fileInputStream.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open " + file.getAbsolutePath());
       throw e;
-    } finally {
+    }
+    finally {
       if (fileInputStream != null) {
         fileInputStream.close();
       }
@@ -199,9 +213,11 @@ public class UploaderAnalysis<T> {
       inArchive.close();
       randomAccessFileStream.close();
       randomAccessFile.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to open " + file.getAbsolutePath());
-    } finally {
+    }
+    finally {
       randomAccessFileStream.close();
       randomAccessFile.close();
       LOG.info("Analysis finished, took " + (System.currentTimeMillis() - analysisStart) + " ms.");
@@ -259,7 +275,8 @@ public class UploaderAnalysis<T> {
         fos.close();
         this.readme = new String(fos.toByteArray());
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to extract README: " + e.getMessage(), e);
     }
   }
@@ -272,7 +289,8 @@ public class UploaderAnalysis<T> {
         fos.close();
         this.readme = new String(fos.getBytes());
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to extract README: " + e.getMessage(), e);
     }
   }
@@ -617,7 +635,8 @@ public class UploaderAnalysis<T> {
         try {
           Integer.parseInt(suffix);
           return true;
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           //
         }
       }

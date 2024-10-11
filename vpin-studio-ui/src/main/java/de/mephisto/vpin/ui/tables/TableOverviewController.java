@@ -35,6 +35,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -584,7 +585,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
-  public void onDelete() {
+  protected void onDelete(Event e) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
         deleteSelection();
@@ -704,9 +705,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public void reload(GameRepresentation refreshedGame) {
     if (refreshedGame != null) {
-      Optional<GameRepresentationModel> optmodel = models.stream().filter(m -> m.getGameId() == refreshedGame.getId()).findFirst();
-      if (optmodel.isPresent()) {
-        GameRepresentationModel model = optmodel.get();
+      GameRepresentationModel model = getModel(refreshedGame);
+      if (model != null) {
         model.setBean(refreshedGame);
         model.reload();
 
@@ -846,21 +846,21 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
     GameEmulatorRepresentation value = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    int id = value != null ? value.getId() : ALL_VPX_ID;
+    boolean isAllVpxSelected = client.getFrontendService().isAllVpx(value);
 
     JFXFuture.supplyAsync(() -> {
       if (clearCache) {
-        if (id == ALL_VPX_ID) {
+        if (isAllVpxSelected) {
           client.getGameService().clearVpxCache();
         }
         else {
-          client.getGameService().clearCache(id);
+          client.getGameService().clearCache(value.getId());
         }
       }
 
-      return id == ALL_VPX_ID
+      return isAllVpxSelected
           ? client.getGameService().getVpxGamesCached()
-          : client.getGameService().getGamesByEmulator(id);
+          : client.getGameService().getGamesByEmulator(value.getId());
     })
     .onErrorSupply(e -> {
       Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
@@ -870,7 +870,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       // as the load of tables could take some time, users may have switched to another emulators in between
       // if this is the case, do not refresh the UI with the results
       GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-      if (valueAfterSearch != null && valueAfterSearch.getId() != id) {
+      if (valueAfterSearch != null && (value == null || valueAfterSearch.getId() != value.getId())) {
         return;
       }
 
@@ -911,7 +911,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       tableView.getSelectionModel().getSelectedItems().addListener(this);
       if (selectedItem == null) {
-        tableView.getSelectionModel().select(0);
+        //TODO this will result in a duplicate initial selection which may lead to a deadlock
+//        tableView.getSelectionModel().select(0);
       }
       else {
         tableView.getSelectionModel().select(selectedItem);
@@ -923,6 +924,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       reloadConsumers.clear();
 
       endReload();
+
+      //TODO fixed above TODO by postphone the selection, no idea if this is feasable
+      Platform.runLater(() -> {
+        if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+      });
     });
   }
 
@@ -998,15 +1006,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
 
     this.emulatorCombo.setDisable(true);
-    List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
-    List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-
-    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
-    allVpx.setId(ALL_VPX_ID);
-    allVpx.setName("All VPX Tables");
-    allVpx.setVpxEmulator(true);
-    filtered.add(0, allVpx);
-
+    List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithAllVpx(uiSettings));
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);
 
@@ -1488,6 +1488,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
   }
 
+  /**
+   *
+   */
   private void refreshView(Optional<GameRepresentation> g) {
     dismissBtn.setVisible(true);
 
@@ -1744,6 +1747,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     client.getPreferenceService().addListener(this);
     Platform.runLater(() -> {
       Dialogs.openUpdateInfoDialog(client.getSystemService().getVersion(), false);
+
     });
 
     columnPlayfield.setVisible(false);
@@ -1869,7 +1873,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   public GameEmulatorRepresentation getEmulatorSelection() {
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
-    return selectedEmu == null || selectedEmu.getId() == ALL_VPX_ID ? null : selectedEmu;
+    return client.getFrontendService().isAllVpx(selectedEmu) ? null : selectedEmu;
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {

@@ -1,62 +1,26 @@
-## Release Notes 3.7.0
+## Release Notes 3.7.2
 
-## Changes
-
-- **Refactored Game Media Access**: For performance optimization, the media access has been refactored widely. As a result, the table (re)load should be noticeable faster. 
-- **Table Validators**: Introduced new validator **VPinMAME ROM Validation**. The validator uses the results from the VPinMAME ROM tester to indicate possibly broken ROM files. The new validator is enabled by default.
-- **Highscore Card Editor**: Added "Apply to all" button for the font selection which will apply the selected font to all available templates.
-- **Table Overview / Reload**: A manual reload in the table overview results in additional cache invalidation of the server. This should pick-up all changes done manually by the user on the cabinet.
-- **Table Overview**: Added new column "Launcher" which shows the .exe file that will be used for launching the table.
-- **Table Overview / Highscores**: Switched order of highscore graph and highscore card.
-- **iScored Integration**: Added the additional tag support for **vps:singlescore**. If you apply this tag to a table in iScored, the VPin Studio will only submit a highscore to iScored if the user has not posted any other score for that table yet - no matter if the new score is higher or not.
-- **Pause Menu**: Added additional info about the highscore data (if supported or not).
-- **PinVol 2.2**: Added PinVol version 2.2. The new .exe file will automatically be downloaded by the server.
-- **VPBM 3.3**: Updated to VPBM 3.3 (finally).
-  - Renamed **Table Repository** to **Table Backups**. VPBM does not need additional exports anymore, so this renaming should make the whole usage more intuitive.
-  - Removed "Repositories" from the settings. The idea to support multiple sources or targets for backups was not bad, but the implementation was not mature enough. It may be picked up again in the future. 
-  - Applied some performance optimizations from VBPM to the Studio integration.
-  - Added support for the additional external host ids.
-  - Added missing button tooltips and changed labels.
-- **Shortcuts**: Several shortcuts have been introduced to improve the accessibility of the Studio. You find an overview in the "Help & Support" section of the preferences.
-- **Studio Toolbar Design**: The toolbar design has been streamlined. The reload and filter buttons and search inputs have all the same order and size now. Also search input fields support Strg+F and ESC inputs for a better accessibility. 
-- **VPin Studio Launcher**: Add auto discovery of VPin Studio Server instances. For VPin Studio Servers running in the same network, the VPin Studio Launcher will now auto-detect the server instance(s). So no more manual IP lookups!
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/network-discovery.png" width="550" />
-
-- **Discord Maintenance Updates**: You can now select a Discord channel where updates are posted when you upload new tables or replace existing ones on your cabinet. If you share your VPin with a bunch of people (like I do), you can let them know this way if there are new tables available.  
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates-channel.png" width="550" />
-
-  The channel is configurable for the Discord BOT in the preferences.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/discord/table-updates.png" width="650" />
-
-- **Toolbar**: Added **System Shutdown** menu item to the header toolbar menu. Note that the item is only visible when you work remote.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/header-toolbar.png" width="250" />
-
-- **Backglass Manager / Backglass images to media assets**: Added the ability to extract the images inside the directb2s (Backglass + DMD) and use them as respective table media assets. If a media asset already exists, the image can replace or be appended to the collection.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/backglass-manager-assets.png" width="500" />
+**Note that a progress dialog will come up once you update is finished, see notes below!!!**
 
 ## Bugfixes
+
+- **Media Cache**: For generating highscore cards and backglass previews, the Studio extracts the data from backglasses and other sources. Unfortunately the generation of these assets were stored with non-unique names, so this index must be regenerated. **You can do that manually in the server settings but the Studio will also regenerate it once after showing the release notes dialog.**
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/media-cache.png" width="650" />
+
+- **VPin Studio Server Tray**: Fixed the "Launch Studio" action from the context menu of the tray icon.
+- **Table Parser**: Fixed issue in the VPX script analyzer which caused the missing resolving for highscore textfile names.
+- **CSV Exporter: Tables**: Added missing escaping of delimiters.
+- **CSV Exporter: Backglasses**: Fixed export errors caused by the wrong media index and improved the performance there.
+- **Highscore Parsing**: Increased support of VPReg.stg file based highscores. A few more highscore patterns are supported now, mainly used from seventies EM tables. 
+- **Table Overview / Initial Selection**: Tried once again to fix an initial selection issue which is leading to a deadlock for some users.
+- **Table Overview / Table Importer Dialog**: Fixed initialization of the emulator combobox. 
+- **Table Overview / Table Uploads**: Fixed issue that newly uploaded tables do not appear for the "Just Added" playlist. 
+- **Table Overview / Table Uploads**: Fixed issue that media has been duplicated instead of replaced when "replace" was selected as upload option. 
+- **Table Overview / PUP Packs**: Improved calculation of the correct PUP pack folder inside a table bundle (hopefully, it's a tricky on; "Stranger Things 4" issue). 
+- **Table Overview / PUP Packs**: Fixed PUP pack detection by also checking .mkv files. 
+- **Drop-in Folder**: The delete action moves files to the trash-bin now, instead of deleting them irrecoverably.
+- **Table Uploads**: Fixed issue that nvram files have not been extracted when uploaded as part of a bundle, e.g. "Big Bang Bar".
+- **Autostart**: Changed the installer so that during the startup the console window does not pop up anymore. This change will only be applied to new installations.  
+
   
-- **Highscore Cards Popups**: Properly centered highscore card when "show on table launch" option is used for highscore cards.
-- **Uploads**: Fixed issue with uploading files with filename length smaller than three characters (e.g. "24" - Damn you, Jack!).
-- **Table Asset Manager / Playlists**: Fixed asset search for playlists. We somehow forgot that. You can now search the frontend's asset database for media for your playlists, e.g. "music".
-- **Highscore Parsing**: Added additional lowercase check for VPReg.stg based highscores ("HELLBOY" problem).
-- **Highscore Parsing**: Added test coverage for over 50 new text file and VPReg.stg file based highscores (thanks to @gorgatron) and added an applicable parser if missing.
-- **System Manager / Visual Pinball**: Fixed issue that the parent folder of the "Tables" folder was used for the VPX system manager component (instead of the actual installation folder). Some users have selected a different folder just for the tables.
-- **Table Data Manager**: Fixed dialog sizing issues.
-- **Backglass Data Exporter**:
-  - Fixed wrong DMD image information (the data was always read from the backglass image).
-  - Added additional data from the backglass settings.
-- **ALT Sound**: Added missing cache invalidation after deletion of ALT sound packages.
-- **PUP Pack Uploads**: Increased maximum file size for uploads to 10GB.
-- **Drop-In Menu**: Fixed file lock and refresh issues.
-
-## VPin Mania 
-
-- **Player Ranking**: Added pagination to the players view, so the list is not limited to 100 anymore.
-- **Navigation**: Fixed several navigation issues.
-- **Player Statistics Tab**: The view has become a small revamp, showing the players rank now too.

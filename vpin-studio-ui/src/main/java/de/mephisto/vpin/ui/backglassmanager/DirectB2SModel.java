@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Objects;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -40,7 +41,17 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
 
   @Override
   public void load() {
-    this.backglassData = client.getBackglassServiceClient().getDirectB2SData(bean);
+    setDirectB2SData(client.getBackglassServiceClient().getDirectB2SData(bean));
+  }
+  /**
+   * Simulate a load and initialize fully
+   */
+  public void load(DirectB2SData b2sdata) {
+    setDirectB2SData(b2sdata);
+    setLoaded();
+  }
+  private void setDirectB2SData(DirectB2SData b2sdata) {
+    this.backglassData = b2sdata;
     if (backglassData != null) {
 
       this.grillHeight = backglassData.getGrillHeight();
@@ -144,5 +155,19 @@ public class DirectB2SModel extends BaseLoadingModel<DirectB2S, DirectB2SModel> 
 
   public int getNbScores() {
     return nbScores;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+    if (!super.equals(object)) return false;
+    DirectB2SModel that = (DirectB2SModel) object;
+    return Objects.equals(backglassData, that.backglassData);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(super.hashCode(), backglassData);
   }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.dropins;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.util.DateUtil;
@@ -74,9 +75,9 @@ public class DropInContainerController implements Initializable {
 
   @FXML
   private void onDelete() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete File", "Delete \"" + file.getAbsolutePath() + "\"?");
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Delete File", "Move \"" + file.getName() + "\" to trash bin?");
     if (result.get().equals(ButtonType.OK)) {
-      if (!file.delete()) {
+      if (!TrashBin.moveTo(file)) {
         WidgetFactory.showAlert(Studio.stage, "Error", "Deletion failed, another process is blocking this file.");
       }
     }

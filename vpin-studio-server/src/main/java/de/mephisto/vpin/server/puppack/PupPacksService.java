@@ -25,7 +25,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.IOException;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
@@ -44,9 +43,10 @@ public class PupPacksService implements InitializingBean {
   private final Map<String, PupPack> pupPackFolders = new ConcurrentHashMap<>();
 
   /**
-   * Return where pinup player is installed, read it today from installation directory, 
-   * independently of the frontend, could be usefull to support standalone installation with 
+   * Return where pinup player is installed, read it today from installation directory,
+   * independently of the frontend, could be usefull to support standalone installation with
    * pinup player only
+   *
    * @return The PupVideos folder of a Pinup Plyer installation
    */
   private File getPupPackFolder() {
@@ -94,13 +94,14 @@ public class PupPacksService implements InitializingBean {
 
   private void refresh() {
     FrontendType frontendType = frontendService.getFrontendType();
-    if(!frontendType.supportPupPacks()) {
+    if (!frontendType.supportPupPacks()) {
       return;
     }
 
     this.pupPackFolders.clear();
     long start = System.currentTimeMillis();
     File pupPackFolder = getPupPackFolder();
+    LOG.info("Refreshing PUP pack info from \"" + pupPackFolder.getAbsolutePath() + "\"");
     if (pupPackFolder.exists()) {
       File[] pupPacks = pupPackFolder.listFiles((dir, name) -> new File(dir, name).isDirectory());
       if (pupPacks != null) {
@@ -122,9 +123,14 @@ public class PupPacksService implements InitializingBean {
       pupPack.setScriptOnly(true);
     }
 
-    if ((OrbitalPins.isOrbitalPin(packFolder.getName()) || pupPack.containsFileWithSuffixes("mp4", "png"))) {
-//      LOG.info("Loaded PUP Pack " + packFolder.getName());
+    boolean orbitalPin = OrbitalPins.isOrbitalPin(packFolder.getName());
+    boolean containsMedia = pupPack.containsFileWithSuffixes("mp4", "mkv", "png");
+    if ((orbitalPin || containsMedia)) {
+//      LOG.info("Loaded PUP Pack " + packFolder.getName() + " (orbitalPin: " + orbitalPin + ")");
       pupPackFolders.put(packFolder.getName().toLowerCase(), pupPack);
+    }
+    else {
+//      LOG.info("Skipped PUP pack folder \"" + packFolder.getName() + "\", no media found.");
     }
     return pupPack;
   }
@@ -256,7 +262,7 @@ public class PupPacksService implements InitializingBean {
   @Override
   public void afterPropertiesSet() {
     FrontendType frontendType = frontendService.getFrontendType();
-    if(!frontendType.supportPupPacks()) {
+    if (!frontendType.supportPupPacks()) {
       return;
     }
 

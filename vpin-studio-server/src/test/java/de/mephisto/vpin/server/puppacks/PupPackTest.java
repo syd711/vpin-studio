@@ -1,11 +1,14 @@
 package de.mephisto.vpin.server.puppacks;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.puppack.PupPackUtil;
 import de.mephisto.vpin.server.puppack.ScreenEntry;
 import de.mephisto.vpin.server.puppack.ScreensPub;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,5 +24,24 @@ public class PupPackTest {
     assertTrue(s.exists());
     assertNotNull(s.getScreenMode(VPinScreen.Loading));
     assertFalse(entries.isEmpty());
+  }
+
+  @Test
+  public void testRootFolderResolving() throws IOException {
+    File archive = new File("C:\\temp\\vpin-dropins\\Stranger Things 4 ALL IN 1 UPDATE.zip");
+    if (archive.exists()) {
+      System.out.println("Analyzing " + archive.getAbsolutePath());
+      UploaderAnalysis analysis = new UploaderAnalysis(archive);
+      analysis.analyze();
+
+      System.out.println("Root: " + analysis.getPupPackRootDirectory());
+      System.out.println("ROM: " + analysis.getRomFromPupPack());
+
+      assertNotNull(analysis.getPupPackRootDirectory());
+      assertNotNull(analysis.getRomFromPupPack());
+
+//      File targetFolder = new File("C:\\temp\\PUPPackTest");
+//      PupPackUtil.unpack(archive, targetFolder, analysis.getPupPackRootDirectory(), "StrangerThings4_Premium", null);
+    }
   }
 }

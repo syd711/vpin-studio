@@ -1,0 +1,33 @@
+6500
+5430
+4652
+4540
+4130
+SEM
+AAA
+DAD
+BBB
+CCC
+19
+5
+13
+1
+1
+1
+4
+1
+4
+2
+2
+2
+3
+3
+3
+Credits: 2
+FreePlay (0 = coin, 1 = free): 1
+Balls: 5
+Match Number: 7
+Chime (0 = sound file, 1 = DOF chime): 0
+pfOption (1 = L/R Stereo, 2 = U/D Stereo, 3 = quad): 1
+LUT: 0
+ReplayEB (0 = Extra Ball , 1 = Replay): 1

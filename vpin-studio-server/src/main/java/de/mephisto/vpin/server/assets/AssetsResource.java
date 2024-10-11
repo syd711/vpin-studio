@@ -89,6 +89,11 @@ public class AssetsResource {
     return assetService.deleteDefaultBackground(gameId);
   }
 
+  @GetMapping("/index/exists")
+  public boolean isMediaIndexAvailable() {
+    return assetService.isMediaIndexAvailable();
+  }
+
   @PostMapping("/save")
   public Asset save(@RequestBody Asset asset) {
     return assetService.save(asset);

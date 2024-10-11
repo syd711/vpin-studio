@@ -57,18 +57,26 @@ public class SingleEntryWithLettersVPRegHighscoreAdapter extends SingleEntryAnon
     return false;
   }
 
-  private String getNameEntry(DirectoryEntry gameFolder, int i) throws IOException {
+  protected String getNameEntry(DirectoryEntry gameFolder, int index) throws IOException {
+    return getNameEntry(gameFolder, index, -1);
+  }
+
+  protected String getNameEntry(DirectoryEntry gameFolder, int index, int scoreIndex) throws IOException {
     String nameString = "?";
-    if (gameFolder.hasEntry("HSA" + i)) {
-      DocumentNode entry = (DocumentNode) gameFolder.getEntry("HSA" + i);
+    if (gameFolder.hasEntry("HSA" + index)) {
+      DocumentNode entry = (DocumentNode) gameFolder.getEntry("HSA" + index);
       nameString = super.getNameString(entry);
     }
-    else if (gameFolder.hasEntry("hsa" + i)) {
-      DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + i);
+    else if (gameFolder.hasEntry("hsa" + index)) {
+      DocumentNode entry = (DocumentNode) gameFolder.getEntry("hsa" + index);
       nameString = super.getNameString(entry);
     }
-    else if (gameFolder.hasEntry("Initial" + i)) {
-      DocumentNode entry = (DocumentNode) gameFolder.getEntry("Initial" + i);
+    else if (gameFolder.hasEntry("Initial" + index)) {
+      DocumentNode entry = (DocumentNode) gameFolder.getEntry("Initial" + index);
+      nameString = super.getNameString(entry);
+    }
+    else if (gameFolder.hasEntry("Initial(" + scoreIndex + "," + index + ")")) {
+      DocumentNode entry = (DocumentNode) gameFolder.getEntry("Initial(" + scoreIndex + "," + index + ")");
       nameString = super.getNameString(entry);
     }
 

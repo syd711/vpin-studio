@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.frontend.standalone;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;

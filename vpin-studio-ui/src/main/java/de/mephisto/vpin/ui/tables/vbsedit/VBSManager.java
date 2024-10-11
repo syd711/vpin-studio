@@ -28,6 +28,7 @@ public class VBSManager {
 
   private VBSManager() {
     monitoringService.startMonitoring(vpsFolder);
+    LOG.info("VPS Monitor started.");
   }
 
   public static VBSManager getInstance() {

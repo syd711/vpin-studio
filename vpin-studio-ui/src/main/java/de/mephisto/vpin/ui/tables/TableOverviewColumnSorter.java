@@ -82,6 +82,9 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnHSType)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getHighscoreType()));
       }
+      else if (column.equals(tableOverviewController.columnLauncher)) {
+        comp = Comparator.comparing(o -> String.valueOf(o.getGame().getLauncher()));
+      }
 
       // optionally reverse order 
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {

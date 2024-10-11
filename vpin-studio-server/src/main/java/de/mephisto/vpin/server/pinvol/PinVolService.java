@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.pinvol;
 
 import de.mephisto.vpin.commons.utils.NirCmd;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.preferences.PreferencesService;

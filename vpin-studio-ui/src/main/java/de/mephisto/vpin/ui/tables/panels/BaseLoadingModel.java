@@ -50,7 +50,10 @@ public abstract class BaseLoadingModel<T, M> extends ObjectPropertyBase<M> {
   /** Invoked from Executor thread */
   protected void doLoad() throws Exception {
     load();
+    setLoaded();
+  }
 
+  protected void setLoaded() {
     // update the table
     loaded = true;
     Platform.runLater(() -> {

@@ -60,7 +60,6 @@ public class AssetService {
   @Autowired
   private FrontendService frontendService;
 
-
   public Asset save(Asset asset) {
     return assetRepository.saveAndFlush(asset);
   }
@@ -298,5 +297,9 @@ public class AssetService {
     Asset updated = assetRepository.saveAndFlush(asset);
     LOG.info("Saved " + updated);
     return updated;
+  }
+
+  public boolean isMediaIndexAvailable() {
+    return defaultPictureService.isMediaIndexAvailable();
   }
 }
