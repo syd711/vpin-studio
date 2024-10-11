@@ -913,7 +913,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
       tableView.getSelectionModel().getSelectedItems().addListener(this);
       if (selectedItem == null) {
-        tableView.getSelectionModel().select(0);
+        //TODO this will result in a duplicate initial selection which may lead to a deadlock
+//        tableView.getSelectionModel().select(0);
       }
       else {
         tableView.getSelectionModel().select(selectedItem);
@@ -925,6 +926,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       reloadConsumers.clear();
 
       endReload();
+
+      //TODO fixed above TODO by postphone the selection, no idea if this is feasable
+      Platform.runLater(() -> {
+        if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+          tableView.getSelectionModel().select(0);
+        }
+      });
     });
   }
 
@@ -1460,14 +1468,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   /**
-   * //TODO
-   * The synchronized is a cheap workaround here to fix a possible client deadlock.
-   * When the client is loaded the first time, the selection is toggled twice and the media for the first
-   * selection is fetched twice in asynchronously. This seems to result in a deadlock for some users, so we try to avoid this here.
    *
-   * @param g
    */
-  private synchronized void refreshView(Optional<GameRepresentation> g) {
+  private void refreshView(Optional<GameRepresentation> g) {
     dismissBtn.setVisible(true);
 
     validationError.setVisible(false);

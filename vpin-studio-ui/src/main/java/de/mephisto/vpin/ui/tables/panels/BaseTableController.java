@@ -110,7 +110,8 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   }
 
   @FXML
-  protected void onDelete(Event e) {}
+  protected void onDelete(Event e) {
+  }
 
   protected void registerKeyPressed() {
 
@@ -199,14 +200,13 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   //----------------------
 
   protected void setItems(List<T> data) {
-
     this.models = FXCollections.observableArrayList();
     for (T bean : data) {
       models.add(toModel(bean));
     }
 
     // Wrap games in a FilteredList
-    this.filteredModels = new FilteredList<>(models);
+    this.filteredModels = new FilteredList<>(models, filterController.buildPredicate());
 
     // Wrap the FilteredList in a SortedList
     SortedList<M> sortedData = new SortedList<>(this.filteredModels);
@@ -239,6 +239,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   public M getSelectedModel() {
     return tableView.getSelectionModel().getSelectedItem();
   }
+
   public T getSelection() {
     M selection = getSelectedModel();
     return selection != null ? selection.getBean() : null;
