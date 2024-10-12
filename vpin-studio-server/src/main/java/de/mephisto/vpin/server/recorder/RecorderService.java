@@ -30,7 +30,7 @@ public class RecorderService {
 
   public List<RecordingScreen> getRecordingScreens() {
     List<VPinScreen> supportedRecodingScreens = frontendService.getFrontend().getSupportedRecodingScreens();
-    List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendConnector().getFrontendPlayerDisplays();
+    List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();
 
     List<RecordingScreen> recordingOptions = new ArrayList<>();
     for (VPinScreen screen : supportedRecodingScreens) {

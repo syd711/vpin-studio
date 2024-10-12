@@ -44,6 +44,11 @@ public class FrontendResource {
     return frontendService.getFrontend();
   }
 
+  @GetMapping("/clearcache")
+  public boolean clearCache() {
+    return frontendService.clearCache();
+  }
+
   @GetMapping("/settings")
   public JsonSettings getSettings() {
     return frontendStatusService.getSettings();

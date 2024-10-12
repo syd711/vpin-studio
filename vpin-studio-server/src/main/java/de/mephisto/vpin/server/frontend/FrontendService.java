@@ -45,6 +45,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
+  private List<FrontendPlayerDisplay> frontendPlayerDisplays;
 
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
@@ -357,7 +358,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
-    return getFrontendConnector().getFrontendPlayerDisplays();
+    if (frontendPlayerDisplays == null) {
+      frontendPlayerDisplays = getFrontendConnector().getFrontendPlayerDisplays();
+    }
+    return frontendPlayerDisplays;
   }
 
   public boolean isValidVPXEmulator(Emulator emulator) {
@@ -554,6 +558,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     Game game = getGame(gameId);
     return getGameMedia(game);
   }
+
+  public boolean clearCache() {
+    this.frontendPlayerDisplays = null;
+    return true;
+  }
+
   @NonNull
   public FrontendMedia getGameMedia(Game game) {
     FrontendMedia frontendMedia = new FrontendMedia();
