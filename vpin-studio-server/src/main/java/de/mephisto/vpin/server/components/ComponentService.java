@@ -200,6 +200,8 @@ public class ComponentService implements InitializingBean {
         return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       }
 
+      componentFacade.preProcess(emulator, releaseArtifact, install);
+
       //we have a real installation from here on
       install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       if (install.getStatus() == null) {

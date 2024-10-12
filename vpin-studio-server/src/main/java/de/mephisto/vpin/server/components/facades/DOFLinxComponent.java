@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.components.facades;
 
+import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
+import de.mephisto.vpin.connectors.github.ReleaseArtifact;
+import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
 import de.mephisto.vpin.server.doflinx.DOFLinxService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -66,13 +69,32 @@ public class DOFLinxComponent implements ComponentFacade {
   @Nullable
   @Override
   public List<String> getExcludedFilenames() {
-    return Arrays.asList(".ini", ".INI", ".log");
+    return Arrays.asList(".ini", ".INI", ".log", ".bak");
   }
 
   @NotNull
   @Override
   public List<String> getIncludedFilenames() {
     return Arrays.asList("Sample INI files/");
+  }
+
+  @Override
+  public void preProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+    dofLinxService.killDOFLinx();
+  }
+
+  @Override
+  public void postProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+    if (dofLinxService.isValid()) {
+      File starter1 = new File(dofLinxService.getInstallationFolder(), "Starter 32 bit");
+      if (starter1.exists()) {
+        FileUtils.deleteFolder(starter1);
+      }
+      File starter2 = new File(dofLinxService.getInstallationFolder(), "Starter 64 bit");
+      if (starter2.exists()) {
+        FileUtils.deleteFolder(starter2);
+      }
+    }
   }
 
   @Override

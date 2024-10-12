@@ -50,4 +50,7 @@ public interface ComponentFacade {
 
   }
 
+  default void preProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
+
+  }
 }

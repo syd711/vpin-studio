@@ -66,7 +66,7 @@
                   </graphic>
                </Button>
                <Separator layoutX="270.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="DOFLink.INI" textFill="WHITE">
+               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="DOFLinx.INI" textFill="WHITE">
                   <font>
                      <Font size="14.0" />
                   </font>
