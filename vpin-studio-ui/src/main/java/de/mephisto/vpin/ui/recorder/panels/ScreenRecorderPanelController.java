@@ -17,6 +17,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,11 +61,15 @@ public class ScreenRecorderPanelController implements Initializable {
   private Spinner<Integer> durationSpinner;
 
   @FXML
+  private Spinner<Integer> delaySpinner;
+
+  @FXML
   private ComboBox<RecordMode> recordModeComboBox;
 
   private RecordingScreen recordingScreen;
 
   private Image imageCached = null;
+  private ChangeListener<Boolean> enabledCheckboxListener;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
     root.prefWidthProperty().bind(Studio.stage.widthProperty().subtract(960));
@@ -99,18 +104,8 @@ public class ScreenRecorderPanelController implements Initializable {
     });
 
     enabledCheckbox.setSelected(option.isEnabled());
-    enabledCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
-        option.setEnabled(newValue);
-
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
-        recorderController.refreshSelection();
-        refresh();
-      }
-    });
+    enabledCheckboxListener = getEnabledCheckboxListener(recorderController, recordingScreen);
+    enabledCheckbox.selectedProperty().addListener(enabledCheckboxListener);
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 3600, option.getRecordingDuration());
     durationSpinner.setValueFactory(factory);
@@ -123,7 +118,34 @@ public class ScreenRecorderPanelController implements Initializable {
       }, 500);
     });
 
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 3600, option.getInitialDelay());
+    delaySpinner.setValueFactory(factory1);
+    delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
+      debouncer.debounce("delay", () -> {
+        RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+        option2.setInitialDelay(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+      }, 500);
+    });
+
     refresh();
+  }
+
+  @NotNull
+  private  ChangeListener<Boolean> getEnabledCheckboxListener(RecorderController recorderController, RecordingScreen recordingScreen) {
+    return new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
+        option.setEnabled(newValue);
+
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+        recorderController.refreshSelection();
+        refresh();
+      }
+    };
   }
 
   public void invalidate() {
@@ -136,6 +158,11 @@ public class ScreenRecorderPanelController implements Initializable {
     preview.setVisible(Studio.stage.widthProperty().intValue() > 1500);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
+
+    enabledCheckbox.selectedProperty().removeListener(enabledCheckboxListener);
+    enabledCheckbox.setSelected(option.isEnabled());
+    enabledCheckbox.selectedProperty().addListener(enabledCheckboxListener);
+
     if (option.isEnabled()) {
       if (!root.getStyleClass().contains("selection-panel-selected")) {
         root.getStyleClass().add("selection-panel-selected");

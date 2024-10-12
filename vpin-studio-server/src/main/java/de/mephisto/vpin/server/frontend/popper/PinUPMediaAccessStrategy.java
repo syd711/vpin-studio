@@ -6,6 +6,7 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 import java.io.File;
 
@@ -18,7 +19,7 @@ public class PinUPMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getGameMediaFolder(@NonNull Game game, VPinScreen screen, String extension) {
+  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
     return new File(mediaDirectory, screen.name());
   }

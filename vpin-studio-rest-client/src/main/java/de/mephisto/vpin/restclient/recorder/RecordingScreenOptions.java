@@ -3,8 +3,17 @@ package de.mephisto.vpin.restclient.recorder;
 public class RecordingScreenOptions {
   private String displayName;
   private int recordingDuration;
+  private int initialDelay;
   private RecordMode recordMode;
   private boolean enabled = true;
+
+  public int getInitialDelay() {
+    return initialDelay;
+  }
+
+  public void setInitialDelay(int initialDelay) {
+    this.initialDelay = initialDelay;
+  }
 
   public boolean isEnabled() {
     return enabled;

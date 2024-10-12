@@ -118,14 +118,16 @@ public class JobPoller implements StudioEventListener {
   }
 
   public void setPolling() {
-    jobProgress.setProgress(-1);
-    jobProgress.setVisible(true);
-    jobProgress.setDisable(false);
+    if (!polling.get()) {
+      jobProgress.setProgress(-1);
+      jobProgress.setVisible(true);
+      jobProgress.setDisable(false);
 
-    if (!service.isRunning()) {
-      service.restart();
+      if (!service.isRunning()) {
+        service.restart();
+      }
+      polling.set(true);
     }
-    polling.set(true);
   }
 
   public void refreshJobsUI() {

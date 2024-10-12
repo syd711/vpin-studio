@@ -26,7 +26,7 @@
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
-                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" styleClass="submit-button" text="TestPause Menu" />
+                  <Button fx:id="testBtn" mnemonicParsing="false" onAction="#onTestClick" styleClass="submit-button" text="Test Pause Menu" />
                </children>
             </HBox>
          </right>

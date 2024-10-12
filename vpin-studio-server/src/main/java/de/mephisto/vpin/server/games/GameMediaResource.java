@@ -193,7 +193,8 @@ public class GameMediaResource {
       }
 
       String suffix = FilenameUtils.getExtension(file.getOriginalFilename());
-      File out = gameMediaService.buildMediaAsset(game, screen, suffix, append);
+      File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+      File out = GameMediaService.buildMediaAsset(mediaFolder, game, suffix, append);
       LOG.info("Uploading " + out.getAbsolutePath());
       UploadUtil.upload(file, out);
 

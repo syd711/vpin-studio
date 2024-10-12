@@ -96,9 +96,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private VBox recordingOptions;
 
   @FXML
-  private Button stopBtn;
-
-  @FXML
   private Button recordBtn;
 
   @FXML
@@ -132,7 +129,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private void onRecord() {
-
+    RecorderDialogs.openRecordingDialog(this, selection);
   }
 
 
@@ -304,7 +301,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       try {
         LOG.info("Launched preview refresh thread.");
         while (active) {
-          invalidateScreens();
+          Platform.runLater(() -> {
+            invalidateScreens();
+          });
+
           RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
           Thread.sleep(recorderSettings.getRefreshInterval() * 1000);
         }
@@ -461,7 +461,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     });
 
     this.recordBtn.setDisable(true);
-    this.stopBtn.setDisable(true);
     labelCount.setText("No tables selected");
   }
 
@@ -487,7 +486,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     tableView.refresh();
   }
 
-  private void refreshScreens() {
+  public void refreshScreens() {
     for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
       screenRecorderPanelController.refresh();
     }

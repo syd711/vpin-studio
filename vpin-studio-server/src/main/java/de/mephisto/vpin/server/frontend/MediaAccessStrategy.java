@@ -9,6 +9,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 public interface MediaAccessStrategy {
 
@@ -16,7 +17,7 @@ public interface MediaAccessStrategy {
 
   File getPlaylistMediaFolder(@NonNull Playlist playlist, @NonNull VPinScreen screen);
 
-  File getGameMediaFolder(@NonNull Game game, VPinScreen screen, String extension);
+  File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension);
 
   List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen);
 

@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.recorder.RecordMode;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
+import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -39,15 +40,20 @@ public class RecorderTest {
     options.setEnabled(true);
     options.setRecordingDuration(3);
 
-    ScreenRecorder recorder = new ScreenRecorder(s);
 
     File target = File.createTempFile("recorder", ".mp4");
     target.deleteOnExit();
-    recorder.start(options, target);
+
+    ScreenRecorder recorder = new ScreenRecorder(s, target);
+
+    recorder.start(options);
+
 
     Thread.sleep(5);
     assertTrue(target.exists());
     assertTrue(target.length() > 0);
+
+//    FileUtils.copyFile(target, new File("C:/temp/" + target.getName()));
 
     target.delete();
   }

@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefWidth="600.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.dialogs.RecordingProgressDialogController">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <bottom>
+      <BorderPane BorderPane.alignment="CENTER">
+         <BorderPane.margin>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </BorderPane.margin>
+         <right>
+            <HBox spacing="6.0" BorderPane.alignment="CENTER">
+               <children>
+                  <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
+                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onRecordClick" style="-fx-border-color: #FF2222; -fx-background-color: #FF223344;" styleClass="submit-button" text="Stop Recording" />
+                  <Button fx:id="recordBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRecordClick" styleClass="submit-button" text="Start Recording" />
+               </children>
+            </HBox>
+         </right>
+      </BorderPane>
+   </bottom>
+   <center>
+      <VBox spacing="6.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Tables selected for recording:" textFill="WHITE" />
+            <Label fx:id="tablesLabel" layoutX="22.0" layoutY="121.0" styleClass="default-text" text="-" />
+            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Screens selected for recording:" textFill="WHITE">
+               <VBox.margin>
+                  <Insets top="6.0" />
+               </VBox.margin></Label>
+            <VBox fx:id="data" spacing="6.0" />
+            <VBox spacing="6.0" styleClass="selection-panel-selected">
+               <children>
+                  <Label fx:id="durationLabel2" styleClass="default-headline" text="Recording Progress" />
+                  <ProgressBar fx:id="progressBar" disable="true" prefWidth="600.0" progress="0.0" />
+                  <GridPane hgap="3.0" vgap="3.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="281.199951171875" minWidth="10.0" prefWidth="184.599951171875" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="418.00000000000006" minWidth="10.0" prefWidth="363.00004882812493" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Label styleClass="default-text" text="Time Remaining:" GridPane.rowIndex="1" />
+                        <Label styleClass="default-text" text="Estimated Time Remaining:" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="Active Table:" />
+                        <Label fx:id="pTableLabel" layoutX="10.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
+                        <Label fx:id="pTimeLabel" layoutX="156.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label fx:id="pTotalTimeLabel" layoutX="156.0" layoutY="33.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                     </children>
+                  </GridPane>
+               </children>
+               <VBox.margin>
+                  <Insets top="12.0" />
+               </VBox.margin>
+               <padding>
+                  <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+               </padding>
+            </VBox>
+         </children>
+         <padding>
+            <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+         </padding>
+      </VBox>
+   </center>
+</BorderPane>

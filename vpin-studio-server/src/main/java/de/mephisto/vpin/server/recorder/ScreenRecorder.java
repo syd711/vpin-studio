@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -21,22 +20,34 @@ import java.util.List;
 public class ScreenRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorder.class);
 
-//  private final static String CMD = "ffmpeg.exe -video_size %s -offset_x %s -offset_y %s -y -rtbufsize 100M -f gdigrab -framerate 30 -t %s -draw_mouse 0 -i desktop -c:v libx264 -r 30 -preset ultrafast -tune zerolatency -crf 25 -pix_fmt yuv420p %s";
-
   @NonNull
   private final RecordingScreen recordingScreen;
+  @NonNull
+  private final File target;
+
   private SystemCommandExecutor executor;
 
-  public ScreenRecorder(@NonNull RecordingScreen recordingScreen) {
+  public ScreenRecorder(@NonNull RecordingScreen recordingScreen, @NonNull File target) {
     this.recordingScreen = recordingScreen;
+    this.target = target;
   }
 
-  public boolean start(@NonNull RecordingScreenOptions options, @NonNull File target) {
+  public boolean start(@NonNull RecordingScreenOptions options) {
     try {
-      String videoSize = recordingScreen.getDisplay().getWidth() + "x" + recordingScreen.getDisplay().getHeight();
-      int offsetX = recordingScreen.getDisplay().getX();
-      int offsetY = recordingScreen.getDisplay().getY();
-      int duration = options.getRecordingDuration();
+      int width = recordingScreen.getDisplay().getWidth();
+      if (width % 2 == 1) {
+        width--;
+      }
+
+      int height = recordingScreen.getDisplay().getHeight();
+      if (height % 2 == 1) {
+        height--;
+      }
+
+      String videoSize = width + "x" + height;
+      String offsetX = String.valueOf(recordingScreen.getDisplay().getX());
+      String offsetY = String.valueOf(recordingScreen.getDisplay().getY());
+      String duration = String.valueOf(options.getRecordingDuration());
 
       File resources = new File(SystemInfo.RESOURCES);
       if (!resources.exists()) {
@@ -45,21 +56,37 @@ public class ScreenRecorder {
 
       List<String> commandList = new ArrayList<>();
       commandList.add("ffmpeg.exe");
-      commandList.add("-video_size " + videoSize);
-      commandList.add("-offset_x " + offsetX);
-      commandList.add("-offset_y " + offsetY);
-      commandList.add("-rtbufsize 100M");
-      commandList.add("-f gdigrab");
-      commandList.add("-framerate 30");
-      commandList.add("-t " + duration);
-      commandList.add("-draw_mouse 0");
-      commandList.add("-i desktop");
-      commandList.add("-c:v libx264");
-      commandList.add("-r 30");
-      commandList.add("-preset ultrafast");
-      commandList.add("-tune zerolatency");
-      commandList.add("-crf 25");
-      commandList.add("-pix_fmt yuv420p");
+      commandList.add("-y");
+      commandList.add("-video_size");
+      commandList.add(videoSize);
+      commandList.add("-offset_x");
+      commandList.add(offsetX);
+      commandList.add("-offset_y");
+      commandList.add(offsetY);
+      commandList.add("-rtbufsize");
+      commandList.add("100M");
+      commandList.add("-f");
+      commandList.add("gdigrab");
+      commandList.add("-framerate");
+      commandList.add("30");
+      commandList.add("-t");
+      commandList.add(duration);
+      commandList.add("-draw_mouse");
+      commandList.add("0");
+      commandList.add("-i");
+      commandList.add("desktop");
+      commandList.add("-c:v");
+      commandList.add("libx264");
+      commandList.add("-r");
+      commandList.add("30");
+      commandList.add("-preset");
+      commandList.add("ultrafast");
+      commandList.add("-tune");
+      commandList.add("zerolatency");
+      commandList.add("-crf");
+      commandList.add("25");
+      commandList.add("-pix_fmt");
+      commandList.add("yuv420p");
       commandList.add(target.getAbsolutePath());
 
       executor = new SystemCommandExecutor(commandList);
