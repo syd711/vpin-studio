@@ -2,7 +2,10 @@ package de.mephisto.vpin.server.doflinx;
 
 import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.components.ComponentSummary;
+import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.util.DateUtil;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -17,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Date;
 
 @Service
 public class DOFLinxService implements InitializingBean, PreferenceChangedListener {
@@ -59,7 +63,11 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
   }
 
   public boolean killDOFLinx() {
-    return systemService.killProcesses("DOFLinx");
+    File folder = new File(dofLinxSettings.getInstallationFolder());
+    SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("DOFLinxMsg", "QUIT"));
+    executor.setDir(folder);
+    executor.executeCommandAsync();
+    return true;
   }
 
   @Nullable
@@ -92,11 +100,31 @@ public class DOFLinxService implements InitializingBean, PreferenceChangedListen
     return true;
   }
 
+  public ComponentSummary getComponentSummary() {
+    ComponentSummary summary = new ComponentSummary();
+    summary.setType(ComponentType.doflinx);
+
+    if (isValid()) {
+      summary.addEntry("DOFLinx.INI", getDOFLinxINI().getAbsolutePath());
+      summary.addEntry("Last Modified", DateUtil.formatDateTime(new Date(getDOFLinxINI().lastModified())));
+    }
+    else {
+      summary.addEntry("DOFLinx.INI", "-");
+      summary.addEntry("Last Modified", "-");
+    }
+
+    return summary;
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
     if (propertyName.equals(PreferenceNames.DOFLINX_SETTINGS)) {
       this.dofLinxSettings = preferencesService.getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
     }
+  }
+
+  public File getDOFLinxINI() {
+    return new File(getInstallationFolder(), "DOFLinx.INI");
   }
 
   @Override

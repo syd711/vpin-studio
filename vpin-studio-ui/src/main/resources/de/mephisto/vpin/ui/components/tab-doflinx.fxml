@@ -29,6 +29,17 @@
                      <Tooltip text="Open Serum Installation Folder" />
                   </tooltip>
                </Button>
+               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component" text="DOFLinxConfig" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip text="Open Serum Installation Folder" />
+                  </tooltip>
+               </Button>
                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
                   <font>
@@ -37,6 +48,34 @@
                   <graphic>
                      <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
                   </graphic>
+               </Button>
+               <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="(Re)start DOFLinx">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
+                  </graphic>
+               </Button>
+               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop DOFLinx" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
+                  </graphic>
+               </Button>
+               <Separator layoutX="270.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="DOFLink.INI" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip text="Open VPMAlias.txt file" />
+                  </tooltip>
                </Button>
             </items>
             </ToolBar>

@@ -77,4 +77,4 @@ Type: filesandordirs; Name: "{app}\config"
 Type: filesandordirs; Name: "{app}"
 
 [Registry]
-Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{autoprograms}\VPin-Studio\VPin-Studio-Server"""; Flags: uninsdeletevalue
+Root: HKLM; Subkey: "SOFTWARE\Microsoft\Windows\CurrentVersion\Run"; ValueType: string; ValueName: "VPin Studio Server"; ValueData: """{autoprograms}\VPin-Studio\VPin-Studio-Server.lnk"""; Flags: uninsdeletevalue

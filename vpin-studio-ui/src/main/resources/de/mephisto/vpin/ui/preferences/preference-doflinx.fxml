@@ -32,6 +32,8 @@
                </VBox.margin>
             </Label>
             <Hyperlink onAction="#onLink" text="https://www.vpforums.org/index.php?showforum=104" />
+            <Label layoutX="34.0" layoutY="126.0" styleClass="preference-description" text="Documentation:" textFill="WHITE" />
+            <Hyperlink layoutX="34.0" layoutY="148.0" onAction="#onLink" text="https://doflinx.github.io/docs/" />
             <VBox>
                <children>
                   <Label styleClass="preference-subtitle" text="Installation" textFill="WHITE" />
