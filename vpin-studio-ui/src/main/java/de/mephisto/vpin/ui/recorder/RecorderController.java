@@ -124,11 +124,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   @FXML
-  private void onStop() {
-
-  }
-
-  @FXML
   private void onRecord() {
     RecorderDialogs.openRecordingDialog(this, selection);
   }
@@ -145,11 +140,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void onReload(ActionEvent e) {
     ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
     this.doReload();
-  }
-
-  @FXML
-  private void onVideoSettings() {
-
   }
 
   public void doReload() {

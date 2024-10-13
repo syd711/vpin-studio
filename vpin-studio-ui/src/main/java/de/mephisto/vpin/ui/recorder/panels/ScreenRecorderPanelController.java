@@ -107,7 +107,7 @@ public class ScreenRecorderPanelController implements Initializable {
     enabledCheckboxListener = getEnabledCheckboxListener(recorderController, recordingScreen);
     enabledCheckbox.selectedProperty().addListener(enabledCheckboxListener);
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 3600, option.getRecordingDuration());
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
     durationSpinner.setValueFactory(factory);
     durationSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("duration", () -> {
@@ -118,7 +118,7 @@ public class ScreenRecorderPanelController implements Initializable {
       }, 500);
     });
 
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(5, 3600, option.getInitialDelay());
+    SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3600, option.getInitialDelay());
     delaySpinner.setValueFactory(factory1);
     delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("delay", () -> {

@@ -77,6 +77,8 @@ public class PinballXConnector extends BaseConnector {
     Frontend frontend = new Frontend();
     frontend.setName("PinballX");
     frontend.setInstallationDirectory(getInstallationFolder().getAbsolutePath());
+    //TODO recordings screens for PinballX
+    frontend.setSupportedRecordingScreens(Collections.emptyList());
     frontend.setFrontendType(FrontendType.PinballX);
 
     frontend.setFrontendExe("PinballX.exe");

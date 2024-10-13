@@ -44,7 +44,7 @@ public class RecorderService {
   @Autowired
   private PreferencesService preferencesService;
 
-  public RecordingData startRecording(RecordingData recordingData) {
+  public JobDescriptor startRecording(RecordingData recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();
     List<Game> games = recordingData.getGameIds().stream().map(id -> gameService.getGame(id)).collect(Collectors.toList());
@@ -57,11 +57,11 @@ public class RecorderService {
 
     jobService.offer(jobDescriptor);
     LOG.info("Offered screen recorder job.");
-    return recordingData;
+    return jobDescriptor;
   }
 
-  public boolean stopRecording() {
-    jobService.cancel(JobType.RECORDER);
+  public boolean stopRecording(String uuid) {
+    jobService.cancel(uuid);
     return true;
   }
 

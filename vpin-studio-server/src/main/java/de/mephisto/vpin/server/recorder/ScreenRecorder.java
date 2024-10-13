@@ -25,6 +25,7 @@ public class ScreenRecorder {
   private final File target;
 
   private SystemCommandExecutor executor;
+  private boolean cancelled = false;
 
   public ScreenRecorder(@NonNull RecordingScreen recordingScreen, @NonNull File target) {
     this.recordingScreen = recordingScreen;
@@ -40,6 +41,9 @@ public class ScreenRecorder {
       if (options.getInitialDelay() > 0) {
         LOG.info(this + " is waiting for the initial recording delay of " + options.getInitialDelay() + " seconds.");
         Thread.sleep(options.getInitialDelay() * 1000);
+        if (cancelled) {
+          return result;
+        }
       }
 
       int width = recordingScreen.getDisplay().getWidth();
@@ -127,6 +131,7 @@ public class ScreenRecorder {
   }
 
   public void cancel() {
+    this.cancelled = true;
     stop();
     if (target.exists()) {
       target.delete();

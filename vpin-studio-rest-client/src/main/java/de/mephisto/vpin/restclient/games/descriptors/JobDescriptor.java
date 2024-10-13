@@ -17,21 +17,40 @@ public class JobDescriptor {
   private int gameId;
   private boolean cancelled;
   private boolean cancelable;
-  private int duration;
+
+  private int tasksExecuted;
+  private int taskRemainingSeconds;
+  private int taskDurationSeconds;
 
   @JsonIgnore
   private Job job;
+
+  public int getTasksExecuted() {
+    return tasksExecuted;
+  }
+
+  public void setTasksExecuted(int tasksExecuted) {
+    this.tasksExecuted = tasksExecuted;
+  }
+
+  public int getTaskRemainingSeconds() {
+    return taskRemainingSeconds;
+  }
+
+  public void setTaskRemainingSeconds(int taskRemainingSeconds) {
+    this.taskRemainingSeconds = taskRemainingSeconds;
+  }
 
   public JobDescriptor() {
 
   }
 
-  public int getDuration() {
-    return duration;
+  public int getTaskDurationSeconds() {
+    return taskDurationSeconds;
   }
 
-  public void setDuration(int duration) {
-    this.duration = duration;
+  public void setTaskDurationSeconds(int taskDurationSeconds) {
+    this.taskDurationSeconds = taskDurationSeconds;
   }
 
   public boolean isCancelable() {
@@ -132,7 +151,7 @@ public class JobDescriptor {
   }
 
   public boolean isFinished() {
-    return error != null || progress == 1;
+    return error != null || progress >= 1;
   }
 
   @Override

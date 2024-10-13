@@ -78,17 +78,6 @@
                   <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
                </graphic>
             </Button>
-            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop Recording" textFill="WHITE">
-               <font>
-                  <Font size="14.0" />
-               </font>
-               <graphic>
-                  <FontIcon iconColor="WHITE" iconLiteral="mdi2s-stop" iconSize="18" />
-               </graphic>
-               <tooltip>
-                  <Tooltip text="Stop recording" />
-               </tooltip>
-            </Button>
             <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>

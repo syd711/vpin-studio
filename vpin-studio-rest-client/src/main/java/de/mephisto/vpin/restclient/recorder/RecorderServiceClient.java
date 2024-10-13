@@ -2,6 +2,7 @@ package de.mephisto.vpin.restclient.recorder;
 
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,9 +23,9 @@ public class RecorderServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "recorder/screens", RecordingScreen[].class));
   }
 
-  public RecordingData startRecording(RecordingData status) {
+  public JobDescriptor startRecording(RecordingData status) {
     try {
-      return getRestClient().post(API + "recorder/start", status, RecordingData.class);
+      return getRestClient().post(API + "recorder/start", status, JobDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed to start recording: " + e.getMessage(), e);
@@ -32,7 +33,7 @@ public class RecorderServiceClient extends VPinStudioClientService {
     }
   }
 
-  public boolean stopRecording() {
-    return getRestClient().get(API + "recorder/stop", Boolean.class);
+  public boolean stopRecording(JobDescriptor jobDescriptor) {
+    return getRestClient().get(API + "recorder/stop/" + jobDescriptor.getUuid(), Boolean.class);
   }
 }

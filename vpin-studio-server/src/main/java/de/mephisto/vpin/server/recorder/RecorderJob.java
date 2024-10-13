@@ -21,9 +21,7 @@ public class RecorderJob implements Job {
   private final List<RecordingScreen> supportedRecodingScreens;
   private final List<FrontendPlayerDisplay> frontendPlayerDisplays;
 
-  private boolean cancelled = false;
   private GameRecorder gameRecorder;
-  private int processed;
 
   public RecorderJob(MediaAccessStrategy mediaAccessStrategy, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens, List<FrontendPlayerDisplay> frontendPlayerDisplays) {
     this.mediaAccessStrategy = mediaAccessStrategy;
@@ -35,22 +33,26 @@ public class RecorderJob implements Job {
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
-    processed = 0;
     for (Game game : games) {
       try {
-        if (cancelled) {
-          return;
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          break;
         }
 
+        long start = System.currentTimeMillis();
         jobDescriptor.setGameId(game.getId());
-        gameRecorder = new GameRecorder(mediaAccessStrategy, game, settings, supportedRecodingScreens, jobDescriptor);
+        gameRecorder = new GameRecorder(mediaAccessStrategy, game, settings, supportedRecodingScreens, jobDescriptor, games.size());
         gameRecorder.startRecording();
 
-        processed++;
-
-        double progress = (double) (processed * 100) / games.size();
-        jobDescriptor.setProgress(progress);
+        double progress = (double) (jobDescriptor.getTasksExecuted() * 100) / games.size() / 100;
+        if (jobDescriptor.getProgress() < 1) {
+          jobDescriptor.setProgress(progress);
+        }
         LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
+        jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
+
+        long duration = System.currentTimeMillis() - start;
+        jobDescriptor.setTaskDurationSeconds((int) (duration / 1000));
       }
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
@@ -63,8 +65,9 @@ public class RecorderJob implements Job {
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
-    LOG.info("Cancelling recorder job, " + processed + " of " + this.games.size() + " processsed.");
+    LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.games.size() + " processed.");
     gameRecorder.cancel(jobDescriptor);
+    jobDescriptor.setProgress(1);
   }
 
   @Override

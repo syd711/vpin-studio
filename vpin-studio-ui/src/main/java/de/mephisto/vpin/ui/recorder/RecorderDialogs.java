@@ -12,7 +12,7 @@ public class RecorderDialogs {
   public static void openRecordingDialog(RecorderController recorderController, List<GameRepresentation> games) {
     Stage stage = Dialogs.createStudioDialogStage(RecordingProgressDialogController.class, "recording-progress-dialog.fxml", "Recorder");
     RecordingProgressDialogController controller = (RecordingProgressDialogController) stage.getUserData();
-    controller.setData(recorderController, games);
+    controller.setData(stage, recorderController, games);
 
     stage.showAndWait();
   }

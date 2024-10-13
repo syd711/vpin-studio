@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.server.util.RequestUtil;
@@ -39,12 +40,12 @@ public class RecorderResource {
   }
 
   @PostMapping("/start")
-  public RecordingData startRecording(@RequestBody RecordingData recordingData) {
+  public JobDescriptor startRecording(@RequestBody RecordingData recordingData) {
     return recorderService.startRecording(recordingData);
   }
 
-  @GetMapping("/stop")
-  public boolean stopRecording() {
-    return recorderService.stopRecording();
+  @GetMapping("/stop/{jobId}")
+  public boolean stopRecording(@PathVariable("jobId") String uuid) {
+    return recorderService.stopRecording(uuid);
   }
 }

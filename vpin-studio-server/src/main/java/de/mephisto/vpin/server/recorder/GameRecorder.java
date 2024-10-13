@@ -26,18 +26,24 @@ public class GameRecorder {
   private final RecorderSettings recorderSettings;
   private final List<RecordingScreen> supportedRecodingScreens;
   private final JobDescriptor jobDescriptor;
+  private final int totalRecordings;
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
   private Thread jobUpdater;
-  private int waitingTime;
 
-  public GameRecorder(MediaAccessStrategy mediaAccessStrategy, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor) {
+  private boolean finished = false;
+
+  private int waitingTime;
+  private int totalTime;
+
+  public GameRecorder(MediaAccessStrategy mediaAccessStrategy, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalRecordings) {
     this.mediaAccessStrategy = mediaAccessStrategy;
     this.game = game;
     this.recorderSettings = recorderSettings;
     this.supportedRecodingScreens = supportedRecodingScreens;
     this.jobDescriptor = jobDescriptor;
+    this.totalRecordings = totalRecordings;
   }
 
   public RecordingResult startRecording() {
@@ -45,13 +51,12 @@ public class GameRecorder {
 
     RecordingResult status = new RecordingResult();
 
-    waitingTime = 0;
     List<Callable<RecordingResult>> callables = new ArrayList<>();
     for (RecordingScreen screen : supportedRecodingScreens) {
       RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
       int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
-      if (totalDuration > waitingTime) {
-        waitingTime = totalDuration;
+      if (totalDuration > totalTime) {
+        totalTime = totalDuration;
       }
       if (option.isEnabled()) {
         Callable<RecordingResult> screenRecordable = new Callable<>() {
@@ -70,6 +75,7 @@ public class GameRecorder {
       }
     }
 
+    waitingTime = totalTime;
 
     ExecutorService executorService = Executors.newFixedThreadPool(callables.size());
     for (Callable<RecordingResult> callable : callables) {
@@ -80,11 +86,25 @@ public class GameRecorder {
 
     jobUpdater = new Thread(() -> {
       Thread.currentThread().setName("Game Recorder JobDescriptor Updater");
-      while(!jobDescriptor.isCancelled() && !jobDescriptor.isFinished()) {
+      while (!finished) {
         try {
           Thread.sleep(1000);
           waitingTime--;
-          jobDescriptor.setDuration(waitingTime);
+
+          if (waitingTime >= 0) {
+            jobDescriptor.setTaskRemainingSeconds(waitingTime);
+          }
+
+          int processed = totalTime - waitingTime;
+          double thisProgress = (processed * 100d / totalTime);
+          double relativeProgress = thisProgress / 100 / totalRecordings;
+          double baseProgress = jobDescriptor.getTasksExecuted() * 100d / totalRecordings / 100;
+
+//          System.out.println("This: " + thisProgress);
+//          System.out.println("Relative: " + relativeProgress);
+//          System.out.println("------------------------");
+
+          jobDescriptor.setProgress(baseProgress + relativeProgress);
         }
         catch (Exception e) {
           //ignore
@@ -92,7 +112,6 @@ public class GameRecorder {
       }
     });
     jobUpdater.start();
-
 
     try {
       for (Future<RecordingResult> future : futures) {
@@ -104,11 +123,14 @@ public class GameRecorder {
       LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
     }
 
+    finished = true;
     return status;
   }
 
   public void cancel(JobDescriptor jobDescriptor) {
     try {
+      finished = true;
+
       for (Future<RecordingResult> future : futures) {
         future.cancel(true);
       }

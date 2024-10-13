@@ -1,14 +1,15 @@
 package de.mephisto.vpin.ui.recorder.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
@@ -67,6 +68,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   private final List<CheckBox> screenCheckboxes = new ArrayList<>();
 
+  private Stage stage;
   private RecorderController recorderController;
   private List<GameRepresentation> games;
 
@@ -74,24 +76,26 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private int popperInitAndLoadingTimeSeconds = 6;
 
   private GameRepresentation game;
+  private JobDescriptor jobDescriptor;
+  private int totalEstimatedSeconds;
+  private int maxScreenRecordingLength;
+  private Thread jobRefreshThread;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
-    JobPoller.getInstance().removeListener(this);
-    recorderController.doReload();
   }
 
   @FXML
   private void onStop(ActionEvent e) {
-    client.getRecorderService().stopRecording();
-    finishRecording();
+    client.getRecorderService().stopRecording(jobDescriptor);
+    finishRecording(true);
   }
 
   @FXML
   private void onRecord(ActionEvent e) {
     recordBtn.setVisible(false);
+    cancelBtn.setVisible(false);
     stopBtn.setVisible(true);
     progressBar.setDisable(false);
 
@@ -99,52 +103,101 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
     RecordingData status = new RecordingData();
     status.setGameIds(games.stream().map(g -> g.getId()).collect(Collectors.toList()));
-    client.getRecorderService().startRecording(status);
+    jobDescriptor = client.getRecorderService().startRecording(status);
     JobPoller.getInstance().setPolling();
     JobPoller.getInstance().addListener(this);
+
+    jobRefreshThread = new Thread(() -> {
+      while (!this.jobDescriptor.isFinished() && !this.jobDescriptor.isCancelled()) {
+        Platform.runLater(() -> {
+          refreshJobStatus();
+        });
+        try {
+          Thread.sleep(1000);
+        }
+        catch (InterruptedException ex) {
+          //ignore
+        }
+      }
+
+      finishRecording(false);
+    });
+    jobRefreshThread.start();
   }
 
   @Override
   public void jobsRefreshed(List<JobDescriptor> activeJobs) {
-    Platform.runLater(() -> {
-      Optional<JobDescriptor> first = activeJobs.stream().filter(j -> j.getJobType().equals(JobType.RECORDER)).findFirst();
-      if (first.isPresent()) {
-        JobDescriptor jobDescriptor = first.get();
-        progressBar.setProgress(jobDescriptor.getProgress());
+    Optional<JobDescriptor> first = activeJobs.stream().filter(j -> j.getUuid().equals(this.jobDescriptor.getUuid())).findFirst();
+    if (first.isPresent()) {
+      this.jobDescriptor = first.get();
+    }
+    else {
+      this.jobDescriptor.setProgress(1);
+    }
+  }
 
-        int gameId = jobDescriptor.getGameId();
-        if (gameId >= 0) {
-          if (this.game == null || this.game.getId() != gameId) {
-            this.game = client.getGameService().getGame(gameId);
-            if (this.game != null) {
-              this.pTableLabel.setText(game.getGameDisplayName());
-            }
-          }
-          if (jobDescriptor.getDuration() > 0) {
-            this.pTimeLabel.setText(DurationFormatUtils.formatDuration(jobDescriptor.getDuration() * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
-          }
-          else {
-            this.pTimeLabel.setText("?");
-          }
+  private void refreshJobStatus() {
+    if (jobDescriptor.getProgress() > 0) {
+      progressBar.setProgress(jobDescriptor.getProgress());
+    }
+
+    int gameId = jobDescriptor.getGameId();
+    if (gameId > 0) {
+      if (this.game == null || this.game.getId() != gameId) {
+        this.game = client.getGameService().getGame(gameId);
+        if (this.game != null) {
+          this.pTableLabel.setText(game.getGameDisplayName());
         }
       }
-      else {
-        finishRecording();
+
+      if (jobDescriptor.getTaskRemainingSeconds() > 0) {
+        this.pTimeLabel.setText(DurationFormatUtils.formatDuration(jobDescriptor.getTaskRemainingSeconds() * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
       }
+      else {
+        this.pTimeLabel.setText("?");
+      }
+
+      int taskDurationSeconds = jobDescriptor.getTaskDurationSeconds();
+      if (taskDurationSeconds > 0) {
+        int estimatedTotalTime = jobDescriptor.getTaskDurationSeconds() * games.size();
+        int estimatedRemainingTime = estimatedTotalTime - (jobDescriptor.getTaskDurationSeconds() * ((games.size() - jobDescriptor.getTasksExecuted()) + 1)) + jobDescriptor.getTaskRemainingSeconds();
+        this.pTotalTimeLabel.setText(DurationFormatUtils.formatDuration(estimatedRemainingTime * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
+      }
+      else {
+        if (jobDescriptor.getTaskRemainingSeconds() > 0) {
+          int remaining = totalEstimatedSeconds - (maxScreenRecordingLength - jobDescriptor.getTaskRemainingSeconds());
+          this.pTotalTimeLabel.setText(DurationFormatUtils.formatDuration(remaining * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
+        }
+      }
+    }
+  }
+
+  private void finishRecording(boolean cancelled) {
+    JobPoller.getInstance().removeListener(this);
+    jobDescriptor.setProgress(1);
+
+    Platform.runLater(() -> {
+      stopBtn.setVisible(false);
+      progressBar.setDisable(true);
+      cancelBtn.setVisible(true);
+
+      this.pTableLabel.setText("-");
+      this.pTimeLabel.setText("-");
+      recorderController.doReload();
+      progressBar.setProgress(1);
+
+      if (cancelled) {
+        WidgetFactory.showAlert(stage, "Job Cancelled", "The recording has been cancelled.");
+      }
+      else {
+        WidgetFactory.showInformation(stage, "Recording Finished", "Finished recording of " + games.size() + " game(s).");
+      }
+      stage.close();
     });
   }
 
-  private void finishRecording() {
-    JobPoller.getInstance().removeListener(this);
-    stopBtn.setVisible(false);
-    progressBar.setDisable(true);
-    cancelBtn.setVisible(true);
-
-    this.pTableLabel.setText("-");
-    this.pTimeLabel.setText("-");
-  }
-
-  public void setData(RecorderController recorderController, List<GameRepresentation> games) {
+  public void setData(Stage stage, RecorderController recorderController, List<GameRepresentation> games) {
+    this.stage = stage;
     this.recorderController = recorderController;
     this.games = games;
     tablesLabel.setText(games.size() + " tables selected");
@@ -161,7 +214,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
 
-    int maxScreenRecordingLength = popperInitAndLoadingTimeSeconds;
+    maxScreenRecordingLength = popperInitAndLoadingTimeSeconds;
     for (RecordingScreen recordingScreen : recordingScreens) {
       RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
 
@@ -171,8 +224,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
-    int totalTime = maxScreenRecordingLength * games.size();
-    String totalDurationString = DurationFormatUtils.formatDuration(totalTime * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false);
+    totalEstimatedSeconds = maxScreenRecordingLength * games.size();
+    String totalDurationString = DurationFormatUtils.formatDuration(totalEstimatedSeconds * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false);
     pTotalTimeLabel.setText(totalDurationString);
   }
 

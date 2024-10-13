@@ -23,7 +23,7 @@ public class JobService {
   private final List<JobDescriptor> jobList = new ArrayList<>();
 
   public void dismissAll() {
-    List<JobDescriptor> collect = jobList.stream().filter(j -> j.isFinished()).collect(Collectors.toList());
+    List<JobDescriptor> collect = jobList.stream().filter(j -> j.isFinished() || j.isCancelled()).collect(Collectors.toList());
     for (JobDescriptor jobDescriptor : collect) {
       jobList.remove(jobDescriptor);
     }
@@ -51,9 +51,11 @@ public class JobService {
   }
 
   public void cancel(@NonNull JobType jobType) {
-    Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getJobType().equals(jobType)).findFirst();
-    if (job.isPresent()) {
-      jobQueue.cancel(job.get());
+    List<JobDescriptor> jobs = jobList.stream().filter(j -> j.getJobType().equals(jobType)).collect(Collectors.toList());
+    for (JobDescriptor job : jobs) {
+      if (!job.isCancelled() && !job.isFinished()) {
+        jobQueue.cancel(job);
+      }
     }
   }
 
