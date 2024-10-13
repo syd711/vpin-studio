@@ -23,6 +23,7 @@ public class RecorderJob implements Job {
 
   private boolean cancelled = false;
   private GameRecorder gameRecorder;
+  private int processed;
 
   public RecorderJob(MediaAccessStrategy mediaAccessStrategy, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens, List<FrontendPlayerDisplay> frontendPlayerDisplays) {
     this.mediaAccessStrategy = mediaAccessStrategy;
@@ -34,7 +35,7 @@ public class RecorderJob implements Job {
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
-    int processed = 0;
+    processed = 0;
     for (Game game : games) {
       try {
         if (cancelled) {
@@ -62,6 +63,7 @@ public class RecorderJob implements Job {
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
+    LOG.info("Cancelling recorder job, " + processed + " of " + this.games.size() + " processsed.");
     gameRecorder.cancel(jobDescriptor);
   }
 

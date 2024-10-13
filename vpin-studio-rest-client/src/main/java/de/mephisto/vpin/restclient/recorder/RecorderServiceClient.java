@@ -31,4 +31,8 @@ public class RecorderServiceClient extends VPinStudioClientService {
       throw e;
     }
   }
+
+  public boolean stopRecording() {
+    return getRestClient().get(API + "recorder/stop", Boolean.class);
+  }
 }

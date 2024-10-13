@@ -60,6 +60,11 @@ public class RecorderService {
     return recordingData;
   }
 
+  public boolean stopRecording() {
+    jobService.cancel(JobType.RECORDER);
+    return true;
+  }
+
   public List<RecordingScreen> getRecordingScreens() {
     List<VPinScreen> supportedRecodingScreens = frontendService.getFrontend().getSupportedRecodingScreens();
     List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();

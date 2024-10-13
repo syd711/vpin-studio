@@ -29,6 +29,8 @@ public class GameRecorder {
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
+  private Thread jobUpdater;
+  private int waitingTime;
 
   public GameRecorder(MediaAccessStrategy mediaAccessStrategy, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor) {
     this.mediaAccessStrategy = mediaAccessStrategy;
@@ -43,9 +45,14 @@ public class GameRecorder {
 
     RecordingResult status = new RecordingResult();
 
+    waitingTime = 0;
     List<Callable<RecordingResult>> callables = new ArrayList<>();
     for (RecordingScreen screen : supportedRecodingScreens) {
       RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+      int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
+      if (totalDuration > waitingTime) {
+        waitingTime = totalDuration;
+      }
       if (option.isEnabled()) {
         Callable<RecordingResult> screenRecordable = new Callable<>() {
           @Override
@@ -70,10 +77,27 @@ public class GameRecorder {
       futures.add(submit);
     }
 
+
+    jobUpdater = new Thread(() -> {
+      Thread.currentThread().setName("Game Recorder JobDescriptor Updater");
+      while(!jobDescriptor.isCancelled() && !jobDescriptor.isFinished()) {
+        try {
+          Thread.sleep(1000);
+          waitingTime--;
+          jobDescriptor.setDuration(waitingTime);
+        }
+        catch (Exception e) {
+          //ignore
+        }
+      }
+    });
+    jobUpdater.start();
+
+
     try {
       for (Future<RecordingResult> future : futures) {
         RecordingResult recordingResult = future.get();
-        LOG.error("Recording finished: {}", recordingResult.toString());
+        LOG.info("Recording finished: {}", recordingResult.toString());
       }
     }
     catch (Exception e) {
@@ -92,6 +116,8 @@ public class GameRecorder {
       for (ScreenRecorder screenRecorder : screenRecorders) {
         screenRecorder.cancel();
       }
+
+      LOG.info("Finished game recorder cancellation.");
     }
     catch (Exception e) {
       jobDescriptor.setError(e.getMessage());

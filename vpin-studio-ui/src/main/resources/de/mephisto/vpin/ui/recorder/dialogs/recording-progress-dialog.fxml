@@ -24,8 +24,8 @@
             <HBox spacing="6.0" BorderPane.alignment="CENTER">
                <children>
                   <Button fx:id="cancelBtn" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Close" />
-                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onRecordClick" style="-fx-border-color: #FF2222; -fx-background-color: #FF223344;" styleClass="submit-button" text="Stop Recording" />
-                  <Button fx:id="recordBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRecordClick" styleClass="submit-button" text="Start Recording" />
+                  <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" style="-fx-border-color: #FF2222; -fx-background-color: #FF223344;" styleClass="submit-button" text="Stop Recording" />
+                  <Button fx:id="recordBtn" layoutX="71.0" layoutY="10.0" mnemonicParsing="false" onAction="#onRecord" styleClass="submit-button" text="Start Recording" />
                </children>
             </HBox>
          </right>

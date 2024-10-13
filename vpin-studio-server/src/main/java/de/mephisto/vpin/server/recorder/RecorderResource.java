@@ -42,4 +42,9 @@ public class RecorderResource {
   public RecordingData startRecording(@RequestBody RecordingData recordingData) {
     return recorderService.startRecording(recordingData);
   }
+
+  @GetMapping("/stop")
+  public boolean stopRecording() {
+    return recorderService.stopRecording();
+  }
 }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.jobs;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,6 +45,13 @@ public class JobService {
 
   public void cancel(@NonNull String uuid) {
     Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getUuid().equals(uuid)).findFirst();
+    if (job.isPresent()) {
+      jobQueue.cancel(job.get());
+    }
+  }
+
+  public void cancel(@NonNull JobType jobType) {
+    Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getJobType().equals(jobType)).findFirst();
     if (job.isPresent()) {
       jobQueue.cancel(job.get());
     }

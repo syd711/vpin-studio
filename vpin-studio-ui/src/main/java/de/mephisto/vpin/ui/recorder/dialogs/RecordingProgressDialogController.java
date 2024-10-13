@@ -84,7 +84,13 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   }
 
   @FXML
-  private void onRecordClick(ActionEvent e) {
+  private void onStop(ActionEvent e) {
+    client.getRecorderService().stopRecording();
+    finishRecording();
+  }
+
+  @FXML
+  private void onRecord(ActionEvent e) {
     recordBtn.setVisible(false);
     stopBtn.setVisible(true);
     progressBar.setDisable(false);
@@ -114,15 +120,28 @@ public class RecordingProgressDialogController implements Initializable, DialogC
               this.pTableLabel.setText(game.getGameDisplayName());
             }
           }
+          if (jobDescriptor.getDuration() > 0) {
+            this.pTimeLabel.setText(DurationFormatUtils.formatDuration(jobDescriptor.getDuration() * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
+          }
+          else {
+            this.pTimeLabel.setText("?");
+          }
         }
       }
       else {
-        JobPoller.getInstance().removeListener(this);
-        stopBtn.setVisible(false);
-        progressBar.setDisable(true);
-        cancelBtn.setVisible(true);
+        finishRecording();
       }
     });
+  }
+
+  private void finishRecording() {
+    JobPoller.getInstance().removeListener(this);
+    stopBtn.setVisible(false);
+    progressBar.setDisable(true);
+    cancelBtn.setVisible(true);
+
+    this.pTableLabel.setText("-");
+    this.pTimeLabel.setText("-");
   }
 
   public void setData(RecorderController recorderController, List<GameRepresentation> games) {

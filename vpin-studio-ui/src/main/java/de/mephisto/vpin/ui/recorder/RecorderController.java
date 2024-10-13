@@ -40,6 +40,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -498,7 +499,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
     refreshScreens();
   }
-
 
   class ScreenSizeChangeListener implements ChangeListener<Number> {
     @Override

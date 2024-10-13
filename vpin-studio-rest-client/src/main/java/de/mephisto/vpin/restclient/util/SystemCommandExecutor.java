@@ -151,7 +151,7 @@ public class SystemCommandExecutor {
       errorStreamHandler.join();
 
     } catch (Exception e) {
-      LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage(), e);
+      LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage());
       throw e;
     }
     return -1;

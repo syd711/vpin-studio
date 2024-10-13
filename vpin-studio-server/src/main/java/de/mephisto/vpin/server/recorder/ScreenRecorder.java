@@ -37,6 +37,11 @@ public class ScreenRecorder {
     result.setFileName(target.getAbsolutePath());
 
     try {
+      if (options.getInitialDelay() > 0) {
+        LOG.info(this + " is waiting for the initial recording delay of " + options.getInitialDelay() + " seconds.");
+        Thread.sleep(options.getInitialDelay() * 1000);
+      }
+
       int width = recordingScreen.getDisplay().getWidth();
       if (width % 2 == 1) {
         width--;
@@ -126,5 +131,11 @@ public class ScreenRecorder {
     if (target.exists()) {
       target.delete();
     }
+    LOG.info("Finished cancellation of " + this);
+  }
+
+  @Override
+  public String toString() {
+    return "Screen Recorder for '" + this.recordingScreen.getScreen().name() + "'";
   }
 }

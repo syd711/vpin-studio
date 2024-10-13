@@ -17,12 +17,21 @@ public class JobDescriptor {
   private int gameId;
   private boolean cancelled;
   private boolean cancelable;
+  private int duration;
 
   @JsonIgnore
   private Job job;
 
   public JobDescriptor() {
 
+  }
+
+  public int getDuration() {
+    return duration;
+  }
+
+  public void setDuration(int duration) {
+    this.duration = duration;
   }
 
   public boolean isCancelable() {
