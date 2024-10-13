@@ -19,7 +19,6 @@ import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,9 +52,10 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   private CardSettings cardSettings;
 
   public void extractDefaultPicture(@NonNull Game game) {
-    if (StringUtils.isEmpty(game.getRom())) {
-      return;
-    }
+    //TODO @Matt check if needed or legacy from old times when default image was using rom as name ?
+    //if (StringUtils.isEmpty(game.getRom())) {
+    //  return;
+    //}
 
     File rawDefaultPicture = getRawDefaultPicture(game);
     if (!rawDefaultPicture.getParentFile().exists() && !rawDefaultPicture.getParentFile().mkdirs()) {

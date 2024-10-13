@@ -24,6 +24,12 @@ public class DirectB2SData {
   private boolean backgroundAvailable;
   private boolean dmdImageAvailable;
 
+  private int backgroundWidth;
+  private int backgroundHeight;
+
+  private int dmdWidth;
+  private int dmdHeight;
+
   private int illuminations;
 
   private int scores;
@@ -155,6 +161,46 @@ public class DirectB2SData {
 
   public void setGrillHeight(int grillHeight) {
     this.grillHeight = grillHeight;
+  }
+
+  public int getBackgroundWidth() {
+    return backgroundWidth;
+  }
+
+  public void setBackgroundWidth(int backgroundWidth) {
+    this.backgroundWidth = backgroundWidth;
+  }
+
+  public int getBackgroundHeight() {
+    return backgroundHeight;
+  }
+
+  public void setBackgroundHeight(int backgroundHeight) {
+    this.backgroundHeight = backgroundHeight;
+  }
+
+  public int getDmdWidth() {
+    return dmdWidth;
+  }
+
+  public void setDmdWidth(int dmdWidth) {
+    this.dmdWidth = dmdWidth;
+  }
+
+  public int getDmdHeight() {
+    return dmdHeight;
+  }
+
+  public void setDmdHeight(int dmdHeight) {
+    this.dmdHeight = dmdHeight;
+  }
+
+  public boolean isFullDmd() {
+    return isFullDmd(dmdWidth, dmdHeight);
+  }
+  public static boolean isFullDmd(double imageWidth, double imageHeight) {
+    double ratio = imageWidth / imageHeight;
+    return ratio < 3.0;
   }
 
   public long getFilesize() {

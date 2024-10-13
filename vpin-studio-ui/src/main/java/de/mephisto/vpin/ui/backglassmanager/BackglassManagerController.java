@@ -777,12 +777,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected int isChecked(DirectB2SModel model) {
-        return model.hasDmd() ? (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ? 1 : 2) : 0;
+        return model.hasDmd() ? (model.isFullDmd() ? 1 : 2) : 0;
       }
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ?
+        return (model.isFullDmd() ?
             "Full DMD backglass" : "DMD backglass present, but not Full-DMD Aspect Ratio")
             + ", resolution " + model.getDmdWidth() + "x" + model.getDmdHeight();
       }
@@ -821,12 +821,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         return model.getNbScores() > 0 ? "Backglass contains " + model.getNbScores() + " scores" : "";
       }
     });
-  }
-
-
-  static boolean isFullDmd(double imageWidth, double imageHeight) {
-    double ratio = imageWidth / imageHeight;
-    return ratio < 3.0;
   }
 
   private void refresh(@Nullable DirectB2S newValue) {
@@ -1067,7 +1061,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         useAsMediaDMDBtn.setDisable(game == null);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
-        fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
+        fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
       }
       else {
         dmdThumbnailImage.setImage(null);

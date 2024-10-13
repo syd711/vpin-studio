@@ -253,6 +253,9 @@ public class GameService implements InitializingBean {
           if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
             success = false;
           }
+          if (!FileUtils.delete(defaultPictureService.getDMDPicture(game))) {
+            success = false;
+          }
           if (!FileUtils.delete(game.getDirectB2SFile())) {
             success = false;
           }

@@ -12,6 +12,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -33,16 +34,19 @@ import java.util.stream.Collectors;
 public abstract class BaseConnector implements FrontendConnector {
   private final static Logger LOG = LoggerFactory.getLogger(BaseConnector.class);
 
+  @Autowired
+  private GameEntryRepository gameEntryRepository;
+
   /**
    * the loaded and cached emulators
    */
   protected Map<Integer, Emulator> emulators = new HashMap<>();
   /**
-   * Map by emulator of ids
+   * Map by emulator of GameEntry
    */
-  protected Map<Integer, List<String>> gamesByEmu = new HashMap<>();
+  protected Map<Integer, List<GameEntry>> gamesByEmu = new HashMap<>();
   /**
-   * Map id <-> filename
+   * Map id <-> GameEntry
    */
   private Map<Integer, GameEntry> mapFilenames = new HashMap<>();
 
@@ -62,14 +66,7 @@ public abstract class BaseConnector implements FrontendConnector {
   private Map<Integer, TableAlxEntry> gameStats = new HashMap<>();
 
 
-  class GameEntry {
-    GameEntry(int emuId, String filename) {
-      this.emuId = emuId;
-      this.filename = filename;
-    }
-    int emuId;
-    String filename;
-  }
+ 
 
   @Override
   public void clearCache() {
@@ -88,22 +85,30 @@ public abstract class BaseConnector implements FrontendConnector {
     // reset database
     clearCache();
 
+    // load all existing entries from database
+    List<GameEntry> entries = gameEntryRepository.findAll();
+
     List<Emulator> loaded = loadEmulators();
     for (Emulator emu : loaded) {
       emulators.put(emu.getId(), emu);
 
       List<String> filenames = loadGames(emu);
-      gamesByEmu.put(emu.getId(), filenames);
 
+      List<GameEntry> games = new ArrayList<>(filenames.size());
       for (String filename : filenames) {
-        int id = filenameToId(emu.getId(), filename);
-        GameEntry e = new GameEntry(emu.getId(), filename);
-        mapFilenames.put(id, e);
+        GameEntry e = popGameEntry(entries, emu.getId(), filename);
+        games.add(e);
+        mapFilenames.put(e.getId(), e);
       }
+      gamesByEmu.put(emu.getId(), games);
+
       LOG.info("Parsed games for emulator " + emu.getId() + ", " + emu.getName() + ": " + filenames.size() + " games");
     }
 
-    // force initialisation of cache
+    // remaining entries in the List are orphaned, delete them
+    entries.forEach(e -> gameEntryRepository.delete(e));
+
+    // force initialisation of cache for statistics
     getAlxData();
 
     // load and cache playlists
@@ -125,19 +130,39 @@ public abstract class BaseConnector implements FrontendConnector {
     return loaded;
   }
 
-  public int filenameToId(int emuId, String filename) {
-    return (emuId + "@" + filename).hashCode() & Integer.MAX_VALUE;
-  }
-  private int findIdFromFilename(int emuId, String filename) {
-    for (Map.Entry<Integer, GameEntry> entry: mapFilenames.entrySet()) {
-      GameEntry e = entry.getValue();
-      if (e.emuId == emuId && StringUtils.equalsIgnoreCase(e.filename, filename)) {
-        return entry.getKey();
-      }
+  private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
+    GameEntry entry = entries.stream()
+      .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
+      .findFirst().orElse(null);
+
+      // new discovered entry, create id
+    if (entry == null) {
+      int id = filenameToId(emuId, filename);
+      entry = new GameEntry(emuId, filename, id);
+      gameEntryRepository.save(entry);
     }
-    return -1;
+    else {
+      entries.remove(entry);
+    }
+    return entry;
   }
 
+  private int filenameToId(int emuId, String filename) {
+    return (emuId + "@" + filename).hashCode() & Integer.MAX_VALUE;
+  }
+  protected GameEntry findEntryFromFilename(int emuId, String filename) {
+    for (Map.Entry<Integer, GameEntry> entry: mapFilenames.entrySet()) {
+      GameEntry e = entry.getValue();
+      if (e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename)) {
+        return e;
+      }
+    }
+    return null;
+  }
+  protected int findIdFromFilename(int emuId, String filename) {
+    GameEntry entry = findEntryFromFilename(emuId,  filename);
+    return entry != null? entry.getId() : -1;
+  }
 
   protected String getEmulatorExtension(String emuName) {
     String emu = emuName.replaceAll(" ", "").toLowerCase();
@@ -195,6 +220,41 @@ public abstract class BaseConnector implements FrontendConnector {
     return emulators.get(emulatorId);
   }
 
+  private Game getGame(GameEntry e) {
+    if (e == null) {
+      return null;
+    }
+
+    String filename = e.getFilename();
+    Emulator emu = emulators.get(e.getEmuId());
+
+    TableDetails details = getGameFromDb(e.getEmuId(), filename);
+    String gameName = FilenameUtils.getBaseName(filename);
+
+    Game game = new Game();
+    game.setEmulatorId(e.getEmuId());
+    game.setId(e.getId());
+    game.setGameName(details != null ? details.getGameName() : gameName);
+    game.setGameFileName(details != null ? details.getGameFileName() : filename);
+    game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
+    game.setGameStatus(details != null ? details.getStatus(): 1);
+    game.setDisabled(details != null ? details.getStatus() == 0 : false);
+    game.setVersion(details != null ? details.getGameVersion() : null);
+
+    File table = new File(emu.getDirGames(), filename);
+    game.setGameFile(table);
+
+    game.setDateAdded(details != null ? details.getDateAdded() : null);
+    game.setDateUpdated(details != null ? details.getDateModified() : null);
+
+    TableAlxEntry stat = getGameStat(e.getId());
+    if (stat != null) {
+      game.setNumberPlayed(stat.getNumberOfPlays());
+    }
+
+    return game;
+  }
+
   @NonNull
   @Override
   public List<Game> getGames() {
@@ -206,66 +266,35 @@ public abstract class BaseConnector implements FrontendConnector {
     return games;
   }
 
+  public GameEntry getGameEntry(int id) {
+    return mapFilenames.get(id);
+  }
+
   public String getGameFilename(int id) {
     GameEntry e = mapFilenames.get(id);
-    return (e != null ? e.filename : null);
+    return (e != null ? e.getFilename() : null);
   }
 
   @Override
   public Game getGame(int id) {
-    GameEntry e = mapFilenames.get(id);
-    return (e != null ? getGameByFilename(e.emuId, e.filename) : null);
+    GameEntry entry = mapFilenames.get(id);
+    return getGame(entry);
   }
 
   @Override
   public Game getGameByFilename(int emuId, String filename) {
-    if (gamesByEmu.get(emuId).contains(filename)) {
-
-      Emulator emu = emulators.get(emuId);
-
-      int id = findIdFromFilename(emuId, filename);
-
-      TableDetails details = getGameFromDb(emuId, filename);
-      String gameName = FilenameUtils.getBaseName(filename);
-
-      Game game = new Game();
-      //game.setMediaStrategy(getMediaAccessStrategy());
-      game.setEmulatorId(emuId);
-      game.setId(id);
-      game.setGameName(details != null ? details.getGameName() : gameName);
-      game.setGameFileName(details != null ? details.getGameFileName() : filename);
-      game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
-      game.setGameStatus(details != null ? details.getStatus(): 1);
-      game.setDisabled(details != null ? details.getStatus() == 0 : false);
-      game.setVersion(details != null ? details.getGameVersion() : null);
-
-      File table = new File(emu.getDirGames(), filename);
-      game.setGameFile(table);
-
-      game.setDateAdded(details != null ? details.getDateAdded() : null);
-      game.setDateUpdated(details != null ? details.getDateModified() : null);
-
-      TableAlxEntry stat = getGameStat(id);
-      if (stat != null) {
-        game.setNumberPlayed(stat.getNumberOfPlays());
-      }
-
-      return game;
-    }
-    return null;
+    GameEntry entry = findEntryFromFilename(emuId, filename);
+    return getGame(entry);
   }
 
   @NonNull
   @Override
   public List<Game> getGamesByEmulator(int emuId) {
-    List<String> filenames = gamesByEmu.get(emuId);
-    List<Game> games = new ArrayList<>();
-    if (filenames != null) {
-      for (String filename : filenames) {
-        games.add(getGameByFilename(emuId, filename));
-      }
+    List<GameEntry> entries = gamesByEmu.get(emuId);
+    if (entries != null) {
+      return entries.stream().map(e -> getGame(e)).collect(Collectors.toList());
     }
-    return games;
+    return new ArrayList<>();
   }
 
   @NonNull
@@ -285,13 +314,13 @@ public abstract class BaseConnector implements FrontendConnector {
     return gamesByEmu.get(emuId).size();
   }
 
-  public List<String> getGameFilenames(int emuId) {
+  public List<GameEntry> getGameEntries(int emuId) {
     return gamesByEmu.get(emuId);
   }
 
   @Override
   public List<Integer> getGameIds(int emuId) {
-    return getGameFilenames(emuId).stream().map(f -> findIdFromFilename(emuId, f)).collect(Collectors.toList());
+    return getGameEntries(emuId).stream().map(e -> e.getId()).collect(Collectors.toList());
   }
 
   //------------------------------------------------------------
@@ -299,7 +328,7 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public TableDetails getTableDetails(int id) {
     GameEntry e = mapFilenames.get(id);
-    return (e != null ? getGameFromDb(e.emuId, e.filename): null);
+    return (e != null ? getGameFromDb(e.getEmuId(), e.getFilename()): null);
   }
 
   @Override
@@ -310,15 +339,15 @@ public abstract class BaseConnector implements FrontendConnector {
     }
 
     // detection of file renamed
-    if (!StringUtils.equalsIgnoreCase(e.filename, tableDetails.getGameFileName())) {
+    if (!StringUtils.equalsIgnoreCase(e.getFilename(), tableDetails.getGameFileName())) {
       deleteGame(id, false);
 
       // update filename, but do not change the id 
-      e.filename = tableDetails.getGameFileName();
+      e.setFilename(tableDetails.getGameFileName());
       mapFilenames.put(id, e);
-      gamesByEmu.get(tableDetails.getEmulatorId()).add(e.filename);
+      gamesByEmu.get(tableDetails.getEmulatorId()).add(e);
     }
-    updateGameInDb(e.emuId, e.filename, tableDetails);
+    updateGameInDb(e.getEmuId(), e.getFilename(), tableDetails);
     commitDb(emulators.get(tableDetails.getEmulatorId()));
   }
 
@@ -338,12 +367,12 @@ public abstract class BaseConnector implements FrontendConnector {
   private boolean deleteGame(int gameId, boolean commit) {
     GameEntry e = mapFilenames.remove(gameId);
     if (e != null) {
-      List<String> games = gamesByEmu.get(e.emuId);
-      games.remove(e.filename);
+      List<GameEntry> games = getGameEntries(e.getEmuId());
+      games.remove(e);
 
-      dropGameFromDb(e.emuId, e.filename);
+      dropGameFromDb(e.getEmuId(), e.getFilename());
       if (commit) {
-        commitDb(emulators.get(e.emuId));
+        commitDb(emulators.get(e.getEmuId()));
       }
       return true;
     }
@@ -352,11 +381,10 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public void deleteGames(int emuId) {
-    List<String> filenames = gamesByEmu.remove(emuId);
-    for (String filename : filenames) {
-      int id = findIdFromFilename(emuId, filename);      
-      mapFilenames.remove(id);
-      dropGameFromDb(emuId, filename);
+    List<GameEntry> entries = gamesByEmu.remove(emuId);
+    for (GameEntry entry : entries) {
+      mapFilenames.remove(entry.getId());
+      dropGameFromDb(emuId, entry.getFilename());
     }
     gamesByEmu.put(emuId, new ArrayList<>());
     commitDb(emulators.get(emuId));
@@ -379,11 +407,12 @@ public abstract class BaseConnector implements FrontendConnector {
 
     updateGameInDb(emulatorId, gameFileName, details);
 
-    // if everything is good, the game id should have been generated, so add to the cached model
     int id = filenameToId(emulatorId, gameFileName);
-    GameEntry e = new GameEntry(emulatorId, gameFileName);
+    GameEntry e = new GameEntry(emulatorId, gameFileName, id);
+    gameEntryRepository.save(e);
+
     mapFilenames.put(id, e);
-    gamesByEmu.get(emulatorId).add(gameFileName);
+    gamesByEmu.get(emulatorId).add(e);
 
     // time to persist the file
     commitDb(emulators.get(emulatorId));
