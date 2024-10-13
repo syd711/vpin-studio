@@ -81,6 +81,10 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   
   //------------------------------------------------------
 
+  public VpsTablesPredicateFactory getPredicateFactory() {
+    return predicateFactory;
+  } 
+
   @Override
   protected void resetFilters() {
     this.predicateFactory = new VpsTablesPredicateFactory();

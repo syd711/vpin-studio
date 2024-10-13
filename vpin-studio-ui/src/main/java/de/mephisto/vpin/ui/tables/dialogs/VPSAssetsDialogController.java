@@ -97,15 +97,15 @@ public class VPSAssetsDialogController implements DialogController, AutoComplete
     dataRoot.getChildren().removeAll(dataRoot.getChildren());
     autoCompleteNameField.reset();
 
-    TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), false);
-    TablesSidebarVpsController.addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), false);
+    TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", game, VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "Backglasses", game, VpsDiffTypes.b2s, vpsTable.getB2sFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", game, VpsDiffTypes.altSound, vpsTable.getAltSoundFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "ALT Color", game, VpsDiffTypes.altColor, vpsTable.getAltColorFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "Sound", game, VpsDiffTypes.sound, vpsTable.getSoundFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "Topper", game, VpsDiffTypes.topper, vpsTable.getTopperFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "ROM", game, VpsDiffTypes.rom, vpsTable.getRomFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", game, VpsDiffTypes.wheel, vpsTable.getWheelArtFiles(), false, null);
+    TablesSidebarVpsController.addSection(dataRoot, "POV", game, VpsDiffTypes.pov, vpsTable.getPovFiles(), false, null);
 
     autoCompleteNameField.setText(vpsTable.getDisplayName());
 

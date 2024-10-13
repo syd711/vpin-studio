@@ -28,7 +28,7 @@ public class VpsEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
   public VpsEntry(GameRepresentation game, VpsDiffTypes type,
-        String version, List<String> authors, String link, long changeDate, String update) {
+        String version, List<String> authors, String link, long changeDate, String update, boolean isFiltered) {
     this.setAlignment(Pos.BASELINE_LEFT);
     this.setStyle("-fx-padding: 3px 0 0 0;");
     Label versionLabel = WidgetFactory.createDefaultLabel(version);
@@ -108,6 +108,8 @@ public class VpsEntry extends HBox {
       changedLabel.setText("");
     }
     this.getChildren().add(changedLabel);
+
+    this.setDisable(!isFiltered);
   }
 
 
