@@ -52,7 +52,7 @@ public class RecorderService {
 
     RecorderJob job = new RecorderJob(mediaAccessStrategy, settings, games, getRecordingScreens(), frontendPlayerDisplays);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.RECORDER);
-    jobDescriptor.setTitle("Screen Recorder");
+    jobDescriptor.setTitle("Screen Recorder (" + games.size() + " games)");
     jobDescriptor.setJob(job);
 
     jobService.offer(jobDescriptor);

@@ -46,7 +46,7 @@ public class RecorderTest {
 
     ScreenRecorder recorder = new ScreenRecorder(s, target);
 
-    recorder.start(options);
+    recorder.record(options);
 
 
     Thread.sleep(5);

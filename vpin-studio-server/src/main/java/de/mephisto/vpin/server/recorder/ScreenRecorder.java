@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +31,11 @@ public class ScreenRecorder {
     this.target = target;
   }
 
-  public boolean start(@NonNull RecordingScreenOptions options) {
+  public RecordingResult record(@NonNull RecordingScreenOptions options) {
+    long start = System.currentTimeMillis();
+    RecordingResult result = new RecordingResult();
+    result.setFileName(target.getAbsolutePath());
+
     try {
       int width = recordingScreen.getDisplay().getWidth();
       if (width % 2 == 1) {
@@ -95,21 +98,33 @@ public class ScreenRecorder {
       executor.executeCommand();
 
       String err = executor.getStandardErrorFromCommand().toString();
-      if (!StringUtils.isEmpty(err)) {
-        throw new Exception(err);
-      }
-      return true;
+//      if (!StringUtils.isEmpty(err)) {
+//        throw new Exception(err);
+//      }
+
+      result.setDuration(System.currentTimeMillis() - start);
     }
     catch (Exception e) {
       LOG.error("Screen recording failed: {}", e.getMessage(), e);
-      return false;
+    }
+    return result;
+  }
+
+  private void stop() {
+    try {
+      if (executor != null) {
+        executor.killProcess();
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to kill ffmpeg recording process: {}", e.getMessage(), e);
     }
   }
 
-  public void stop() {
-    if (executor != null) {
-      executor.killProcess();
+  public void cancel() {
+    stop();
+    if (target.exists()) {
+      target.delete();
     }
   }
-
 }

@@ -3,16 +3,23 @@ package de.mephisto.vpin.ui.recorder.dialogs;
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -22,12 +29,13 @@ import org.slf4j.LoggerFactory;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class RecordingProgressDialogController implements Initializable, DialogController {
+public class RecordingProgressDialogController implements Initializable, DialogController, JobUpdatesListener {
   private final static Logger LOG = LoggerFactory.getLogger(RecordingProgressDialogController.class);
 
   @FXML
@@ -65,11 +73,13 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   //just a guess!
   private int popperInitAndLoadingTimeSeconds = 6;
 
+  private GameRepresentation game;
+
   @FXML
   private void onCancelClick(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     stage.close();
-
+    JobPoller.getInstance().removeListener(this);
     recorderController.doReload();
   }
 
@@ -85,6 +95,34 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     status.setGameIds(games.stream().map(g -> g.getId()).collect(Collectors.toList()));
     client.getRecorderService().startRecording(status);
     JobPoller.getInstance().setPolling();
+    JobPoller.getInstance().addListener(this);
+  }
+
+  @Override
+  public void jobsRefreshed(List<JobDescriptor> activeJobs) {
+    Platform.runLater(() -> {
+      Optional<JobDescriptor> first = activeJobs.stream().filter(j -> j.getJobType().equals(JobType.RECORDER)).findFirst();
+      if (first.isPresent()) {
+        JobDescriptor jobDescriptor = first.get();
+        progressBar.setProgress(jobDescriptor.getProgress());
+
+        int gameId = jobDescriptor.getGameId();
+        if (gameId >= 0) {
+          if (this.game == null || this.game.getId() != gameId) {
+            this.game = client.getGameService().getGame(gameId);
+            if (this.game != null) {
+              this.pTableLabel.setText(game.getGameDisplayName());
+            }
+          }
+        }
+      }
+      else {
+        JobPoller.getInstance().removeListener(this);
+        stopBtn.setVisible(false);
+        progressBar.setDisable(true);
+        cancelBtn.setVisible(true);
+      }
+    });
   }
 
   public void setData(RecorderController recorderController, List<GameRepresentation> games) {

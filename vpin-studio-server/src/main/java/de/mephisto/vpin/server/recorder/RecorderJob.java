@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
-import java.util.concurrent.*;
 
 public class RecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderJob.class);
@@ -23,7 +22,7 @@ public class RecorderJob implements Job {
   private final List<FrontendPlayerDisplay> frontendPlayerDisplays;
 
   private boolean cancelled = false;
-  private Future<GameRecordingStatus> recordingFuture;
+  private GameRecorder gameRecorder;
 
   public RecorderJob(MediaAccessStrategy mediaAccessStrategy, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens, List<FrontendPlayerDisplay> frontendPlayerDisplays) {
     this.mediaAccessStrategy = mediaAccessStrategy;
@@ -42,27 +41,28 @@ public class RecorderJob implements Job {
           return;
         }
 
-        ExecutorService executorService = Executors.newSingleThreadExecutor();
-        recordingFuture = executorService.submit(new GameRecorderRunnable(mediaAccessStrategy, game, settings, supportedRecodingScreens, jobDescriptor));
-        GameRecordingStatus status = recordingFuture.get();
+        jobDescriptor.setGameId(game.getId());
+        gameRecorder = new GameRecorder(mediaAccessStrategy, game, settings, supportedRecodingScreens, jobDescriptor);
+        gameRecorder.startRecording();
 
         processed++;
 
         double progress = (double) (processed * 100) / games.size();
         jobDescriptor.setProgress(progress);
+        LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
       }
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
       }
     }
+    LOG.info("Recordings for " + games.size() + " games finished.");
+    jobDescriptor.setProgress(1);
+    jobDescriptor.setGameId(-1);
   }
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
-    if (!recordingFuture.isCancelled()) {
-      recordingFuture.cancel(true);
-    }
-    cancelled = true;
+    gameRecorder.cancel(jobDescriptor);
   }
 
   @Override

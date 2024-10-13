@@ -41,6 +41,16 @@ public class JobPoller implements StudioEventListener {
   private final AtomicBoolean polling = new AtomicBoolean(false);
   private JobsMenuHeaderController headerController;
 
+  private final List<JobUpdatesListener> listeners = new ArrayList<>();
+
+  public void addListener(JobUpdatesListener listener) {
+    this.listeners.add(listener);
+  }
+
+  public void removeListener(JobUpdatesListener listener) {
+    this.listeners.remove(listener);
+  }
+
   public static void destroy() {
     if (instance != null) {
       instance.service.cancel();
@@ -92,6 +102,7 @@ public class JobPoller implements StudioEventListener {
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
               refreshJobsUI();
               poll = !activeJobs.isEmpty();
+              notifyListeners(activeJobs);
             }
             LOG.info("JobPoller finished all jobs");
             refreshJobsUI();
@@ -107,6 +118,12 @@ public class JobPoller implements StudioEventListener {
     });
 
     setPolling();
+  }
+
+  private void notifyListeners(List<JobDescriptor> activeJobs) {
+    for (JobUpdatesListener listener : listeners) {
+      listener.jobsRefreshed(activeJobs);
+    }
   }
 
   public static JobPoller getInstance() {
