@@ -362,24 +362,22 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       for (File file : screenAssets) {
         String mimeType = MimeTypeUtil.determineMimeType(file);
         if (mimeType != null) {
-          if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
-            return false;
+          if (mimeType.contains("audio") && config.getMedia().equals(ValidatorMedia.audio)) {
+            return true;
           }
-          if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-            return false;
+          if (mimeType.contains("video") && (config.getMedia().equals(ValidatorMedia.video) || config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return true;
           }
-          if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-            return false;
+          if (mimeType.contains("image") && (config.getMedia().equals(ValidatorMedia.image) || config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return true;
           }
         }
       }
+      return false;
     }
     else {
-      if (config.getOption().equals(ValidatorOption.mandatory)) {
-        return false;
-      }
+      return !config.getOption().equals(ValidatorOption.mandatory);
     }
-    return true;
   }
 
   private List<ValidationState> validateForceStereo(Game game) {
