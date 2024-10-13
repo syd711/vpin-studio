@@ -65,8 +65,10 @@ hs_err_pid*
 /resources/vbs/*.vbs
 /resources/vpin-studio.db.bak
 /resources/vpin-studio.sqbpro
-/resources/b2s-raw/*
-/resources/b2s-cropped/*
+/resources/b2s-raw/
+/resources/b2s-cropped/
+resources/media-raw/
+resources/media-cropped/
 /resources/overlay.png
 /resources/overlay.jpg
 /resources/pinemhi/pinemhi.ini
@@ -89,7 +91,6 @@ hs_err_pid*
 /resources/*.db-journal
 /resources/*.sqbpro
 /resources/b2s/*.png
-/resources/b2s-raw/
 /resources/backglassdesigner/Projects/**
 /resources/backgrounds/*.directb2s
 /resources/directb2s/*.directb2s
