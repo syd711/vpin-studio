@@ -1,5 +1,8 @@
 package de.mephisto.vpin.ui.vps;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Predicate;
@@ -15,6 +18,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
   private boolean installedOnly;
   private boolean notInstalledOnly;
+
+  private LocalDate lastUpdateDate;
 
   private String[] authors;
   private boolean searchAuthorInOtherAssetsToo;
@@ -47,6 +52,13 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   }
   public void setNotInstalledOnly(boolean notInstalledOnly) {
     this.notInstalledOnly = notInstalledOnly;
+  }
+
+  public LocalDate getLastUpdateDate() {
+    return lastUpdateDate;
+  }
+  public void setLastUpdateDate(LocalDate lastUpdateDate) {
+    this.lastUpdateDate = lastUpdateDate;
   }
 
   public String getAuthor() {
@@ -158,6 +170,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
   public boolean isResetted() {
     return isFeaturesFilterEmpty()
+      && lastUpdateDate == null
       && (authors == null || authors.length == 0)
       && (manufacturers == null || manufacturers.length == 0)
       && StringUtils.isEmpty(theme)
@@ -196,6 +209,14 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         }
         if (notInstalledOnly && !noVPX && model.isInstalled()) {
           return false;
+        }
+
+        if (lastUpdateDate != null) {
+          LocalDate updated = Instant.ofEpochMilli(table.getUpdatedAt())
+            .atZone(ZoneId.systemDefault()).toLocalDate();
+          if (lastUpdateDate.compareTo(updated) > 0) {
+            return false;
+          }
         }
 
         if (StringUtils.isNotEmpty(searchTerm)
@@ -291,6 +312,14 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
             if (!containsIgnoreCase(version.getFeatures(), f)) {
               return false;
             }
+          }
+        }
+
+        if (lastUpdateDate != null) {
+          LocalDate updated = Instant.ofEpochMilli(version.getUpdatedAt())
+            .atZone(ZoneId.systemDefault()).toLocalDate();
+          if (lastUpdateDate.compareTo(updated) > 0) {
+            return false;
           }
         }
 
