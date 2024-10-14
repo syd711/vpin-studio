@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <VBox fx:id="filterRoot" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="200.0" minWidth="-Infinity" prefWidth="250.0" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.vps.VpsTablesFilterController">
@@ -68,21 +69,28 @@
                                     <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                  </graphic>
                                  <StackPane.margin>
-                                       <Insets right="20"/>
+                                    <Insets right="20"/>
                                  </StackPane.margin>
                               </Button>
                            </children>
                         </StackPane>
 
                         <Label styleClass="preference-checkbox" text="Author" />
-                        <TextField fx:id="author" maxWidth="204.0" />
+                        <TextField fx:id="author" maxWidth="204.0" >
+                           <Font size="14.0" />
+                        </TextField>
+
                         <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="Search author in all Assets" />
 
                         <Label styleClass="preference-checkbox" text="Manufacturer" />
-                        <TextField fx:id="manufacturer" maxWidth="204.0" />
+                        <TextField fx:id="manufacturer" maxWidth="204.0" >
+                           <Font size="14.0" />
+                        </TextField>
 
                         <Label styleClass="preference-checkbox" text="Theme" />
-                        <TextField fx:id="theme" maxWidth="204.0" />
+                        <TextField fx:id="theme" maxWidth="204.0" >
+                           <Font size="14.0" />
+                        </TextField>
                      </children>
                   </VBox>
 

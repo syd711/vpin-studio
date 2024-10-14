@@ -968,16 +968,15 @@
 }
 
 .preference-datepicker.date-picker .date-picker-display-node {
-    -fx-font-size : 12px;
+    -fx-font-size : 14px;
     -fx-padding : 2;
 	-fx-background-color: white;
     -fx-background-radius : 2 0 0 2;
     -fx-border-color : white;
     -fx-border-radius : 2 0 0 2;
 }
-
 .preference-datepicker.date-picker .arrow-button {
-    -fx-padding : 0 8 4 0;
+    -fx-padding : 0 8 2 0;
 	-fx-background-color: white;
     -fx-background-radius : 0;
     -fx-border-color : white;
