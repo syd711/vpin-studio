@@ -1,8 +1,11 @@
 package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
+import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -13,14 +16,22 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
+import javafx.scene.layout.BorderPane;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.util.ResourceBundle;
 
-public class ComponentShortSummaryController implements Initializable, StudioEventListener {
+import static de.mephisto.vpin.commons.utils.WidgetFactory.*;
+import static de.mephisto.vpin.ui.Studio.client;
+
+public class ComponentShortSummaryController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentShortSummaryController.class);
+
+
+  @FXML
+  private BorderPane root;
 
   @FXML
   private Label titleLabel;
@@ -58,20 +69,31 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
 
     titleLabel.setText(component.getType().toString());
 
-    if (component.getInstalledVersion() != null) {
+    if (component.getInstalledVersion() != null && !component.getInstalledVersion().equals("?")) {
       installedVersionLabel.setText(component.getInstalledVersion());
     }
     else {
-      WidgetFactory.createHelpIcon(installedVersionLabel, "The existing installation version can't be matched against the release version read from github.\nIt will be set after the first update.");
+      createHelpIcon(installedVersionLabel, "The existing installation version can't be matched against the release version read from github.\nIt will be set after the first update.");
     }
     latestVersionLabel.setText(component.getLatestReleaseVersion() != null ? component.getLatestReleaseVersion() : "?");
+
+    if (component.getType().equals(ComponentType.doflinx)) {
+      preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
+    }
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.DOFLINX_SETTINGS) && component.getType().equals(ComponentType.doflinx)) {
+      root.setVisible(client.getDofLinxService().isValid());
+    }
   }
 
   @Override
   public void thirdPartyVersionUpdated(@NonNull ComponentType type) {
     if (component.getType().equals(type)) {
       Platform.runLater(() -> {
-        ComponentRepresentation updatedComponent = Studio.client.getComponentService().getComponent(type);
+        ComponentRepresentation updatedComponent = client.getComponentService().getComponent(type);
         refresh(updatedComponent);
       });
     }
@@ -79,6 +101,8 @@ public class ComponentShortSummaryController implements Initializable, StudioEve
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    client.getPreferenceService().addListener(this);
+    root.managedProperty().bindBidirectional(root.visibleProperty());
     EventManager.getInstance().addListener(this);
   }
 }

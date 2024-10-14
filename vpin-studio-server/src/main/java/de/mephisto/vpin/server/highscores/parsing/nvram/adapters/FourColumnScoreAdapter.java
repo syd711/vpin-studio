@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -19,12 +19,12 @@ public class FourColumnScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public boolean isApplicable(@NotNull String nvRam, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name);
   }
 
   @Override
-  public String convert(@NotNull String nvRam, @NotNull List<String> lines) {
+  public String convert(@NonNull String nvRam, @NonNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
 
     for (int i = 1; i < lines.size(); i++) {

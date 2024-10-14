@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<StackPane fx:id="stack" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.components.TabDOFLinxController">
+    <BorderPane>
+        <top>
+            <ToolBar BorderPane.alignment="CENTER">
+            <items>
+               <Button fx:id="openFolderButton" mnemonicParsing="false" onAction="#onFolder" styleClass="external-component" text="Open Folder" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip text="Open Serum Installation Folder" />
+                  </tooltip>
+               </Button>
+               <Button fx:id="configBtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#onConfigTool" styleClass="external-component" text="DOFLinxConfig" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip text="Open Serum Installation Folder" />
+                  </tooltip>
+               </Button>
+               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" text="Reload">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                  </graphic>
+               </Button>
+               <Button fx:id="restartBtn" mnemonicParsing="false" onAction="#onRestart" text="(Re)start DOFLinx">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2r-restart" iconSize="18" />
+                  </graphic>
+               </Button>
+               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop DOFLinx" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2s-skull-crossbones-outline" iconSize="18" />
+                  </graphic>
+               </Button>
+               <Separator layoutX="270.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+               <Button fx:id="iniBtn" mnemonicParsing="false" onAction="#onIni" styleClass="text-button" text="DOFLinx.INI" textFill="WHITE">
+                  <font>
+                     <Font size="14.0" />
+                  </font>
+                  <graphic>
+                     <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                  </graphic>
+                  <tooltip>
+                     <Tooltip text="Open VPMAlias.txt file" />
+                  </tooltip>
+               </Button>
+            </items>
+            </ToolBar>
+        </top>
+        <center>
+         <ScrollPane fitToWidth="true" BorderPane.alignment="CENTER">
+            <content>
+                  <VBox styleClass="subpanel-tabbed">
+                      <children>
+                          <VBox fx:id="componentSummaryPane" />
+                          <VBox fx:id="componentCustomValues" layoutX="10.0" layoutY="10.0" />
+                          <BorderPane fx:id="componentInstallerPane" />
+
+                     <VBox layoutX="24.0" layoutY="22.0" styleClass="info-container">
+                        <children>
+                           <Label styleClass="default-text" text="The installer will extract the latest update into the DOFLinx installation folder." />
+                        </children>
+                        <padding>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        </padding>
+                        <VBox.margin>
+                           <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                        </VBox.margin>
+                     </VBox>
+                      </children>
+                  </VBox>
+            </content>
+         </ScrollPane>
+        </center>
+    </BorderPane>
+</StackPane>

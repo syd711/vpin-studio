@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +14,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class SerumComponent implements ComponentFacade {
-  @NotNull
+  @NonNull
   @Override
   public String[] getDiffList() {
     return new String[]{".dll"};
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getReleasesUrl() {
     return "https://github.com/zesinger/libserum/releases";
@@ -32,9 +33,9 @@ public class SerumComponent implements ComponentFacade {
     return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", "linux", "sc-", "macos", "android", "arm"));
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
+  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
     return gameEmulator.getMameFolder();
   }
 
@@ -50,12 +51,12 @@ public class SerumComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Collections.emptyList();
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("serum64.dll", "serum.dll");
   }
 }

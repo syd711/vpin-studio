@@ -150,8 +150,9 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
     emptylabel.setVisible(false);
 
     GameRepresentation game = ServerFX.client.getGame(competition.getGameId());
-    FrontendMediaRepresentation frontendMedia = ServerFX.client.getFrontendMedia(game.getId());
+    FrontendMediaRepresentation frontendMedia = null;
     if (game != null) {
+      frontendMedia = ServerFX.client.getFrontendMedia(game.getId());
       if (competitionType.equals(CompetitionType.SUBSCRIPTION)) {
         durationLabel.setText("Table Subscription");
         tableNameLabel.setText("Top Scores");
@@ -165,6 +166,10 @@ public class WidgetCompetitionSummaryController extends WidgetController impleme
         tableNameLabel.setText(game.getGameDisplayName());
       }
     }
+    else {
+      LOG.error("No game found for " + competition);
+    }
+
 
     competitionLabel.setText(competition.getName());
 

@@ -6,7 +6,7 @@ import de.mephisto.vpin.server.competitions.Competition;
 import de.mephisto.vpin.server.competitions.CompetitionService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.highscores.*;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -29,7 +29,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
   private HighscoreService highscoreService;
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     Game game = event.getGame();
     Score newScore = event.getNewScore();
 
@@ -67,7 +67,7 @@ public class IScoredHighscoreChangeListener implements HighscoreChangeListener, 
 
 
   @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
 
   }
 

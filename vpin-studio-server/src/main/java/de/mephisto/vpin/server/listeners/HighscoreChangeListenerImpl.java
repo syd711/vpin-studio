@@ -18,8 +18,8 @@ import de.mephisto.vpin.server.highscores.HighscoreChangeListener;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -54,12 +54,12 @@ public class HighscoreChangeListenerImpl implements InitializingBean, HighscoreC
   private HighscoreParsingService highscoreParsingService;
 
   @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
     //no used for diff calculation
   }
 
   @Override
-  public synchronized void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public synchronized void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     Game game = event.getGame();
 
     //update channel subscriptions

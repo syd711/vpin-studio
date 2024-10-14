@@ -253,6 +253,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   }
 
   @FXML
+  private void onDOFLinx(ActionEvent event) throws IOException {
+    load("preference-doflinx.fxml", event);
+  }
+
+  @FXML
   private void onReset(ActionEvent event) throws IOException {
     load("preference-frontend-reset.fxml", event);
   }

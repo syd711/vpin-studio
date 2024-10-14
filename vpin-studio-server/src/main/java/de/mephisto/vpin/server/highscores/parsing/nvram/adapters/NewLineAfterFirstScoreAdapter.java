@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,12 +19,12 @@ public class NewLineAfterFirstScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public boolean isApplicable(@NotNull String nvRam, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals("kiko_a10.nv");
   }
 
   @Override
-  public String convert(@NotNull String nvRam, @NotNull List<String> lines) {
+  public String convert(@NonNull String nvRam, @NonNull List<String> lines) {
     int index = 0;
     lines = new ArrayList<>(lines);
     lines.remove(2);

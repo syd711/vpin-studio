@@ -34,11 +34,13 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
 
   @FXML
   private CheckBox installedOnlyCheckbox;
+
   @FXML
   private CheckBox notInstalledOnlyCheckbox;
 
   @FXML
   private DatePicker lastUpdateDate;
+
   @FXML
   private Button clearDateBtn;
 

@@ -1,9 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.util.List;
 
@@ -22,12 +20,12 @@ public class SinglePlayerScoreAdapter implements ScoreNvRamAdapter {
   }
 
   @Override
-  public boolean isApplicable(@NotNull String nvRam, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull String nvRam, @NonNull List<String> lines) {
     return nvRam.equals(name) || lines.size() == 2;
   }
 
   @Override
-  public String convert(@NotNull String nvRam, @NotNull List<String> lines) {
+  public String convert(@NonNull String nvRam, @NonNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine);
     builder.append("#1");

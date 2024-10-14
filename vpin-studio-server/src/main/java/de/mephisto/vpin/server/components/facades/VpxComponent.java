@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +14,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class VpxComponent implements ComponentFacade {
-  @NotNull
+  @NonNull
   @Override
   public String[] getDiffList() {
     return new String[]{".vbs", ".dll", ".exe"};
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getReleasesUrl() {
     return "https://github.com/vpinball/vpinball/releases";
@@ -32,9 +33,9 @@ public class VpxComponent implements ComponentFacade {
     return GithubReleaseFactory.loadReleases(getReleasesUrl(), Collections.emptyList(), Arrays.asList("Debug", "Source", "linux", "sc-", "macos", "android"));
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
+  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
     return gameEmulator.getInstallationFolder();
   }
 
@@ -53,12 +54,12 @@ public class VpxComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Collections.emptyList();
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("VPinballX64.exe", "VPinballX.exe", "VPinballX_GL.exe");
   }
 }

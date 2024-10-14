@@ -9,6 +9,8 @@ public class ComponentRepresentation {
 
   private List<GithubReleaseRepresentation> releases = new ArrayList<>();
 
+  private boolean installed;
+
   private Date lastCheck;
 
   private Date lastModified;
@@ -20,6 +22,14 @@ public class ComponentRepresentation {
   private String targetFolder;
 
   private String url;
+
+  public boolean isInstalled() {
+    return installed;
+  }
+
+  public void setInstalled(boolean installed) {
+    this.installed = installed;
+  }
 
   private List<String> exclusions = new ArrayList<>();
 

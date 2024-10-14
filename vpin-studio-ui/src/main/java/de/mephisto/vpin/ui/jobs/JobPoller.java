@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.JobFinishedEvent;
 import de.mephisto.vpin.ui.events.StudioEventListener;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import javafx.application.Platform;
 import javafx.concurrent.Service;
 import javafx.concurrent.Task;
@@ -13,7 +14,6 @@ import javafx.scene.control.MenuButton;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.ProgressIndicator;
 import javafx.scene.layout.BorderPane;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -223,7 +223,7 @@ public class JobPoller implements StudioEventListener {
   }
 
   @Override
-  public void jobFinished(@NotNull JobFinishedEvent event) {
+  public void jobFinished(@NonNull JobFinishedEvent event) {
     refreshJobsUI();
   }
 }

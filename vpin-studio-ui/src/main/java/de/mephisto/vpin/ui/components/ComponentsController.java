@@ -3,6 +3,8 @@ package de.mephisto.vpin.ui.components;
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -10,8 +12,8 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
-import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,6 +23,7 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.Pane;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,7 +35,7 @@ import java.util.ResourceBundle;
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
 
-public class ComponentsController implements Initializable, StudioFXController, StudioEventListener {
+public class ComponentsController implements Initializable, StudioFXController, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ComponentsController.class);
 
   @FXML
@@ -55,6 +58,9 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   private Tab serumTab;
+
+  @FXML
+  private Tab doflinxTab;
 
   @FXML
   private Tab flexDMDTab;
@@ -121,16 +127,18 @@ public class ComponentsController implements Initializable, StudioFXController, 
     else if (index == 6) {
       NavigationController.setBreadCrumb(Arrays.asList("System Manager", "Serum"));
     }
+    else if (index == 7) {
+      NavigationController.setBreadCrumb(Arrays.asList("System Manager", "DOFLinx"));
+    }
   }
 
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     EventManager.getInstance().addListener(this);
+    client.getPreferenceService().addListener(this);
 
     hint.managedProperty().bindBidirectional(hint.visibleProperty());
-
-    preferencesChanged(PreferenceType.uiSettings);
 
     NavigationController.setBreadCrumb(Arrays.asList("System Manager"));
     try {
@@ -148,12 +156,16 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(flexDMDTab, "tab-flexdmd.fxml");
     loadTab(freezyTab, "tab-freezy.fxml");
     loadTab(serumTab, "tab-serum.fxml");
+    loadTab(doflinxTab, "tab-doflinx.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {
       updateForTabSelection(t1.intValue());
     });
 
     updateForTabSelection(0);
+
+    preferencesChanged(PreferenceNames.UI_SETTINGS, null);
+    preferencesChanged(PreferenceNames.DOFLINX_SETTINGS, null);
   }
 
   private void loadTab(Tab tab, String file) {
@@ -179,10 +191,23 @@ public class ComponentsController implements Initializable, StudioFXController, 
   }
 
   @Override
-  public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.uiSettings)) {
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.UI_SETTINGS)) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       hint.setVisible(!uiSettings.isHideComponentWarning());
+    }
+    if (key.equals(PreferenceNames.DOFLINX_SETTINGS)) {
+      Platform.runLater(() -> {
+        client.getPreferenceService().getJsonPreference(PreferenceNames.DOFLINX_SETTINGS, DOFLinxSettings.class);
+        if (client.getDofLinxService().isValid()) {
+          if (!tabPane.getTabs().contains(doflinxTab)) {
+            tabPane.getTabs().add(doflinxTab);
+          }
+        }
+        else {
+          tabPane.getTabs().remove(doflinxTab);
+        }
+      });
     }
   }
 }

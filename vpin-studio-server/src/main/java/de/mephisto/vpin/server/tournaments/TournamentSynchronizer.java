@@ -11,8 +11,8 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class TournamentSynchronizer {
     return false;
   }
 
-  @NotNull
+  @NonNull
   private TournamentTableInfo createTournamentTableInfo(TournamentMetaData metaData, TournamentTable tournamentTable) {
     TournamentTableInfo info = new TournamentTableInfo();
     info.setTournamentId(metaData.getTournamentId());

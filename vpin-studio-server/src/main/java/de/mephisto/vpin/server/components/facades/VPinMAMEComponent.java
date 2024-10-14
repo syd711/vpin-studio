@@ -4,8 +4,8 @@ import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,14 +14,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+@Service
 public class VPinMAMEComponent implements ComponentFacade {
-  @NotNull
+  @NonNull
   @Override
   public String[] getDiffList() {
     return new String[]{"Setup64.exe", "Setup.exe", ".dll"};
   }
 
-  @NotNull
+  @NonNull
   @Override
   public String getReleasesUrl() {
     return "https://github.com/vpinball/pinmame/releases";
@@ -32,9 +33,9 @@ public class VPinMAMEComponent implements ComponentFacade {
     return Collections.singletonList(GithubReleaseFactory.loadRelease(getReleasesUrl(), Arrays.asList("win-", "VPinMAME"), Arrays.asList("linux", "osx")));
   }
 
-  @NotNull
+  @NonNull
   @Override
-  public File getTargetFolder(@NotNull GameEmulator gameEmulator) {
+  public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
     return gameEmulator.getMameFolder();
   }
 
@@ -53,12 +54,12 @@ public class VPinMAMEComponent implements ComponentFacade {
 
   @Nullable
   @Override
-  public List<String> getExclusionList() {
+  public List<String> getExcludedFilenames() {
     return Arrays.asList("VPMAlias.txt");
   }
 
   @Override
-  public List<String> getRootFolderIndicators() {
+  public List<String> getRootFolderInArchiveIndicators() {
     return Arrays.asList("VPMAlias.txt");
   }
 }
