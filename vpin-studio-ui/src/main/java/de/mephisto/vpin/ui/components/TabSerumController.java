@@ -37,23 +37,6 @@ public class TabSerumController extends AbstractComponentTab implements Initiali
 
   private void refreshCustomValues() {
     clearCustomValues();
-//
-//    ComponentRepresentation freezyComponent = client.getComponentService().getComponent(ComponentType.freezy);
-//    Date lastModified = freezyComponent.getLastModified();
-//    if (lastModified != null && this.component.getLastModified() != null) {
-//      ComponentSummaryEntry entry = new ComponentSummaryEntry();
-//      entry.setValid(true);
-//      if (lastModified.before(this.component.getLastModified())) {
-//        entry.setValue("The Serum .dll files are newer than the Freezy installation files.");
-//      }
-//      else {
-//        entry.setValue("The Freezy installation is newer than the Serum .dll files.");
-//      }
-//      entry.setName("Serum Status");
-//      entry.setDescription("If the Serum .dll files are newer than the Freezy installation, make sure that they are added as plugin with \"passthrough\" set to \"true\".");
-//
-//      super.addCustomValue(entry);
-//    }
   }
 
   @FXML

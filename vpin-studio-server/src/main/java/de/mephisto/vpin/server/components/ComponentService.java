@@ -10,9 +10,8 @@ import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -37,13 +36,34 @@ public class ComponentService implements InitializingBean {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private VPinMAMEComponent vPinMAMEComponent;
+
+  @Autowired
+  private VpxComponent vpxComponent;
+
+  @Autowired
+  private BackglassComponent backglassComponent;
+
+  @Autowired
+  private FlexDMDComponent flexDMDComponent;
+
+  @Autowired
+  private FreezyComponent freezyComponent;
+
+  @Autowired
+  private SerumComponent serumComponent;
+
+  @Autowired
+  private DOFLinxComponent dofLinxComponent;
+
   private Map<ComponentType, List<GithubRelease>> releaseCache = new HashMap<>();
 
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
     ComponentType[] values = ComponentType.values();
     // sort by visibility order
-    Arrays.sort(values, (a, b) -> a.getOrder()-b.getOrder());
+    Arrays.sort(values, (a, b) -> a.getOrder() - b.getOrder());
 
     for (ComponentType value : values) {
       result.add(getComponent(value));
@@ -97,50 +117,52 @@ public class ComponentService implements InitializingBean {
 
   public ReleaseArtifactActionLog check(@NonNull GameEmulator emulator, @NonNull ComponentType type, @NonNull String tag, @NonNull String artifact, boolean forceDownload) {
     Component component = getComponent(type);
-    if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
-      loadReleases(component);
+    ComponentFacade componentFacade = getComponentFacade(type);
+    if (componentFacade.getTargetFolder(emulator) != null) {
+      if (StringUtils.isEmpty(component.getLatestReleaseVersion()) || forceDownload) {
+        loadReleases(component);
 
 
-      ReleaseArtifactActionLog install = null;
-      List<GithubRelease> githubReleases = getCached(component);
-      Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
-      GithubRelease githubRelease = githubReleases.get(0);
-      if (first.isPresent()) {
-        githubRelease = first.get();
-      }
-
-      if (githubRelease != null) {
-        ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
-        ComponentFacade componentFacade = getComponentFacade(type);
-        File targetFolder = componentFacade.getTargetFolder(emulator);
-
-        File folder = systemService.getComponentArchiveFolder(type);
-        File artifactArchive = new File(folder, releaseArtifact.getName());
-        if (artifactArchive.exists() && forceDownload) {
-          artifactArchive.delete();
+        ReleaseArtifactActionLog install = null;
+        List<GithubRelease> githubReleases = getCached(component);
+        Optional<GithubRelease> first = githubReleases.stream().filter(r -> r.getTag().equals(tag)).findFirst();
+        GithubRelease githubRelease = githubReleases.get(0);
+        if (first.isPresent()) {
+          githubRelease = first.get();
         }
 
-        install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList(), componentFacade.getDiffList());
-        boolean diff = install.isDiffering();
-        if (!diff) {
-          component.setInstalledVersion(githubRelease.getTag());
-          LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+        if (githubRelease != null) {
+          ReleaseArtifact releaseArtifact = getReleaseArtifact(artifact, githubRelease);
+          File targetFolder = componentFacade.getTargetFolder(emulator);
+
+          File folder = systemService.getComponentArchiveFolder(type);
+          File artifactArchive = new File(folder, releaseArtifact.getName());
+          if (artifactArchive.exists() && forceDownload) {
+            artifactArchive.delete();
+          }
+
+          install = releaseArtifact.diff(artifactArchive, targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames(), componentFacade.getDiffList());
+          boolean diff = install.isDiffering();
+          if (!diff) {
+            component.setInstalledVersion(githubRelease.getTag());
+            LOG.info("Applied current version \"" + githubRelease.getTag() + " for " + component.getType());
+          }
+
+          component.setLastCheck(new Date());
+          componentRepository.saveAndFlush(component);
+        }
+        else {
+          throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
         }
 
-        component.setLastCheck(new Date());
-        componentRepository.saveAndFlush(component);
+        return install;
       }
-      else {
-        throw new UnsupportedOperationException(type + " release for tag \"" + tag + "\" not found.");
-      }
-
-      return install;
     }
     return new ReleaseArtifactActionLog(false, true);
   }
 
   @Nullable
-  private ReleaseArtifact getReleaseArtifact(@NotNull String artifact, GithubRelease githubRelease) {
+  private ReleaseArtifact getReleaseArtifact(@NonNull String artifact, GithubRelease githubRelease) {
     ReleaseArtifact releaseArtifact = null;
     if (artifact.equals("-latest-")) {
       if (githubRelease.getArtifacts().size() == 1) {
@@ -175,11 +197,13 @@ public class ComponentService implements InitializingBean {
       ComponentFacade componentFacade = getComponentFacade(type);
       File targetFolder = componentFacade.getTargetFolder(emulator);
       if (simulate) {
-        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
+        return releaseArtifact.simulateInstall(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       }
 
+      componentFacade.preProcess(emulator, releaseArtifact, install);
+
       //we have a real installation from here on
-      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderIndicators(), componentFacade.getExclusionList());
+      install = releaseArtifact.install(targetFolder, componentFacade.getRootFolderInArchiveIndicators(), componentFacade.getExcludedFilenames(), componentFacade.getIncludedFilenames());
       if (install.getStatus() == null) {
         //unzipping was successful
         component.setInstalledVersion(githubRelease.getTag());
@@ -208,7 +232,8 @@ public class ComponentService implements InitializingBean {
       }
       componentRepository.saveAndFlush(component);
       this.releaseCache.put(component.getType(), githubReleases);
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Failed to initialize release for " + component + ": " + e.getMessage(), e);
     }
   }
@@ -238,22 +263,25 @@ public class ComponentService implements InitializingBean {
   public ComponentFacade getComponentFacade(ComponentType type) {
     switch (type) {
       case vpinmame: {
-        return new VPinMAMEComponent();
+        return vPinMAMEComponent;
       }
       case vpinball: {
-        return new VpxComponent();
+        return vpxComponent;
       }
       case b2sbackglass: {
-        return new BackglassComponent();
+        return backglassComponent;
       }
       case flexdmd: {
-        return new FlexDMDComponent();
+        return flexDMDComponent;
       }
       case freezy: {
-        return new FreezyComponent();
+        return freezyComponent;
       }
       case serum: {
-        return new SerumComponent();
+        return serumComponent;
+      }
+      case doflinx: {
+        return dofLinxComponent;
       }
       default: {
         throw new UnsupportedOperationException("Invalid component type " + type);

@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.highscores.parsing.HighscoreParsingService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -175,7 +174,7 @@ public class SubscriptionCompetitionChangeListenerImpl extends DefaultCompetitio
     }
   }
 
-  private void joinCompetition(@NotNull Competition competition, DiscordMember bot) {
+  private void joinCompetition(@NonNull Competition competition, DiscordMember bot) {
     //the bot is not the owner, so it has joined the subscription OR re-joined it
     long msgId = discordService.sendMessage(competition.getDiscordServerId(), competition.getDiscordChannelId(), discordSubscriptionMessageFactory.createSubscriptionJoinedMessage(competition, bot));
     discordService.addCompetitionPlayer(competition.getDiscordServerId(), competition.getDiscordChannelId(), msgId);

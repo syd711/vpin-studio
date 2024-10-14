@@ -21,7 +21,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +66,7 @@ public class PinUPConnector implements FrontendConnector {
     //not used yet
   }
 
-  @NotNull
+  @NonNull
   @Override
   public File getInstallationFolder() {
     return systemService.getPinupInstallationFolder();

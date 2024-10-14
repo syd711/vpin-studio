@@ -2,10 +2,9 @@ package de.mephisto.vpin.server.exporter;
 
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.GameEmulator;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.csv.QuoteMode;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,8 @@ public class ExporterService {
   @Autowired
   protected FrontendService frontendService;
 
-  protected @NotNull CSVPrinter createPrinter(Map<String, String> customQuery, List<String> headers, StringBuilder builder) throws IOException {
+  @NonNull
+  protected CSVPrinter createPrinter(Map<String, String> customQuery, List<String> headers, StringBuilder builder) throws IOException {
     if (customQuery.containsKey(PARAM_DELIMITER)) {
       delimiter = customQuery.get(PARAM_DELIMITER);
     }
@@ -55,8 +55,7 @@ public class ExporterService {
   }
 
 
-
-  @NotNull
+  @NonNull
   protected List<Integer> getEmulatorIds(Map<String, String> customQuery) {
     List<Integer> emulatorIds = new ArrayList<>();
     if (customQuery.containsKey(PARAM_EMULATOR_ID)) {
@@ -80,7 +79,7 @@ public class ExporterService {
     return emulatorIds;
   }
 
-  @NotNull
+  @NonNull
   protected List<Integer> getGameIds(Map<String, String> customQuery) {
     List<Integer> gameIds = new ArrayList<>();
     if (customQuery.containsKey(PARAM_GAME_ID)) {

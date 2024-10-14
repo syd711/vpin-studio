@@ -15,7 +15,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -76,7 +75,7 @@ public class PupPacksService implements InitializingBean {
   }
 
   @Nullable
-  private PupPack getCachedPupPack(@NotNull Game game) {
+  private PupPack getCachedPupPack(@NonNull Game game) {
     if (!StringUtils.isEmpty(game.getPupPackName()) && pupPackFolders.containsKey(game.getPupPackName().toLowerCase())) {
       return pupPackFolders.get(game.getPupPackName().toLowerCase());
     }

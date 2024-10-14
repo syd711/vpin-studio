@@ -4,11 +4,12 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.textedit.VPinFile;
+import de.mephisto.vpin.server.doflinx.DOFLinxService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
@@ -45,6 +46,9 @@ public class TextEditService {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private DOFLinxService dofLinxService;
+
   public TextFile getText(TextFile textFile) {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -55,6 +59,18 @@ public class TextEditService {
           GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           File mameFolder = defaultGameEmulator.getMameFolder();
           File init = new File(mameFolder, "DmdDevice.ini");
+          Path filePath = init.toPath();
+          String iniText = Files.readString(filePath);
+          //Remove BOM
+          iniText = iniText.replace("\uFEFF", "");
+          textFile.setContent(iniText);
+          textFile.setPath(init.getAbsolutePath());
+          textFile.setSize(init.length());
+          textFile.setLastModified(new Date(init.lastModified()));
+          break;
+        }
+        case DOFLinxINI: {
+          File init = dofLinxService.getDOFLinxINI();
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
           //Remove BOM
@@ -84,7 +100,8 @@ public class TextEditService {
         }
       }
 
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error reading text file: " + e.getMessage(), e);
     }
     return textFile;
@@ -117,6 +134,26 @@ public class TextEditService {
           }
           return textFile;
         }
+        case DOFLinxINI: {
+          File dofLinxIni = dofLinxService.getDOFLinxINI();
+          File backup = new File(dofLinxIni.getParentFile(), "DOFLinx.INI.bak");
+          if (!backup.exists()) {
+            FileUtils.copyFile(dofLinxIni, backup);
+          }
+
+          if (dofLinxIni.delete()) {
+            BufferedWriter out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(dofLinxIni), StandardCharsets.UTF_8));
+            out.write('\ufeff');
+            out.write(textFile.getContent());
+            out.close();
+            LOG.info("Written " + dofLinxIni.getAbsolutePath());
+          }
+          else {
+            throw new IOException("Failed to delete target file.");
+          }
+          textFile.setLastModified(new Date(dofLinxIni.lastModified()));
+          return textFile;
+        }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           String[] lines = textFile.getContent().split("\n");
@@ -129,12 +166,12 @@ public class TextEditService {
         }
         case VBScript: {
           Game game = frontendService.getGame(textFile.getFileId());
-          if(game != null) {
+          if (game != null) {
             File gameFile = game.getGameFile();
             VPXUtil.importVBS(gameFile, textFile.getContent(), serverSettings.isKeepVbsFiles());
             textFile.setLastModified(new Date(gameFile.lastModified()));
             textFile.setSize(textFile.getContent().getBytes().length);
-            LOG.info("Saved " + gameFile.getAbsolutePath()+ ", performing table table.");
+            LOG.info("Saved " + gameFile.getAbsolutePath() + ", performing table table.");
             gameService.scanGame(game.getId());
             return textFile;
           }
@@ -146,7 +183,8 @@ public class TextEditService {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
         }
       }
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error reading text file: " + e.getMessage(), e);
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }

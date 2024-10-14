@@ -9,8 +9,8 @@ import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,7 +31,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   private GameService gameService;
 
   @Override
-  public void competitionStarted(@NotNull Competition competition) {
+  public void competitionStarted(@NonNull Competition competition) {
     if (isEnabled()) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
@@ -42,17 +42,17 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   }
 
   @Override
-  public void competitionCreated(@NotNull Competition competition) {
+  public void competitionCreated(@NonNull Competition competition) {
 
   }
 
   @Override
-  public void competitionChanged(@NotNull Competition competition) {
+  public void competitionChanged(@NonNull Competition competition) {
 
   }
 
   @Override
-  public void competitionFinished(@NotNull Competition competition, @Nullable Player winner, @NotNull ScoreSummary scoreSummary) {
+  public void competitionFinished(@NonNull Competition competition, @Nullable Player winner, @NonNull ScoreSummary scoreSummary) {
     if (isEnabled()) {
       Game game = gameService.getGame(competition.getGameId());
       if (game != null) {
@@ -63,7 +63,7 @@ public class CompetitionNotificationsListener implements CompetitionChangeListen
   }
 
   @Override
-  public void competitionDeleted(@NotNull Competition competition) {
+  public void competitionDeleted(@NonNull Competition competition) {
   }
 
   private boolean isEnabled() {

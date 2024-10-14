@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.cards.CardSettings;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
+import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.notifications.NotificationSettings;
@@ -65,6 +66,9 @@ public class PreferenceResource {
         }
         case PreferenceNames.DOF_SETTINGS: {
           return preferencesService.getJsonPreference(key, DOFSettings.class);
+        }
+        case PreferenceNames.DOFLINX_SETTINGS: {
+          return preferencesService.getJsonPreference(key, DOFLinxSettings.class);
         }
         case PreferenceNames.PAUSE_MENU_SETTINGS: {
           return preferencesService.getJsonPreference(key, PauseMenuSettings.class);
