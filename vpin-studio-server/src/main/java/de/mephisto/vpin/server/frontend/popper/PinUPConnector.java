@@ -2033,6 +2033,17 @@ public class PinUPConnector implements FrontendConnector {
       boolean b = pinUpProcess.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
+
+    File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
+    if (showTaskbarExe.exists()) {
+      SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
+      exec.setDir(getInstallationFolder());
+      exec.executeCommandAsync();
+    }
+    else {
+      LOG.error("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found.");
+    }
+
     return true;
   }
 
