@@ -161,6 +161,7 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
     });
 
     lastUpdateDate.valueProperty().setValue(predicateFactory.getLastUpdateDate());
+    clearDateBtn.setVisible(predicateFactory.getLastUpdateDate() != null);
     lastUpdateDate.valueProperty().addListener((observable, oldValue, newValue) -> {
       predicateFactory.setLastUpdateDate(newValue);
       applyFilters();
