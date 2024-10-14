@@ -79,7 +79,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     return StringUtils.join(manufacturers, ", ");
   }
   public void setManufacturer(String manufacturer) {
-    this.manufacturers =  splitAndTrim(manufacturer, ",;");;
+    this.manufacturers =  splitAndTrim(manufacturer, ",;");
   }
 
   public String getTheme() {
@@ -421,11 +421,15 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
 
   protected String[] splitAndTrim(String input, String separators) {
-    String[] splitted = StringUtils.split(input, separators);
-    for (int i = 0; i < splitted.length; i++) {
-      splitted[i] = splitted[i].trim();
+    if(input != null) {
+      String[] splitted = StringUtils.split(input, separators);
+      for (int i = 0; i < splitted.length; i++) {
+        splitted[i] = splitted[i].trim();
+      }
+      return splitted;
     }
-    return splitted;
+
+    return null;
   }
 
 }
