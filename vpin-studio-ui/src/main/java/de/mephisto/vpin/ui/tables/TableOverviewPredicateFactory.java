@@ -11,23 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.function.Predicate;
 
 public class TableOverviewPredicateFactory {
-
-  private PlaylistRepresentation playlist;
-
-  private GameEmulatorRepresentation emulator;
-
-  public void setFilterPlaylist(PlaylistRepresentation playlist) {
-    this.playlist = playlist;
-  }
-
-  public void setFilterEmulator(GameEmulatorRepresentation emulator) {
-    this.emulator = emulator;
-  }
-
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, FilterSettings filterSettings) {
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings) {
     return new Predicate<GameRepresentationModel>() {
       @Override
       public boolean test(GameRepresentationModel model) {

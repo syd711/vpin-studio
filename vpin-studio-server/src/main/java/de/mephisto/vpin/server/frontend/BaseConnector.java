@@ -24,6 +24,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -36,6 +37,11 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Autowired
   private GameEntryRepository gameEntryRepository;
+
+  private static final int PLAYLIST_FAVORITE_ID = -1;
+  //private static final int PLAYLIST_GLOBALFAV_ID = -2;
+  private static final int PLAYLIST_JUSTADDED_ID = -3;
+  private static final int PLAYLIST_MOSTPLAYED_ID = -4;
 
   /**
    * the loaded and cached emulators
@@ -465,25 +471,62 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private Playlist getFavPlaylist() {
     Playlist favs = new Playlist();
-    favs.setId(-1);
+    favs.setId(PLAYLIST_FAVORITE_ID);
     favs.setName("Favorites");
     List<PlaylistGame> favspg = gameFavs.stream().map(id -> toPlaylistGame(id)).collect(Collectors.toList());
     favs.setGames(favspg);
     return favs;
   }
- 
+  private Playlist getJustAddedPlaylist() {
+    Playlist pl = new Playlist();
+    pl.setId(PLAYLIST_JUSTADDED_ID);
+    pl.setName("Just Added");
+    pl.setSqlPlayList(true);
+    long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
+    List<PlaylistGame> games = getGames().stream().filter(g -> {
+        return g.getDateAdded() != null? g.getDateAdded().getTime() > dayMinus7 : false;
+      }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
+    pl.setGames(games);
+    return pl;
+  }
+
+  private Playlist getMostPlayedPlaylist() {
+    Playlist pl = new Playlist();
+    pl.setId(PLAYLIST_MOSTPLAYED_ID);
+    pl.setName("Most Played");
+    pl.setSqlPlayList(true);
+    
+    // extract stats, sort by number of plays, take first 10 and return PLaylistGames
+    Comparator<TableAlxEntry> c = (s1, s2) -> s1.getNumberOfPlays() == s2.getNumberOfPlays()? 
+        s2.getTimePlayedSecs()-s1.getTimePlayedSecs():
+        s2.getNumberOfPlays() - s1.getNumberOfPlays();
+
+    List<TableAlxEntry> games = getAlxData().stream().sorted(c).limit(10)
+        .collect(Collectors.toList());
+
+    List<PlaylistGame> plgames = games.stream().map(s -> toPlaylistGame(s.getGameId()))
+      .collect(Collectors.toList());
+
+    pl.setGames(plgames);
+    return pl;
+  }
+
   @NonNull
   @Override
   public Playlist getPlayList(int id) {
-    return id == -1 ? getFavPlaylist() : playlists.get(id);
+    return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() : 
+          id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
+          id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
+          playlists.get(id);
   }
 
   @Override
   public List<Playlist> getPlayLists() {
     List<Playlist> result = new ArrayList<>();
 
-    Playlist favs = getFavPlaylist();
-    result.add(favs);
+    result.add(getFavPlaylist());
+    result.add(getJustAddedPlaylist());
+    result.add(getMostPlayedPlaylist());
 
     for (Map.Entry<Integer, Playlist> playlist : playlists.entrySet()) {
       result.add(playlist.getValue());

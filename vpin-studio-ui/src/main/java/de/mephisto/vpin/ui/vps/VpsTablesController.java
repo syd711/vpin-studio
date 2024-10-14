@@ -318,7 +318,8 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
 
     VpsTable vpsTable = newSelection != null? newSelection.getVpsTable(): null;
-    tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable));
+    VpsTablesPredicateFactory predicates = ((VpsTablesFilterController) filterController).getPredicateFactory();
+    tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable), predicates);
   }
 
   static class VpsTableFormat {

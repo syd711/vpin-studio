@@ -3,22 +3,29 @@ package de.mephisto.vpin.ui.vps;
 import static de.mephisto.vpin.ui.Studio.client;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.FormatStyle;
 import java.util.LinkedHashMap;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
 
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.DateCell;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.util.converter.LocalDateStringConverter;
 
 public class VpsTablesFilterController extends BaseFilterController<VpsTable, VpsTableModel> implements Initializable {
 
@@ -29,6 +36,11 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   private CheckBox installedOnlyCheckbox;
   @FXML
   private CheckBox notInstalledOnlyCheckbox;
+
+  @FXML
+  private DatePicker lastUpdateDate;
+  @FXML
+  private Button clearDateBtn;
 
   @FXML
   private TextField author;
@@ -80,13 +92,22 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   
   //------------------------------------------------------
 
+  public VpsTablesPredicateFactory getPredicateFactory() {
+    return predicateFactory;
+  } 
+
+  @FXML
+  private void onClearDate() {
+    lastUpdateDate.setValue(null);
+  }
+
   @Override
   protected void resetFilters() {
     this.predicateFactory = new VpsTablesPredicateFactory();
 
     installedOnlyCheckbox.setSelected(false);
     notInstalledOnlyCheckbox.setSelected(false);
-
+    lastUpdateDate.setValue(null);
     author.setText(null);
     withAuthorInOtherAssetsToo.setSelected(false);
     manufacturer.setText(null);
@@ -115,7 +136,7 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   }
 
   @Override
-  public Predicate<VpsTableModel> buildPredicate(String searchTerm) {
+  public Predicate<VpsTableModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
     boolean noVPX = client.getFrontendService().getVpxGameEmulators().isEmpty();
     return predicateFactory.buildPredicate(noVPX, searchTerm);
   }
@@ -138,6 +159,28 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
       installedOnlyCheckbox.setDisable(newValue);
       applyFilters();
     });
+
+    lastUpdateDate.valueProperty().setValue(predicateFactory.getLastUpdateDate());
+    lastUpdateDate.valueProperty().addListener((observable, oldValue, newValue) -> {
+      predicateFactory.setLastUpdateDate(newValue);
+      applyFilters();
+      clearDateBtn.setVisible(newValue != null);
+    });
+    // prevent selection of future dates
+    lastUpdateDate.setDayCellFactory(param -> new DateCell() {
+        @Override
+        public void updateItem(LocalDate date, boolean empty) {
+          super.updateItem(date, empty);
+          setDisable(empty || date.compareTo(LocalDate.now()) > 0 );
+        }
+    });
+    // install specific formatter
+    LocalDateStringConverter dsc = new LocalDateStringConverter(FormatStyle.MEDIUM);
+    lastUpdateDate.setConverter(dsc);
+    // prevent modification in the text field, and force user to use the picker
+    lastUpdateDate.getEditor().setEditable(false);
+    // click on textfield opens popup
+    lastUpdateDate.getEditor().setOnMouseClicked((e) -> lastUpdateDate.show());
 
     author.textProperty().setValue(predicateFactory.getAuthor());
     author.textProperty().addListener((observable, oldValue, newValue) -> {

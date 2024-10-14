@@ -564,6 +564,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void doReload() {
     startReload("Loading Backglasses...");
 
+    refreshPlaylists();
+
     JFXFuture.supplyAsync(() -> {
       return client.getBackglassServiceClient().getBackglasses();
     }).thenAcceptLater(data -> {
@@ -608,6 +610,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     bindTable();
 
     super.loadFilterPanel("scene-directb2s-admin-filter.fxml");
+
+    super.loadPlaylistCombo();
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {

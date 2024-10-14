@@ -449,6 +449,14 @@ public class TablesController implements Initializable, StudioFXController, Stud
         this.tableOverviewController.reload(selection);
       }
     }
+
+    // also refresh playlists as the addition/modification of tables may impact them
+    refreshPlaylists();
+  }
+
+  public void refreshPlaylists() {
+    this.tableOverviewController.refreshPlaylists();
+    this.backglassManagerController.refreshPlaylists();
   }
 
   public StackPane getEditorRootStack() {
