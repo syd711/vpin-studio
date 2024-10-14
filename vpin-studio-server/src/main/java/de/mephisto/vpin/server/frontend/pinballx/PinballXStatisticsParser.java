@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.Game;
 
 public class PinballXStatisticsParser {
@@ -46,10 +47,9 @@ public class PinballXStatisticsParser {
     try (FileReader fileReader = new FileReader(getPinballXStatisticsIni(), Charset.forName("UTF-8"))) {
       iniConfiguration.read(fileReader);
       for (Emulator emu : emus) {
-        for (String filename : connector.getGameFilenames(emu.getId())) {
-          int id = connector.filenameToId(emu.getId(), filename);
-          TableDetails details = connector.getGameFromDb(emu.getId(), filename);
-          getAlxData(iniConfiguration, stats, favs, emu, id, details);
+        for (GameEntry entry : connector.getGameEntries(emu.getId())) {
+          TableDetails details = connector.getGameFromDb(emu.getId(), entry.getFilename());
+          getAlxData(iniConfiguration, stats, favs, emu, entry.getId(), details);
         }
       }
     }

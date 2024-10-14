@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.puppack;
 
-import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.util.UnzipChangeListener;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -26,10 +24,11 @@ public class PupPackUtil {
   private final static Logger LOG = LoggerFactory.getLogger(PupPackUtil.class);
 
   public static void unpack(@NonNull File archiveFile, @NonNull File destinationDir, @NonNull String pupPackFolderInArchive, @NonNull String rom, @Nullable UnzipChangeListener listener) {
-    if (archiveFile.getName().toLowerCase().endsWith(".zip")) {
+    String archiveName = archiveFile.getName().toLowerCase();
+    if (archiveName.endsWith(".zip")) {
       unzip(archiveFile, destinationDir, pupPackFolderInArchive, rom, listener);
     }
-    else if (archiveFile.getName().toLowerCase().endsWith(".rar")) {
+    else if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
       unrar(archiveFile, destinationDir, pupPackFolderInArchive, rom, listener);
     }
     else {

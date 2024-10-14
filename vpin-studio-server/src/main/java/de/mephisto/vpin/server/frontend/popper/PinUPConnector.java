@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend.popper;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -8,11 +7,11 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.popper.PopperSettings;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -2034,6 +2033,17 @@ public class PinUPConnector implements FrontendConnector {
       boolean b = pinUpProcess.destroyForcibly();
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
+
+    File showTaskbarExe = new File(getInstallationFolder(), "showtaskbar.exe");
+    if (showTaskbarExe.exists()) {
+      SystemCommandExecutor exec = new SystemCommandExecutor(Arrays.asList("showtaskbar.exe"));
+      exec.setDir(getInstallationFolder());
+      exec.executeCommandAsync();
+    }
+    else {
+      LOG.error("Popper '" + showTaskbarExe.getAbsolutePath() + "' not found.");
+    }
+
     return true;
   }
 

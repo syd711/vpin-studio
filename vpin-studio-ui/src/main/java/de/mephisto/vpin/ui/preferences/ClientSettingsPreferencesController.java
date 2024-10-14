@@ -225,7 +225,8 @@ public class ClientSettingsPreferencesController implements Initializable {
     sectionAssets.setVisible(frontendType.supportMedias());
     dropIns.setVisible(Features.DROP_IN_FOLDER);
 
-    networkShareTestPath = client.getFrontendService().getDefaultGameEmulator().getInstallationDirectory();
+    GameEmulatorRepresentation defaultEmu = client.getFrontendService().getDefaultGameEmulator();
+    networkShareTestPath = defaultEmu != null ? defaultEmu.getInstallationDirectory() : null;
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 

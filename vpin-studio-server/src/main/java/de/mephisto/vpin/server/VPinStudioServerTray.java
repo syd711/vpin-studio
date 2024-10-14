@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.util.SystemUtil;
 import org.slf4j.Logger;
@@ -102,9 +102,15 @@ public class VPinStudioServerTray {
 
   private static void launchStudio() {
     try {
-      SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("VPin-Studio.exe"));
-      executor.setDir(new File("C:\\workspace\\vpin-studio\\Output\\VPin-Studio"));
-      executor.executeCommandAsync();
+      File file = new File("./VPin-Studio.exe");
+      if (file.exists()) {
+        SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("VPin-Studio.exe"));
+        executor.setDir(new File("./"));
+        executor.executeCommandAsync();
+      }
+      else {
+        LOG.error("VPin-Studio.exe not found in directory " + new File("./").getAbsolutePath());
+      }
     }
     catch (Exception ex) {
       LOG.error("Failed to execute Studio: " + ex.getMessage(), ex);

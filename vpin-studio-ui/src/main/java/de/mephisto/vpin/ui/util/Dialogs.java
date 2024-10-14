@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemData;
 import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.ui.ClientUpdatePostProcessing;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.TextEditorController;
 import de.mephisto.vpin.ui.UpdateInfoDialog;
@@ -60,6 +61,10 @@ public class Dialogs {
 
       uiSettings.setHideUpdateInfo(true);
       client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
+
+      if (!force) {
+        ClientUpdatePostProcessing.executePostProcessing();
+      }
     }
   }
 
@@ -158,10 +163,10 @@ public class Dialogs {
 
     if (!local) {
       ConfirmationResult confirmationResult = WidgetFactory.showAlertOptionWithCheckbox(stage,
-        FrontendUtil.replaceName("[Frontend] is running.", frontend),
-        "Kill Processes", "Cancel",
-        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
-        null, "Switch cabinet to maintenance mode");
+          FrontendUtil.replaceName("[Frontend] is running.", frontend),
+          "Kill Processes", "Cancel",
+          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
+          null, "Switch cabinet to maintenance mode");
       if (confirmationResult.isApplyClicked()) {
         client.getFrontendService().terminateFrontend();
         if (confirmationResult.isChecked()) {
@@ -173,9 +178,9 @@ public class Dialogs {
     }
     else {
       Optional<ButtonType> buttonType = WidgetFactory.showAlertOption(stage,
-        FrontendUtil.replaceName("[Frontend] is running.", frontend),
-        "Kill Processes", "Cancel",
-        FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
+          FrontendUtil.replaceName("[Frontend] is running.", frontend),
+          "Kill Processes", "Cancel",
+          FrontendUtil.replaceName("[Frontend] is running. To perform this operation, you have to close it.", frontend),
           null);
       if (buttonType.isPresent() && buttonType.get().equals(ButtonType.APPLY)) {
         client.getFrontendService().terminateFrontend();

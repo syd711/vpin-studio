@@ -7,6 +7,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 import java.nio.charset.Charset;
@@ -15,6 +17,7 @@ import java.util.ResourceBundle;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class SplashScreenController implements Initializable {
+  private final static Logger LOG = LoggerFactory.getLogger(SplashScreenController.class);
 
   @FXML
   private ImageView splashImage;
@@ -34,8 +37,9 @@ public class SplashScreenController implements Initializable {
       int i = ThreadLocalRandom.current().nextInt(0, facts.size() - 1);
       String fact = facts.get(i);
       factLabel.setText("\"" + fact + "\"");
-    } catch (Exception e) {
-      throw new RuntimeException(e);
+    }
+    catch (Exception e) {
+      LOG.error("Splash screen init failed: " + e.getMessage(), e);
     }
   }
 

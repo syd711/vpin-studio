@@ -1,0 +1,32 @@
+65450
+50000
+45000
+40000
+35000
+DAD
+SEM
+AAA
+BBB
+CCC
+4
+1
+4
+19
+5
+13
+1
+1
+1
+2
+2
+2
+3
+3
+3
+Credits: 4
+FreePlay (0 = coin, 1 = free): 1
+Balls: 5
+Match Number: 8
+Chime (0 = sound file, 1 = DOF chime): 0
+pfOption (1 = L/R Stereo, 2 = U/D Stereo, 3 = quad): 1
+LUT: 0

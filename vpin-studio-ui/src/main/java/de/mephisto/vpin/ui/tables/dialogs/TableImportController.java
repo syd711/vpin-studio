@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.FrontendUtil;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -35,7 +36,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -104,24 +104,21 @@ public class TableImportController implements Initializable, DialogController {
       Frontend frontend = client.getFrontendService().getFrontendCached();
       // should always be done
       FrontendUtil.replaceNames(text2Description, frontend, frontend.getName());
-      GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
+
+      List<GameEmulatorRepresentation> filtered = new ArrayList<>(client.getFrontendService().getFilteredEmulatorsWithAllVpx(uiSettings));
+      this.emulatorCombo.setItems(FXCollections.observableList(filtered));
+
       this.emulatorCombo.valueProperty().addListener(new ChangeListener<GameEmulatorRepresentation>() {
         @Override
         public void changed(ObservableValue<? extends GameEmulatorRepresentation> observable, GameEmulatorRepresentation oldValue, GameEmulatorRepresentation newValue) {
           if (newValue != null) {
             refreshEmulator(newValue);
           }
-          saveBtn.setDisable(newValue == null);
+          else {
+            saveBtn.setDisable(true);
+          }
         }
       });
-
-      List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
-      List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-      this.emulatorCombo.setItems(FXCollections.observableList(filtered));
-
-      if (selectedEmu == null && !filtered.isEmpty()) {
-        this.emulatorCombo.getSelectionModel().selectFirst();
-      }
     }
     catch (Exception e) {
       LOG.error("Failed to init import dialog: " + e.getMessage(), e);
@@ -130,11 +127,31 @@ public class TableImportController implements Initializable, DialogController {
   }
 
   private void refreshEmulator(GameEmulatorRepresentation emulator) {
-    try {
-      GameList importableTables = client.getFrontendService().getImportableTables(emulator.getId());
-      saveBtn.setDisable(importableTables.getItems().isEmpty());
-      checkBoxes.clear();
-      tableBox.getChildren().removeAll(tableBox.getChildren());
+    saveBtn.setDisable(true);
+    emulatorCombo.setDisable(true);
+
+    checkBoxes.clear();
+    tableBox.getChildren().removeAll(tableBox.getChildren());
+
+    Label loading = new Label("loading...");
+    loading.setStyle("-fx-font-size: 14px;");
+    tableBox.getChildren().add(loading);
+
+    JFXFuture.supplyAsync(() -> {
+      if (client.getFrontendService().isAllVpx(emulator)) {
+        return client.getFrontendService().getImportableTablesVpx(); 
+      }
+      else {
+        return client.getFrontendService().getImportableTables(emulator.getId());
+      }
+    })
+    .onErrorSupply(e -> {
+      LOG.error("Failed to init import dialog: " + e.getMessage(), e);
+      Platform.runLater(() -> WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage()));
+      return new GameList();
+    })
+    .thenAcceptLater(importableTables -> {
+      tableBox.getChildren().remove(loading);
 
       if (importableTables.getItems().isEmpty()) {
         Label label = new Label("No tables found for \"" + emulator.getName() + "\" that have not been imported yet.");
@@ -161,11 +178,9 @@ public class TableImportController implements Initializable, DialogController {
           checkBoxes.add(checkBox);
         }
       }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to init import dialog: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Failed to read import list: " + e.getMessage());
-    }
+      saveBtn.setDisable(importableTables.getItems().isEmpty());
+      emulatorCombo.setDisable(false);
+    });
   }
 
   public void setData(GameEmulatorRepresentation emulatorRepresentation) {

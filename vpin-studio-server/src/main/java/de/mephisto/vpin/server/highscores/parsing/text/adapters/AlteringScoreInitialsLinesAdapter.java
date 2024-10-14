@@ -10,27 +10,49 @@ import java.util.List;
 
 public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl {
 
-  private final int start;
-  private final int entryCount;
+  private int start;
+  private int size;
   private int lineCount;
-  private String name;
+  private List<String> fileNames;
 
-  public AlteringScoreInitialsLinesAdapter(int lineCount, int start, int entryCount) {
-    this.lineCount = lineCount;
-    this.start = start;
-    this.entryCount = entryCount;
+  public AlteringScoreInitialsLinesAdapter() {
   }
 
+  public int getStart() {
+    return start;
+  }
 
-  public AlteringScoreInitialsLinesAdapter(String name, int start, int entryCount) {
-    this.name = name;
+  public void setStart(int start) {
     this.start = start;
-    this.entryCount = entryCount;
+  }
+
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
+    this.size = size;
+  }
+
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
+  }
+
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
   }
 
   @Override
   public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
-    if(name != null && name.equalsIgnoreCase(file.getName())) {
+    if(fileNames != null && fileNames.contains(file.getName())) {
       return true;
     }
     return lines.size() == lineCount;
@@ -38,7 +60,7 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
 
   @Override
   public String convert(@NotNull File file, @NotNull List<String> lines) {
-    return super.convertAlteringScoreLines(start, entryCount, lines);
+    return super.convertAlteringScoreLines(start, size, lines);
   }
 
   @Override
@@ -46,10 +68,10 @@ public class AlteringScoreInitialsLinesAdapter extends ScoreTextFileAdapterImpl 
     List<String> newScoreText = new ArrayList<>();
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);
-      if (i >= start && i < start + (entryCount * 2) && i % 2 == 0) {
+      if (i >= start && i < start + (size * 2) && i % 2 == 0) {
         line = "0";
       }
-      else if (i >= start && i < start + (entryCount * 2) && i % 2 == 1) {
+      else if (i >= start && i < start + (size * 2) && i % 2 == 1) {
         line = "???";
       }
       newScoreText.add(line);

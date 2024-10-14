@@ -1,5 +1,297 @@
 {
   "pinemhiVersion": "3.6.2",
+  "highscoreVPRegParsers": [
+
+  ],
+  "highscoreTextParsers": [
+    {
+      "parser": "SinglePlayer",
+      "fileNames": [
+        "A7XHighscore.txt", "Disco.txt", "Forrest Gump HighscorePostIt.txt", "HumptyDumpty.txt", "ImpracticalJokers.txt",
+        "Jalopy_51VPX.txt", "MacJungle.txt", "StrippingFunny.txt", "SwingAlong.txt", "Toledo.txt", "*PostIt.txt"
+      ],
+      "scoreLine": 0
+    },
+    {
+      "parser": "SinglePlayer",
+      "fileNames": [
+        "JacksOpen.txt", "aztec.txt", "aerobatics.txt", "JokerPoker_EM_1978.txt", "LuckyHand.txt", "tramway.txt"
+      ],
+      "scoreLine": 1
+    },
+    {
+      "parser": "SinglePlayer"
+    },
+    {
+      "parser": "SinglePlayer",
+      "fileNames": [
+        "thunderbirds.txt", "Bally_Hoo_69.txt", "Dixieland.txt"
+      ],
+      "scoreLine": 5
+    },
+    {
+      "parser": "SinglePlayer",
+      "fileNames": [
+        "4Queens70.txt"
+      ],
+      "scoreLine": 3
+    },
+    {
+      "parser": "TwoPlayers",
+      "fileNames": [
+        "Strip_JP_EM_1978.txt", "The_Fog_1979.txt"
+      ],
+      "scoreLine1": 1,
+      "scoreLine2": 3
+    },
+    {
+      "parser": "TwoPlayers",
+      "fileNames": [
+        "LMEMShadows.txt"
+      ],
+      "scoreLine1": 0,
+      "scoreLine2": 1
+    },
+    {
+      "parser": "ThreePlayers",
+      "fileNames": [
+        "Jackpot.txt", "Cabaret.txt", "Cabaret_Mon.txt"
+      ],
+      "start": 2
+    },
+    {
+      "parser": "FourPlayers",
+      "fileNames": [
+        "GetSmart.txt"
+      ],
+      "start": 1
+    },
+    {
+      "parser": "AlteringScoreInitialsLines",
+      "fileNames": [
+        "Fireball_XL5.txt"
+      ],
+      "size": 5,
+      "start": 1
+    },
+    {
+      "parser": "AlteringScoreInitialsLines",
+      "fileNames": [
+        "UT99.txt"
+      ],
+      "size": 3,
+      "start": 0
+    },
+    {
+      "parser": "AlteringScoreInitialsLines",
+      "lineCount": 10,
+      "size": 3,
+      "start": 0
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocksWithOffset",
+      "fileNames": [
+        "BountyHunter.txt"
+      ],
+      "start": 1,
+      "size": 5,
+      "offset": 2
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "ShortCircuitRB.txt"
+      ],
+      "start": 0,
+      "size": 4
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "Rockmakers(Bally1968)v0.60.txt"
+      ],
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "Bird_Fly.txt"
+      ],
+      "start": 1,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "Barnstorming.txt", "crystalball.txt", "fouraces.txt"
+      ],
+      "start": 2,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "HotShot_73VPX.txt", "PinballEM_77VPX.txt"
+      ],
+      "start": 4,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "FarOut_74VPX.txt", "Orbit_71VPX.txt", "RollerCoaster_71VPX.txt", "SuperSoccer_75VPX.txt"
+      ],
+      "start": 5,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "MagicCity_67VPX.txt", "WorldSeries_72VPX.txt", "TeachersPet_65VPX.txt", "DipsyDoodle_70VPX.txt", "DoodleBug_71VPX.txt", "HomeRun_71VPX.txt", "Kickoff_67VPX.txt", "LoveBug_71VPX.txt", "Touchdown_67VPX.txt"
+      ],
+      "start": 6,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "CanadaDry_76VPX.txt", "Circus_73VPX.txt", "BigValley_70VPX.txt", "Freedom_76VPX.txt", "Target_Alpha_76VPX.txt"
+      ],
+      "start": 7,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "BlackGold_75VPX.txt"
+      ],
+      "start": 8,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "BowAndArrowEM_74VPX.txt"
+      ],
+      "start": 7,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "MountainClimbingHS.txt"
+      ],
+      "start": 3,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "jungleprincess_1977_v2a.txt"
+      ],
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "fileNames": [
+        "LittleJoe_71VPX.txt"
+      ],
+      "start": 6,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 33,
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 32,
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 31,
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 26,
+      "start": 0,
+      "size": 3
+    },
+    {
+      "comment": "Space Mission",
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 27,
+      "start": 7,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 25,
+      "start": 5,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 18,
+      "start": 8,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 17,
+      "start": 7,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 16,
+      "start": 6,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 15,
+      "start": 5,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 14,
+      "start": 4,
+      "size": 5
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 12,
+      "start": 2,
+      "size": 5
+    },
+    {
+      "comment": "woz",
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 11,
+      "start": 3,
+      "size": 4
+    },
+    {
+      "parser": "AlteringScoreInitialsBlocks",
+      "lineCount": 10,
+      "start": 0,
+      "size": 5
+    },
+    {
+      "parser": "TwoPlayers",
+      "lineCount": 8
+    }
+  ],
   "highscoreMappings": [
     {
       "rom": "spongebob",
@@ -51,12 +343,21 @@
   ],
   "ignoredVPRegEntries": [
     "Amazon",
+    "Aloha1",
+    "alienwar",
     "bnzai_l3",
+    "bnzai_l3_dbz_budokai",
+    "BowAndArrow",
     "BloodMachines",
+    "Count-Down",
     "CC_TTNZ",
+    "CrazyCats",
     "cyberrace",
     "Counterforce",
     "Cosmic Gunfight",
+    "DoubleBarrel1",
+    "Dolphin",
+    "dvlrider",
     "eballdlx",
     "Eclipse",
     "elvis",
@@ -64,29 +365,62 @@
     "fpwr2_l2",
     "Funhouse_VPX",
     "gamatron",
+    "gamatron_starbad",
     "grgar_l1",
     "godzilla",
+    "gnr_300_np",
     "Gridiron_1977",
     "HarleyQuinn_VPX",
     "HeavyMetal",
+    "HoneyVPX",
     "hh",
+    "hh7",
+    "heavymtl",
     "icefever",
+    "Jigsaw",
+    "jm_12r",
+    "MBuw",
+    "mav_402",
+    "mysticb",
     "motrdome",
     "nf_23x",
+    "ndlsmr",
+    "ndlsmr_np",
+    "panther7",
+    "Premier",
+    "play_a24",
+    "Pink_Floyd_np",
+    "Pink_Floyd",
+    "Polic_L4",
+    "Playboy",
     "polar",
+    "Re-Animator_VPX",
     "Royal",
+    "rctycn",
+    "roses4",
+    "rock_ffdp",
     "rackemup",
     "savingWallden",
     "ScaredStiffVPX",
     "spongebob",
+    "SpaceRamp",
+    "spcpoker",
+    "SkyRide",
     "SexyGirl",
+    "TimeMachine",
+    "TAF_VPX",
+    "tf_180_pro",
     "term3",
+    "twd_160",
+    "TenStrikeClassic",
     "TAF_VPX_V2",
     "TripleStrike",
     "totan_14",
     "Victory",
+    "Wonderland1",
     "ww_lh6",
-    "xmn_151h"
+    "xmn_151h",
+    "ZoneFuryVPX"
   ],
   "notSupported": [
     "mtl_180hc",

@@ -18,7 +18,6 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.nvrams.NVRamService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -36,9 +35,6 @@ import java.util.stream.Collectors;
 @Service
 public class HighscoreService implements InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(HighscoreService.class);
-
-  @Autowired
-  private SystemService systemService;
 
   @Autowired
   private HighscoreRepository highscoreRepository;

@@ -7,25 +7,50 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TwoPlayersAdapter implements ScoreTextFileAdapter {
-  private String name;
+  private List<String> fileNames;
   private int scoreLine1 = 1;
   private int scoreLine2 = 2;
 
   private int lineCount;
 
-  public TwoPlayersAdapter(int lineCount) {
-    this.lineCount = lineCount;
+  public TwoPlayersAdapter() {
   }
 
-  public TwoPlayersAdapter(String name, int scoreLine1, int scoreLine2) {
-    this.name = name;
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getScoreLine1() {
+    return scoreLine1;
+  }
+
+  public void setScoreLine1(int scoreLine1) {
     this.scoreLine1 = scoreLine1;
+  }
+
+  public int getScoreLine2() {
+    return scoreLine2;
+  }
+
+  public void setScoreLine2(int scoreLine2) {
     this.scoreLine2 = scoreLine2;
+  }
+
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
   }
 
   @Override
   public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
-    if (file.getName().equals(name)) {
+    if (fileNames != null && fileNames.contains(file.getName())) {
       return true;
     }
     return lines.size() == lineCount;

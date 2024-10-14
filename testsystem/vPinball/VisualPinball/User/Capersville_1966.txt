@@ -1,0 +1,33 @@
+4500
+4302
+4000
+3500
+3000
+SEM
+DAD
+AAA
+BBB
+CCC
+19
+5
+13
+4
+1
+4
+1
+1
+1
+2
+2
+2
+3
+3
+3
+Credits: 2
+FreePlay (0 = coin, 1 = free): 1
+Balls: 5
+Match Number: 2
+Chime (0 = sound file, 1 = DOF chime): 0
+pfOption (1 = L/R Stereo, 2 = U/D Stereo, 3 = quad): 1
+Language (E = English, G = German): E
+LUT: 0

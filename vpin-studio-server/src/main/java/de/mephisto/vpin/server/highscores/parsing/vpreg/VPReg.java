@@ -31,13 +31,19 @@ public class VPReg {
 
   static {
     adapters.put("numericList", new NumericListVPRegHighscoreAdapter());
-    adapters.put("numericList2", new NumericList2VPRegHighscoreAdapter("HSName%s", "HSPoints%s" ));
-    adapters.put("numericList3", new NumericList2VPRegHighscoreAdapter("HighscoreInits(%s)", "Highscore(%s)" ));
-    adapters.put("numericList4", new NumericList2VPRegHighscoreAdapter("Name%s", "High%s" , 1));
-    adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter("Heatw", "HS"));
-    adapters.put("singleAnonymousEntry2", new SingleEntryAnonymousVPRegHighscoreAdapter());
+    adapters.put("numericList2", new NumericList2VPRegHighscoreAdapter("HSName%s", "HSPoints%s"));
+    adapters.put("numericList3", new NumericList2VPRegHighscoreAdapter("HighscoreInits(%s)", "Highscore(%s)"));
+    adapters.put("numericList4", new NumericList2VPRegHighscoreAdapter("Name%s", "High%s", 1));
+    adapters.put("singleAnonymousEntry1", new SingleEntryAnonymousVPRegHighscoreAdapter("madscientist", "Score"));
+    adapters.put("singleAnonymousEntry2", new SingleEntryAnonymousVPRegHighscoreAdapter("RaygunRunner", "highscore"));
+    adapters.put("singleAnonymousEntry3", new SingleEntryAnonymousVPRegHighscoreAdapter("Heatw", "HS"));
+    adapters.put("singleAnonymousEntry4", new SingleEntryAnonymousVPRegHighscoreAdapter("SpEyes", "HS"));
+    adapters.put("multiWithLettersEntry", new MultiEntryWithLettersVPRegHighscoreAdapter(Arrays.asList("Gulfstream", "Mariner", "AirAces", "SeaRay"), 5));
+    adapters.put("singleAnonymousEntry", new SingleEntryAnonymousVPRegHighscoreAdapter());
     adapters.put("singleWithLettersEntry", new SingleEntryWithLettersVPRegHighscoreAdapter());
-    adapters.put("numericListAnonymous", new NumericListAnonymousVPRegHighscoreAdapter());
+    adapters.put("numericListAnonymous", new NumericListAnonymousVPRegHighscoreAdapter("HighScore%s"));
+    adapters.put("numericListAnonymous2", new NumericListAnonymousVPRegHighscoreAdapter("sScore%sP"));
+    adapters.put("numericListAnonymous3", new NumericListAnonymousVPRegHighscoreAdapter("hsa%s"));
   }
 
 
@@ -78,6 +84,51 @@ public class VPReg {
       }
     }
     return result;
+  }
+
+  public void dump() {
+    POIFSFileSystem fs = null;
+    try {
+      fs = new POIFSFileSystem(vpregFile, false);
+      DirectoryEntry root = fs.getRoot();
+      if (root != null) {
+        Iterator<Entry> entries = root.getEntries();
+        while (entries.hasNext()) {
+          Entry next = entries.next();
+          String folder = next.getName();
+          System.out.println("/" + folder);
+          if (next.isDirectoryEntry()) {
+            DirectoryEntry child = (DirectoryEntry) next;
+            Iterator<Entry> childEntries = child.getEntries();
+            while (childEntries.hasNext()) {
+              Entry childNext = childEntries.next();
+              String childName = childNext.getName();
+
+              DocumentNode scoreEntry = (DocumentNode) child.getEntry(childName);
+              DocumentInputStream scoreEntryStream = new DocumentInputStream(scoreEntry);
+              byte[] scoreContent = new byte[scoreEntryStream.available()];
+              scoreEntryStream.read(scoreContent);
+              scoreEntryStream.close();
+
+              System.out.println("/" + folder + "/" + childName + " => " + new String(scoreContent));
+            }
+          }
+        }
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to read VPReg: " + e.getMessage());
+    }
+    finally {
+      if (fs != null) {
+        try {
+          fs.close();
+        }
+        catch (IOException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   public boolean containsGame() {

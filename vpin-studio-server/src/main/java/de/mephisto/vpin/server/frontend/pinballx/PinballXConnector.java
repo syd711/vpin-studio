@@ -1,15 +1,16 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
+import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -27,7 +28,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -211,7 +215,7 @@ public class PinballXConnector extends BaseConnector {
     }
 
     // check presence of [internal] section
-    SubnodeConfiguration s = iniConfiguration.getSection("internal");
+    SubnodeConfiguration s = iniConfiguration.getSection("Display");
     return s.isEmpty() ? null : iniConfiguration;
   }
 
@@ -404,7 +408,7 @@ public class PinballXConnector extends BaseConnector {
           parser.addGames(f, _games, _tabledetails, emu);
 
           List<PlaylistGame> pg = _games.stream()
-              .map(g -> toPlaylistGame(filenameToId(emu.getId(), g)))
+              .map(g -> toPlaylistGame(findIdFromFilename(emu.getId(), g)))
               .collect(Collectors.toList());
           p.setGames(pg);
 
@@ -420,7 +424,7 @@ public class PinballXConnector extends BaseConnector {
     if (pl.getEmulatorId() != null) {
       Emulator emu = getEmulator(pl.getEmulatorId());
       PinballXTableParser parser = new PinballXTableParser();
-      List<String> games = pl.getGames().stream().map(pg -> getGameFilename(pg.getId())).collect(Collectors.toList());
+      List<GameEntry> games = pl.getGames().stream().map(pg -> getGameEntry(pg.getId())).collect(Collectors.toList());
 
       File pinballXFolder = getInstallationFolder();
       File playlistDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + pl.getName() + ".xml");

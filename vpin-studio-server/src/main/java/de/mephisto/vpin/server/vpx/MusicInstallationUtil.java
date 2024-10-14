@@ -32,7 +32,7 @@ public class MusicInstallationUtil {
     if (suffix.equalsIgnoreCase(AssetType.ZIP.name())) {
       unzipIntoMusicFolder(archiveFile, musicFolder, analysis, rom, relativePath);
     }
-    else if (suffix.equalsIgnoreCase(AssetType.RAR.name())) {
+    else if (suffix.equalsIgnoreCase(AssetType.RAR.name()) || suffix.equalsIgnoreCase("7z")) {
       unrarIntoMusicFolder(archiveFile, musicFolder, analysis, rom, relativePath);
     }
     return true;

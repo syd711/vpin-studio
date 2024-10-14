@@ -1,0 +1,33 @@
+300000
+250000
+200000
+150000
+100000
+SEM
+AAA
+BBB
+CCC
+DDD
+19
+5
+13
+1
+1
+1
+2
+2
+2
+3
+3
+3
+4
+4
+4
+Credits: 1
+FreePlay (0 = coin, 1 = free): 1
+Balls: 5
+Match Number: 4
+Chime (0 = sound file, 1 = DOF chime): 0
+pfOption (1 = L/R Stereo, 2 = U/D Stereo, 3 = quad): 1
+LUT: 0
+replayEB (0 = Add-A-Ball, 1 = Replay, 2 = Novelty): 0

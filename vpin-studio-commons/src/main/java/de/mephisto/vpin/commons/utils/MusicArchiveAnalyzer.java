@@ -19,12 +19,13 @@ public class MusicArchiveAnalyzer {
 
 
   public static String analyze(@NonNull File file) {
-    if(file.getName().toLowerCase().endsWith(".zip")) {
+    String fileName = file.getName().toLowerCase();
+    if (fileName.endsWith(".zip")) {
       return analyzeZip(file);
     }
-//    if(Features.RAR_ENABLED && file.getName().toLowerCase().endsWith(".rar")) {
-//      return analyzeRar(file);
-//    }
+    if (fileName.endsWith(".rar") || fileName.endsWith(".7z")) {
+      return analyzeRar(file);
+    }
     return null;
   }
 
@@ -50,7 +51,8 @@ public class MusicArchiveAnalyzer {
       inArchive.close();
       randomAccessFileStream.close();
       randomAccessFile.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to check rar file \"" + file.getAbsolutePath() + "\": " + e.getMessage(), e);
       return "Failed to check rar file \"" + file.getAbsolutePath() + "\": " + e.getMessage();
     }
@@ -81,7 +83,7 @@ public class MusicArchiveAnalyzer {
         }
         zis.closeEntry();
 
-        if(entryFound) {
+        if (entryFound) {
           break;
         }
 
@@ -90,7 +92,8 @@ public class MusicArchiveAnalyzer {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Analyzing of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return "Analyzing of " + file.getAbsolutePath() + " failed: " + e.getMessage();
     }

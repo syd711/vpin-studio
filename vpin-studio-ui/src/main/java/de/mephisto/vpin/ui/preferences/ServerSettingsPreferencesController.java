@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -77,6 +78,17 @@ public class ServerSettingsPreferencesController implements Initializable {
       WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
     }
   }
+
+  @FXML
+  private void onMediaIndex() {
+    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Media Cache", "Cancel", "Regenerate Media Cache", "Regenerate the media cache?", null);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      Platform.runLater(() -> {
+        ProgressDialog.createProgressDialog(new RegenerateMediaCacheProgressModel(client.getGameService().getVpxGamesCached()));
+      });
+    }
+  }
+
 
   @FXML
   private void onRestart() {

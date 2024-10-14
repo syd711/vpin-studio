@@ -136,7 +136,7 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   @FXML
   private void onScoreSync() {
     List<PlayerRepresentation> players = Studio.client.getPlayerService().getPlayers();
-    List<PlayerRepresentation> collect = players.stream().filter(p -> StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
+    List<PlayerRepresentation> collect = players.stream().filter(p -> !StringUtils.isEmpty(p.getTournamentUserUuid())).collect(Collectors.toList());
     if (collect.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "No Accounts", "None of your players is registered on VPin Mania.", "The highscores are registered based on players that have marked as VPin Mania account.");
       return;

@@ -10,27 +10,50 @@ import java.util.List;
 public class AlteringScoreInitialsBlocksAdapter extends ScoreTextFileAdapterImpl {
 
   private int lineCount;
-  private String name;
+  private List<String> fileNames;
 
-  private final int start;
-  private final int size;
+  private int start;
+  private int size;
 
-  public AlteringScoreInitialsBlocksAdapter(int lineCount, int start, int size) {
-    this.lineCount = lineCount;
-    this.start = start;
-    this.size = size;
+  public AlteringScoreInitialsBlocksAdapter() {
   }
 
-  public AlteringScoreInitialsBlocksAdapter(String name, int start, int size) {
-    this.name = name;
+  public int getLineCount() {
+    return lineCount;
+  }
+
+  public void setLineCount(int lineCount) {
+    this.lineCount = lineCount;
+  }
+
+  public List<String> getFileNames() {
+    return fileNames;
+  }
+
+  public void setFileNames(List<String> fileNames) {
+    this.fileNames = fileNames;
+  }
+
+  public int getStart() {
+    return start;
+  }
+
+  public void setStart(int start) {
     this.start = start;
+  }
+
+  public int getSize() {
+    return size;
+  }
+
+  public void setSize(int size) {
     this.size = size;
   }
 
   @Override
   public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
-    if (name != null) {
-      return file.getName().equals(name);
+    if (fileNames != null) {
+      return fileNames.contains(file.getName());
     }
     return lines.size() == lineCount;
   }

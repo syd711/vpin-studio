@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -32,8 +33,8 @@ public class GameMediaService {
 
     Game game = frontendService.getGame(uploadDescriptor.getGameId());
     List<VPinScreen> values = frontendService.getFrontend().getSupportedScreens();
-    for (VPinScreen value : values) {
-      List<String> filesForScreen = analysis.getPopperMediaFiles(value);
+    for (VPinScreen screen : values) {
+      List<String> filesForScreen = analysis.getPopperMediaFiles(screen);
 
       int maxAssets = 3;
       for (String mediaFile : filesForScreen) {
@@ -42,10 +43,16 @@ public class GameMediaService {
         }
 
         String suffix = FilenameUtils.getExtension(mediaFile);
-        File out = uniqueMediaAsset(game, value, suffix);
+        File out = uniqueMediaAsset(game, screen, suffix);
+        if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+          out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
+          if (out.exists() && !out.delete()) {
+            out = uniqueMediaAsset(game, screen, suffix);
+          }
+        }
 
         if (PackageUtil.unpackTargetFile(tempFile, out, mediaFile)) {
-          LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + value.name() + "\" from archive file \"" + mediaFile + "\"");
+          LOG.info("Created \"" + out.getAbsolutePath() + "\" for screen \"" + screen.name() + "\" from archive file \"" + mediaFile + "\"");
         }
         else {
           LOG.error("Failed to unpack " + out.getAbsolutePath() + " from " + tempFile.getAbsolutePath());

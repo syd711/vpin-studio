@@ -89,7 +89,7 @@ public class MusicUploadController implements Initializable, DialogController {
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select Music Archive");
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Music Bundle", "*.zip", "*.rar"));
+        new FileChooser.ExtensionFilter("Music Bundle", "*.zip", "*.rar", "*.7z"));
 
     this.selection = fileChooser.showOpenDialog(stage);
 

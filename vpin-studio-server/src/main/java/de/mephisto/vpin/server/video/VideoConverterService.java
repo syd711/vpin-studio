@@ -1,8 +1,8 @@
 package de.mephisto.vpin.server.video;
 
-import de.mephisto.vpin.commons.utils.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.restclient.video.VideoOperation;
 import de.mephisto.vpin.server.frontend.FrontendService;

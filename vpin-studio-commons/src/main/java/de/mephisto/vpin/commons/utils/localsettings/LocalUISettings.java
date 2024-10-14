@@ -100,8 +100,8 @@ public class LocalUISettings {
       store.set(id + ".y", y);
       store.set(id + ".width", width);
       store.set(id + ".height", height);
+      LOG.info("Saved window position to store for " + id);
     }
-    LOG.info("Saved window position to store for " + id);
   }
 
   public static Rectangle getPosition() {

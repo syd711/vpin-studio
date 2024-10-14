@@ -4,6 +4,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.csv.QuoteMode;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,12 +25,13 @@ public class ExporterService {
   private final static String PARAM_EMULATOR_ID = "emulatorId";
   private final static String PARAM_GAME_ID = "gameId";
 
+  protected String delimiter = ";";
+  protected char escape = '\\';
 
   @Autowired
   protected FrontendService frontendService;
 
   protected @NotNull CSVPrinter createPrinter(Map<String, String> customQuery, List<String> headers, StringBuilder builder) throws IOException {
-    String delimiter = ";";
     if (customQuery.containsKey(PARAM_DELIMITER)) {
       delimiter = customQuery.get(PARAM_DELIMITER);
     }
@@ -38,7 +40,7 @@ public class ExporterService {
       quote = customQuery.get(PARAM_QUOTE).charAt(0);
     }
 
-    char escape = '\\';
+    escape = '\\';
     if (customQuery.containsKey(PARAM_ESCAPE)) {
       escape = customQuery.get(PARAM_ESCAPE).charAt(0);
     }

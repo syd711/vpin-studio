@@ -199,7 +199,7 @@ public class CardGenerationPreferencesController implements Initializable {
         cardSettings.setCardResolution(HighscoreCardResolution.valueOfString(newValue));
         client.getPreferenceService().setJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, cardSettings);
         Platform.runLater(() -> {
-          ProgressDialog.createProgressDialog(new GenerateAllBackgroundsProgressModel(client.getGameService().getVpxGamesCached()));
+          ProgressDialog.createProgressDialog(new RegenerateMediaCacheProgressModel(client.getGameService().getVpxGamesCached()));
         });
       }
       else {

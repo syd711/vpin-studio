@@ -108,6 +108,7 @@ public class UniversalUploadResource {
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV);
 
       universalUploadService.notifyUpdates(uploadDescriptor);
     }
