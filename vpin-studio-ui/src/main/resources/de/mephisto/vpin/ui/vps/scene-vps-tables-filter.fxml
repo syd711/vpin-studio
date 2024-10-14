@@ -64,7 +64,7 @@
                         <StackPane alignment="CENTER_RIGHT">
                            <children>
                               <DatePicker fx:id="lastUpdateDate" maxWidth="204.0" styleClass="preference-datepicker" />
-                              <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button" textFill="WHITE">
+                              <Button fx:id="clearDateBtn" mnemonicParsing="false" onAction="#onClearDate" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
                                  <graphic>
                                     <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                  </graphic>
