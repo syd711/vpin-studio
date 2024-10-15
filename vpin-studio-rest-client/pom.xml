@@ -52,7 +52,7 @@
             <version>16.02-2.01</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.sevenzipjbinding</groupId>
+            <groupId>com.github.shayartzi.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
             <version>16.02-2.01</version>
         </dependency>

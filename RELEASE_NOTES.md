@@ -10,6 +10,7 @@
 ## Bugfixes
 
 - **Added 7-zip support**: Actually it was there since the .rar support, but we forgot to add the .7z suffix to dialogs and drag-and-drop filters.
+- **Added RAR support for MacOS (ARM)**: The sevenzip library that is used for .rar files has been replaced with a patched version that is supposed to work for macOS with ARM.
 - **Maintenance Mode**: Fixed issue that the Windows taskbar is not shown when the Studio is exited and this mode was enabled. 
 - **Validation of assets with image and video**: when Asset validation is set to video and the tables contains a video asset and an  image one, the validation was claiming an error when it shouldn't .
 - **Highscore Parsing**: Fixed "Red & Ted's Road Show" highscore.
