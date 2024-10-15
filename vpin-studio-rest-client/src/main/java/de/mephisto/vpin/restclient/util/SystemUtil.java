@@ -13,6 +13,11 @@ public class SystemUtil {
   private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial");
 
   public static String getUniqueSystemId() {
+    String os = System.getProperty("os.name");
+    if (os.equalsIgnoreCase("Windows 11")) {
+      return NetworkUtil.getMacAddress();
+    }
+
     String id = getBoardSerialNumber();
     if (StringUtils.isEmpty(id)) {
       id = getCpuSerialNumber();
@@ -63,11 +68,11 @@ public class SystemUtil {
   }
 
   private static boolean isNotValid(String serial) {
-    if(StringUtils.isEmpty(serial)) {
+    if (StringUtils.isEmpty(serial)) {
       return false;
     }
     for (String invalidName : INVALID_NAMES) {
-      if(serial.contains(invalidName)) {
+      if (serial.contains(invalidName)) {
         return false;
       }
     }
