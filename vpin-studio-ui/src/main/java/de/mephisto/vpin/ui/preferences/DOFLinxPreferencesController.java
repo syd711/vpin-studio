@@ -115,7 +115,8 @@ public class DOFLinxPreferencesController implements Initializable {
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-        client.getDofLinxService().toggleAutoStart();
+        settings.setAutostart(t1);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.DOFLINX_SETTINGS, settings);
       }
     });
 
