@@ -26,7 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DropInManager implements LocalSettingsChangeListener, StudioEventListener, FolderChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(DropInManager.class);
@@ -82,25 +85,27 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.dropInsBtn.getItems().clear();
 
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
-      File[] files = dropinsFolder.listFiles(pathname -> pathname.isFile());
-      if (files != null) {
-        for (File file : files) {
-          if (!FileUtils.isTempFile(file)) {
-            try {
-              FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
-              BorderPane root = loader.load();
-              root.getStyleClass().add("dropin-menu-item");
-              DropInContainerController containerController = loader.getController();
-              containerController.setData(dropInsBtn, file);
-              CustomMenuItem item = new CustomMenuItem();
-              item.setContent(root);
-              dropInsBtn.getItems().add(item);
-            }
-            catch (IOException e) {
-              LOG.error("Failed to load drop in container: " + e.getMessage(), e);
-            }
-          }
-        }
+
+      try (Stream<Path> stream = Files.walk(dropinsFolder.toPath())) {
+          stream.filter((p) -> Files.isRegularFile(p) && !FileUtils.isTempFile(p.toFile()))
+                .forEach((p) -> {
+                  try {
+                    FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
+                    BorderPane root = loader.load();
+                    root.getStyleClass().add("dropin-menu-item");
+                    DropInContainerController containerController = loader.getController();
+                    containerController.setData(dropInsBtn, p.toFile());
+                    CustomMenuItem item = new CustomMenuItem();
+                    item.setContent(root);
+                    dropInsBtn.getItems().add(item);
+                  }
+                  catch (IOException e) {
+                    LOG.error("Failed to load drop in container: " + e.getMessage(), e);
+                  }
+                });
+      }
+      catch (IOException e) {
+        LOG.error("Failed to walk through drop in container: " + e.getMessage(), e);
       }
     }
   }
@@ -165,17 +170,14 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     if (file == null || FileUtils.isTempFile(file)) {
       return;
     }
-
     Platform.runLater(() -> {
       reload();
-      if (file != null) {
-        dropInsBtn.getGraphic().setVisible(true);
-        Notifications.create()
-            .title("New Drop-In Detected!")
-            .text(file.getAbsolutePath())
-            .graphic(WidgetFactory.createCheckboxIcon())
-            .showInformation();
-      }
+      dropInsBtn.getGraphic().setVisible(true);
+      Notifications.create()
+          .title("Drop-In Modification Detected!")
+          .text(file.getAbsolutePath())
+          .graphic(WidgetFactory.createCheckboxIcon())
+          .showInformation();
     });
   }
 }

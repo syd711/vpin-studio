@@ -4,10 +4,13 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.sun.nio.file.ExtendedWatchEventModifier;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.*;
+import java.nio.file.WatchEvent.Kind;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class FolderMonitoringThread {
@@ -56,32 +59,35 @@ public class FolderMonitoringThread {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
     monitorThread = new Thread(() -> {
-      Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder.getAbsolutePath() + "\"");
+      Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder + "\"");
       LOG.info("Launched " + Thread.currentThread().getName());
       try {
         final Path path = folder.toPath();
-        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        path.register(watchService, new Kind[] { StandardWatchEventKinds.ENTRY_CREATE, 
+          StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY },
+          ExtendedWatchEventModifier.FILE_TREE);
         while (running.get()) {
           try {
             final WatchKey wk = watchService.take();
             for (WatchEvent<?> event : wk.pollEvents()) {
-              if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
-                final Path filedropped = (Path) event.context();
-                File f = new File(folder, filedropped.toString());
-                if (FileUtils.isTempFile(f)) {
-                  waitABit(f, 3000);
+              final Path filedropped = (Path) event.context();
+              File f = new File(folder, filedropped.toString());
+              if (f.isFile()) {
+                if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+                  if (FileUtils.isTempFile(f)) {
+                    waitABit(f, 3000);
+                  }
+                  // still exists ?
+                  if (f.exists()) {
+                    notifyUpdates(f);
+                  }
                 }
-                // still exists ?
-                if (f.exists()) {
+                else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
                   notifyUpdates(f);
                 }
-              }
-              else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                notifyUpdates(null);
-              }
-              else if (modifyEvents && event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
-                final Path f = (Path) event.context();
-                notifyUpdates(f.toFile());
+                else if (modifyEvents && event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
+                  notifyUpdates(f);
+                }
               }
             }
             wk.reset();

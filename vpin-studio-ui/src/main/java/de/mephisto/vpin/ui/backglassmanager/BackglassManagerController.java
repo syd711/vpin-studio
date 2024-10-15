@@ -695,8 +695,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       if (!refreshing && tableSettings != null) {
         save(() -> {
           tableSettings.setUsedLEDType(t1 != null ? t1.getId() : 0);
-          glowing.setDisable(t1 != null ? t1.getId() == 1 : true);
-          lightBulbOn.setDisable(t1 != null ? t1.getId() == 1 : true);
+          glowing.setDisable(t1 != null && t1.getId() == 1);
+          lightBulbOn.setDisable(t1 != null && t1.getId() == 1);
           lightBulbOn.setSelected(false);
         });
       }
@@ -838,17 +838,16 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
 
     this.refreshing = true;
-    boolean disable = newValue == null;
 
     //both these depend on the game selection
     this.uploadBtn.setDisable(true);
     this.dataManagerBtn.setDisable(true);
 
-    this.openBtn.setDisable(disable);
-    this.renameBtn.setDisable(disable);
-    this.duplicateBtn.setDisable(disable);
-    this.deleteBtn.setDisable(disable);
-    this.reloadBackglassBtn.setDisable(disable);
+    this.openBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
+    this.duplicateBtn.setDisable(true);
+    this.deleteBtn.setDisable(true);
+    this.reloadBackglassBtn.setDisable(true);
 
     nameLabel.setText("-");
     typeLabel.setText("-");
@@ -875,20 +874,28 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     gameLabel.setText("-");
     gameFilenameLabel.setText("-");
 
-    glowing.setDisable(disable);
-    startAsExe.setDisable(disable);
-    hideB2SDMD.setDisable(disable);
-    hideB2SBackglass.setDisable(disable);
-    hideGrill.setDisable(disable);
-    hideDMD.setDisable(disable);
-    startBackground.setDisable(disable);
-    bringBGFromTop.setDisable(disable);
-    skipGIFrames.setDisable(disable);
-    skipLampFrames.setDisable(disable);
-    skipSolenoidFrames.setDisable(disable);
-    skipLEDFrames.setDisable(disable);
-    bulbsLabel.setDisable(disable);
-    usedLEDType.setDisable(disable);
+    hideGrill.setDisable(true);
+    hideB2SBackglass.setDisable(true);
+    hideB2SDMD.setDisable(true);
+    hideDMD.setDisable(true);
+    startBackground.setDisable(true);
+    bringBGFromTop.setDisable(true);
+    skipGIFrames.setDisable(true);
+    skipLampFrames.setDisable(true);
+    skipSolenoidFrames.setDisable(true);
+    skipLEDFrames.setDisable(true);
+    usedLEDType.setDisable(true);
+    lightBulbOn.setDisable(true);
+    glowing.setDisable(true);
+    startAsExe.setDisable(true);
+
+    skipLampFrames.getValueFactory().valueProperty().set(0);
+    skipGIFrames.getValueFactory().valueProperty().set(0);
+    skipSolenoidFrames.getValueFactory().valueProperty().set(0);
+    skipLEDFrames.getValueFactory().valueProperty().set(0);
+    lightBulbOn.selectedProperty().setValue(false);
+    bringBGFromTop.selectedProperty().setValue(false);
+    startBackground.selectedProperty().setValue(false);
 
     this.refreshing = false;
 
@@ -919,6 +926,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
         this.refreshing = true;
 
+        this.openBtn.setDisable(false);
+        this.renameBtn.setDisable(false);
+        this.duplicateBtn.setDisable(false);
+        this.deleteBtn.setDisable(false);
+        this.reloadBackglassBtn.setDisable(false);
+
         if (game != null) {
           gameLabel.setText(game.getGameDisplayName());
           gameFilenameLabel.setText(game.getGameFileName());
@@ -943,60 +956,46 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
         filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
         bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-        hideGrill.setDisable(tableData.getGrillHeight() == 0);
-
-        hideB2SDMD.selectedProperty().setValue(false);
-        hideB2SBackglass.selectedProperty().setValue(false);
-        skipLampFrames.getValueFactory().valueProperty().set(0);
-        skipGIFrames.getValueFactory().valueProperty().set(0);
-        skipSolenoidFrames.getValueFactory().valueProperty().set(0);
-        skipLEDFrames.getValueFactory().valueProperty().set(0);
-        lightBulbOn.selectedProperty().setValue(false);
-        startBackground.selectedProperty().setValue(false);
-        bringBGFromTop.selectedProperty().setValue(false);
 
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
         if (tableSettings != null) {
           boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
           boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
+          startAsExe.setDisable(false);
           startAsExe.setSelected(tableLaunchAsExe);
           startAsExeServer.setSelected(serverLaunchAsExe);
           startAsExeServer.setDisable(true);
 
+          hideGrill.setDisable(tableData.getGrillHeight() == 0);
           hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
-          hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+          hideB2SBackglass.setDisable(false);
           hideB2SBackglass.selectedProperty().setValue(tableSettings.isHideB2SBackglass());
+          hideB2SDMD.setDisable(false);
+          hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
           hideDMD.setDisable(false);
           hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
-          skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
-          skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
-          skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
-          skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
-          lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-          glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+          usedLEDType.setDisable(false);
           usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
+
+          skipLampFrames.setDisable(tableData.getIlluminations() == 0);
+          skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
+          skipGIFrames.setDisable(tableData.getIlluminations() == 0);
+          skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
+          skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
+          skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
+          skipLEDFrames.setDisable(tableData.getIlluminations() == 0);
+          skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
+          lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
+          lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
+          glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
+          glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+
+          startBackground.setDisable(false);
           startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+          bringBGFromTop.setDisable(false);
           bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
         }
-        else {
-          usedLEDType.setDisable(true);
-          hideDMD.setDisable(true);
-          startBackground.setDisable(true);
-          startAsExe.setDisable(true);
-          bringBGFromTop.setDisable(true);
-          hideB2SBackglass.setDisable(true);
-          hideB2SDMD.setDisable(true);
-        }
-
-        skipLampFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipGIFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipSolenoidFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipLEDFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-
-        lightBulbOn.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1));
-        glowing.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1));
-        bringBGFromTop.setSelected(false);
 
         this.refreshing = false;
       });
