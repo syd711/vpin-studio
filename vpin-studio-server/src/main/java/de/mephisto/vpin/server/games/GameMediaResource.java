@@ -11,6 +11,7 @@ import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -113,8 +114,8 @@ public class GameMediaResource {
 
   @GetMapping("/assets/d/{screen}/{gameId}/{url}")
   public ResponseEntity<StreamingResponseBody> getMedia(@PathVariable("screen") String screen,
-                                                      @PathVariable("gameId") int gameId,
-                                                      @PathVariable("url") String url) throws Exception {
+                                                        @PathVariable("gameId") int gameId,
+                                                        @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = frontendService.getGame(gameId);
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
@@ -129,11 +130,11 @@ public class GameMediaResource {
 
     TableAsset tableAsset = result.get();
     return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
-      .header("X-Frame-Options", "SAMEORIGIN")
-      .body(out -> {
-        tableAssetsService.download(out, tableAsset.getUrl());
-      });
+        .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
+        .header("X-Frame-Options", "SAMEORIGIN")
+        .body(out -> {
+          tableAssetsService.download(out, tableAsset.getUrl());
+        });
   }
 
   @GetMapping("/{id}/{screen}/{name}")
@@ -230,6 +231,10 @@ public class GameMediaResource {
     File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
     File media = new File(mediaFolder, filename);
     if (media.exists()) {
+      if (screen.equals(VPinScreen.Wheel)) {
+        WheelAugmenter augmenter = new WheelAugmenter(media);
+        augmenter.deAugment();
+      }
       return media.delete();
     }
     return false;
