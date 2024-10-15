@@ -111,7 +111,7 @@ public class DOFLinxPreferencesController implements Initializable {
     stopBtn.setDisable(!client.getDofLinxService().isRunning());
     folderBtn.setVisible(client.getSystemService().isLocal());
 
-    toggleAutoStart.setSelected(client.getDofLinxService().isAutoStartEnabled());
+    toggleAutoStart.setSelected(settings.isAutostart());
     toggleAutoStart.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
