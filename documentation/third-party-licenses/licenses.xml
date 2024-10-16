@@ -83,6 +83,14 @@
       </licenses>
     </dependency>
     <dependency>
+      <groupId>com.github.shayartzi.sevenzipjbinding</groupId>
+      <artifactId>sevenzipjbinding-all-platforms</artifactId>
+      <version>16.02-2.01</version>
+      <licenses>
+        <!-- No license information available. -->
+      </licenses>
+    </dependency>
+    <dependency>
       <groupId>com.github.spotbugs</groupId>
       <artifactId>spotbugs-annotations</artifactId>
       <version>4.7.2</version>
@@ -232,7 +240,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-discord</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -240,7 +248,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-github</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -248,7 +256,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-iscored</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -256,7 +264,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-connector-vps</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -272,7 +280,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-commons</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -288,7 +296,7 @@
     <dependency>
       <groupId>de.mephisto.vpin</groupId>
       <artifactId>vpin-studio-rest-client</artifactId>
-      <version>3.7.0</version>
+      <version>3.8.0</version>
       <licenses>
         <!-- No license information available. -->
       </licenses>
@@ -415,23 +423,6 @@
     <dependency>
       <groupId>net.sf.sevenzipjbinding</groupId>
       <artifactId>sevenzipjbinding</artifactId>
-      <version>16.02-2.01</version>
-      <licenses>
-        <license>
-          <name>LGPL</name>
-          <url>http://www.gnu.org/licenses/lgpl-2.1.html</url>
-          <distribution>repo</distribution>
-        </license>
-        <license>
-          <name>unRAR restriction</name>
-          <url>http://www.7-zip.org/license.txt</url>
-          <file>unrar restriction - license.txt</file>
-        </license>
-      </licenses>
-    </dependency>
-    <dependency>
-      <groupId>net.sf.sevenzipjbinding</groupId>
-      <artifactId>sevenzipjbinding-all-platforms</artifactId>
       <version>16.02-2.01</version>
       <licenses>
         <license>
