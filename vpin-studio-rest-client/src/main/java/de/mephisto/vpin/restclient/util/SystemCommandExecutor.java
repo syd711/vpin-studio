@@ -49,6 +49,7 @@ public class SystemCommandExecutor {
   private boolean enableLogging = false;
   private String commandError;
   private File dir;
+  private boolean ignoreError;
 
   /**
    * Pass in the system command you want to run as a List of Strings, as shown here:
@@ -85,6 +86,10 @@ public class SystemCommandExecutor {
     }
   }
 
+  public void setIgnoreError(boolean ignoreError) {
+    this.ignoreError = ignoreError;
+  }
+
   public void enableLogging(boolean b) {
     this.enableLogging = b;
   }
@@ -95,7 +100,8 @@ public class SystemCommandExecutor {
       public void run() {
         try {
           execute();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to execute command " + Joiner.on(" ").join(commandInformation) + ": " + e.getMessage(), e);
         }
       }
@@ -112,7 +118,7 @@ public class SystemCommandExecutor {
     int exitValue = -99;
 
     try {
-      LOG.info("System Command: " + (this.dir != null ? dir.getAbsolutePath() : "") +  "> " + String.join(" ", commandInformation));
+      LOG.info("System Command: " + (this.dir != null ? dir.getAbsolutePath() : "") + "> " + String.join(" ", commandInformation));
 
       ProcessBuilder pb = new ProcessBuilder(commandInformation);
 
@@ -150,9 +156,15 @@ public class SystemCommandExecutor {
       inputStreamHandler.join();
       errorStreamHandler.join();
 
-    } catch (Exception e) {
-      LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage(), e);
-      throw e;
+    }
+    catch (Exception e) {
+      if (ignoreError) {
+        LOG.info("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage());
+      }
+      else {
+        LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage(), e);
+        throw e;
+      }
     }
     return -1;
   }

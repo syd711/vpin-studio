@@ -13,14 +13,13 @@ public class SystemUtil {
   private final static List<String> INVALID_NAMES = Arrays.asList("Default", "filled by", "Serial");
 
   public static String getUniqueSystemId() {
-    String os = System.getProperty("os.name");
-    if (os.equalsIgnoreCase("Windows 11")) {
-      return NetworkUtil.getMacAddress();
-    }
-
     String id = getBoardSerialNumber();
     if (StringUtils.isEmpty(id)) {
       id = getCpuSerialNumber();
+    }
+
+    if (StringUtils.isEmpty(id)) {
+      return NetworkUtil.getMacAddress();
     }
     return id;
   }
@@ -28,6 +27,7 @@ public class SystemUtil {
   private static String getBoardSerialNumber() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "baseboard", "get", "serialnumber"), false);
+      executor.setIgnoreError(true);
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
@@ -49,6 +49,7 @@ public class SystemUtil {
   private static String getCpuSerialNumber() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
+      executor.setIgnoreError(true);
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
@@ -64,7 +65,6 @@ public class SystemUtil {
       LOG.warn("Failed to resolve cpu id: " + e.getMessage());
     }
     return null;
-
   }
 
   private static boolean isNotValid(String serial) {
