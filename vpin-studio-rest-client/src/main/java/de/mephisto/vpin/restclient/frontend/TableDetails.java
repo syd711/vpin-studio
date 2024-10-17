@@ -11,7 +11,6 @@ public class TableDetails {
   private int emulatorId;
 
   private int status;
-  private String emulatorType;
   private String gameName;
   private String gameFileName;
   private String gameDisplayName;
@@ -307,14 +306,6 @@ public class TableDetails {
 
   public void setCategory(String category) {
     this.category = category;
-  }
-
-  public String getEmulatorType() {
-    return emulatorType;
-  }
-
-  public void setEmulatorType(String emulatorType) {
-    this.emulatorType = emulatorType;
   }
 
   public String getGameName() {

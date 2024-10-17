@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.roms;
 
-import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.restclient.system.ScoringDBMapping;
 import de.mephisto.vpin.server.games.Game;
@@ -24,7 +23,7 @@ public class RomService {
 
   @NonNull
   public ScanResult scanGameFile(@NonNull Game game) {
-    if (Emulator.isVisualPinball(game.getEmulator().getName(), game.getEmulator().getDisplayName(), game.getEmulator().getDescription(), game.getEmulator().getGameExt())) {
+    if (game.getEmulator().isVpxEmulator()) {
       if (game.getGameFile().exists()) {
         ScanResult scan = VPXFileScanner.scan(game.getGameFile());
         if (!StringUtils.isEmpty(scan.getRom())) {

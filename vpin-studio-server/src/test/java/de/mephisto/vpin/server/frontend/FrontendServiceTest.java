@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend;
 
-import de.mephisto.vpin.restclient.frontend.EmulatorNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
@@ -79,10 +78,12 @@ public class FrontendServiceTest extends AbstractVPinServerTest {
     assertNotEquals(connector.getGameCount(1), 0);
 
     assertNotNull(connector.getStartupScript());
-    assertNotNull(connector.getEmulatorExitScript(EmulatorNames.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorExitScript(EmulatorNames.FUTURE_PINBALL));
-    assertNotNull(connector.getEmulatorStartupScript(EmulatorNames.VISUAL_PINBALL_X));
-    assertNotNull(connector.getEmulatorStartupScript(EmulatorNames.FUTURE_PINBALL));
+
+    //TODO move to EmulatorType ?
+    assertNotNull(connector.getEmulatorExitScript("Visual Pinball X"));
+    assertNotNull(connector.getEmulatorExitScript("Future Pinball"));
+    assertNotNull(connector.getEmulatorStartupScript("Visual Pinball X"));
+    assertNotNull(connector.getEmulatorStartupScript("Future Pinball"));
   }
 
 }

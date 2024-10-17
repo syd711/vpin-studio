@@ -236,35 +236,6 @@ public class PinballXConnector extends BaseConnector {
     String executable = s.getString("Executable");
     //String parameters = s.getString("Parameters");
 
-    String gameext = null;
-    if (s.containsKey("SystemType")) {
-      int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          gameext = "vpx";
-          break; // Visual Pinball
-        case 2:
-          gameext = "vpx";
-          break; // Future Pinball
-        case 4:
-          gameext = "exe";
-          break; // Custom Exe
-      }
-    }
-    else {
-      gameext = getEmulatorExtension(emuname);
-    }
-
-    Emulator e = new Emulator();
-    e.setId(emuId);
-    e.setName(emuname);
-    e.setDisplayName(emuname);
-
-    File mediaDir = new File(installDir, "Media/" + emuname);
-    if (mediaDir.exists() && mediaDir.isDirectory()) {
-      e.setDirMedia(mediaDir.getAbsolutePath());
-    }
-
     if (tablePath == null || !new File(tablePath).exists()) {
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
       return null;
@@ -275,11 +246,40 @@ public class PinballXConnector extends BaseConnector {
       return null;
     }
 
+    EmulatorType type = null;
+    if (s.containsKey("SystemType")) {
+      int systemType = s.getInt("SystemType");
+      switch (systemType) {
+        case 1:
+          type = EmulatorType.VisualPinball;
+          break; // Visual Pinball
+        case 2:
+          type = EmulatorType.FuturePinball;
+          break; // Future Pinball
+        default:
+          type = EmulatorType.OTHER;
+          break; // Custom Exe
+      }
+    }
+    else {
+      type = EmulatorType.fromName(emuname);
+    }
+
+    Emulator e = new Emulator(type);
+    e.setId(emuId);
+    e.setName(emuname);
+    e.setDisplayName(emuname);
+
+    File mediaDir = new File(installDir, "Media/" + emuname);
+    if (mediaDir.exists() && mediaDir.isDirectory()) {
+      e.setDirMedia(mediaDir.getAbsolutePath());
+    }
+
     e.setDirGames(tablePath);
     e.setEmuLaunchDir(workingPath);
     e.setExeName(executable);
 
-    e.setGamesExt(gameext);
+    e.setGamesExt(type.getExtension());
     e.setVisible(enabled);
 
     return e;

@@ -107,7 +107,8 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   private Emulator createEmulator(File installDir, File tablesDir, int emuId, String emuname) {
-    Emulator e = new Emulator();
+    EmulatorType type = EmulatorType.VisualPinball;
+    Emulator e = new Emulator(type);
     e.setId(emuId);
     e.setName(emuname);
     e.setDisplayName(emuname);
@@ -116,9 +117,7 @@ public class StandaloneConnector extends BaseConnector {
     e.setEmuLaunchDir(installDir.getAbsolutePath());
 
     e.setExeName(getVPXExe());
-
-    String gameext = getEmulatorExtension(emuname);
-    e.setGamesExt(gameext);
+    e.setGamesExt(type.getExtension());
 
     e.setVisible(true);
 
@@ -154,7 +153,6 @@ public class StandaloneConnector extends BaseConnector {
     TableDetails details = new TableDetails();
     details.setEmulatorId(emuId);
     details.setStatus(1);
-    details.setEmulatorType(filename);
     details.setGameFileName(filename);
     String basename = FilenameUtils.getBaseName(filename);
     details.setGameDisplayName(basename);
