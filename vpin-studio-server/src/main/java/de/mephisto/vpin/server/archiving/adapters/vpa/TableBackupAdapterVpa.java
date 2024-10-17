@@ -339,7 +339,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   }
 
   private void zipTableDetails(ZipOutputStream zipOut) throws IOException {
-    tableDetails.setEmulatorType(ArchiveUtil.getEmulatorType(game.getGameFile()));
     if (StringUtils.isEmpty(tableDetails.getGameFileName())) {
       tableDetails.setGameFileName(game.getGameFileName());
     }

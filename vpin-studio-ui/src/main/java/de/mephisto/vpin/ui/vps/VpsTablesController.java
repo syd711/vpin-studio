@@ -21,14 +21,11 @@ import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +42,6 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
-
-  private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
-
-  static {
-    TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
-    TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
-    TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX", "Pinball FX"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX2", "Pinball FX2"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
-  }
 
   @FXML
   private ComboBox<VpsTableFormat> emulatorCombo;
@@ -193,11 +179,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     //-----------
     // load tables in parallel
     JFXFuture.supplyAsync(()-> {
-      // get all tables and filter by format
-      VpsTableFormat value = emulatorCombo.getValue();
-      String tableFormat = value.getAbbrev();
-      return ListUtils.select(client.getVpsService().getTables(), t -> t.getAvailableTableFormats().contains(tableFormat));
-
+      return client.getVpsService().getTables();
     }).thenAcceptLater(data -> {
 
       setItems(data);
@@ -283,14 +265,16 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       return row;
     });
 
-    emulatorCombo.setItems(FXCollections.observableList(TABLE_FORMATS));
+    List<VpsTableFormat> tableFormats = new ArrayList<>();
+    tableFormats.add(new VpsTableFormat("All Emulators", (String[]) null));
+    tableFormats.add(new VpsTableFormat("Visual Pinball X", "VPX"));
+    tableFormats.add(new VpsTableFormat("Visual Pinball 9", "VP9"));
+    tableFormats.add(new VpsTableFormat("Future Pinball", "FP"));
+    tableFormats.add(new VpsTableFormat("Zen Studio", "FX", "FX2", "FX3"));
+
+    emulatorCombo.setItems(FXCollections.observableList(tableFormats));
     emulatorCombo.getSelectionModel().select(0);
-    emulatorCombo.valueProperty().addListener(new ChangeListener<VpsTableFormat>() {
-      @Override
-      public void changed(ObservableValue<? extends VpsTableFormat> observable, VpsTableFormat oldValue, VpsTableFormat newValue) {
-        doReload(false);
-      }
-    });
+    ((VpsTablesFilterController) filterController).bindEmulatorCombo(emulatorCombo);
 
     EventManager.getInstance().addListener(this);
   }
@@ -323,15 +307,15 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   }
 
   static class VpsTableFormat {
-    private final String abbrev;
+    private final String[] abbrev;
     private final String name;
 
-    VpsTableFormat(String abbrev, String name) {
+    VpsTableFormat(String name, String... abbrev) {
       this.abbrev = abbrev;
       this.name = name;
     }
 
-    public String getAbbrev() {
+    public String[] getAbbrev() {
       return abbrev;
     }
 

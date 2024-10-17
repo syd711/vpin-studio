@@ -170,25 +170,6 @@ public abstract class BaseConnector implements FrontendConnector {
     return entry != null? entry.getId() : -1;
   }
 
-  protected String getEmulatorExtension(String emuName) {
-    String emu = emuName.replaceAll(" ", "").toLowerCase();
-    switch (emu) {
-      case "futurepinball":
-        return "";
-      case "visualpinball":
-        return "vpx";
-      case "zaccaria":
-        return "";
-      case "pinballfx2":
-        return "fp2";
-      case "pinballfx3":
-        return "fp3";
-      case "pinballarcade":
-        return "";
-      default:
-        return null;
-    }
-  }
 
   /**
    * To be implemented by parent, to load a list of Emulators

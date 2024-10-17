@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
-import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
@@ -174,8 +174,8 @@ public class TableInstallerAdapterVpa implements TableInstallerAdapter, Job {
   }
 
   private File getDestDirForEntry(ZipEntry entry) {
-    String name = entry.getName();
-    if (Emulator.isVisualPinball(name, null, null, null)) {
+    EmulatorType type = EmulatorType.fromName(entry.getName());
+    if (type != null && type.isVpxEmulator()) {
       return emulator.getInstallationFolder().getParentFile();
     }
     else {
