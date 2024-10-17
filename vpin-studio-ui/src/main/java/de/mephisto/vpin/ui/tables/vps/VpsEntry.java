@@ -134,10 +134,10 @@ public class VpsEntry extends HBox {
 
     // add context menu on VPS button
     ContextMenu menu = new ContextMenu();
-    MenuItem vpsItem = new MenuItem("Open VPS Entry");
+    MenuItem vpsItem = new MenuItem("Open Link");
     vpsItem.setOnAction(actionEvent -> Studio.browse(link));
     menu.getItems().add(vpsItem);
-    MenuItem copyItem = new MenuItem("Copy link of VPS Entry");
+    MenuItem copyItem = new MenuItem("Copy Link");
     copyItem.setOnAction(actionEvent -> {
       Clipboard clipboard = Clipboard.getSystemClipboard();
       ClipboardContent content = new ClipboardContent();
