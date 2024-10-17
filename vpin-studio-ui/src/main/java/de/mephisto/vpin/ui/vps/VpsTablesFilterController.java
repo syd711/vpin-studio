@@ -13,11 +13,15 @@ import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
+import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableFormat;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DateCell;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -268,6 +272,15 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
       featureCheckboxes.put(feature, badge);
       featuresPanel.getChildren().add(badge);
     }
+  }
 
+  public void bindEmulatorCombo(ComboBox<VpsTableFormat> emulatorCombo) {
+    emulatorCombo.valueProperty().addListener(new ChangeListener<VpsTableFormat>() {
+      @Override
+      public void changed(ObservableValue<? extends VpsTableFormat> observable, VpsTableFormat oldValue, VpsTableFormat newValue) {
+        predicateFactory.setTableFormats(newValue.getAbbrev());
+        applyFilters();
+      }
+    });
   }
 }

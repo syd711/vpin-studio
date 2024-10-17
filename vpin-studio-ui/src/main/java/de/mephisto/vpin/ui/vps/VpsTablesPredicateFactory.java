@@ -16,6 +16,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
  class VpsTablesPredicateFactory {
 
+  private String[] tableFormats;
+
   private boolean installedOnly;
   private boolean notInstalledOnly;
 
@@ -39,6 +41,10 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   private boolean withTutorial;
 
   private LinkedHashMap<String, Boolean> features = new LinkedHashMap<>();
+
+  public void setTableFormats(String[] tableFormats) {
+    this.tableFormats = tableFormats;
+  }
 
   public boolean isInstalledOnly() {
     return installedOnly;
@@ -204,6 +210,10 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       public boolean test(VpsTableModel model) {
         VpsTable table = model.getVpsTable();
 
+        if (tableFormats != null && !containsAnyIgnoreCase(table.getAvailableTableFormats(), tableFormats)) {
+          return false;
+        }
+
         if (installedOnly && !noVPX && !model.isInstalled()) {
           return false;
         }
@@ -307,6 +317,10 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       @Override
       public boolean test(VpsTableVersion version) {
         
+        if (tableFormats != null && !containsIgnoreCase(tableFormats, version.getTableFormat())) {
+          return false;
+        }
+
         for (String f : features.keySet()) {
           if (features.get(f)) {
             if (!containsIgnoreCase(version.getFeatures(), f)) {
@@ -353,6 +367,20 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     for (String m : _manufacturers) {
       if (StringUtils.containsIgnoreCase(manufacturer, m)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean containsAnyIgnoreCase(List<String> values, String[] tosearch) {
+    if (tosearch == null || tosearch.length == 0) {
+      return true;
+    }
+    if (values != null) {
+      for (String s : tosearch) {
+        if (containsIgnoreCase(values, s)) {
+          return true;
+        }
       }
     }
     return false;
