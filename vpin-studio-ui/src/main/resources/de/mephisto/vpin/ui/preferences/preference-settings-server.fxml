@@ -280,6 +280,15 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="981.0" styleClass="checkbox-description" text="If checked, the exported .vbs files will be kept, matching with the table name so that VPX uses these." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1035.0" styleClass="checkbox-description" text="Otherwise the .vbs files will be removed after import/export." textFill="WHITE" />
+                  <CheckBox fx:id="keepModificationDateCheckbox" layoutX="34.0" layoutY="1147.0" mnemonicParsing="false" text="Keep .vpx modification dates." textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </CheckBox>
+                  <Label layoutX="34.0" layoutY="1167.0" styleClass="checkbox-description" text="If checked, the modification date of replaced VPX files won't be updated." textFill="WHITE" />
                   <VBox fx:id="vpxMonitorSettings">
                      <children>
                         <CheckBox fx:id="vpxMonitoringCheckbox" mnemonicParsing="false" text="Use VPX Table Monitor for Table Launch/Exit Events." textFill="WHITE">

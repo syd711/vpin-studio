@@ -2,10 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.commons.utils.FileUtils;
 import de.mephisto.vpin.commons.utils.PackageUtil;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -14,12 +11,8 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.vps.VpsService;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -28,13 +21,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -236,10 +225,12 @@ public class UniversalUploadResource {
     boolean keepExistingFilename = serverSettings.isVpxKeepFileNames();
     boolean keepExistingDisplayName = serverSettings.isVpxKeepDisplayNames();
     boolean keepCopy = serverSettings.isBackupTableOnOverwrite();
+    boolean keepModificationDate = serverSettings.isKeepModificationDate();
     boolean autoFill = uploadDescriptor.isAutoFill();
 
     //create backup first and delete existing table
     File existingVPXFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
+    long existingModifiationDate = existingVPXFile.lastModified();
     if (existingVPXFile.exists()) {
       if (keepCopy) {
         File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
@@ -280,6 +271,17 @@ public class UniversalUploadResource {
     //copy file
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
+
+    //keep modification date
+    if (keepModificationDate) {
+      boolean b = target.setLastModified(existingModifiationDate);
+      if (b) {
+        LOG.info("Reverted modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to \"" + new Date(existingModifiationDate) + "\"");
+      }
+      else {
+        LOG.warn("Revetring modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" failed.");
+      }
+    }
 
 
     //delete possibly existing .vbs file that matches with the new name

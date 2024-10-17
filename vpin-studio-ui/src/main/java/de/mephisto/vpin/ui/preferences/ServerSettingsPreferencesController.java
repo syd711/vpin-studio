@@ -38,6 +38,9 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox useOriginalVbsFilesCheckbox;
 
   @FXML
+  private CheckBox keepModificationDateCheckbox;
+
+  @FXML
   private CheckBox vpxMonitoringCheckbox;
 
   @FXML
@@ -177,6 +180,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
     useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepVbsFiles(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    keepModificationDateCheckbox.setSelected(serverSettings.isKeepModificationDate());
+    keepModificationDateCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setKeepModificationDate(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 
