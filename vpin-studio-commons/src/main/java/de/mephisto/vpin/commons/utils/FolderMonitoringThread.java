@@ -82,14 +82,16 @@ public class FolderMonitoringThread {
                     notifyUpdates(f);
                   }
                 }
-                else if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                  notifyUpdates(f);
-                }
                 else if (modifyEvents && event.kind().equals(StandardWatchEventKinds.ENTRY_MODIFY)) {
                   notifyUpdates(f);
                 }
               }
+
+              if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+                notifyUpdates(null);
+              }
             }
+
             wk.reset();
           }
           catch (ClosedWatchServiceException e) {
