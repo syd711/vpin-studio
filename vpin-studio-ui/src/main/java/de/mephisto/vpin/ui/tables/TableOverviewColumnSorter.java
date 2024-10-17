@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
+import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
@@ -17,7 +18,6 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
   }
 
   public Comparator<GameRepresentationModel> buildComparator(TableView<GameRepresentationModel> tableView) {
-
     Comparator<GameRepresentationModel> comp = null;
 
     if (!tableView.getSortOrder().isEmpty()) {
@@ -88,8 +88,44 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
       else if (column.equals(tableOverviewController.columnLauncher)) {
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getLauncher()));
       }
+      else if (column.equals(tableOverviewController.columnPlayfield)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnBackglass)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnLoading)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnWheel)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnDMD)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnTopper)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnFullDMD)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnAudio)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnAudioLaunch)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnInfo)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnHelp)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
+      else if (column.equals(tableOverviewController.columnOther2)) {
+        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+      }
 
-      // optionally reverse order 
+      // optionally reverse order
       if (comp != null && column.getSortType().equals(TableColumn.SortType.DESCENDING)) {
         comp = comp.reversed();
       }

@@ -135,40 +135,40 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnLauncher;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnLoading;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnLoading;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnWheel;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnWheel;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnAudio;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnAudio;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnAudioLaunch;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnAudioLaunch;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnInfo;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnInfo;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnHelp;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnHelp;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnOther2;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnOther2;
 
   @FXML
   private ComboBox<GameEmulatorRepresentation> emulatorCombo;
@@ -1301,6 +1301,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Button btn = new Button();
     btn.getStyleClass().add("table-media-button");
 
+    //TODO this whole calculation has be be moved into the FrontendMedia entity.
     if (defaultMediaItem != null) {
       String mimeType = defaultMediaItem.getMimeType();
       tt.append("Name:\t ");
@@ -1799,6 +1800,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     FrontendMediaRepresentation frontendMedia;
 
+    private boolean mediaValid = false;
+
     public GameRepresentationModel(GameRepresentation game) {
       super(game);
     }
@@ -1821,6 +1824,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         frontendMedia = client.getFrontendMedia(bean.getId());
       }
       return frontendMedia;
+    }
+
+    public boolean isMediaValid() {
+      return mediaValid;
     }
 
     public VpsTable getVpsTable() {
