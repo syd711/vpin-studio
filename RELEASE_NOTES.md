@@ -1,5 +1,6 @@
 ## Release Notes 3.9
 
+- **Tables / Asset Management View**: The screen columns are sortable now.
 - **Tables / Table Uploads**: Added additional server setting to keep the modification date of VPX files when they have been uploaded and replaced.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modifiation-date.png" width="650" />
@@ -8,6 +9,7 @@
 - **Preferences / System Settings** Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/system-settings.png" width="750" />
+
 
 
 ## Bugfixes
