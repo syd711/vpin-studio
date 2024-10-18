@@ -1,7 +1,5 @@
 package de.mephisto.vpin.server.mania;
 
-import de.mephisto.vpin.connectors.mania.VPinManiaClient;
-import de.mephisto.vpin.connectors.mania.VPinManiaClientService;
 import de.mephisto.vpin.connectors.mania.model.Account;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
@@ -13,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,10 @@ public class ManiaServiceCache {
     gamesByVpsId.clear();
     LOG.info("Mania service cache has been cleared.");
     return true;
+  }
+
+  public List<Account> getCachedPlayerAccounts() {
+    return new ArrayList<>(playerCache.values());
   }
 
   public void preCache() {

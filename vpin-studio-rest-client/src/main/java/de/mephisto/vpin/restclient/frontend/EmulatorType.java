@@ -64,8 +64,7 @@ public enum EmulatorType {
     }
   }
 
-  public static EmulatorType fromExtension(File gameFile) {
-    String extension = FilenameUtils.getExtension(gameFile.getName());
+  public static EmulatorType fromExtension(String extension) {
     for (EmulatorType type : EmulatorType.values()) {
       if (type.getExtension() != null && type.getExtension().equalsIgnoreCase(extension)) {
         return type;
