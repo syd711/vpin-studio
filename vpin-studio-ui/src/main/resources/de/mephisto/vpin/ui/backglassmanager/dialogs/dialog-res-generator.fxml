@@ -5,6 +5,7 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -103,9 +104,12 @@
                   </GridPane>
                </bottom>
                <center>
-                  <VBox prefHeight="350.0" styleClass="media-container" BorderPane.alignment="CENTER">
+                  <VBox alignment="CENTER" prefHeight="350.0" styleClass="media-container" BorderPane.alignment="CENTER">
                      <children>
-                        <ImageView fx:id="previewImage" fitHeight="350.0" fitWidth="622.0" pickOnBounds="true" preserveRatio="true" />
+                        <ImageView fx:id="previewImage" fitHeight="350.0" fitWidth="622.0" nodeOrientation="INHERIT" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../empty-preview.png" />
+                           </image></ImageView>
                      </children>
                      <BorderPane.margin>
                         <Insets />
