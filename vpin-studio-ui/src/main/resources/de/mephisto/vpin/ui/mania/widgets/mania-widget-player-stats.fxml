@@ -70,7 +70,7 @@
                         <Insets top="6.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label fx:id="rankLabel" text="Label">
+                  <Label fx:id="rankLabel" text="-">
                      <font>
                         <Font name="System Bold" size="24.0" />
                      </font>

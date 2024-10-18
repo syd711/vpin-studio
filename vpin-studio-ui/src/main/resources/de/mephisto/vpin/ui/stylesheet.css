@@ -1356,3 +1356,15 @@
     -fx-show-delay: 250ms;
     -fx-show-duration: 10s;
  }
+
+.separator:horizontal .line {
+    -fx-border-color: #272b2f;
+    -fx-border-width: 1;
+    -fx-border-insets: 0, 1 0 0 0;
+}
+
+.separator:vertical .line {
+    -fx-border-color: #272b2f;
+    -fx-border-width: 1;
+    -fx-border-insets: 0, 0 0 0 1;
+}

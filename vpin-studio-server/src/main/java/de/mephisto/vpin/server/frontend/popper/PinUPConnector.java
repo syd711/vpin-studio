@@ -28,6 +28,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -190,7 +193,6 @@ public class PinUPConnector implements FrontendConnector {
         manifest.setSqlVersion(sqlVersion);
 
         manifest.setEmulatorId(rs.getInt("EMUID"));
-        manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
@@ -498,7 +500,7 @@ public class PinUPConnector implements FrontendConnector {
     }
     finally {
       this.disconnect(connect);
-      LOG.info("Game fetch for emulatorId '" + emulatorId + "' took " + (System.currentTimeMillis()-start) + "ms.");
+      LOG.info("Game fetch for emulatorId '" + emulatorId + "' took " + (System.currentTimeMillis() - start) + "ms.");
     }
     return result;
   }
@@ -1113,16 +1115,22 @@ public class PinUPConnector implements FrontendConnector {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
-        Emulator e = new Emulator();
+        String emuName = rs.getString("EmuName");
+        String dirGames = rs.getString("DirGames");
+        String extension = rs.getString("GamesExt");
+
+        EmulatorType type = getEmulatorType(emuName, dirGames, extension);
+
+        Emulator e = new Emulator(type);
         e.setId(rs.getInt("EMUID"));
-        e.setName(rs.getString("EmuName"));
+        e.setName(emuName);
+        e.setDirGames(dirGames);
+        e.setGamesExt(extension);
         e.setDisplayName(rs.getString("EmuDisplay"));
         e.setDirMedia(rs.getString("DirMedia"));
-        e.setDirGames(rs.getString("DirGames"));
         e.setDirRoms(rs.getString("DirRoms"));
         e.setDescription(rs.getString("Description"));
         e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-        e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
 
         // specific initialization
@@ -1166,6 +1174,49 @@ public class PinUPConnector implements FrontendConnector {
     }
 
     return result;
+  }
+
+  private @NonNull EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+    EmulatorType type = EmulatorType.fromExtension(extension);
+    if (type != null) {
+      return type;
+    }
+
+    type = EmulatorType.fromName(emuName);
+    if (type != null) {
+      return type;
+    }
+
+    for (EmulatorType t : EmulatorType.values()) {
+      if (t.getExtension() != null && dirGames != null) {
+        String ext = t.getExtension().toLowerCase();
+        final Path[] fileFound = {null};
+        try {
+          Files.walkFileTree(Paths.get(dirGames), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+              if (StringUtils.endsWithIgnoreCase(file.toString(), ext)) {
+                fileFound[0] = file;
+                return FileVisitResult.TERMINATE;
+              }
+              return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+              return FileVisitResult.CONTINUE;
+            }
+          });
+        }
+        catch (IOException ioe) {
+          LOG.error("Encountered exception while traversing " + dirGames, ioe);
+        }
+        if (fileFound[0] != null) {
+          return t;
+        }
+      }
+    }
+    return EmulatorType.OTHER;
   }
 
   @NonNull

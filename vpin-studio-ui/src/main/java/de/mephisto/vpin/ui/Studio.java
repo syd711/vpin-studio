@@ -225,7 +225,7 @@ public class Studio extends Application {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
         double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-        if (position.getWidth() != -1) {
+        if (position.getWidth() > 800 && position.getHeight() > 600) {
           width = position.getWidth();
           height = position.getHeight();
         }

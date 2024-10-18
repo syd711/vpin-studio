@@ -228,6 +228,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     deleteBtn.setDisable(true);
     deleteBtn.setVisible(false);
 
+
     columnName.setCellValueFactory(cellData -> {
       VpsTable tableById = cellData.getValue().getVpsTable();
       if (tableById == null) {

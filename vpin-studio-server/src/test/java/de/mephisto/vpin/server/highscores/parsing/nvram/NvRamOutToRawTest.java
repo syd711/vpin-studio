@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.nvram;
 
 import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.highscores.DefaultHighscoresTitles;
 import de.mephisto.vpin.restclient.system.ScoringDB;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -90,7 +91,7 @@ public class NvRamOutToRawTest {
   }
 
   private GameEmulator getGameEmulator() {
-    Emulator emulator = new Emulator();
+    Emulator emulator = new Emulator(EmulatorType.VisualPinball);
     emulator.setName("VPX");
     emulator.setEmuLaunchDir("../testsystem/vPinball/VisualPinball/");
     GameEmulator gameEmulator = new GameEmulator(emulator);

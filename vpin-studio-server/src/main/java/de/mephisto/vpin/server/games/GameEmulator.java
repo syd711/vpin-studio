@@ -30,6 +30,7 @@ public class GameEmulator {
 
   private File romFolder;
 
+  private final EmulatorType type;
   private final String name;
   private final String description;
   private final String displayName;
@@ -47,12 +48,11 @@ public class GameEmulator {
   private final String gameExt;
 
   private String backglassServerFolder;
-  private boolean vpxEmulator;
-  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
+    this.type = emulator.getType();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
@@ -111,17 +111,6 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
-
-    this.vpxEmulator = emulator.isVisualPinball();
-    this.fpEmulator = emulator.isFuturePinball();
-  }
-
-  public boolean isFpEmulator() {
-    return fpEmulator;
-  }
-
-  public void setFpEmulator(boolean fpEmulator) {
-    this.fpEmulator = fpEmulator;
   }
 
   public List<String> getAltVPXExeNames() {
@@ -133,17 +122,14 @@ public class GameEmulator {
   }
 
   public boolean isVpxEmulator() {
-    return vpxEmulator;
+    return type.isVpxEmulator();
   }
-
-  public void setVpxEmulator(boolean vpxEmulator) {
-    this.vpxEmulator = vpxEmulator;
+  public boolean isFpEmulator() {
+    return type.isFpEmulator();
   }
 
   public EmulatorType getEmulatorType() {
-    return isVpxEmulator() ? EmulatorType.VisualPinball :
-          isFpEmulator() ? EmulatorType.FuturePinball : 
-          null;
+    return type;
   }
 
   public String getGameFileName(@NonNull File file) {
@@ -209,10 +195,6 @@ public class GameEmulator {
   @JsonIgnore
   public File getVPXExe() {
     return new File(installationFolder, vpxExeName);
-  }
-
-  public boolean isVpx() {
-    return true;
   }
 
   public List<String> getAltExeNames() {

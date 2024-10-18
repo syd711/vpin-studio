@@ -427,7 +427,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          entries.add(new VpsEntry(game, diffTypes, version, authors, url, updatedAt, updateText, isFiltered));
+          entries.add(new VpsEntry(game, diffTypes, null, null, null, version, authors, url, updatedAt, updateText, false, isFiltered));
         }
 
         if (authoredUrl instanceof VpsBackglassFile) {
@@ -483,11 +483,13 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
           for (VpsUrl vpsUrl : authoredUrlUrls) {
             String url = vpsUrl.getUrl();
-            entries.add(new VpsTableEntry(game, vpsTable.getId(), vpsTableVersion.getId(), version, authors, url, vpsTableVersion.getTableFormat(), updatedAt, updateText, installed, isFiltered));
+            entries.add(new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+              version, authors, url, updatedAt, updateText, installed, isFiltered));
           }
         }
         else {
-          entries.add(new VpsTableEntry(game, vpsTable.getId(), vpsTableVersion.getId(), version, authors, null, vpsTableVersion.getTableFormat(), updatedAt, updateText, installed, isFiltered));
+          entries.add(new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+              version, authors, null, updatedAt, updateText, installed, isFiltered));
         }
       }
 
