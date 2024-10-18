@@ -31,6 +31,23 @@ public class WinRegistry {
     return Collections.emptyList();
   }
 
+  public static boolean isStickyKeysEnabled() {
+    Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues("Control Panel\\Accessibility\\StickyKeys\\");
+    return currentUserValues.containsKey("Flags") && !currentUserValues.get("Flags").equals("506");
+  }
+
+
+  public static void setStickyKeysEnabled(boolean b) {
+    Map<String, Object> currentUserValues = WinRegistry.getCurrentUserValues("Control Panel\\Accessibility\\StickyKeys\\");
+    if (b) {
+      WinRegistry.setValue("Control Panel\\Accessibility\\StickyKeys\\", "Flags", "510");
+    }
+    else {
+      WinRegistry.setValue("Control Panel\\Accessibility\\StickyKeys\\", "Flags", "506");
+    }
+    LOG.info("WinRegistry - Sticky keys enabled: " + b);
+  }
+
   public static boolean isDotNetInstalled() throws Exception {
     List<String> localMachineKeys = getLocalMachineKeys(DOT_NET);
     LOG.info("Found .net registry entries: " + String.join(", ", localMachineKeys));
@@ -117,6 +134,19 @@ public class WinRegistry {
   public static void setIntValue(@NonNull String path, @NonNull String key, int value) {
     try {
       Advapi32Util.registrySetIntValue(WinReg.HKEY_CURRENT_USER, path, key, value);
+      LOG.info("Written " + path + "\\" + key + " => " + value);
+    }
+    catch (Exception e) {
+      LOG.error("Failed to write value for path '" + path + "\\" + key + ": " + e.getMessage());
+    }
+  }
+
+  /**
+   *
+   */
+  public static void setValue(@NonNull String path, @NonNull String key, String value) {
+    try {
+      Advapi32Util.registrySetStringValue(WinReg.HKEY_CURRENT_USER, path, key, value);
       LOG.info("Written " + path + "\\" + key + " => " + value);
     }
     catch (Exception e) {

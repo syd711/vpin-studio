@@ -95,6 +95,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button highscore_cardsBtn;
 
   @FXML
+  private Button systemBtn;
+
+  @FXML
   private Button highscoresBtn;
 
   @FXML
@@ -190,6 +193,12 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
+  }
+
+
+  @FXML
+  private void onSystemSettings(ActionEvent event) throws IOException {
+    load("preference-system-settings.fxml", event);
   }
 
   @FXML

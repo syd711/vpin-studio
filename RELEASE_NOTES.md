@@ -4,6 +4,11 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modifiation-date.png" width="650" />
 
+- **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
+- **Preferences / System Settings** Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/system-settings.png" width="750" />
+
 
 ## Bugfixes
 

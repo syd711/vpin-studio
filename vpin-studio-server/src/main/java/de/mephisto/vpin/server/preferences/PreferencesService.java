@@ -1,7 +1,10 @@
 package de.mephisto.vpin.server.preferences;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.JsonSettings;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.assets.Asset;
 import de.mephisto.vpin.server.assets.AssetRepository;
 import org.slf4j.Logger;
@@ -15,7 +18,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 
 @Service
-public class PreferencesService implements InitializingBean {
+public class PreferencesService implements InitializingBean, PreferenceChangedListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesService.class);
 
   @Autowired
@@ -34,6 +37,10 @@ public class PreferencesService implements InitializingBean {
 
   public void addChangeListener(PreferenceChangedListener listener) {
     this.listeners.add(listener);
+  }
+
+  public void removeChangeListener(PreferenceChangedListener listener) {
+    this.listeners.remove(listener);
   }
 
   public void notifyListeners(String key, Object oldValue, Object newValue) throws Exception {
@@ -88,7 +95,7 @@ public class PreferencesService implements InitializingBean {
   }
 
   public boolean savePreference(String key, JsonSettings value) throws Exception {
-    if(value != null) {
+    if (value != null) {
       String json = value.toJson();
       return savePreference(key, json);
     }
@@ -134,11 +141,12 @@ public class PreferencesService implements InitializingBean {
   public <T> T getJsonPreference(String key, Class<T> jsonSettings) {
     try {
       Object preferenceValue = getPreferenceValue(key);
-      if(preferenceValue != null) {
-        return JsonSettings.fromJson(jsonSettings, (String)preferenceValue);
+      if (preferenceValue != null) {
+        return JsonSettings.fromJson(jsonSettings, (String) preferenceValue);
       }
       return jsonSettings.getDeclaredConstructor().newInstance();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read JSON preferences: " + e.getMessage(), e);
     }
     return null;
@@ -146,12 +154,48 @@ public class PreferencesService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() {
-    List<Preferences> all = preferencesRepository.findAll();
-    if (all.isEmpty()) {
-      Preferences prefs = new Preferences();
-      preferencesRepository.saveAndFlush(prefs);
-      all = preferencesRepository.findAll();
+    try {
+      List<Preferences> all = preferencesRepository.findAll();
+      if (all.isEmpty()) {
+        Preferences prefs = new Preferences();
+        preferencesRepository.saveAndFlush(prefs);
+        all = preferencesRepository.findAll();
+      }
+      preferences = all.get(0);
     }
-    preferences = all.get(0);
+    catch (Exception e) {
+      LOG.error("Preference Service init failed: {}", e.getMessage(), e);
+    }
+
+    try {
+      ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+      boolean stickyKeysEnabled = WinRegistry.isStickyKeysEnabled();
+      if (stickyKeysEnabled && !serverSettings.isStickyKeysEnabled()) {
+        serverSettings.setStickyKeysEnabled(true);
+        savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      }
+      if (!stickyKeysEnabled && serverSettings.isStickyKeysEnabled()) {
+        serverSettings.setStickyKeysEnabled(false);
+        savePreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Sticky keys init failed: {}", e.getMessage(), e);
+    }
+
+    addChangeListener(this);
+  }
+
+  @Override
+  public void preferenceChanged(String propertyName, Object oldValue, Object newValue) {
+    try {
+      if (propertyName.equals(PreferenceNames.SERVER_SETTINGS)) {
+        ServerSettings serverSettings = getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+        WinRegistry.setStickyKeysEnabled(serverSettings.isStickyKeysEnabled());
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Preferences update failed: {}", e.getMessage(), e);
+    }
   }
 }
