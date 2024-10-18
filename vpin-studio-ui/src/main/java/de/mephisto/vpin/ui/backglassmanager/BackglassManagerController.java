@@ -17,6 +17,7 @@ import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -278,7 +279,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private void onResEdit(ActionEvent e) {
-
+    DirectB2S selection = getSelection();
+    if(selection != null) {
+      BackglassManagerDialogs.openResGenerator(selection);
+    }
   }
 
   public void refreshBackglass() {
