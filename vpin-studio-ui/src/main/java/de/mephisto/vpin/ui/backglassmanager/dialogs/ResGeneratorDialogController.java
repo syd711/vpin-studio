@@ -13,6 +13,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -51,6 +52,9 @@ public class ResGeneratorDialogController implements Initializable, DialogContro
 
   @FXML
   private Label dmdDimensionLabel;
+
+  @FXML
+  private ImageView previewImage;
 
   private File selection;
 
