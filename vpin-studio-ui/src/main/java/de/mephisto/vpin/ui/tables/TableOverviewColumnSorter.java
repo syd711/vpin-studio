@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.fxml.FXML;
@@ -89,40 +90,40 @@ public class TableOverviewColumnSorter implements BaseColumnSorter<GameRepresent
         comp = Comparator.comparing(o -> String.valueOf(o.getGame().getLauncher()));
       }
       else if (column.equals(tableOverviewController.columnPlayfield)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.PlayField));
       }
       else if (column.equals(tableOverviewController.columnBackglass)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.BackGlass));
       }
       else if (column.equals(tableOverviewController.columnLoading)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Loading));
       }
       else if (column.equals(tableOverviewController.columnWheel)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Wheel));
       }
       else if (column.equals(tableOverviewController.columnDMD)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.DMD));
       }
       else if (column.equals(tableOverviewController.columnTopper)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Topper));
       }
       else if (column.equals(tableOverviewController.columnFullDMD)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Menu));
       }
       else if (column.equals(tableOverviewController.columnAudio)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Audio));
       }
       else if (column.equals(tableOverviewController.columnAudioLaunch)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Audio));
       }
       else if (column.equals(tableOverviewController.columnInfo)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.GameInfo));
       }
       else if (column.equals(tableOverviewController.columnHelp)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.GameHelp));
       }
       else if (column.equals(tableOverviewController.columnOther2)) {
-        comp =  (o1, o2) -> Boolean.compare(o1.isMediaValid(), o2.isMediaValid());
+        comp = Comparator.comparing(o -> o.getStatusColor(VPinScreen.Other2));
       }
 
       // optionally reverse order

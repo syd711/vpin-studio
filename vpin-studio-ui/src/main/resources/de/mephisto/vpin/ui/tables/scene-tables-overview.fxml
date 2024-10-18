@@ -49,62 +49,62 @@
                         <TableColumn fx:id="columnLauncher" minWidth="10.4000244140625" prefWidth="160.0" style="-fx-alignment: BASELINE_LEFT;" text="Launcher" />
                                  <TableColumn fx:id="columnDateAdded" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Date Added" />
                                  <TableColumn fx:id="columnDateModified" minWidth="10.4000244140625" prefWidth="140.2000732421875" style="-fx-alignment: CENTER;" text="Last Update" />
-                                 <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Wheel">
+                                 <TableColumn fx:id="columnWheel" minWidth="10.4000244140625" prefWidth="75.199951171875" style="-fx-alignment: CENTER;" text="Wheel">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Playfield">
+                                 <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="Playfield">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Backglass">
+                                 <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="Backglass">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Loading">
+                                 <TableColumn fx:id="columnLoading" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="Loading">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" sortable="false" style="-fx-alignment: CENTER;" text="DMD">
+                                 <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="DMD">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" sortable="false" style="-fx-alignment: CENTER;" text="Topper">
+                                 <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="Topper">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Full DMD">
+                                 <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="Full DMD">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" sortable="false" style="-fx-alignment: CENTER;" text="Info">
+                                 <TableColumn fx:id="columnInfo" minWidth="10.4000244140625" prefWidth="62.39990234375" style="-fx-alignment: CENTER;" text="Info">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Help">
+                                 <TableColumn fx:id="columnHelp" minWidth="10.4000244140625" prefWidth="71.999755859375" style="-fx-alignment: CENTER;" text="Help">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" sortable="false" style="-fx-alignment: CENTER;" text="Other2">
+                                 <TableColumn fx:id="columnOther2" minWidth="10.4000244140625" prefWidth="88" style="-fx-alignment: CENTER;" text="Other2">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" sortable="false" style="-fx-alignment: CENTER;" text="Audio">
+                                 <TableColumn fx:id="columnAudio" minWidth="10.4000244140625" prefWidth="68.7998046875" style="-fx-alignment: CENTER;" text="Audio">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>
                                  </TableColumn>
-                                 <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" sortable="false" style="-fx-alignment: CENTER;" text="Audio L.">
+                                 <TableColumn fx:id="columnAudioLaunch" minWidth="10.4000244140625" prefWidth="91.19970703125" style="-fx-alignment: CENTER;" text="Audio L.">
                                     <graphic>
                                        <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                     </graphic>

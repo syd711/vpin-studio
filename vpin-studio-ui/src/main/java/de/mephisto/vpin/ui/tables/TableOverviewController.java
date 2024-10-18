@@ -843,89 +843,89 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     boolean isAllVpxSelected = client.getFrontendService().isAllVpx(value);
 
     JFXFuture.supplyAsync(() -> {
-      if (clearCache) {
-        if (isAllVpxSelected) {
-          client.getGameService().clearVpxCache();
-        }
-        else {
-          client.getGameService().clearCache(value.getId());
-        }
-      }
+          if (clearCache) {
+            if (isAllVpxSelected) {
+              client.getGameService().clearVpxCache();
+            }
+            else {
+              client.getGameService().clearCache(value.getId());
+            }
+          }
 
-      return isAllVpxSelected
-          ? client.getGameService().getVpxGamesCached()
-          : client.getGameService().getGamesByEmulator(value.getId());
-    })
-    .onErrorSupply(e -> {
-      Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
-      return Collections.emptyList();
-    })
-    .thenAcceptLater(data -> {
-      // as the load of tables could take some time, users may have switched to another emulators in between
-      // if this is the case, do not refresh the UI with the results
-      GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
-      if (valueAfterSearch != null && (value == null || valueAfterSearch.getId() != value.getId())) {
-        return;
-      }
+          return isAllVpxSelected
+              ? client.getGameService().getVpxGamesCached()
+              : client.getGameService().getGamesByEmulator(value.getId());
+        })
+        .onErrorSupply(e -> {
+          Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
+          return Collections.emptyList();
+        })
+        .thenAcceptLater(data -> {
+          // as the load of tables could take some time, users may have switched to another emulators in between
+          // if this is the case, do not refresh the UI with the results
+          GameEmulatorRepresentation valueAfterSearch = this.emulatorCombo.getValue();
+          if (valueAfterSearch != null && (value == null || valueAfterSearch.getId() != value.getId())) {
+            return;
+          }
 
-      tableView.getSelectionModel().getSelectedItems().removeListener(this);
-      setItems(data);
-      refreshFilters();
+          tableView.getSelectionModel().getSelectedItems().removeListener(this);
+          setItems(data);
+          refreshFilters();
 
-      if (selection != null) {
-        final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
-        if (updatedGame.isPresent()) {
-          GameRepresentation gameRepresentation = updatedGame.get().getBean();
-          //tableView.getSelectionModel().select(gameRepresentation);
-          this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
-        }
-      }
+          if (selection != null) {
+            final Optional<GameRepresentationModel> updatedGame = this.models.stream().filter(g -> g.getGameId() == selection.getId()).findFirst();
+            if (updatedGame.isPresent()) {
+              GameRepresentation gameRepresentation = updatedGame.get().getBean();
+              //tableView.getSelectionModel().select(gameRepresentation);
+              this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
+            }
+          }
 
-      if (!data.isEmpty()) {
-        this.validateBtn.setDisable(false);
-        this.deleteBtn.setDisable(false);
-        this.tableEditBtn.setDisable(false);
-      }
-      else {
-        Frontend frontend = client.getFrontendService().getFrontendCached();
-        this.validationErrorLabel.setText("No tables found");
-        this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
-            + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
-      }
+          if (!data.isEmpty()) {
+            this.validateBtn.setDisable(false);
+            this.deleteBtn.setDisable(false);
+            this.tableEditBtn.setDisable(false);
+          }
+          else {
+            Frontend frontend = client.getFrontendService().getFrontendCached();
+            this.validationErrorLabel.setText("No tables found");
+            this.validationErrorText.setText(FrontendUtil.replaceName("Check the emulator setup in [Frontend]"
+                + ". Make sure that all(!) directories are set and reload after fixing these.", frontend));
+          }
 
-      this.importBtn.setDisable(false);
-      this.stopBtn.setDisable(false);
-      this.searchTextField.setDisable(false);
-      this.reloadBtn.setDisable(false);
-      this.scanBtn.setDisable(false);
-      this.scanAllBtn.setDisable(false);
-      this.uploadTableBtn.setDisable(false);
+          this.importBtn.setDisable(false);
+          this.stopBtn.setDisable(false);
+          this.searchTextField.setDisable(false);
+          this.reloadBtn.setDisable(false);
+          this.scanBtn.setDisable(false);
+          this.scanAllBtn.setDisable(false);
+          this.uploadTableBtn.setDisable(false);
 
-      tableView.requestFocus();
+          tableView.requestFocus();
 
-      tableView.getSelectionModel().getSelectedItems().addListener(this);
-      if (selectedItem == null) {
-        //TODO this will result in a duplicate initial selection which may lead to a deadlock
+          tableView.getSelectionModel().getSelectedItems().addListener(this);
+          if (selectedItem == null) {
+            //TODO this will result in a duplicate initial selection which may lead to a deadlock
 //        tableView.getSelectionModel().select(0);
-      }
-      else {
-        tableView.getSelectionModel().select(selectedItem);
-      }
+          }
+          else {
+            tableView.getSelectionModel().select(selectedItem);
+          }
 
-      for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
-        reloadConsumer.accept(selection);
-      }
-      reloadConsumers.clear();
+          for (Consumer<GameRepresentation> reloadConsumer : reloadConsumers) {
+            reloadConsumer.accept(selection);
+          }
+          reloadConsumers.clear();
 
-      endReload();
+          endReload();
 
-      //TODO fixed above TODO by postphone the selection, no idea if this is feasable
-      Platform.runLater(() -> {
-        if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
-          tableView.getSelectionModel().select(0);
-        }
-      });
-    });
+          //TODO fixed above TODO by postphone the selection, no idea if this is feasable
+          Platform.runLater(() -> {
+            if (tableView.getSelectionModel().getSelectedItems().isEmpty()) {
+              tableView.getSelectionModel().select(0);
+            }
+          });
+        });
   }
 
   private void refreshEmulators(UISettings uiSettings) {
@@ -1291,11 +1291,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   //------------------------------
 
-  private Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen VPinScreen) {
-    FrontendMediaItemRepresentation defaultMediaItem = model.getFrontendMedia().getDefaultMediaItem(VPinScreen);
+  private Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
+    FrontendMediaItemRepresentation defaultMediaItem = model.getFrontendMedia().getDefaultMediaItem(screen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-    ValidationConfig config = defaultProfile.getOrCreateConfig(VPinScreen.getValidationCode());
-    boolean ignored = value.getIgnoredValidations().contains(VPinScreen.getValidationCode());
+    ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
+    boolean ignored = value.getIgnoredValidations().contains(screen.getValidationCode());
 
     StringBuilder tt = new StringBuilder();
     Button btn = new Button();
@@ -1381,7 +1381,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     tooltip.setWrapText(true);
     btn.setTooltip(tooltip);
     btn.setOnAction(event -> {
-      showAssetDetails(value, VPinScreen);
+      showAssetDetails(value, screen);
     });
 
     return btn;
@@ -1607,7 +1607,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     super.loadFilterPanel("scene-tables-overview-filter.fxml");
 
-    super.loadPlaylistCombo();    
+    super.loadPlaylistCombo();
 
     validationError.setVisible(false);
 
@@ -1792,15 +1792,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return new GameRepresentationModel(game);
   }
 
-  public static class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> {
+  public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> {
 
     VpsTable vpsTable;
 
     GameEmulatorRepresentation gameEmulator;
 
     FrontendMediaRepresentation frontendMedia;
-
-    private boolean mediaValid = false;
 
     public GameRepresentationModel(GameRepresentation game) {
       super(game);
@@ -1826,8 +1824,49 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       return frontendMedia;
     }
 
-    public boolean isMediaValid() {
-      return mediaValid;
+    public String getStatusColor(VPinScreen screen) {
+      FrontendMediaItemRepresentation defaultMediaItem = getFrontendMedia().getDefaultMediaItem(screen);
+      ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
+      ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
+      boolean ignored = bean.getIgnoredValidations().contains(screen.getValidationCode());
+
+      if (defaultMediaItem != null) {
+        String mimeType = defaultMediaItem.getMimeType();
+        if (mimeType.contains("audio")) {
+          if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
+            return WidgetFactory.ERROR_COLOR;
+          }
+        }
+        else if (mimeType.contains("image")) {
+          if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+            return WidgetFactory.ERROR_COLOR;
+          }
+        }
+        else if (mimeType.contains("video")) {
+          if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
+            return WidgetFactory.ERROR_COLOR;
+          }
+        }
+
+        if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
+          return WidgetFactory.ERROR_COLOR;
+        }
+      }
+      else {
+        if (!ignored) {
+          if (config.getOption().equals(ValidatorOption.empty)) {
+            return DISABLED_COLOR;
+          }
+          else if (config.getOption().equals(ValidatorOption.optional)) {
+            return DISABLED_COLOR;
+          }
+          else if (config.getOption().equals(ValidatorOption.mandatory)) {
+            return WidgetFactory.ERROR_COLOR;
+          }
+        }
+      }
+
+      return "#FFFFFF";
     }
 
     public VpsTable getVpsTable() {
@@ -1861,7 +1900,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     contextMenuController.handleKeyEvent(event);
 
     List<GameRepresentation> games = tableView.getSelectionModel().getSelectedItems().stream().map(g -> g.getBean()).collect(Collectors.toList());
-
 
 
     if (event.getCode() == KeyCode.K && event.isControlDown()) {
