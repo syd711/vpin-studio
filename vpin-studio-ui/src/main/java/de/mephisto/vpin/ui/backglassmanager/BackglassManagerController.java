@@ -65,7 +65,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -148,6 +151,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Button uploadDMDBtn;
+
+  @FXML
+  private Button resBtn;
   @FXML
   private Button downloadDMDBtn;
   @FXML
@@ -268,6 +274,11 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   @FXML
   private void onBackglassReload(ActionEvent e) {
     refreshBackglass();
+  }
+
+  @FXML
+  private void onResEdit(ActionEvent e) {
+
   }
 
   public void refreshBackglass() {
@@ -530,7 +541,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           if (client.getBackglassServiceClient().deleteBackglass(selection.getBacklass())) {
             // remove from the list if successfully deleted
             models.remove(selection);
-            
+
             applyFilter();
 
             // then notify changes
@@ -680,7 +691,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (!refreshing && tableSettings != null) {
-        save(() -> tableSettings.setStartAsEXE(newValue? newValue : null));
+        save(() -> tableSettings.setStartAsEXE(newValue ? newValue : null));
       }
     });
 
@@ -868,6 +879,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     downloadDMDBtn.setDisable(true);
     useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
+    resBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
@@ -930,6 +942,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         this.renameBtn.setDisable(false);
         this.duplicateBtn.setDisable(false);
         this.deleteBtn.setDisable(false);
+        this.resBtn.setDisable(false);
         this.reloadBackglassBtn.setDisable(false);
 
         if (game != null) {
