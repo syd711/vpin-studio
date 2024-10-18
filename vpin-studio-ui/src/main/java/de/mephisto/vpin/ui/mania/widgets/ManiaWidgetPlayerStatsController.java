@@ -182,6 +182,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     tableView.setPlaceholder(new Label("No player selected."));
     titleLabel.setText("Player Statistics");
 
+
     columnName.setCellValueFactory(cellData -> {
       VpsTable tableById = cellData.getValue().getVpsTable();
       if (tableById == null) {

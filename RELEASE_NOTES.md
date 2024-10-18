@@ -17,7 +17,7 @@
 - **Tables / Validation of assets with image and video**: When Asset validation is set to video and the tables contains a video asset and an  image one, the validation was claiming an error when it shouldn't .
 - **Highscore Parsing**: Fixed "Red & Ted's Road Show" highscore.
 - **Maintenance Mode**: Fixed issue that the Windows taskbar is not shown when the Studio is exited and this mode was enabled.
-
+- **Emulator Detection**: Improved the way emulator types are determined.
 
 ## VPin Mania
 
