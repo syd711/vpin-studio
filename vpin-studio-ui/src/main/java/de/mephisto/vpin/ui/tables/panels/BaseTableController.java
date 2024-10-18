@@ -356,7 +356,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
       FrontendType frontendType = client.getFrontendService().getFrontendType();
 
       if (frontendType.supportExtendedPlaylists()) {
-        List<PlaylistGame> localFavs = new ArrayList<>();
+        /*List<PlaylistGame> localFavs = new ArrayList<>();
         List<PlaylistGame> globalFavs = new ArrayList<>();
         for (PlaylistRepresentation playlistRepresentation : pl) {
           List<PlaylistGame> games1 = playlistRepresentation.getGames();
@@ -368,14 +368,14 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
               globalFavs.add(playlistGame);
             }
           }
-        }
+        }*/
         PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
-        favsPlaylist.setGames(localFavs);
+        //favsPlaylist.setGames(localFavs);
         favsPlaylist.setId(-1);
         favsPlaylist.setName("Local Favorites");
 
         PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
-        globalFavsPlaylist.setGames(globalFavs);
+        //globalFavsPlaylist.setGames(globalFavs);
         globalFavsPlaylist.setId(-2);
         globalFavsPlaylist.setName("Global Favorites");
 
