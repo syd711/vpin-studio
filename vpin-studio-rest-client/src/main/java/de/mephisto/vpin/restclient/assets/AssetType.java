@@ -55,4 +55,73 @@ public enum AssetType {
   public static boolean isInstallable(AssetType assetType) {
     return ArrayUtils.contains(INSTALLABLE_ASSET_TYPES, assetType);
   }
+
+
+  @Override
+  public String toString() {
+    switch (this) {
+      case NV: {
+        return "NV RAM";
+      }
+      case RES: {
+        return ".res File";
+      }
+      case POV: {
+        return ".pov File";
+      }
+      case INI: {
+        return ".ini File";
+      }
+      case DIRECTB2S: {
+        return "Backglass";
+      }
+      case ALT_SOUND: {
+        return "ALT Sound Bundle";
+      }
+      case ALT_COLOR: {
+        return "ALT Color File";
+      }
+      case CFG: {
+        return ".cfg File";
+      }
+      case ROM: {
+        return "ROM";
+      }
+      case VPX: {
+        return "VPX Table";
+      }
+      case DMD_PACK: {
+        return "DMD Pack";
+      }
+      case CRZ: {
+        return ".cRZ File";
+      }
+      case PAC: {
+        return ".pac File";
+      }
+      case PAL: {
+        return ".pal File";
+      }
+      case VNI: {
+        return ".vni File";
+      }
+      case MUSIC: {
+        return "Music File";
+      }
+      case PUP_PACK: {
+        return "PUP Pack";
+      }
+      case POPPER_MEDIA: {
+        return "Frontend Media File";
+      }
+      case MUSIC_BUNDLE: {
+        return "Music Bundle";
+      }
+      case TABLE: {
+        return "Table File";
+      }
+    }
+
+    return this.name();
+  }
 }

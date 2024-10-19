@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.altcolor;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;

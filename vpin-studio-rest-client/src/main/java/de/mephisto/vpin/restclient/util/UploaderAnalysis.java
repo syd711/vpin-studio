@@ -41,6 +41,7 @@ public class UploaderAnalysis<T> {
   private final List<String> directories = new ArrayList<>();
 
   private String readme;
+  private String pupFolder;
 
   public UploaderAnalysis(File file) {
     this.file = file;
@@ -58,29 +59,32 @@ public class UploaderAnalysis<T> {
   }
 
   public String getRomFromPupPack() {
-    String contains = containsWithPath("scriptonly.txt");
-    if (contains == null) {
+    String pupFolderFile = containsWithPath("scriptonly.txt");
+    if (pupFolderFile == null) {
       String batPath = containsWithPath(".bat");
       String pupPath = containsWithPath(".pup");
 
       if (batPath != null && pupPath == null) {
-        contains = batPath;
+        pupFolderFile = batPath;
       }
       if (batPath == null && pupPath != null) {
-        contains = pupPath;
+        pupFolderFile = pupPath;
       }
 
       if (batPath != null && pupPath != null) {
         String[] batSegments = batPath.split("/");
         String[] pupSegments = pupPath.split("/");
-        contains = pupSegments.length <= batSegments.length ? pupPath : batPath;
+        pupFolderFile = pupSegments.length <= batSegments.length ? pupPath : batPath;
       }
     }
 
-    if (contains != null) {
-      String rom = contains;
-      if (rom.contains("/")) {
-        rom = rom.substring(0, rom.lastIndexOf("/"));
+    if (pupFolderFile != null) {
+      String rom = null;
+      if (pupFolderFile.contains("/")) {
+        String pupBasePath = pupFolderFile.substring(0, pupFolderFile.lastIndexOf("/"));
+        pupFolder = pupBasePath;
+
+        rom = pupBasePath;
         if (rom.contains("/")) {
           rom = rom.substring(rom.lastIndexOf("/") + 1);
         }
@@ -89,7 +93,42 @@ public class UploaderAnalysis<T> {
       return rom;
     }
 
-    return contains;
+    return pupFolderFile;
+  }
+
+  public String getMusicFolder() {
+    String path = null;
+    for (String name : fileNamesWithPath) {
+      String suffix = FilenameUtils.getExtension(name);
+      if (!musicSuffixes.contains(suffix)) {
+        continue;
+      }
+      if (getPupPackRootDirectory() != null && name.startsWith(getPupPackRootDirectory())) {
+        continue;
+      }
+      if (name.toLowerCase().contains("music/")) {
+        String folder = name.substring(0, name.lastIndexOf("/"));
+        if (path == null || folder.length() > path.length()) {
+          path = folder;
+        }
+      }
+    }
+    return path;
+  }
+
+  public String getPUPPackFolder() {
+    if (pupFolder == null) {
+      getRomFromPupPack();
+    }
+    return pupFolder;
+  }
+
+  public List<String> getFileNamesWithPath() {
+    return fileNamesWithPath;
+  }
+
+  public List<String> getDirectories() {
+    return directories;
   }
 
   public String getRomFromAltSoundPack() {
@@ -241,6 +280,10 @@ public class UploaderAnalysis<T> {
   }
 
   public boolean analyze(T archiveEntry, String formattedName, boolean directory) {
+    if (formattedName.contains("_MACOSX")) {
+      return false;
+    }
+
     if (directory) {
       String[] split = formattedName.split("/");
       for (String s : split) {
@@ -254,7 +297,9 @@ public class UploaderAnalysis<T> {
       fileNamesWithPath.add(fileName);
       if (fileName.contains("/")) {
         String dir = fileName.substring(0, fileName.lastIndexOf("/"));
-        directories.add(dir);
+        if (!StringUtils.isEmpty(dir) && !directories.contains(dir)) {
+          directories.add(dir);
+        }
         fileName = fileName.substring(fileName.lastIndexOf("/") + 1);
       }
       fileNames.add(fileName);
@@ -513,7 +558,7 @@ public class UploaderAnalysis<T> {
     return false;
   }
 
-  private boolean isMusic(boolean forceMusicFolder) {
+  public boolean isMusic(boolean forceMusicFolder) {
     for (String name : fileNamesWithPath) {
       String suffix = FilenameUtils.getExtension(name);
       if (!musicSuffixes.contains(suffix)) {
@@ -670,11 +715,11 @@ public class UploaderAnalysis<T> {
     return match;
   }
 
-  private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
-    if (screen.equals(VPinScreen.GameInfo)) {
-      return false;
-    }
+  public byte[] readFile(String name) {
+    return PackageUtil.readFile(file, name);
+  }
 
+  private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
     if (!screen.equals(VPinScreen.Menu) && !screen.equals(VPinScreen.DMD) && fileNameWithPath.contains("DMD/")) {
       return false;
     }
@@ -700,9 +745,14 @@ public class UploaderAnalysis<T> {
       return true;
     }
 
+    if (screen.equals(VPinScreen.GameInfo) && fileNameWithPath.toLowerCase().contains("flyer")) {
+      return true;
+    }
+
     if (screen.equals(VPinScreen.Menu) && (fileNameWithPath.toLowerCase().contains("fulldmd") || fileNameWithPath.toLowerCase().contains("apron"))) {
       return true;
     }
+
 
     if (!fileNameWithPath.toLowerCase().contains(screen.name().toLowerCase())) {
       return false;

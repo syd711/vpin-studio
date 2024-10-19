@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.util;
 
-import de.mephisto.vpin.commons.utils.ZipProgressable;
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipProgressable;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import javafx.application.Platform;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;

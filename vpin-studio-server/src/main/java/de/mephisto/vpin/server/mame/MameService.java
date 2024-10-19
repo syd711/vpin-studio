@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.mame;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;

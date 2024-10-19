@@ -17,6 +17,7 @@ public class GameEmulatorRepresentation {
 
   private String mameDirectory;
   private String nvramDirectory;
+  private String romDirectory;
 
   private String backglassServerFolder;
   private boolean vpxEmulator;
@@ -29,6 +30,14 @@ public class GameEmulatorRepresentation {
 
   public void setAltVPXExeNames(List<String> altVPXExeNames) {
     this.altVPXExeNames = altVPXExeNames;
+  }
+
+  public String getRomDirectory() {
+    return romDirectory;
+  }
+
+  public void setRomDirectory(String romDirectory) {
+    this.romDirectory = romDirectory;
   }
 
   public String getBackglassServerFolder() {

@@ -4,8 +4,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
-import javafx.scene.layout.Pane;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import org.apache.commons.io.FilenameUtils;
 
 import de.mephisto.vpin.ui.tables.BaseDragDropHandler;

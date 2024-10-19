@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.FXResizeHelper;
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AssetMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
@@ -19,6 +18,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -474,10 +474,10 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+  public static boolean openMediaUploadDialog(GameEmulatorRepresentation gameEmulatorRepresentation, GameRepresentation game, File file, UploaderAnalysis analysis) {
     Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", "Media Pack Upload for \"" + game.getGameDisplayName() + "\"");
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
-    controller.setData(game, analysis, file, stage);
+    controller.setData(gameEmulatorRepresentation, game, analysis, file, stage);
     stage.showAndWait();
 
     return controller.uploadFinished();

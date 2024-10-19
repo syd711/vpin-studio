@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 

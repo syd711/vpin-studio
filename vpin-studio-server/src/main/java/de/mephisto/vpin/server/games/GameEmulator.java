@@ -38,6 +38,7 @@ public class GameEmulator {
   private final String tablesDirectory;
   private final String altSoundDirectory;
   private final String altColorDirectory;
+  private final String romDirectory;
   private final String nvramDirectory;
   private final String mameDirectory;
   private final String userDirectory;
@@ -111,6 +112,7 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
+    this.romDirectory = this.romFolder.getAbsolutePath();
   }
 
   public List<String> getAltVPXExeNames() {
@@ -124,6 +126,7 @@ public class GameEmulator {
   public boolean isVpxEmulator() {
     return type.isVpxEmulator();
   }
+
   public boolean isFpEmulator() {
     return type.isFpEmulator();
   }
@@ -170,6 +173,10 @@ public class GameEmulator {
 
   public String getAltColorDirectory() {
     return altColorDirectory;
+  }
+
+  public String getRomDirectory() {
+    return romDirectory;
   }
 
   public String getInstallationDirectory() {

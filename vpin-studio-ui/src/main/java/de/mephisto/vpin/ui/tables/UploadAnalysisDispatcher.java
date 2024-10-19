@@ -1,9 +1,10 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -116,7 +117,8 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case POPPER_MEDIA: {
-        TableDialogs.openMediaUploadDialog(game, file, analysis);
+        GameEmulatorRepresentation emulator = Studio.client.getFrontendService().getGameEmulator(game.getEmulatorId());
+        TableDialogs.openMediaUploadDialog(emulator, game, file, analysis);
         break;
       }
       default: {
