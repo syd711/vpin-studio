@@ -1,4 +1,12 @@
-## Release Notes 3.8
+## Release Notes 3.8.1
+
+## Bugfixes
+
+- **Tables / Emulator Filter**: Fixed critical error in the emulator detection, causing empty views for non VPX emulators.
+- **VPin Mania / Wheel Icons**: Changed loading of the wheel icons for the VPin Mania tables, so that they can be updated independently from the Studio now.
+
+
+### Release Notes 3.8
 
 - **Drop-In Folder: Trash-bin support**: Files deleted from the drop-in folder menu are not deleted anymore, but moved to the trash-bin.
 - **Drop-In Folder: Added subfolders support** : The drop-ins folder can now contains sub-folders that are also monitored. The drop-in section displays all files flat from the tree structure.
@@ -8,7 +16,7 @@
 - **Tables / VPS Tables: Add filter on last update date**: in VPS Tables tab, add a new filter on last update date of VPS table versions.
 - **Tables / VPS Tables: Table format filtering**: Add grouping of Zen Studio tables (FX, FX2, FX3) and highlight VPS table versions based on the table format selection
 
-## Bugfixes
+### Bugfixes
 
 - **Added 7-zip support**: Actually it was there since the .rar support, but we forgot to add the .7z suffix to dialogs and drag-and-drop filters.
 - **Added RAR support for MacOS (ARM)**: The sevenzip library that is used for .rar files has been replaced with a patched version that is supposed to work for macOS with ARM.
@@ -19,6 +27,6 @@
 - **Maintenance Mode**: Fixed issue that the Windows taskbar is not shown when the Studio is exited and this mode was enabled.
 - **Emulator Detection**: Improved the way emulator types are determined.
 
-## VPin Mania
+### VPin Mania
 
 - **Window 11 Support**: Fixed cabinet registration issue for Windows 11.
