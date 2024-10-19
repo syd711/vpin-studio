@@ -9,12 +9,15 @@ import de.mephisto.vpin.ui.Studio;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class TarcisioWheelsDB {
   private final static Logger LOG = LoggerFactory.getLogger(ScoringDB.class);
 
   private final static ObjectMapper objectMapper;
+  private final static String WHEEL_DB = "https://www.vpin-mania.net/wheels/wheels.json";
 
   static {
     objectMapper = new ObjectMapper();
@@ -33,22 +36,37 @@ public class TarcisioWheelsDB {
     return Studio.client.getPersistentCachedUrlImage("mania", "https://vpin-mania.net/wheels/" + wheelImage);
   }
 
+  private static void update() {
+    try {
+      LOG.info("Downloading " + WHEEL_DB);
+      java.net.URL url = new URL(WHEEL_DB);
+      HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+      connection.setDoOutput(true);
+      BufferedInputStream in = new BufferedInputStream(url.openStream());
+      File tmp = File.createTempFile("wheels", ".json");
+      tmp.deleteOnExit();
+
+      FileOutputStream fileOutputStream = new FileOutputStream(tmp);
+      wheels = objectMapper.readValue(in, TarcisioWheels.class);
+      in.close();
+      fileOutputStream.close();
+      LOG.info("Written {}", tmp.getAbsolutePath());
+      LOG.info("Tarcisio wheel database loaded with " + wheels.getData().size() + " images.");
+      tmp.delete();
+    }
+    catch (IOException e) {
+      LOG.error("Wheel database download failed: " + e.getMessage());
+    }
+  }
+
   private static String getWheelIcon(String vpsTableId) {
     if (wheels.getData().isEmpty()) {
-      try {
-        InputStream in = TarcisioWheelsDB.class.getResourceAsStream("wheels.json");
-        wheels = objectMapper.readValue(in, TarcisioWheels.class);
-        LOG.info("Tarcisio wheel database loaded with " + wheels.getData().size() + " images.");
-      }
-      catch (Exception e) {
-        LOG.error("Failed to read wheels database: " + e.getMessage(), e);
-      }
+      update();
     }
 
     if (wheels.getData().containsKey(vpsTableId)) {
       return wheels.getData().get(vpsTableId);
     }
-
     return null;
   }
 }
