@@ -65,6 +65,9 @@ public class ManiaService implements InitializingBean {
 
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
+    if (scoreList.isEmpty()) {
+      LOG.info("No highscores found for \"" + game.getGameDisplayName() + "\", VPS ids: " + game.getExtTableId() + "/" + game.getExtTableVersionId());
+    }
 
     List<String> submittedInitials = new ArrayList<>();
     for (Score score : scoreList) {

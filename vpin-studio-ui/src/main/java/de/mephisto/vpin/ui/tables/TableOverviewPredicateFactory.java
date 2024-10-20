@@ -109,9 +109,6 @@ public class TableOverviewPredicateFactory {
         if (emulator != null && game.getEmulatorId() != emulator.getId()) {
           return false;
         }
-        if (emulator != null && !game.isVpxGame()) {
-          return false;
-        }
 
         if (playlist != null && !playlist.containsGame(game.getId())) {
           return false;
