@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
 import de.mephisto.vpin.commons.utils.WidgetFactory;

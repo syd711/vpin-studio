@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -205,24 +205,23 @@ public class GameMediaResource {
     }
   }
 
-  @PostMapping("/packupload")
-  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
-                                     @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
-    try {
-      descriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
-      descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.POPPER_MEDIA);
-      return descriptor;
-    }
-    catch (Exception e) {
-      LOG.error(AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage());
-    }
-    finally {
-      descriptor.finalizeUpload();
-    }
-  }
+//  @PostMapping("/packupload")
+//  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
+//                                     @RequestParam("objectId") Integer gameId) {
+//    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+//    try {
+//      descriptor.upload();
+//      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.FRONTEND_MEDIA);
+//      return descriptor;
+//    }
+//    catch (Exception e) {
+//      LOG.error(AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage(), e);
+//      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage());
+//    }
+//    finally {
+//      descriptor.finalizeUpload();
+//    }
+//  }
 
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {

@@ -3,7 +3,7 @@ package de.mephisto.vpin.server.highscores;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.highscores.HighscoreBackup;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.server.games.Game;

@@ -20,12 +20,13 @@ public enum AssetType {
   ALT_SOUND,
   PUP_PACK,
   DMD_PACK,
-  POPPER_MEDIA,
+  FRONTEND_MEDIA,
   ROM,
   MUSIC,
   MUSIC_BUNDLE,
   POV,
   VPX,
+  FPT,
   ZIP,
   RAR,
   SEVENZIP,
@@ -34,7 +35,7 @@ public enum AssetType {
   CARD_BACKGROUND;
 
   static final AssetType[] INSTALLABLE_ASSET_TYPES = {
-    ZIP, RAR, SEVENZIP, RES, INI, POV, DIRECTB2S, VNI, VPX, PAL, PAC, CRZ, CFG, NV
+    ZIP, RAR, SEVENZIP, RES, INI, POV, DIRECTB2S, VNI, VPX, FPT, PAL, PAC, CRZ, CFG, NV
   };
 
   public static AssetType fromExtension(String extension) {
@@ -84,6 +85,9 @@ public enum AssetType {
       case CFG: {
         return ".cfg File";
       }
+      case FPT: {
+        return "FP Table";
+      }
       case ROM: {
         return "ROM";
       }
@@ -111,7 +115,7 @@ public enum AssetType {
       case PUP_PACK: {
         return "PUP Pack";
       }
-      case POPPER_MEDIA: {
+      case FRONTEND_MEDIA: {
         return "Frontend Media File";
       }
       case MUSIC_BUNDLE: {

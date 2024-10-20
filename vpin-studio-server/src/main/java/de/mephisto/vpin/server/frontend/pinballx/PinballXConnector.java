@@ -559,7 +559,7 @@ public class PinballXConnector extends BaseConnector {
           LOG.info("Copied VPin Studio App icon.");
 
           File thumbsFolder = new File(pcWheelFolder, "pthumbs");
-          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
+          de.mephisto.vpin.restclient.util.FileUtils.deleteFolder(thumbsFolder);
         }
         catch (Exception e) {
           LOG.info("Failed to copy VPin App wheel icon: " + e.getMessage(), e);

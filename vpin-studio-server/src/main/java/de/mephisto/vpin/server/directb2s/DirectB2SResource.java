@@ -167,7 +167,6 @@ public class DirectB2SResource {
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);

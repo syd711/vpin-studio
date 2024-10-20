@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.puppacks;
 
+import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.puppack.PupPackUtil;
@@ -31,7 +33,10 @@ public class PupPackTest {
     File archive = new File("C:\\temp\\vpin-dropins\\Stranger Things 4 ALL IN 1 UPDATE.zip");
     if (archive.exists()) {
       System.out.println("Analyzing " + archive.getAbsolutePath());
-      UploaderAnalysis analysis = new UploaderAnalysis(archive);
+      Frontend frontend = new Frontend();
+      frontend.setFrontendType(FrontendType.Popper);
+
+      UploaderAnalysis analysis = new UploaderAnalysis(frontend, archive);
       analysis.analyze();
 
       System.out.println("Root: " + analysis.getPupPackRootDirectory());

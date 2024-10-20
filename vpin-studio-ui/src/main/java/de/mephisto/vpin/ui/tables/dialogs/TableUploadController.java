@@ -6,7 +6,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -105,6 +104,9 @@ public class TableUploadController implements Initializable, DialogController {
   private Button fileBtn;
 
   @FXML
+  private Button assetFilterBtn;
+
+  @FXML
   private Button cancelBtn;
 
   @FXML
@@ -118,31 +120,31 @@ public class TableUploadController implements Initializable, DialogController {
   private Label noAssetsLabel;
 
   @FXML
-  private CheckBox assetPupPackCheckbox;
+  private Label assetPupPackLabel;
   @FXML
-  private CheckBox assetAltSoundCheckbox;
+  private Label assetAltSoundLabel;
   @FXML
-  private CheckBox assetAltColorCheckbox;
+  private Label assetAltColorLabel;
   @FXML
-  private CheckBox assetMediaCheckbox;
+  private Label assetMediaLabel;
   @FXML
-  private CheckBox assetMusicCheckbox;
+  private Label assetMusicLabel;
   @FXML
-  private CheckBox assetBackglassCheckbox;
+  private Label assetBackglassLabel;
   @FXML
-  private CheckBox assetRomCheckbox;
+  private Label assetRomLabel;
   @FXML
-  private CheckBox assetPovCheckbox;
+  private Label assetPovLabel;
   @FXML
-  private CheckBox assetIniCheckbox;
+  private Label assetIniLabel;
   @FXML
-  private CheckBox assetResCheckbox;
+  private Label assetResLabel;
   @FXML
-  private CheckBox assetCfgCheckbox;
+  private Label assetCfgLabel;
   @FXML
-  private CheckBox assetNvRamCheckbox;
+  private Label assetNvRamLabel;
   @FXML
-  private CheckBox assetDmdCheckbox;
+  private Label assetDmdLabel;
 
   @FXML
   private VBox assetsBox;
@@ -184,116 +186,30 @@ public class TableUploadController implements Initializable, DialogController {
         return;
       }
 
+      String subFolder = this.subfolderText.getText();
+      boolean useSubFolder = this.subfolderCheckbox.isSelected();
+      boolean autoFill = this.autofillCheckbox.isSelected();
+      int gameId = getGameId();
+
       uploadBtn.setDisable(true);
+      Platform.runLater(() -> {
+        onCancelClick(event);
+      });
 
-      try {
-        String subFolder = this.subfolderText.getText();
-        boolean useSubFolder = this.subfolderCheckbox.isSelected();
-        boolean autoFill = this.autofillCheckbox.isSelected();
+      result = UniversalUploader.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
+      if (result.isPresent()) {
+        UploadDescriptor uploadDescriptor = result.get();
+        uploadDescriptor.setSubfolderName(subFolder);
+        uploadDescriptor.setFolderBasedImport(useSubFolder);
+        uploadDescriptor.setAutoFill(autoFill);
 
-        boolean assetPupPack = assetPupPackCheckbox.isSelected();
-        boolean assetAltSound = assetAltSoundCheckbox.isSelected();
-        boolean assetAltColor = assetAltColorCheckbox.isSelected();
-        boolean assetMusic = assetMusicCheckbox.isSelected();
-        boolean assetMedia = assetMediaCheckbox.isSelected();
-        boolean assetBackglass = assetBackglassCheckbox.isSelected();
-        boolean assetRom = assetRomCheckbox.isSelected();
-        boolean assetDmd = assetDmdCheckbox.isSelected();
-        boolean assetIni = assetIniCheckbox.isSelected();
-        boolean assetRes = assetResCheckbox.isSelected();
-        boolean assetPov = assetPovCheckbox.isSelected();
-        boolean assetNvRam = assetNvRamCheckbox.isSelected();
-        boolean assetCfg = assetCfgCheckbox.isSelected();
-
-        int gameId = getGameId();
-
-        Platform.runLater(() -> {
-          onCancelClick(event);
-        });
-
-        //Platform.runLater(() -> {
-        TableUploadProgressModel model = new TableUploadProgressModel("Table Upload", selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
-        ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
-
-        List<Object> results = uploadResultModel.getResults();
-        if (!results.isEmpty()) {
-          final UploadDescriptor uploadDescriptor = (UploadDescriptor) results.get(0);
-          if (!StringUtils.isEmpty(uploadDescriptor.getError())) {
-            Platform.runLater(() -> {
-              WidgetFactory.showAlert(stage, "Error", "Upload Failed: " + uploadDescriptor.getError());
-            });
-            return;
-          }
-
-          uploadDescriptor.setSubfolderName(subFolder);
-          uploadDescriptor.setFolderBasedImport(useSubFolder);
-          uploadDescriptor.setAutoFill(autoFill);
-
-          if (assetAltSound) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
-          }
-          if (assetAltSound) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
-          }
-          if (assetAltColor) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
-          }
-          if (assetBackglass) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
-          }
-          if (assetDmd) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.DMD_PACK);
-          }
-          if (assetMusic) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.MUSIC);
-          }
-          if (assetMedia) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
-          }
-          if (assetPupPack) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.PUP_PACK);
-          }
-          if (assetRom) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.ROM);
-          }
-          if (assetIni) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.INI);
-          }
-          if (assetPov) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.POV);
-          }
-          if (assetRes) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.RES);
-          }
-          if (assetCfg) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.CFG);
-          }
-          if (assetNvRam) {
-            uploadDescriptor.getAssetsToImport().add(AssetType.NV);
-          }
-
-          TableUploadProcessingProgressModel progressModel = new TableUploadProcessingProgressModel("Importing Table and Assets", uploadDescriptor);
-          ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
-          if (!progressDialogResult.getResults().isEmpty()) {
-            UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
-            if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
-              Platform.runLater(() -> {
-                WidgetFactory.showAlert(stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
-              });
-              return;
-            }
-
-            result = Optional.of(uploadedAndImportedDescriptor);
-            // notify listeners of table import done
-            EventManager.getInstance().notifyTableUploaded(uploadedAndImportedDescriptor);
-          }
+        uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
+        uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
+        result = UniversalUploader.postProcess(uploadDescriptor);
+        if (result.isPresent()) {
+          // notify listeners of table import done
+          EventManager.getInstance().notifyTableUploaded(result.get());
         }
-        //});
-      }
-      catch (Exception e) {
-        LOG.error("Upload failed: " + e.getMessage(), e);
-        stage.close();
-        WidgetFactory.showAlert(stage, "Uploading VPX file failed.", "Please check the log file for details.", "Error: " + e.getMessage());
       }
     }
   }
@@ -369,6 +285,14 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private void setSelection(boolean rescan) {
+    assetFilterBtn.setVisible(false);
+    if (this.selection != null) {
+      String extension = FilenameUtils.getExtension(selection.getName());
+      if (PackageUtil.isSupportedArchive(extension)) {
+        assetFilterBtn.setVisible(true);
+      }
+    }
+
     tableNameLabel.setVisible(false);
     tableTitleLabel.setVisible(false);
     this.readmeTextField.setText("");
@@ -406,10 +330,10 @@ public class TableUploadController implements Initializable, DialogController {
 
               tableTitleLabel.setVisible(true);
               tableNameLabel.setVisible(true);
-              tableNameLabel.setText(uploaderAnalysis.getVpxFileName(null));
+              tableNameLabel.setText(uploaderAnalysis.getTableFileName(null));
 
               this.fileNameField.setText(this.selection.getAbsolutePath());
-              this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getVpxFileName(this.selection.getName())));
+              this.subfolderText.setText(FilenameUtils.getBaseName(uploaderAnalysis.getTableFileName(this.selection.getName())));
             }
 
             updateAnalysis();
@@ -442,109 +366,84 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private void updateAnalysis() {
-    assetPupPackCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null);
-    assetPupPackCheckbox.setVisible(assetPupPackCheckbox.isSelected());
-
-    assetAltSoundCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
-    assetAltSoundCheckbox.setVisible(assetAltSoundCheckbox.isSelected());
-
-    assetAltColorCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null);
-    assetAltColorCheckbox.setVisible(assetAltColorCheckbox.isSelected());
-
-    assetMediaCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POPPER_MEDIA) == null);
-    assetMediaCheckbox.setVisible(assetMediaCheckbox.isSelected());
-
-    assetMusicCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
-    assetMusicCheckbox.setVisible(assetMusicCheckbox.isSelected());
-
-    assetBackglassCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
-    assetBackglassCheckbox.setVisible(assetBackglassCheckbox.isSelected());
-
-    assetIniCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.INI) == null);
-    assetIniCheckbox.setVisible(assetIniCheckbox.isSelected());
-
-    assetPovCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
-    assetPovCheckbox.setVisible(assetPovCheckbox.isSelected());
-
-    assetResCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.RES) == null);
-    assetResCheckbox.setVisible(assetResCheckbox.isSelected());
-
-    assetDmdCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
-    assetDmdCheckbox.setVisible(assetDmdCheckbox.isSelected());
-
-    assetRomCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
-    assetRomCheckbox.setVisible(assetRomCheckbox.isSelected());
-
-    assetCfgCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.CFG) == null);
-    assetCfgCheckbox.setVisible(assetCfgCheckbox.isSelected());
-
-    assetNvRamCheckbox.setSelected(uploaderAnalysis.validateAssetType(AssetType.NV) == null);
-    assetNvRamCheckbox.setVisible(assetNvRamCheckbox.isSelected());
-
-
-    assetCfgCheckbox.setText(".cfg File");
-    if (assetCfgCheckbox.isSelected()) {
-      assetCfgCheckbox.setText(".cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
+    assetFilterBtn.setText("Filter Selection");
+    if (!uploaderAnalysis.getExclusions().isEmpty()) {
+      if (uploaderAnalysis.getExclusions().size() == 1) {
+        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded asset)");
+      }
+      else {
+        assetFilterBtn.setText("Filter Selection (" + uploaderAnalysis.getExclusions().size() + " excluded assets)");
+      }
     }
 
-    assetDmdCheckbox.setText("DMD Pack");
-    if (assetDmdCheckbox.isSelected()) {
-      assetDmdCheckbox.setText("DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
+    assetPupPackLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null);
+    assetAltSoundLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
+    assetAltColorLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null);
+    assetMediaLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null);
+    assetMusicLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
+    assetBackglassLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
+    assetIniLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.INI) == null);
+    assetPovLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
+    assetResLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.RES) == null);
+    assetDmdLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
+    assetRomLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
+    assetCfgLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.CFG) == null);
+    assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.NV) == null);
+
+
+    assetCfgLabel.setText("- .cfg File");
+    if (assetCfgLabel.isVisible()) {
+      assetCfgLabel.setText("- .cfg File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.CFG) + ")");
     }
 
-    assetNvRamCheckbox.setText(".nv File");
-    if (assetNvRamCheckbox.isSelected()) {
-      assetNvRamCheckbox.setText(".nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
+    assetDmdLabel.setText("- DMD Pack");
+    if (assetDmdLabel.isVisible()) {
+      assetDmdLabel.setText("- DMD Pack (" + uploaderAnalysis.getDMDPath() + ")");
     }
 
-    assetPupPackCheckbox.setText("PUP Pack");
-    if (assetPupPackCheckbox.isSelected()) {
-      assetPupPackCheckbox.setText("PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
+    assetNvRamLabel.setText("- .nv File");
+    if (assetNvRamLabel.isVisible()) {
+      assetNvRamLabel.setText("- .nv File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.NV) + ")");
     }
 
-    assetIniCheckbox.setText(".ini File");
-    if (assetIniCheckbox.isSelected()) {
-      assetIniCheckbox.setText(".ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
+    assetPupPackLabel.setText("- PUP Pack");
+    if (assetPupPackLabel.isVisible()) {
+      assetPupPackLabel.setText("- PUP Pack (" + uploaderAnalysis.getRomFromPupPack() + ")");
     }
 
-    assetResCheckbox.setText(".res File");
-    if (assetResCheckbox.isSelected()) {
-      assetResCheckbox.setText(".res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
+    assetIniLabel.setText("- .ini File");
+    if (assetIniLabel.isVisible()) {
+      assetIniLabel.setText("- .ini File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.INI) + ")");
     }
 
-    assetRomCheckbox.setText("ROM");
-    if (assetRomCheckbox.isSelected()) {
-      assetRomCheckbox.setText("ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
+    assetResLabel.setText("- .res File");
+    if (assetResLabel.isVisible()) {
+      assetResLabel.setText("- .res File (" + uploaderAnalysis.getFileNameForAssetType(AssetType.RES) + ")");
     }
 
-    assetAltSoundCheckbox.setText("ALT Sound");
-    if (assetAltSoundCheckbox.isSelected()) {
-      assetAltSoundCheckbox.setText("ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
+    assetRomLabel.setText("- ROM");
+    if (assetRomLabel.isVisible()) {
+      assetRomLabel.setText("- ROM (" + uploaderAnalysis.getRomFromArchive() + ")");
     }
 
-    FrontendType frontendType = client.getFrontendService().getFrontendType();
-    if (!frontendType.supportPupPacks()) {
-      assetPupPackCheckbox.setSelected(false);
-      assetPupPackCheckbox.setVisible(false);
-
-      assetMediaCheckbox.setSelected(false);
-      assetMediaCheckbox.setVisible(false);
+    assetAltSoundLabel.setText("- ALT Sound");
+    if (assetAltSoundLabel.isVisible()) {
+      assetAltSoundLabel.setText("- ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
     }
 
-
-    assetsBox.setVisible(assetBackglassCheckbox.isSelected()
-        || assetAltSoundCheckbox.isSelected()
-        || assetAltColorCheckbox.isSelected()
-        || assetPovCheckbox.isSelected()
-        || assetIniCheckbox.isSelected()
-        || assetResCheckbox.isSelected()
-        || assetCfgCheckbox.isSelected()
-        || assetNvRamCheckbox.isSelected()
-        || assetMusicCheckbox.isSelected()
-        || assetMediaCheckbox.isSelected()
-        || assetBackglassCheckbox.isSelected()
-        || assetPupPackCheckbox.isSelected()
-        || assetRomCheckbox.isSelected());
+    assetsBox.setVisible(assetBackglassLabel.isVisible()
+        || assetAltSoundLabel.isVisible()
+        || assetAltColorLabel.isVisible()
+        || assetPovLabel.isVisible()
+        || assetIniLabel.isVisible()
+        || assetResLabel.isVisible()
+        || assetCfgLabel.isVisible()
+        || assetNvRamLabel.isVisible()
+        || assetMusicLabel.isVisible()
+        || assetMediaLabel.isVisible()
+        || assetBackglassLabel.isVisible()
+        || assetPupPackLabel.isVisible()
+        || assetRomLabel.isVisible());
     noAssetsLabel.setVisible(!assetsBox.isVisible());
   }
 
@@ -552,8 +451,8 @@ public class TableUploadController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
-    assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
-    assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
+    assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
+    assetMediaLabel.managedProperty().bindBidirectional(assetMediaLabel.visibleProperty());
 
     root.setOnDragOver(new FileSelectorDragEventHandler(root, "vpx", PackageUtil.ARCHIVE_ZIP, PackageUtil.ARCHIVE_RAR, PackageUtil.ARCHIVE_7Z));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
@@ -680,33 +579,33 @@ public class TableUploadController implements Initializable, DialogController {
     assetsBox.setVisible(false);
     assetsBox.managedProperty().bindBidirectional(assetsBox.visibleProperty());
 
-    assetPupPackCheckbox.managedProperty().bindBidirectional(assetPupPackCheckbox.visibleProperty());
-    assetMusicCheckbox.managedProperty().bindBidirectional(assetMusicCheckbox.visibleProperty());
-    assetMediaCheckbox.managedProperty().bindBidirectional(assetMediaCheckbox.visibleProperty());
-    assetAltColorCheckbox.managedProperty().bindBidirectional(assetAltColorCheckbox.visibleProperty());
-    assetAltSoundCheckbox.managedProperty().bindBidirectional(assetAltSoundCheckbox.visibleProperty());
-    assetBackglassCheckbox.managedProperty().bindBidirectional(assetBackglassCheckbox.visibleProperty());
-    assetRomCheckbox.managedProperty().bindBidirectional(assetRomCheckbox.visibleProperty());
-    assetDmdCheckbox.managedProperty().bindBidirectional(assetDmdCheckbox.visibleProperty());
-    assetResCheckbox.managedProperty().bindBidirectional(assetResCheckbox.visibleProperty());
-    assetPovCheckbox.managedProperty().bindBidirectional(assetPovCheckbox.visibleProperty());
-    assetIniCheckbox.managedProperty().bindBidirectional(assetIniCheckbox.visibleProperty());
-    assetCfgCheckbox.managedProperty().bindBidirectional(assetCfgCheckbox.visibleProperty());
-    assetNvRamCheckbox.managedProperty().bindBidirectional(assetNvRamCheckbox.visibleProperty());
+    assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
+    assetMusicLabel.managedProperty().bindBidirectional(assetMusicLabel.visibleProperty());
+    assetMediaLabel.managedProperty().bindBidirectional(assetMediaLabel.visibleProperty());
+    assetAltColorLabel.managedProperty().bindBidirectional(assetAltColorLabel.visibleProperty());
+    assetAltSoundLabel.managedProperty().bindBidirectional(assetAltSoundLabel.visibleProperty());
+    assetBackglassLabel.managedProperty().bindBidirectional(assetBackglassLabel.visibleProperty());
+    assetRomLabel.managedProperty().bindBidirectional(assetRomLabel.visibleProperty());
+    assetDmdLabel.managedProperty().bindBidirectional(assetDmdLabel.visibleProperty());
+    assetResLabel.managedProperty().bindBidirectional(assetResLabel.visibleProperty());
+    assetPovLabel.managedProperty().bindBidirectional(assetPovLabel.visibleProperty());
+    assetIniLabel.managedProperty().bindBidirectional(assetIniLabel.visibleProperty());
+    assetCfgLabel.managedProperty().bindBidirectional(assetCfgLabel.visibleProperty());
+    assetNvRamLabel.managedProperty().bindBidirectional(assetNvRamLabel.visibleProperty());
 
-    assetPupPackCheckbox.setVisible(false);
-    assetMediaCheckbox.setVisible(false);
-    assetMusicCheckbox.setVisible(false);
-    assetAltSoundCheckbox.setVisible(false);
-    assetAltColorCheckbox.setVisible(false);
-    assetBackglassCheckbox.setVisible(false);
-    assetResCheckbox.setVisible(false);
-    assetRomCheckbox.setVisible(false);
-    assetDmdCheckbox.setVisible(false);
-    assetIniCheckbox.setVisible(false);
-    assetPovCheckbox.setVisible(false);
-    assetNvRamCheckbox.setVisible(false);
-    assetCfgCheckbox.setVisible(false);
+    assetPupPackLabel.setVisible(false);
+    assetMediaLabel.setVisible(false);
+    assetMusicLabel.setVisible(false);
+    assetAltSoundLabel.setVisible(false);
+    assetAltColorLabel.setVisible(false);
+    assetBackglassLabel.setVisible(false);
+    assetResLabel.setVisible(false);
+    assetRomLabel.setVisible(false);
+    assetDmdLabel.setVisible(false);
+    assetIniLabel.setVisible(false);
+    assetPovLabel.setVisible(false);
+    assetNvRamLabel.setVisible(false);
+    assetCfgLabel.setVisible(false);
   }
 
   public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {

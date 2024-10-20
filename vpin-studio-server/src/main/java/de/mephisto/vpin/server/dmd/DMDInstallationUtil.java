@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.dmd;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -19,7 +21,7 @@ import java.util.zip.ZipInputStream;
 public class DMDInstallationUtil {
   private final static Logger LOG = LoggerFactory.getLogger(DMDInstallationUtil.class);
 
-  public static void unzip(File archiveFile, File tablesFolder, String dmdFolder) {
+  public static void unzip(@NonNull File archiveFile, @NonNull File tablesFolder, @NonNull String dmdFolder) {
     try {
       if (dmdFolder.endsWith("/")) {
         dmdFolder.substring(0, dmdFolder.length() - 1);

@@ -139,7 +139,6 @@ public class VPXResource {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
       descriptor.setAcceptAllAudioAsMusic(true);
-      descriptor.getAssetsToImport().add(AssetType.MUSIC);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
       return descriptor;
@@ -156,7 +155,6 @@ public class VPXResource {
                                     @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.POV);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
       gameService.resetUpdate(gameId, VpsDiffTypes.pov);

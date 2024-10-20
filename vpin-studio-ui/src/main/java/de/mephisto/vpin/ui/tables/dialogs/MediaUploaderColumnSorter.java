@@ -6,7 +6,7 @@ import javafx.scene.control.TableView;
 
 import java.util.Comparator;
 
-public class MediaUploaderColumnSorter implements BaseColumnSorter<MediaUploadController.ArchiveItem> {
+public class MediaUploaderColumnSorter implements BaseColumnSorter<MediaUploadArchiveItem> {
 
   private final MediaUploadController mediaUploadController;
 
@@ -15,10 +15,10 @@ public class MediaUploaderColumnSorter implements BaseColumnSorter<MediaUploadCo
   }
 
   @Override
-  public Comparator<MediaUploadController.ArchiveItem> buildComparator(TableView<MediaUploadController.ArchiveItem> tableView) {
-    Comparator<MediaUploadController.ArchiveItem> comp = null;
+  public Comparator<MediaUploadArchiveItem> buildComparator(TableView<MediaUploadArchiveItem> tableView) {
+    Comparator<MediaUploadArchiveItem> comp = null;
     if (!tableView.getSortOrder().isEmpty()) {
-      TableColumn<MediaUploadController.ArchiveItem, ?> column = tableView.getSortOrder().get(0);
+      TableColumn<MediaUploadArchiveItem, ?> column = tableView.getSortOrder().get(0);
 
       if (column.equals(mediaUploadController.columnAssetType)) {
         comp = Comparator.comparing(o -> o.getAssetType());

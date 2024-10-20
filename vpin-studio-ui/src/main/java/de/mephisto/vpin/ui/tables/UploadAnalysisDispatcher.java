@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -20,6 +19,8 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
@@ -44,7 +45,7 @@ public class UploadAnalysisDispatcher {
   }
 
   public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType) {
-    UploaderAnalysis<?> analysis = new UploaderAnalysis<>(file);
+    UploaderAnalysis<?> analysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
     dispatchBySuffix(file, game, assetType, analysis);
   }
 
@@ -116,7 +117,7 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openPupPackUploadDialog(game, file, analysis);
         break;
       }
-      case POPPER_MEDIA: {
+      case FRONTEND_MEDIA: {
         TableDialogs.openMediaUploadDialog(game, file, analysis, false);
         break;
       }
@@ -186,7 +187,7 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          if (singleAssetType.equals(AssetType.VPX)) {
+          if (singleAssetType.equals(AssetType.VPX) || singleAssetType.equals(AssetType.FPT)) {
             TableDialogs.openTableUploadDialog(game, null, analysis);
           }
           else {

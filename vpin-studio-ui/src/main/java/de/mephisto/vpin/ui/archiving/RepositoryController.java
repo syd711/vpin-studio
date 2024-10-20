@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.archiving;
 
 import de.mephisto.vpin.commons.ArchiveSourceType;
 import de.mephisto.vpin.commons.utils.CommonImageUtil;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;

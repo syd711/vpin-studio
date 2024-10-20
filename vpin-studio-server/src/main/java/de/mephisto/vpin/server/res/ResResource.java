@@ -36,7 +36,6 @@ public class ResResource {
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.RES);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.RES);
       return descriptor;

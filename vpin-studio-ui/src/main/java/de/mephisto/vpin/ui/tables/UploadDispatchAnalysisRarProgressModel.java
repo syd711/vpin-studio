@@ -19,6 +19,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.zip.ZipEntry;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpleInArchiveItem> {
   private final static Logger LOG = LoggerFactory.getLogger(UploadDispatchAnalysisRarProgressModel.class);
   private final RandomAccessFile randomAccessFile;
@@ -42,7 +44,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
     size = archiveItems.length;
     iterator = Arrays.stream(archiveItems).iterator();
 
-    uploaderAnalysis = new UploaderAnalysis<>(file);
+    uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
   }
 
   @Override

@@ -1,5 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
+import de.mephisto.vpin.restclient.util.FileUtils;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -14,6 +14,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEntry> {
   private final static Logger LOG = LoggerFactory.getLogger(UploadDispatchAnalysisZipProgressModel.class);
   private ZipEntry zipEntry;
@@ -32,7 +34,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
     fileInputStream = new FileInputStream(file);
     zis = new ZipInputStream(fileInputStream);
 
-    uploaderAnalysis = new UploaderAnalysis<>(file);
+    uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
   }
 
   @Override

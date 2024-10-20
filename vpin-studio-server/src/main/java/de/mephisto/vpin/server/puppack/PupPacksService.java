@@ -188,7 +188,7 @@ public class PupPacksService implements InitializingBean {
 
     String rom = analysis.getRomFromPupPack();
     if (StringUtils.isEmpty(rom)) {
-      LOG.error("PUP pack extraction has been cancelled, no ROM could be resolved");
+      LOG.info("PUP pack extraction has been cancelled, no ROM could be resolved");
       return;
     }
 

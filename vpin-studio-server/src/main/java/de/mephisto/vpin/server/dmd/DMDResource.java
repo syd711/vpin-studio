@@ -57,7 +57,6 @@ public class DMDResource {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     descriptor.setEmulatorId(emulatorId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.DMD_PACK);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.DMD_PACK);
       return descriptor;

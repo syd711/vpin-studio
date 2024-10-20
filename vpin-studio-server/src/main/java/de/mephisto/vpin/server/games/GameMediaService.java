@@ -27,7 +27,7 @@ public class GameMediaService {
   public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis<?> analysis) throws Exception {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis<>(tempFile);
+      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
       analysis.analyze();
     }
 

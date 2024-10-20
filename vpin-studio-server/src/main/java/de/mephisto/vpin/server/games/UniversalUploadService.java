@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
@@ -9,12 +8,14 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vps.VpsInstallLink;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
 import de.mephisto.vpin.server.discord.DiscordService;
 import de.mephisto.vpin.server.dmd.DMDService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.mame.MameService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.puppack.PupPacksService;
@@ -73,6 +74,9 @@ public class UniversalUploadService {
   @Autowired
   private PreferencesService preferencesService;
 
+  @Autowired
+  private FrontendService frontendService;
+
   public File writeTableFilenameBasedEntry(UploadDescriptor descriptor, String archiveFile) throws IOException {
     File tempFile = new File(descriptor.getTempFilename());
     String archiveSuffix = FilenameUtils.getExtension(tempFile.getName());
@@ -93,14 +97,8 @@ public class UniversalUploadService {
   }
 
   public void importFileBasedAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis, AssetType assetType) throws Exception {
-
     // If the file is not a real file but a pointer to an external resource, it is time to get the real file...
     resolveLinks(uploadDescriptor);
-
-    if (!uploadDescriptor.isImporting(assetType)) {
-      LOG.info("Skipped file import of type " + assetType.name() + ", because it is not marked for import.");
-      return;
-    }
 
     LOG.info("---> Executing table asset archive import for type \"" + assetType.name() + "\" <---");
     File temporaryUploadDescriptorBundleFile = new File(uploadDescriptor.getTempFilename());
@@ -112,7 +110,7 @@ public class UniversalUploadService {
 
       if (PackageUtil.isSupportedArchive(FilenameUtils.getExtension(temporaryUploadDescriptorBundleFile.getName()))) {
         if (analysis == null) {
-          analysis = new UploaderAnalysis<>(temporaryUploadDescriptorBundleFile);
+          analysis = new UploaderAnalysis<>(frontendService.getFrontend(), temporaryUploadDescriptorBundleFile);
           analysis.analyze();
         }
 
@@ -134,65 +132,79 @@ public class UniversalUploadService {
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
-    if (!uploadDescriptor.isImporting(assetType)) {
-      LOG.info("Skipped bundle import of type " + assetType.name() + ", because it is not marked for import.");
-      return;
-    }
-
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis(tempFile);
+      analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
       analysis.analyze();
     }
 
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     switch (assetType) {
       case ALT_SOUND: {
-        JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
-        uploadDescriptor.setError(jobExecutionResult.getError());
+        if (analysis.validateAssetType(AssetType.ALT_SOUND) == null) {
+          JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
+          uploadDescriptor.setError(jobExecutionResult.getError());
+        }
         break;
       }
       case ALT_COLOR: {
-        String suffix = FilenameUtils.getExtension(tempFile.getName());
-        if (PackageUtil.isSupportedArchive(suffix)) {
-          altColorService.installAltColorFromArchive(analysis, game, tempFile);
-          break;
+        if (analysis.validateAssetType(AssetType.ALT_COLOR) == null) {
+          String suffix = FilenameUtils.getExtension(tempFile.getName());
+          if (PackageUtil.isSupportedArchive(suffix)) {
+            altColorService.installAltColorFromArchive(analysis, game, tempFile);
+            break;
+          }
+          JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
+          uploadDescriptor.setError(jobExecutionResult.getError());
         }
-        JobDescriptor jobExecutionResult = altColorService.installAltColor(game, tempFile);
-        uploadDescriptor.setError(jobExecutionResult.getError());
         break;
       }
       case DMD_PACK: {
-        dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), uploadDescriptor.getEmulatorId());
+        if (analysis.validateAssetType(AssetType.DMD_PACK) == null) {
+          dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), uploadDescriptor.getEmulatorId());
+        }
         break;
       }
       case PUP_PACK: {
-        pupPacksService.installPupPack(uploadDescriptor, analysis, uploadDescriptor.isAsync());
+        if (analysis.validateAssetType(AssetType.PUP_PACK) == null) {
+          pupPacksService.installPupPack(uploadDescriptor, analysis, uploadDescriptor.isAsync());
+        }
         break;
       }
-      case POPPER_MEDIA: {
-        gameMediaService.installMediaPack(uploadDescriptor, analysis);
+      case FRONTEND_MEDIA: {
+        if (analysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null) {
+          gameMediaService.installMediaPack(uploadDescriptor, analysis);
+        }
         break;
       }
       case MUSIC: {
-        String rom = null;
-        if (game != null) {
-          rom = game.getRom();
+        if (analysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null) {
+          String rom = null;
+          if (game != null) {
+            rom = game.getRom();
+          }
+          //TODO better music bundle handling based on emulators
+          vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         }
-        vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         break;
       }
       case ROM: {
-        mameService.installRom(uploadDescriptor, tempFile, analysis);
+        if (analysis.validateAssetType(AssetType.ROM) == null) {
+          mameService.installRom(uploadDescriptor, tempFile, analysis);
+        }
         break;
       }
       case NV: {
-        mameService.installNvRam(uploadDescriptor, tempFile, analysis);
+        if (analysis.validateAssetType(AssetType.NV) == null) {
+          mameService.installNvRam(uploadDescriptor, tempFile, analysis);
+        }
         break;
       }
       case CFG: {
-        mameService.installCfg(uploadDescriptor, tempFile, analysis);
+        if (analysis.validateAssetType(AssetType.CFG) == null) {
+          mameService.installCfg(uploadDescriptor, tempFile, analysis);
+        }
         break;
       }
       default: {

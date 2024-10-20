@@ -64,7 +64,7 @@ public class PlaylistMediaServiceClient extends VPinStudioClientService {
   public JobDescriptor uploadMedia(File file, int gameId, VPinScreen screen, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/upload/" + screen.name() + "/" + append;
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.FRONTEND_MEDIA, listener);
       ResponseEntity<JobDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();

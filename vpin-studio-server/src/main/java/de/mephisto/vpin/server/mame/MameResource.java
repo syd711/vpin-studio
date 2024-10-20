@@ -63,7 +63,6 @@ public class MameResource {
     descriptor.setEmulatorId(emuId);
 
     try {
-      descriptor.getAssetsToImport().add(AssetType.ROM);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ROM);
       return descriptor;
@@ -83,7 +82,6 @@ public class MameResource {
     descriptor.setEmulatorId(emuId);
 
     try {
-      descriptor.getAssetsToImport().add(AssetType.CFG);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.CFG);
       return descriptor;
@@ -103,7 +101,6 @@ public class MameResource {
     descriptor.setEmulatorId(emuId);
 
     try {
-      descriptor.getAssetsToImport().add(AssetType.NV);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.NV);
       return descriptor;
