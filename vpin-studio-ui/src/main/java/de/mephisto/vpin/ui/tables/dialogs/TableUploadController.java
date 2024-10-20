@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -15,9 +14,11 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.TableDialogs;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.util.*;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -297,6 +298,12 @@ public class TableUploadController implements Initializable, DialogController {
     }
   }
 
+  @FXML
+  private void onAssetFilter() {
+    TableDialogs.openMediaUploadDialog(this.game, selection, uploaderAnalysis, true);
+    updateAnalysis();
+  }
+
   private boolean runPreChecks(Stage s) {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
@@ -317,10 +324,10 @@ public class TableUploadController implements Initializable, DialogController {
     //suggest table match
     if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
       try {
-        ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s, 
-          new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
-            return client.getGameService().findMatch(fileName);
-          }));
+        ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
+            new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
+              return client.getGameService().findMatch(fileName);
+            }));
         if (checkResult.isCancelled()) {
           return false;
         }

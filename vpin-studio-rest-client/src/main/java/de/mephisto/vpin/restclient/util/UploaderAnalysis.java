@@ -39,6 +39,7 @@ public class UploaderAnalysis<T> {
   private final List<String> fileNames = new ArrayList<>();
   private final List<String> fileNamesWithPath = new ArrayList<>();
   private final List<String> directories = new ArrayList<>();
+  private List<String> exclusions = new ArrayList<>();
 
   private String readme;
   private String pupFolder;
@@ -47,12 +48,17 @@ public class UploaderAnalysis<T> {
     this.file = file;
   }
 
+  public void setExclusions(List<String> exclusions) {
+    this.exclusions = exclusions;
+  }
 
   public void reset() {
     this.fileNames.clear();
     this.fileNamesWithPath.clear();
     this.directories.clear();
   }
+
+
 
   public File getFile() {
     return file;
@@ -281,6 +287,9 @@ public class UploaderAnalysis<T> {
 
   public boolean analyze(T archiveEntry, String formattedName, boolean directory) {
     if (formattedName.contains("_MACOSX")) {
+      return false;
+    }
+    if (formattedName.toLowerCase().contains("scorbit")) {
       return false;
     }
 

@@ -412,8 +412,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onMediaUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-      TableDialogs.openMediaUploadDialog(defaultGameEmulator, selectedItems.get(0), null, null);
+      TableDialogs.openMediaUploadDialog(selectedItems.get(0), null, null, false);
     }
   }
 

@@ -8,7 +8,6 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
@@ -91,6 +90,9 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   @FXML
   private Label tableFileLabel;
 
+  @FXML
+  private Label emulatorLabel;
+
   private File selection;
   private Stage stage;
 
@@ -146,11 +148,11 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
       this.uploaderAnalysis = null;
-      refreshSelection(stage);
+      refreshSelection();
     }
   }
 
-  private void refreshSelection(Stage stage) {
+  private void refreshSelection() {
     archiveItemSelection.clear();
     previewCache.clear();
 
@@ -172,6 +174,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
           archiveItemSelection.addAll(filteredData);
         })
         .thenLater(() -> {
+          this.emulatorLabel.setText(this.emulator.getName());
           this.fileNameField.setText(this.selection.getAbsolutePath());
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
@@ -194,21 +197,36 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     return result;
   }
 
-  public void setData(GameEmulatorRepresentation emulator, GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
-    this.emulator = emulator;
+  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, boolean filterMode) {
+    this.emulator = client.getFrontendService().getDefaultGameEmulator();
     this.game = game;
-    this.tableNameLabel.setText(this.game.getGameDisplayName());
-    this.tableFileLabel.setText(this.game.getGameFilePath());
     this.selection = file;
     this.uploaderAnalysis = analysis;
     this.stage = stage;
+
+    if (game != null) {
+      this.emulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      this.tableNameLabel.setText(this.game.getGameDisplayName());
+      this.tableFileLabel.setText(this.game.getGameFilePath());
+    }
+
+    if (filterMode) {
+      this.uploadBtn.setText("Apply Selection");
+      this.tableInfo.setVisible(false);
+      this.stage.setTitle("Asset Selector");
+    }
+
     if (selection != null) {
+      refreshSelection();
     }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("media", "media", new MediaUploaderColumnSorter(this));
+
+    this.tableInfo.managedProperty().bindBidirectional(tableInfo.visibleProperty());
+
     this.result = false;
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -216,7 +234,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
     root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
       selection = file;
-      refreshSelection(stage);
+      refreshSelection();
     }));
 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
@@ -242,7 +260,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       Label label = new Label(model.getName());
       label.getStyleClass().add("default-text");
       label.setTooltip(new Tooltip(model.getName()));
-      if(model.folder) {
+      if (model.folder) {
         label.setGraphic(WidgetFactory.createIcon("mdi2f-folder-multiple-outline"));
       }
       else {
@@ -462,7 +480,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       String extension = FilenameUtils.getExtension(getName());
       for (AssetType tableAssetType : tableAssetTypes) {
         if (extension.equalsIgnoreCase(tableAssetType.name())) {
-          target = new File(game.getGameFilePath()).getParentFile().getAbsolutePath();
+          target = emulator.getTablesDirectory();
           assetType = tableAssetType;
           return true;
         }

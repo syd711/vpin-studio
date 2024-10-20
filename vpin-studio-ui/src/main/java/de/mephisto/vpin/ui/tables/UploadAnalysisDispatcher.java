@@ -43,12 +43,12 @@ public class UploadAnalysisDispatcher {
     }
   }
 
-  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType) {
+  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType) {
     UploaderAnalysis<?> analysis = new UploaderAnalysis<>(file);
     dispatchBySuffix(file, game, assetType, analysis);
   }
 
-  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, AssetType assetType, UploaderAnalysis<?> analysis) {
+  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @NonNull UploaderAnalysis<?> analysis) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file);
@@ -117,8 +117,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case POPPER_MEDIA: {
-        GameEmulatorRepresentation emulator = Studio.client.getFrontendService().getGameEmulator(game.getEmulatorId());
-        TableDialogs.openMediaUploadDialog(emulator, game, file, analysis);
+        TableDialogs.openMediaUploadDialog(game, file, analysis, false);
         break;
       }
       default: {
@@ -157,7 +156,7 @@ public class UploadAnalysisDispatcher {
       }
     }
     catch (Exception e) {
-      LOG.error("Error opening archive: " + e.getMessage(), e);
+      LOG.error("Error opening archive: {}", e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
     }
     return null;
@@ -172,13 +171,13 @@ public class UploadAnalysisDispatcher {
       return analysis.validateAssetType(assetType);
     }
     catch (Exception e) {
-      LOG.error("Error opening archive: " + e.getMessage(), e);
+      LOG.error("Error opening archive: {}", e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
     }
     return null;
   }
 
-  public static String validateArchive(File file, GameRepresentation game) {
+  public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game) {
     try {
       ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
@@ -187,7 +186,13 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          dispatchBySuffix(file, game, singleAssetType, analysis);
+          if (singleAssetType.equals(AssetType.VPX)) {
+            TableDialogs.openTableUploadDialog(game, null, analysis);
+          }
+          else {
+            TableDialogs.openMediaUploadDialog(game, file, analysis, false);
+          }
+//          dispatchBySuffix(file, game, singleAssetType, analysis);
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
@@ -198,7 +203,7 @@ public class UploadAnalysisDispatcher {
       }
     }
     catch (Exception e) {
-      LOG.error("Error creating UploadDispatchAnalysisZipProgressModel: " + e.getMessage(), e);
+      LOG.error("Error creating UploadDispatchAnalysisZipProgressModel: {}", e.getMessage(), e);
     }
     return null;
   }

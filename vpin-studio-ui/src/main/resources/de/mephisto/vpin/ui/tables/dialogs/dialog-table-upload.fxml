@@ -291,6 +291,14 @@
                                           <Font size="14.0" />
                                        </font>
                                     </CheckBox>
+                                    <Button mnemonicParsing="false" onAction="#onAssetFilter" text="Filter Selection" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-outline" iconSize="18" />
+                                       </graphic>
+                                    </Button>
                                  </children>
                                  <VBox.margin>
                                     <Insets left="26.0" top="12.0" />
