@@ -182,7 +182,12 @@ public class UploadAnalysisDispatcher {
     try {
       ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) progressDialog.getResults().get(0);
+      List<Object> results = progressDialog.getResults();
+      if (results.isEmpty()) {
+        return null;
+      }
+
+      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) results.get(0);
       AssetType singleAssetType = analysis.getSingleAssetType();
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);

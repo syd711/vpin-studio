@@ -656,7 +656,7 @@ public class UploaderAnalysis<T> {
 
   public String getDMDPath() {
     String pupPackRoot = getPupPackRootDirectory();
-    for (String filenameWithPath : getFilteredFilenamesWithPath()) {
+    for (String filenameWithPath : getFoldersWithPath()) {
       if (pupPackRoot != null && isFileBelowFolder(pupPackRoot, filenameWithPath)) {
         continue;
       }

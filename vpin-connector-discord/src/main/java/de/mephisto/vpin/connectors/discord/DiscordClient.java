@@ -42,12 +42,12 @@ public class DiscordClient {
     this.botToken = botToken;
 
     jda = JDABuilder.createDefault(botToken.trim(), Arrays.asList(GatewayIntent.DIRECT_MESSAGES,
-        GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
-      .setEventPassthrough(true)
-      .setStatus(OnlineStatus.ONLINE)
-      .setMemberCachePolicy(MemberCachePolicy.ALL)
-      .addEventListeners(this.listenerAdapter)
-      .build();
+            GatewayIntent.GUILD_MESSAGES, GatewayIntent.GUILD_MEMBERS, GatewayIntent.MESSAGE_CONTENT))
+        .setEventPassthrough(true)
+        .setStatus(OnlineStatus.ONLINE)
+        .setMemberCachePolicy(MemberCachePolicy.ALL)
+        .addEventListeners(this.listenerAdapter)
+        .build();
     jda.awaitReady();
 
     this.botId = jda.getSelfUser().getIdLong();
@@ -117,7 +117,8 @@ public class DiscordClient {
         t.setCreationDate(new Date(epochMilli));
 
         return t;
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Failed to create text channel \"" + name + "\": " + e.getMessage(), e);
       }
     }
@@ -224,7 +225,8 @@ public class DiscordClient {
           LOG.error("No discord channel found for id '" + channelId + "' to read pinned messages from.");
         }
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error reading pinned messages: " + e.getMessage(), e);
     }
     return Collections.emptyList();
@@ -262,7 +264,8 @@ public class DiscordClient {
             }
           }
           invalidateMessageCache(channelId, -1);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
           LOG.error("Failed to cleanup pin messages: " + e.getMessage(), e);
         }
       }
@@ -350,7 +353,8 @@ public class DiscordClient {
     if (guild != null) {
       try {
         guild.getTextChannelById(channelId).delete().complete();
-      } catch (Exception e) {
+      }
+      catch (Exception e) {
         LOG.error("Channel deletion failed: " + e.getMessage());
       }
     }
@@ -412,9 +416,15 @@ public class DiscordClient {
     if (guild != null) {
       TextChannel textChannel = jda.getChannelById(TextChannel.class, channelId);
       if (textChannel != null) {
-        Message complete = textChannel.sendMessage("").addEmbeds(msg).complete();
-        this.messageCacheById.put(complete.getIdLong(), complete);
-        return complete.getIdLong();
+        try {
+          Message complete = textChannel.sendMessage("").addEmbeds(msg).complete();
+          this.messageCacheById.put(complete.getIdLong(), complete);
+          return complete.getIdLong();
+        }
+        catch (Exception e) {
+          LOG.error("Sending discord message failed: {}", e.getMessage(), e);
+          return -1;
+        }
       }
       else {
         LOG.error("No discord channel found for id '" + channelId + "'");
@@ -576,7 +586,8 @@ public class DiscordClient {
       else {
         this.jda.getPresence().setActivity(Activity.playing("\"" + status + "\""));
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Discord activity update failed: " + e.getMessage());
     }
   }

@@ -61,7 +61,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   private BaseColumnSorter<M> columnSorter;
 
-  private WaitOverlay loadingOverlay;
+  protected WaitOverlay loadingOverlay;
 
   @FXML
   protected Button reloadBtn;

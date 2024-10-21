@@ -179,7 +179,7 @@ public class UniversalUploadService {
         break;
       }
       case MUSIC: {
-        if (analysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null) {
+        if (analysis.validateAssetType(AssetType.MUSIC) == null) {
           String rom = null;
           if (game != null) {
             rom = game.getRom();

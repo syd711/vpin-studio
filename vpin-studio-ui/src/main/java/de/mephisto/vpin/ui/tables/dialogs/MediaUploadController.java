@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
@@ -18,6 +19,7 @@ import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -101,11 +103,13 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   private UploaderAnalysis uploaderAnalysis;
 
   private List<String> allData;
-  private List<String> filteredData;
+  private List<MediaUploadArchiveItem> filteredData;
   private boolean filterMode = false;
 
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
+
+  private Map<String, Image> previewCache = new HashMap<>();
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -119,20 +123,21 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     if (selection != null && selection.exists()) {
       result = true;
 
-      if (filterMode) {
-        List<String> excludedFiles = new ArrayList<>();
-        List<String> excludedFolders = new ArrayList<>();
-        this.tableView.getItems().forEach(m -> {
-          if (!m.isSelected()) {
-            if (m.isFolder()) {
-              excludedFolders.add(m.getBean());
-            }
-            else {
-              excludedFiles.add(m.getBean());
-            }
+      List<String> excludedFiles = new ArrayList<>();
+      List<String> excludedFolders = new ArrayList<>();
+      this.tableView.getItems().forEach(m -> {
+        if (!m.isSelected()) {
+          if (m.isFolder()) {
+            excludedFolders.add(m.getBean());
           }
-        });
-        uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
+          else {
+            excludedFiles.add(m.getBean());
+          }
+        }
+      });
+      uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
+
+      if (filterMode) {
         stage.close();
       }
       else {
@@ -148,6 +153,8 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
             uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
             uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
             result = UniversalUploader.postProcess(uploadDescriptor);
+
+            EventManager.getInstance().notifyTableChange(game.getId(), game.getRom(), game.getGameName());
           }
         });
       }
@@ -181,6 +188,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
   }
 
   private void refreshSelection() {
+    this.previewCache.clear();
     this.fileNameField.setText(this.selection.getAbsolutePath());
 
     if (uploaderAnalysis == null) {
@@ -198,10 +206,22 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
           allData.addAll(uploaderAnalysis.getFoldersWithPath());
           LOG.info("Media Uploader is analyzing {} folder entries.", uploaderAnalysis.getFoldersWithPath().size());
           LOG.info("Media Uploader is analyzing {} archive entries.", allData.size());
-          filteredData = allData.stream().filter(d -> toModel(d).getAssetType() != null).collect(Collectors.toList());
-          setItems(filteredData);
+
+          filteredData = allData.stream().map(d -> toModel(d)).filter(m -> m.getAssetType() != null).collect(Collectors.toList());
+
+          List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
+          for (int i = 0; i < images.size(); i++) {
+            MediaUploadArchiveItem model = images.get(i);
+            String message = "Generating Previews... (" + (i + 1) + "/" + images.size() + ")";
+            Platform.runLater(() -> {
+              loadingOverlay.setMessage(message);
+            });
+            previewCache.put(model.getName(), model.getPreview());
+          }
         })
         .thenLater(() -> {
+          tableView.setItems(FXCollections.observableList(filteredData));
+
           this.fileNameField.setText(this.selection.getAbsolutePath());
           this.fileNameField.setDisable(false);
           this.fileBtn.setDisable(false);
@@ -333,9 +353,8 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     }, true);
 
     BaseLoadingColumn.configureColumn(columnPreview, (value, model) -> {
-      Image preview = model.getPreview();
-      if (preview != null) {
-        ImageView imageView = new ImageView(preview);
+      if (previewCache.containsKey(model.getName())) {
+        ImageView imageView = new ImageView(previewCache.get(model.getName()));
         imageView.setFitWidth(250);
         imageView.setFitHeight(140);
         imageView.setPreserveRatio(true);

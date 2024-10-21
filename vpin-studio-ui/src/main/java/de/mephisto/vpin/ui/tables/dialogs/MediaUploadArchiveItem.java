@@ -176,7 +176,6 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
 
   public String getAssetType() {
     if (assetType != null) {
-      getPreview();
       return assetType.toString();
     }
     return null;
@@ -186,12 +185,16 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     return this.folder;
   }
 
+  public boolean isImage() {
+    return  name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".gif");
+  }
+
   public Image getPreview() {
     String name = getName();
-    if (name.toLowerCase().endsWith(".png") || name.toLowerCase().endsWith(".jpg") || name.toLowerCase().endsWith(".gif")) {
+    if (isImage()) {
       if (image == null) {
         try {
-          LOG.info("Reading previewable archive file " + name);
+          LOG.info("Generating preview for file " + name);
           InputStream in = new ByteArrayInputStream(uploaderAnalysis.readFile(name));
           image = new Image(in);
         }
