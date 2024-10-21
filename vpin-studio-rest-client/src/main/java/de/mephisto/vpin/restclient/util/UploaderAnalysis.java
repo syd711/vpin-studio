@@ -656,7 +656,7 @@ public class UploaderAnalysis<T> {
 
   public String getDMDPath() {
     String pupPackRoot = getPupPackRootDirectory();
-    for (String filenameWithPath : getFoldersWithPath()) {
+    for (String filenameWithPath : getFilteredFolders()) {
       if (pupPackRoot != null && isFileBelowFolder(pupPackRoot, filenameWithPath)) {
         continue;
       }
@@ -667,7 +667,7 @@ public class UploaderAnalysis<T> {
           return filenameWithPath.substring(0, filenameWithPath.indexOf(segment) + segment.length());
         }
 
-        if (segment.endsWith("DMD") && !segment.equalsIgnoreCase("DMD") && !segment.contains(" ")) {
+        if (segment.endsWith("DMD") && !segment.equalsIgnoreCase("DMD") && !segment.equalsIgnoreCase("FullDMD") && !segment.contains(" ")) {
           return filenameWithPath;
         }
       }
