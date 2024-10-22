@@ -128,7 +128,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
     }
 
-    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.RES, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX))) {
+    if (resolveTableFileAssets(Arrays.asList(AssetType.INI, AssetType.POV, AssetType.RES, AssetType.RES, AssetType.DIRECTB2S, AssetType.VPX, AssetType.FPT))) {
       LOG.info(fileNameWithPath + ": " + assetType.name());
       return;
     }

@@ -314,11 +314,14 @@ public class TableUploadController implements Initializable, DialogController {
 
           // If null the analysis was not successful.
           if (this.uploaderAnalysis != null) {
-            String analyze = uploaderAnalysis.validateAssetType(AssetType.VPX);
+            String analyzeVpx = uploaderAnalysis.validateAssetType(AssetType.VPX);
+            String analyzeFpt = uploaderAnalysis.validateAssetType(AssetType.FPT);
 
+            uploadBtn.setDisable(false);
             // If the analysis failed.
-            if (analyze != null) {
-              WidgetFactory.showAlert(Studio.stage, analyze);
+            if (analyzeVpx != null && analyzeFpt != null) {
+              uploadBtn.setDisable(true);
+              WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
 
               this.fileNameField.setText("");
               this.subfolderText.setText("");
@@ -337,8 +340,6 @@ public class TableUploadController implements Initializable, DialogController {
             }
 
             updateAnalysis();
-
-            this.uploadBtn.setDisable(analyze != null);
             this.fileBtn.setDisable(false);
             this.cancelBtn.setDisable(false);
 

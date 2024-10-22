@@ -411,6 +411,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive does not not contain a .vpx file.";
       }
+      case FPT: {
+        if (hasFileWithSuffix("fpt")) {
+          return null;
+        }
+        return "This archive does not not contain a .fpt file.";
+      }
       case DIRECTB2S: {
         if (hasFileWithSuffix("directb2s")) {
           return null;
@@ -503,6 +509,10 @@ public class UploaderAnalysis<T> {
   public AssetType getSingleAssetType() {
     if (hasFileWithSuffix("vpx")) {
       return AssetType.VPX;
+    }
+
+    if (hasFileWithSuffix("fpt")) {
+      return AssetType.FPT;
     }
 
     if (hasFileWithSuffix("directb2s")) {

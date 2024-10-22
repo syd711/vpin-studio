@@ -845,7 +845,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     JFXFuture.supplyAsync(() -> {
           if (clearCache) {
             if (isAllVpxSelected) {
-              client.getGameService().clearVpxCache();
+              client.getGameService().clearCache();
             }
             else {
               client.getGameService().clearCache(value.getId());

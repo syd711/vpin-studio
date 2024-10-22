@@ -75,6 +75,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openTableUploadDialog(game, null, analysis);
         return;
       }
+      case FPT: {
+        TableDialogs.openTableUploadDialog(game, null, analysis);
+        return;
+      }
       default: {
       }
     }

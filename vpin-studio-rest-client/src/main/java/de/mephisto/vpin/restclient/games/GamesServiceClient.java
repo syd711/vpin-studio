@@ -56,17 +56,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.loadingFlags.clear();
   }
 
-  public void clearVpxCache() {
-    // acceptable shortcut, else use below 
-    clearCache();
-
-    // ALTERNATIVE
-    //List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
-    //for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
-    //  clearCache(gameEmulator.getId());
-    //}
-  }
-
   public void clearCache(int emulatorId) {
     this.allGames.remove(emulatorId);
     this.loadingFlags.remove(emulatorId);
