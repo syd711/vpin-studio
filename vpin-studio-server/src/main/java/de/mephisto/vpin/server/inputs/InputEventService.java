@@ -129,8 +129,8 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
   }
 
   private void onPauseMenuEvent() {
-    boolean vpxRunning = systemService.isVPXRunning();
-    if (vpxRunning) {
+    boolean emulatorRunning = systemService.isPinballEmulatorRunning();
+    if (emulatorRunning) {
       ServerFX.getInstance().togglePauseMenu();
     }
     else {

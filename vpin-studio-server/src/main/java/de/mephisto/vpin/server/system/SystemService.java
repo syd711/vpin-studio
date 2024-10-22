@@ -332,17 +332,31 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
-  public boolean isVPXRunning() {
-    return isVPXRunning(getProcesses());
+  public boolean isPinballEmulatorRunning() {
+    return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
   }
 
   public boolean isVPXRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\")+1);
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
           LOG.info("Found active VPX process: " + fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public boolean isFPRunning(List<ProcessHandle> allProcesses) {
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("Future Pinball")) {
+          LOG.info("Found active FP process: " + fileName);
           return true;
         }
       }

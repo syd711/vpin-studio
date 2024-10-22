@@ -1,4 +1,4 @@
-package de.mephisto.vpin.server.vpx;
+package de.mephisto.vpin.server.fp;
 
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
@@ -19,9 +19,12 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * "Future Pinball.exe"  -open "C:\vPinball\FuturePinball\Tables\Retroflair - BAM Edition 1.4 (PinEvent 1.1).fpt" -play -exit
+ */
 @Service
-public class VPXCommandLineService {
-  private final static Logger LOG = LoggerFactory.getLogger(VPXCommandLineService.class);
+public class FPCommandLineService {
+  private final static Logger LOG = LoggerFactory.getLogger(FPCommandLineService.class);
 
   @Autowired
   private SystemService systemService;
@@ -29,34 +32,34 @@ public class VPXCommandLineService {
   @Autowired
   private FrontendService frontendService;
 
-  public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
+  public boolean execute(@NonNull Game game, @Nullable String altExe) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getExe();
+    File fpExe = game.getEmulator().getExe();
 
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
-    String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
-    if(altExe != null) {
-      vpxExe = new File(game.getEmulator().getInstallationFolder(), altExe);
+    String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
+    if (altExe != null) {
+      fpExe = new File(game.getEmulator().getInstallationFolder(), altExe);
     }
     else if (!StringUtils.isEmpty(altLaunchExe)) {
-      vpxExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
+      fpExe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
     }
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
-      executor.setDir(vpxExe.getParentFile());
+      List<String> strings = Arrays.asList("\"" + fpExe.getAbsolutePath() + "\"", "-open", "\"" + gameFile.getAbsolutePath() + "\"", "-play", "-exit");
+      SystemCommandExecutor executor = new SystemCommandExecutor(strings, false);
+      executor.setDir(fpExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n" + standardErrorFromCommand);
         return false;
       }
       return true;
-    } catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+    }
+    catch (Exception e) {
+      LOG.error("Error executing FP command: " + e.getMessage(), e);
     }
     return false;
   }
@@ -68,17 +71,18 @@ public class VPXCommandLineService {
 
     try {
       List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      LOG.info("Executing FP " + commandParam + "command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
 
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+        LOG.error("FP command failed:\n" + standardErrorFromCommand);
       }
-    } catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
+    }
+    catch (Exception e) {
+      LOG.error("Error executing FP command: " + e.getMessage(), e);
     }
 
     int count = 0;
@@ -86,12 +90,13 @@ public class VPXCommandLineService {
       count++;
       try {
         Thread.sleep(500);
-      } catch (InterruptedException e) {
+      }
+      catch (InterruptedException e) {
         //ignore
       }
       if (count > 20) {
         LOG.error("Timeout waiting for the generation of " + target.getAbsolutePath());
-        systemService.killProcesses("VPinballX");
+        systemService.killProcesses("Future Pinball");
         break;
       }
     }
@@ -100,21 +105,31 @@ public class VPXCommandLineService {
   }
 
   public boolean launch() {
-    GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    File vpxExe = defaultGameEmulator.getExe();
-    try {
-      List<String> strings = Arrays.asList(vpxExe.getName());
-      SystemCommandExecutor executor = new SystemCommandExecutor(strings);
-      executor.setDir(vpxExe.getParentFile());
-      executor.executeCommandAsync();
+    List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
+    for (GameEmulator gameEmulator : gameEmulators) {
+      if (gameEmulator.isFpEmulator()) {
+        File fpExe = gameEmulator.getExe();
+        try {
+          List<String> strings = Arrays.asList(fpExe.getName());
+          SystemCommandExecutor executor = new SystemCommandExecutor(strings);
+          executor.setDir(fpExe.getParentFile());
+          executor.executeCommandAsync();
 
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX command failed:\n" + standardErrorFromCommand);
+          StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+          if (standardErrorFromCommand != null && !StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+            LOG.error("FP command failed:\n" + standardErrorFromCommand);
+            return false;
+          }
+        }
+        catch (Exception e) {
+          LOG.error("Error executing VPX command: " + e.getMessage(), e);
+          return false;
+        }
+        return true;
       }
-    } catch (Exception e) {
-      LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
+
+    LOG.warn("No Future Pinball emulator found to launch.");
     return false;
   }
 }

@@ -495,7 +495,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (game != null) {
       UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
       if (uiSettings.isHideVPXStartInfo()) {
-        client.getVpxService().playGame(game.getId(), altExe);
+        client.getGameService().playGame(game.getId(), altExe);
         return;
       }
 
@@ -511,7 +511,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
           uiSettings.setHideVPXStartInfo(true);
           client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
         }
-        client.getVpxService().playGame(game.getId(), altExe);
+        client.getGameService().playGame(game.getId(), altExe);
       }
     }
   }
@@ -520,7 +520,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onStop() {
     Frontend frontend = client.getFrontendService().getFrontendCached();
     Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
-        FrontendUtil.replaceNames("Stop all [Emulator] and [Frontend] processes?", frontend, "VPX"));
+        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
       client.getFrontendService().terminateFrontend();
     }
@@ -1676,10 +1676,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.importBtn.setVisible(!frontendType.equals(FrontendType.Standalone));
     this.importBtn.setDisable(!vpxOrFpEmulator);
     this.deleteBtn.setVisible(vpxOrFpEmulator);
-    this.uploadTableBtn.setVisible(vpxEmulator);
+    this.uploadTableBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-    this.playBtn.setVisible(vpxEmulator);
-    this.stopBtn.setVisible(vpxEmulator);
+    this.playBtn.setVisible(vpxOrFpEmulator);
+    this.stopBtn.setVisible(vpxOrFpEmulator);
 
     deleteSeparator.setVisible(vpxOrFpEmulator);
 

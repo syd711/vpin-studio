@@ -1,16 +1,16 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.frontend.FrontendMedia;
-import de.mephisto.vpin.restclient.games.FilterSettings;
 import de.mephisto.vpin.restclient.games.GameScoreValidation;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
+import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +31,12 @@ public class GamesResource {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private VPXService vpxService;
+
+  @Autowired
+  private FPService fpService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -55,6 +61,19 @@ public class GamesResource {
   @GetMapping("/knowns/{emulatorId}")
   public List<Game> getKnownGames(@PathVariable("emulatorId") int emulatorId) {
     return gameService.getKnownGames(emulatorId);
+  }
+
+  @PutMapping("/play/{id}")
+  public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    String altExe = (String) values.get("altExe");
+    Game game = gameService.getGame(id);
+    if (game.getEmulator().isVpxEmulator()) {
+      return vpxService.play(game, altExe);
+    }
+    else if (game.getEmulator().isFpEmulator()) {
+      return fpService.play(game, altExe);
+    }
+    throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());
   }
 
   @GetMapping("/recent/{count}")

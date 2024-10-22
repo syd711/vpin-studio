@@ -45,7 +45,7 @@ public class GameEmulator {
   private final String mediaDirectory;
   private final int id;
   private final boolean visible;
-  private final String vpxExeName;
+  private String exeName;
   private final String gameExt;
 
   private String backglassServerFolder;
@@ -57,7 +57,7 @@ public class GameEmulator {
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
-    this.vpxExeName = emulator.getExeName();
+    this.exeName = emulator.getExeName();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
 
@@ -200,8 +200,11 @@ public class GameEmulator {
   }
 
   @JsonIgnore
-  public File getVPXExe() {
-    return new File(installationFolder, vpxExeName);
+  public File getExe() {
+    if (exeName == null && isFpEmulator()) {
+      this.exeName = "Future Pinball.exe";
+    }
+    return new File(installationFolder, exeName);
   }
 
   public List<String> getAltExeNames() {

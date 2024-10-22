@@ -284,7 +284,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-import-outline" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Import existing VPX files into [Frontend]" />
+                  <Tooltip text="Import existing games files into [Frontend]" />
                </tooltip>
             </Button>
             <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
@@ -359,7 +359,7 @@
                   <Font size="14.0" />
                </font>
                <tooltip>
-                  <Tooltip text="Upload VPX files to [Frontend]" />
+                  <Tooltip text="Upload game files to [Frontend]" />
                </tooltip>
                <graphic>
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
@@ -385,7 +385,7 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Launch default/configured VPX with the selected table." />
+                  <Tooltip text="Launch default/configured emulator with the selected table." />
                </tooltip>
             </SplitMenuButton>
             <Button fx:id="stopBtn" layoutX="700.0" layoutY="11.0" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
@@ -396,7 +396,7 @@
                      <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
                </graphic>
                <tooltip>
-                     <Tooltip text="Kill all VPX and [Frontend] processes (Ctrl + K)" />
+                     <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
                </tooltip>
             </Button>
             <Separator layoutX="768.0" layoutY="10.0" orientation="VERTICAL" prefHeight="30.0" prefWidth="12.0" />

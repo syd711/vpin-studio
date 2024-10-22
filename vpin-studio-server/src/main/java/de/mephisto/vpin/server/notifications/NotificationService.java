@@ -56,7 +56,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
 
-        boolean vpxRunning = systemService.isVPXRunning();
+        boolean vpxRunning = systemService.isPinballEmulatorRunning();
         NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
       }
     }

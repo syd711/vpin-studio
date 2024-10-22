@@ -1,11 +1,9 @@
 package de.mephisto.vpin.ui.util;
 
-import org.apache.commons.lang3.StringUtils;
-
 import de.mephisto.vpin.restclient.frontend.Frontend;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import javafx.scene.control.Labeled;
 import javafx.scene.control.Tooltip;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * ex: Stop all [Emulator] and [Frontend] processes 

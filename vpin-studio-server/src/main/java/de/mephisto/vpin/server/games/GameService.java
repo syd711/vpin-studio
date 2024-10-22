@@ -603,8 +603,8 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator.isVpxEmulator() && emulator.getVPXExe().exists()) {
-      game.setLauncher(emulator.getVPXExe().getName());
+    if (emulator.isVpxEmulator() && emulator.getExe().exists()) {
+      game.setLauncher(emulator.getExe().getName());
     }
 
     //apply the alt launcher exe as actually used one

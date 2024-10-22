@@ -118,12 +118,6 @@ public class VPXResource {
     return vpxService.savePOVPreference(gameService.getGame(id), values);
   }
 
-  @PutMapping("/play/{id}")
-  public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    String altExe = (String) values.get("altExe");
-    return vpxService.play(gameService.getGame(id), altExe);
-  }
-
   @PostMapping("/pov/{id}")
   public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     return vpxService.create(gameService.getGame(id));

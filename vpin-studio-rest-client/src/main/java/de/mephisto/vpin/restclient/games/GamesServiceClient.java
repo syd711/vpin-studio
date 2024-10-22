@@ -65,6 +65,16 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
+  public void playGame(int id, String altExe) {
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("altExe", altExe);
+      getRestClient().put(API + "games/play/" + id, params);
+    } catch (Exception e) {
+      LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
+    }
+  }
+
   public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload/table";

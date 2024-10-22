@@ -209,6 +209,7 @@ public class StandaloneConnector extends BaseConnector {
                     p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
                     p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().startsWith("VPinball")))
         .collect(Collectors.toList());
 
