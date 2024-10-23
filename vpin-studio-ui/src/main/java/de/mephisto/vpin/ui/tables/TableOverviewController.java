@@ -231,7 +231,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private MenuItem iniUploadMenuItem;
 
   @FXML
+  private MenuItem nvUploadMenuItem;
+
+  @FXML
   private MenuItem altSoundUploadItem;
+
+  @FXML
+  private MenuItem cfgUploadItem;
 
   @FXML
   private MenuItem altColorUploadItem;
@@ -241,6 +247,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   private MenuItem mediaUploadItem;
+
+  @FXML
+  private MenuItem musicUploadItem;
 
   @FXML
   private MenuItem pupPackUploadItem;
@@ -1681,6 +1690,19 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.playBtn.setVisible(vpxOrFpEmulator);
     this.stopBtn.setVisible(vpxOrFpEmulator);
 
+    altSoundUploadItem.setVisible(vpxEmulator);
+    altColorUploadItem.setVisible(vpxEmulator);
+    dmdUploadItem.setVisible(vpxEmulator);
+    iniUploadMenuItem.setVisible(vpxEmulator);
+    povItem.setVisible(vpxEmulator);
+    nvUploadMenuItem.setVisible(vpxEmulator);
+    resItem.setVisible(vpxEmulator);
+    mediaUploadItem.setVisible(vpxOrFpEmulator);
+    musicUploadItem.setVisible(vpxEmulator);
+    cfgUploadItem.setVisible(vpxEmulator);
+    romsUploadItem.setVisible(vpxEmulator);
+    pupPackUploadItem.setVisible(vpxEmulator);
+
     deleteSeparator.setVisible(vpxOrFpEmulator);
 
     refreshColumns();
@@ -1696,13 +1718,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void refreshColumns() {
     GameEmulatorRepresentation newValue = emulatorCombo.getValue();
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
+    boolean fpMode = newValue == null || newValue.isFpEmulator();
     FrontendType frontendType = client.getFrontendService().getFrontendType();
 
-    columnVersion.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVersion());
-    columnEmulator.setVisible(vpxMode && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
+    columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
+    columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
     columnVPS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
-    columnB2S.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnBackglass());
+    columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());
     columnAltSound.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltSound());
     columnAltColor.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnAltColor());
@@ -1710,10 +1733,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     columnINI.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnIni());
     columnRES.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRes());
     columnHSType.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnHighscore());
-    columnDateAdded.setVisible(!assetManagerMode && uiSettings.isColumnDateAdded());
-    columnDateModified.setVisible(!assetManagerMode && uiSettings.isColumnDateModified());
-    columnLauncher.setVisible(!assetManagerMode && uiSettings.isColumnLauncher());
-    columnPlaylists.setVisible(!assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
+    columnDateAdded.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateAdded());
+    columnDateModified.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnDateModified());
+    columnLauncher.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnLauncher());
+    columnPlaylists.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.supportPlaylists() && uiSettings.isColumnPlaylists());
   }
 
   @Override
