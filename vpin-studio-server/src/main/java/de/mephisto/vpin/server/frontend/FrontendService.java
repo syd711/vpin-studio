@@ -554,6 +554,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     Game game = getGame(gameId);
     return getGameMedia(game);
   }
+
   @NonNull
   public FrontendMedia getGameMedia(Game game) {
     FrontendMedia frontendMedia = new FrontendMedia();
