@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.commons.SystemInfo;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
@@ -78,6 +79,10 @@ public abstract class BaseConnector implements FrontendConnector {
    * map between gameId and stat
    */
   private Map<Integer, TableAlxEntry> gameStats = new HashMap<>();
+
+  private MediaAccessStrategy mediaAccessStrategy;
+
+  private TableAssetsAdapter tableAssetsAdapter;
 
 
   @Override
@@ -704,6 +709,24 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   //-------------------------
+
+  @Override
+  public MediaAccessStrategy getMediaAccessStrategy() {
+    return mediaAccessStrategy;
+  }
+
+  public void setMediaAccessStrategy(MediaAccessStrategy mediaAccessStrategy) {
+    this.mediaAccessStrategy = mediaAccessStrategy;
+  }
+
+  @Override
+  public TableAssetsAdapter getTableAssetAdapter() {
+    return tableAssetsAdapter;
+  }
+
+  public void setTableAssetAdapter(TableAssetsAdapter tableAssetsAdapter) {
+    this.tableAssetsAdapter = tableAssetsAdapter;
+  }
 
   @Override
   public FrontendControl getFunction(@NonNull String description) {

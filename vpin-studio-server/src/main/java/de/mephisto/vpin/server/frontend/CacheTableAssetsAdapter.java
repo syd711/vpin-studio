@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import org.apache.commons.lang3.StringUtils;
 
@@ -19,6 +20,11 @@ public class CacheTableAssetsAdapter implements TableAssetsAdapter {
 
   public CacheTableAssetsAdapter(TableAssetsAdapter delegate) {
     this.delegate = delegate;
+  }
+
+  @Override
+  public TableAssetConf getTableAssetConf() {
+    return delegate.getTableAssetConf();
   }
 
   @Override

@@ -2,11 +2,10 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -73,6 +72,12 @@ public class GameMediaResource {
       throw new ResponseStatusException(NOT_FOUND, "Not game found for id " + id);
     }
     return frontendService.getGameMedia(game);
+  }
+
+  @GetMapping("/assets/search/conf")
+  public TableAssetConf getTableAssetConf() throws Exception {
+    TableAssetsAdapter assetAdapter = frontendService.getTableAssetAdapter();
+    return assetAdapter != null ? assetAdapter.getTableAssetConf() : null;
   }
 
   @PostMapping("/assets/search")

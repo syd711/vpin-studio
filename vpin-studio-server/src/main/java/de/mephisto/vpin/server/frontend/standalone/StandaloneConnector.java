@@ -1,10 +1,8 @@
 package de.mephisto.vpin.server.frontend.standalone;
 
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
@@ -72,7 +70,7 @@ public class StandaloneConnector extends BaseConnector {
         GameValidationCode.CODE_NO_WHEEL_IMAGE,
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING
     ));
-    frontend.setAssetSearchEnabled(false);
+
     return frontend;
   }
 
@@ -166,18 +164,6 @@ public class StandaloneConnector extends BaseConnector {
   @Override
   protected void commitDb(Emulator emu) {
     // do nothing
-  }
-
-  //------------------------------------------------------------
-  @Override
-  public MediaAccessStrategy getMediaAccessStrategy() {
-    // no associated medias
-    return null;
-  }
-
-  @Override
-  public TableAssetsAdapter getTableAssetAdapter() {
-    return null;
   }
 
   //----------------------------------

@@ -1,6 +1,5 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
@@ -9,7 +8,6 @@ import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
 import de.mephisto.vpin.server.frontend.GameEntry;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -45,16 +43,20 @@ public class PinballXConnector extends BaseConnector {
   //private PinballXAssetsAdapter assetsAdapter;
   private PinballXAssetsIndexAdapter assetsAdapter;
 
-  private PinballXMediaAccessStrategy pinballXMediaAccessStrategy;
-
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
 
   @Override
   public void initializeConnector() {
+    super.setMediaAccessStrategy(new PinballXMediaAccessStrategy(getInstallationFolder()));
+
     PinballXSettings ps = getSettings();
-    if (ps != null) {
+    if (ps != null && ps.isGameExEnabled()) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
+      super.setTableAssetAdapter(assetsAdapter);
+    }
+    else {
+      super.setTableAssetAdapter(null);
     }
     LOG.info("Finished initialization of " + this);
   }
@@ -81,11 +83,6 @@ public class PinballXConnector extends BaseConnector {
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
-
-    PinballXSettings ps = getSettings();
-    frontend.setAssetSearchEnabled(ps != null && ps.isGameExEnabled());
-    frontend.setAssetSearchLabel("GameEx Assets Search for PinballX");
-    frontend.setAssetSearchIcon("gameex.png");
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -336,19 +333,6 @@ public class PinballXConnector extends BaseConnector {
   }
 
   //------------------------------------------------------------
-
-  @Override
-  public MediaAccessStrategy getMediaAccessStrategy() {
-    if (pinballXMediaAccessStrategy == null) {
-      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy(getInstallationFolder());
-    }
-    return pinballXMediaAccessStrategy;
-  }
-
-  @Override
-  public TableAssetsAdapter getTableAssetAdapter() {
-    return assetsAdapter;
-  }
 
   @Override
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {

@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
 import de.mephisto.vpin.commons.utils.media.VideoMediaPlayer;
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
@@ -576,6 +577,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
     Frontend frontend = client.getFrontendService().getFrontendCached();
     FrontendType frontendType = frontend.getFrontendType();
+    TableAssetConf tableAssetConf = client.getGameMediaService().getTableAssetsConf();
 
     if (!isEmbeddedMode()) {
       helpBtn.managedProperty().bindBidirectional(helpBtn.visibleProperty());
@@ -630,7 +632,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     }
 
     List<VPinScreen> supportedScreens = frontend.getSupportedScreens();
-    assetSearchBox.setVisible(frontend.isAssetSearchEnabled());
+    assetSearchBox.setVisible(tableAssetConf != null);
 
     this.folderSeparator.managedProperty().bindBidirectional(this.folderSeparator.visibleProperty());
     this.folderBtn.managedProperty().bindBidirectional(this.folderBtn.visibleProperty());
@@ -769,11 +771,11 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     else {
       clearCacheBtn.setVisible(frontend.getFrontendType().isSupportMediaCache());
 
-      if (frontend.getAssetSearchIcon() != null) {
-        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(frontend.getAssetSearchIcon())));
+      if (tableAssetConf != null && tableAssetConf.getAssetSearchIcon() != null) {
+        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(tableAssetConf.getAssetSearchIcon())));
       }
-      //if (frontend.getAssetSearchLabel() != null) {
-      //    assetSearchLabel.setText(frontend.getAssetSearchLabel());
+      //if (tableAssetConf != null && tableAssetConf.getAssetSearchLabel() != null) {
+      //    assetSearchLabel.setText(tableAssetConf.getAssetSearchLabel());
       //}
     }
 

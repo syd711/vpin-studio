@@ -1,11 +1,11 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
@@ -34,9 +34,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Autowired
   private SystemService systemService;
-
-  @Autowired
-  private TableAssetsService tableAssetsService;
 
   @Autowired
   private PreferencesService preferencesService;
@@ -459,7 +456,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     FrontendConnector frontend = getFrontendConnector();
     if (frontend != null) {
       frontend.initializeConnector();
-      tableAssetsService.registerAdapter(frontend.getTableAssetAdapter());
     }
 
     this.loadEmulators();
@@ -577,6 +573,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       frontendMedia.getMedia().put(screen.name(), itemList);
     }
     return frontendMedia;
+  }
+
+  public TableAssetsAdapter getTableAssetAdapter() {
+    return getFrontendConnector().getTableAssetAdapter();  
   }
 
   @Override

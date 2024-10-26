@@ -1,11 +1,10 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
-import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTP;
@@ -13,8 +12,6 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.io.CopyStreamException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -32,6 +29,14 @@ public class PinballXAssetsIndexAdapter extends PinballXFtpClient implements Tab
   private final static Logger LOG = LoggerFactory.getLogger(PinballXAssetsIndexAdapter.class);
 
   private PinballXIndex index;
+
+  @Override
+  public TableAssetConf getTableAssetConf() {
+    TableAssetConf conf = new TableAssetConf();
+    conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
+    conf.setAssetSearchIcon("gameex.png");
+    return conf;
+  }
 
   @Override
   public void invalidateMediaCache() {

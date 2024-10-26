@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
+import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
@@ -32,13 +33,13 @@ public class PinballYConnector extends BaseConnector {
   @Autowired
   private SystemService systemService;
 
-  private PinballXMediaAccessStrategy pinballXMediaAccessStrategy;
 
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
 
   @Override
   public void initializeConnector() {
+    super.setMediaAccessStrategy(new PinballXMediaAccessStrategy(getInstallationFolder()));
   }
 
   @NonNull
@@ -299,19 +300,6 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
   }
 
   //------------------------------------------------------------
-
-  @Override
-  public MediaAccessStrategy getMediaAccessStrategy() {
-    if (pinballXMediaAccessStrategy == null) {
-      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy(getInstallationFolder());
-    }
-    return pinballXMediaAccessStrategy;
-  }
-
-  @Override
-  public TableAssetsAdapter getTableAssetAdapter() {
-    return null;
-  }
 
   @Override
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {

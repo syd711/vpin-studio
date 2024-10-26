@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.util.MimeTypeUtil;
@@ -43,6 +44,14 @@ public class PinballXAssetsAdapter extends PinballXFtpClient implements TableAss
       "Startup Video", "System Logo", "System Overlay", "System Underlay", "Tutorial Video", "Table Audio",
       "Table Image", "Table Video", "Topper Image", "Topper Video", "Wheel"
   );
+
+  @Override
+  public TableAssetConf getTableAssetConf() {
+    TableAssetConf conf = new TableAssetConf();
+    conf.setAssetSearchLabel("GameEx Assets Search for PinballX");
+    conf.setAssetSearchIcon("gameex.png");
+    return conf;
+  }
 
   @Override
   public Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception {

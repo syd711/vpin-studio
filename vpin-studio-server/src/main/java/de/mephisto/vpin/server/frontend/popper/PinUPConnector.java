@@ -64,6 +64,8 @@ public class PinUPConnector implements FrontendConnector {
 
   private int sqlVersion = DB_VERSION;
 
+  private TableAssetsAdapter assetsAdapter;
+
   @Override
   public void clearCache() {
     //not used yet
@@ -1996,16 +1998,7 @@ public class PinUPConnector implements FrontendConnector {
 
   @Override
   public TableAssetsAdapter getTableAssetAdapter() {
-    try {
-      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
-      // add cache to Popper search adapter
-      return new CacheTableAssetsAdapter(assetAdapter);
-    }
-    catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
-      return null;
-    }
+    return assetsAdapter;
   }
 
   public void initializeConnector() {
@@ -2013,6 +2006,16 @@ public class PinUPConnector implements FrontendConnector {
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 
     sqlVersion = this.getVersion();
+
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      // add cache to Popper search adapter
+      this.assetsAdapter = new CacheTableAssetsAdapter(assetAdapter);
+    }
+    catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+    }
   }
 
   public File getDatabaseFile() {
@@ -2029,9 +2032,6 @@ public class PinUPConnector implements FrontendConnector {
     frontend.setAdminExe("PinUpMenuSetup.exe");
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
-    frontend.setAssetSearchEnabled(true);
-    frontend.setAssetSearchLabel("PinUP Popper Assets Search");
-    frontend.setAssetSearchIcon("pinup-system.png");
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));
