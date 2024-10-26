@@ -64,6 +64,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File pinupInstallationFolder;
   private File pinballXInstallationFolder;
+  private File pinballYInstallationFolder;
   private File standaloneInstallationFolder;
 
   private File backupFolder;
@@ -103,6 +104,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (store.containsKey(PINBALLX_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR))) {
         this.pinballXInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
         frontendType = FrontendType.PinballX;
+      }
+      //PinballY Folder
+      if (store.containsKey(PINBALLY_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLY_INSTALLATION_DIR_INST_DIR))) {
+        this.pinballYInstallationFolder = new File(store.get(PINBALLY_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.PinballY;
       }
       //PinUP Popper Folder
       if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
@@ -154,6 +160,9 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     }
     if (pinballXInstallationFolder != null) {
       LOG.info(formatPathLog("PinballX Folder", this.pinballXInstallationFolder));
+    }
+    if (pinballYInstallationFolder != null) {
+      LOG.info(formatPathLog("PinballY Folder", this.pinballYInstallationFolder));
     }
     if (standaloneInstallationFolder != null) {
       LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
@@ -230,6 +239,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getPinballXInstallationFolder() {
     return pinballXInstallationFolder;
+  }
+
+  public File getPinballYInstallationFolder() {
+    return pinballYInstallationFolder;
   }
 
   public File getStandaloneInstallationFolder() {

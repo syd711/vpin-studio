@@ -95,6 +95,13 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public GameEmulator getDefaultGameEmulator() {
     Collection<GameEmulator> values = emulators.values();
+
+    // when there is only one VPX emulator, it is forcibly the default one
+    if (values.size() == 1) {
+      GameEmulator value = values.iterator().next();
+      return value.isVpxEmulator() ? value : null;
+    }
+
     for (GameEmulator value : values) {
       if (value.getDescription() != null && value.isVpxEmulator() && value.getDescription().contains("default")) {
         return value;

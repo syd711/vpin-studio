@@ -2031,6 +2031,7 @@ public class PinUPConnector implements FrontendConnector {
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setAssetSearchEnabled(true);
     frontend.setAssetSearchLabel("PinUP Popper Assets Search");
+    frontend.setAssetSearchIcon("pinup-system.png");
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));

@@ -1,11 +1,14 @@
 package de.mephisto.vpin.server.frontend;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-
+import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
+import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -23,12 +26,14 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -36,7 +41,10 @@ public abstract class BaseConnector implements FrontendConnector {
   private final static Logger LOG = LoggerFactory.getLogger(BaseConnector.class);
 
   @Autowired
-  private GameEntryRepository gameEntryRepository;
+  protected GameEntryRepository gameEntryRepository;
+
+  @Autowired
+  protected PreferencesService preferencesService;
 
   private static final int PLAYLIST_FAVORITE_ID = -1;
   //private static final int PLAYLIST_GLOBALFAV_ID = -2;
@@ -71,8 +79,6 @@ public abstract class BaseConnector implements FrontendConnector {
    */
   private Map<Integer, TableAlxEntry> gameStats = new HashMap<>();
 
-
- 
 
   @Override
   public void clearCache() {
@@ -287,13 +293,16 @@ public abstract class BaseConnector implements FrontendConnector {
   @NonNull
   @Override
   public List<Game> getGamesByFilename(String filename) {
-    String gameName = filename.replaceAll("'", "''");
-    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameName)).collect(Collectors.toList());
+    String gameFileName = filename.replaceAll("'", "''");
+    return getGames().stream().filter(g -> StringUtils.containsIgnoreCase(g.getGameFileName(), gameFileName)).collect(Collectors.toList());
   }
 
   @Override
   public Game getGameByName(int emuId, String gameName) {
-    return getGameByFilename(emuId, gameName);
+    return getGameEntries(emuId).stream()
+        .map(e -> getGame(e))
+        .filter(g -> StringUtils.containsIgnoreCase(g.getGameName(), gameName))
+        .findFirst().orElse(null);
   }
 
   @Override
@@ -369,9 +378,11 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public void deleteGames(int emuId) {
     List<GameEntry> entries = gamesByEmu.remove(emuId);
-    for (GameEntry entry : entries) {
-      mapFilenames.remove(entry.getId());
-      dropGameFromDb(emuId, entry.getFilename());
+    if (entries != null) {
+      for (GameEntry entry : entries) {
+        mapFilenames.remove(entry.getId());
+        dropGameFromDb(emuId, entry.getFilename());
+      }
     }
     gamesByEmu.put(emuId, new ArrayList<>());
     commitDb(emulators.get(emuId));
@@ -440,7 +451,7 @@ public abstract class BaseConnector implements FrontendConnector {
     return null;
   }
 
-  protected void savePlaylist(Playlist playlist) {
+  protected void savePlaylist(int gameId, Playlist playlist) {
   }
 
   public Set<Integer> loadFavorites() {
@@ -541,7 +552,7 @@ public abstract class BaseConnector implements FrontendConnector {
       if (!pl.containsGame(gameId)) {
         pl.getGames().add(toPlaylistGame(gameId));
       }
-      savePlaylist(pl);
+      savePlaylist(gameId, pl);
     }
     else {
       gameFavs.add(gameId);
@@ -566,7 +577,7 @@ public abstract class BaseConnector implements FrontendConnector {
     if (playlistId >= 0) {
       Playlist pl = playlists.get(playlistId);
       if (pl.removeGame(gameId)) {
-        savePlaylist(pl);
+        savePlaylist(gameId, pl);
       }
     }
     else {
@@ -588,8 +599,8 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   private File getPlaylistConfFile() {
-    File pinballXFolder = getInstallationFolder();
-    return new File(pinballXFolder, "/Databases/playlists.json");
+    File installFolder = getInstallationFolder();
+    return new File(installFolder, "/Databases/playlists.json");
   }
 
   private JsonObject getPlaylistConf() {
@@ -715,5 +726,115 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public String toString() {
     return "Frontend Connector \"" + this.getFrontend().getFrontendType().name() + "\"";
+  }
+
+  //----------------------------
+  // UI Management
+
+  protected abstract String getFrontendExe();
+
+  protected File getVPXExe() {
+    SystemInfo si = new SystemInfo();
+    if (SystemUtil.is64Bit(preferencesService)) {
+      File f = new File(si.resolveVpx64InstallFolder(), "VPinballX64.exe");
+      if (f.exists()) {
+        return f;
+      }
+    }
+    File f = new File(si.resolveVpxInstallFolder(), "VPinballX.exe");
+    if (f.exists()) {
+      return f;
+    }
+    return null;
+  }
+
+  protected File getVPTExe() {
+    SystemInfo si = new SystemInfo();
+    File f = new File(si.resolveVptInstallFolder(), "VPinball995.exe");
+    return f.exists() ? f : null;
+  }
+
+  protected File getFpExe() {
+    SystemInfo si = new SystemInfo();
+    File f = new File(si.resolveFpInstallFolder(), "Future Pinball.exe");
+    return f.exists() ? f : null;
+  }
+
+  protected File resolveExe(EmulatorType type) {
+    switch (type) {
+    case VisualPinball:
+      return getVPXExe(); 
+    case VisualPinball9:
+      return getVPTExe();
+    case FuturePinball:
+      return getFpExe();
+    default:
+      return null;
+    }
+  }
+
+  @Override
+  public boolean killFrontend() {
+    List<ProcessHandle> processes = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            (
+                p.info().command().get().contains(getFrontendExe()) ||
+                    p.info().command().get().contains("PinUpDisplay") ||
+                    p.info().command().get().contains("PinUpPlayer") ||
+                    p.info().command().get().contains("VPXStarter") ||
+                    p.info().command().get().contains("VPinballX") ||
+                    p.info().command().get().contains("Future Pinball") ||
+                    p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("B2SBackglassServerEXE") ||
+                    p.info().command().get().contains("DOF")))
+        .collect(Collectors.toList());
+
+    if (processes.isEmpty()) {
+      LOG.info("No vpin processes found, termination canceled.");
+      return false;
+    }
+
+    for (ProcessHandle process : processes) {
+      String cmd = process.info().command().get();
+      boolean b = process.destroyForcibly();
+      LOG.info("Destroyed process '" + cmd + "', result: " + b);
+    }
+    return true;
+  }
+
+  @Override
+  public boolean isFrontendRunning() {
+    Optional<ProcessHandle> process = ProcessHandle
+      .allProcesses()
+      .filter(p -> p.info().command().isPresent() && 
+            p.info().command().get().contains(getFrontendExe()))
+      .findFirst();
+    return process.isPresent();
+  }
+
+  @Override
+  public boolean restartFrontend() {
+    killFrontend();
+
+    String exe = getFrontendExe();
+    try {
+      List<String> params = Arrays.asList("cmd", "/c", "start", exe);
+      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+      executor.setDir(getInstallationFolder());
+      executor.executeCommandAsync();
+
+      //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+        LOG.error(exe + " restart failed: {}", standardErrorFromCommand);
+        return false;
+      }
+    }
+    catch (Exception e) {
+      LOG.error("Failed to start " + exe + " again: " + e.getMessage(), e);
+      return false;
+    }
+    return true;
   }
 }

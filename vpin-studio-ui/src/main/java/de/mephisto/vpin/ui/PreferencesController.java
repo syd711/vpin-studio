@@ -426,9 +426,10 @@ public class PreferencesController implements Initializable, StudioEventListener
 //    repositoriesBtn.setVisible(frontendType.supportArchive());
 
     // activation of custom options according to installed frontend
-    frontendPreferences.setVisible(frontendType.isNotStandalone());
+    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+
     notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
     overlayBtn.setVisible(frontendType.isNotStandalone());
 

@@ -60,6 +60,8 @@ public class PinballXTableParser extends DefaultHandler {
             // will be overriden by description but in case the tag is absent
             detail.setGameDisplayName(gameName); 
             detail.setEmulatorId(emu.getId());
+            // will be overriden but enabled by default
+            detail.setStatus(1);  // STATUS_NORMAL
 
             NodeList childNodes = element.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
@@ -208,6 +210,16 @@ public class PinballXTableParser extends DefaultHandler {
   //----------------------------------------
 
   public void writeGames(File pinballXDb, List<GameEntry> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
+    if (!pinballXDb.exists()) {
+      try {
+        pinballXDb.getParentFile().mkdirs();
+        pinballXDb.createNewFile();
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot create file " + pinballXDb, ioe);
+      }
+    }
+    
     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
 
       writer.append("<menu>\n");

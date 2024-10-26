@@ -769,12 +769,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     else {
       clearCacheBtn.setVisible(frontend.getFrontendType().isSupportMediaCache());
 
-      if (frontend.getFrontendType().equals(FrontendType.Popper)) {
-        frontendImage.setImage(new Image(Studio.class.getResourceAsStream("pinup-system.png")));
+      if (frontend.getAssetSearchIcon() != null) {
+        frontendImage.setImage(new Image(Studio.class.getResourceAsStream(frontend.getAssetSearchIcon())));
       }
-      if (frontend.getFrontendType().equals(FrontendType.PinballX)) {
-        frontendImage.setImage(new Image(Studio.class.getResourceAsStream("gameex.png")));
-      }
+      //if (frontend.getAssetSearchLabel() != null) {
+      //    assetSearchLabel.setText(frontend.getAssetSearchLabel());
+      //}
     }
 
     infoBtn.setDisable(true);

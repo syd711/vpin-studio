@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.server.AbstractVPinServerTest;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXConnector;
+import de.mephisto.vpin.server.frontend.pinbally.PinballYConnector;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.frontend.standalone.StandaloneConnector;
 import de.mephisto.vpin.server.games.Game;
@@ -62,6 +63,15 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
   public void testPinballXConnector() {
     setupSystem(FrontendType.PinballX);
     assertTrue(frontendService.getFrontendConnector() instanceof PinballXConnector);
+
+    int id = testLoad(2, 3);
+    testSave(id); 
+  }
+
+  @Test
+  public void testPinballYConnector() {
+    setupSystem(FrontendType.PinballY);
+    assertTrue(frontendService.getFrontendConnector() instanceof PinballYConnector);
 
     int id = testLoad(2, 3);
     testSave(id); 

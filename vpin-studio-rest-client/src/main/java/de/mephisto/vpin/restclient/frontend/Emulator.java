@@ -9,6 +9,9 @@ public class Emulator {
   private String dirGames;
   private String dirRoms;
 
+  /** optionnal database name, used by pinballY for instance */
+  private String database;
+
   private EmulatorType type;
 
   /**
@@ -136,6 +139,14 @@ public class Emulator {
 
   public void setDirRoms(String dirRoms) {
     this.dirRoms = dirRoms;
+  }
+
+  public String getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(String database) {
+    this.database = database;
   }
 
   public boolean isVisualPinball() {

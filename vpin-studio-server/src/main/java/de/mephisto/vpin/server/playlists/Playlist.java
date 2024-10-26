@@ -123,6 +123,10 @@ public class Playlist {
     return null;
   }
 
+  public void addGame(PlaylistGame game) {
+    games.add(game);
+  }
+
   public boolean removeGame(int id) {
     for (Iterator<PlaylistGame> iter = this.games.iterator(); iter.hasNext();) {
       if (iter.next().getId() == id) {

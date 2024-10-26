@@ -19,6 +19,7 @@ public class SystemInfo {
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
+  public final static String PINBALLY_INSTALLATION_DIR_INST_DIR = "pinballY.installationDir";
   public final static String STANDALONE_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
@@ -49,6 +50,54 @@ public class SystemInfo {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);
     }
     return new File("C:/vPinball/PinUPSystem");
+  }
+
+  public File resolvePinballXInstallationFolder() {
+    return new File("C:\\PinballX");
+  }
+
+  public File resolvePinballYInstallationFolder() {
+    return new File("C:\\PinballY");
+  }
+
+  public File resolveVpx64InstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX64.exe\\shell\\open\\command", null);
+    return f != null ? f : resolveVpxInstallFolder();
+  }
+  public File resolveVpxInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX.exe\\shell\\open\\command", 
+    "HKEY_CLASSES_ROOT\\vpx_auto_file\\shell\\edit\\command");
+    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+  }
+
+  public File resolveVptInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinball995.exe\\shell\\open\\command", 
+    "HKEY_CLASSES_ROOT\\vpt_auto_file\\shell\\edit\\command");
+    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+  }
+
+  public File resolveFpInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Future Pinball Table\\Shell\\Open\\Command", null);
+    return f != null ? f : new File("C:/vPinball/Future Pinball");
+  }
+
+  private File resolveInstallFolder(String regkey, String extkey) {
+    File f = regkey != null ? extractFolder(regkey) : null;
+    return f != null ? f : extkey != null ? extractFolder(extkey) : null;
+  }
+  private File extractFolder(String regkey) {
+    String vpx = extractRegistryValue(readRegistry(regkey, null));
+    if (StringUtils.isNotEmpty(vpx)) {
+      int indexOf = vpx.toLowerCase().indexOf(".exe");
+      if (indexOf > 0) {
+        String exe = StringUtils.removeStart(vpx.substring(0, indexOf + 4), "\"");
+        File fexe =  new File(exe);
+        if (fexe.exists()) {
+          return fexe.getParentFile();
+        }
+      }
+    }
+    return null;
   }
 
   /** 

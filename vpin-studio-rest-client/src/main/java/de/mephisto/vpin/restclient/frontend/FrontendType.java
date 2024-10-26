@@ -7,7 +7,8 @@ package de.mephisto.vpin.restclient.frontend;
 public enum FrontendType {
   Standalone(SupportType.NONE, SupportType.NONE, false, SupportType.NONE, false, false, false, false, false, false),
   Popper    (SupportType.FULL, SupportType.FULL, false, SupportType.FULL, true, false, true, true, true, true),
-  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false);
+  PinballX  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false),
+  PinballY  (SupportType.MINI, SupportType.MINI, true, SupportType.MINI, true, true, false, true, false, false);
 
   enum SupportType {NONE, MINI, FULL}
 
