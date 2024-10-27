@@ -10,7 +10,7 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 
 public class MacOS {
     private final static Logger LOG = LoggerFactory.getLogger(MacOS.class);
@@ -37,7 +37,7 @@ public class MacOS {
         try {
             createScript(UPDATE_CLIENT_SCRIPT_NAME, UPDATE_CLIENT_SCRIPT);
         } catch (Exception e) {
-            LOG.error("Failed to create upgrade script: {}", e.getMessage(), e);
+            LOG.error("Failed to create update script: {}", e.getMessage(), e);
         }
     }
 
