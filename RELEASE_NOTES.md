@@ -5,6 +5,14 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modifiation-date.png" width="650" />
 
+- **Tables / Future Pinball**: Added better support of future pinball tables.
+- **Tables / Future Pinball VPS match**: Added ability to match future pinball tables against the VPS database. Also VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table. 
+
+- **Backglass Manager / Multiple Emulators**: The backglass manager now displays all backglasses coming from all VPX and FP emulators.
+
+- **PinballY frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. 
+
+- **Preferences / Backglass Server**: Selection of emulator is no more needed, uses instead the B2SServer installation folder.
 - **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
 - **Preferences / System Settings** Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
 
