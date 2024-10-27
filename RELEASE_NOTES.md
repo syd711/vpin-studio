@@ -22,7 +22,7 @@
 
 ## Bugfixes
 
-- **Studio Update/Restart Error** Fixed an issue where the MacOS client update process would fail to restart client. Improved MacOS upgrade process. Note: the MacOS update process will work correctly AFTER this release update.
+- **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. Note: the macOS update process will work correctly AFTER this release update.
 
 
 ## VPin Mania
