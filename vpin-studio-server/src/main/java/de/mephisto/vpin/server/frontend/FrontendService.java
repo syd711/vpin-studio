@@ -86,7 +86,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public List<GameEmulator> getBackglassGameEmulators() {
     List<GameEmulator> gameEmulators = new ArrayList<>(this.emulators.values());
     return gameEmulators.stream().filter(e -> {
-      return e.getB2STableSettingsXml().exists();
+      return e.isVpxEmulator() || e.isFpEmulator();
     }).collect(Collectors.toList());
   }
 

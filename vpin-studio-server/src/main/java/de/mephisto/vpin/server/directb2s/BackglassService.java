@@ -325,7 +325,7 @@ public class BackglassService {
 
   public List<DirectB2S> getBackglasses() {
     List<DirectB2S> result = new ArrayList<>();
-    List<GameEmulator> gameEmulators = frontendService.getVpxGameEmulators();
+    List<GameEmulator> gameEmulators = frontendService.getBackglassGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       File tablesFolder = gameEmulator.getTablesFolder();
       Path tablesPath = tablesFolder.toPath();

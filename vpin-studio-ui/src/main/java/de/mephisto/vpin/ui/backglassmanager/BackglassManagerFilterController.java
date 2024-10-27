@@ -116,7 +116,7 @@ public class BackglassManagerFilterController extends BaseFilterController<Direc
 
     predicateFactory = new BackglassManagerPredicateFactory();
 
-    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator: emulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
