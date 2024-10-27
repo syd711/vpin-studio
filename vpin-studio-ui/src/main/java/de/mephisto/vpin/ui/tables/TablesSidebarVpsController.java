@@ -306,7 +306,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
-        refreshTableView(tableById);
+        refreshTableView(tableById, game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX);
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
           VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
           tableVersionsCombo.setValue(version);
@@ -315,10 +315,10 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
-  private void refreshTableView(VpsTable vpsTable) {
+  private void refreshTableView(VpsTable vpsTable, String tableFormat) {
     versionAuthorsLabel.setText("-");
     versionAuthorsLabel.setTooltip(new Tooltip(null));
-    List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(VpsFeatures.VPX));
+    List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(tableFormat));
     if (!tableFiles.isEmpty()) {
       tableVersionsCombo.setItems(FXCollections.emptyObservableList());
       tableFiles.add(0, null);
@@ -357,7 +357,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
     boolean doFilter = filterCheckbox.isSelected();
 
-    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", game.get(), VpsDiffTypes.tableNewVersionVPX, vpsTable, vpsTable.getTableFiles(), false, null);
+    TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", game.get(), VpsDiffTypes.tableNewVersionVPX, vpsTable, false, null);
 
     if (!doFilter || game.get().getPupPackName() == null) {
       addSection(dataRoot, "PUP Pack", game.get(), VpsDiffTypes.pupPack, vpsTable.getPupPackFiles(), !uiSettings.isHideVPSUpdates() && uiSettings.isVpsPUPPack(), null);
@@ -446,7 +446,12 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
-  public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, List<VpsTableVersion> tableVersions, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
+  public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
+
+    final List<VpsTableVersion> tableVersions = game != null ? 
+      vpsTable.getTableFilesForFormat(game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX) :
+      vpsTable.getTableFiles();
+
     if (tableVersions == null || tableVersions.isEmpty()) {
       return;
     }

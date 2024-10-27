@@ -62,6 +62,9 @@ public class GameRepresentation {
   private String pupPackName;
   private Long templateId;
   private boolean vpxGame;
+  private boolean fpGame;
+  private boolean fxGame;
+
   private boolean cardDisabled;
   private boolean eventLogAvailable;
 
@@ -175,6 +178,22 @@ public class GameRepresentation {
 
   public void setVpxGame(boolean vpxGame) {
     this.vpxGame = vpxGame;
+  }
+
+  public boolean isFpGame() {
+    return fpGame;
+  }
+
+  public void setFpGame(boolean fpGame) {
+    this.fpGame = fpGame;
+  }
+
+  public boolean isFxGame() {
+    return fxGame;
+  }
+
+  public void setFxGame(boolean fxGame) {
+    this.fxGame = fxGame;
   }
 
   public String getPupPackName() {

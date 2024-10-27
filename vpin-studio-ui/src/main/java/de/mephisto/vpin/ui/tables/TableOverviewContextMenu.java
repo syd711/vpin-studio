@@ -95,35 +95,35 @@ public class TableOverviewContextMenu {
       ctxMenu.getItems().add(assetsViewItem);
     }
 
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem vpsItem = new MenuItem("Open VPS Entry");
+    KeyCombination vpsItemKey = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
+    vpsItem.setAccelerator(vpsItemKey);
+    vpsItem.setOnAction(actionEvent -> tableOverviewController.onVps());
+    vpsItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
+    vpsItem.setGraphic(iconVps);
+    ctxMenu.getItems().add(vpsItem);
+
+    MenuItem vpsUpdateItem = new MenuItem("Reset VPS Updates");
+    vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsReset());
+    vpsUpdateItem.setDisable(game.getVpsUpdates().isEmpty());
+    vpsUpdateItem.setGraphic(iconVpsReset);
+    ctxMenu.getItems().add(vpsUpdateItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem eventLogItem = new MenuItem("Event Log");
+    KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
+    eventLogItem.setAccelerator(eventLogItemKey);
+    eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
+    eventLogItem.setDisable(!game.isEventLogAvailable());
+    eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
+    ctxMenu.getItems().add(eventLogItem);
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
     if (game.isVpxGame()) {
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem vpsItem = new MenuItem("Open VPS Entry");
-      KeyCombination vpsItemKey = new KeyCodeCombination(KeyCode.D, KeyCombination.CONTROL_DOWN);
-      vpsItem.setAccelerator(vpsItemKey);
-      vpsItem.setOnAction(actionEvent -> tableOverviewController.onVps());
-      vpsItem.setDisable(StringUtils.isEmpty(game.getExtTableId()));
-      vpsItem.setGraphic(iconVps);
-      ctxMenu.getItems().add(vpsItem);
-
-      MenuItem vpsUpdateItem = new MenuItem("Reset VPS Updates");
-      vpsUpdateItem.setOnAction(actionEvent -> tableOverviewController.onVpsReset());
-      vpsUpdateItem.setDisable(game.getVpsUpdates().isEmpty());
-      vpsUpdateItem.setGraphic(iconVpsReset);
-      ctxMenu.getItems().add(vpsUpdateItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem eventLogItem = new MenuItem("Event Log");
-      KeyCombination eventLogItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.CONTROL_DOWN);
-      eventLogItem.setAccelerator(eventLogItemKey);
-      eventLogItem.setOnAction(actionEvent -> TableDialogs.openEventLogDialog(game));
-      eventLogItem.setDisable(!game.isEventLogAvailable());
-      eventLogItem.setGraphic(WidgetFactory.createIcon("mdi2m-message-text-clock-outline"));
-      ctxMenu.getItems().add(eventLogItem);
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
       MenuItem scanItem = new MenuItem("Scan");
       KeyCombination scanItemKey = new KeyCodeCombination(KeyCode.T, KeyCombination.CONTROL_DOWN);
       scanItem.setAccelerator(scanItemKey);
@@ -137,22 +137,25 @@ public class TableOverviewContextMenu {
       scanAllItem.setGraphic(WidgetFactory.createIcon("mdi2m-map-search"));
       scanAllItem.setOnAction(actionEvent -> tableOverviewController.onTablesScanAll());
       ctxMenu.getItems().add(scanAllItem);
+    }
 
-      if (frontendType.isNotStandalone()) {
-        ctxMenu.getItems().add(new SeparatorMenuItem());
-
-        MenuItem importsItem = new MenuItem("Import Tables");
-        importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
-        importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
-        ctxMenu.getItems().add(importsItem);
-      }
-
+    if (frontendType.isNotStandalone()) {
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
-      MenuItem b2sItem = new MenuItem("Open Backglass Manager");
-      b2sItem.setGraphic(iconBackglassManager);
-      b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
-      ctxMenu.getItems().add(b2sItem);
+      MenuItem importsItem = new MenuItem("Import Tables");
+      importsItem.setGraphic(WidgetFactory.createIcon("mdi2d-database-import-outline"));
+      importsItem.setOnAction(actionEvent -> tableOverviewController.onImport());
+      ctxMenu.getItems().add(importsItem);
+    }
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem b2sItem = new MenuItem("Open Backglass Manager");
+    b2sItem.setGraphic(iconBackglassManager);
+    b2sItem.setOnAction(actionEvent -> tableOverviewController.onBackglassManager(game));
+    ctxMenu.getItems().add(b2sItem);
+
+    if (game.isVpxGame()) {
 
       ctxMenu.getItems().add(new SeparatorMenuItem());
 
@@ -215,12 +218,10 @@ public class TableOverviewContextMenu {
         uploadMenu.getItems().add(mediaItem);
       }
 
-
       MenuItem musicItem = new MenuItem("Upload Music Pack");
       musicItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       musicItem.setOnAction(actionEvent -> tableOverviewController.onMusicUpload());
       uploadMenu.getItems().add(musicItem);
-
 
       MenuItem uploadNvItem = new MenuItem("Upload .nv File");
       uploadNvItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
@@ -250,10 +251,8 @@ public class TableOverviewContextMenu {
       romsItem.setOnAction(actionEvent -> tableOverviewController.onRomsUpload());
       uploadMenu.getItems().add(romsItem);
 
-
       ctxMenu.getItems().add(uploadMenu);
     }
-
 
     ctxMenu.getItems().add(new SeparatorMenuItem());
 
@@ -303,17 +302,16 @@ public class TableOverviewContextMenu {
         });
         ctxMenu.getItems().add(vpbmItem);
       }
-
-      ctxMenu.getItems().add(new SeparatorMenuItem());
-
-      MenuItem removeItem = new MenuItem("Delete");
-      KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
-      removeItem.setAccelerator(removeItemKey);
-      removeItem.setOnAction(tableOverviewController::onDelete);
-      removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
-      ctxMenu.getItems().add(removeItem);
-
     }
+
+    ctxMenu.getItems().add(new SeparatorMenuItem());
+
+    MenuItem removeItem = new MenuItem("Delete");
+    KeyCombination removeItemKey = new KeyCodeCombination(KeyCode.DELETE);
+    removeItem.setAccelerator(removeItemKey);
+    removeItem.setOnAction(tableOverviewController::onDelete);
+    removeItem.setGraphic(WidgetFactory.createAlertIcon("mdi2d-delete-outline"));
+    ctxMenu.getItems().add(removeItem);
   }
 
   public void handleKeyEvent(KeyEvent event) {

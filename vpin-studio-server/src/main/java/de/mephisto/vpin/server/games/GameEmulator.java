@@ -131,6 +131,10 @@ public class GameEmulator {
     return type.isFpEmulator();
   }
 
+  public boolean isFxEmulator() {
+    return type.isFxEmulator();
+  }
+
   public EmulatorType getEmulatorType() {
     return type;
   }

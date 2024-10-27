@@ -37,27 +37,30 @@ public class TableOverviewPredicateFactory {
           if (filterSettings.isWithAltColor() && game.getAltColorType() == null) {
             return false;
           }
-          if (filterSettings.isWithBackglass() && game.getDirectB2SPath() == null) {
-            return false;
-          }
-          if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
-            return false;
-          }
           if (filterSettings.isWithIni() && game.getIniPath() == null) {
             return false;
           }
           if (filterSettings.isWithPov() && game.getPovPath() == null) {
             return false;
           }
-          if (filterSettings.isWithRes() && game.getResPath() == null) {
-            return false;
-          }
-          if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
-            return false;
-          }
-          if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
-            return false;
-          }
+        }
+
+        if (filterSettings.isWithBackglass() && game.getDirectB2SPath() == null) {
+          return false;
+        }
+        if (filterSettings.isWithRes() && game.getResPath() == null) {
+          return false;
+        }
+
+        if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
+          return false;
+        }
+
+        if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
+          return false;
+        }
+        if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
+          return false;
         }
 
         NoteType noteType = filterSettings.getNoteType();
@@ -80,22 +83,23 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
+        if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
+          return false;
+        }
+        if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+          return false;
+        }
+
+        if (filterSettings.isNotPlayed() && game.isPlayed()) {
+          return false;
+        }
+
+        if (filterSettings.getGameStatus() != -1 && game.getGameStatus() != filterSettings.getGameStatus()) {
+          return false;
+        }
+
         if (vpxGame) {
           if (filterSettings.isOtherIssues() && !game.isHasOtherIssues()) {
-            return false;
-          }
-          if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
-            return false;
-          }
-          if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-            return false;
-          }
-
-          if (filterSettings.isNotPlayed() && game.isPlayed()) {
-            return false;
-          }
-
-          if (filterSettings.getGameStatus() != -1 && game.getGameStatus() != filterSettings.getGameStatus()) {
             return false;
           }
 

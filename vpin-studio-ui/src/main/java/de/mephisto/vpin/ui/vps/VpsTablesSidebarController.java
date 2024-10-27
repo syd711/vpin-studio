@@ -179,7 +179,7 @@ public class VpsTablesSidebarController implements Initializable {
       players.setText(String.valueOf(table.getPlayers()));
       ipdbLink.setText(StringUtils.isEmpty(table.getIpdbUrl()) ? "-" : table.getIpdbUrl());
 
-      TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, table, table.getTableFiles(), false, predicate.buildTableVersionPredicate());
+      TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, table, false, predicate.buildTableVersionPredicate());
 
       Predicate<VpsAuthoredUrls> authoredUrlsPredicate = predicate.buildAuthoredUrlsPredicate();
       TablesSidebarVpsController.addSection(dataRoot, "Backglasses", null, VpsDiffTypes.b2s, table.getB2sFiles(), false, authoredUrlsPredicate);

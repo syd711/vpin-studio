@@ -1723,7 +1723,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     columnVersion.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVersion());
     columnEmulator.setVisible((vpxMode || fpMode) && !assetManagerMode && frontendType.isNotStandalone() && uiSettings.isColumnEmulator());
-    columnVPS.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnVpsStatus());
+    columnVPS.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnVpsStatus());
     columnRom.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnRom());
     columnB2S.setVisible((vpxMode || fpMode) && !assetManagerMode && uiSettings.isColumnBackglass());
     columnPUPPack.setVisible(vpxMode && !assetManagerMode && uiSettings.isColumnPupPack() && frontendType.supportPupPacks());

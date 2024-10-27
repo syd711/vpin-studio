@@ -828,24 +828,20 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   public void refreshViewForEmulator(GameEmulatorRepresentation newValue) {
     boolean vpxMode = newValue == null || newValue.isVpxEmulator();
 
+    titledPaneHighscores.setVisible(vpxMode);
+    titledPanePov.setVisible(vpxMode);
+    titledPaneIni.setVisible(vpxMode);
+    titledPaneAltSound.setVisible(vpxMode);
+    //titledPaneDirectB2s.setVisible(vpxMode);
+    //titledPanePUPPack.setVisible(vpxMode);
+    titledPaneDMD.setVisible(vpxMode);
+    titledPaneMame.setVisible(vpxMode);
+    //titledPaneVps.setVisible(vpxMode);
+    titledPaneAltColor.setVisible(vpxMode);
+    titledPaneScriptDetails.setVisible(vpxMode);
 
-    if (!vpxMode) {
-      tableAccordion.getPanes().remove(titledPaneHighscores);
-      tableAccordion.getPanes().remove(titledPanePov);
-      tableAccordion.getPanes().remove(titledPaneIni);
-      tableAccordion.getPanes().remove(titledPaneAltSound);
-      tableAccordion.getPanes().remove(titledPaneDirectB2s);
-      tableAccordion.getPanes().remove(titledPanePUPPack);
-      tableAccordion.getPanes().remove(titledPaneDMD);
-      tableAccordion.getPanes().remove(titledPaneMame);
-      tableAccordion.getPanes().remove(titledPaneVps);
-      tableAccordion.getPanes().remove(titledPaneAltColor);
-      tableAccordion.getPanes().remove(titledPaneScriptDetails);
-    }
-    else {
-      if (!tablesController.isAssetManagerMode()) {
-        refreshSidebarSections();
-      }
+    if (!tablesController.isAssetManagerMode()) {
+      refreshSidebarSections();
     }
   }
 
@@ -873,7 +869,7 @@ public class TablesSidebarController implements Initializable, PreferenceChangeL
   }
 
   private int refreshSection(TitledPane section, boolean sectionAssets, int index) {
-    if (sectionAssets) {
+    if (sectionAssets && section.isVisible()) {
       if (!tableAccordion.getPanes().contains(section)) {
         tableAccordion.getPanes().add(index, section);
       }
