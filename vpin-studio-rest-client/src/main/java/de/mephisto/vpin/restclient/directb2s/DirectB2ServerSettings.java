@@ -7,6 +7,8 @@ public class DirectB2ServerSettings {
   public final static int STANDARD_START_MODE = 1;
   public final static int EXE_START_MODE = 2;
 
+  private String backglassServerFolder;
+
   private boolean pluginsOn;
   private boolean showStartupError;
   private boolean disableFuzzyMatching;
@@ -47,5 +49,13 @@ public class DirectB2ServerSettings {
 
   public void setShowStartupError(boolean showStartupError) {
     this.showStartupError = showStartupError;
+  }
+
+  public String getBackglassServerFolder() {
+    return backglassServerFolder;
+  }
+
+  public void setBackglassServerFolder(String backglassServerFolder) {
+    this.backglassServerFolder = backglassServerFolder;
   }
 }

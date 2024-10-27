@@ -6,12 +6,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 public class SystemInfo {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
@@ -53,11 +56,11 @@ public class SystemInfo {
   }
 
   public File resolvePinballXInstallationFolder() {
-    return new File("C:\\PinballX");
+    return new File("C:/PinballX");
   }
 
   public File resolvePinballYInstallationFolder() {
-    return new File("C:\\PinballY");
+    return new File("C:/PinballY");
   }
 
   public File resolveVpx64InstallFolder() {
@@ -104,7 +107,7 @@ public class SystemInfo {
    * cf https://github.com/vpinball/b2s-backglass/
    * => b2sbackglassserverregisterapp/b2sbackglassserverregisterapp/formBackglassServerRegApp.vb
    */
-  public File resolveBackglassServerFolder(@NonNull File visualPinballTableFolder) {
+  public File resolveBackglassServerFolder() {
     String b2sClsid = extractRegistryValue(readRegistry("HKEY_CLASSES_ROOT\\B2S.Server\\CLSID", null));
     String regkey = "HKEY_CLASSES_ROOT\\WOW6432Node\\CLSID\\" + b2sClsid + "\\InprocServer32";
     String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
@@ -116,11 +119,23 @@ public class SystemInfo {
       }
     } catch (MalformedURLException ue) {
     }
-    // check in tables folder
-    serverDllFile = new File(visualPinballTableFolder, "B2SBackglassServer.dll");
-    if (serverDllFile.exists()) {
-      return serverDllFile.getParentFile();
+
+    // alternative way copied from FrontendService
+    Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
+    if (!pathEntry.isEmpty()) {
+      String path = String.valueOf(pathEntry.values().iterator().next());
+      if (path.contains("\"")) {
+        path = path.substring(1);
+        path = path.substring(0, path.indexOf("\""));
+        File exeFile = new File(path);
+        File b2sFolder = exeFile.getParentFile();
+        if (b2sFolder.exists()) {
+          LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+          return b2sFolder;
+        }
+      }
     }
+
     return null;
   }
 

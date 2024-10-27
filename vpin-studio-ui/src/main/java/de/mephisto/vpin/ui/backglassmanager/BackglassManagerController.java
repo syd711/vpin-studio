@@ -11,7 +11,6 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.NavigationController;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -595,13 +594,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     EventManager.getInstance().addListener(this);
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-    if (gameEmulators.isEmpty()) {
-      LOG.error("No backglass server game emulator found!");
-    }
-    else {
-      serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
-    }
+    serverSettings = client.getBackglassServiceClient().getServerSettings();
 
     this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);

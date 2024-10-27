@@ -411,15 +411,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           continue;
         }
 
-        if (emulator.isVisualPinball() && emulator.getDirB2S() == null) {
-          File b2sFolder = systemService.resolveBackglassServerFolder(new File(emulator.getDirGames()));
-          if (b2sFolder == null) {
-            // not installed, use B2SServer folder inside vpx folder
-            b2sFolder = new File(emulator.getEmuLaunchDir(), "B2SServer");
-          }
-          emulator.setDirB2S(b2sFolder.getAbsolutePath());
-        }
-
         GameEmulator gameEmulator = new GameEmulator(emulator);
         emulators.put(emulator.getId(), gameEmulator);
 
@@ -453,60 +444,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Override
   public void afterPropertiesSet() {
-    FrontendConnector frontend = getFrontendConnector();
-    if (frontend != null) {
-      frontend.initializeConnector();
-    }
+
+    getFrontendConnector().initializeConnector();
 
     this.loadEmulators();
 
     getFrontendConnector().getFrontendPlayerDisplays();
-
-    GameEmulator defaultEmulator = getDefaultGameEmulator();
-    if (defaultEmulator != null) {
-      boolean b2sfolderSet = false;
-      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
-      if (!pathEntry.isEmpty()) {
-        String path = String.valueOf(pathEntry.values().iterator().next());
-        if (path.contains("\"")) {
-          path = path.substring(1);
-          path = path.substring(0, path.indexOf("\""));
-          File exeFile = new File(path);
-          File b2sFolder = exeFile.getParentFile();
-          if (b2sFolder.exists()) {
-            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
-            defaultEmulator.setBackglassServerDirectory(b2sFolder);
-            b2sfolderSet = true;
-          }
-        }
-      }
-      // second try
-      if (!b2sfolderSet || pathEntry.isEmpty()) {
-        File backglassServerDirectory = defaultEmulator.getBackglassServerDirectory();
-        File exeFile = new File(backglassServerDirectory, "B2SBackglassServerEXE.exe");
-        File installDirectory = defaultEmulator.getInstallationFolder();
-        if (!exeFile.exists() && installDirectory != null && installDirectory.exists()) {
-          //search recursively for the server exe file
-          Iterator<File> fileIterator = FileUtils.iterateFiles(installDirectory, new String[]{"exe"}, true);
-          boolean found = false;
-          while (fileIterator.hasNext()) {
-            File next = fileIterator.next();
-            if (next.getName().equals(exeFile.getName())) {
-              defaultEmulator.setBackglassServerDirectory(next.getParentFile());
-              LOG.info("Resolved backglass server directory from file search: " + defaultEmulator.getBackglassServerDirectory().getAbsolutePath());
-              found = true;
-              break;
-            }
-          }
-          if (!found) {
-            LOG.error("Failed to resolve backglass server directory, search returned no match. Sticking to default folder " + backglassServerDirectory.getAbsolutePath());
-          }
-        }
-        else {
-          LOG.info("Resolved backglass server directory " + backglassServerDirectory.getAbsolutePath());
-        }
-      }
-    }
 
     preferencesService.addChangeListener(this);
   }

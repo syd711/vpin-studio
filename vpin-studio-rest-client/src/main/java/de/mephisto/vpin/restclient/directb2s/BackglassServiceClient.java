@@ -97,17 +97,25 @@ public class BackglassServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "directb2s", DirectB2S[].class));
   }
 
-  public DirectB2ServerSettings getServerSettings(int emuId) {
-    return getRestClient().get(API + "directb2s/serversettings/" + emuId, DirectB2ServerSettings.class);
+
+  public File getBackglassServerFolder() {
+    DirectB2ServerSettings serverSettings = getServerSettings();
+    return serverSettings.getBackglassServerFolder() != null ? 
+      new File(serverSettings.getBackglassServerFolder()) : null;
+  }
+  
+
+  public DirectB2ServerSettings getServerSettings() {
+    return getRestClient().get(API + "directb2s/serversettings", DirectB2ServerSettings.class);
   }
 
   public DirectB2STableSettings getTableSettings(int gameId) {
     return getRestClient().get(API + "directb2s/tablesettings/" + gameId, DirectB2STableSettings.class);
   }
 
-  public DirectB2ServerSettings saveServerSettings(int emuId, DirectB2ServerSettings settings) throws Exception {
+  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) throws Exception {
     try {
-      return getRestClient().post(API + "directb2s/serversettings/" + emuId, settings, DirectB2ServerSettings.class);
+      return getRestClient().post(API + "directb2s/serversettings", settings, DirectB2ServerSettings.class);
     } catch (Exception e) {
       LOG.error("Failed to save b2s server settings: " + e.getMessage(), e);
       throw e;

@@ -67,6 +67,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   private File pinballYInstallationFolder;
   private File standaloneInstallationFolder;
 
+  private File backglassServerFolder;
+
   private File backupFolder;
 
   private ArchiveType archiveType = ArchiveType.VPA;
@@ -134,6 +136,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
+
+      this.backglassServerFolder = resolveBackglassServerFolder();
     }
     catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
@@ -167,6 +171,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     if (standaloneInstallationFolder != null) {
       LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
     }
+    LOG.info(formatPathLog("B2S Server", this.getBackglassServerFolder()));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getRawImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getCroppedImageFolder()));
@@ -192,6 +197,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getBackupFolder() {
     return backupFolder;
+  }
+
+  public File getBackglassServerFolder() {
+    return backglassServerFolder;
   }
 
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {

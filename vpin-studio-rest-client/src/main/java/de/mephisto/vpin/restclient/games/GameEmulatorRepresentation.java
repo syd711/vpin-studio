@@ -19,7 +19,6 @@ public class GameEmulatorRepresentation {
   private String nvramDirectory;
   private String romDirectory;
 
-  private String backglassServerFolder;
   private boolean vpxEmulator;
   private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
@@ -38,14 +37,6 @@ public class GameEmulatorRepresentation {
 
   public void setRomDirectory(String romDirectory) {
     this.romDirectory = romDirectory;
-  }
-
-  public String getBackglassServerFolder() {
-    return backglassServerFolder;
-  }
-
-  public void setBackglassServerFolder(String backglassServerFolder) {
-    this.backglassServerFolder = backglassServerFolder;
   }
 
   public boolean isFpEmulator() {

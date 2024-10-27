@@ -10,7 +10,9 @@ import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.DefaultPictureService;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import javafx.scene.image.Image;
 
@@ -29,6 +31,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,7 +39,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -45,6 +50,9 @@ import javax.xml.bind.DatatypeConverter;
 @Service
 public class BackglassService {
   private final static Logger LOG = LoggerFactory.getLogger(BackglassService.class);
+
+  @Autowired
+  private SystemService systemService;
 
   @Autowired
   private GameService gameService;
@@ -247,7 +255,7 @@ public class BackglassService {
   public DirectB2STableSettings saveTableSettings(int gameId, DirectB2STableSettings settings) throws VPinStudioException {
     Game game = gameService.getGame(gameId);
     try {
-      File settingsXml = game.getEmulator().getB2STableSettingsXml();
+      File settingsXml = getB2STableSettingsXml();
       B2STableSettingsSerializer tableSettingsSerializer = new B2STableSettingsSerializer(settingsXml);
       tableSettingsSerializer.serialize(settings);
       // destroy cache, will be recreated on first access
@@ -269,7 +277,7 @@ public class BackglassService {
 
     String rom = game.getRom();
 
-    File settingsXml = game.getEmulator().getB2STableSettingsXml();
+    File settingsXml = getB2STableSettingsXml();
     B2STableSettingsParser tableSettingsParser = cacheB2STableSettingsParser.get(settingsXml.getPath());
     if (tableSettingsParser == null) {
       if (settingsXml.exists() && !StringUtils.isEmpty(rom)) {
@@ -298,30 +306,62 @@ public class BackglassService {
     return null;
   }
 
-  public DirectB2ServerSettings getServerSettings(int emuId) {
-    GameEmulator emulator = frontendService.getGameEmulator(emuId);
-    File settingsXml = emulator.getB2STableSettingsXml();
-    if (!settingsXml.exists()) {
-      emulator = frontendService.getDefaultGameEmulator();
-      settingsXml = emulator.getB2STableSettingsXml();
-    }
+  //-----------------------------
 
+  public DirectB2ServerSettings getServerSettings() {
+    File settingsXml = getB2STableSettingsXml();
     B2SServerSettingsParser serverSettingsParser = new B2SServerSettingsParser(settingsXml);
     return serverSettingsParser.getSettings();
   }
 
-  public DirectB2ServerSettings saveServerSettings(int emulatorId, DirectB2ServerSettings settings) {
-    GameEmulator emulator = frontendService.getGameEmulator(emulatorId);
-    File settingsXml = emulator.getB2STableSettingsXml();
-    if (!settingsXml.exists()) {
-      emulator = frontendService.getDefaultGameEmulator();
-      settingsXml = emulator.getB2STableSettingsXml();
-    }
-
+  public DirectB2ServerSettings saveServerSettings(DirectB2ServerSettings settings) {
+    File settingsXml = getB2STableSettingsXml();
     B2SServerSettingsSerializer serverSettingsSerializer = new B2SServerSettingsSerializer(settingsXml);
     serverSettingsSerializer.serialize(settings);
-    return getServerSettings(emulatorId);
+    return getServerSettings();
   }
+
+  @NonNull
+  public File getBackglassServerFolder() {
+    File b2sFolder = systemService.getBackglassServerFolder();
+    if (b2sFolder != null) {
+      return b2sFolder;
+    }
+    // else search in VPX emulators folders
+    for (GameEmulator emu : frontendService.getVpxGameEmulators()) {
+      // check in installation
+      try (Stream<Path> walkStream = Files.walk(emu.getInstallationFolder().toPath())) {
+        Optional<Path> found = walkStream.filter(p -> StringUtils.equalsIgnoreCase(p.getFileName().toString(), "B2SBackglassServer.dll")).findFirst();
+        if (found.isPresent()) {
+          return found.get().toFile().getParentFile();
+        }
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot find backglass server in " + emu.getInstallationDirectory() + ", skip this emulator for B2S server search", ioe);
+      }
+    }
+    // not installed, use default folder
+    return new File("C:/vPinball/B2SServer");
+  }
+
+  @NonNull
+  public File getB2STableSettingsXml() {
+    File xml = new File(getBackglassServerFolder(), "B2STableSettings.xml");
+    if (xml.exists()) {
+      return xml;
+    }
+
+    // not found, check the legacy default : in tables folder of Vpx emulators
+    for (GameEmulator emu : frontendService.getVpxGameEmulators()) {
+      xml = new File(emu.getTablesDirectory(), "B2STableSettings.xml");
+      if (xml.exists()) {
+        return xml;
+      }
+    }
+    return null;
+  }
+
+  //--------------------------
 
   public List<DirectB2S> getBackglasses() {
     List<DirectB2S> result = new ArrayList<>();

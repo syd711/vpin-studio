@@ -48,7 +48,6 @@ public class GameEmulator {
   private String exeName;
   private final String gameExt;
 
-  private String backglassServerFolder;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator) {
@@ -64,7 +63,6 @@ public class GameEmulator {
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
-    this.backglassServerFolder = StringUtils.defaultString(emulator.getDirB2S(), emulator.getDirGames());
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
@@ -84,9 +82,6 @@ public class GameEmulator {
 
     if (emulator.getDirGames() != null) {
       this.tablesFolder = new File(emulator.getDirGames().trim());
-    }
-    if (this.backglassServerFolder != null) {
-      this.backglassServerDirectory = new File(this.backglassServerFolder);
     }
 
     this.musicFolder = new File(installationFolder, "Music");
@@ -221,39 +216,6 @@ public class GameEmulator {
     }
 
     return Collections.emptyList();
-  }
-
-  public String getBackglassServerFolder() {
-    return backglassServerFolder;
-  }
-
-  public void setBackglassServerFolder(String backglassServerFolder) {
-    this.backglassServerFolder = backglassServerFolder;
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getBackglassServerDirectory() {
-    return backglassServerDirectory;
-  }
-
-  public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
-    this.backglassServerDirectory = backglassServerDirectory;
-    this.backglassServerFolder = backglassServerDirectory.getAbsolutePath();
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getB2STableSettingsXml() {
-    if (this.backglassServerDirectory != null) {
-      File xml = new File(this.backglassServerDirectory, "B2STableSettings.xml");
-      if (xml.exists()) {
-        return xml;
-      }
-    }
-
-    //simply assume the legacy default
-    return new File(this.tablesFolder, "B2STableSettings.xml");
   }
 
   @NonNull

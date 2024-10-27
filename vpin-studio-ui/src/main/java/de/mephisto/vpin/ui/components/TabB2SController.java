@@ -2,7 +2,6 @@ package de.mephisto.vpin.ui.components;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.components.ComponentType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import javafx.fxml.FXML;
@@ -31,9 +30,8 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onRegister() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    if(defaultGameEmulator.getBackglassServerFolder() != null) {
-      File folder = new File(defaultGameEmulator.getBackglassServerFolder());
+    File folder = client.getBackglassServiceClient().getBackglassServerFolder();
+    if (folder != null) {
       File exe = new File(folder, "B2SBackglassServerRegisterApp.exe");
       super.openFile(exe);
     }
@@ -45,16 +43,14 @@ public class TabB2SController extends AbstractComponentTab implements Initializa
 
   @FXML
   private void onFolder() {
-    GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
-    if(defaultGameEmulator.getBackglassServerFolder() != null) {
-      File folder = new File(defaultGameEmulator.getBackglassServerFolder());
+    File folder = client.getBackglassServiceClient().getBackglassServerFolder();
+    if (folder != null) {
       openFolder(folder);
     }
     else {
       WidgetFactory.showAlert(Studio.stage, "Error", "The server was unable to determine the backglass server installation directory.");
     }
   }
-
 
   @Override
   protected ComponentType getComponentType() {

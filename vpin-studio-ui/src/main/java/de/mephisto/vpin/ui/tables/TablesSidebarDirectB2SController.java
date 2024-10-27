@@ -514,18 +514,14 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
             bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
 
-            List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-            if (gameEmulators.isEmpty()) {
-              LOG.error("No backglass server game emulator found!");
-              return;
-            }
-
-            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
-
-            boolean serverLaunchAsExe = serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
             boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
             startAsExe.setSelected(tableLaunchAsExe);
-            startAsExeServer.setSelected(serverLaunchAsExe);
+
+            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
+            if (serverSettings != null) {
+              boolean serverLaunchAsExe = serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
+              startAsExeServer.setSelected(serverLaunchAsExe);
+            }
           }
 
           setDisable(b2sSettings, false);

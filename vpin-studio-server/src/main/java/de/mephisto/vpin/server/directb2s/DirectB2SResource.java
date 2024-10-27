@@ -146,15 +146,15 @@ public class DirectB2SResource {
     }
   }
 
-  @GetMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings getServerSettings(@PathVariable("emuId") int emuId) {
-    return backglassService.getServerSettings(emuId);
+  @GetMapping("/serversettings")
+  public DirectB2ServerSettings getServerSettings() {
+    return backglassService.getServerSettings();
   }
 
-  @PostMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
+  @PostMapping("/serversettings")
+  public DirectB2ServerSettings saveServerSettings(@RequestBody DirectB2ServerSettings settings) {
     try {
-      return backglassService.saveServerSettings(emuId, settings);
+      return backglassService.saveServerSettings(settings);
     }
     catch (Exception e) {
       LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);

@@ -14,10 +14,6 @@ public class Emulator {
 
   private EmulatorType type;
 
-  /**
-   * opportunity for emulator to set a specific b2s folder, if null use dirGames
-   */
-  private String dirB2S;
   private String emuLaunchDir;
   /**
    * the executable to run the table
@@ -99,14 +95,6 @@ public class Emulator {
 
   public void setDirGames(String dirGames) {
     this.dirGames = dirGames;
-  }
-
-  public String getDirB2S() {
-    return dirB2S;
-  }
-
-  public void setDirB2S(String dirB2S) {
-    this.dirB2S = dirB2S;
   }
 
   public String getName() {
