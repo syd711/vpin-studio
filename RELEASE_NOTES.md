@@ -22,6 +22,8 @@
 
 ## Bugfixes
 
+- **Studio Update/Restart Error** Fixed an issue where the MacOS client update process would fail to restart client.
+
 
 ## VPin Mania
 
