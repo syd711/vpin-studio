@@ -83,7 +83,7 @@ public class UniversalUploadResource {
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
       String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
-      if (StringUtils.isEmpty(tableFileName)) {
+      if (StringUtils.isNotEmpty(tableFileName)) {
         LOG.info("Importing media bundle, not a table bundle.");
 
         File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
