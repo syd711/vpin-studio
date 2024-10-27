@@ -13,12 +13,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Updater {
@@ -151,14 +147,14 @@ public class Updater {
         MacOS.createExecScript();
 
         // Log the exit message
-        LOG.info("Exiting VPin-Studio to perform upgrade...");
+        LOG.info("Exiting VPin-Studio to perform update...");
 
         MacOS.launchUpdateScript();
 
         // Exit the current application
         System.exit(0);
       } catch (Exception e) {
-        LOG.error("Failed to execute upgrade and restart: {}", e.getMessage(), e);
+        LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
       }
     }
     return true;
