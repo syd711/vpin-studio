@@ -6,6 +6,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.vps.VpsUtil;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -25,6 +26,10 @@ import javafx.scene.text.TextAlignment;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 import java.text.DateFormat;
 import java.util.ArrayList;
@@ -32,6 +37,7 @@ import java.util.Date;
 import java.util.List;
 
 public class VpsEntry extends HBox {
+  private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
   public VpsEntry(GameRepresentation game, VpsDiffTypes type, 
         String tableId, String versionId, String tableFormat, 
@@ -145,6 +151,29 @@ public class VpsEntry extends HBox {
       clipboard.setContent(content);
     });
     menu.getItems().add(copyItem);
+
+    if (game != null) {
+      MenuItem addTodoItem = new MenuItem("Add //TODO");
+      addTodoItem.setOnAction(actionEvent -> {
+        String notes = game.getNotes();
+        if (notes != null && notes.length() > 0) {
+          notes  = notes + "\n";
+        }
+        else {
+          notes = "";
+        }
+        notes += "//TODO " + link;
+        game.setNotes(notes);
+        try {
+          client.getGameService().saveGame(game);
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+        }
+        catch (Exception e) {
+          LOG.error("Cannot save notes for game " + game.getId() + ", " + e.getMessage());
+        }
+      });
+      menu.getItems().add(addTodoItem);
+    }
     button.setContextMenu(menu);
 
     Label label = new Label();
