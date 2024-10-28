@@ -5,6 +5,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modifiation-date.png" width="650" />
 
+- **Tables / Notes box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box
 - **Tables / Future Pinball**: Added better support of future pinball tables.
 - **Tables / Future Pinball VPS match**: Added ability to match future pinball tables against the VPS database. Also VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table. 
 
