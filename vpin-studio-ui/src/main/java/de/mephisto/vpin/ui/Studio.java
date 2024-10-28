@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -400,8 +401,10 @@ public class Studio extends Application {
 
   public static void exit() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
 
-    if (!uiSettings.isHideFrontendLaunchQuestion()) {
+    if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
       if (!confirmationResult.isApplyClicked()) {
