@@ -38,6 +38,7 @@
 - **Drop-in Folder**: Fixed menu button initially enabled even though being disabled in the preferences. 
 - **VPS Data**: Fixed issue that caused all tutorial URLs being ignored.
 - **Highscore Cards**: Fixed missing status updates. When a backglass is uploaded, the default background information for a game is refreshed too.
+- **Dialog Positioning**: Dialogs are now always opened on the screen the main Studio Window is located. So only the size of a dialog is restored, not the previous position. 
 
 ## VPin Mania
 

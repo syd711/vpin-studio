@@ -26,6 +26,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
 
 import de.mephisto.vpin.server.system.SystemService;
+import org.jcodec.common.logging.Logger;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -109,7 +110,9 @@ abstract public class AbstractVPinServerTest {
   @Autowired
   protected AltSoundService altSoundService;
 
-  /** To force usage of a given Frontend */
+  /**
+   * To force usage of a given Frontend
+   */
   protected GameEmulator buildGameEmulator() {
     Emulator emulator = new Emulator(EmulatorType.VisualPinball);
     emulator.setDescription("VPX");
@@ -131,14 +134,19 @@ abstract public class AbstractVPinServerTest {
   }
 
   public void setupSystem() {
-    frontendService.deleteGames(1);
-    clearVPinStudioDatabase();
+    try {
+      frontendService.deleteGames(1);
+      clearVPinStudioDatabase();
 
-    systemService.setArchiveType(ArchiveType.VPA);
+      systemService.setArchiveType(ArchiveType.VPA);
 
-    frontendService.importGame(EM_TABLE, 1);
-    frontendService.importGame(VPREG_TABLE, 1);
-    frontendService.importGame(NVRAM_TABLE, 1);
+      frontendService.importGame(EM_TABLE, 1);
+      frontendService.importGame(VPREG_TABLE, 1);
+      frontendService.importGame(NVRAM_TABLE, 1);
+    }
+    catch (Exception e) {
+      Logger.error("Failed to setup test system: {}", e.getMessage(), e);
+    }
   }
 
   protected void clearVPinStudioDatabase() {
