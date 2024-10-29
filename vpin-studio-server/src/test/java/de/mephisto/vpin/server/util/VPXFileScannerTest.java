@@ -13,11 +13,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VPXFileScannerTest {
 
+  private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
+
   @Test
   public void testScan() {
-    File files = new File("C:\\vPinball\\VisualPinball\\Tables");
-    if(files.exists()) {
-      File[] vpxfiles = files.listFiles(new FilenameFilter() {
+    if(folder.exists()) {
+      File[] vpxfiles = folder.listFiles(new FilenameFilter() {
         @Override
         public boolean accept(File dir, String name) {
           return name.endsWith("vpx");

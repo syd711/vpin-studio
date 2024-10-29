@@ -193,7 +193,7 @@ public class TableOverviewContextMenu {
 
       Menu uploadMenu = new Menu("Upload...");
 
-      MenuItem altColorFilesItem = new MenuItem("Upload ALT Color Files");
+      MenuItem altColorFilesItem = new MenuItem("Upload ALT Color File");
       altColorFilesItem.setGraphic(WidgetFactory.createIcon("mdi2u-upload"));
       altColorFilesItem.setOnAction(actionEvent -> tableOverviewController.onAltColorUpload());
       uploadMenu.getItems().add(altColorFilesItem);

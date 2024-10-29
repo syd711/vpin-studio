@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.archiving.adapters.vpbm;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.preferences.BackupSettings;
@@ -153,6 +154,11 @@ public class VpbmService implements InitializingBean {
     SystemCommandOutput out = new SystemCommandOutput();
     long start = System.currentTimeMillis();
     try {
+      if (!WinRegistry.isDotNetInstalled()) {
+        LOG.error("Can't execute VPBM command, no .net installation found!");
+        return out;
+      }
+
       File dir = new File(RESOURCES, VpbmArchiveSource.FOLDER_NAME);
       File exe = new File(dir, "vPinBackupManager.exe");
       List<String> commands = new ArrayList<>(Arrays.asList(exe.getAbsolutePath()));

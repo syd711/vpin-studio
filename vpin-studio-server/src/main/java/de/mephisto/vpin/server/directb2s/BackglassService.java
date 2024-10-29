@@ -1,11 +1,12 @@
 package de.mephisto.vpin.server.directb2s;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.VPinStudioException;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
@@ -13,9 +14,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.util.ImageUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import javafx.scene.image.Image;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
@@ -27,25 +26,18 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.xml.bind.DatatypeConverter;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.xml.bind.DatatypeConverter;
 
 @Service
 public class BackglassService {
@@ -114,12 +106,14 @@ public class BackglassService {
     // now fill images dimension
     try {
       extractBackgroundData(data, game, forceBackglassExtraction);
-    } catch (IOException ioe) {
+    }
+    catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
     }
     try {
       exportDMDData(data, game, forceBackglassExtraction);
-    } catch (IOException ioe) {
+    }
+    catch (IOException ioe) {
       LOG.error("cannot extract background dimension", ioe);
     }
 
@@ -286,7 +280,7 @@ public class BackglassService {
       }
     }
 
-    if (tableSettingsParser != null) {
+    if (tableSettingsParser != null && !StringUtils.isEmpty(rom)) {
       DirectB2STableSettings entry = tableSettingsParser.getEntry(rom);
       if (entry == null && !StringUtils.isEmpty(game.getRomAlias())) {
         entry = tableSettingsParser.getEntry(game.getRomAlias());
@@ -387,6 +381,7 @@ public class BackglassService {
     Path tablesPath = tablesFolder.toPath();
     return getDirectB2S(gameEmulator, tablesPath, file);
   }
+
   private DirectB2S getDirectB2S(GameEmulator gameEmulator, Path tablesPath, File file) {
     DirectB2S directB2S = new DirectB2S();
     directB2S.setEmulatorId(gameEmulator.getId());
@@ -406,7 +401,7 @@ public class BackglassService {
         cacheDirectB2SData.remove(b2sFile.getPath());
       }
       LOG.info("Renamed \"" + filename + "\" to \"" + newName + "\"");
-      
+
       return getDirectB2S(emulator, b2sNewFile);
     }
     return null;

@@ -289,7 +289,7 @@
             </Button>
             <SplitMenuButton fx:id="uploadTableBtn" mnemonicParsing="false" onAction="#onTableUpload">
                <items>
-                  <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color Files">
+                  <MenuItem fx:id="altColorUploadItem" mnemonicParsing="false" onAction="#onAltColorUpload" text="Upload ALT Color File">
                      <graphic>
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2u-upload" iconSize="18" />
                      </graphic>

@@ -31,6 +31,7 @@
 - **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
 - **Drop-in Folder**: Fixed drop-in folder for macOS and Linux. The recursive watching of the filesystem doesn't work there, so right now only the flat folder is supported for these operating systems. 
 - **Drop-in Folder**: Fixed menu button initially enabled even though being disabled in the preferences. 
+- **VPS Data**: Fixed issue that caused all tutorial URLs being ignored.
 
 ## VPin Mania
 

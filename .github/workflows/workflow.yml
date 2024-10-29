@@ -76,7 +76,7 @@ jobs:
           ls ${{ github.workspace }}                    
 
       - name: Build with Maven
-        run: mvn --batch-mode --update-snapshots clean package -DskipTests
+        run: mvn --batch-mode --update-snapshots clean package
 
       - name: List files in the Output folder
         run: |

@@ -2,6 +2,8 @@ package de.mephisto.vpin.server;
 
 import de.mephisto.vpin.server.inputs.InputEventService;
 import org.apache.catalina.connector.RequestFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
@@ -12,6 +14,7 @@ import java.io.IOException;
 @Component
 @Order(1)
 public class ShutdownResetFilter implements Filter {
+  private final static Logger LOG = LoggerFactory.getLogger(ShutdownResetFilter.class);
 
   @Autowired
   private InputEventService keyEventService;
@@ -20,8 +23,9 @@ public class ShutdownResetFilter implements Filter {
   public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws ServletException, IOException {
     try {
       Thread.currentThread().setName(((RequestFacade) request).getRequestURI());
-    } catch (Exception e) {
-      e.printStackTrace();
+    }
+    catch (Exception e) {
+      LOG.error("Shutdown Thread naming failed: {}", e.getMessage());
     }
     chain.doFilter(request, response);
     keyEventService.resetShutdownTimer();
