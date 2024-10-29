@@ -1,142 +1,16 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
-import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 
-import java.io.File;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.stream.Collectors;
+public class CfgUploadController extends BaseUploadController {
 
-import static de.mephisto.vpin.ui.Studio.stage;
-
-public class CfgUploadController implements Initializable, DialogController {
-  private final static Logger LOG = LoggerFactory.getLogger(CfgUploadController.class);
-
-  @FXML
-  private Node root;
-
-  @FXML
-  private TextField fileNameField;
-
-  @FXML
-  private Button uploadBtn;
-
-  @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
-
-  private List<File> selection;
-
-  private boolean result = false;
-  private GameEmulatorRepresentation emulatorRepresentation;
-
-  @FXML
-  private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
-  }
-
-  @FXML
-  private void onUploadClick(ActionEvent event) {
-    if (selection != null && !selection.isEmpty()) {
-      result = true;
-      try {
-        Platform.runLater(()-> {
-          Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-          stage.close();
-        });
-        CfgUploadProgressModel model = new CfgUploadProgressModel("Config File Upload", selection, emulatorRepresentation.getId());
-        ProgressDialog.createProgressDialog(model);
-      } catch (Exception e) {
-        LOG.error("Upload failed: " + e.getMessage(), e);
-        WidgetFactory.showAlert(stage, "Uploading Config File failed", "Please check the log file for details", "Error: " + e.getMessage());
-      }
-    }
-  }
-
-  @FXML
-  private void onFileSelect(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select Config File");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Config File", "*.cfg"));
-
-    this.selection = fileChooser.showOpenMultipleDialog(stage);
-    refreshSelection();
-  }
-
-  private void refreshSelection() {
-    if (this.selection != null && !this.selection.isEmpty()) {
-      List<String> collect = this.selection.stream().map(f -> f.getName()).collect(Collectors.toList());
-      this.fileNameField.setText(String.join(", ", collect));
-    }
-    else {
-      this.fileNameField.setText("");
-    }
+  public CfgUploadController() {
+    super(AssetType.CFG, true, true, "cfg");
   }
 
   @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
-    this.selection = null;
-
-    this.uploadBtn.setDisable(true);
-    this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
-
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
-    emulatorRepresentation = gameEmulators.get(0);
-    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-    emulatorCombo.setItems(emulators);
-    emulatorCombo.setValue(emulatorRepresentation);
-    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-      emulatorRepresentation = t1;
-    });
-
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, true, "cfg"));
-    root.setOnDragDropped(new FilesSelectorDropEventHandler(fileNameField, files -> {
-      selection = files;
-      refreshSelection();
-    }));
-  }
-
-  @Override
-  public void onDialogCancel() {
-    result = false;
-  }
-
-  public boolean uploadFinished() {
-    return result;
-  }
-
-  public void setFile(File file) {
-    if(file != null) {
-      this.selection = Arrays.asList(file);
-      refreshSelection();
-    }
+  protected UploadProgressModel createUploadModel() {
+    return new CfgUploadProgressModel("Config File Upload", getSelections(), getSelectedEmulatorId(), finalizer);
   }
 }

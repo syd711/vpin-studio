@@ -16,10 +16,9 @@ public class MusicUploadProgressModel extends UploadProgressModel {
 
   private final Iterator<File> iterator;
   private final File file;
-  private double percentage = 0;
 
-  public MusicUploadProgressModel(String title, File file) {
-    super(file, title);
+  public MusicUploadProgressModel(String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();
   }

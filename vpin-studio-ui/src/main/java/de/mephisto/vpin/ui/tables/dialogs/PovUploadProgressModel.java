@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -25,8 +24,8 @@ public class PovUploadProgressModel extends UploadProgressModel {
   private final int gameId;
   private final File file;
 
-  public PovUploadProgressModel(int gameId, String title, File file) {
-    super(file, title);
+  public PovUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

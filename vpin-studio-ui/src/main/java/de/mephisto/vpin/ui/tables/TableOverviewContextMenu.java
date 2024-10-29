@@ -73,12 +73,23 @@ public class TableOverviewContextMenu {
     iconVpsReset.setFitWidth(18);
     iconVpsReset.setFitHeight(18);
 
-
     MenuItem dataItem = new MenuItem("Edit Table Data");
     KeyCombination dataItemKey = new KeyCodeCombination(KeyCode.O, KeyCombination.CONTROL_DOWN);
     dataItem.setAccelerator(dataItemKey);
     dataItem.setOnAction(actionEvent -> tableOverviewController.onTableEdit());
     ctxMenu.getItems().add(dataItem);
+
+    if (frontendType.supportStandardFields()) {
+      boolean isDisabled = game.isDisabled();
+      String txt = isDisabled ? "Enable Table Data" : "Disable Table Data";
+      String icon = isDisabled ? "mdi2c-checkbox-marked-outline" : "mdi2c-checkbox-blank-off-outline";
+      //icon = isDisabled ? "mdi2m-microsoft-xbox-controller" : "mdi2m-microsoft-xbox-controller-off";
+      MenuItem enableItem = new MenuItem(txt, WidgetFactory.createIcon(icon));
+      KeyCombination enableItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.ALT_DOWN);
+      enableItem.setAccelerator(enableItemKey);
+      enableItem.setOnAction(actionEvent -> tableOverviewController.onTableToggle());
+      ctxMenu.getItems().add(enableItem);
+    }
 
     if (frontendType.supportMedias()) {
       MenuItem assetsItem = new MenuItem("Edit Table Assets");

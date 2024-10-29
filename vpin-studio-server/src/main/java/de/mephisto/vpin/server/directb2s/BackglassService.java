@@ -282,8 +282,8 @@ public class BackglassService {
     if (tableSettingsParser == null) {
       if (settingsXml.exists() && !StringUtils.isEmpty(rom)) {
         tableSettingsParser = new B2STableSettingsParser(settingsXml);
+        cacheB2STableSettingsParser.put(settingsXml.getPath(), tableSettingsParser);
       }
-      cacheB2STableSettingsParser.put(settingsXml.getPath(), tableSettingsParser);
     }
 
     if (tableSettingsParser != null) {

@@ -124,8 +124,76 @@ public enum AssetType {
       case TABLE: {
         return "Table File";
       }
+      default: {
+        return this.name();
+      }
     }
+  }
 
-    return this.name();
+  public String[] installableExtension() {
+    return new String[] {  defaultExtension(), "*.zip", "*.rar", "*.7z" };
+  }
+
+  public String defaultExtension() {
+    switch (this) {
+      case RES: {
+        return "*.res";
+      }
+      case POV: {
+        return "*.pov";
+      }
+      case INI: {
+        return "*.ini";
+      }
+      case DIRECTB2S: {
+        return "*.directb2s";
+      }
+      case NV: {
+        return "*.nv";
+      }
+      case ALT_SOUND: {
+        return "*.zip";
+      }
+      case ALT_COLOR: {
+        return "*.zip";
+      }
+      case CFG: {
+        return ".cfg";
+      }
+      case FPT: {
+        return "*.fpt";
+      }
+      case ROM: {
+        return "*.zip";
+      }
+      case VPX: {
+        return "*.vpx";
+      }
+      case DMD_PACK: {
+        return "DMD Pack";
+      }
+      case CRZ: {
+        return ".cRZ";
+      }
+      case PAC: {
+        return ".pac";
+      }
+      case PAL: {
+        return ".pal";
+      }
+      case VNI: {
+        return ".vni";
+      }
+      case MUSIC:
+      case MUSIC_BUNDLE: {
+          return "*.zip";
+      }
+      case PUP_PACK: {
+        return "*.zip";
+      }
+      default: {
+        return null;
+      }
+    }
   }
 }

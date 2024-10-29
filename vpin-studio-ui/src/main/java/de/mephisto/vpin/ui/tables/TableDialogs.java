@@ -18,7 +18,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.archiving.dialogs.*;
@@ -42,7 +41,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -125,10 +123,10 @@ public class TableDialogs {
     }
   }
 
-  public static void openCfgUploads(File file) {
+  public static void openCfgUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
     CfgUploadController controller = (CfgUploadController) stage.getUserData();
-    controller.setFile(file);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
@@ -140,54 +138,40 @@ public class TableDialogs {
   }
 
 
-  public static void openNvRamUploads(File file) {
+  public static void openNvRamUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
     NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
-    controller.setFile(file);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
-  public static void onRomUploads(File file) {
-    boolean uploaded = TableDialogs.openRomUploadDialog(file);
+  public static void onRomUploads(File file, Runnable finalizer) {
+    boolean uploaded = TableDialogs.openRomUploadDialog(file, finalizer);
     if (uploaded) {
       EventManager.getInstance().notifyTablesChanged();
     }
   }
 
-  public static void onMusicUploads() {
-    TableDialogs.openMusicUploadDialog(null, null);
+  public static void onMusicUploads(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+    TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
   }
 
 
-  public static boolean directBackglassUpload(Stage stage, GameRepresentation game) {
+  public static boolean directUpload(Stage stage, AssetType assetType, GameRepresentation game, Runnable finalizer) {
     StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select DirectB2S File");
+    fileChooser.setTitle("Select " + assetType.toString());
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("Direct B2S", "*.directb2s", "*.zip", "*.rar", "*.7z"));
+        new FileChooser.ExtensionFilter(assetType.toString(), assetType.installableExtension()));
 
     File file = fileChooser.showOpenDialog(stage);
     if (file != null && file.exists()) {
-      //Platform.runLater(() -> {
-      String analyze = null;
-      String suffix = FilenameUtils.getExtension(file.getName());
-      if (!suffix.equalsIgnoreCase(AssetType.DIRECTB2S.name()) && PackageUtil.isSupportedArchive(suffix)) {
-        analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.DIRECTB2S);
-      }
-
-      if (!StringUtils.isEmpty(analyze)) {
-        WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-      }
-      else {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
-        ProgressDialog.createProgressDialog(model);
-      }
-      //});
+      UploadAnalysisDispatcher.dispatchFile(file, game, assetType, finalizer);
       return true;
     }
     return false;
   }
 
-  public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file) {
+  public static boolean directBackglassUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       String help2 = null;
       if (game.getDirectB2SPath() != null) {
@@ -195,7 +179,7 @@ public class TableDialogs {
       }
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload backglass for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
-        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file);
+        DirectB2SUploadProgressModel model = new DirectB2SUploadProgressModel(game.getId(), "DirectB2S Upload", file, finalizer);
         ProgressDialog.createProgressDialog(model);
         return true;
       }
@@ -203,35 +187,7 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean directResUpload(Stage stage, GameRepresentation game) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select .res File");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".res File", "*.res", "*.zip", "*.rar", "*.7z"));
-
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null && file.exists()) {
-      Platform.runLater(() -> {
-        String analyze = null;
-        String suffix = FilenameUtils.getExtension(file.getName());
-        if (!suffix.equalsIgnoreCase(AssetType.RES.name()) && PackageUtil.isSupportedArchive(suffix)) {
-          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.RES);
-        }
-
-        if (!StringUtils.isEmpty(analyze)) {
-          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        }
-        else {
-          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), ".res File Upload", file);
-          ProgressDialog.createProgressDialog(model);
-        }
-      });
-      return true;
-    }
-    return false;
-  }
-
-  public static boolean directResUpload(Stage stage, GameRepresentation game, File file) {
+  public static boolean directResUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       String help2 = null;
       if (game.getDirectB2SPath() != null) {
@@ -240,7 +196,7 @@ public class TableDialogs {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .res file for \"" + game.getGameDisplayName() + "\"?", help2);
       if (result.get().equals(ButtonType.OK)) {
         Platform.runLater(() -> {
-          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file);
+          ResUploadProgressModel model = new ResUploadProgressModel(game.getId(), "Res File Upload", file, finalizer);
           ProgressDialog.createProgressDialog(model);
         });
         return true;
@@ -249,34 +205,7 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean directIniUpload(Stage stage, GameRepresentation game) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select .ini File");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".ini Files", "*.ini", "*.zip", "*.rar", "*.7z"));
-
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null && file.exists()) {
-      Platform.runLater(() -> {
-        String analyze = null;
-        String suffix = FilenameUtils.getExtension(file.getName());
-        if (!suffix.equalsIgnoreCase(AssetType.INI.name()) && PackageUtil.isSupportedArchive(suffix)) {
-          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.INI);
-        }
-        if (!StringUtils.isEmpty(analyze)) {
-          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        }
-        else {
-          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
-          ProgressDialog.createProgressDialog(model);
-        }
-      });
-      return true;
-    }
-    return false;
-  }
-
-  public static boolean directIniUpload(Stage stage, GameRepresentation game, File file) {
+  public static boolean directIniUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
@@ -285,7 +214,7 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .ini file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file);
+          IniUploadProgressModel model = new IniUploadProgressModel(game.getId(), "Ini Upload", file, finalizer);
           ProgressDialog.createProgressDialog(model);
         }
       });
@@ -294,34 +223,7 @@ public class TableDialogs {
     return false;
   }
 
-  public static boolean directPovUpload(Stage stage, GameRepresentation game) {
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select .pov File");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter(".pov Files", "*.pov", "*.zip", "*.rar", "*.7z"));
-
-    File file = fileChooser.showOpenDialog(stage);
-    if (file != null && file.exists()) {
-      Platform.runLater(() -> {
-        String analyze = null;
-        String suffix = FilenameUtils.getExtension(file.getName());
-        if (!suffix.equalsIgnoreCase(AssetType.POV.name()) && PackageUtil.isSupportedArchive(suffix)) {
-          analyze = UploadAnalysisDispatcher.validateArchive(file, AssetType.POV);
-        }
-        if (!StringUtils.isEmpty(analyze)) {
-          WidgetFactory.showAlert(Studio.stage, "Error", analyze);
-        }
-        else {
-          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV File Upload", file);
-          ProgressDialog.createProgressDialog(model);
-        }
-      });
-      return true;
-    }
-    return false;
-  }
-
-  public static boolean directPovUpload(Stage stage, GameRepresentation game, File file) {
+  public static boolean directPovUpload(Stage stage, GameRepresentation game, File file, Runnable finalizer) {
     if (file != null && file.exists()) {
       Platform.runLater(() -> {
         String help2 = null;
@@ -330,7 +232,7 @@ public class TableDialogs {
         }
         Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Upload", "Upload .pov file for \"" + game.getGameDisplayName() + "\"?", help2);
         if (result.get().equals(ButtonType.OK)) {
-          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file);
+          PovUploadProgressModel model = new PovUploadProgressModel(game.getId(), "POV Upload", file, finalizer);
           ProgressDialog.createProgressDialog(model);
         }
       });
@@ -415,10 +317,10 @@ public class TableDialogs {
     return true;
   }
 
-  public static void openAltSoundUploadDialog(File file, UploaderAnalysis analysis, int gameId) {
+  public static void openAltSoundUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(AltSoundUploadController.class, "dialog-altsound-upload.fxml", "ALT Sound Upload");
     AltSoundUploadController controller = (AltSoundUploadController) stage.getUserData();
-    controller.setData(stage, file, analysis, gameId);
+    controller.setData(stage, file, game, analysis, finalizer);
     stage.showAndWait();
   }
 
@@ -438,7 +340,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(GameRepresentation game, File file) {
+  public static boolean openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -447,13 +349,13 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setFile(file);
+    controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static boolean openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+  public static boolean openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -461,20 +363,20 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
-    controller.setFile(file, analysis, stage);
+    controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis analysis) {
+  public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(DMDUploadController.class, "dialog-dmd-upload.fxml", "DMD Bundle Upload");
     DMDUploadController controller = (DMDUploadController) stage.getUserData();
-    controller.setData(game, analysis, file, stage);
+    controller.setData(stage, file, game, analysis, finalizer);
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis analysis, boolean filterMode) {
+  public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, boolean filterMode) {
     String title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
     if (filterMode) {
       title = "Assets for \"" + game.getGameDisplayName() + "\"";
@@ -487,7 +389,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -680,19 +582,19 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openRomUploadDialog(File file) {
+  public static boolean openRomUploadDialog(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
-    controller.setFile(file);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();
   }
 
-  public static void openMusicUploadDialog(File file, UploaderAnalysis analysis) {
+  public static void openMusicUploadDialog(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(MusicUploadController.class, "dialog-music-upload.fxml", "Music Upload");
     MusicUploadController controller = (MusicUploadController) stage.getUserData();
-    controller.setFile(stage, file, analysis);
+    controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
   }
 

@@ -162,7 +162,9 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   public void install(File file) {
     if (gameSelection != null) {
-      UploadAnalysisDispatcher.dispatch(file, gameSelection);
+      UploadAnalysisDispatcher.dispatch(file, gameSelection, () -> {
+        //TODO move to installed folder
+      });
     }
   }
 

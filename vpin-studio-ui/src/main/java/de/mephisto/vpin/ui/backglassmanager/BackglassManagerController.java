@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.backglassmanager;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -265,9 +266,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onUpload(ActionEvent e) {
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      TableDialogs.directBackglassUpload(stage, game);
-      // when done, force refresh
-      refreshBackglass();
+      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, () -> {
+        // when done, force refresh
+        refreshBackglass();
+      });
     }
   }
 

@@ -1,14 +1,10 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.tables.TablesSidebarController;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -27,8 +23,8 @@ public class PupPackUploadProgressModel extends UploadProgressModel {
   private final String rom;
   private final File file;
 
-  public PupPackUploadProgressModel(String rom, String title, File file) {
-    super(file, title);
+  public PupPackUploadProgressModel(String rom, String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.rom = rom;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

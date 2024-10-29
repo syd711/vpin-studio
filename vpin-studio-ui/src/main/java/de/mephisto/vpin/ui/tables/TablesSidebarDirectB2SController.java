@@ -3,10 +3,10 @@ package de.mephisto.vpin.ui.tables;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -234,7 +234,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private void onUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     if (game.isPresent()) {
-      TableDialogs.directBackglassUpload(stage, game.get());
+      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game.get(), null);
     }
   }
 
