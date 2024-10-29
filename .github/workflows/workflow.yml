@@ -53,7 +53,7 @@ jobs:
 
       - name: Run maven build for popper client
         working-directory: ./vpin-studio-popper-client
-        run: mvn clean install -D
+        run: mvn clean install
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
