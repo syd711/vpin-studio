@@ -13,14 +13,18 @@ abstract public class UploadProgressModel extends ProgressModel<File> {
   private File file;
   private List<File> files;
 
-  public UploadProgressModel(File file, String title) {
+  private Runnable finalizer;
+
+  public UploadProgressModel(File file, String title, Runnable finalizer) {
     super(title);
     this.file = file;
+    this.finalizer = finalizer;
   }
 
-  public UploadProgressModel(List<File> files, String title) {
+  public UploadProgressModel(List<File> files, String title, Runnable finalizer) {
     super(title);
     this.files = files;
+    this.finalizer = finalizer;
   }
 
   @Override
@@ -28,5 +32,8 @@ abstract public class UploadProgressModel extends ProgressModel<File> {
     FileUtils.deleteIfTempFile(file);
     FileUtils.deleteIfTempFile(files);
     super.finalizeModel(progressResultModel);
+    if (finalizer != null) {
+      finalizer.run();
+    }
   }
 }

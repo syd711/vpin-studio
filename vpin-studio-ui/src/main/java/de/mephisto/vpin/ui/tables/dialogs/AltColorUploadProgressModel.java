@@ -24,8 +24,8 @@ public class AltColorUploadProgressModel extends UploadProgressModel {
   private final int gameId;
   private final File file;
 
-  public AltColorUploadProgressModel(int gameId, String title, File file, String altColorType) {
-    super(file, title);
+  public AltColorUploadProgressModel(int gameId, String title, File file, String altColorType, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

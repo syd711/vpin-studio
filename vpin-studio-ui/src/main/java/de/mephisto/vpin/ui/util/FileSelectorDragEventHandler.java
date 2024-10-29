@@ -20,8 +20,7 @@ public class FileSelectorDragEventHandler implements EventHandler<DragEvent> {
   private List<String> suffixes;
 
   public FileSelectorDragEventHandler(Node node, String... suffix) {
-    this.node = node;
-    this.suffixes = Arrays.asList(suffix);
+    this(node, false, suffix);
   }
 
   public FileSelectorDragEventHandler(Node node, boolean multiSelection, String... suffix) {

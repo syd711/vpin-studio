@@ -68,25 +68,24 @@ public class VpsInstallerUtils {
   }
 
   private static void installFile(GameRepresentation game, String link, VpsInstallLink installFile, AssetType assetType) {
-    Path tmp = null;
+    String filename = installFile.getName() + VpsInstallLink.VPS_INSTALL_LINK_PREFIX;
     try {
-      tmp = Path.of(System.getProperty("java.io.tmpdir"), installFile.getName() + VpsInstallLink.VPS_INSTALL_LINK_PREFIX);
+      Path tmp = Path.of(System.getProperty("java.io.tmpdir"), filename);
       Files.write(tmp, (link + "@" + installFile.getOrder()).getBytes());
-      UploadAnalysisDispatcher.dispatchFile(tmp.toFile(), game, assetType);
+      UploadAnalysisDispatcher.dispatchFile(tmp.toFile(), game, assetType, () -> {
+        // clean file when installed
+        if (tmp != null) {
+          try {
+            Files.delete(tmp);
+          }
+          catch (IOException ioe) {
+            LOG.info("Cannot delete temp File " + tmp);
+          }
+        }
+      });
     }
     catch (IOException ioe) {
-      LOG.info("Cannot save link in File " + tmp);
-    }
-    finally {
-      // clean file when installed
-      if (tmp != null) {
-        try {
-          Files.delete(tmp);
-        }
-        catch (IOException ioe) {
-          LOG.info("Cannot delete temp File " + tmp);
-        }
-      }
+      LOG.info("Cannot save link in File " + filename);
     }
   }
 

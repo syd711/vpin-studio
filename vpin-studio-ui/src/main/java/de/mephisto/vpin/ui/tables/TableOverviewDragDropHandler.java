@@ -33,6 +33,6 @@ public class TableOverviewDragDropHandler extends BaseDragDropHandler {
   @Override
   protected void processDroppedFile(File file) {
     GameRepresentation selection = getSelectedGame();
-    UploadAnalysisDispatcher.dispatch(file, selection);
+    UploadAnalysisDispatcher.dispatch(file, selection, null);
   }
 }

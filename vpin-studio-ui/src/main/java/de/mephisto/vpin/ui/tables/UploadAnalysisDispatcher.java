@@ -25,7 +25,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class UploadAnalysisDispatcher {
   private final static Logger LOG = LoggerFactory.getLogger(UploadAnalysisDispatcher.class);
 
-  public static void dispatch(@NonNull File file, @Nullable GameRepresentation game) {
+  public static void dispatch(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     String extension = FilenameUtils.getExtension(file.getName());
     AssetType assetType = AssetType.fromExtension(extension);
     if (assetType == null) {
@@ -37,38 +37,39 @@ public class UploadAnalysisDispatcher {
     }
 
     if (PackageUtil.isSupportedArchive(extension)) {
-      validateArchive(file, game);
+      validateArchive(file, game, finalizer);
     }
     else {
-      dispatchFile(file, game, assetType);
+      dispatchFile(file, game, assetType, finalizer);
     }
   }
 
-  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType) {
+  public static void dispatchFile(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @Nullable Runnable finalizer) {
     UploaderAnalysis<?> analysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), file);
-    dispatchBySuffix(file, game, assetType, analysis);
+    dispatchBySuffix(file, game, assetType, analysis, finalizer);
   }
 
-  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, @NonNull UploaderAnalysis<?> analysis) {
+  private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType, 
+      @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
-        TableDialogs.onRomUploads(file);
+        TableDialogs.onRomUploads(file, finalizer);
         return;
       }
       case NV: {
-        TableDialogs.openNvRamUploads(file);
+        TableDialogs.openNvRamUploads(file, finalizer);
         return;
       }
       case CFG: {
-        TableDialogs.openCfgUploads(file);
+        TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
       case DMD_PACK: {
-        TableDialogs.openDMDUploadDialog(game, file, analysis);
+        TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
       }
       case ALT_SOUND: {
-        TableDialogs.openAltSoundUploadDialog(file, analysis, game != null ? game.getId() : -1);
+        TableDialogs.openAltSoundUploadDialog(game, file, analysis, finalizer);
         return;
       }
       case VPX: {
@@ -90,19 +91,19 @@ public class UploadAnalysisDispatcher {
 
     switch (assetType) {
       case DIRECTB2S: {
-        TableDialogs.directBackglassUpload(Studio.stage, game, file);
+        TableDialogs.directBackglassUpload(Studio.stage, game, file, finalizer);
         return;
       }
       case RES: {
-        TableDialogs.directResUpload(Studio.stage, game, file);
+        TableDialogs.directResUpload(Studio.stage, game, file, finalizer);
         return;
       }
       case INI: {
-        TableDialogs.directIniUpload(Studio.stage, game, file);
+        TableDialogs.directIniUpload(Studio.stage, game, file, finalizer);
         break;
       }
       case POV: {
-        TableDialogs.directPovUpload(Studio.stage, game, file);
+        TableDialogs.directPovUpload(Studio.stage, game, file, finalizer);
         break;
       }
       case ALT_COLOR:
@@ -110,15 +111,15 @@ public class UploadAnalysisDispatcher {
       case PAL:
       case VNI:
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(game, file);
+        TableDialogs.openAltColorUploadDialog(game, file, finalizer);
         break;
       }
       case MUSIC: {
-        TableDialogs.openMusicUploadDialog(file, analysis);
+        TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
         break;
       }
       case PUP_PACK: {
-        TableDialogs.openPupPackUploadDialog(game, file, analysis);
+        TableDialogs.openPupPackUploadDialog(game, file, analysis, finalizer);
         break;
       }
       case FRONTEND_MEDIA: {
@@ -129,7 +130,6 @@ public class UploadAnalysisDispatcher {
         showDefault(file);
       }
     }
-
   }
 
   private static void showDefault(@NonNull File file) {
@@ -182,7 +182,7 @@ public class UploadAnalysisDispatcher {
     return null;
   }
 
-  public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game) {
+  public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     try {
       ProgressModel<?> model = createProgressModel(file);
       ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
@@ -196,13 +196,15 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
+          /*
           if (singleAssetType.equals(AssetType.VPX) || singleAssetType.equals(AssetType.FPT)) {
             TableDialogs.openTableUploadDialog(game, null, analysis);
           }
           else {
             TableDialogs.openMediaUploadDialog(game, file, analysis, false);
           }
-//          dispatchBySuffix(file, game, singleAssetType, analysis);
+          */
+          dispatchBySuffix(file, game, singleAssetType, analysis, finalizer);
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);

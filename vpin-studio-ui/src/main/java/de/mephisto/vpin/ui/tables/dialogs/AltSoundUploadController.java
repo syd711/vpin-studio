@@ -1,50 +1,26 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
-import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
-import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.StudioFileChooser;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
-import javafx.scene.Node;
 import javafx.scene.control.Button;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 
-public class AltSoundUploadController implements Initializable, DialogController {
+public class AltSoundUploadController extends BaseUploadController {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadController.class);
 
-  @FXML
-  private Node root;
-
-  @FXML
-  private TextField fileNameField;
-
-  @FXML
-  private Button uploadBtn;
 
   @FXML
   private Button cancelBtn;
@@ -58,56 +34,23 @@ public class AltSoundUploadController implements Initializable, DialogController
   @FXML
   private Label romLabel;
 
-  @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
+  private UploaderAnalysis<?> uploaderAnalysis;
 
-  private Stage stage;
-  private File selection;
-  private UploaderAnalysis uploaderAnalysis;
-  private GameEmulatorRepresentation emulatorRepresentation;
-  private int gameId;
-
-  @FXML
-  private void onCancelClick(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-    stage.close();
+  private GameRepresentation game;
+  
+  public AltSoundUploadController() {
+    super("ALT Sound Package", false, true, PackageUtil.ARCHIVE_SUFFIXES);
   }
 
-  @FXML
-  private void onUploadClick(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-    if (selection != null && selection.exists()) {
-      stage.close();
-      AltSoundUploadProgressModel model = new AltSoundUploadProgressModel(gameId, "ALT Sound Upload", selection, this.emulatorCombo.getValue().getId(), uploaderAnalysis.getRomFromAltSoundPack());
-
-      Platform.runLater(() -> {
-        ProgressDialog.createProgressDialog(model);
-      });
-    }
+  protected UploadProgressModel createUploadModel() {
+    return new AltSoundUploadProgressModel(game != null ? game.getId() : -1, "ALT Sound Upload", 
+      getSelection(), getSelectedEmulatorId(), uploaderAnalysis.getRomFromAltSoundPack(), finalizer);
   }
 
-  @FXML
-  private void onFileSelect(ActionEvent event) {
-    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+  @Override
+  protected void refreshSelection() {
+    File selection = getSelection();
 
-    this.uploadBtn.setDisable(true);
-
-    StudioFileChooser fileChooser = new StudioFileChooser();
-    fileChooser.setTitle("Select ALT Sound");
-    fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("ALT Sound Package", "*.zip", "*.rar", "*.7z"));
-
-    this.selection = fileChooser.showOpenDialog(stage);
-    this.uploadBtn.setDisable(selection == null);
-    if (this.selection != null) {
-      refreshSelection();
-    }
-    else {
-      this.fileNameField.setText("");
-    }
-  }
-
-  private void refreshSelection() {
     this.uploadBtn.setDisable(selection == null);
 
     this.fileNameField.setText("Analyzing \"" + selection.getName() + "\"...");
@@ -117,7 +60,7 @@ public class AltSoundUploadController implements Initializable, DialogController
 
 
     Platform.runLater(() -> {
-      uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(this.selection);
+      uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
       refreshMatchingGame(uploaderAnalysis);
       String validation = uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND);
 
@@ -129,7 +72,7 @@ public class AltSoundUploadController implements Initializable, DialogController
         this.cancelBtn.setDisable(false);
       }
       else {
-        this.fileNameField.setText(this.selection.getAbsolutePath());
+        this.fileNameField.setText(selection.getAbsolutePath());
         this.fileNameField.setDisable(false);
         this.fileBtn.setDisable(false);
         this.cancelBtn.setDisable(false);
@@ -138,41 +81,14 @@ public class AltSoundUploadController implements Initializable, DialogController
     });
   }
 
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.selection = null;
-    this.uploadBtn.setDisable(true);
-
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
-    emulatorRepresentation = gameEmulators.get(0);
-    ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-    emulatorCombo.setItems(emulators);
-    emulatorCombo.setValue(emulatorRepresentation);
-    emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-      emulatorRepresentation = t1;
-    });
-
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
-    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
-      selection = file;
-      refreshSelection();
-    }));
-  }
-
-  @Override
-  public void onDialogCancel() {
-
-  }
-
-  public void setData(Stage stage, File file, UploaderAnalysis uploaderAnalysis, int gameId) {
-    this.stage = stage;
-    this.selection = file;
+  public void setData(Stage stage, File file, GameRepresentation game, UploaderAnalysis<?> uploaderAnalysis, Runnable finalizer) {
+    super.setFile(stage, file, finalizer);
     this.uploaderAnalysis = uploaderAnalysis;
-    this.gameId = gameId;
+    this.game = game;
 
-    if (this.selection != null) {
+    if (file != null) {
       refreshMatchingGame(uploaderAnalysis);
-      this.fileNameField.setText(this.selection.getAbsolutePath());
+      this.fileNameField.setText(file.getAbsolutePath());
       this.fileNameField.setDisable(false);
       this.fileBtn.setDisable(false);
       this.cancelBtn.setDisable(false);
@@ -181,7 +97,7 @@ public class AltSoundUploadController implements Initializable, DialogController
   }
 
 
-  private void refreshMatchingGame(UploaderAnalysis uploaderAnalysis) {
+  private void refreshMatchingGame(UploaderAnalysis<?> uploaderAnalysis) {
     tableLabel.setText("-");
     romLabel.setText("-");
     this.uploadBtn.setDisable(true);

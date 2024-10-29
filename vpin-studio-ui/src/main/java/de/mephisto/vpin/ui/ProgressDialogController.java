@@ -35,6 +35,11 @@ public class ProgressDialogController implements Initializable, DialogController
   @FXML
   private Button cancelButton;
 
+  @FXML
+  private Button backgroundButton;
+
+  private boolean runsInBackground = false;
+
   private Service service;
   private ProgressResultModel progressResultModel;
   private ProgressModel model;
@@ -44,6 +49,12 @@ public class ProgressDialogController implements Initializable, DialogController
     cancelButton.setOnAction(event -> {
       this.onDialogCancel();
 
+      Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+      stage.close();
+    });
+
+    backgroundButton.setOnAction(event -> {
+      runsInBackground = true;
       Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
       stage.close();
     });
@@ -72,23 +83,25 @@ public class ProgressDialogController implements Initializable, DialogController
                 Object next = model.getNext();
                 final int uiIndex = index;
 
-                Platform.runLater(() -> {
-                  String label = model.nextToString(next);
-                  if (label != null) {
-                    String progressText = model.nextToString(next);
-                    if(!StringUtils.isEmpty(progressText)) {
-                      progressBarLabel.setText(progressText);
+                if (!runsInBackground) {
+                  Platform.runLater(() -> {
+                    String label = model.nextToString(next);
+                    if (label != null) {
+                      String progressText = model.nextToString(next);
+                      if(!StringUtils.isEmpty(progressText)) {
+                        progressBarLabel.setText(progressText);
+                      }
+                      else {
+                        progressBarLabel.setText("");
+                      }
                     }
-                    else {
-                      progressBarLabel.setText("");
+                    String title = model.getTitle();
+                    if (model.getMax() > 1) {
+                      title = title + " (" + uiIndex + "/" + model.getMax() + ")";
                     }
-                  }
-                  String title = model.getTitle();
-                  if (model.getMax() > 1) {
-                    title = title + " (" + uiIndex + "/" + model.getMax() + ")";
-                  }
-                  titleLabel.setText(title);
-                });
+                    titleLabel.setText(title);
+                  });
+                }
 
                 model.processNext(progressResultModel, next);
                 if (!model.isIndeterminate()) {
@@ -96,18 +109,23 @@ public class ProgressDialogController implements Initializable, DialogController
                   updateProgress(percent, 100);
                 }
 
-                Platform.runLater(() -> {
-                  if (!model.isIndeterminate()) {
-                    double p = Double.valueOf(uiIndex) / model.getMax();
-                    progressBar.setProgress(p);
-                  }
-                });
+                if (!runsInBackground) {
+                  Platform.runLater(() -> {
+                    if (!model.isIndeterminate()) {
+                      double p = Double.valueOf(uiIndex) / model.getMax();
+                      progressBar.setProgress(p);
+                    }
+                  });
+                }
                 index++;
               }
 
               Platform.runLater(() -> {
-                stage.close();
+                if (!runsInBackground) {
+                  stage.close();
+                }
                 model.finalizeModel(progressResultModel);
+
                 if (model.isShowSummary()) {
                   Platform.runLater(() -> {
                     String msg = model.getTitle() + " finished.";
@@ -118,9 +136,11 @@ public class ProgressDialogController implements Initializable, DialogController
             } catch (Exception e) {
               LOG.error("Error in Progress Dialog model: " + e.getMessage(), e);
               model.finalizeModel(progressResultModel);
-              Platform.runLater(() -> {
-                stage.close();
-              });
+              if (!runsInBackground) {
+                Platform.runLater(() -> {
+                  stage.close();
+                });
+              }
               Platform.runLater(() -> {
                 WidgetFactory.showAlert(Studio.stage, "Error", "Error in progressing: " + e.getMessage());
               });

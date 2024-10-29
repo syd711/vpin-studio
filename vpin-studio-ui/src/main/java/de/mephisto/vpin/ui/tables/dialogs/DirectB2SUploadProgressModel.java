@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
@@ -16,8 +15,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static de.mephisto.vpin.restclient.jobs.JobType.DIRECTB2S_INSTALL;
-
 public class DirectB2SUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(DirectB2SUploadProgressModel.class);
 
@@ -25,8 +22,8 @@ public class DirectB2SUploadProgressModel extends UploadProgressModel {
   private final int gameId;
   private final File file;
 
-  public DirectB2SUploadProgressModel(int gameId, String title, File file) {
-    super(file, title);
+  public DirectB2SUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

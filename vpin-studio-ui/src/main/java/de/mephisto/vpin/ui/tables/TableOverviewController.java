@@ -7,6 +7,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
@@ -344,18 +345,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onAltSoundUpload() {
     List<GameRepresentation> selectedItems = getSelections();
-    int gameId = -1;
+    GameRepresentation game = null;
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      gameId = selectedItems.get(0).getId();
+      game = selectedItems.get(0);
     }
-    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
+    TableDialogs.openAltSoundUploadDialog(game, null, null, null);
   }
 
   @FXML
   public void onAltColorUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null);
+      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
       }
@@ -364,23 +365,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onRomsUpload() {
-    TableDialogs.onRomUploads(null);
+    TableDialogs.onRomUploads(null, null);
   }
 
   @FXML
   public void onCfgUpload() {
-    TableDialogs.openCfgUploads(null);
+    TableDialogs.openCfgUploads(null, null);
   }
 
   @FXML
   public void onNvRamUpload() {
-    TableDialogs.openNvRamUploads(null);
+    TableDialogs.openNvRamUploads(null, null);
   }
 
 
   @FXML
   public void onMusicUpload() {
-    TableDialogs.onMusicUploads();
+    TableDialogs.onMusicUploads(null, null);
   }
 
 
@@ -388,7 +389,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onPupPackUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null);
+      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
@@ -399,7 +400,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onBackglassUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directBackglassUpload(stage, selectedItems.get(0));
+      boolean b = TableDialogs.directUpload(stage, AssetType.DIRECTB2S, selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
       }
@@ -410,7 +411,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onIniUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directIniUpload(stage, selectedItems.get(0));
+      boolean b = TableDialogs.directUpload(stage, AssetType.INI, selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneIni().setExpanded(true);
       }
@@ -429,7 +430,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onDMDUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null);
+      TableDialogs.openDMDUploadDialog(selectedItems.get(0), null, null, null);
     }
   }
 
@@ -437,7 +438,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onPOVUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.directPovUpload(stage, selectedItems.get(0));
+      boolean b = TableDialogs.directUpload(stage, AssetType.POV, selectedItems.get(0), null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPanePov().setExpanded(true);
       }
@@ -448,7 +449,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onResUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.directResUpload(stage, selectedItems.get(0));
+      TableDialogs.directUpload(stage, AssetType.RES, selectedItems.get(0), null);
     }
   }
 

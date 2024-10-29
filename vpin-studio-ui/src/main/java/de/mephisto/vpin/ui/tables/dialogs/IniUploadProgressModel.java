@@ -22,8 +22,8 @@ public class IniUploadProgressModel extends UploadProgressModel {
   private final int gameId;
   private final File file;
 
-  public IniUploadProgressModel(int gameId, String title, File file) {
-    super(file, title);
+  public IniUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();
