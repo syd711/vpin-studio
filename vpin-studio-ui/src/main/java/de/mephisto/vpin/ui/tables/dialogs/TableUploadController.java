@@ -42,6 +42,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -278,8 +279,17 @@ public class TableUploadController implements Initializable, DialogController {
 
     StudioFileChooser fileChooser = new StudioFileChooser();
     fileChooser.setTitle("Select VPX File");
+
+    List<String> filters = Arrays.asList("*.vpx", "*.zip", "*.rar", "*.7z");
+    String description = "FP file";
+    GameEmulatorRepresentation value = emulatorCombo.getValue();
+    if (value != null && value.isFpEmulator()) {
+      filters = Arrays.asList("*.fpt", "*.zip", "*.rar", "*.7z");
+      description = "VPX file";
+    }
+
     fileChooser.getExtensionFilters().addAll(
-        new FileChooser.ExtensionFilter("VPX File", "*.vpx", "*.zip", "*.rar", "*.7z"));
+        new FileChooser.ExtensionFilter(description, filters));
 
     this.selection = fileChooser.showOpenDialog(stage);
     setSelection(true);
