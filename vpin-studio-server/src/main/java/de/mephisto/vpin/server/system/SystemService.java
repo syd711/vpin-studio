@@ -537,24 +537,29 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (!available(port)) {
-      LOG.warn("----------------------------------------------");
-      LOG.warn("Instance already running, terminating server.");
-      LOG.warn("==============================================");
-      this.shutdown();
-      return;
-    }
-
-    this.loadingScoringDB();
-    new Thread(() -> {
-      Thread.currentThread().setName("ScoringDB Updater");
-      if (!new File("./").getAbsolutePath().contains("workspace")) {
-        ScoringDB.update();
+    try {
+      if (!available(port)) {
+        LOG.warn("----------------------------------------------");
+        LOG.warn("Instance already running, terminating server.");
+        LOG.warn("==============================================");
+        this.shutdown();
+        return;
       }
-      this.loadingScoringDB();
-    }).start();
 
-    initBaseFolders();
-    logSystemInfo();
+      this.loadingScoringDB();
+      new Thread(() -> {
+        Thread.currentThread().setName("ScoringDB Updater");
+        if (!new File("./").getAbsolutePath().contains("workspace")) {
+          ScoringDB.update();
+        }
+        this.loadingScoringDB();
+      }).start();
+
+      initBaseFolders();
+      logSystemInfo();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize system service: {}", e.getMessage(), e);
+    }
   }
 }
