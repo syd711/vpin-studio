@@ -67,6 +67,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     EventManager.getInstance().addListener(this);
 
     this.dropInsBtn = dropInsBtn;
+    this.dropInsBtn.setVisible(false);
     this.dropInsBtn.getGraphic().setVisible(false);
     this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override

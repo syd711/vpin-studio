@@ -1,11 +1,11 @@
 package de.mephisto.vpin.commons.utils;
 
+import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.sun.nio.file.ExtendedWatchEventModifier;
 
 import java.io.File;
 import java.io.IOException;
@@ -64,9 +64,16 @@ public class FolderMonitoringThread {
       LOG.info("Launched " + Thread.currentThread().getName());
       try {
         final Path path = folder.toPath();
-        path.register(watchService, new Kind[] { StandardWatchEventKinds.ENTRY_CREATE, 
-          StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY },
-          ExtendedWatchEventModifier.FILE_TREE);
+
+        if (OSUtil.isWindows()) {
+          path.register(watchService, new Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
+                  StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
+              ExtendedWatchEventModifier.FILE_TREE);
+        }
+        else {
+          path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        }
+
         while (running.get()) {
           try {
             final WatchKey wk = watchService.take();
