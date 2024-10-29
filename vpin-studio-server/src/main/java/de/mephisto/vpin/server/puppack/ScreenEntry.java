@@ -28,7 +28,8 @@ public class ScreenEntry {
   public int getScreenNum() {
     try {
       return Integer.parseInt(record.get(0));
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       return -1;
     }
   }
@@ -40,7 +41,8 @@ public class ScreenEntry {
         return false;
       }
       return transparency.trim().equals("1");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Invalid transparency value: " + e.getMessage());
       return false;
     }
@@ -53,8 +55,14 @@ public class ScreenEntry {
       if (StringUtils.isEmpty(screenMode) || screenMode.equals("0")) {
         return ScreenMode.off;
       }
+
+      if (screenMode.equals("Off") || screenMode.equals("On") || screenMode.equals("Show")) {
+        screenMode = screenMode.toLowerCase();
+      }
+
       return ScreenMode.valueOf(screenMode);
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.warn("Invalid screen mode: " + e.getMessage());
       return null;
     }

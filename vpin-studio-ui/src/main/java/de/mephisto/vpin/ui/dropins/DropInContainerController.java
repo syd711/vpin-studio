@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.TrashBin;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.util.DateUtil;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -121,7 +122,7 @@ public class DropInContainerController implements Initializable {
 
   @Override
   public void initialize(URL location, ResourceBundle resources) {
-    openBtn.setDisable(!SystemUtil.isWindows());//TODO
+    openBtn.setDisable(!OSUtil.isWindows());//TODO
 
     installBtn.managedProperty().bindBidirectional(installBtn.visibleProperty());
     installSeparator.managedProperty().bindBidirectional(installSeparator.visibleProperty());
