@@ -10,11 +10,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
+import static de.mephisto.vpin.restclient.util.OSUtil.isMac;
+import static de.mephisto.vpin.restclient.util.OSUtil.isWindows;
 import static de.mephisto.vpin.ui.Studio.client;
-import static de.mephisto.vpin.ui.Studio.stage;
 
 public class SystemUtil {
   private final static Logger LOG = LoggerFactory.getLogger(SystemUtil.class);
@@ -249,13 +248,4 @@ public class SystemUtil {
     return client.getSystemService().isLocal();
   }
 
-  public static boolean isWindows() {
-    String os = System.getProperty("os.name").toLowerCase();
-    return os.contains("windows");
-  }
-
-  public static boolean isMac() {
-    String os = System.getProperty("os.name").toLowerCase();
-    return os.contains("mac") || os.contains("darwin");
-  }
 }
