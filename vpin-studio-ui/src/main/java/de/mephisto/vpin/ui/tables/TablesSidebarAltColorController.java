@@ -82,7 +82,7 @@ public class TablesSidebarAltColorController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openAltColorUploadDialog(game.get(), null, null);
+      TableDialogs.openAltColorUploadDialog(game.get(), null, null, null);
     }
   }
 

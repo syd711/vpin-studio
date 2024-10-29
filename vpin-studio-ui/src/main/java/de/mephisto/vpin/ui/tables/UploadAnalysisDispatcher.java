@@ -111,7 +111,7 @@ public class UploadAnalysisDispatcher {
       case PAL:
       case VNI:
       case CRZ: {
-        TableDialogs.openAltColorUploadDialog(game, file, finalizer);
+        TableDialogs.openAltColorUploadDialog(game, file, analysis, finalizer);
         break;
       }
       case MUSIC: {
@@ -143,7 +143,7 @@ public class UploadAnalysisDispatcher {
     });
   }
 
-  private static boolean isArchive(File file) {
+  public static boolean isArchive(File file) {
     String extension = FilenameUtils.getExtension(file.getName());
     return PackageUtil.isSupportedArchive(extension);
   }
@@ -169,29 +169,13 @@ public class UploadAnalysisDispatcher {
 
 
   public static String validateArchive(File file, AssetType assetType) {
-    try {
-      ProgressModel<?> model = createProgressModel(file);
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) progressDialog.getResults().get(0);
-      return analysis.validateAssetType(assetType);
-    }
-    catch (Exception e) {
-      LOG.error("Error opening archive: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
-    }
-    return null;
+    UploaderAnalysis<?> analysis = analyzeArchive(file);
+    return analysis != null ? analysis.validateAssetType(assetType) : null;
   }
-
+  
   public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
-    try {
-      ProgressModel<?> model = createProgressModel(file);
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
-      List<Object> results = progressDialog.getResults();
-      if (results.isEmpty()) {
-        return null;
-      }
-
-      UploaderAnalysis<?> analysis = (UploaderAnalysis<?>) results.get(0);
+    UploaderAnalysis<?> analysis = analyzeArchive(file);
+    if (analysis != null) {
       AssetType singleAssetType = analysis.getSingleAssetType();
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
@@ -213,9 +197,6 @@ public class UploadAnalysisDispatcher {
       else {
         WidgetFactory.showInformation(Studio.stage, "A matching asset type could not be determined for this file.", null);
       }
-    }
-    catch (Exception e) {
-      LOG.error("Error creating UploadDispatchAnalysisZipProgressModel: {}", e.getMessage(), e);
     }
     return null;
   }

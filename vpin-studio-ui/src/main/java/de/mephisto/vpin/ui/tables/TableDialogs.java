@@ -126,7 +126,7 @@ public class TableDialogs {
   public static void openCfgUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(CfgUploadController.class, "dialog-cfg-upload.fxml", "Config File Upload");
     CfgUploadController controller = (CfgUploadController) stage.getUserData();
-    controller.setFile(stage, file, finalizer);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
@@ -141,7 +141,7 @@ public class TableDialogs {
   public static void openNvRamUploads(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(NvRamUploadController.class, "dialog-nvram-upload.fxml", "NvRAM Upload");
     NvRamUploadController controller = (NvRamUploadController) stage.getUserData();
-    controller.setFile(stage, file, finalizer);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
   }
 
@@ -152,8 +152,8 @@ public class TableDialogs {
     }
   }
 
-  public static void onMusicUploads(File file, Runnable finalizer) {
-    TableDialogs.openMusicUploadDialog(file, null, finalizer);
+  public static void onMusicUploads(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+    TableDialogs.openMusicUploadDialog(file, analysis, finalizer);
   }
 
 
@@ -340,7 +340,7 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(GameRepresentation game, File file, Runnable finalizer) {
+  public static boolean openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
       return false;
@@ -349,7 +349,7 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
     AltColorUploadController controller = (AltColorUploadController) stage.getUserData();
     controller.setGame(game);
-    controller.setFile(stage, file, finalizer);
+    controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -585,7 +585,7 @@ public class TableDialogs {
   public static boolean openRomUploadDialog(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
-    controller.setFile(stage, file, finalizer);
+    controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
 
     return controller.uploadFinished();

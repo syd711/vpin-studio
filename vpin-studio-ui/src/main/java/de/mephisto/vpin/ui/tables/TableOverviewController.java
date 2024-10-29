@@ -357,7 +357,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onAltColorUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null);
+      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, null);
       if (b) {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
       }
@@ -382,7 +382,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   @FXML
   public void onMusicUpload() {
-    TableDialogs.onMusicUploads(null, null);
+    TableDialogs.onMusicUploads(null, null, null);
   }
 
 

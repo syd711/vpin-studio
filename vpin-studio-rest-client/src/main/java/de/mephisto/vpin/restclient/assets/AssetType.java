@@ -184,8 +184,9 @@ public enum AssetType {
       case VNI: {
         return ".vni";
       }
-      case MUSIC: {
-        return "*.zip";
+      case MUSIC:
+      case MUSIC_BUNDLE: {
+          return "*.zip";
       }
       case PUP_PACK: {
         return "*.zip";
