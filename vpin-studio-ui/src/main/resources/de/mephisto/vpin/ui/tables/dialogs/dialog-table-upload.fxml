@@ -207,7 +207,7 @@
                         </VBox>
                      </children>
                   </HBox>
-                  <HBox prefHeight="420.0" spacing="12.0">
+                  <HBox prefHeight="330.0" spacing="12.0">
                      <children>
                         <VBox fx:id="uploadImportBox" prefWidth="400.0" styleClass="selection-panel">
                            <children>
@@ -222,7 +222,7 @@
                                     <Insets left="26.0" top="12.0" />
                                  </VBox.margin>
                               </Label>
-                              <Label fx:id="noAssetsLabel" layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="No archive selected or the selected file it does not contain additional assets or all assets have been filtered." textFill="WHITE" wrapText="true" />
+                              <Label fx:id="noAssetsLabel" layoutX="10.0" layoutY="30.0" styleClass="checkbox-description" text="No additional assets found." textFill="WHITE" wrapText="true" />
                               <VBox fx:id="assetsBox" spacing="6.0">
                                  <children>
                                     <Label styleClass="preference-description" text="The following additional assets have been found:" textFill="WHITE" wrapText="true" />
