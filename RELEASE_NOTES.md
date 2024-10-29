@@ -5,9 +5,9 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modification-date.png" width="650" />
 
-- **Tables / Notes box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box
+- **Tables / Notes Box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box.
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="750" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="600" />
   
 - **Tables / VPS Entry**: In the VPS tab, the VPS table version links to VPF or VPU has a context menu that can be used to insert a TODO note in the table
 - **Tables / Future Pinball Support**: The support for Future Pinball has been massively improved. We have added the launch option, additional columns and the uploader can know also deal with FP bundles.
@@ -15,7 +15,7 @@
 
 - **Backglass Manager / Multiple Emulators**: The backglass manager now displays all backglasses coming from all VPX and FP emulators.
 
-- **PinballY frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. 
+- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. 
 
 - **Preferences / Backglass Server**: Selection of emulator is no more needed, uses instead the B2SServer installation folder.
 - **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
@@ -27,8 +27,9 @@
 ## Bugfixes
 
 - **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. Note: the macOS update process will work correctly AFTER this release update.
-- Changed **System keyEvent handling** to avoid table deletion on DEL key press in preference panel.
+- Changed **System KeyEvent Handling** to avoid table deletion on DEL key press in preference panel.
 - **Studio Client Exit Confirmations**: The question about launching the frontend on exit is now only shown if the server setting "Launch Frontend on exit" is set to _false_.
+- **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
 
 ## VPin Mania
 
