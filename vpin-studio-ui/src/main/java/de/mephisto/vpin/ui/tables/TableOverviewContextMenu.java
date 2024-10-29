@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -319,7 +320,8 @@ public class TableOverviewContextMenu {
       List<MenuItem> items = new ArrayList<>(ctxMenu.getItems());
       for (MenuItem item : items) {
         if (item.getAccelerator() != null && item.getAccelerator().match(event)) {
-          item.getOnAction().handle(null);
+          ActionEvent ae = new ActionEvent(event.getSource(), event.getTarget());
+          item.getOnAction().handle(ae);
           event.consume();
         }
       }
