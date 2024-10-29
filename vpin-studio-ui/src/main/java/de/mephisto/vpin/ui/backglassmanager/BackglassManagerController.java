@@ -266,9 +266,10 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onUpload(ActionEvent e) {
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, null);
-      // when done, force refresh
-      refreshBackglass();
+      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, () -> {
+        // when done, force refresh
+        refreshBackglass();
+      });
     }
   }
 
