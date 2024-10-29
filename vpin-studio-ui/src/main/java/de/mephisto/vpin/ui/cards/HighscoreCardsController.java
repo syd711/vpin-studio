@@ -32,6 +32,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import javafx.util.Callback;
+import org.jetbrains.annotations.Nullable;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -115,6 +116,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       if (result.isPresent() && result.get().equals(ButtonType.OK)) {
         Studio.client.getAssetService().deleteGameAssets(game.getId());
         refreshRawPreview(Optional.of(game));
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
     }
   }
@@ -192,6 +194,7 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
       boolean uploaded = TableDialogs.openDefaultBackgroundUploadDialog(game);
       if (uploaded) {
         refreshRawPreview(Optional.of(game));
+        onReloadPressed();
         templateEditorController.selectTable(Optional.ofNullable(tableView.getSelectionModel().getSelectedItem()), true);
       }
     }
@@ -558,5 +561,15 @@ public class HighscoreCardsController implements Initializable, StudioFXControll
         tableView.refresh();
       });
     }
+  }
+
+  @Override
+  public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
+    this.onReloadPressed();
+  }
+
+  @Override
+  public void tablesChanged() {
+    this.onReloadPressed();
   }
 }

@@ -47,7 +47,7 @@ public class NvRamOutToRawTest {
       assertNotNull(raw);
       RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
       List<Score> parse = parser.parse();
-      assertFalse(parse.isEmpty());
+      assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
       System.out.println("Parsed " + parse.size() + " score entries.");
       System.out.println("*******************************************************************************************");
       count++;
