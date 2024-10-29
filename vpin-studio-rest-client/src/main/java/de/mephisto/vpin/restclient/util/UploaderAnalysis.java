@@ -150,7 +150,6 @@ public class UploaderAnalysis<T> {
           rom = rom.substring(rom.lastIndexOf("/") + 1);
         }
       }
-      LOG.info("Resolved archive ROM: {}", rom);
       return rom;
     }
 
@@ -430,7 +429,7 @@ public class UploaderAnalysis<T> {
         return "This archive does not not contain a .res file.";
       }
       case ROM: {
-        if (isRom() || hasFileWithSuffix("zip")) {
+        if (isRom() || hasFileWithSuffixAndNot("zip", "pup")) {
           return null;
         }
         return "This archive does not not contain a ROM file.";
@@ -594,6 +593,11 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
+
+  public boolean isTable() {
+    return validateAssetType(AssetType.FPT) == null || validateAssetType(AssetType.VPX) == null;
+  }
+
   private boolean isAltSound() {
     for (String name : getFilteredFilenamesWithPath()) {
 //      if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
@@ -755,7 +759,11 @@ public class UploaderAnalysis<T> {
   public String getPupPackRootDirectory() {
     String match = null;
     for (String name : getFilteredFilenamesWithPath()) {
-      if (name.contains("screens.pup") || (name.toLowerCase().contains("option") && name.toLowerCase().endsWith(".bat")) || name.contains("scriptonly.txt")) {
+      if (name.contains("screens.pup")
+          || (name.toLowerCase().contains("option") && name.toLowerCase().endsWith(".bat"))
+          || name.contains("EditThisPuPPack.bat")
+          || (name.toLowerCase().contains("screen") && name.toLowerCase().endsWith(".bat"))
+          || name.contains("scriptonly.txt")) {
         if (name.contains("/")) {
           String path = name.substring(0, name.lastIndexOf("/") + 1);
 
@@ -772,6 +780,7 @@ public class UploaderAnalysis<T> {
   public byte[] readFile(String name) {
     return PackageUtil.readFile(file, name);
   }
+
 
   private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
     if (!screen.equals(VPinScreen.Menu) && !screen.equals(VPinScreen.DMD) && fileNameWithPath.contains("DMD/")) {

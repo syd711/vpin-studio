@@ -1,5 +1,7 @@
 ## Release Notes 3.9
 
+
+- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available.
 - **Tables / Asset Management View**: The screen columns are sortable now.
 - **Tables / Table Uploads**: Added additional server setting to keep the modification date of VPX files when they have been uploaded and replaced.
 
@@ -12,11 +14,7 @@
 - **Tables / VPS Entry**: In the VPS tab, the VPS table version links to VPF or VPU has a context menu that can be used to insert a TODO note in the table
 - **Tables / Future Pinball Support**: The support for Future Pinball has been massively improved. We have added the launch option, additional columns and the uploader can know also deal with FP bundles.
 - **Tables / Future Pinball VPS match**: Added ability to match future pinball tables against the VPS database. Also VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table. 
-
 - **Backglass Manager / Multiple Emulators**: The backglass manager now displays all backglasses coming from all VPX and FP emulators.
-
-- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. 
-
 - **Preferences / Backglass Server**: Selection of emulator is no more needed, uses instead the B2SServer installation folder.
 - **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
 - **Preferences / System Settings**: Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
@@ -26,10 +24,12 @@
 
 ## Bugfixes
 
-- **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. Note: the macOS update process will work correctly AFTER this release update.
-- Changed **System KeyEvent Handling** to avoid table deletion on DEL key press in preference panel.
+- **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. **Note: the macOS update process will work correctly AFTER this release update.**
+- **System KeyEvent Handling**: Fixed key handling to avoid table deletion on DEL key press in preference panel.
 - **Studio Client Exit Confirmations**: The question about launching the frontend on exit is now only shown if the server setting "Launch Frontend on exit" is set to _false_.
 - **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
+- **Drop-in Folder**: Fixed drop-in folder for macOS and Linux. The recursive watching of the filesystem doesn't work there, so right now only the flat folder is supported for these operating systems. 
+- **Drop-in Folder**: Fixed menu button initially enabled even though being disabled in the preferences. 
 
 ## VPin Mania
 

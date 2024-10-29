@@ -553,7 +553,7 @@ public class GameService implements InitializingBean {
 
       tableDetails = frontendService.getTableDetails(game.getId());
 
-      if (!game.isVpxGame()) {
+      if (game.isVpxGame()) {
         ScanResult scanResult = romService.scanGameFile(game);
         //always prefer PinUP Popper ROM name over the scanned value
         String scannedRomName = scanResult.getRom();

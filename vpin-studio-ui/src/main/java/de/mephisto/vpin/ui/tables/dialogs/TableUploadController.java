@@ -45,6 +45,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -297,6 +298,7 @@ public class TableUploadController implements Initializable, DialogController {
     tableTitleLabel.setVisible(false);
     this.readmeTextField.setText("");
 
+    subfolderCheckbox.setDisable(true);
     uploadBtn.setDisable(true);
 
     if (this.selection != null) {
@@ -310,19 +312,25 @@ public class TableUploadController implements Initializable, DialogController {
         Platform.runLater(() -> {
           if (rescan) {
             this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
+            if (!selectMatchingEmulator()) {
+              return;
+            }
           }
 
           // If null the analysis was not successful.
           if (this.uploaderAnalysis != null) {
             String analyzeVpx = uploaderAnalysis.validateAssetType(AssetType.VPX);
             String analyzeFpt = uploaderAnalysis.validateAssetType(AssetType.FPT);
+            subfolderCheckbox.setDisable(analyzeVpx != null);
 
             uploadBtn.setDisable(false);
             // If the analysis failed.
             if (analyzeVpx != null && analyzeFpt != null) {
               uploadBtn.setDisable(true);
               WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
+              this.selection = null;
 
+              this.assetFilterBtn.setVisible(false);
               this.fileNameField.setText("");
               this.subfolderText.setText("");
               this.uploaderAnalysis.reset();
@@ -366,7 +374,52 @@ public class TableUploadController implements Initializable, DialogController {
     }
   }
 
+  private boolean selectMatchingEmulator() {
+    boolean vpx = this.uploaderAnalysis.validateAssetType(AssetType.VPX) == null;
+    boolean fp = this.uploaderAnalysis.validateAssetType(AssetType.FPT) == null;
+    GameEmulatorRepresentation value = emulatorCombo.getValue();
+
+    if (vpx) {
+      if (value != null && value.isVpxEmulator()) {
+        return true;
+      }
+
+      Optional<GameEmulatorRepresentation> first = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isVpxEmulator).findFirst();
+      if (first.isPresent()) {
+        emulatorCombo.setValue(first.get());
+        return true;
+      }
+      else {
+        WidgetFactory.showAlert(stage, "Invalid File", "No matching Future Pinball emulator found.");
+        this.selection = null;
+        setSelection(false);
+      }
+    }
+    else if (fp) {
+      if (value != null && value.isFpEmulator()) {
+        return true;
+      }
+
+      Optional<GameEmulatorRepresentation> first = this.emulatorCombo.getItems().stream().filter(GameEmulatorRepresentation::isFpEmulator).findFirst();
+      if (first.isPresent()) {
+        emulatorCombo.setValue(first.get());
+        return true;
+      }
+      else {
+        WidgetFactory.showAlert(stage, "Invalid File", "No matching Future Pinball emulator found.");
+        this.selection = null;
+        setSelection(false);
+      }
+    }
+    return false;
+  }
+
   private void updateAnalysis() {
+    if (uploaderAnalysis == null) {
+      return;
+    }
+
+    assetFilterBtn.setVisible(selection != null);
     assetFilterBtn.setText("Filter Selection");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
       if (uploaderAnalysis.getExclusions().size() == 1) {
@@ -450,6 +503,8 @@ public class TableUploadController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    assetFilterBtn.setVisible(false);
+
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
     assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
@@ -471,13 +526,14 @@ public class TableUploadController implements Initializable, DialogController {
     this.uploadBtn.setDisable(true);
     this.fileNameField.textProperty().addListener((observableValue, s, t1) -> uploadBtn.setDisable(StringUtils.isEmpty(t1)));
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulators().stream().filter(e -> e.isFpEmulator() || e.isVpxEmulator()).collect(Collectors.toList());
     emulatorRepresentation = gameEmulators.get(0);
     ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
     emulatorCombo.setItems(emulators);
     emulatorCombo.setValue(emulatorRepresentation);
     emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
       emulatorRepresentation = t1;
+      subfolderCheckbox.setDisable(t1 == null || t1.isFpEmulator());
       if (this.game != null) {
         boolean sameEmulator = t1.getId() == game.getEmulatorId();
         uploadAndImportRadio.setSelected(true);

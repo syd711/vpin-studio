@@ -196,13 +196,7 @@ public class UploadAnalysisDispatcher {
       if (singleAssetType != null) {
         String s = analysis.validateAssetType(singleAssetType);
         if (s == null) {
-          if (singleAssetType.equals(AssetType.VPX) || singleAssetType.equals(AssetType.FPT)) {
-            TableDialogs.openTableUploadDialog(game, null, analysis);
-          }
-          else {
-            TableDialogs.openMediaUploadDialog(game, file, analysis, false);
-          }
-//          dispatchBySuffix(file, game, singleAssetType, analysis);
+          dispatchBySuffix(file, game, singleAssetType, analysis);
         }
         else {
           WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);

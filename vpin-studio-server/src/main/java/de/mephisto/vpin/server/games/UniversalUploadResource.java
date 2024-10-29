@@ -15,7 +15,6 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,11 +47,11 @@ public class UniversalUploadResource {
   @Autowired
   private FrontendService frontendService;
 
-  @PostMapping("/upload/table")
-  public UploadDescriptor uploadTable(@RequestParam(value = "file") MultipartFile file,
-                                      @RequestParam(value = "gameId") int gameId,
-                                      @RequestParam(value = "emuId") int emuId,
-                                      @RequestParam(value = "mode") TableUploadType mode) {
+  @PostMapping("/upload")
+  public UploadDescriptor upload(@RequestParam(value = "file") MultipartFile file,
+                                 @RequestParam(value = "gameId") int gameId,
+                                 @RequestParam(value = "emuId") int emuId,
+                                 @RequestParam(value = "mode") TableUploadType mode) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.setUploadType(mode);
@@ -68,8 +67,8 @@ public class UniversalUploadResource {
     return descriptor;
   }
 
-  @PostMapping("/process/table")
-  public UploadDescriptor processUploadedTable(@RequestBody UploadDescriptor uploadDescriptor) {
+  @PostMapping("/process")
+  public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
     long start = System.currentTimeMillis();
     LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
@@ -82,10 +81,10 @@ public class UniversalUploadResource {
       analysis.analyze();
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
-      String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
-      if (StringUtils.isNotEmpty(tableFileName)) {
-        LOG.info("Importing media bundle, not a table bundle.");
+      if (analysis.isTable()) {
+        LOG.info("Importing table bundle, not media bundle.");
 
+        String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
         File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
         importVPXFile(temporaryVPXFile, uploadDescriptor, analysis);
       }
@@ -110,7 +109,9 @@ public class UniversalUploadResource {
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
       universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV);
 
-      universalUploadService.notifyUpdates(uploadDescriptor);
+      if (analysis.isTable()) {
+        universalUploadService.notifyUpdates(uploadDescriptor);
+      }
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);

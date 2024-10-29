@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.tables.models.MediaUploadArchiveItem;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;

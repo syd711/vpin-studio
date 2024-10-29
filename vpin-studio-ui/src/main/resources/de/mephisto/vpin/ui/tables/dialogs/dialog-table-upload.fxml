@@ -97,7 +97,7 @@
                                     <ComboBox fx:id="emulatorCombo" prefHeight="30.0" prefWidth="266.0" GridPane.columnIndex="1" />
                                     <HBox fx:id="autoFillCheckbox" alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                                        <children>
-                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill Database" textFill="WHITE">
+                                          <CheckBox fx:id="autofillCheckbox" mnemonicParsing="false" selected="true" text="Auto-match VPS entry and fill database" textFill="WHITE">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

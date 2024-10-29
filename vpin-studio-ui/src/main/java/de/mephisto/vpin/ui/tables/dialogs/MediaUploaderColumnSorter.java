@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
+import de.mephisto.vpin.ui.tables.models.MediaUploadArchiveItem;
 import de.mephisto.vpin.ui.tables.panels.BaseColumnSorter;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;

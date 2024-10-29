@@ -77,7 +77,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/table";
+      String url = getRestClient().getBaseUrl() + API + "games/upload";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("mode", tableUploadDescriptor.name());
       map.add("gameId", gameId);
@@ -93,7 +93,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public UploadDescriptor proccessTableUpload(UploadDescriptor uploadDescriptor) throws Exception {
     try {
-      return getRestClient().post(API + "games/process/table", uploadDescriptor, UploadDescriptor.class);
+      return getRestClient().post(API + "games/process", uploadDescriptor, UploadDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed to process table: " + e.getMessage(), e);
