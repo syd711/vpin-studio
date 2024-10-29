@@ -15,7 +15,10 @@ import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.tables.vps.*;
+import de.mephisto.vpin.ui.tables.vps.VpsDBDownloadProgressModel;
+import de.mephisto.vpin.ui.tables.vps.VpsEntry;
+import de.mephisto.vpin.ui.tables.vps.VpsEntryComment;
+import de.mephisto.vpin.ui.tables.vps.VpsTableVersionCell;
 import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -36,6 +39,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -43,8 +47,6 @@ import java.text.DateFormat;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -423,11 +425,14 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
 
-        boolean isFiltered = filterPredicate != null? filterPredicate.test(authoredUrl) : true;
+        boolean isFiltered = filterPredicate != null ? filterPredicate.test(authoredUrl) : true;
 
         for (VpsUrl vpsUrl : authoredUrlUrls) {
           String url = vpsUrl.getUrl();
-          entries.add(new VpsEntry(game, diffTypes, null, null, null, version, authors, url, updatedAt, updateText, false, isFiltered));
+          VpsEntry vpsEntry = new VpsEntry(game, diffTypes, null, null, null, version, authors, url, updatedAt, updateText, false, isFiltered);
+          if (!entries.contains(vpsEntry)) {
+            entries.add(vpsEntry);
+          }
         }
 
         if (authoredUrl instanceof VpsBackglassFile) {
@@ -448,9 +453,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
 
-    final List<VpsTableVersion> tableVersions = game != null ? 
-      vpsTable.getTableFilesForFormat(game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX) :
-      vpsTable.getTableFiles();
+    final List<VpsTableVersion> tableVersions = game != null ?
+        vpsTable.getTableFilesForFormat(game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX) :
+        vpsTable.getTableFiles();
 
     if (tableVersions == null || tableVersions.isEmpty()) {
       return;
@@ -483,27 +488,33 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(vpsTable.getId(), vpsTableVersion.getId());
         boolean installed = (gameByVpsTable != null);
 
-        boolean isFiltered = filterPredicate != null? filterPredicate.test(vpsTableVersion) : true;
+        boolean isFiltered = filterPredicate != null ? filterPredicate.test(vpsTableVersion) : true;
 
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
           for (VpsUrl vpsUrl : authoredUrlUrls) {
             String url = vpsUrl.getUrl();
-            entries.add(new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
-              version, authors, url, updatedAt, updateText, installed, isFiltered));
+            VpsEntry vpsEntry = new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+                version, authors, url, updatedAt, updateText, installed, isFiltered);
+            if (!entries.contains(vpsEntry)) {
+              entries.add(vpsEntry);
+            }
           }
         }
         else {
-          entries.add(new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
-              version, authors, null, updatedAt, updateText, installed, isFiltered));
+          VpsEntry vpsEntry = new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+              version, authors, null, updatedAt, updateText, installed, isFiltered);
+          if (!entries.contains(vpsEntry)) {
+            entries.add(vpsEntry);
+          }
         }
       }
 
       // now refresh UI
       Platform.runLater(() -> {
         rows.getChildren().clear();
-          if (!entries.isEmpty()) {
-            rows.getChildren().addAll(entries);
-          }
+        if (!entries.isEmpty()) {
+          rows.getChildren().addAll(entries);
+        }
       });
     }).start();
   }

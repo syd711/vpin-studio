@@ -12,41 +12,64 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.TextAlignment;
-
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static de.mephisto.vpin.ui.Studio.client;
-
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public class VpsEntry extends HBox {
   private final static Logger LOG = LoggerFactory.getLogger(VpsEntry.class);
 
-  public VpsEntry(GameRepresentation game, VpsDiffTypes type, 
-        String tableId, String versionId, String tableFormat, 
-        String version, List<String> authors, String link, 
-        long changeDate, String update, boolean installed, boolean isFiltered) {
+  private final String tableId;
+  private final String versionId;
+  private final GameRepresentation game;
+  private final VpsDiffTypes type;
+  private final String tableFormat;
+  private final String version;
+  private final List<String> authors;
+  private final String link;
+  private final long changeDate;
+  private final String update;
+  private final boolean installed;
+  private final boolean isFiltered;
+
+  public VpsEntry(GameRepresentation game, VpsDiffTypes type,
+                  String tableId, String versionId, String tableFormat,
+                  String version, List<String> authors, String link,
+                  long changeDate, String update, boolean installed, boolean isFiltered) {
+    this.game = game;
+    this.type = type;
+    this.tableFormat = tableFormat;
+    this.version = version;
+    this.authors = authors;
+    this.link = link;
+    this.changeDate = changeDate;
+    this.update = update;
+    this.installed = installed;
+    this.isFiltered = isFiltered;
     this.setAlignment(Pos.CENTER_LEFT);
+
+    this.tableId = tableId;
+    this.versionId = versionId;
+
     if (tableId != null) {
       this.setStyle("-fx-padding: 3px 0 0 0;");
-    } else {
+    }
+    else {
       this.setStyle("-fx-padding: 6px 0 0 0;");
     }
     // Version box
@@ -71,7 +94,7 @@ public class VpsEntry extends HBox {
       });
       versionBox.getChildren().add(copyBtn);
     }
-  
+
     Label versionLabel = WidgetFactory.createDefaultLabel(version);
     versionLabel.setStyle("-fx-padding: 0 0 0 3px;-fx-font-size: 14px;");
     if (!StringUtils.isEmpty(version)) {
@@ -119,90 +142,90 @@ public class VpsEntry extends HBox {
       button.setPrefWidth(70);
       button.setTooltip(new Tooltip(link));
       button.setOnAction(event -> {
-      if (Features.AUTO_INSTALLER) {
-      	if (tableId != null) {
-      		VpsInstallerUtils.installTable(game, link, tableId, versionId, version);
+        if (Features.AUTO_INSTALLER) {
+          if (tableId != null) {
+            VpsInstallerUtils.installTable(game, link, tableId, versionId, version);
+          }
+          else {
+            VpsInstallerUtils.installOrBrowse(game, link, type);
+          }
         }
         else {
-      	  VpsInstallerUtils.installOrBrowse(game, link, type);
-        }
-      }
-      else {
-        Studio.browse(link);
-      }
-    });
-
-    FontIcon fontIcon = new FontIcon();
-    fontIcon.setIconSize(14);
-    fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
-    fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
-    button.setGraphic(fontIcon);
-
-    // add context menu on VPS button
-    ContextMenu menu = new ContextMenu();
-    MenuItem vpsItem = new MenuItem("Open Link");
-    vpsItem.setOnAction(actionEvent -> Studio.browse(link));
-    menu.getItems().add(vpsItem);
-    MenuItem copyItem = new MenuItem("Copy Link");
-    copyItem.setOnAction(actionEvent -> {
-      Clipboard clipboard = Clipboard.getSystemClipboard();
-      ClipboardContent content = new ClipboardContent();
-      content.putString(link);
-      clipboard.setContent(content);
-    });
-    menu.getItems().add(copyItem);
-
-    if (game != null) {
-      MenuItem addTodoItem = new MenuItem("Add //TODO");
-      addTodoItem.setOnAction(actionEvent -> {
-        String notes = game.getNotes();
-        if (notes != null && notes.length() > 0) {
-          notes  = notes + "\n";
-        }
-        else {
-          notes = "";
-        }
-        notes += "//TODO " + link;
-        game.setNotes(notes);
-        try {
-          client.getGameService().saveGame(game);
-          EventManager.getInstance().notifyTableChange(game.getId(), null);
-        }
-        catch (Exception e) {
-          LOG.error("Cannot save notes for game " + game.getId() + ", " + e.getMessage());
+          Studio.browse(link);
         }
       });
-      menu.getItems().add(addTodoItem);
-    }
-    button.setContextMenu(menu);
 
-    Label label = new Label();
-    label.setPrefWidth(20);
-    List<Node> children = new ArrayList<>();
-    if (update != null) {
-      FontIcon updateIcon = WidgetFactory.createUpdateIcon();
-      label.setGraphic(updateIcon);
-      label.setTooltip(new Tooltip("Update Available\n\n" + update));
-    }
-    children.add(label);
+      FontIcon fontIcon = new FontIcon();
+      fontIcon.setIconSize(14);
+      fontIcon.setIconColor(Paint.valueOf("#FFFFFF"));
+      fontIcon.setIconLiteral(VpsUtil.getIconClass(abb));
+      button.setGraphic(fontIcon);
 
-    if (abb.equals("Dropbox")) {
-      children.add(button);
-    }
-    else if (abb.equals("Mega")) {
-      children.add(spacer(5));
-      button.setPrefWidth(60);
-      children.add(button);
-      children.add(spacer(5));
-    }
-    else {
-      children.add(spacer(10));
-      button.setPrefWidth(50);
-      children.add(button);
-      children.add(spacer(10));
-    }
+      // add context menu on VPS button
+      ContextMenu menu = new ContextMenu();
+      MenuItem vpsItem = new MenuItem("Open Link");
+      vpsItem.setOnAction(actionEvent -> Studio.browse(link));
+      menu.getItems().add(vpsItem);
+      MenuItem copyItem = new MenuItem("Copy Link");
+      copyItem.setOnAction(actionEvent -> {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        ClipboardContent content = new ClipboardContent();
+        content.putString(link);
+        clipboard.setContent(content);
+      });
+      menu.getItems().add(copyItem);
 
-    this.getChildren().addAll(children);
+      if (game != null) {
+        MenuItem addTodoItem = new MenuItem("Add //TODO");
+        addTodoItem.setOnAction(actionEvent -> {
+          String notes = game.getNotes();
+          if (notes != null && notes.length() > 0) {
+            notes = notes + "\n";
+          }
+          else {
+            notes = "";
+          }
+          notes += "//TODO " + link;
+          game.setNotes(notes);
+          try {
+            client.getGameService().saveGame(game);
+            EventManager.getInstance().notifyTableChange(game.getId(), null);
+          }
+          catch (Exception e) {
+            LOG.error("Cannot save notes for game " + game.getId() + ", " + e.getMessage());
+          }
+        });
+        menu.getItems().add(addTodoItem);
+      }
+      button.setContextMenu(menu);
+
+      Label label = new Label();
+      label.setPrefWidth(20);
+      List<Node> children = new ArrayList<>();
+      if (update != null) {
+        FontIcon updateIcon = WidgetFactory.createUpdateIcon();
+        label.setGraphic(updateIcon);
+        label.setTooltip(new Tooltip("Update Available\n\n" + update));
+      }
+      children.add(label);
+
+      if (abb.equals("Dropbox")) {
+        children.add(button);
+      }
+      else if (abb.equals("Mega")) {
+        children.add(spacer(5));
+        button.setPrefWidth(60);
+        children.add(button);
+        children.add(spacer(5));
+      }
+      else {
+        children.add(spacer(10));
+        button.setPrefWidth(50);
+        children.add(button);
+        children.add(spacer(10));
+      }
+
+      this.getChildren().addAll(children);
     }
     else {
       Label spacer = new Label();
@@ -228,5 +251,18 @@ public class VpsEntry extends HBox {
     Label spacer = new Label("");
     spacer.setPrefWidth(width);
     return spacer;
+  }
+
+  @Override
+  public boolean equals(Object object) {
+    if (this == object) return true;
+    if (object == null || getClass() != object.getClass()) return false;
+    VpsEntry vpsEntry = (VpsEntry) object;
+    return changeDate == vpsEntry.changeDate && installed == vpsEntry.installed && isFiltered == vpsEntry.isFiltered && Objects.equals(tableId, vpsEntry.tableId) && Objects.equals(versionId, vpsEntry.versionId) && Objects.equals(game, vpsEntry.game) && type == vpsEntry.type && Objects.equals(tableFormat, vpsEntry.tableFormat) && Objects.equals(version, vpsEntry.version) && Objects.equals(authors, vpsEntry.authors) && Objects.equals(link, vpsEntry.link) && Objects.equals(update, vpsEntry.update);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(tableId, versionId, game, type, tableFormat, version, authors, link, changeDate, update, installed, isFiltered);
   }
 }
