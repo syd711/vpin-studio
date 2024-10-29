@@ -443,14 +443,16 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Override
   public void afterPropertiesSet() {
+    try {
+      getFrontendConnector().initializeConnector();
+      this.loadEmulators();
 
-    getFrontendConnector().initializeConnector();
-
-    this.loadEmulators();
-
-    getFrontendConnector().getFrontendPlayerDisplays();
-
-    preferencesService.addChangeListener(this);
+      getFrontendConnector().getFrontendPlayerDisplays();
+      preferencesService.addChangeListener(this);
+    }
+    catch (Exception e) {
+      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
+    }
   }
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
@@ -518,7 +520,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public TableAssetsAdapter getTableAssetAdapter() {
-    return getFrontendConnector().getTableAssetAdapter();  
+    return getFrontendConnector().getTableAssetAdapter();
   }
 
   @Override
