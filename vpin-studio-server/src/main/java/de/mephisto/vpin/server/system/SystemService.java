@@ -186,7 +186,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private static String formatPathLog(String label, @Nullable File file) {
     if (file == null) {
-      return "-";
+      return formatPathLog(label, "-");
     }
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }

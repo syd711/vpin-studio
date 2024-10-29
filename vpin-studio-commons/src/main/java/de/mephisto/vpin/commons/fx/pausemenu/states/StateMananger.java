@@ -26,9 +26,9 @@ import org.slf4j.LoggerFactory;
 public class StateMananger implements GameControllerInputListener {
   private final static Logger LOG = LoggerFactory.getLogger(StateMananger.class);
 
-  private final MediaPlayer navPlayer;
-  private final MediaPlayer enterPlayer;
-  private final MediaPlayer backPlayer;
+  private MediaPlayer navPlayer;
+  private MediaPlayer enterPlayer;
+  private MediaPlayer backPlayer;
 
   private MenuState activeState;
 
@@ -44,26 +44,31 @@ public class StateMananger implements GameControllerInputListener {
   }
 
   private StateMananger() {
-    Media media = new Media(PauseMenu.class.getResource("select.mp3").toExternalForm());
-    navPlayer = new MediaPlayer(media);
-    navPlayer.setOnEndOfMedia(() -> {
-      navPlayer.stop();
-      navPlayer.seek(Duration.ZERO);
-    });
+    try {
+      Media media = new Media(PauseMenu.class.getResource("select.mp3").toExternalForm());
+      navPlayer = new MediaPlayer(media);
+      navPlayer.setOnEndOfMedia(() -> {
+        navPlayer.stop();
+        navPlayer.seek(Duration.ZERO);
+      });
 
-    media = new Media(PauseMenu.class.getResource("enter.mp3").toExternalForm());
-    enterPlayer = new MediaPlayer(media);
-    enterPlayer.setOnEndOfMedia(() -> {
-      enterPlayer.stop();
-      enterPlayer.seek(Duration.ZERO);
-    });
+      media = new Media(PauseMenu.class.getResource("enter.mp3").toExternalForm());
+      enterPlayer = new MediaPlayer(media);
+      enterPlayer.setOnEndOfMedia(() -> {
+        enterPlayer.stop();
+        enterPlayer.seek(Duration.ZERO);
+      });
 
-    media = new Media(PauseMenu.class.getResource("back.mp3").toExternalForm());
-    backPlayer = new MediaPlayer(media);
-    backPlayer.setOnEndOfMedia(() -> {
-      backPlayer.stop();
-      backPlayer.seek(Duration.ZERO);
-    });
+      media = new Media(PauseMenu.class.getResource("back.mp3").toExternalForm());
+      backPlayer = new MediaPlayer(media);
+      backPlayer.setOnEndOfMedia(() -> {
+        backPlayer.stop();
+        backPlayer.seek(Duration.ZERO);
+      });
+    }
+    catch (Exception e) {
+      LOG.error("StateManager init failed: {}", e.getMessage(), e);
+    }
   }
 
   public void init(MenuController controller) {
