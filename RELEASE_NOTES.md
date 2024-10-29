@@ -26,6 +26,7 @@
 
 ## Bugfixes
 
+- **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. Note: the macOS update process will work correctly AFTER this release update.
 - Changed **System keyEvent handling** to avoid table deletion on DEL key press in preference panel.
 
 ## VPin Mania

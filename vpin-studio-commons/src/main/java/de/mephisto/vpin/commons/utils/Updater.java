@@ -5,18 +5,16 @@ import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.scripts.MacOS;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.attribute.PosixFilePermission;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 public class Updater {
@@ -140,34 +138,23 @@ public class Updater {
       }).start();
     }
     else {
+      // For the macOS we'll use our startup bash to perform our upgrade.
       try {
-        String cmds = "#!/bin/bash\nsleep 4\nunzip -o vpin-studio-ui-jar.zip\nrm vpin-studio-ui-jar.zip\n./VPin-Studio.sh &";
-        File file = FileUtils.writeBatch("update-client.sh", cmds);
-        LOG.info("Written temporary bash: " + cmds);
+        // Create update-client script.
+        MacOS.createUpdateScript();
 
-        Set<PosixFilePermission> perms = new HashSet<>();
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-        Files.setPosixFilePermissions(file.toPath(), perms);
-        LOG.info("Applied execute permissions to : " + file.getAbsolutePath());
+        // Create new exec script.
+        MacOS.createExecScript();
 
-        List<String> commands = Arrays.asList("./update-client.sh");
-        SystemCommandExecutor executor = new SystemCommandExecutor(commands, false);
-        executor.setDir(getBasePath());
-        executor.enableLogging(true);
-        executor.executeCommandAsync();
-        new Thread(() -> {
-          try {
-            LOG.info("Exiting Studio");
-            Thread.sleep(2000);
-            System.exit(0);
-          } catch (InterruptedException e) {
-            //ignore
-          }
-        }).start();
+        // Log the exit message
+        LOG.info("Exiting VPin-Studio to perform update...");
+
+        MacOS.launchUpdateScript();
+
+        // Exit the current application
+        System.exit(0);
       } catch (Exception e) {
-        LOG.error("Failed to execute update: " + e.getMessage(), e);
+        LOG.error("Failed to execute update and restart: {}", e.getMessage(), e);
       }
     }
     return true;
@@ -190,7 +177,8 @@ public class Updater {
       conn.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
       conn.addRequestProperty("User-Agent", "Mozilla");
       conn.addRequestProperty("Referer", "google.com");
-      int responseCode = conn.getResponseCode();//DO NOT DELETE!!!!
+
+      int responseCode = conn.getResponseCode(); //DO NOT DELETE!!!!
 
       String s = conn.getURL().toString();
       String latestVersion = s.substring(s.lastIndexOf("/") + 1);
