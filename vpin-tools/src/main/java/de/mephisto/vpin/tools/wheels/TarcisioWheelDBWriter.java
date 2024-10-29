@@ -38,6 +38,7 @@ public class TarcisioWheelDBWriter {
       file.delete();
     }
     FileUtils.write(file, s, StandardCharsets.UTF_8);
+    System.out.println("Written " + file.getAbsolutePath());
   }
 
 }
