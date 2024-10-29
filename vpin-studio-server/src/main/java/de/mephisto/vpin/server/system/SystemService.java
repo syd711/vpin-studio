@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -183,7 +184,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return formatPathLog(label, value, null, null);
   }
 
-  private static String formatPathLog(String label, File file) {
+  private static String formatPathLog(String label, @Nullable File file) {
+    if (file == null) {
+      return "-";
+    }
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }
 

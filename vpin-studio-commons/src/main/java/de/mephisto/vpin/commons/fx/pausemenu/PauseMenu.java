@@ -77,16 +77,16 @@ public class PauseMenu extends Application {
   }
 
   public static void loadPauseMenu() {
-    Stage pauseMenuStage = new Stage();
-    pauseMenuStage.setTitle("VPin UI");
-    pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
-    pauseMenuStage.setAlwaysOnTop(true);
-    PauseMenu.stage = pauseMenuStage;
-
-    Scene scene = null;
-    client = new VPinStudioClient("localhost");
-
     try {
+      Stage pauseMenuStage = new Stage();
+      pauseMenuStage.setTitle("VPin UI");
+      pauseMenuStage.initStyle(StageStyle.TRANSPARENT);
+      pauseMenuStage.setAlwaysOnTop(true);
+      PauseMenu.stage = pauseMenuStage;
+
+      Scene scene = null;
+      client = new VPinStudioClient("localhost");
+
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
       Rectangle2D screenBounds = Screen.getPrimary().getBounds();

@@ -472,7 +472,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @NonNull
   public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    if (mediaStrategy != null) {
+    if (mediaStrategy != null && game.getEmulator() != null) {
       return mediaStrategy.getScreenMediaFiles(game, screen);
     }
     return Collections.emptyList();
