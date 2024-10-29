@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
@@ -486,6 +487,28 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         return;
       }
       TableDialogs.openTableDataDialog(this, selectedItems);
+    }
+  }
+
+  /**
+   * Not mapped to a button in toolbar, but could be. Useful for context menu
+   */
+  @FXML
+  public void onTableToggle() {
+    GameRepresentation game = getSelection();
+    if (game != null) {
+      TableDetails detail = client.getFrontendService().getTableDetails(game.getId());
+      boolean isDisable = game.isDisabled();
+      detail.setStatus(isDisable ? 1 : 0);
+      try {
+        client.getFrontendService().saveTableDetails(detail, game.getId());
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+      catch(Exception e) {
+        LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
+        WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
+          + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
+      }
     }
   }
 

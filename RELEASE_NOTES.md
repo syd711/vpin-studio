@@ -5,6 +5,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modifiation-date.png" width="650" />
 
+- **Tables / Enable or Disable tables**: In the context menu of tables, added a one click enable / disable table menu
 - **Tables / Notes box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box
 - **Tables / VPS Entry**: In the VPS tab, the VPS table version links to VPF or VPU has a context menu that can be used to insert a TODO note in the table
 - **Tables / Future Pinball**: Added better support of future pinball tables.
