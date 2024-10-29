@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
-import de.mephisto.vpin.commons.utils.NirCmd;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -20,21 +20,15 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
-import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.util.Optional;
@@ -42,7 +36,7 @@ import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class ToolbarController implements Initializable, StudioEventListener {
+public class ToolbarController implements Initializable, StudioEventListener, PreferenceChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
@@ -239,15 +233,6 @@ public class ToolbarController implements Initializable, StudioEventListener {
   }
 
   @Override
-  public void preferencesChanged(PreferenceType preferenceType) {
-    if (preferenceType.equals(PreferenceType.serverSettings)) {
-      DOFSettings settings = client.getDofService().getSettings();
-      boolean valid = (settings.isValidDOFFolder() || settings.isValidDOFFolder32()) && !StringUtils.isEmpty(settings.getApiKey());
-      dofSyncEntry.setDisable(!valid);
-    }
-  }
-
-  @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
@@ -315,5 +300,17 @@ public class ToolbarController implements Initializable, StudioEventListener {
         }, DEBOUNCE_MS);
       }
     });
+
+    client.getPreferenceService().addListener(this);
+    preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+  }
+
+  @Override
+  public void preferencesChanged(String key, Object value) {
+    if (key.equals(PreferenceNames.DOF_SETTINGS)) {
+      DOFSettings settings = client.getDofService().getSettings();
+      boolean valid = settings.isValidDOFFolder() && !StringUtils.isEmpty(settings.getApiKey());
+      dofSyncEntry.setDisable(!valid);
+    }
   }
 }

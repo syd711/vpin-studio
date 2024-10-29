@@ -1,5 +1,10 @@
 ## Release Notes 3.9
 
+## Breaking Changes
+
+- **DOF Integration**: The VPin Studio no longer supports older DOF installations that have different configuration folders for 32 and 64 bit. Instead, only the new folder structure with a shared **Config** folder is support. Please update your installation by downloading the latest DOF version from https://github.com/mjrgh/DirectOutput/releases.
+
+## Changes
 
 - **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available.
 - **Tables / Asset Management View**: The screen columns are sortable now.
