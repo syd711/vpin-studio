@@ -31,6 +31,14 @@ public enum EmulatorType {
     return ZenFX.equals(this) || ZenFX2.equals(this) || ZenFX3.equals(this) || PinballM.equals(this);
   }
 
+  public String shortName() {
+    switch (this) {
+    case VisualPinball: return "VPX";
+    case FuturePinball: return "FP";
+    default: return "";
+    }    
+  }
+
   public static EmulatorType fromName(String emuName) {
     if (emuName == null) {
       return null;

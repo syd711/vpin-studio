@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -389,14 +390,14 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, EmulatorType emutype, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
       return Optional.empty();
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
+    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName()  + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
     controller.setGame(stage, game, tableUploadType, analysis);
     stage.showAndWait();

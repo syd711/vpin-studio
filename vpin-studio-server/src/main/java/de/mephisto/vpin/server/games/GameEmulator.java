@@ -118,14 +118,17 @@ public class GameEmulator {
     this.altVPXExeNames = altVPXExeNames;
   }
 
+  @JsonIgnore
   public boolean isVpxEmulator() {
     return type.isVpxEmulator();
   }
 
+  @JsonIgnore
   public boolean isFpEmulator() {
     return type.isFpEmulator();
   }
 
+  @JsonIgnore
   public boolean isFxEmulator() {
     return type.isFxEmulator();
   }

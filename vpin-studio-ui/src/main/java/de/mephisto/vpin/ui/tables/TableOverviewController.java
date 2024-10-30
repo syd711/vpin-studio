@@ -577,7 +577,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void openUploadDialog(@Nullable TableUploadType uploadType) {
     GameRepresentation game = getSelection();
-    TableDialogs.openTableUploadDialog(game, uploadType, null);
+    GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+    TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
   }
 
   public void refreshFilters() {
@@ -890,6 +891,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
               : client.getGameService().getGamesByEmulator(value.getId());
         })
         .onErrorSupply(e -> {
+          LOG.error("Loading tables failed", e);
           Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
           return Collections.emptyList();
         })

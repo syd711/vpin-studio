@@ -6,7 +6,7 @@ import de.mephisto.vpin.ui.util.UploadProgressModel;
 public class CfgUploadController extends BaseUploadController {
 
   public CfgUploadController() {
-    super(AssetType.CFG, true, true, "cfg");
+    super(AssetType.CFG, true, true, "cfg", "zip", "7z", "rar");
   }
 
   @Override
