@@ -322,13 +322,14 @@ public class TableUploadController implements Initializable, DialogController {
         Platform.runLater(() -> {
           if (rescan) {
             this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
-            if (!selectMatchingEmulator()) {
-              return;
-            }
           }
 
           // If null the analysis was not successful.
           if (this.uploaderAnalysis != null) {
+            if (!selectMatchingEmulator()) {
+              return;
+            }
+
             String analyzeVpx = uploaderAnalysis.validateAssetType(AssetType.VPX);
             String analyzeFpt = uploaderAnalysis.validateAssetType(AssetType.FPT);
             subfolderCheckbox.setDisable(analyzeVpx != null);

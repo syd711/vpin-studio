@@ -50,7 +50,7 @@ public class UploadAnalysisDispatcher {
   }
 
   private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType,
-      @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
+                                       @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file, finalizer);
@@ -176,14 +176,16 @@ public class UploadAnalysisDispatcher {
   public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     UploaderAnalysis<?> analysis = analyzeArchive(file);
     if (analysis != null) {
-      AssetType singleAssetType = analysis.getSingleAssetType();
-      if (singleAssetType != null) {
-        String s = analysis.validateAssetType(singleAssetType);
-        if (s == null) {
-          dispatchBySuffix(file, game, singleAssetType, analysis, finalizer);
+      List<AssetType> assetTypes = analysis.getAssetTypes();
+      if (!assetTypes.isEmpty()) {
+        if (analysis.isTable()) {
+          TableDialogs.openTableUploadDialog(game, null, analysis);
+        }
+        else if (assetTypes.size() == 1) {
+          dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
+          TableDialogs.openMediaUploadDialog(game, file, analysis, false);
         }
       }
       else {

@@ -505,67 +505,68 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public AssetType getSingleAssetType() {
+  public List<AssetType> getAssetTypes() {
+    List<AssetType> result = new ArrayList<>();
     if (hasFileWithSuffix("vpx")) {
-      return AssetType.VPX;
+      result.add(AssetType.VPX);
     }
 
     if (hasFileWithSuffix("fpt")) {
-      return AssetType.FPT;
+      result.add(AssetType.FPT);
     }
 
     if (hasFileWithSuffix("directb2s")) {
-      return AssetType.DIRECTB2S;
+      result.add(AssetType.DIRECTB2S);
     }
 
     if (hasFileWithSuffix("res")) {
-      return AssetType.RES;
+      result.add(AssetType.RES);
     }
 
     if (isAltSound()) {
-      return AssetType.ALT_SOUND;
+      result.add(AssetType.ALT_SOUND);
     }
 
     if (isPUPPack()) {
-      return AssetType.PUP_PACK;
+      result.add(AssetType.PUP_PACK);
     }
 
     if (isDMD()) {
-      return AssetType.DMD_PACK;
+      result.add(AssetType.DMD_PACK);
     }
 
     if (isMusic()) {
-      return AssetType.MUSIC;
+      result.add(AssetType.MUSIC);
     }
 
     if (isAltColor()) {
-      return getAltColor();
+      result.add(getAltColor());
     }
 
     if (isRom()) {
-      return AssetType.ROM;
+      result.add(AssetType.ROM);
     }
 
     if (isMediaPack()) {
-      return AssetType.FRONTEND_MEDIA;
+      result.add(AssetType.FRONTEND_MEDIA);
     }
 
     if (hasFileWithSuffix("pov")) {
-      return AssetType.POV;
+      result.add(AssetType.POV);
     }
 
     if (hasFileWithSuffix(NVRAM_SUFFIX)) {
-      return AssetType.NV;
+      result.add(AssetType.NV);
     }
 
     if (hasFileWithSuffix(CFG_SUFFIX)) {
-      return AssetType.CFG;
+      result.add(AssetType.CFG);
     }
 
     if (hasFileWithSuffix("ini")) {
-      return AssetType.INI;
+      result.add(AssetType.INI);
     }
-    return null;
+    return result;
   }
 
   private boolean isPUPPack() {
