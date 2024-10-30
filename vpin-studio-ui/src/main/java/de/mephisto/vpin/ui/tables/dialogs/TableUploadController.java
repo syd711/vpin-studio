@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -375,9 +376,17 @@ public class TableUploadController implements Initializable, DialogController {
         });
       }
       else {
+        this.uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), this.selection);
+        if (!selectMatchingEmulator()) {
+          return;
+        }
+        EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
+        this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
+        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);
+        updateAnalysis();
       }
     }
     else {
@@ -386,11 +395,10 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private boolean selectMatchingEmulator() {
-    boolean vpx = this.uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX) == null;
-    boolean fp = this.uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT) == null;
+    EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
     GameEmulatorRepresentation value = emulatorCombo.getValue();
 
-    if (vpx) {
+    if (emulatorType != null && emulatorType.isVpxEmulator()) {
       if (value != null && value.isVpxEmulator()) {
         return true;
       }
@@ -406,7 +414,7 @@ public class TableUploadController implements Initializable, DialogController {
         setSelection(false);
       }
     }
-    else if (fp) {
+    else if (emulatorType != null && emulatorType.isFpEmulator()) {
       if (value != null && value.isFpEmulator()) {
         return true;
       }
@@ -427,6 +435,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   private void updateAnalysis() {
     if (uploaderAnalysis == null) {
+      assetFilterBtn.setVisible(false);
       return;
     }
 
@@ -549,6 +558,10 @@ public class TableUploadController implements Initializable, DialogController {
         boolean sameEmulator = t1.getId() == game.getEmulatorId();
         uploadAndImportRadio.setSelected(true);
         uploadAndReplaceRadio.setDisable(!sameEmulator);
+        uploadAndCloneRadio.setDisable(!sameEmulator);
+        keepDisplayNamesCheckbox.setDisable(!sameEmulator);
+        keepNamesCheckbox.setDisable(!sameEmulator);
+        backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
       }
     });
 

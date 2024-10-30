@@ -132,6 +132,10 @@ public class UniversalUploadService {
   }
 
   public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType) throws Exception {
+    importArchiveBasedAssets(uploadDescriptor, analysis, assetType, false);
+  }
+
+  public void importArchiveBasedAssets(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis analysis, @NonNull AssetType assetType, boolean validateAssetType) throws Exception {
     LOG.info("---> Executing asset archive import for type \"" + assetType.name() + "\" <---");
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
@@ -142,14 +146,14 @@ public class UniversalUploadService {
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     switch (assetType) {
       case ALT_SOUND: {
-        if (analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
           JobDescriptor jobExecutionResult = altSoundService.installAltSound(uploadDescriptor.getEmulatorId(), analysis.getRomFromAltSoundPack(), tempFile);
           uploadDescriptor.setError(jobExecutionResult.getError());
         }
         break;
       }
       case ALT_COLOR: {
-        if (analysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null) {
           String suffix = FilenameUtils.getExtension(tempFile.getName());
           if (PackageUtil.isSupportedArchive(suffix)) {
             altColorService.installAltColorFromArchive(analysis, game, tempFile);
@@ -161,25 +165,25 @@ public class UniversalUploadService {
         break;
       }
       case DMD_PACK: {
-        if (analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
           dmdService.installDMDPackage(tempFile, analysis.getDMDPath(), uploadDescriptor.getEmulatorId());
         }
         break;
       }
       case PUP_PACK: {
-        if (analysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
           pupPacksService.installPupPack(uploadDescriptor, analysis, uploadDescriptor.isAsync());
         }
         break;
       }
       case FRONTEND_MEDIA: {
-        if (analysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null) {
           gameMediaService.installMediaPack(uploadDescriptor, analysis);
         }
         break;
       }
       case MUSIC: {
-        if (analysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
           String rom = null;
           if (game != null) {
             rom = game.getRom();
@@ -190,19 +194,19 @@ public class UniversalUploadService {
         break;
       }
       case ROM: {
-        if (analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
           mameService.installRom(uploadDescriptor, tempFile, analysis);
         }
         break;
       }
       case NV: {
-        if (analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.NV) == null) {
           mameService.installNvRam(uploadDescriptor, tempFile, analysis);
         }
         break;
       }
       case CFG: {
-        if (analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
+        if (!validateAssetType || analysis.validateAssetTypeInArchive(AssetType.CFG) == null) {
           mameService.installCfg(uploadDescriptor, tempFile, analysis);
         }
         break;

@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -62,8 +63,6 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   private Stage stage;
 
-  private boolean result = false;
-
   private AssetType assetType;
 
   private boolean multiSelection;
@@ -99,9 +98,10 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
 
-        UploadProgressModel model = createUploadModel();
-        ProgressDialog.createProgressDialog(model);
-        result = true;
+        Platform.runLater(() -> {
+          UploadProgressModel model = createUploadModel();
+          ProgressDialog.createProgressDialog(model);
+        });
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -136,7 +136,6 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
     this.selection = null;
 
     this.uploadBtn.setDisable(true);
@@ -164,11 +163,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   @Override
   public void onDialogCancel() {
-    result = false;
-  }
 
-  public boolean uploadFinished() {
-    return result;
   }
 
   public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {

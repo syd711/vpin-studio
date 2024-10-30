@@ -409,10 +409,6 @@ public class UploaderAnalysis<T> {
   }
 
   public String validateAssetTypeInArchive(AssetType assetType) {
-    if (!this.isArchive()) {
-      return null;
-    }
-
     switch (assetType) {
       case VPX: {
         if (hasFileWithSuffix("vpx")) {
@@ -606,15 +602,21 @@ public class UploaderAnalysis<T> {
 
 
   public boolean isTable() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
+      return true;
+    }
+
     return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
   }
 
   @Nullable
   public EmulatorType getEmulatorType() {
-    if (validateAssetTypeInArchive(AssetType.FPT) == null) {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (validateAssetTypeInArchive(AssetType.FPT) == null || ext.equalsIgnoreCase(AssetType.FPT.name())) {
       return EmulatorType.FuturePinball;
     }
-    if (validateAssetTypeInArchive(AssetType.VPX) == null) {
+    if (validateAssetTypeInArchive(AssetType.VPX) == null || ext.equalsIgnoreCase(AssetType.VPX.name())) {
       return EmulatorType.VisualPinball;
     }
     return null;

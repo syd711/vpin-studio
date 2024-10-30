@@ -100,15 +100,15 @@ public class UniversalUploadResource {
       }
 
 
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
 
       if (analysis.isTable()) {
         universalUploadService.notifyUpdates(uploadDescriptor);

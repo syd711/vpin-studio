@@ -357,10 +357,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onAltColorUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, null);
-      if (b) {
+      TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
-      }
+      }));
     }
   }
 
@@ -390,10 +389,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onPupPackUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, null);
-      if (b) {
+      TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
-      }
+      }));
     }
   }
 
@@ -504,10 +502,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         client.getFrontendService().saveTableDetails(detail, game.getId());
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
-      catch(Exception e) {
+      catch (Exception e) {
         LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
         WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-          + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
+            + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
       }
     }
   }
