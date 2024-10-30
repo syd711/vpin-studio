@@ -83,12 +83,13 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   TableColumn<VpsTableModel, VpsTableModel> updatedColumn;
 
   @FXML
-  private Button openBtn;
+  private Button vpsOpenBtn;
+
   @FXML
   private Button tableEditBtn;
 
   @FXML
-  private Button editBtn;
+  private Button tableDataBtn;
 
   //------------------------
 
@@ -319,10 +320,9 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     }
 
-    openBtn.setDisable(newSelection == null);
-    tableEditBtn.setDisable(newSelection == null);
-
-    editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
+    vpsOpenBtn.setDisable(newSelection == null);
+    tableEditBtn.setDisable(newSelection == null || !newSelection.isInstalled());
+    tableDataBtn.setDisable(newSelection == null || !newSelection.isInstalled());
 
     VpsTable vpsTable = newSelection != null ? newSelection.getVpsTable() : null;
     VpsTablesPredicateFactory predicates = ((VpsTablesFilterController) filterController).getPredicateFactory();

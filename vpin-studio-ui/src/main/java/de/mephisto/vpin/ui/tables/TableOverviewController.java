@@ -1592,6 +1592,22 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.tableView.getSelectionModel().select(model.get());
       this.tableView.scrollTo(model.get());
     }
+    else {
+      GameRepresentation game = client.getGameService().getGame(gameId);
+      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation value = emulatorCombo.getValue();
+      if (value.getId() != gameEmulator.getId()) {
+        reloadConsumers.add(new Consumer<GameRepresentation>() {
+          @Override
+          public void accept(GameRepresentation gameRepresentation) {
+            Platform.runLater(() -> {
+              selectGameInModel(gameId);
+            });
+          }
+        });
+        emulatorCombo.setValue(gameEmulator);
+      }
+    }
   }
 
   @Override
