@@ -26,6 +26,10 @@
 - **Preferences / System Settings**: Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/system-settings.png" width="750" />
+  
+- **Tables**: Added edit and open button to the VPS and backglass manager view for a better navigation back to the table overview.
+ 
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/navi-buttons.png" width="300" />
 
 
 ## Bugfixes
