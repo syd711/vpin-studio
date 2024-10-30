@@ -3,10 +3,14 @@ package de.mephisto.vpin.restclient.games;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
+
 public class GameEmulatorRepresentation {
   private int id;
   private String name;
   private String descriptions;
+
+  private EmulatorType emulatorType;
 
   private String installationDirectory;
   private String tablesDirectory;
@@ -19,8 +23,6 @@ public class GameEmulatorRepresentation {
   private String nvramDirectory;
   private String romDirectory;
 
-  private boolean vpxEmulator;
-  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public List<String> getAltVPXExeNames() {
@@ -40,19 +42,11 @@ public class GameEmulatorRepresentation {
   }
 
   public boolean isFpEmulator() {
-    return this.fpEmulator;
-  }
-
-  public void setFpEmulator(boolean fpEmulator) {
-    this.fpEmulator = fpEmulator;
+    return emulatorType.isFpEmulator();
   }
 
   public boolean isVpxEmulator() {
-    return vpxEmulator;
-  }
-
-  public void setVpxEmulator(boolean vpxEmulator) {
-    this.vpxEmulator = vpxEmulator;
+    return emulatorType.isVpxEmulator();
   }
 
   public String getName() {
@@ -61,6 +55,14 @@ public class GameEmulatorRepresentation {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public EmulatorType getEmulatorType() {
+    return emulatorType;
+  }
+
+  public void setEmulatorType(EmulatorType type) {
+    this.emulatorType = type;
   }
 
   public String getMameDirectory() {

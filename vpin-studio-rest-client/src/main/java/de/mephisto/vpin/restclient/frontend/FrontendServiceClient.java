@@ -105,8 +105,22 @@ public class FrontendServiceClient extends VPinStudioClientService {
   }
 
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {
-    List<GameEmulatorRepresentation> gameEmulators = getGameEmulators();
-    return gameEmulators.stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+    return getGameEmulators().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
+  }
+  public List<GameEmulatorRepresentation> getFpGameEmulators() {
+    return getGameEmulators().stream().filter(e -> e.isFpEmulator()).collect(Collectors.toList());
+  }
+
+  public List<GameEmulatorRepresentation> getGameEmulatorsByType(EmulatorType emutype) {
+    if (emutype.equals(EmulatorType.VisualPinball)) {
+      return getVpxGameEmulators();
+    }
+    else if (emutype.equals(EmulatorType.FuturePinball)) {
+      return getFpGameEmulators();
+    }
+    else {
+      return Collections.emptyList();
+    }
   }
 
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
@@ -121,7 +135,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
     allVpx.setId(ALL_VPX_ID);
     allVpx.setName("All VPX Tables");
-    allVpx.setVpxEmulator(true);
+    allVpx.setEmulatorType(EmulatorType.VisualPinball);
     return allVpx;
   }
   

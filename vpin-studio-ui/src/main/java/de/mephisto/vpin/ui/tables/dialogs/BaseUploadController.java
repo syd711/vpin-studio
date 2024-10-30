@@ -202,13 +202,13 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       // No analysis provided, start one
       if (analysis == null) {
         startAnalysis();
-        if (multiSelection) {
+        if (multiSelection && selection.size() != 1) {
           // no validation for multi-selections ?
         }
         else {
           File file = getSelection();
           if (file !=null && UploadAnalysisDispatcher.isArchive(file)) {
-            analysis = UploadAnalysisDispatcher.analyzeArchive(file);
+            analysis = UploadAnalysisDispatcher.analyzeArchive(stage, file);
             if (analysis != null) {
               validation = validateAnalysis(analysis);
             }
@@ -232,6 +232,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     this.fileNameField.setText("Analyzing, please wait...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);
+    this.uploadBtn.setDisable(true);
     this.cancelBtn.setDisable(true);
   }
 
