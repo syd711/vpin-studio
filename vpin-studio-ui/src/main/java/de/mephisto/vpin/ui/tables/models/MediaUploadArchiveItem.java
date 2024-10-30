@@ -67,7 +67,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   public void load() {
     String fileNameWithPath = getName();
     this.selected = !uploaderAnalysis.getExclusions().contains(fileNameWithPath);
-//      LOG.info("Loading " + name);
+    LOG.info("Loading " + name);
 
     String pupPackDir = uploaderAnalysis.getPUPPackFolder();
     if (pupPackDir != null) {
@@ -94,6 +94,19 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
 
       if (FileUtils.isFileBelowFolder(dmdDir, fileNameWithPath)) {
+        return;
+      }
+    }
+
+    String altSoundFolder = uploaderAnalysis.getAltSoundFolder();
+    if (altSoundFolder != null) {
+      if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
+        assetType = AssetType.ALT_SOUND;
+        target = emulator.getMameDirectory() + "...";
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+
+      if (FileUtils.isFileBelowFolder(altSoundFolder, fileNameWithPath)) {
         return;
       }
     }

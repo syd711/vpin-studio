@@ -164,12 +164,13 @@ public class UploaderAnalysis<T> {
 
   public String getMusicFolder() {
     String path = null;
+    String pupPackFolder = getPupPackRootDirectory();
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(filenameWithPath);
       if (!musicSuffixes.contains(suffix)) {
         continue;
       }
-      if (getPupPackRootDirectory() != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
+      if (pupPackFolder != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
         continue;
       }
       if (filenameWithPath.toLowerCase().contains("music/")) {
@@ -180,6 +181,18 @@ public class UploaderAnalysis<T> {
       }
     }
     return path;
+  }
+
+  public String getAltSoundFolder() {
+    for (String name : getFilteredFilenamesWithPath()) {
+      if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
+        if (name.contains("/")) {
+          return name.substring(0, name.lastIndexOf("/"));
+        }
+        return "/";
+      }
+    }
+    return null;
   }
 
   public String getPUPPackFolder() {
@@ -541,7 +554,7 @@ public class UploaderAnalysis<T> {
       result.add(AssetType.DMD_PACK);
     }
 
-    if (isMusic()) {
+    if (!isAltSound() && isMusic()) {
       result.add(AssetType.MUSIC);
     }
 
@@ -624,9 +637,6 @@ public class UploaderAnalysis<T> {
 
   private boolean isAltSound() {
     for (String name : getFilteredFilenamesWithPath()) {
-//      if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
-//
-//      }
       if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
         return true;
       }
@@ -724,7 +734,7 @@ public class UploaderAnalysis<T> {
   private boolean hasFileWithSuffix(String s) {
     for (String fileName : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(fileName);
-      if (suffix.equalsIgnoreCase(s)) {
+      if (suffix.equalsIgnoreCase(s) && !fileName.toLowerCase().endsWith("altsound.ini")) {
         return true;
       }
     }

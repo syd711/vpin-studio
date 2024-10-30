@@ -376,9 +376,12 @@ public class TableDialogs {
   }
 
   public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, boolean filterMode) {
-    String title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+    String title = "Media Pack";
+    if (game != null) {
+      title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+    }
     if (filterMode) {
-      title = "Assets for \"" + game.getGameDisplayName() + "\"";
+      title = "Media Pack";
     }
     Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", title);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
