@@ -177,7 +177,7 @@ public class UploadAnalysisDispatcher {
 
   public static String validateArchive(File file, AssetType assetType) {
     UploaderAnalysis<?> analysis = analyzeArchive(file);
-    return analysis != null ? analysis.validateAssetType(assetType) : null;
+    return analysis != null ? analysis.validateAssetTypeInArchive(assetType) : null;
   }
 
   public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {

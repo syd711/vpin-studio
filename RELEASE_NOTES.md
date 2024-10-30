@@ -29,7 +29,7 @@
   
 - **Tables**: Added edit and open button to the VPS and backglass manager view for a better navigation back to the table overview.
  
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/navi-buttons.png" width="300" />
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/navi-buttons.png" width="100" />
 
 
 ## Bugfixes

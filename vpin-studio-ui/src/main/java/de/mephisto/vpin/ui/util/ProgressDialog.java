@@ -19,7 +19,6 @@ public class ProgressDialog {
     stage.setAlwaysOnTop(true);
     ProgressDialogController controller = (ProgressDialogController) stage.getUserData();
     controller.setProgressModel(stage, model);
-    stage.showAndWait();
     ProgressResultModel progressResult = controller.getProgressResult();
     stage.close();
     return progressResult;

@@ -330,8 +330,8 @@ public class TableUploadController implements Initializable, DialogController {
               return;
             }
 
-            String analyzeVpx = uploaderAnalysis.validateAssetType(AssetType.VPX);
-            String analyzeFpt = uploaderAnalysis.validateAssetType(AssetType.FPT);
+            String analyzeVpx = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX);
+            String analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
             subfolderCheckbox.setDisable(analyzeVpx != null);
 
             uploadBtn.setDisable(false);
@@ -386,8 +386,8 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private boolean selectMatchingEmulator() {
-    boolean vpx = this.uploaderAnalysis.validateAssetType(AssetType.VPX) == null;
-    boolean fp = this.uploaderAnalysis.validateAssetType(AssetType.FPT) == null;
+    boolean vpx = this.uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX) == null;
+    boolean fp = this.uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT) == null;
     GameEmulatorRepresentation value = emulatorCombo.getValue();
 
     if (vpx) {
@@ -441,19 +441,19 @@ public class TableUploadController implements Initializable, DialogController {
       }
     }
 
-    assetPupPackLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null);
-    assetAltSoundLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
-    assetAltColorLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null);
-    assetMediaLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null);
-    assetMusicLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
-    assetBackglassLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
-    assetIniLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.INI) == null);
-    assetPovLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
-    assetResLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.RES) == null);
-    assetDmdLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
-    assetRomLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
-    assetCfgLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.CFG) == null);
-    assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.NV) == null);
+    assetPupPackLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null);
+    assetAltSoundLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null);
+    assetAltColorLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null);
+    assetMediaLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null);
+    assetMusicLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null);
+    assetBackglassLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIRECTB2S) == null);
+    assetIniLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.INI) == null);
+    assetPovLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.POV) == null);
+    assetResLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.RES) == null);
+    assetDmdLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null);
+    assetRomLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null);
+    assetCfgLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.CFG) == null);
+    assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
     assetCfgLabel.setText("- .cfg File");

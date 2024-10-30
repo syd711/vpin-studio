@@ -52,6 +52,10 @@ public class UploaderAnalysis<T> {
     this.file = file;
   }
 
+  public boolean isArchive() {
+    return PackageUtil.isSupportedArchive(FilenameUtils.getExtension(file.getName()));
+  }
+
   public void setExclusions(List<String> excludedFiles, List<String> excludedFolders) {
     this.excludedFiles = excludedFiles;
     this.excludedFolders = excludedFolders;
@@ -404,7 +408,11 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public String validateAssetType(AssetType assetType) {
+  public String validateAssetTypeInArchive(AssetType assetType) {
+    if (!this.isArchive()) {
+      return null;
+    }
+
     switch (assetType) {
       case VPX: {
         if (hasFileWithSuffix("vpx")) {
@@ -598,15 +606,15 @@ public class UploaderAnalysis<T> {
 
 
   public boolean isTable() {
-    return validateAssetType(AssetType.FPT) == null || validateAssetType(AssetType.VPX) == null;
+    return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
   }
 
   @Nullable
   public EmulatorType getEmulatorType() {
-    if (validateAssetType(AssetType.FPT) == null) {
+    if (validateAssetTypeInArchive(AssetType.FPT) == null) {
       return EmulatorType.FuturePinball;
     }
-    if (validateAssetType(AssetType.VPX) == null) {
+    if (validateAssetTypeInArchive(AssetType.VPX) == null) {
       return EmulatorType.VisualPinball;
     }
     return null;

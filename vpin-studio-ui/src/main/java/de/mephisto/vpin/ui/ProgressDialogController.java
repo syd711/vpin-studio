@@ -79,6 +79,10 @@ public class ProgressDialogController implements Initializable, DialogController
           protected Object call() throws Exception {
             int index = 1;
 
+            Platform.runLater(() -> {
+               stage.showAndWait();
+            });
+
             try {
               while (model.hasNext() && !this.isCancelled()) {
                 Object next = model.getNext();

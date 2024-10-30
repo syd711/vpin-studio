@@ -65,7 +65,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   private boolean result = false;
 
   private AssetType assetType;
-  
+
   private boolean multiSelection;
 
   private boolean useEmulators;
@@ -130,7 +130,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     else {
       this.selection = Arrays.asList(fileChooser.showOpenDialog(stage));
     }
- 
+
     refreshSelection(null);
   }
 
@@ -174,7 +174,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     this.stage = stage;
     this.finalizer = finalizer;
-    if(file != null) {
+    if (file != null) {
       this.selection = Arrays.asList(file);
       refreshSelection(analysis);
     }
@@ -183,6 +183,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   public GameEmulatorRepresentation getSelectedEmulator() {
     return emulator;
   }
+
   public int getSelectedEmulatorId() {
     return emulator != null ? emulator.getId() : -1;
   }
@@ -190,6 +191,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   public File getSelection() {
     return this.selection != null && !this.selection.isEmpty() ? selection.get(0) : null;
   }
+
   public List<File> getSelections() {
     return this.selection;
   }
@@ -207,7 +209,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         }
         else {
           File file = getSelection();
-          if (file !=null && UploadAnalysisDispatcher.isArchive(file)) {
+          if (file != null && UploadAnalysisDispatcher.isArchive(file)) {
             analysis = UploadAnalysisDispatcher.analyzeArchive(stage, file);
             if (analysis != null) {
               validation = validateAnalysis(analysis);
@@ -216,7 +218,9 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         }
       }
       else {
-        validation = validateAnalysis(analysis);
+        if (analysis.isArchive()) {
+          validation = validateAnalysis(analysis);
+        }
       }
       endAnalysis(validation);
     }
@@ -240,18 +244,19 @@ public abstract class BaseUploadController implements Initializable, DialogContr
    * Perform the analysis, by default just validateAssetType
    */
   protected String validateAnalysis(UploaderAnalysis<?> analysis) {
-    return analysis.validateAssetType(assetType);
+    return analysis.validateAssetTypeInArchive(assetType);
   }
 
   /**
    * Called after analysis is done on javafx thread to update specific fields
+   *
    * @param analysis The result of the analysis
-  */
+   */
   protected void endAnalysis(String analysis) {
     if (analysis == null) {
-      String collect = multiSelection ? 
-        this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :
-        getSelection().getAbsolutePath();
+      String collect = multiSelection ?
+          this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :
+          getSelection().getAbsolutePath();
 
       this.fileNameField.setText(collect);
       this.uploadBtn.setDisable(false);
