@@ -46,6 +46,7 @@ public class ProgressDialogController implements Initializable, DialogController
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    backgroundButton.setVisible(false);
     cancelButton.setOnAction(event -> {
       this.onDialogCancel();
 

@@ -452,7 +452,6 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
-
     final List<VpsTableVersion> tableVersions = game != null ?
         vpsTable.getTableFilesForFormat(game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX) :
         vpsTable.getTableFiles();
@@ -493,7 +492,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
         if (authoredUrlUrls != null && !authoredUrlUrls.isEmpty()) {
           for (VpsUrl vpsUrl : authoredUrlUrls) {
             String url = vpsUrl.getUrl();
-            VpsEntry vpsEntry = new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+            VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
                 version, authors, url, updatedAt, updateText, installed, isFiltered);
             if (!entries.contains(vpsEntry)) {
               entries.add(vpsEntry);
@@ -501,7 +500,7 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
           }
         }
         else {
-          VpsEntry vpsEntry = new VpsEntry(game, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
+          VpsEntry vpsEntry = new VpsEntry(gameByVpsTable, diffTypes, vpsTable.getId(), vpsTableVersion.getId(), vpsTableVersion.getTableFormat(),
               version, authors, null, updatedAt, updateText, installed, isFiltered);
           if (!entries.contains(vpsEntry)) {
             entries.add(vpsEntry);

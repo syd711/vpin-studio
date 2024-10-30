@@ -5,10 +5,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -87,6 +84,8 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
   @FXML
   private Button openBtn;
+  @FXML
+  private Button tableEditBtn;
 
   @FXML
   private Button editBtn;
@@ -103,13 +102,26 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   public VpsTablesController() {
   }
 
+
+  @FXML
+  private void onOpenTable() {
+    VpsTable vpstable = getSelection();
+    if (vpstable != null) {
+      GameRepresentation game = client.getGameService().getGameByVpsTable(vpstable, null);
+      if (game != null) {
+        Platform.runLater(() -> {
+          NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
+        });
+      }
+    }
+  }
+
   @FXML
   private void onTableEdit() {
     VpsTable vpstable = getSelection();
     if (vpstable != null) {
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpstable, null);
       if (game != null) {
-        //tablesController.getTableOverviewController().setSelection(game);
         Platform.runLater(() -> {
           TableDialogs.openTableDataDialog(tablesController.getTableOverviewController(), game);
         });
@@ -308,6 +320,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }
 
     openBtn.setDisable(newSelection == null);
+    tableEditBtn.setDisable(newSelection == null);
 
     editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
 

@@ -95,7 +95,18 @@
                   <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
                </graphic>
                <tooltip>
-                  <Tooltip text="Edit table in table overview" />
+                  <Tooltip text="Edit table data" />
+               </tooltip>
+            </Button>
+            <Button fx:id="tableNavigateBtn" layoutX="591.0" layoutY="11.0" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Show table in table overview" />
                </tooltip>
             </Button>
             <Separator layoutX="533.0" layoutY="10.0" orientation="VERTICAL" prefWidth="12.0" />
