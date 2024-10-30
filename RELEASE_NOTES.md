@@ -7,6 +7,10 @@
 ## Changes
 
 - **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available.
+- **Tables / Uploads**: Re-implemented the upload dialog for media packs. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter dialog for table archive uploads.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/media-upload.png" width="650" />
+
 - **Tables / Asset Management View**: The screen columns are sortable now.
 - **Tables / Table Uploads**: Added additional server setting to keep the modification date of VPX files when they have been uploaded and replaced.
 
