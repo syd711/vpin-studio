@@ -390,7 +390,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, EmulatorType emutype, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");

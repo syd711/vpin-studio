@@ -1,8 +1,10 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -597,6 +599,17 @@ public class UploaderAnalysis<T> {
 
   public boolean isTable() {
     return validateAssetType(AssetType.FPT) == null || validateAssetType(AssetType.VPX) == null;
+  }
+
+  @Nullable
+  public EmulatorType getEmulatorType() {
+    if (validateAssetType(AssetType.FPT) == null) {
+      return EmulatorType.FuturePinball;
+    }
+    if (validateAssetType(AssetType.VPX) == null) {
+      return EmulatorType.VisualPinball;
+    }
+    return null;
   }
 
   private boolean isAltSound() {

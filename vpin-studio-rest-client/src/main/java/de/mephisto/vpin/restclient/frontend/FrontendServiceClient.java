@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,20 +108,21 @@ public class FrontendServiceClient extends VPinStudioClientService {
   public List<GameEmulatorRepresentation> getVpxGameEmulators() {
     return getGameEmulators().stream().filter(e -> e.isVpxEmulator()).collect(Collectors.toList());
   }
+
   public List<GameEmulatorRepresentation> getFpGameEmulators() {
     return getGameEmulators().stream().filter(e -> e.isFpEmulator()).collect(Collectors.toList());
   }
 
-  public List<GameEmulatorRepresentation> getGameEmulatorsByType(EmulatorType emutype) {
-    if (emutype.equals(EmulatorType.VisualPinball)) {
-      return getVpxGameEmulators();
+  public List<GameEmulatorRepresentation> getGameEmulatorsByType(@Nullable EmulatorType emutype) {
+    if (emutype != null) {
+      if (emutype.equals(EmulatorType.VisualPinball)) {
+        return getVpxGameEmulators();
+      }
+      else if (emutype.equals(EmulatorType.FuturePinball)) {
+        return getFpGameEmulators();
+      }
     }
-    else if (emutype.equals(EmulatorType.FuturePinball)) {
-      return getFpGameEmulators();
-    }
-    else {
-      return Collections.emptyList();
-    }
+    return Collections.emptyList();
   }
 
   public List<GameEmulatorRepresentation> getFilteredEmulatorsWithAllVpx(UISettings uiSettings) {
@@ -138,7 +140,7 @@ public class FrontendServiceClient extends VPinStudioClientService {
     allVpx.setEmulatorType(EmulatorType.VisualPinball);
     return allVpx;
   }
-  
+
   public boolean isAllVpx(GameEmulatorRepresentation emu) {
     return emu != null ? emu.getId() == ALL_VPX_ID : true;
   }

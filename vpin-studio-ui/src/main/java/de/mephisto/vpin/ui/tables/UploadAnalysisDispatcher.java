@@ -154,6 +154,7 @@ public class UploadAnalysisDispatcher {
   public static UploaderAnalysis<?> analyzeArchive(File file) {
     return analyzeArchive(null, file);
   }
+
   public static UploaderAnalysis<?> analyzeArchive(Stage parentStage, File file) {
     try {
       ProgressModel<?> model = createProgressModel(file);
@@ -163,12 +164,12 @@ public class UploadAnalysisDispatcher {
         return (UploaderAnalysis<?>) results.get(0);
       }
       else {
-        WidgetFactory.showAlert(parentStage != null? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
+        WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
       }
     }
     catch (Exception e) {
       LOG.error("Error opening archive: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(parentStage != null? parentStage : Studio.stage, "Error", "Error opening archive: " + e.getMessage());
+      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: " + e.getMessage());
     }
     return null;
   }
@@ -185,7 +186,7 @@ public class UploadAnalysisDispatcher {
       List<AssetType> assetTypes = analysis.getAssetTypes();
       if (!assetTypes.isEmpty()) {
         if (analysis.isTable()) {
-          TableDialogs.openTableUploadDialog(game, null, analysis);
+          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
         }
         else if (assetTypes.size() == 1) {
           dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
