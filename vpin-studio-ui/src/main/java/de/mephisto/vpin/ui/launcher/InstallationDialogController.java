@@ -122,6 +122,7 @@ public class InstallationDialogController implements Initializable, DialogContro
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.installBtn.setDisable(true);
+    this.validationError.setVisible(false);
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
     versionLabel.setText(Studio.getVersion());
