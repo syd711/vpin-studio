@@ -92,7 +92,7 @@
    <left>
         <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <StackPane fx:id="loaderStack" prefWidth="750.0">
+                <StackPane fx:id="loaderStack">
                     <BorderPane.margin>
                         <Insets bottom="6.0" />
                     </BorderPane.margin>
