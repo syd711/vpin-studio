@@ -492,9 +492,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
    * Not mapped to a button in toolbar, but could be. Useful for context menu
    */
   @FXML
-  public void onTableToggle() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
+  public void onTableStatusToggle() {
+    List<GameRepresentation> selections = getSelections();
+    toggleTableStatus(selections);
+  }
+
+  private static void toggleTableStatus(List<GameRepresentation> games) {
+    for (GameRepresentation game : games) {
       TableDetails detail = client.getFrontendService().getTableDetails(game.getId());
       boolean isDisable = game.isDisabled();
       detail.setStatus(isDisable ? 1 : 0);
