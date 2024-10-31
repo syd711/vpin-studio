@@ -1,6 +1,8 @@
 package de.mephisto.vpin.commons.utils;
 
+import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,15 +23,17 @@ public class FolderMonitoringThread {
 
   private FolderChangeListener listener;
   private final boolean modifyEvents;
+  private final boolean recursive;
 
   private Thread monitorThread;
   private File folder;
   private WatchService watchService;
+  private Consumer<Path> register;
 
-
-  public FolderMonitoringThread(FolderChangeListener listener, boolean modifyEvents) {
+  public FolderMonitoringThread(FolderChangeListener listener, boolean modifyEvents, boolean recursive) {
     this.listener = listener;
     this.modifyEvents = modifyEvents;
+    this.recursive = recursive;
   }
 
 
@@ -61,28 +65,54 @@ public class FolderMonitoringThread {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
 
-   final Map<WatchKey, Path> keys = new HashMap<>();
+    final Path path = folder.toPath();
+    final Map<WatchKey, Path> keys = new HashMap<>();
 
-    Consumer<Path> register = p -> {
-      if (!p.toFile().exists() || !p.toFile().isDirectory()) {
-        throw new RuntimeException("folder " + p + " does not exist or is not a directory");
+    if (recursive) {
+      if (OSUtil.isWindows()) {
+        try {
+          WatchKey register = path.register(watchService, new WatchEvent.Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
+                  StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
+              ExtendedWatchEventModifier.FILE_TREE);
+          keys.put(register, path);
+        }
+        catch (IOException e) {
+          LOG.error("Error registering path " + path);
+        }
       }
-      try {
-        Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
-          @Override
-          public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
-            LOG.info("registering " + path + " in watcher service");
-            WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-            keys.put(watchKey, path);
-            return FileVisitResult.CONTINUE;
+      else {
+        register = p -> {
+          if (!p.toFile().exists() || !p.toFile().isDirectory()) {
+            throw new RuntimeException("folder " + p + " does not exist or is not a directory");
           }
-        });
-      } catch (IOException e) {
-        LOG.error("Error registering path " + p);
+          try {
+            Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
+              @Override
+              public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
+                LOG.info("registering " + path + " in watcher service");
+                WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+                keys.put(watchKey, path);
+                return FileVisitResult.CONTINUE;
+              }
+            });
+          }
+          catch (IOException e) {
+            LOG.error("Error registering path " + p);
+          }
+        };
+        register.accept(folder.toPath());
       }
-    };
+    }
+    else {
+      try {
+        WatchKey register = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+        keys.put(register, path);
+      }
+      catch (IOException e) {
+        LOG.error("Error registering path " + path);
+      }
+    }
 
-    register.accept(folder.toPath());
 
     monitorThread = new Thread(() -> {
       Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder + "\"");
@@ -93,7 +123,6 @@ public class FolderMonitoringThread {
             final WatchKey wk = watchService.take();
 
             Path dir = keys.get(wk);
-
             if (dir == null) {
               LOG.info("WatchKey " + wk + " not recognized!");
               continue;
@@ -117,14 +146,14 @@ public class FolderMonitoringThread {
                   notifyUpdates(f);
                 }
               }
-              else if (f.isDirectory()) {
+              else if (f.isDirectory() && recursive && !OSUtil.isWindows()) {
                 if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                   Path absPath = dir.resolve(filedropped);
                   register.accept(absPath);
                   notifyGlobal = true;
                 }
               }
-              
+
               if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
                 notifyGlobal = true;
               }

@@ -56,7 +56,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     if (dropInPath != null) {
       this.dropinsFolder = new File(dropInPath);
     }
-    dropinsMonitor = new FolderMonitoringThread(this, false);
+    dropinsMonitor = new FolderMonitoringThread(this, false, true);
     dropinsMonitor.setFolder(dropinsFolder);
     dropinsMonitor.startMonitoring();
   }
@@ -170,7 +170,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   public void notifyFolderChange(@NonNull File folder, @Nullable File file) {
     Platform.runLater(() -> {
       reload();
-      dropInsBtn.getGraphic().setVisible(true);
+      dropInsBtn.getGraphic().setVisible(file != null);
       if (file != null && FileUtils.isTempFile(file)) {
         Notifications.create()
             .title("Drop-In Modification Detected!")
