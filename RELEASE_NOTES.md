@@ -17,6 +17,9 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modification-date.png" width="650" />
 
 - **Tables / Enable or Disable tables**: In the context menu of tables, added a one click enable / disable table menu
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/status-toggle.png" width="650" />
+ 
 - **Tables / Notes Box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="600" />
