@@ -174,6 +174,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploaderAnalysis<?> uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
+  private EmulatorType emuType;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -698,9 +699,10 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
+    this.emuType = emuType;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
       uploadType = TableUploadType.valueOf(uiSettings.getDefaultUploadMode());

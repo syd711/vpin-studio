@@ -400,7 +400,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, tableUploadType, analysis);
+    controller.setGame(stage, game, emutype, tableUploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
