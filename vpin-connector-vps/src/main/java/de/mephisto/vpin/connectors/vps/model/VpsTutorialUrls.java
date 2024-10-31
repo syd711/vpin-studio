@@ -13,12 +13,12 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
     List<VpsUrl> urls = super.getUrls();
     if (urls == null) {
       urls = new ArrayList<>();
-      if (youtubeId != null) {
-        VpsUrl url = new VpsUrl();
-        url.setUrl("https://www.youtube.com/watch?v=" + youtubeId);
-        url.setBroken(false);
-        urls.add(url);
-      }
+    }
+    if (youtubeId != null) {
+      VpsUrl url = new VpsUrl();
+      url.setUrl("https://www.youtube.com/watch?v=" + youtubeId);
+      url.setBroken(false);
+      urls.add(url);
     }
     return urls;
   }
@@ -32,12 +32,12 @@ public class VpsTutorialUrls extends VpsAuthoredUrls {
       builder.append("\n");
     }
 
-    if(getVersion() != null) {
+    if (getVersion() != null) {
       builder.append("- Version: ");
       builder.append(getVersion());
       builder.append("\n");
     }
-    if(title != null) {
+    if (title != null) {
       builder.append("- Title: ");
       builder.append(title);
       builder.append("\n");

@@ -6,8 +6,8 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-public class DMDUploadProgressModel extends ProgressModel<File> {
+public class DMDUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(DMDUploadProgressModel.class);
 
   private final Iterator<File> iterator;
@@ -25,8 +25,8 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   private final File file;
   private final GameRepresentation game;
 
-  public DMDUploadProgressModel(String title, File file, int emulatorId, GameRepresentation game) {
-    super(title);
+  public DMDUploadProgressModel(String title, File file, int emulatorId, GameRepresentation game, Runnable finalizer) {
+    super(file, title, finalizer);
     this.emulatorId = emulatorId;
     this.file = file;
     this.game = game;
@@ -57,9 +57,7 @@ public class DMDUploadProgressModel extends ProgressModel<File> {
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
       UploadDescriptor result = Studio.client.getDmdService().uploadDMDPackage(next, emulatorId, percent ->
-          Platform.runLater(() -> {
-            progressResultModel.setProgress(percent);
-          }));
+        progressResultModel.setProgress(percent));
       if (!StringUtils.isEmpty(result.getError())) {
         Platform.runLater(() -> {
           WidgetFactory.showAlert(Studio.stage, "Error", result.getError());

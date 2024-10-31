@@ -2,8 +2,8 @@ package de.mephisto.vpin.server.archiving.adapters.vpa;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchivePackageInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -13,7 +13,6 @@ import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.server.archiving.ArchiveDescriptor;
 import de.mephisto.vpin.server.archiving.ArchiveSourceAdapter;
-import de.mephisto.vpin.server.archiving.ArchiveUtil;
 import de.mephisto.vpin.server.archiving.adapters.TableBackupAdapter;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
@@ -339,7 +338,6 @@ public class TableBackupAdapterVpa implements TableBackupAdapter, Job {
   }
 
   private void zipTableDetails(ZipOutputStream zipOut) throws IOException {
-    tableDetails.setEmulatorType(ArchiveUtil.getEmulatorType(game.getGameFile()));
     if (StringUtils.isEmpty(tableDetails.getGameFileName())) {
       tableDetails.setGameFileName(game.getGameFileName());
     }

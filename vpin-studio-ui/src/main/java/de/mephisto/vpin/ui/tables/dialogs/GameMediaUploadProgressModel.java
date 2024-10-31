@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-public class TableUploadProgressModel extends ProgressModel<File> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableUploadProgressModel.class);
+public class GameMediaUploadProgressModel extends ProgressModel<File> {
+  private final static Logger LOG = LoggerFactory.getLogger(GameMediaUploadProgressModel.class);
 
   private final Iterator<File> iterator;
   private final List<File> files;
@@ -27,7 +27,7 @@ public class TableUploadProgressModel extends ProgressModel<File> {
   private final int emuId;
   private double percentage = 0;
 
-  public TableUploadProgressModel(String title, File file, int gameId, TableUploadType tableUploadDescriptor, int emuId) {
+  public GameMediaUploadProgressModel(String title, File file, int gameId, TableUploadType tableUploadDescriptor, int emuId) {
     super(title);
     this.files = Collections.singletonList(file);
     this.file = file;

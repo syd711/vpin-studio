@@ -12,6 +12,7 @@ import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientErrorHandler;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.mania.ManiaConfig;
+import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.system.SystemSummary;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -225,7 +226,7 @@ public class Studio extends Application {
         Rectangle2D bounds = Screen.getPrimary().getVisualBounds();
         double width = bounds.getWidth() - (bounds.getWidth() * 10 / 100);
         double height = bounds.getHeight() - (bounds.getHeight() * 10 / 100);
-        if (position.getWidth() != -1) {
+        if (position.getWidth() > 800 && position.getHeight() > 600) {
           width = position.getWidth();
           height = position.getHeight();
         }
@@ -250,7 +251,9 @@ public class Studio extends Application {
         FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
         stage.setUserData(fxResizeHelper);
 
-        scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
+        // OLE use event bubbling, from most specific node up to windows
+        //scene.addEventFilter(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, new StudioKeyEventHandler(stage));
 
         client.setErrorHandler(errorHandler);
         stage.show();
@@ -400,8 +403,10 @@ public class Studio extends Application {
 
   public static void exit() {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+    boolean launchFrontendOnExit = serverSettings.isLaunchPopperOnExit();
 
-    if (!uiSettings.isHideFrontendLaunchQuestion()) {
+    if (!launchFrontendOnExit && !uiSettings.isHideFrontendLaunchQuestion()) {
       Frontend frontend = Studio.client.getFrontendService().getFrontendCached();
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Exit and Launch " + frontend.getName(), "Exit and Launch " + frontend.getName(), "Exit", "Select the checkbox below if you do not wish to see this question anymore.", null, "Do not show again", false);
       if (!confirmationResult.isApplyClicked()) {

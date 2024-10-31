@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.altsound.AltSoundFormats;
@@ -96,11 +96,7 @@ public class TablesSidebarAltSoundController implements Initializable {
 
   @FXML
   private void onUpload() {
-    int gameId = -1;
-    if (this.game.isPresent()) {
-      gameId = this.game.get().getId();
-    }
-    TableDialogs.openAltSoundUploadDialog(null, null, gameId);
+    TableDialogs.openAltSoundUploadDialog(this.game.orElse(null), null, null, null);
   }
 
   @FXML

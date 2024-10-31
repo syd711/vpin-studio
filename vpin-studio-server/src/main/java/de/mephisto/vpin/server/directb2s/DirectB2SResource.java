@@ -9,9 +9,11 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.server.VPinStudioServer;
+import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 
+import de.mephisto.vpin.server.system.DefaultPictureService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +53,9 @@ public class DirectB2SResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private DefaultPictureService defaultPictureService;
 
   @GetMapping("/{id}")
   public DirectB2SData getData(@PathVariable("id") int gameId) {
@@ -146,15 +151,15 @@ public class DirectB2SResource {
     }
   }
 
-  @GetMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings getServerSettings(@PathVariable("emuId") int emuId) {
-    return backglassService.getServerSettings(emuId);
+  @GetMapping("/serversettings")
+  public DirectB2ServerSettings getServerSettings() {
+    return backglassService.getServerSettings();
   }
 
-  @PostMapping("/serversettings/{emuId}")
-  public DirectB2ServerSettings saveServerSettings(@PathVariable("emuId") int emuId, @RequestBody DirectB2ServerSettings settings) {
+  @PostMapping("/serversettings")
+  public DirectB2ServerSettings saveServerSettings(@RequestBody DirectB2ServerSettings settings) {
     try {
-      return backglassService.saveServerSettings(emuId, settings);
+      return backglassService.saveServerSettings(settings);
     }
     catch (Exception e) {
       LOG.error("Saving b2s server settings failed: " + e.getMessage(), e);
@@ -167,11 +172,15 @@ public class DirectB2SResource {
                                           @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.DIRECTB2S);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.DIRECTB2S);
       gameService.resetUpdate(gameId, VpsDiffTypes.b2s);
       backglassService.clearCache();
+
+      Game game = gameService.getGame(gameId);
+      if (game != null) {
+        defaultPictureService.extractDefaultPicture(game);
+      }
       return descriptor;
     }
     catch (Exception e) {

@@ -118,12 +118,6 @@ public class VPXResource {
     return vpxService.savePOVPreference(gameService.getGame(id), values);
   }
 
-  @PutMapping("/play/{id}")
-  public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
-    String altExe = (String) values.get("altExe");
-    return vpxService.play(gameService.getGame(id), altExe);
-  }
-
   @PostMapping("/pov/{id}")
   public POV create(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
     return vpxService.create(gameService.getGame(id));
@@ -139,7 +133,6 @@ public class VPXResource {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
       descriptor.setAcceptAllAudioAsMusic(true);
-      descriptor.getAssetsToImport().add(AssetType.MUSIC);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.MUSIC);
       return descriptor;
@@ -156,7 +149,6 @@ public class VPXResource {
                                     @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.POV);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.POV);
       gameService.resetUpdate(gameId, VpsDiffTypes.pov);

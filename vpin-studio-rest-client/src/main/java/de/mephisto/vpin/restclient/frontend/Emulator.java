@@ -8,10 +8,12 @@ public class Emulator {
   private String dirMedia;
   private String dirGames;
   private String dirRoms;
-  /**
-   * opportunity for emulator to set a specific b2s folder, if null use dirGames
-   */
-  private String dirB2S;
+
+  /** optionnal database name, used by pinballY for instance */
+  private String database;
+
+  private EmulatorType type;
+
   private String emuLaunchDir;
   /**
    * the executable to run the table
@@ -20,6 +22,15 @@ public class Emulator {
   private String gamesExt;
   private boolean visible;
   private boolean enabled = true;
+
+
+  public Emulator(EmulatorType type) {
+    this.type = type;
+  }
+  
+  public EmulatorType getType() {
+    return type;
+  }
 
   public boolean isEnabled() {
     return enabled;
@@ -86,14 +97,6 @@ public class Emulator {
     this.dirGames = dirGames;
   }
 
-  public String getDirB2S() {
-    return dirB2S;
-  }
-
-  public void setDirB2S(String dirB2S) {
-    this.dirB2S = dirB2S;
-  }
-
   public String getName() {
     return name;
   }
@@ -126,59 +129,18 @@ public class Emulator {
     this.dirRoms = dirRoms;
   }
 
+  public String getDatabase() {
+    return database;
+  }
+
+  public void setDatabase(String database) {
+    this.database = database;
+  }
+
   public boolean isVisualPinball() {
-    return isVisualPinball(this.name, this.displayName, this.description, this.gamesExt);
+    return type.isVpxEmulator();
   }
 
-  public boolean isFuturePinball() {
-    return isFuturePinball(this.name, this.displayName, this.description, this.gamesExt);
-  }
-
-  public static boolean isVisualPinball(String name, String displayName, String description, String gamesExt) {
-    if (matchesVPX(name)) {
-      return true;
-    }
-    if (matchesVPX(displayName)) {
-      return true;
-    }
-    if (matchesVPX(description)) {
-      return true;
-    }
-    return String.valueOf(gamesExt).toLowerCase().contains("vpx");
-  }
-
-  public static boolean isFuturePinball(String name, String displayName, String description, String gamesExt) {
-    if (matchesFP(name)) {
-      return true;
-    }
-    if (matchesFP(displayName)) {
-      return true;
-    }
-    if (matchesFP(description)) {
-      return true;
-    }
-    return String.valueOf(gamesExt).toLowerCase().contains("fpt");
-  }
-
-  private static boolean matchesVPX(String name) {
-    if (name == null) {
-      return false;
-    }
-
-    return name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL_X.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorNames.VISUAL_PINBALL.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALL.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorNames.VISUALPINBALLX.toLowerCase());
-  }
-
-  private static boolean matchesFP(String name) {
-    if (name == null) {
-      return false;
-    }
-
-    return name.toLowerCase().startsWith(EmulatorNames.FUTURE_PINBALL.toLowerCase())
-        || name.toLowerCase().startsWith(EmulatorNames.FUTUREPINBALL.toLowerCase());
-  }
 
   @Override
   public String toString() {

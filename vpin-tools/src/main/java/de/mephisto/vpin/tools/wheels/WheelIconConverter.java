@@ -1,4 +1,4 @@
-package de.mephisto.vpin.tools;
+package de.mephisto.vpin.tools.wheels;
 
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
@@ -11,6 +11,7 @@ import org.apache.commons.text.similarity.JaroWinklerSimilarity;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class WheelIconConverter {
@@ -20,7 +21,7 @@ public class WheelIconConverter {
     VPS vps = new VPS();
     vps.reload();
 
-    File folder = new File("C:\\workspace\\tarcisio-wheel-icons\\original\\");
+    File folder = new File("C:\\workspace\\tarcisio-wheel-icons\\leprinco\\Tarcisio Style wheels\\");
     File[] files = folder.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
@@ -28,6 +29,8 @@ public class WheelIconConverter {
       }
     });
 
+    List<String> mapped = new ArrayList<>();
+    int matchCount = 0;
     for (File file : files) {
       String name = FilenameUtils.getBaseName(file.getName());
       if (name.contains("(")) {
@@ -55,16 +58,25 @@ public class WheelIconConverter {
       }
 
       if (closest != null) {
-        File target = new File(file.getParentFile().getParentFile(), closest.getId() + ".png");
-        if (target.exists()) {
+        File existing = new File("C:\\workspace\\tarcisio-wheel-icons\\", closest.getId() + ".png");
+        if (existing.exists()) {
           continue;
         }
-//        FileUtils.copyFile(file, target);
+
+        File target = new File("C:\\workspace\\tarcisio-wheel-icons\\upload-wheels", closest.getId() + ".png");
+        if (target.exists() || mapped.contains(closest.getId())) {
+          continue;
+        }
+
+        matchCount++;
+        mapped.add(closest.getId());
+        System.out.println(file.getName());
+        FileUtils.copyFile(file, target);
       }
       else {
-        System.out.println(file.getName());
       }
     }
+    System.out.println("Finished: " + matchCount + " new icons");
   }
 
   private static VpsTable findByName(VPS vps, String name) {

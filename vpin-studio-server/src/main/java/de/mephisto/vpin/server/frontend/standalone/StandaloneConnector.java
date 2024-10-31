@@ -1,18 +1,12 @@
 package de.mephisto.vpin.server.frontend.standalone;
 
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.SystemUtil;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service("Standalone")
 public class StandaloneConnector extends BaseConnector {
@@ -41,10 +34,6 @@ public class StandaloneConnector extends BaseConnector {
 
   @Autowired
   private SystemService systemService;
-
-  @Autowired
-  private PreferencesService preferencesService;
-
   @Override
   public void initializeConnector() {
   }
@@ -54,7 +43,7 @@ public class StandaloneConnector extends BaseConnector {
     return List.of();
   }
 
-  @NotNull
+  @NonNull
   @Override
   public File getInstallationFolder() {
     return systemService.getStandaloneInstallationFolder();
@@ -81,7 +70,7 @@ public class StandaloneConnector extends BaseConnector {
         GameValidationCode.CODE_NO_WHEEL_IMAGE,
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING
     ));
-    frontend.setAssetSearchEnabled(false);
+
     return frontend;
   }
 
@@ -107,18 +96,19 @@ public class StandaloneConnector extends BaseConnector {
   }
 
   private Emulator createEmulator(File installDir, File tablesDir, int emuId, String emuname) {
-    Emulator e = new Emulator();
+    EmulatorType type = EmulatorType.VisualPinball;
+    Emulator e = new Emulator(type);
     e.setId(emuId);
     e.setName(emuname);
     e.setDisplayName(emuname);
 
     e.setDirGames(tablesDir.getAbsolutePath());
-    e.setEmuLaunchDir(installDir.getAbsolutePath());
 
-    e.setExeName(getVPXExe());
+    File exe = getVPXExe();
+    e.setEmuLaunchDir(exe.getParentFile().getAbsolutePath());
+    e.setExeName(exe.getName());
 
-    String gameext = getEmulatorExtension(emuname);
-    e.setGamesExt(gameext);
+    e.setGamesExt(type.getExtension());
 
     e.setVisible(true);
 
@@ -154,7 +144,6 @@ public class StandaloneConnector extends BaseConnector {
     TableDetails details = new TableDetails();
     details.setEmulatorId(emuId);
     details.setStatus(1);
-    details.setEmulatorType(filename);
     details.setGameFileName(filename);
     String basename = FilenameUtils.getBaseName(filename);
     details.setGameDisplayName(basename);
@@ -177,91 +166,10 @@ public class StandaloneConnector extends BaseConnector {
     // do nothing
   }
 
-  //------------------------------------------------------------
-  @Override
-  public MediaAccessStrategy getMediaAccessStrategy() {
-    // no associated medias
-    return null;
-  }
-
-  @Override
-  public TableAssetsAdapter getTableAssetAdapter() {
-    return null;
-  }
-
   //----------------------------------
 
-  // UI Management
-  private String getVPXExe() { //TODO configurable default exe
-    String exeName = "VPinballX.exe";
-    if (SystemUtil.is64Bit(preferencesService) && new File(getInstallationFolder(), "VPinballX64.exe").exists()) {
-      exeName = "VPinballX64.exe";
-    }
-    return exeName;
-  }
-
   @Override
-  public boolean killFrontend() {
-    List<ProcessHandle> pinUpProcesses = ProcessHandle
-        .allProcesses()
-        .filter(p -> p.info().command().isPresent() &&
-            (
-                p.info().command().get().contains(getVPXExe()) ||
-                    p.info().command().get().contains("PinUpDisplay") ||
-                    p.info().command().get().contains("PinUpPlayer") ||
-                    p.info().command().get().contains("VPXStarter") ||
-                    p.info().command().get().contains("VPinballX") ||
-                    p.info().command().get().startsWith("VPinball")))
-        .collect(Collectors.toList());
-
-    if (pinUpProcesses.isEmpty()) {
-      LOG.info("No VPX processes found, termination canceled.");
-      return false;
-    }
-
-    for (ProcessHandle pinUpProcess : pinUpProcesses) {
-      String cmd = pinUpProcess.info().command().get();
-      boolean b = pinUpProcess.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
-    }
-    return true;
-  }
-
-  @Override
-  public boolean isFrontendRunning() {
-    List<ProcessHandle> allProcesses = systemService.getProcesses();
-    for (ProcessHandle p : allProcesses) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        if (cmdName.contains("Pinball Player")) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  @Override
-  public boolean restartFrontend() {
-    killFrontend();
-
-    try {
-      List<String> params = Arrays.asList("cmd", "/c", "start", getVPXExe());
-      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(getInstallationFolder());
-      executor.executeCommandAsync();
-
-      //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("VPX restart failed: {}", standardErrorFromCommand);
-        return false;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to start VPX again: " + e.getMessage(), e);
-      return false;
-    }
-    return true;
+  protected String getFrontendExe() {
+    return getVPXExe().getName();
   }
 }

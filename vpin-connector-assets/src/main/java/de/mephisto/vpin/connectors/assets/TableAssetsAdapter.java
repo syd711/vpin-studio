@@ -6,6 +6,8 @@ import java.util.Optional;
 
 public interface TableAssetsAdapter {
 
+  TableAssetConf getTableAssetConf();
+
   List<TableAsset> search(String emulatorName, String screenSegment, String term) throws Exception;
 
   Optional<TableAsset> get(String emulatorName, String screenSegment, String folder, String name) throws Exception;

@@ -3,12 +3,14 @@ package de.mephisto.vpin.server.dmd;
 import de.mephisto.vpin.restclient.components.ComponentSummary;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.dmd.DMDPackageTypes;
+import de.mephisto.vpin.restclient.util.PackageUtil;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,16 +107,22 @@ public class DMDService implements InitializingBean {
     return null;
   }
 
-  public void installDMDPackage(File archive, String dmdPath, int emulatorId) {
-    File tablesFolder = frontendService.getGameEmulator(emulatorId).getTablesFolder();
-    if (archive.getName().toLowerCase().endsWith(".zip")) {
-      DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
-    }
-    else if (archive.getName().toLowerCase().endsWith(".rar")) {
-      DMDInstallationUtil.unrar(archive, tablesFolder, dmdPath);
+  public void installDMDPackage(@NonNull File archive, @Nullable String dmdPath, int emulatorId) {
+    if (dmdPath != null) {
+      File tablesFolder = frontendService.getGameEmulator(emulatorId).getTablesFolder();
+      String extension = FilenameUtils.getExtension(archive.getName()).toLowerCase();
+      if (extension.equals(PackageUtil.ARCHIVE_ZIP)) {
+        DMDInstallationUtil.unzip(archive, tablesFolder, dmdPath);
+      }
+      else if (extension.equals(PackageUtil.ARCHIVE_7Z) || extension.equals(PackageUtil.ARCHIVE_RAR)) {
+        DMDInstallationUtil.unrar(archive, tablesFolder, dmdPath);
+      }
+      else {
+        throw new UnsupportedOperationException("Unsupported archive format for DMD pack " + archive.getName());
+      }
     }
     else {
-      throw new UnsupportedOperationException("Unsupported archive format for DMD pack " + archive.getName());
+      LOG.info("Skipped DMD extraction, no DMD path found in archive.");
     }
   }
 

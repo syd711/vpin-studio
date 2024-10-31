@@ -1,7 +1,13 @@
 package de.mephisto.vpin.ui.tables.panels;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
+import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
 import de.mephisto.vpin.ui.tables.TablesController;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.Keys;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
@@ -11,20 +17,22 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import static de.mephisto.vpin.ui.Studio.client;
 
 public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   private final static Logger LOG = LoggerFactory.getLogger(BaseTableController.class);
@@ -53,7 +61,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   private BaseColumnSorter<M> columnSorter;
 
-  private WaitOverlay loadingOverlay;
+  protected WaitOverlay loadingOverlay;
 
   @FXML
   protected Button reloadBtn;
@@ -71,6 +79,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   protected Button clearBtn;
 
   protected BaseFilterController<T, M> filterController;
+
+  @FXML
+  private ComboBox<PlaylistRepresentation> playlistCombo;
 
   //----------------------
   // Key Pressed
@@ -90,8 +101,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.names = names;
 
     loadingOverlay = new WaitOverlay(loaderStack, null);
-    this.clearBtn.setVisible(false);
-
+    if (this.clearBtn != null) {
+      this.clearBtn.setVisible(false);
+    }
     registerKeyPressed();
   }
 
@@ -113,8 +125,24 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
   protected void onDelete(Event e) {
   }
 
-  protected void registerKeyPressed() {
+  protected void loadPlaylistCombo() {
+    if (this.playlistCombo != null) {
+      this.playlistCombo.managedProperty().bindBidirectional(this.playlistCombo.visibleProperty());
 
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+      if (frontendType.supportPlaylists()) {
+        UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+        playlistCombo.setCellFactory(c -> new PlaylistBackgroundImageListCell(uiSettings));
+        playlistCombo.setButtonCell(new PlaylistBackgroundImageListCell(uiSettings));
+        filterController.bindPlaylistField(playlistCombo);
+      }
+      else {
+        playlistCombo.setVisible(false);
+      }
+    }
+  }
+
+  protected void registerKeyPressed() {
     tableView.setOnKeyPressed(event -> {
       if (Keys.isSpecial(event)) {
         KeyCode code = event.getCode();
@@ -182,18 +210,31 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   public void startReload(String message) {
     loadingOverlay.setBusy(message, true);
-    this.searchTextField.setDisable(true);
-    this.filterBtn.setDisable(true);
-    this.reloadBtn.setDisable(true);
+
+    if (searchTextField != null) {
+      this.searchTextField.setDisable(true);
+    }
+    if (filterBtn != null) {
+      this.filterBtn.setDisable(true);
+    }
+    if (reloadBtn != null) {
+      this.reloadBtn.setDisable(true);
+    }
+
     this.labelCount.setText(null);
   }
 
   public void endReload() {
-    this.searchTextField.setDisable(false);
-    this.filterBtn.setDisable(false);
-    this.reloadBtn.setDisable(false);
+    if (searchTextField != null) {
+      this.searchTextField.setDisable(false);
+    }
+    if (filterBtn != null) {
+      this.filterBtn.setDisable(false);
+    }
+    if (reloadBtn != null) {
+      this.reloadBtn.setDisable(false);
+    }
     loadingOverlay.setBusy("", false);
-
     tableView.requestFocus();
   }
 
@@ -210,22 +251,27 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     }
 
     // Wrap games in a FilteredList
-    this.filteredModels = new FilteredList<>(models, filterController.buildPredicate());
+    if (filterController != null) {
+      this.filteredModels = new FilteredList<>(models, filterController.buildPredicate());
 
-    // Wrap the FilteredList in a SortedList
-    SortedList<M> sortedData = new SortedList<>(this.filteredModels);
-    // Bind the SortedList comparator to the TableView comparator.
-    sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
-        () -> columnSorter.buildComparator(tableView),
-        tableView.comparatorProperty()));
-    // Set a dummy SortPolicy to tell the TableView data is successfully sorted
-    tableView.setSortPolicy(tableView -> true);
+      // Wrap the FilteredList in a SortedList
+      SortedList<M> sortedData = new SortedList<>(this.filteredModels);
+      // Bind the SortedList comparator to the TableView comparator.
+      sortedData.comparatorProperty().bind(Bindings.createObjectBinding(
+          () -> columnSorter.buildComparator(tableView),
+          tableView.comparatorProperty()));
+      // Set a dummy SortPolicy to tell the TableView data is successfully sorted
+      tableView.setSortPolicy(tableView -> true);
 
-    // Set the items in the TableView
-    tableView.setItems(sortedData);
+      // Set the items in the TableView
+      tableView.setItems(sortedData);
 
-    // filter the list and refresh number of items
-    applyFilter();
+      // filter the list and refresh number of items
+      applyFilter();
+    }
+    else {
+      tableView.setItems(models);
+    }
   }
 
   protected abstract M toModel(T bean);
@@ -281,6 +327,90 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     tableView.getSelectionModel().clearSelection();
   }
 
+  /**
+   * Select items of a Combo base on Predicate applied on its items
+   */
+  public <I> void selectItem(ComboBox<I> combo, Predicate<I> p) {
+    for (I item : combo.getItems()) {
+      if (item != null && p.test(item)) {
+        combo.getSelectionModel().select(item);
+      }
+    }
+  }
+
+
+  //----------------------
+  // Playlists
+
+  public List<PlaylistRepresentation> getPlaylists() {
+    return this.playlistCombo.getItems();
+  }
+
+  public void updatePlaylist(PlaylistRepresentation playlist) {
+    int idx = ListUtils.indexOf(this.playlistCombo.getItems(), p -> p != null && p.getId() == playlist.getId());
+    if (idx >= 0) {
+      boolean selected = this.playlistCombo.getSelectionModel().isSelected(idx);
+
+      this.playlistCombo.getItems().remove(idx);
+      this.playlistCombo.getItems().add(idx, playlist);
+
+      if (selected) {
+        this.playlistCombo.getSelectionModel().select(playlist);
+      }
+    }
+  }
+
+  public void refreshPlaylists() {
+    PlaylistRepresentation selected = this.playlistCombo.getSelectionModel().getSelectedItem();
+    this.playlistCombo.setDisable(true);
+
+    JFXFuture.supplyAsync(() -> client.getPlaylistsService().getPlaylists()).thenAcceptLater(playlists -> {
+
+      List<PlaylistRepresentation> pl = new ArrayList<>(playlists);
+
+      FrontendType frontendType = client.getFrontendService().getFrontendType();
+
+      if (frontendType.supportExtendedPlaylists()) {
+        /*List<PlaylistGame> localFavs = new ArrayList<>();
+        List<PlaylistGame> globalFavs = new ArrayList<>();
+        for (PlaylistRepresentation playlistRepresentation : pl) {
+          List<PlaylistGame> games1 = playlistRepresentation.getGames();
+          for (PlaylistGame playlistGame : games1) {
+            if (playlistGame.isFav()) {
+              localFavs.add(playlistGame);
+            }
+            if (playlistGame.isGlobalFav()) {
+              globalFavs.add(playlistGame);
+            }
+          }
+        }*/
+        PlaylistRepresentation favsPlaylist = new PlaylistRepresentation();
+        //favsPlaylist.setGames(localFavs);
+        favsPlaylist.setId(-1);
+        favsPlaylist.setName("Local Favorites");
+
+        PlaylistRepresentation globalFavsPlaylist = new PlaylistRepresentation();
+        //globalFavsPlaylist.setGames(globalFavs);
+        globalFavsPlaylist.setId(-2);
+        globalFavsPlaylist.setName("Global Favorites");
+
+        pl.add(0, globalFavsPlaylist);
+        pl.add(0, favsPlaylist);
+      }
+      pl.add(0, null);
+
+      playlistCombo.setItems(FXCollections.observableList(pl));
+
+      // reselect same playlist
+      if (selected != null) {
+        selectItem(playlistCombo, p -> p.getId() == selected.getId());
+      }
+      this.playlistCombo.setDisable(false);
+    });
+  }
+
+  //----------------------
+
   public void onKeyEvent(KeyEvent event) {
     if (event.getCode() == KeyCode.F && event.isControlDown()) {
       searchTextField.requestFocus();
@@ -292,6 +422,29 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         searchTextField.setText("");
       }
       event.consume();
+    }
+  }
+
+
+  //---------------------------------------
+
+  public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+    private UISettings uiSettings;
+
+    public PlaylistBackgroundImageListCell(UISettings uiSettings) {
+      this.uiSettings = uiSettings;
+    }
+
+    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if (item != null) {
+        Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
+        setGraphic(playlistIcon);
+
+        setText(" " + item.toString());
+      }
     }
   }
 }

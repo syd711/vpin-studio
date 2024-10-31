@@ -14,7 +14,7 @@
    <bottom>
       <HBox alignment="BASELINE_RIGHT" spacing="6.0" BorderPane.alignment="CENTER">
          <children>
-            <Button fx:id="cancelButton1" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
+            <Button fx:id="cancelBtn" layoutX="446.0" layoutY="10.0" mnemonicParsing="false" onAction="#onCancelClick" styleClass="default-button" text="Cancel" />
             <Button fx:id="saveBtn" layoutX="418.0" layoutY="10.0" mnemonicParsing="false" onAction="#onSaveClick" styleClass="submit-button" text="Dismiss Selected Errors">
                <HBox.margin>
                   <Insets />

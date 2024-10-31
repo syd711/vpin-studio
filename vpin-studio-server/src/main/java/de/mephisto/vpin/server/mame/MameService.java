@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.mame;
 
 import de.mephisto.vpin.commons.utils.WinRegistry;
-import de.mephisto.vpin.commons.utils.ZipUtil;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.mame.MameOptions;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
@@ -263,7 +263,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
 
   public void installMameFile(UploadDescriptor uploadDescriptor, File tempFile, UploaderAnalysis analysis, AssetType assetType, File folder) throws IOException {
     if (analysis == null) {
-      analysis = new UploaderAnalysis(tempFile);
+      analysis = new UploaderAnalysis(frontendServie.getFrontend(), tempFile);
       analysis.analyze();
     }
 
@@ -275,6 +275,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
       ZipUtil.unzipTargetFile(tempFile, out, nvFileName);
+      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
     else {
       if (out.exists() && !out.delete()) {

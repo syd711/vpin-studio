@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -225,6 +225,7 @@ public class GameService implements InitializingBean {
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
+    LOG.info("************* Game Deletion ************");
     boolean success = false;
     try {
       List<Integer> gameIds = descriptor.getGameIds();
@@ -251,6 +252,9 @@ public class GameService implements InitializingBean {
             success = false;
           }
           if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
+            success = false;
+          }
+          if (!FileUtils.delete(defaultPictureService.getDMDPicture(game))) {
             success = false;
           }
           if (!FileUtils.delete(game.getDirectB2SFile())) {
@@ -394,6 +398,7 @@ public class GameService implements InitializingBean {
     catch (Exception e) {
       LOG.error("Game deletion failed: " + e.getMessage(), e);
     }
+    LOG.info("*********** /Game Deletion End **********");
     return success;
   }
 
@@ -540,59 +545,47 @@ public class GameService implements InitializingBean {
     GameDetails gameDetails = gameDetailsRepository.findByPupId(game.getId());
     boolean newGame = (gameDetails == null);
 
-    if (!game.isVpxGame()) {
-      if (gameDetails == null) {
-        gameDetails = new GameDetails();
-        gameDetails.setCreatedAt(new Date());
-        gameDetails.setUpdatedAt(new Date());
-        gameDetails.setPupId(game.getId());
-        gameDetails = gameDetailsRepository.saveAndFlush(gameDetails);
-      }
-
-      game.setIgnoredValidations(ValidationState.toIds(gameDetails.getIgnoredValidations()));
-      List<ValidationState> validate = gameValidationService.validate(game, true);
-      if (validate.isEmpty()) {
-        validate.add(GameValidationStateFactory.empty());
-      }
-      game.setValidationState(validate.get(0));
-      game.setHasMissingAssets(gameValidationService.hasMissingAssets(validate));
-
-      game.setNotes(gameDetails.getNotes());
-      return newGame;
-    }
-
     TableDetails tableDetails = null;
     if (gameDetails == null || forceScan) {
-      ScanResult scanResult = romService.scanGameFile(game);
 
       if (gameDetails == null) {
         gameDetails = new GameDetails();
         gameDetails.setCreatedAt(new java.util.Date());
       }
 
-      //always prefer PinUP Popper ROM name over the scanned value
-      String scannedRomName = scanResult.getRom();
-      String scannedTableName = scanResult.getTableName();
-
       tableDetails = frontendService.getTableDetails(game.getId());
-      if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
-        scannedRomName = tableDetails.getRomName();
+
+      if (game.isVpxGame()) {
+        ScanResult scanResult = romService.scanGameFile(game);
+        //always prefer PinUP Popper ROM name over the scanned value
+        String scannedRomName = scanResult.getRom();
+        String scannedTableName = scanResult.getTableName();
+
+        if (tableDetails != null && StringUtils.isEmpty(scannedRomName) && !StringUtils.isEmpty(tableDetails.getRomName())) {
+          scannedRomName = tableDetails.getRomName();
+        }
+
+        if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
+          scannedTableName = tableDetails.getRomAlt();
+        }
+        gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
+        gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
+        gameDetails.setRomName(scannedRomName);
+        gameDetails.setTableName(scannedTableName);
+        gameDetails.setNvOffset(scanResult.getNvOffset());
+        gameDetails.setHsFileName(scanResult.getHsFileName());
+
+        gameDetails.setPupPack(scanResult.getPupPackName());
+        gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
+      }
+      else {
+        if (tableDetails != null) {
+          gameDetails.setRomName(tableDetails.getRomName());
+          gameDetails.setTableName(tableDetails.getRomAlt());
+        }
       }
 
-      if (tableDetails != null && StringUtils.isEmpty(scannedTableName) && !StringUtils.isEmpty(tableDetails.getRomAlt())) {
-        scannedTableName = tableDetails.getRomAlt();
-      }
-
-      gameDetails.setFoundControllerStop(scanResult.isFoundControllerStop());
-      gameDetails.setFoundTableExit(scanResult.isFoundTableExit());
-      gameDetails.setRomName(scannedRomName);
-      gameDetails.setTableName(scannedTableName);
-      gameDetails.setNvOffset(scanResult.getNvOffset());
-      gameDetails.setHsFileName(scanResult.getHsFileName());
       gameDetails.setPupId(game.getId());
-      gameDetails.setPupPack(scanResult.getPupPackName());
-      gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
-
       gameDetails.setUpdatedAt(new java.util.Date());
 
       gameDetailsRepository.saveAndFlush(gameDetails);
@@ -600,8 +593,8 @@ public class GameService implements InitializingBean {
     }
 
     GameEmulator emulator = game.getEmulator();
-    if (emulator.isVpxEmulator() && emulator.getVPXExe().exists()) {
-      game.setLauncher(emulator.getVPXExe().getName());
+    if (emulator.isVpxEmulator() && emulator.getExe().exists()) {
+      game.setLauncher(emulator.getExe().getName());
     }
 
     //apply the alt launcher exe as actually used one

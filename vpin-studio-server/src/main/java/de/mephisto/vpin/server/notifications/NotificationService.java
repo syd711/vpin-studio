@@ -20,8 +20,8 @@ import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -56,7 +56,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
         notification.setDesktopMode(notificationSettings.isDesktopMode());
         notification.setDurationSec(notificationSettings.getDurationSec());
 
-        boolean vpxRunning = systemService.isVPXRunning();
+        boolean vpxRunning = systemService.isPinballEmulatorRunning();
         NotificationStageService.getInstance().queueNotification(notification, !vpxRunning);
       }
     }
@@ -73,7 +73,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   }
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     if (notificationSettings.getDurationSec() == 0) {
       LOG.info("Skipped notification, duration is not set.");
       return;
@@ -106,7 +106,7 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
   }
 
   @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
 
   }
 

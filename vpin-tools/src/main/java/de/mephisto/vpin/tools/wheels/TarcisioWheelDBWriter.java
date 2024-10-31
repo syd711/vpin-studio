@@ -1,4 +1,4 @@
-package de.mephisto.vpin.tools;
+package de.mephisto.vpin.tools.wheels;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,11 +33,12 @@ public class TarcisioWheelDBWriter {
     objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     String s = objectMapper.writeValueAsString(wheels);
-    File file = new File("./vpin-studio-ui/src/main/resources/de/mephisto/vpin/ui/mania/wheels.json");
+    File file = new File("C:\\workspace\\tarcisio-wheel-icons/wheels.json");
     if(file.exists()) {
       file.delete();
     }
     FileUtils.write(file, s, StandardCharsets.UTF_8);
+    System.out.println("Written " + file.getAbsolutePath());
   }
 
 }

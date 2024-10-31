@@ -17,7 +17,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.util.RequestUtil;
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -280,7 +280,7 @@ public class SystemResource {
 
   @GetMapping("/restart")
   public boolean restart() throws IOException {
-    de.mephisto.vpin.commons.utils.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\ncd /d %~dp0\nwscript server.vbs\nexit");
+    de.mephisto.vpin.restclient.util.FileUtils.writeBatch("server-restart.bat", "timeout /T 5 /nobreak\ncd /d %~dp0\nwscript server.vbs\nexit");
     List<String> commands = Arrays.asList("cmd", "/c", "start", "server-restart.bat");
     SystemCommandExecutor executor = new SystemCommandExecutor(commands);
     executor.setDir(new File("./"));

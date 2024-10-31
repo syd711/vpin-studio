@@ -17,12 +17,17 @@ public class SystemUtil {
     if (StringUtils.isEmpty(id)) {
       id = getCpuSerialNumber();
     }
+
+    if (StringUtils.isEmpty(id)) {
+      return NetworkUtil.getMacAddress();
+    }
     return id;
   }
 
   private static String getBoardSerialNumber() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "baseboard", "get", "serialnumber"), false);
+      executor.setIgnoreError(true);
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
@@ -44,6 +49,7 @@ public class SystemUtil {
   private static String getCpuSerialNumber() {
     try {
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList("wmic", "cpu", "get", "ProcessorId"), false);
+      executor.setIgnoreError(true);
       executor.executeCommand();
       StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
       if (standardOutputFromCommand != null) {
@@ -59,15 +65,14 @@ public class SystemUtil {
       LOG.warn("Failed to resolve cpu id: " + e.getMessage());
     }
     return null;
-
   }
 
   private static boolean isNotValid(String serial) {
-    if(StringUtils.isEmpty(serial)) {
+    if (StringUtils.isEmpty(serial)) {
       return false;
     }
     for (String invalidName : INVALID_NAMES) {
-      if(serial.contains(invalidName)) {
+      if (serial.contains(invalidName)) {
         return false;
       }
     }

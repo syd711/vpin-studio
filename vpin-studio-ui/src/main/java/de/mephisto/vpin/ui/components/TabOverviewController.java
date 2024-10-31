@@ -52,7 +52,8 @@ public class TabOverviewController implements Initializable {
         ComponentShortSummaryController controller = loader.getController();
         controller.refresh(component);
         componentList.getChildren().add(builtInRoot);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to load tab: " + e.getMessage(), e);
       }
     }

@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.vps;
 
 import de.mephisto.vpin.connectors.vps.VPS;
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.ui.Studio;
@@ -25,6 +26,7 @@ import java.text.DateFormat;
 import java.util.Date;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 public class VpsTablesSidebarController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesSidebarController.class);
@@ -123,7 +125,7 @@ public class VpsTablesSidebarController implements Initializable {
   }
 
 
-  public void setTable(Optional<VpsTable> selection) {
+  public void setTable(Optional<VpsTable> selection, VpsTablesPredicateFactory predicate) {
     this.init();
     this.openBtn.setDisable(selection.isEmpty());
 
@@ -156,7 +158,15 @@ public class VpsTablesSidebarController implements Initializable {
           badge.getStyleClass().add("white-label");
           badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
           badge.getStyleClass().add("vps-badge");
-          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
+          
+          if (predicate.isFeaturesFilterEmpty()) {
+            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
+          }
+          else {
+            boolean isFilter = predicate.isSelectedFeature(feature);
+            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, isFilter)  + ";");
+          }
+          
           features.getChildren().add(badge);
         }
       }
@@ -169,18 +179,20 @@ public class VpsTablesSidebarController implements Initializable {
       players.setText(String.valueOf(table.getPlayers()));
       ipdbLink.setText(StringUtils.isEmpty(table.getIpdbUrl()) ? "-" : table.getIpdbUrl());
 
-      TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, table, table.getTableFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "Backglasses", null, VpsDiffTypes.b2s, table.getB2sFiles(), false);
+      TablesSidebarVpsController.addTablesSection(dataRoot, "Table Version", null, VpsDiffTypes.tableNewVersionVPX, table, false, predicate.buildTableVersionPredicate());
 
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", null, VpsDiffTypes.altSound, table.getAltSoundFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "ALT Color", null, VpsDiffTypes.altColor, table.getAltColorFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", null, VpsDiffTypes.pupPack, table.getPupPackFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "ROM", null, VpsDiffTypes.rom, table.getRomFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "Sound", null, VpsDiffTypes.sound, table.getSoundFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "Topper", null, VpsDiffTypes.topper, table.getTopperFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "Tutorials", null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles(), false);
-      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false);
+      Predicate<VpsAuthoredUrls> authoredUrlsPredicate = predicate.buildAuthoredUrlsPredicate();
+      TablesSidebarVpsController.addSection(dataRoot, "Backglasses", null, VpsDiffTypes.b2s, table.getB2sFiles(), false, authoredUrlsPredicate);
+
+      TablesSidebarVpsController.addSection(dataRoot, "ALT Sound", null, VpsDiffTypes.altSound, table.getAltSoundFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "ALT Color", null, VpsDiffTypes.altColor, table.getAltColorFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "PUP Pack", null, VpsDiffTypes.pupPack, table.getPupPackFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "ROM", null, VpsDiffTypes.rom, table.getRomFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "Sound", null, VpsDiffTypes.sound, table.getSoundFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "Topper", null, VpsDiffTypes.topper, table.getTopperFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "Tutorials", null, VpsDiffTypes.tutorial, table.getTutorialFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "POV", null, VpsDiffTypes.pov, table.getPovFiles(), false, authoredUrlsPredicate);
+      TablesSidebarVpsController.addSection(dataRoot, "Wheel Art", null, VpsDiffTypes.wheel, table.getWheelArtFiles(), false, authoredUrlsPredicate);
     }
   }
 }

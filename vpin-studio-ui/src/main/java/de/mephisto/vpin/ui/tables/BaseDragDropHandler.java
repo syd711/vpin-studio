@@ -143,7 +143,7 @@ public abstract class BaseDragDropHandler {
     File tempFile = new File(systemTmpFolder, file.getName() + ".zip");
     if (tempFile.exists() && !tempFile.delete()) {
       LOG.error("Failed to delete existing temp file " + tempFile.getAbsolutePath());
-//      tempFile = de.mephisto.vpin.commons.utils.FileUtils.uniqueFile(tempFile);
+//      tempFile = de.mephisto.vpin.restclient.util.FileUtils.uniqueFile(tempFile);
       throw new Exception("Failed to delete existing temp file " + tempFile.getAbsolutePath());
     }
 
@@ -168,7 +168,7 @@ public abstract class BaseDragDropHandler {
   }
 
   private void dispatchTemporaryFile(File file) throws IOException {
-    File tempFile = de.mephisto.vpin.commons.utils.FileUtils.createMatchingTempFile(file);
+    File tempFile = de.mephisto.vpin.restclient.util.FileUtils.createMatchingTempFile(file);
     tempFile.deleteOnExit();
     FileUtils.copyFile(file, tempFile);
     LOG.info("Created separate temp file for dropped archive file: " + tempFile.getAbsolutePath());

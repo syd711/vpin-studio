@@ -74,12 +74,12 @@ public class AssetService {
       Game game = gameService.getGame(gameId);
       if (game != null) {
         File target = defaultPictureService.getRawDefaultPicture(game);
-        if (target != null && !target.exists()) {
+        if (!target.exists()) {
           defaultPictureService.extractDefaultPicture(game);
         }
 
         target = defaultPictureService.getRawDefaultPicture(game);
-        if (target != null && target.exists()) {
+        if (target.exists()) {
           BufferedImage bufferedImage = ImageUtil.loadImage(target);
           return ImageUtil.toBytes(bufferedImage);
         }

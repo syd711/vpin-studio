@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ public class SinglePlayerAdapter extends ScoreTextFileAdapterImpl {
   }
 
   @Override
-  public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
     if (fileNames != null) {
       return fileNames.contains(file.getName()) || file.getName().toLowerCase().endsWith("postit.txt");
     }
@@ -41,7 +41,7 @@ public class SinglePlayerAdapter extends ScoreTextFileAdapterImpl {
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines) {
+  public String convert(@NonNull File file, @NonNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(scoreLine);
     builder.append("#1");
@@ -54,7 +54,7 @@ public class SinglePlayerAdapter extends ScoreTextFileAdapterImpl {
   }
 
   @Override
-  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
     List<String> newScoreText = new ArrayList<>();
     for (int i = 0; i < lines.size(); i++) {
       String line = lines.get(i);

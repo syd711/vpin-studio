@@ -1,7 +1,7 @@
 package de.mephisto.vpin.server.vpx;
 
 import de.mephisto.vpin.commons.POV;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;

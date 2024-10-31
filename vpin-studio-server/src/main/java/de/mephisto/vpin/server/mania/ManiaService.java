@@ -60,8 +60,15 @@ public class ManiaService implements InitializingBean {
     }
 
     LOG.info("Synchronizing mania table scores for \"" + game + "\"");
+    List<Account> cachedPlayerAccounts = maniaServiceCache.getCachedPlayerAccounts();
+    LOG.info("Found " + cachedPlayerAccounts.size() + " eligable local players to synchronize.");
+
     ScoreSummary scores = gameService.getScores(game.getId());
     List<Score> scoreList = scores.getScores();
+    if (scoreList.isEmpty()) {
+      LOG.info("No highscores found for \"" + game.getGameDisplayName() + "\", VPS ids: " + game.getExtTableId() + "/" + game.getExtTableVersionId());
+    }
+
     List<String> submittedInitials = new ArrayList<>();
     for (Score score : scoreList) {
       try {

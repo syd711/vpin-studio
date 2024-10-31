@@ -1,5 +1,8 @@
 package de.mephisto.vpin.ui.vps;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.function.Predicate;
@@ -13,8 +16,12 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
  class VpsTablesPredicateFactory {
 
+  private String[] tableFormats;
+
   private boolean installedOnly;
   private boolean notInstalledOnly;
+
+  private LocalDate lastUpdateDate;
 
   private String[] authors;
   private boolean searchAuthorInOtherAssetsToo;
@@ -35,6 +42,10 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
   private LinkedHashMap<String, Boolean> features = new LinkedHashMap<>();
 
+  public void setTableFormats(String[] tableFormats) {
+    this.tableFormats = tableFormats;
+  }
+
   public boolean isInstalledOnly() {
     return installedOnly;
   }
@@ -47,6 +58,13 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   }
   public void setNotInstalledOnly(boolean notInstalledOnly) {
     this.notInstalledOnly = notInstalledOnly;
+  }
+
+  public LocalDate getLastUpdateDate() {
+    return lastUpdateDate;
+  }
+  public void setLastUpdateDate(LocalDate lastUpdateDate) {
+    this.lastUpdateDate = lastUpdateDate;
   }
 
   public String getAuthor() {
@@ -67,7 +85,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     return StringUtils.join(manufacturers, ", ");
   }
   public void setManufacturer(String manufacturer) {
-    this.manufacturers =  splitAndTrim(manufacturer, ",;");;
+    this.manufacturers =  splitAndTrim(manufacturer, ",;");
   }
 
   public String getTheme() {
@@ -157,13 +175,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   }
 
   public boolean isResetted() {
-
-    boolean isFeaturesEmpty = true;
-    for (String f : features.keySet()) {
-      isFeaturesEmpty &= !features.get(f);
-    }
-
-    return isFeaturesEmpty
+    return isFeaturesFilterEmpty()
+      && lastUpdateDate == null
       && (authors == null || authors.length == 0)
       && (manufacturers == null || manufacturers.length == 0)
       && StringUtils.isEmpty(theme)
@@ -180,6 +193,14 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       && !this.withPupPack;
   }
 
+  public boolean isFeaturesFilterEmpty() {
+    boolean isFeaturesEmpty = true;
+    for (String f : features.keySet()) {
+      isFeaturesEmpty &= !features.get(f);
+    }
+    return isFeaturesEmpty;
+  }
+
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
@@ -189,11 +210,23 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       public boolean test(VpsTableModel model) {
         VpsTable table = model.getVpsTable();
 
+        if (tableFormats != null && !containsAnyIgnoreCase(table.getAvailableTableFormats(), tableFormats)) {
+          return false;
+        }
+
         if (installedOnly && !noVPX && !model.isInstalled()) {
           return false;
         }
         if (notInstalledOnly && !noVPX && model.isInstalled()) {
           return false;
+        }
+
+        if (lastUpdateDate != null) {
+          LocalDate updated = Instant.ofEpochMilli(table.getUpdatedAt())
+            .atZone(ZoneId.systemDefault()).toLocalDate();
+          if (lastUpdateDate.compareTo(updated) > 0) {
+            return false;
+          }
         }
 
         if (StringUtils.isNotEmpty(searchTerm)
@@ -207,7 +240,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         for (String f : features.keySet()) {
           if (features.get(f)) {
             boolean hasFeature = containsIgnoreCase(table.getFeatures(), f);
-            if (!hasFeature) {
+            /*if (!hasFeature) {
               // check at version level
               for (VpsTableVersion version: table.getTableFiles()) {
                 if (containsIgnoreCase(version.getFeatures(), f)) {
@@ -215,7 +248,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
                   break;
                 }
               }  
-            }
+            }*/
             if (!hasFeature) {
               return false;
             }
@@ -279,6 +312,54 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     };
   }
 
+  public Predicate<VpsTableVersion> buildTableVersionPredicate() {
+    return new Predicate<VpsTableVersion>() {
+      @Override
+      public boolean test(VpsTableVersion version) {
+        
+        if (tableFormats != null && !containsIgnoreCase(tableFormats, version.getTableFormat())) {
+          return false;
+        }
+
+        for (String f : features.keySet()) {
+          if (features.get(f)) {
+            if (!containsIgnoreCase(version.getFeatures(), f)) {
+              return false;
+            }
+          }
+        }
+
+        if (lastUpdateDate != null) {
+          LocalDate updated = Instant.ofEpochMilli(version.getUpdatedAt())
+            .atZone(ZoneId.systemDefault()).toLocalDate();
+          if (lastUpdateDate.compareTo(updated) > 0) {
+            return false;
+          }
+        }
+
+        if (!containsAnyAuthor(version, authors)) {
+          return false;
+        }
+
+        return true;
+      }
+    };
+  }
+
+  public Predicate<VpsAuthoredUrls> buildAuthoredUrlsPredicate() {
+    return new Predicate<VpsAuthoredUrls>() {
+      @Override
+      public boolean test(VpsAuthoredUrls url) {
+        
+        if (searchAuthorInOtherAssetsToo && !containsAnyAuthor(url, authors)) {
+          return false;
+        }
+
+        return true;
+      }
+    };
+  }
+
   protected boolean containsAnyIgnoreCase(String manufacturer, String[] _manufacturers) {
     if (_manufacturers == null || _manufacturers.length == 0) {
       return true;
@@ -286,6 +367,20 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     for (String m : _manufacturers) {
       if (StringUtils.containsIgnoreCase(manufacturer, m)) {
         return true;
+      }
+    }
+    return false;
+  }
+
+  protected boolean containsAnyIgnoreCase(List<String> values, String[] tosearch) {
+    if (tosearch == null || tosearch.length == 0) {
+      return true;
+    }
+    if (values != null) {
+      for (String s : tosearch) {
+        if (containsIgnoreCase(values, s)) {
+          return true;
+        }
       }
     }
     return false;
@@ -336,13 +431,33 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     }
     return false;
  }
+ protected boolean containsAnyAuthor(VpsAuthoredUrls url, String[] _authors) {
+  if (_authors == null || _authors.length == 0) {
+    return true;
+  }
+  if (url != null) {
+    if (url.getAuthors() != null) {
+      for (String author : url.getAuthors()) {
+        if (containsAnyIgnoreCase(author, _authors)) {
+          return true;
+        }
+      }
+    }
+  }
+  return false;
+}
+
 
   protected String[] splitAndTrim(String input, String separators) {
-    String[] splitted = StringUtils.split(input, separators);
-    for (int i = 0; i < splitted.length; i++) {
-      splitted[i] = splitted[i].trim();
+    if(input != null) {
+      String[] splitted = StringUtils.split(input, separators);
+      for (int i = 0; i < splitted.length; i++) {
+        splitted[i] = splitted[i].trim();
+      }
+      return splitted;
     }
-    return splitted;
+
+    return null;
   }
 
 }

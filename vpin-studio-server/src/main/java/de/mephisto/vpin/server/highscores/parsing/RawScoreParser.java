@@ -76,7 +76,7 @@ public class RawScoreParser {
     int pos = 1;
     for (Score s : scores) {
       Optional<Score> match = scoreList.stream().filter(score -> score.getFormattedScore().equals(s.getFormattedScore()) && String.valueOf(score.getPlayerInitials()).equals(s.getPlayerInitials())).findFirst();
-      if(match.isPresent()) {
+      if (match.isPresent()) {
         continue;
       }
       s.setPosition(pos);

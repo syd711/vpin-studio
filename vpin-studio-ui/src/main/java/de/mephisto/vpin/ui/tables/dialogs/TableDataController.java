@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
@@ -64,7 +64,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.IOException;
 import java.net.URL;
 import java.util.List;
@@ -295,7 +294,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   private Scene scene;
   private Stage stage;
   private ScoringDB scoringDB;
-  private HighscoreFiles highscoreFiles;
   private TableDataTabStatisticsController tableStatisticsController;
   private TableDataTabScreensController tableScreensController;
   private TableDataTabScoreDataController tableDataTabScoreDataController;
@@ -321,6 +319,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     setVpsVersionIdValue("");
 
     autoCompleteNameField.setText("");
+    this.tableVersionsCombo.setValue(null);
     refreshVersionsCombo(null);
     propperRenamingController.setVpsTable(null);
 
@@ -582,11 +581,14 @@ public class TableDataController implements Initializable, DialogController, Aut
       if (game.isVpxGame() && !updatedGameFileName.toLowerCase().endsWith(".vpx")) {
         updatedGameFileName = updatedGameFileName + ".vpx";
       }
+      else if (game.isFpGame() && !updatedGameFileName.toLowerCase().endsWith(".fpt")) {
+        updatedGameFileName = updatedGameFileName + ".fpt";
+      }
 
       if (!updatedGameFileName.trim().equalsIgnoreCase(initialVpxFileName.trim())) {
         String duplicate = findDuplicate(game.getEmulatorId(), updatedGameFileName);
         if (duplicate != null) {
-          WidgetFactory.showAlert(stage, "Error", "Another VPX file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
+          WidgetFactory.showAlert(stage, "Error", "Another file with the name \"" + duplicate + "\" already exist. Please chooser another name.");
           return;
         }
       }
@@ -717,7 +719,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.stage = stage;
     this.game = game;
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    this.uiSettings =client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
@@ -728,20 +730,23 @@ public class TableDataController implements Initializable, DialogController, Aut
     FrontendType frontendType = client.getFrontendService().getFrontendType();
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
-    highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
 
-    if (game.isVpxGame()) {
-      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+    if (game.isVpxGame() || game.isFpGame()) {
       propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
     }
     else {
-      gameFileName.setDisable(true);
       autoFillBtn.setVisible(false);
       detailsRoot.getChildren().remove(propertRenamingRoot);
-      this.tabPane.getTabs().remove(scoreDataTab);
-      this.fixVersionBtn.setVisible(false);
-      this.vpsPanel.setVisible(false);
     }
+
+    if (game.isVpxGame()) {
+      HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
+      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+    }
+    else {
+      this.tabPane.getTabs().remove(scoreDataTab);
+    }
+
 
     this.scene = stage.getScene();
 
@@ -801,16 +806,21 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
       gameName.setDisable(frontendType.isStandalone());
 
-      gameFileName.setText(tableDetails.getGameFileName());
-      gameFileName.setDisable(StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\") || !game.isVpxGame());
-      gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
-        if (FileUtils.isValidFilename(newValue)) {
-          tableDetails.setGameFileName(newValue);
-        }
-        else {
-          gameFileName.setText(oldValue);
-        }
-      });
+      if (game.isVpxGame() || game.isFpGame()) {
+        gameFileName.setText(tableDetails.getGameFileName());
+        gameFileName.setDisable(StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\"));
+        gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
+          if (FileUtils.isValidFilename(newValue)) {
+            tableDetails.setGameFileName(newValue);
+          }
+          else {
+            gameFileName.setText(oldValue);
+          }
+        });
+      }
+      else {
+        gameFileName.setDisable(true);
+      }
 
       gameDisplayName.setText(tableDetails.getGameDisplayName());
       gameDisplayName.textProperty().addListener((observable, oldValue, newValue) -> tableDetails.setGameDisplayName(newValue.trim()));
@@ -1123,7 +1133,9 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
-      List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(VpsFeatures.VPX));
+      String tableFormat = game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX;
+      List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
+
       if (!tableFiles.isEmpty()) {
         tableVersionsCombo.setItems(FXCollections.emptyObservableList());
         tableFiles.add(0, null);
@@ -1189,6 +1201,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   public static List<TableStatus> supportedStatuses(FrontendType frontendType) {
-      return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
+    return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
   }
 }

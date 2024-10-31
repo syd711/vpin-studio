@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import java.io.File;
 import java.util.Arrays;
@@ -33,5 +33,16 @@ public class PackageUtil {
       return RarUtil.unrarTargetFile(archiveFile, targetFile, name);
     }
     throw new UnsupportedOperationException("No package support for " + archiveFile.getName());
+  }
+
+  public static byte[] readFile(File file, String name) {
+    String archiveName = file.getName().toLowerCase();
+    if (archiveName.endsWith(".zip")) {
+      return ZipUtil.readFile(file, name);
+    }
+    if (archiveName.endsWith(".rar") || archiveName.endsWith(".7z")) {
+      return RarUtil.readFile(file, name);
+    }
+    throw new UnsupportedOperationException("No package support for " + file.getName());
   }
 }

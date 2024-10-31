@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.vpx;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.util.MD5ChecksumUtil;
 import de.mephisto.vpin.server.util.VPXFileScanner;

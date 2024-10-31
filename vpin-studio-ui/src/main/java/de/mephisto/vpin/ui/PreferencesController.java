@@ -20,6 +20,8 @@ import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -36,9 +38,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class PreferencesController implements Initializable, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(PreferencesController.class);
 
-  // Add a public no-args constructor
-  public PreferencesController() {
-  }
+    // Add a public no-args constructor
+    public PreferencesController() {
+    }
+  
+  /** a singleton */
+  private static PreferencesController instance;
 
   @FXML
   private Hyperlink versionLink;
@@ -95,6 +100,9 @@ public class PreferencesController implements Initializable, StudioEventListener
   private Button highscore_cardsBtn;
 
   @FXML
+  private Button systemBtn;
+
+  @FXML
   private Button highscoresBtn;
 
   @FXML
@@ -112,61 +120,54 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private Button notificationsButton;
 
-  private static Button lastSelection;
+  private Button lastSelection;
 
-  private static Node preferencesRoot;
+  private Node preferencesRoot;
 
-  private static Button initialBtn;
+  private PreferenceType dirtyPreferenceType = null;
 
-  private static BorderPane prefsMain;
-
-  private static VBox navBox;
-
-  private static PreferenceType dirtyPreferenceType = null;
-
-  private static String lastScreen = "preference-settings-cabinet.fxml";
-
-  static {
-
-  }
+  private String lastScreen = "preference-settings-cabinet.fxml";
 
   public static void markDirty(PreferenceType preferenceType) {
-    PreferencesController.dirtyPreferenceType = preferenceType;
+    instance.dirtyPreferenceType = preferenceType;
   }
 
   public static void open() {
-    if (preferencesRoot == null) {
+    if (instance == null) {
       try {
-        FXMLLoader loader = new FXMLLoader(NavigationController.class.getResource("scene-preferences.fxml"));
+        FXMLLoader loader = new FXMLLoader(PreferencesController.class.getResource("scene-preferences.fxml"));
+        Node preferencesRoot = loader.load();
         PreferencesController controller = loader.getController();
-        preferencesRoot = loader.load();
         preferencesRoot.setUserData(controller);
+        preferencesRoot.addEventHandler(KeyEvent.ANY, ke -> {
+          if (ke.getCode() == KeyCode.ESCAPE) {
+            instance.onClose(null);
+          }
+          // consume all other events, preventing them to bubble up
+          ke.consume();
+        });
+        controller.preferencesRoot = preferencesRoot;
+
+        instance = controller;
       }
       catch (IOException e) {
         LOG.error("Failed to load preferences: " + e.getMessage(), e);
       }
-
-      Node lookup = Studio.stage.getScene().lookup("#root");
-      BorderPane main = (BorderPane) lookup;
-      StackPane stack = (StackPane) main.getCenter();
-      stack.getChildren().add(preferencesRoot);
     }
-    else {
-      Node lookup = Studio.stage.getScene().lookup("#root");
-      BorderPane main = (BorderPane) lookup;
-      StackPane stack = (StackPane) main.getCenter();
-      stack.getChildren().add(preferencesRoot);
+    instance.onOpen();
+  }
 
+  private void onOpen() {
+    switchNode(preferencesRoot);
+    if (lastScreen != null) {
       loadScreen(lastScreen);
     }
   }
 
   @FXML
   private void onClose(ActionEvent event) {
-    Node lookup = Studio.stage.getScene().lookup("#root");
-    BorderPane main = (BorderPane) lookup;
-    StackPane stack = (StackPane) main.getCenter();
-    stack.getChildren().remove(1);
+
+    switchNode(null);
 
     NavigationController.refreshControllerCache();
 
@@ -174,6 +175,17 @@ public class PreferencesController implements Initializable, StudioEventListener
       PreferenceType preferenceType = dirtyPreferenceType;
       dirtyPreferenceType = null;
       EventManager.getInstance().notifyPreferenceChanged(preferenceType);
+    }
+  }
+
+  private void switchNode(Node preferencesNode) {
+    Node lookup = Studio.stage.getScene().lookup("#root");
+    BorderPane main = (BorderPane) lookup;
+    StackPane stack = (StackPane) main.getCenter();
+    if (preferencesNode != null) {
+      stack.getChildren().add(preferencesNode);
+    } else {
+      stack.getChildren().remove(1);
     }
   }
 
@@ -190,6 +202,12 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onClientSettings(ActionEvent event) throws IOException {
     load("preference-settings_client.fxml", event);
+  }
+
+
+  @FXML
+  private void onSystemSettings(ActionEvent event) throws IOException {
+    load("preference-system-settings.fxml", event);
   }
 
   @FXML
@@ -250,6 +268,11 @@ public class PreferencesController implements Initializable, StudioEventListener
   @FXML
   private void onDOF(ActionEvent event) throws IOException {
     load("preference-dof.fxml", event);
+  }
+
+  @FXML
+  private void onDOFLinx(ActionEvent event) throws IOException {
+    load("preference-doflinx.fxml", event);
   }
 
   @FXML
@@ -336,7 +359,7 @@ public class PreferencesController implements Initializable, StudioEventListener
   public static void open(String preferenceType) {
     open();
     Platform.runLater(() -> {
-      load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
+      instance.load("preference-" + preferenceType + ".fxml", null, preferenceType + "Btn");
     });
   }
 
@@ -354,12 +377,12 @@ public class PreferencesController implements Initializable, StudioEventListener
     load(screen, event, null);
   }
 
-  private static void load(String screen, ActionEvent event, String btnId) {
+  private void load(String screen, ActionEvent event, String btnId) {
     if (lastSelection != null) {
       lastSelection.getStyleClass().remove("preference-button-selected");
     }
     else {
-      initialBtn.getStyleClass().remove("preference-button-selected");
+      avatarBtn.getStyleClass().remove("preference-button-selected");
     }
 
     if (event != null) {
@@ -367,7 +390,7 @@ public class PreferencesController implements Initializable, StudioEventListener
       lastSelection.getStyleClass().add("preference-button-selected");
     }
     else if (btnId != null) {
-      Optional<Node> first = navBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
+      Optional<Node> first = navigationBox.getChildren().stream().filter(b -> btnId.equals(b.getId())).findFirst();
       if (first.isPresent()) {
         lastSelection = (Button) first.get();
         lastSelection.getStyleClass().add("preference-button-selected");
@@ -377,13 +400,13 @@ public class PreferencesController implements Initializable, StudioEventListener
     loadScreen(screen);
   }
 
-  public static void loadScreen(String screen) {
+  private void loadScreen(String screen) {
     lastScreen = screen;
 
     try {
       FXMLLoader loader = new FXMLLoader(ClientSettingsPreferencesController.class.getResource(screen));
       Node node = loader.load();
-      prefsMain.setCenter(node);
+      preferencesMain.setCenter(node);
     }
     catch (Exception e) {
       LOG.error("Failed to loading settings view: " + e.getMessage(), e);
@@ -412,19 +435,16 @@ public class PreferencesController implements Initializable, StudioEventListener
 //    repositoriesBtn.setVisible(frontendType.supportArchive());
 
     // activation of custom options according to installed frontend
-    frontendPreferences.setVisible(frontendType.isNotStandalone());
+    frontendPreferences.setVisible(frontendType.equals(FrontendType.Popper) || frontendType.equals(FrontendType.PinballX));
     popperSettingsBtn.setVisible(frontendType.equals(FrontendType.Popper));
     pinballXSettingsBtn.setVisible(frontendType.equals(FrontendType.PinballX));
+
     notificationsButton.setVisible(frontendType.isNotStandalone() && Features.NOTIFICATIONS_ENABLED);
     overlayBtn.setVisible(frontendType.isNotStandalone());
 
     pauseMenuBtn.setVisible(frontendType.supportControls());
     highscore_cardsBtn.setVisible(frontendType.isNotStandalone());
     validators_screensBtn.setVisible(frontendType.isNotStandalone());
-
-    initialBtn = avatarBtn;
-    prefsMain = preferencesMain;
-    navBox = navigationBox;
 
     tournamentGroup.managedProperty().bindBidirectional(tournamentGroup.visibleProperty());
     tournamentGroup.setVisible(Features.MANIA_ENABLED);

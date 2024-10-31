@@ -21,7 +21,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +28,9 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.IOException;
+import java.nio.file.*;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
@@ -62,12 +64,14 @@ public class PinUPConnector implements FrontendConnector {
 
   private int sqlVersion = DB_VERSION;
 
+  private TableAssetsAdapter assetsAdapter;
+
   @Override
   public void clearCache() {
     //not used yet
   }
 
-  @NotNull
+  @NonNull
   @Override
   public File getInstallationFolder() {
     return systemService.getPinupInstallationFolder();
@@ -191,7 +195,6 @@ public class PinUPConnector implements FrontendConnector {
         manifest.setSqlVersion(sqlVersion);
 
         manifest.setEmulatorId(rs.getInt("EMUID"));
-        manifest.setEmulatorType(rs.getString("GameType"));
         manifest.setGameName(rs.getString("GameName"));
         manifest.setGameFileName(rs.getString("GameFileName"));
         manifest.setGameDisplayName(rs.getString("GameDisplay"));
@@ -1114,16 +1117,22 @@ public class PinUPConnector implements FrontendConnector {
       Statement statement = connect.createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
-        Emulator e = new Emulator();
+        String emuName = rs.getString("EmuName");
+        String dirGames = rs.getString("DirGames");
+        String extension = rs.getString("GamesExt");
+
+        EmulatorType type = getEmulatorType(emuName, dirGames, extension);
+
+        Emulator e = new Emulator(type);
         e.setId(rs.getInt("EMUID"));
-        e.setName(rs.getString("EmuName"));
+        e.setName(emuName);
+        e.setDirGames(dirGames);
+        e.setGamesExt(extension);
         e.setDisplayName(rs.getString("EmuDisplay"));
         e.setDirMedia(rs.getString("DirMedia"));
-        e.setDirGames(rs.getString("DirGames"));
         e.setDirRoms(rs.getString("DirRoms"));
         e.setDescription(rs.getString("Description"));
         e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-        e.setGamesExt(rs.getString("GamesExt"));
         e.setVisible(rs.getInt("Visible") == 1);
 
         // specific initialization
@@ -1167,6 +1176,49 @@ public class PinUPConnector implements FrontendConnector {
     }
 
     return result;
+  }
+
+  private @NonNull EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
+    EmulatorType type = EmulatorType.fromExtension(extension);
+    if (type != null) {
+      return type;
+    }
+
+    type = EmulatorType.fromName(emuName);
+    if (type != null) {
+      return type;
+    }
+
+    for (EmulatorType t : EmulatorType.values()) {
+      if (t.getExtension() != null && dirGames != null) {
+        String ext = t.getExtension().toLowerCase();
+        final Path[] fileFound = {null};
+        try {
+          Files.walkFileTree(Paths.get(dirGames), new SimpleFileVisitor<Path>() {
+            @Override
+            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
+              if (StringUtils.endsWithIgnoreCase(file.toString(), ext)) {
+                fileFound[0] = file;
+                return FileVisitResult.TERMINATE;
+              }
+              return FileVisitResult.CONTINUE;
+            }
+
+            @Override
+            public FileVisitResult visitFileFailed(Path file, IOException exc) throws IOException {
+              return FileVisitResult.CONTINUE;
+            }
+          });
+        }
+        catch (IOException ioe) {
+          LOG.error("Encountered exception while traversing " + dirGames, ioe);
+        }
+        if (fileFound[0] != null) {
+          return t;
+        }
+      }
+    }
+    return EmulatorType.OTHER;
   }
 
   @NonNull
@@ -1946,16 +1998,7 @@ public class PinUPConnector implements FrontendConnector {
 
   @Override
   public TableAssetsAdapter getTableAssetAdapter() {
-    try {
-      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
-      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
-      // add cache to Popper search adapter
-      return new CacheTableAssetsAdapter(assetAdapter);
-    }
-    catch (Exception e) {
-      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
-      return null;
-    }
+    return assetsAdapter;
   }
 
   public void initializeConnector() {
@@ -1963,6 +2006,16 @@ public class PinUPConnector implements FrontendConnector {
     dbFilePath = file.getAbsolutePath().replaceAll("\\\\", "/");
 
     sqlVersion = this.getVersion();
+
+    try {
+      Class<?> aClass = Class.forName("de.mephisto.vpin.popper.PopperAssetAdapter");
+      TableAssetsAdapter assetAdapter = (TableAssetsAdapter) aClass.getDeclaredConstructor().newInstance();
+      // add cache to Popper search adapter
+      this.assetsAdapter = new CacheTableAssetsAdapter(assetAdapter);
+    }
+    catch (Exception e) {
+      LOG.error("Unable to find PopperAssetAdapter: " + e.getMessage());
+    }
   }
 
   public File getDatabaseFile() {
@@ -1980,8 +2033,6 @@ public class PinUPConnector implements FrontendConnector {
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
     frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.BackGlass, VPinScreen.Topper, VPinScreen.Menu, VPinScreen.DMD, VPinScreen.PlayField));
-    frontend.setAssetSearchEnabled(true);
-    frontend.setAssetSearchLabel("PinUP Popper Assets Search");
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));
@@ -2020,6 +2071,7 @@ public class PinUPConnector implements FrontendConnector {
                     p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
+                    p.info().command().get().contains("Future Pinball") ||
                     p.info().command().get().contains("B2SBackglassServerEXE") ||
                     p.info().command().get().contains("DOF")))
         .collect(Collectors.toList());

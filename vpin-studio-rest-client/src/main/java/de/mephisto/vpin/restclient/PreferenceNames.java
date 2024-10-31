@@ -20,6 +20,7 @@ public interface PreferenceNames {
   String AVATAR = "avatar";
 
   String DOF_SETTINGS = "dofSettings";
+  String DOFLINX_SETTINGS = "dofLinxSettings";
 
   String OVERLAY_DESIGN = "overlayDesign";
   String OVERLAY_PAGE_URL = "overlayPageUrl";

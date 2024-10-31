@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import java.io.File;
 

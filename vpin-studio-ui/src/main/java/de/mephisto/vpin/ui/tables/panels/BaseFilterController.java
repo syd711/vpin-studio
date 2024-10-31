@@ -4,6 +4,7 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.commons.utils.TransitionUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import javafx.animation.Animation;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
@@ -12,6 +13,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.StackPane;
@@ -39,6 +41,8 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
 
   private String searchTerm;
 
+  private PlaylistRepresentation playlist;
+
   protected BaseTableController<T, M> tableController;
 
   //--------------------------------------
@@ -54,6 +58,16 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
       searchTerm = filterValue;
       tableController.applyFilter();
       clearBtn.setVisible(filterValue != null && !filterValue.isEmpty());
+    });
+  }
+
+  public void bindPlaylistField(ComboBox<PlaylistRepresentation> playlistCombo) {
+    playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
+      @Override
+      public void changed(ObservableValue<? extends PlaylistRepresentation> observableValue, PlaylistRepresentation old, PlaylistRepresentation t1) {
+        playlist = t1;
+        tableController.applyFilter();
+      }
     });
   }
 
@@ -184,8 +198,8 @@ public abstract class BaseFilterController<T, M extends BaseLoadingModel<T, M>> 
   protected abstract boolean hasFilter();
 
   public final Predicate<M> buildPredicate() {
-    return buildPredicate(searchTerm);
+    return buildPredicate(searchTerm, playlist);
   }
-  public abstract Predicate<M> buildPredicate(String searchTerm);
+  public abstract Predicate<M> buildPredicate(String searchTerm, PlaylistRepresentation playlist);
 
 }

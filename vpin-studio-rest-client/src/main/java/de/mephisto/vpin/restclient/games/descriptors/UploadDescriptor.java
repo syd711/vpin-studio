@@ -31,7 +31,8 @@ public class UploadDescriptor {
   private boolean async;
   private boolean acceptAllAudioAsMusic;
 
-  private List<AssetType> assetsToImport = new ArrayList<>();
+  private List<String> excludedFiles = new ArrayList<>();
+  private List<String> excludedFolders = new ArrayList<>();
 
   private List<File> tempFiles = new ArrayList<>();
 
@@ -108,22 +109,25 @@ public class UploadDescriptor {
     }
   }
 
-  @JsonIgnore
-  public boolean isImporting(AssetType assetType) {
-    return assetsToImport.contains(assetType);
-  }
-
   public boolean isFileAsset(AssetType assetType) {
     String suffix = FilenameUtils.getExtension(originalUploadedFileName);
     return suffix.equalsIgnoreCase(assetType.name().toLowerCase());
   }
 
-  public List<AssetType> getAssetsToImport() {
-    return assetsToImport;
+  public List<String> getExcludedFiles() {
+    return excludedFiles;
   }
 
-  public void setAssetsToImport(List<AssetType> assetsToImport) {
-    this.assetsToImport = assetsToImport;
+  public void setExcludedFiles(List<String> excludedFiles) {
+    this.excludedFiles = excludedFiles;
+  }
+
+  public List<String> getExcludedFolders() {
+    return excludedFolders;
+  }
+
+  public void setExcludedFolders(List<String> excludedFolders) {
+    this.excludedFolders = excludedFolders;
   }
 
   @JsonIgnore

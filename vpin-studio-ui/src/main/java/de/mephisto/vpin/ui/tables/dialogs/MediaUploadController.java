@@ -1,26 +1,37 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
+import de.mephisto.vpin.ui.tables.models.MediaUploadArchiveItem;
+import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
+import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
-import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.StackPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -28,14 +39,40 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
+import java.util.*;
+import java.util.stream.Collectors;
 
-public class MediaUploadController implements Initializable, DialogController {
+import static de.mephisto.vpin.ui.Studio.client;
+
+public class MediaUploadController extends BaseTableController<String, MediaUploadArchiveItem> implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(MediaUploadController.class);
 
   @FXML
   private Node root;
+
+  @FXML
+  private Node tableInfo;
+
+  @FXML
+  TableColumn<MediaUploadArchiveItem, MediaUploadArchiveItem> columnSelection;
+
+  @FXML
+  TableColumn<MediaUploadArchiveItem, MediaUploadArchiveItem> columnFilename;
+
+  @FXML
+  TableColumn<MediaUploadArchiveItem, MediaUploadArchiveItem> columnPreview;
+
+  @FXML
+  TableColumn<MediaUploadArchiveItem, MediaUploadArchiveItem> columnAssetType;
+
+  @FXML
+  TableColumn<MediaUploadArchiveItem, MediaUploadArchiveItem> columnTarget;
+
+  @FXML
+  private CheckBox selectAllCheckbox;
+
+  @FXML
+  private StackPane loaderStack;
 
   @FXML
   private TextField fileNameField;
@@ -50,43 +87,30 @@ public class MediaUploadController implements Initializable, DialogController {
   private Button fileBtn;
 
   @FXML
-  private Label audioLabel;
+  private Label tableNameLabel;
 
   @FXML
-  private Label audioLaunchLabel;
+  private Label tableFileLabel;
 
   @FXML
-  private Label backglassLabel;
-
-  @FXML
-  private Label apronLabel;
-
-  @FXML
-  private Label dmdLabel;
-
-  @FXML
-  private Label helpLabel;
-
-  @FXML
-  private Label infoLabel;
-
-  @FXML
-  private Label loadingLabel;
-
-  @FXML
-  private Label playfieldLabel;
-
-  @FXML
-  private Label topperLabel;
-
-  @FXML
-  private Label wheelLabel;
+  private Label emulatorLabel;
 
   private File selection;
   private Stage stage;
 
   private boolean result = false;
+  private GameEmulatorRepresentation emulator;
   private GameRepresentation game;
+  private UploaderAnalysis uploaderAnalysis;
+
+  private List<String> allData;
+  private List<MediaUploadArchiveItem> filteredData;
+  private boolean filterMode = false;
+
+  private List<String> excludedFiles = new ArrayList<>();
+  private List<String> excludedFolders = new ArrayList<>();
+
+  private Map<String, Image> previewCache = new HashMap<>();
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -99,12 +123,51 @@ public class MediaUploadController implements Initializable, DialogController {
     Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null && selection.exists()) {
       result = true;
-      stage.close();
 
-      Platform.runLater(() -> {
-        MediaPackUploadProgressModel model = new MediaPackUploadProgressModel(this.game.getId(), "Media Pack Upload", selection);
-        ProgressDialog.createProgressDialog(model);
+      List<String> excludedFiles = new ArrayList<>();
+      List<String> excludedFolders = new ArrayList<>();
+      this.tableView.getItems().forEach(m -> {
+        if (!m.isSelected()) {
+          if (m.isFolder()) {
+            excludedFolders.add(m.getBean());
+          }
+          else {
+            excludedFiles.add(m.getBean());
+          }
+        }
       });
+      uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
+
+      if (filterMode) {
+        stage.close();
+      }
+      else {
+        stage.close();
+        Platform.runLater(() -> {
+          Optional<UploadDescriptor> result = UniversalUploader.upload(selection, game.getId(), TableUploadType.uploadAndImport, emulator);
+          if (result.isPresent()) {
+            UploadDescriptor uploadDescriptor = result.get();
+            uploadDescriptor.setSubfolderName(null);
+            uploadDescriptor.setFolderBasedImport(false);
+            uploadDescriptor.setAutoFill(true);
+
+            uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
+            uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
+            result = UniversalUploader.postProcess(uploadDescriptor);
+
+            EventManager.getInstance().notifyTableChange(game.getId(), game.getRom(), game.getGameName());
+          }
+        });
+      }
+    }
+  }
+
+  @FXML
+  private void onTableMouseClicked(MouseEvent mouseEvent) {
+    if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+      if (mouseEvent.getClickCount() == 2) {
+
+      }
     }
   }
 
@@ -120,82 +183,71 @@ public class MediaUploadController implements Initializable, DialogController {
         new FileChooser.ExtensionFilter("Media Pack", "*.zip", "*.rar", "*.7z"));
     this.selection = fileChooser.showOpenDialog(stage);
     if (this.selection != null) {
-      refreshSelection(stage);
+      this.uploaderAnalysis = null;
+      refreshSelection();
     }
   }
 
-  private void refreshSelection(Stage stage) {
+  private void refreshSelection() {
+    this.previewCache.clear();
     this.fileNameField.setText(this.selection.getAbsolutePath());
 
-    audioLabel.setText("-");
-    audioLaunchLabel.setText("-");
-    backglassLabel.setText("-");
-    apronLabel.setText("-");
-    dmdLabel.setText("-");
-    helpLabel.setText("-");
-    infoLabel.setText("-");
-    loadingLabel.setText("-");
-    playfieldLabel.setText("-");
-    topperLabel.setText("-");
-    wheelLabel.setText("-");
-
-
-    UploaderAnalysis analysis = UploadAnalysisDispatcher.analyzeArchive(selection);
-    String analyze = analysis.validateAssetType(AssetType.POPPER_MEDIA);
-    if (analyze != null) {
-      result = false;
-      WidgetFactory.showAlert(stage, analyze);
-      this.fileNameField.setText("");
-      this.fileBtn.setDisable(false);
-      this.fileNameField.setDisable(false);
-      this.cancelBtn.setDisable(false);
+    if (uploaderAnalysis == null) {
+      this.excludedFiles.clear();
+      this.excludedFolders.clear();
+      this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
     }
-    else {
-      this.fileNameField.setText(this.selection.getAbsolutePath());
-      this.fileNameField.setDisable(false);
-      this.fileBtn.setDisable(false);
-      this.cancelBtn.setDisable(false);
-      this.uploadBtn.setDisable(false);
-      this.cancelBtn.setDisable(false);
 
-      audioLabel.setText(formatReadable(audioLabel, analysis.getPopperMediaFiles(VPinScreen.Audio)));
-      audioLaunchLabel.setText(formatReadable(audioLaunchLabel, analysis.getPopperMediaFiles(VPinScreen.AudioLaunch)));
-      backglassLabel.setText(formatReadable(backglassLabel, analysis.getPopperMediaFiles(VPinScreen.BackGlass)));
-      apronLabel.setText(formatReadable(apronLabel, analysis.getPopperMediaFiles(VPinScreen.Menu)));
-      dmdLabel.setText(formatReadable(dmdLabel, analysis.getPopperMediaFiles(VPinScreen.DMD)));
-      helpLabel.setText(formatReadable(helpLabel, analysis.getPopperMediaFiles(VPinScreen.GameHelp)));
-      infoLabel.setText(formatReadable(infoLabel, analysis.getPopperMediaFiles(VPinScreen.GameInfo)));
-      loadingLabel.setText(formatReadable(loadingLabel, analysis.getPopperMediaFiles(VPinScreen.Loading)));
-      playfieldLabel.setText(formatReadable(playfieldLabel, analysis.getPopperMediaFiles(VPinScreen.PlayField)));
-      topperLabel.setText(formatReadable(topperLabel, analysis.getPopperMediaFiles(VPinScreen.Topper)));
-      wheelLabel.setText(formatReadable(wheelLabel, analysis.getPopperMediaFiles(VPinScreen.Wheel)));
-    }
+    startReload("Generating Previews...");
+
+    // run later to let the splash render properly
+    JFXFuture.runAsync(() -> {
+          allData = uploaderAnalysis.getFileNamesWithPath();
+          LOG.info("Media Uploader is analyzing {} file entries.", uploaderAnalysis.getFileNamesWithPath().size());
+          allData.addAll(uploaderAnalysis.getFoldersWithPath());
+          LOG.info("Media Uploader is analyzing {} folder entries.", uploaderAnalysis.getFoldersWithPath().size());
+          LOG.info("Media Uploader is analyzing {} archive entries.", allData.size());
+
+          filteredData = allData.stream().map(d -> toModel(d)).filter(m -> m.getAssetType() != null).collect(Collectors.toList());
+
+          List<MediaUploadArchiveItem> images = filteredData.stream().filter(m -> m.isImage()).collect(Collectors.toList());
+          for (int i = 0; i < images.size(); i++) {
+            MediaUploadArchiveItem model = images.get(i);
+            String message = "Generating Previews... (" + (i + 1) + "/" + images.size() + ")";
+            Platform.runLater(() -> {
+              loadingOverlay.setMessage(message);
+            });
+            previewCache.put(model.getName(), model.getPreview());
+          }
+        })
+        .thenLater(() -> {
+          tableView.setItems(FXCollections.observableList(filteredData));
+
+          this.fileNameField.setText(this.selection.getAbsolutePath());
+          this.fileNameField.setDisable(false);
+          this.fileBtn.setDisable(false);
+          this.cancelBtn.setDisable(false);
+          this.uploadBtn.setDisable(false);
+          this.cancelBtn.setDisable(false);
+
+          this.labelCount.setText(allData.size() + " entries");
+
+          uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
+          ObservableList<MediaUploadArchiveItem> items = tableView.getItems();
+          for (MediaUploadArchiveItem item : items) {
+            item.setSelected(!(excludedFiles.contains(item.getName()) || excludedFolders.contains(item.getName())));
+          }
+          tableView.refresh();
+
+          refreshAfterSelection();
+
+          endReload();
+        });
   }
 
-  private String formatReadable(Label label, List<String> mediaFiles) {
-    if (mediaFiles.isEmpty()) {
-      return "-";
-    }
-
-    String result = mediaFiles.get(0);
-    if (mediaFiles.size() > 1) {
-      result = result + " (" + (mediaFiles.size() - 1) + " more)";
-      label.setTooltip(new Tooltip(String.join("\n",mediaFiles)));
-    }
-    return result;
-  }
-
-  @Override
-  public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
-    this.selection = null;
-    this.uploadBtn.setDisable(true);
-
-    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
-    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
-      selection = file;
-      refreshSelection(stage);
-    }));
+  private void refreshAfterSelection() {
+    boolean b = tableView.getItems().stream().anyMatch(MediaUploadArchiveItem::isSelected);
+    uploadBtn.setDisable(!b);
   }
 
   @Override
@@ -207,12 +259,126 @@ public class MediaUploadController implements Initializable, DialogController {
     return result;
   }
 
-  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage) {
+  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, boolean filterMode) {
+    this.filterMode = filterMode;
+    this.emulator = client.getFrontendService().getDefaultGameEmulator();
     this.game = game;
     this.selection = file;
+    this.uploaderAnalysis = analysis;
     this.stage = stage;
-    if (selection != null) {
-      refreshSelection(stage);
+
+    if (game != null) {
+      this.emulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      this.emulatorLabel.setText(this.emulator.getName());
+      this.tableNameLabel.setText(this.game.getGameDisplayName());
+      this.tableFileLabel.setText(this.game.getGameFilePath());
     }
+
+    if (filterMode) {
+      this.uploadBtn.setText("Apply Selection");
+      this.tableInfo.setVisible(false);
+      this.stage.setTitle("Asset Selector");
+    }
+
+    if (selection != null) {
+      excludedFiles = analysis.getExcludedFiles();
+      excludedFolders = analysis.getExcludedFolders();
+      analysis.resetExclusions();
+      refreshSelection();
+    }
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize("media", "media", new MediaUploaderColumnSorter(this));
+
+    this.tableInfo.managedProperty().bindBidirectional(tableInfo.visibleProperty());
+
+    this.result = false;
+    this.selection = null;
+    this.uploadBtn.setDisable(true);
+
+    root.setOnDragOver(new FileSelectorDragEventHandler(root, PackageUtil.ARCHIVE_SUFFIXES));
+    root.setOnDragDropped(new FileSelectorDropEventHandler(fileNameField, file -> {
+      selection = file;
+      refreshSelection();
+    }));
+
+    BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
+      CheckBox columnCheckbox = new CheckBox();
+      columnCheckbox.setUserData(value);
+      columnCheckbox.setSelected(model.isSelected());
+      columnCheckbox.getStyleClass().add("default-text");
+      columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+        @Override
+        public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+          model.setSelected(newValue);
+          tableView.refresh();
+          refreshAfterSelection();
+        }
+      });
+
+      //you can't de-select on selection mode
+      if (filterMode && model.isTableAsset()) {
+        columnCheckbox.setDisable(true);
+      }
+
+      return columnCheckbox;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnFilename, (value, model) -> {
+      Label label = new Label(model.getName());
+      label.getStyleClass().add("default-text");
+      label.setTooltip(new Tooltip(model.getName()));
+      if (model.isFolder()) {
+        label.setGraphic(WidgetFactory.createIcon("mdi2f-folder-multiple-outline"));
+      }
+      else {
+        label.setGraphic(WidgetFactory.createIcon("mdi2f-file-outline"));
+      }
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnTarget, (value, model) -> {
+      Label label = new Label(model.getName());
+      label.getStyleClass().add("default-text");
+      label.setText(model.getTarget());
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnAssetType, (value, model) -> {
+      Label label = new Label(model.getName());
+      label.getStyleClass().add("default-text");
+      label.setText(model.getAssetType().toString());
+      return label;
+    }, true);
+
+    BaseLoadingColumn.configureColumn(columnPreview, (value, model) -> {
+      if (previewCache.containsKey(model.getName())) {
+        ImageView imageView = new ImageView(previewCache.get(model.getName()));
+        imageView.setFitWidth(250);
+        imageView.setFitHeight(140);
+        imageView.setPreserveRatio(true);
+        return imageView;
+      }
+
+      Label label = new Label("-");
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
+
+    selectAllCheckbox.setSelected(true);
+    selectAllCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        tableView.getItems().forEach(m -> m.setSelected(newValue));
+        tableView.refresh();
+      }
+    });
+  }
+
+  @Override
+  protected MediaUploadArchiveItem toModel(String bean) {
+    return new MediaUploadArchiveItem(bean, emulator, uploaderAnalysis, filterMode);
   }
 }

@@ -7,6 +7,7 @@ public class ServerSettings extends JsonSettings {
   private boolean vpxKeepDisplayNames;
   private boolean backupTableOnOverwrite = true;
   private boolean keepVbsFiles = true;
+  private boolean keepModificationDate = false;
   private boolean useSubfolders = false;
   private boolean launchPopperOnExit = false;
   private boolean useVPXTableMonitor = false;
@@ -14,6 +15,23 @@ public class ServerSettings extends JsonSettings {
   private String mappingVpsTableId = "WEBGameID";
   private String mappingVpsTableVersionId = "CUSTOM3";
   private String mappingHsFileName = "CUSTOM4";
+  private boolean stickyKeysEnabled = true;
+
+  public boolean isStickyKeysEnabled() {
+    return stickyKeysEnabled;
+  }
+
+  public void setStickyKeysEnabled(boolean stickyKeysEnabled) {
+    this.stickyKeysEnabled = stickyKeysEnabled;
+  }
+
+  public boolean isKeepModificationDate() {
+    return keepModificationDate;
+  }
+
+  public void setKeepModificationDate(boolean keepModificationDate) {
+    this.keepModificationDate = keepModificationDate;
+  }
 
   public boolean isUseVPXTableMonitor() {
     return useVPXTableMonitor;

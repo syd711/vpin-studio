@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
@@ -27,7 +27,7 @@ public class GameMediaService {
   public void installMediaPack(@NonNull UploadDescriptor uploadDescriptor, @Nullable UploaderAnalysis<?> analysis) throws Exception {
     File tempFile = new File(uploadDescriptor.getTempFilename());
     if (analysis == null) {
-      analysis = new UploaderAnalysis<>(tempFile);
+      analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
       analysis.analyze();
     }
 

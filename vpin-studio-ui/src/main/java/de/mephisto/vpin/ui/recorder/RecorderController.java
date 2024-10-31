@@ -168,12 +168,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     JFXFuture.supplyAsync(() -> {
           if (clearCache) {
-            if (id == ALL_VPX_ID) {
-              client.getGameService().clearVpxCache();
-            }
-            else {
-              client.getGameService().clearCache(id);
-            }
+            client.getGameService().clearCache(id);
           }
 
           return id == ALL_VPX_ID
@@ -250,12 +245,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     this.emulatorCombo.setDisable(true);
     List<GameEmulatorRepresentation> emulators = new ArrayList<>(client.getFrontendService().getGameEmulatorsUncached());
     List<GameEmulatorRepresentation> filtered = emulators.stream().filter(e -> !uiSettings.getIgnoredEmulatorIds().contains(Integer.valueOf(e.getId()))).collect(Collectors.toList());
-
-    GameEmulatorRepresentation allVpx = new GameEmulatorRepresentation();
-    allVpx.setId(ALL_VPX_ID);
-    allVpx.setName("All VPX Tables");
-    allVpx.setVpxEmulator(true);
-    filtered.add(0, allVpx);
 
     this.emulatorCombo.setItems(FXCollections.observableList(filtered));
     this.emulatorCombo.setDisable(false);

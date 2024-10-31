@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
@@ -34,6 +35,15 @@ public class TableNotesController implements Initializable, DialogController {
 
   @FXML
   private Label titleLabel;
+
+  @FXML
+  private Label useTodoLabel;
+
+  @FXML
+  private Label useErrorLabel;
+  
+  @FXML
+  private Label useOutdatedLabel;
 
   private GameRepresentation game;
 
@@ -73,7 +83,13 @@ public class TableNotesController implements Initializable, DialogController {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-
+    useTodoLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//TODO "));
+    useErrorLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//ERROR "));
+    useOutdatedLabel.setOnMouseClicked(mouseEvent -> appendTextAndFocus("//OUTDATED "));
+  }
+  private void appendTextAndFocus(String text) {
+    this.textArea.insertText(this.textArea.getCaretPosition(), text);
+    this.textArea.requestFocus();
   }
 
   public void setGame(GameRepresentation game) {

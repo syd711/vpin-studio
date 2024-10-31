@@ -4,7 +4,6 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
@@ -27,29 +26,6 @@
                   </graphic>
                   <tooltip>
                      <Tooltip text="Open Visual Pinball Installation Folder" />
-                  </tooltip>
-               </Button>
-               <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
-               <Button fx:id="playBtn" mnemonicParsing="false" onAction="#onPlay" styleClass="external-component" text="Launch Visual Pinball" textFill="WHITE">
-                  <font>
-                     <Font size="14.0" />
-                  </font>
-                  <graphic>
-                     <FontIcon iconColor="WHITE" iconLiteral="mdi2o-open-in-new" iconSize="18" text="󰐊" />
-                  </graphic>
-                  <tooltip>
-                     <Tooltip text="Launch VPX with the selected table." />
-                  </tooltip>
-               </Button>
-               <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" text="Stop Visual Pinball" textFill="#ff3333">
-                  <font>
-                     <Font size="14.0" />
-                  </font>
-                  <graphic>
-                     <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
-                  </graphic>
-                  <tooltip>
-                     <Tooltip text="Kill all VPX and [Frontend] processes." />
                   </tooltip>
                </Button>
             </items>

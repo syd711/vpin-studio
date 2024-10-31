@@ -2,6 +2,7 @@ package de.mephisto.vpin.server.frontend.pinballx;
 
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.server.frontend.GameEntry;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -59,6 +60,8 @@ public class PinballXTableParser extends DefaultHandler {
             // will be overriden by description but in case the tag is absent
             detail.setGameDisplayName(gameName); 
             detail.setEmulatorId(emu.getId());
+            // will be overriden but enabled by default
+            detail.setStatus(1);  // STATUS_NORMAL
 
             NodeList childNodes = element.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
@@ -206,12 +209,22 @@ public class PinballXTableParser extends DefaultHandler {
 
   //----------------------------------------
 
-  public void writeGames(File pinballXDb, List<String> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
+  public void writeGames(File pinballXDb, List<GameEntry> games, Map<String, TableDetails> mapTableDetails, Emulator emu) {
+    if (!pinballXDb.exists()) {
+      try {
+        pinballXDb.getParentFile().mkdirs();
+        pinballXDb.createNewFile();
+      }
+      catch (IOException ioe) {
+        LOG.error("Cannot create file " + pinballXDb, ioe);
+      }
+    }
+    
     try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(pinballXDb)))) {
 
       writer.append("<menu>\n");
-      for (String filename : games) {
-        TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), filename));
+      for (GameEntry entry : games) {
+        TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
           writer.append("  <game name=\"").append(escapeXml(detail.getGameName())).append("\">\n");
 

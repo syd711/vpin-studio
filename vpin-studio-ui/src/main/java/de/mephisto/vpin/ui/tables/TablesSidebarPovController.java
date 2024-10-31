@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.POV;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.representations.POVRepresentation;
 import de.mephisto.vpin.ui.Studio;
@@ -207,7 +208,7 @@ public class TablesSidebarPovController implements Initializable {
   @FXML
   private void onPOVUpload() {
     if (game.isPresent()) {
-      TableDialogs.directPovUpload(Studio.stage, game.get());
+      TableDialogs.directUpload(Studio.stage, AssetType.POV, game.get(), null);
     }
   }
 

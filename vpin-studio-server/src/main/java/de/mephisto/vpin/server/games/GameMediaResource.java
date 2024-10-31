@@ -1,16 +1,16 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
-import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
+import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.util.UploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -74,6 +74,12 @@ public class GameMediaResource {
     return frontendService.getGameMedia(game);
   }
 
+  @GetMapping("/assets/search/conf")
+  public TableAssetConf getTableAssetConf() throws Exception {
+    TableAssetsAdapter assetAdapter = frontendService.getTableAssetAdapter();
+    return assetAdapter != null ? assetAdapter.getTableAssetConf() : null;
+  }
+
   @PostMapping("/assets/search")
   public TableAssetSearch searchTableAssets(@RequestBody TableAssetSearch search) throws Exception {
     Game game = frontendService.getGame(search.getGameId());
@@ -113,8 +119,8 @@ public class GameMediaResource {
 
   @GetMapping("/assets/d/{screen}/{gameId}/{url}")
   public ResponseEntity<StreamingResponseBody> getMedia(@PathVariable("screen") String screen,
-                                                      @PathVariable("gameId") int gameId,
-                                                      @PathVariable("url") String url) throws Exception {
+                                                        @PathVariable("gameId") int gameId,
+                                                        @PathVariable("url") String url) throws Exception {
     VPinScreen vPinScreen = VPinScreen.valueOfSegment(screen);
     Game game = frontendService.getGame(gameId);
     EmulatorType emulatorType = game.getEmulator().getEmulatorType();
@@ -129,11 +135,11 @@ public class GameMediaResource {
 
     TableAsset tableAsset = result.get();
     return ResponseEntity.ok()
-      .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
-      .header("X-Frame-Options", "SAMEORIGIN")
-      .body(out -> {
-        tableAssetsService.download(out, tableAsset.getUrl());
-      });
+        .contentType(MediaType.parseMediaType(tableAsset.getMimeType()))
+        .header("X-Frame-Options", "SAMEORIGIN")
+        .body(out -> {
+          tableAssetsService.download(out, tableAsset.getUrl());
+        });
   }
 
   @GetMapping("/{id}/{screen}/{name}")
@@ -205,24 +211,23 @@ public class GameMediaResource {
     }
   }
 
-  @PostMapping("/packupload")
-  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
-                                     @RequestParam("objectId") Integer gameId) {
-    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
-    try {
-      descriptor.getAssetsToImport().add(AssetType.POPPER_MEDIA);
-      descriptor.upload();
-      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.POPPER_MEDIA);
-      return descriptor;
-    }
-    catch (Exception e) {
-      LOG.error(AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage(), e);
-      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.POPPER_MEDIA.name() + " upload failed: " + e.getMessage());
-    }
-    finally {
-      descriptor.finalizeUpload();
-    }
-  }
+//  @PostMapping("/packupload")
+//  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
+//                                     @RequestParam("objectId") Integer gameId) {
+//    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
+//    try {
+//      descriptor.upload();
+//      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.FRONTEND_MEDIA);
+//      return descriptor;
+//    }
+//    catch (Exception e) {
+//      LOG.error(AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage(), e);
+//      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage());
+//    }
+//    finally {
+//      descriptor.finalizeUpload();
+//    }
+//  }
 
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
@@ -231,6 +236,10 @@ public class GameMediaResource {
     File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
     File media = new File(mediaFolder, filename);
     if (media.exists()) {
+      if (screen.equals(VPinScreen.Wheel)) {
+        WheelAugmenter augmenter = new WheelAugmenter(media);
+        augmenter.deAugment();
+      }
       return media.delete();
     }
     return false;

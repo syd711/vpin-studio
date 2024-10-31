@@ -32,12 +32,12 @@
             <Hyperlink onAction="#onLink" text="http://mjrnet.org/pinscape/PinVol.html" />
             <VBox>
                <children>
-                  <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-Start PinVol with VPin Server" textFill="WHITE">
+                  <CheckBox fx:id="toggleAutoStart" mnemonicParsing="false" styleClass="preference-checkbox" text="Auto-Start PinVol with VPin Studio Server" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </CheckBox>
-                  <Label styleClass="checkbox-description" text="The PinVol.exe is launched together with the VPin-Server." textFill="WHITE" wrapText="true">
+                  <Label styleClass="checkbox-description" text="The PinVol.exe is launched together with the VPin Studio Server." textFill="WHITE" wrapText="true">
                      <VBox.margin>
                         <Insets bottom="6.0" />
                      </VBox.margin>

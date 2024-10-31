@@ -1,26 +1,62 @@
-## Release Notes 3.7.2
+## Release Notes 3.9
 
-**Note that a progress dialog will come up once you update is finished, see notes below!!!**
+## Breaking Changes
+
+- **DOF Integration**: The VPin Studio no longer supports older DOF installations that have different configuration folders for 32 and 64 bit. Instead, only the new folder structure with a shared **Config** folder is support. Please update your installation by downloading the latest DOF version from https://github.com/mjrgh/DirectOutput/releases.
+
+## Changes
+
+- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. (http://mjrnet.org/pinscape/PinballY.php)
+- **Tables / Uploads**: Re-implemented the upload dialog for media packs and large parts of the backend here. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter/inspection dialog for table archive uploads.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/media-upload.png" width="650" />
+
+- **Tables / Asset Management View**: The screen columns are sortable now.
+- **Tables / Table Uploads**: Added additional server setting to keep the modification date of VPX files when they have been uploaded and replaced.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modification-date.png" width="650" />
+
+- **Tables / Enable or Disable Tables**: In the context menu of tables, a menu item to enable/disable the selected table has been added. This action works as a bulk action and is applied to all selected games.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/status-toggle.png" width="650" />
+ 
+- **Tables / Notes Box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box.
+- **Tables / VPS Entry**: In the VPS tab, the VPS table version links to VPF or VPU has a context menu that can be used to insert a TODO note in the table
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="600" />
+- **Tables / Future Pinball**: The support for Future Pinball has been massively improved.
+  - Added the launch button to launch Future Pinball tables.
+  - Added columns that were previously not shown for Future Pinball.
+  - Added the possibility to upload Future Pinball tables.
+  - Added ability to match Future Pinball tables against the VPS database. 
+  - The VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table.
+  - The backglass manager now displays all backglasses coming from all VPX and FP emulators.
+- **Preferences / Backglass Server**: Selection of emulator is no more needed, uses instead the B2SServer installation folder.
+- **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
+- **Preferences / System Settings**: Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/system-settings.png" width="750" />
+  
+- **Tables**: Added edit and open button to the VPS and backglass manager view for a better navigation back to the table overview.
+ 
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/navi-buttons.png" width="100" />
+
 
 ## Bugfixes
 
-- **Media Cache**: For generating highscore cards and backglass previews, the Studio extracts the data from backglasses and other sources. Unfortunately the generation of these assets were stored with non-unique names, so this index must be regenerated. **You can do that manually in the server settings but the Studio will also regenerate it once after showing the release notes dialog.**
+- **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. **Note: the macOS update process will work correctly AFTER this release update.**
+- **System KeyEvent Handling**: Fixed key handling to avoid table deletion on DEL key press in preference panel.
+- **Studio Client Exit Confirmations**: The question about launching the frontend on exit is now only shown if the server setting "Launch Frontend on exit" is set to _false_.
+- **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
+- **Drop-in Folder**: Fixed drop-in folder for **macOS and Linux**. The recursive watching of filesystem changes also works for these operating systems now. 
+- **Drop-in Folder**: Fixed menu button being initially visible even though being disabled in the preferences. 
+- **VPS Data**: Fixed issue that caused all tutorial URLs being ignored.
+- **Highscore Cards**: Fixed missing status updates. When a backglass is uploaded, the default background information for a game is refreshed too.
+- **Dialog Positioning**: Dialogs are now always opened on the screen the main Studio Window is located. So only the size of a dialog is restored, not the previous position. 
 
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/media-cache.png" width="650" />
+## VPin Mania
 
-- **VPin Studio Server Tray**: Fixed the "Launch Studio" action from the context menu of the tray icon.
-- **Table Parser**: Fixed issue in the VPX script analyzer which caused the missing resolving for highscore textfile names.
-- **CSV Exporter: Tables**: Added missing escaping of delimiters.
-- **CSV Exporter: Backglasses**: Fixed export errors caused by the wrong media index and improved the performance there.
-- **Highscore Parsing**: Increased support of VPReg.stg file based highscores. A few more highscore patterns are supported now, mainly used from seventies EM tables. 
-- **Table Overview / Initial Selection**: Tried once again to fix an initial selection issue which is leading to a deadlock for some users.
-- **Table Overview / Table Importer Dialog**: Fixed initialization of the emulator combobox. 
-- **Table Overview / Table Uploads**: Fixed issue that newly uploaded tables do not appear for the "Just Added" playlist. 
-- **Table Overview / Table Uploads**: Fixed issue that media has been duplicated instead of replaced when "replace" was selected as upload option. 
-- **Table Overview / PUP Packs**: Improved calculation of the correct PUP pack folder inside a table bundle (hopefully, it's a tricky on; "Stranger Things 4" issue). 
-- **Table Overview / PUP Packs**: Fixed PUP pack detection by also checking .mkv files. 
-- **Drop-in Folder**: The delete action moves files to the trash-bin now, instead of deleting them irrecoverably.
-- **Table Uploads**: Fixed issue that nvram files have not been extracted when uploaded as part of a bundle, e.g. "Big Bang Bar".
-- **Autostart**: Changed the installer so that during the startup the console window does not pop up anymore. This change will only be applied to new installations.  
+- Added **Delete Table Scores** button to the **Player Statistics** view. This way you can delete e.g. default highscores that have been pushed with your account name. I know this is not an optimal solution yet, but it helps users to at least clean up their own statistics. In the long run, some filtering must be provided to avoid the submission of default scores.
+
 
   

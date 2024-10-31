@@ -6,12 +6,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.mephisto.vpin.commons.utils.WinRegistry;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 public class SystemInfo {
   private final static Logger LOG = LoggerFactory.getLogger(SystemInfo.class);
@@ -19,6 +22,7 @@ public class SystemInfo {
 
   public final static String PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR = "pinupSystem.installationDir";
   public final static String PINBALLX_INSTALLATION_DIR_INST_DIR = "pinballX.installationDir";
+  public final static String PINBALLY_INSTALLATION_DIR_INST_DIR = "pinballY.installationDir";
   public final static String STANDALONE_INSTALLATION_DIR_INST_DIR = "visualPinball.installationDir";
   public final static String ARCHIVE_TYPE = "archive.type";
 
@@ -45,33 +49,102 @@ public class SystemInfo {
         }
         LOG.error("Found registry entry for " + POPPER_REG_KEY + ", but that folder does not exist. I'm using the default installation folder instead.");
       }
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to read installation folder: " + e.getMessage(), e);
     }
     return new File("C:/vPinball/PinUPSystem");
   }
 
-  /** 
+  public File resolvePinballXInstallationFolder() {
+    return new File("C:/PinballX");
+  }
+
+  public File resolvePinballYInstallationFolder() {
+    return new File("C:/PinballY");
+  }
+
+  public File resolveVpx64InstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX64.exe\\shell\\open\\command", null);
+    return f != null ? f : resolveVpxInstallFolder();
+  }
+
+  public File resolveVpxInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinballX.exe\\shell\\open\\command",
+        "HKEY_CLASSES_ROOT\\vpx_auto_file\\shell\\edit\\command");
+    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+  }
+
+  public File resolveVptInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Applications\\VPinball995.exe\\shell\\open\\command",
+        "HKEY_CLASSES_ROOT\\vpt_auto_file\\shell\\edit\\command");
+    return f != null ? f : new File("C:/vPinball/Visual Pinball");
+  }
+
+  public File resolveFpInstallFolder() {
+    File f = resolveInstallFolder("HKEY_CLASSES_ROOT\\Future Pinball Table\\Shell\\Open\\Command", null);
+    return f != null ? f : new File("C:/vPinball/Future Pinball");
+  }
+
+  private File resolveInstallFolder(String regkey, String extkey) {
+    File f = regkey != null ? extractFolder(regkey) : null;
+    return f != null ? f : extkey != null ? extractFolder(extkey) : null;
+  }
+
+  private File extractFolder(String regkey) {
+    String vpx = extractRegistryValue(readRegistry(regkey, null));
+    if (StringUtils.isNotEmpty(vpx)) {
+      int indexOf = vpx.toLowerCase().indexOf(".exe");
+      if (indexOf > 0) {
+        String exe = StringUtils.removeStart(vpx.substring(0, indexOf + 4), "\"");
+        File fexe = new File(exe);
+        if (fexe.exists()) {
+          return fexe.getParentFile();
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
    * cf https://github.com/vpinball/b2s-backglass/
    * => b2sbackglassserverregisterapp/b2sbackglassserverregisterapp/formBackglassServerRegApp.vb
    */
-  public File resolveBackglassServerFolder(@NonNull File visualPinballTableFolder) {
-    String b2sClsid = extractRegistryValue(readRegistry("HKEY_CLASSES_ROOT\\B2S.Server\\CLSID", null));
-    String regkey = "HKEY_CLASSES_ROOT\\WOW6432Node\\CLSID\\" + b2sClsid + "\\InprocServer32";
-    String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
-    File serverDllFile = null;
+  public File resolveBackglassServerFolder() {
     try {
-      serverDllFile = new File(new URL(serverDllPath).getFile());
-      if (serverDllFile.exists()) {
-        return serverDllFile.getParentFile();
+      String b2sClsid = extractRegistryValue(readRegistry("HKEY_CLASSES_ROOT\\B2S.Server\\CLSID", null));
+      String regkey = "HKEY_CLASSES_ROOT\\WOW6432Node\\CLSID\\" + b2sClsid + "\\InprocServer32";
+      String serverDllPath = extractRegistryValue(readRegistry(regkey, "CodeBase"));
+      File serverDllFile = null;
+      try {
+        serverDllFile = new File(new URL(serverDllPath).getFile());
+        if (serverDllFile.exists()) {
+          return serverDllFile.getParentFile();
+        }
       }
-    } catch (MalformedURLException ue) {
+      catch (MalformedURLException ue) {
+      }
+
+      // alternative way copied from FrontendService
+      Map<String, Object> pathEntry = WinRegistry.getClassesValues(".res\\b2sserver.res\\ShellNew");
+      if (!pathEntry.isEmpty()) {
+        String path = String.valueOf(pathEntry.values().iterator().next());
+        if (path.contains("\"")) {
+          path = path.substring(1);
+          path = path.substring(0, path.indexOf("\""));
+          File exeFile = new File(path);
+          File b2sFolder = exeFile.getParentFile();
+          if (b2sFolder.exists()) {
+            LOG.info("Resolved backglass server directory from WinRegistry: " + b2sFolder.getAbsolutePath());
+            return b2sFolder;
+          }
+        }
+      }
     }
-    // check in tables folder
-    serverDllFile = new File(visualPinballTableFolder, "B2SBackglassServer.dll");
-    if (serverDllFile.exists()) {
-      return serverDllFile.getParentFile();
+    catch (Exception e) {
+      LOG.error("Failed to calculate backglass server folder: {}", e.getMessage(), e);
     }
+
     return null;
   }
 
@@ -88,7 +161,8 @@ public class SystemInfo {
       process.waitFor();
       reader.join();
       return reader.getResult();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.info("Failed to read registry key " + location);
       return null;
     }
@@ -109,7 +183,8 @@ public class SystemInfo {
       reader.start();
       process.waitFor();
       reader.join();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Failed to write registry key " + location + ": " + e.getMessage(), e);
     }
   }
@@ -139,7 +214,8 @@ public class SystemInfo {
         int c;
         while ((c = is.read()) != -1)
           sw.write(c);
-      } catch (IOException e) {
+      }
+      catch (IOException e) {
         LOG.error("Failed to execute stream reader: " + e.getMessage(), e);
       }
     }

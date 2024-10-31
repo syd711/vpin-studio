@@ -3,11 +3,11 @@ package de.mephisto.vpin.ui.mania;
 import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.StudioFXController;
 import de.mephisto.vpin.ui.mania.widgets.ManiaWidgetVPSTableAlxController;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.layout.BorderPane;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

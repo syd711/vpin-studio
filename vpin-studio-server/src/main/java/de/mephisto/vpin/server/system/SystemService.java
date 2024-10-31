@@ -18,6 +18,7 @@ import de.mephisto.vpin.server.inputs.ShutdownThread;
 import de.mephisto.vpin.server.pinemhi.PINemHiService;
 import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.geometry.Rectangle2D;
@@ -64,7 +65,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   private File pinupInstallationFolder;
   private File pinballXInstallationFolder;
+  private File pinballYInstallationFolder;
   private File standaloneInstallationFolder;
+
+  private File backglassServerFolder;
 
   private File backupFolder;
 
@@ -104,6 +108,11 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         this.pinballXInstallationFolder = new File(store.get(PINBALLX_INSTALLATION_DIR_INST_DIR));
         frontendType = FrontendType.PinballX;
       }
+      //PinballY Folder
+      if (store.containsKey(PINBALLY_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINBALLY_INSTALLATION_DIR_INST_DIR))) {
+        this.pinballYInstallationFolder = new File(store.get(PINBALLY_INSTALLATION_DIR_INST_DIR));
+        frontendType = FrontendType.PinballY;
+      }
       //PinUP Popper Folder
       if (store.containsKey(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR) && !StringUtils.isEmpty(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR))) {
         this.pinupInstallationFolder = new File(store.get(PINUP_SYSTEM_INSTALLATION_DIR_INST_DIR));
@@ -128,6 +137,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       if (!this.backupFolder.exists() && !this.backupFolder.mkdirs()) {
         LOG.error("Failed to create backup folder " + this.backupFolder.getAbsolutePath());
       }
+
+      this.backglassServerFolder = resolveBackglassServerFolder();
     }
     catch (Exception e) {
       String msg = "Failed to initialize base folders: " + e.getMessage();
@@ -155,9 +166,13 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     if (pinballXInstallationFolder != null) {
       LOG.info(formatPathLog("PinballX Folder", this.pinballXInstallationFolder));
     }
+    if (pinballYInstallationFolder != null) {
+      LOG.info(formatPathLog("PinballY Folder", this.pinballYInstallationFolder));
+    }
     if (standaloneInstallationFolder != null) {
       LOG.info(formatPathLog("Standalone VPX Folder", this.standaloneInstallationFolder));
     }
+    LOG.info(formatPathLog("B2S Server", this.getBackglassServerFolder()));
     LOG.info(formatPathLog("Pinemhi Command", this.getPinemhiCommandFile()));
     LOG.info(formatPathLog("B2S Extraction Folder", this.getRawImageExtractionFolder()));
     LOG.info(formatPathLog("B2S Cropped Folder", this.getCroppedImageFolder()));
@@ -169,7 +184,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     return formatPathLog(label, value, null, null);
   }
 
-  private static String formatPathLog(String label, File file) {
+  private static String formatPathLog(String label, @Nullable File file) {
+    if (file == null) {
+      return formatPathLog(label, "-");
+    }
     return formatPathLog(label, file.getAbsolutePath(), file.exists(), file.canRead());
   }
 
@@ -183,6 +201,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getBackupFolder() {
     return backupFolder;
+  }
+
+  public File getBackglassServerFolder() {
+    return backglassServerFolder;
   }
 
   private static String formatPathLog(String label, String value, Boolean exists, Boolean readable) {
@@ -230,6 +252,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   public File getPinballXInstallationFolder() {
     return pinballXInstallationFolder;
+  }
+
+  public File getPinballYInstallationFolder() {
+    return pinballYInstallationFolder;
   }
 
   public File getStandaloneInstallationFolder() {
@@ -332,17 +358,31 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
-  public boolean isVPXRunning() {
-    return isVPXRunning(getProcesses());
+  public boolean isPinballEmulatorRunning() {
+    return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
   }
 
   public boolean isVPXRunning(List<ProcessHandle> allProcesses) {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        String fileName = cmdName.substring(cmdName.lastIndexOf("\\")+1);
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
         if (fileName.toLowerCase().contains("Visual Pinball".toLowerCase()) || fileName.toLowerCase().contains("VisualPinball".toLowerCase()) || fileName.toLowerCase().contains("VPinball".toLowerCase())) {
           LOG.info("Found active VPX process: " + fileName);
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  public boolean isFPRunning(List<ProcessHandle> allProcesses) {
+    for (ProcessHandle p : allProcesses) {
+      if (p.info().command().isPresent()) {
+        String cmdName = p.info().command().get();
+        String fileName = cmdName.substring(cmdName.lastIndexOf("\\") + 1);
+        if (fileName.toLowerCase().contains("Future Pinball")) {
+          LOG.info("Found active FP process: " + fileName);
           return true;
         }
       }
@@ -501,24 +541,29 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    if (!available(port)) {
-      LOG.warn("----------------------------------------------");
-      LOG.warn("Instance already running, terminating server.");
-      LOG.warn("==============================================");
-      this.shutdown();
-      return;
-    }
-
-    this.loadingScoringDB();
-    new Thread(() -> {
-      Thread.currentThread().setName("ScoringDB Updater");
-      if (!new File("./").getAbsolutePath().contains("workspace")) {
-        ScoringDB.update();
+    try {
+      if (!available(port)) {
+        LOG.warn("----------------------------------------------");
+        LOG.warn("Instance already running, terminating server.");
+        LOG.warn("==============================================");
+        this.shutdown();
+        return;
       }
-      this.loadingScoringDB();
-    }).start();
 
-    initBaseFolders();
-    logSystemInfo();
+      this.loadingScoringDB();
+      new Thread(() -> {
+        Thread.currentThread().setName("ScoringDB Updater");
+        if (!new File("./").getAbsolutePath().contains("workspace")) {
+          ScoringDB.update();
+        }
+        this.loadingScoringDB();
+      }).start();
+
+      initBaseFolders();
+      logSystemInfo();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize system service: {}", e.getMessage(), e);
+    }
   }
 }

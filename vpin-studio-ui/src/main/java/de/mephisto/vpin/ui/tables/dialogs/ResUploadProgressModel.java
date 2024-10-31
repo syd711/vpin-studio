@@ -15,8 +15,6 @@ import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
 
-import static de.mephisto.vpin.restclient.jobs.JobType.DIRECTB2S_INSTALL;
-
 public class ResUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(ResUploadProgressModel.class);
 
@@ -24,8 +22,8 @@ public class ResUploadProgressModel extends UploadProgressModel {
   private final int gameId;
   private final File file;
 
-  public ResUploadProgressModel(int gameId, String title, File file) {
-    super(file, title);
+  public ResUploadProgressModel(int gameId, String title, File file, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.iterator = Collections.singletonList(this.file).iterator();

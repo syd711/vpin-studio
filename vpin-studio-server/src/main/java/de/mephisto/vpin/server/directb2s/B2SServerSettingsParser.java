@@ -24,6 +24,8 @@ public class B2SServerSettingsParser extends DefaultHandler {
   @Nullable
   public DirectB2ServerSettings getSettings() {
     DirectB2ServerSettings settings = new DirectB2ServerSettings();
+    settings.setBackglassServerFolder(xmlFile.getParentFile().getAbsolutePath());
+
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

@@ -7,7 +7,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +28,7 @@ public class NvRamHighscoreToRawConverter {
     adapters.add(new SkipFirstListScoreAdapter("godzilla.nv"));
     adapters.add(new NewLineAfterFirstScoreAdapter("kiko_a10.nv"));
     adapters.add(new Anonymous5PlayerScoreAdapter("punchy.nv"));
+    adapters.add(new FixTitleScoreAdapter("rs_l6.nv", "TODAY'S HIGHEST SCORES", "ALL TIME HIGHEST SCORES"));
     adapters.add(new SinglePlayerScoreAdapter());
   }
 
@@ -88,7 +88,7 @@ public class NvRamHighscoreToRawConverter {
     }
   }
 
-  @NotNull
+  @NonNull
   private static String convertOutputToRaw(@NonNull String nvRamFileName, String stdOut) throws Exception {
     // replace french space character, displayed ÿ with "."
     stdOut = stdOut

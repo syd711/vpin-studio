@@ -1,16 +1,17 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.SevenZipNativeInitializationException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
+import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -96,5 +97,36 @@ public class RarUtil {
       LOG.error("Unrar of " + targetFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
     return written;
+  }
+
+  public static byte[] readFile(File file, String name) {
+    byte[] bytes = null;
+    try {
+      RandomAccessFile randomAccessFile = new RandomAccessFile(file, "r");
+      RandomAccessFileInStream randomAccessFileStream = new RandomAccessFileInStream(randomAccessFile);
+      IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
+
+      for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
+        if (item.isFolder()) {
+          //ignore
+        }
+        else {
+          String entryName = item.getPath().replaceAll("\\\\", "/");
+          if (entryName.equals(name)) {
+            ByteArrayStream fos = new ByteArrayStream(Integer.MAX_VALUE);
+            ExtractOperationResult result = item.extractSlow(fos);
+            bytes = fos.getBytes();
+            break;
+          }
+        }
+      }
+      inArchive.close();
+      randomAccessFileStream.close();
+      randomAccessFile.close();
+    }
+    catch (Exception e) {
+      LOG.error("Unrar of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+    return bytes;
   }
 }

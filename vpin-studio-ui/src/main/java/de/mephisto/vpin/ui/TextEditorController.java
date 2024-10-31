@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.ui.util.RichText;
@@ -73,7 +73,9 @@ public class TextEditorController implements Initializable, DialogController {
       TextFile save = client.getTextEditorService().save(file);
       lastModified.setText(DateFormat.getDateTimeInstance().format(save.getLastModified()));
       size.setText(FileUtils.readableFileSize(save.getSize()));
-    } catch (Exception ex) {
+    }
+    catch (Exception ex) {
+      LOG.error("Failed to save file: {} ", ex.getMessage(), ex);
       WidgetFactory.showAlert(stage, "Error", "Error saving file: " + ex.getMessage());
     }
 

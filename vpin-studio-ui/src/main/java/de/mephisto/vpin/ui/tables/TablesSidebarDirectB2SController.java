@@ -1,12 +1,12 @@
 package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -234,7 +234,7 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
   private void onUpload(ActionEvent e) {
     Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
     if (game.isPresent()) {
-      TableDialogs.directBackglassUpload(stage, game.get());
+      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game.get(), null);
     }
   }
 
@@ -514,18 +514,14 @@ public class TablesSidebarDirectB2SController implements Initializable, StudioEv
             startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
             bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
 
-            List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-            if (gameEmulators.isEmpty()) {
-              LOG.error("No backglass server game emulator found!");
-              return;
-            }
-
-            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
-
-            boolean serverLaunchAsExe = serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
             boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
             startAsExe.setSelected(tableLaunchAsExe);
-            startAsExeServer.setSelected(serverLaunchAsExe);
+
+            DirectB2ServerSettings serverSettings = client.getBackglassServiceClient().getServerSettings();
+            if (serverSettings != null) {
+              boolean serverLaunchAsExe = serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
+              startAsExeServer.setSelected(serverLaunchAsExe);
+            }
           }
 
           setDisable(b2sSettings, false);

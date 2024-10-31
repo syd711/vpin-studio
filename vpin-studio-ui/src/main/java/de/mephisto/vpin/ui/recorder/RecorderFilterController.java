@@ -127,8 +127,8 @@ public class RecorderFilterController extends BaseFilterController<GameRepresent
   }
 
   @Override
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm) {
-    return predicateFactory.buildPredicate(searchTerm, filterSettings);
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlistRepresentation) {
+    return predicateFactory.buildPredicate(searchTerm, playlistRepresentation, getEmulatorSelection(), filterSettings);
   }
 
   protected void resetFilters() {
@@ -308,10 +308,4 @@ public class RecorderFilterController extends BaseFilterController<GameRepresent
     vpsFilters.setVisible(vpxMode);
     configurationIssuesFilter.setVisible(vpxMode);
   }
- 
-  public void setFilterPlaylist(PlaylistRepresentation playlist) {
-    predicateFactory.setFilterPlaylist(playlist);
-    super.applyFilters();
-  }
-
 }

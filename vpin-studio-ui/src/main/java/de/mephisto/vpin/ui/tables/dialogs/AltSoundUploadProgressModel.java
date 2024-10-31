@@ -7,8 +7,6 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
-import javafx.fxml.FXML;
-import javafx.scene.Node;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,8 +14,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.Collections;
 import java.util.Iterator;
-
-import static de.mephisto.vpin.restclient.jobs.JobType.ALTSOUND_INSTALL;
 
 public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final static Logger LOG = LoggerFactory.getLogger(AltSoundUploadProgressModel.class);
@@ -28,8 +24,8 @@ public class AltSoundUploadProgressModel extends UploadProgressModel {
   private final int emulatorId;
   private final String rom;
 
-  public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom) {
-    super(file, title);
+  public AltSoundUploadProgressModel(int gameId, String title, File file, int emulatorId, String rom, Runnable finalizer) {
+    super(file, title, finalizer);
     this.gameId = gameId;
     this.file = file;
     this.emulatorId = emulatorId;

@@ -21,8 +21,8 @@ public class NvRamUploadProgressModel extends UploadProgressModel {
   private final List<File> files;
   private double percentage = 0;
 
-  public NvRamUploadProgressModel(String title, List<File> files, int emuId) {
-    super(files, title);
+  public NvRamUploadProgressModel(String title, List<File> files, int emuId, Runnable finalizer) {
+    super(files, title, finalizer);
     this.files = files;
     this.iterator = files.iterator();
     this.emuId = emuId;
@@ -63,9 +63,9 @@ public class NvRamUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("ROM upload failed: " + e.getMessage(), e);
+      LOG.error("NV upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "ROM upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "NV upload failed: " + e.getMessage());
       });
     }
   }

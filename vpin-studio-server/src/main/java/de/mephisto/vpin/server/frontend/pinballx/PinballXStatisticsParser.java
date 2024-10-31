@@ -10,18 +10,19 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.FastDateFormat;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.games.Game;
 
 public class PinballXStatisticsParser {
@@ -35,7 +36,7 @@ public class PinballXStatisticsParser {
     this.connector = connector;
   }
 
-  @NotNull
+  @NonNull
   private File getPinballXStatisticsIni() {
     File pinballXFolder = connector.getInstallationFolder();
     return new File(pinballXFolder, "/Databases/Statistics.ini");
@@ -46,10 +47,9 @@ public class PinballXStatisticsParser {
     try (FileReader fileReader = new FileReader(getPinballXStatisticsIni(), Charset.forName("UTF-8"))) {
       iniConfiguration.read(fileReader);
       for (Emulator emu : emus) {
-        for (String filename : connector.getGameFilenames(emu.getId())) {
-          int id = connector.filenameToId(emu.getId(), filename);
-          TableDetails details = connector.getGameFromDb(emu.getId(), filename);
-          getAlxData(iniConfiguration, stats, favs, emu, id, details);
+        for (GameEntry entry : connector.getGameEntries(emu.getId())) {
+          TableDetails details = connector.getGameFromDb(emu.getId(), entry.getFilename());
+          getAlxData(iniConfiguration, stats, favs, emu, entry.getId(), details);
         }
       }
     }

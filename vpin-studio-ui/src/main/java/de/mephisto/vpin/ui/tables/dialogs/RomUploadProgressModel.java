@@ -3,11 +3,9 @@ package de.mephisto.vpin.ui.tables.dialogs;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
 import javafx.application.Platform;
-import net.dv8tion.jda.api.utils.WidgetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,8 +21,8 @@ public class RomUploadProgressModel extends UploadProgressModel {
   private final List<File> files;
   private double percentage = 0;
 
-  public RomUploadProgressModel(String title, List<File> files, int emuId) {
-    super(files, title);
+  public RomUploadProgressModel(String title, List<File> files, int emuId, Runnable finalizer) {
+    super(files, title, finalizer);
     this.files = files;
     this.iterator = files.iterator();
     this.emuId = emuId;

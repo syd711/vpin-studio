@@ -1,11 +1,6 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
-import de.mephisto.vpin.commons.utils.PackageUtil;
-import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
@@ -13,28 +8,22 @@ import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
+import de.mephisto.vpin.restclient.util.FileUtils;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
-import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.vps.VpsService;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.awt.*;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -55,11 +44,14 @@ public class UniversalUploadResource {
   @Autowired
   private UniversalUploadService universalUploadService;
 
-  @PostMapping("/upload/table")
-  public UploadDescriptor uploadTable(@RequestParam(value = "file") MultipartFile file,
-                                      @RequestParam(value = "gameId") int gameId,
-                                      @RequestParam(value = "emuId") int emuId,
-                                      @RequestParam(value = "mode") TableUploadType mode) {
+  @Autowired
+  private FrontendService frontendService;
+
+  @PostMapping("/upload")
+  public UploadDescriptor upload(@RequestParam(value = "file") MultipartFile file,
+                                 @RequestParam(value = "gameId") int gameId,
+                                 @RequestParam(value = "emuId") int emuId,
+                                 @RequestParam(value = "mode") TableUploadType mode) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.setUploadType(mode);
@@ -75,8 +67,8 @@ public class UniversalUploadResource {
     return descriptor;
   }
 
-  @PostMapping("/process/table")
-  public UploadDescriptor processUploadedTable(@RequestBody UploadDescriptor uploadDescriptor) {
+  @PostMapping("/process")
+  public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Universal Upload Thread");
     long start = System.currentTimeMillis();
     LOG.info("*********** Importing " + uploadDescriptor.getTempFilename() + " ************************");
@@ -85,32 +77,42 @@ public class UniversalUploadResource {
       universalUploadService.resolveLinks(uploadDescriptor);
 
       File tempFile = new File(uploadDescriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis<>(tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
       analysis.analyze();
+      analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
-      String vpxFileName = analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName());
-      if (StringUtils.isEmpty(vpxFileName)) {
-        throw new Exception("Failed to resolve VPX filename from " + uploadDescriptor.getOriginalUploadFileName());
+      if (analysis.isTable()) {
+        LOG.info("Importing table bundle, not media bundle.");
+
+        String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
+        File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
+        importVPXFile(temporaryVPXFile, uploadDescriptor, analysis);
       }
 
-      File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, vpxFileName);
-      importVPXFile(temporaryVPXFile, uploadDescriptor, analysis);
+      if (uploadDescriptor.getGameId() > 0) {
+        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
+        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
+        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
+        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
+      }
+      else {
+        LOG.info("Skipped table based assets since no gameId was set for the upload.");
+      }
 
-      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
-      universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
 
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.POPPER_MEDIA);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
+      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
 
-      universalUploadService.notifyUpdates(uploadDescriptor);
+      if (analysis.isTable()) {
+        universalUploadService.notifyUpdates(uploadDescriptor);
+      }
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
@@ -189,7 +191,7 @@ public class UniversalUploadResource {
       TableDetails tableDetailsClone = frontendStatusService.getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
       tableDetailsClone.setGameFileName(fileName);
-      tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName())));
+      tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName())));
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
 
       frontendStatusService.saveTableDetails(tableDetailsClone, returningGameId, false);
@@ -236,10 +238,12 @@ public class UniversalUploadResource {
     boolean keepExistingFilename = serverSettings.isVpxKeepFileNames();
     boolean keepExistingDisplayName = serverSettings.isVpxKeepDisplayNames();
     boolean keepCopy = serverSettings.isBackupTableOnOverwrite();
+    boolean keepModificationDate = serverSettings.isKeepModificationDate();
     boolean autoFill = uploadDescriptor.isAutoFill();
 
     //create backup first and delete existing table
     File existingVPXFile = new File(gameEmulator.getTablesDirectory(), tableDetails.getGameFileName());
+    long existingModifiationDate = existingVPXFile.lastModified();
     if (existingVPXFile.exists()) {
       if (keepCopy) {
         File tableBackupsFolder = gameEmulator.getTableBackupsFolder();
@@ -269,7 +273,7 @@ public class UniversalUploadResource {
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
     if (!keepExistingFilename) {
-      String vpxFileName = analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName());
+      String vpxFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
       if (vpxFileName == null) {
         vpxFileName = uploadDescriptor.getOriginalUploadFileName();
       }
@@ -280,6 +284,17 @@ public class UniversalUploadResource {
     //copy file
     org.apache.commons.io.FileUtils.copyFile(temporaryVPXFile, target);
     LOG.info("Copied temporary VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to target \"" + target.getAbsolutePath() + "\"");
+
+    //keep modification date
+    if (keepModificationDate) {
+      boolean b = target.setLastModified(existingModifiationDate);
+      if (b) {
+        LOG.info("Reverted modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" to \"" + new Date(existingModifiationDate) + "\"");
+      }
+      else {
+        LOG.warn("Revetring modification of VPX file \"" + temporaryVPXFile.getAbsolutePath() + "\" failed.");
+      }
+    }
 
 
     //delete possibly existing .vbs file that matches with the new name
@@ -300,7 +315,7 @@ public class UniversalUploadResource {
     LOG.info("Updated database filename to \"" + name + "\"");
     tableDetails.setGameFileName(name);
     if (!keepExistingDisplayName) {
-      tableDetails.setGameDisplayName(FilenameUtils.getBaseName(analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName())));
+      tableDetails.setGameDisplayName(FilenameUtils.getBaseName(analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName())));
     }
 
     frontendStatusService.saveTableDetails(tableDetails, uploadDescriptor.getGameId(), !keepExistingFilename);
@@ -333,7 +348,7 @@ public class UniversalUploadResource {
 
     for (String archiveSuffix : PackageUtil.ARCHIVE_SUFFIXES) {
       if (FilenameUtils.getExtension(uploadDescriptor.getTempFilename()).equalsIgnoreCase(archiveSuffix)) {
-        targetVPXFile = new File(tablesFolder, analysis.getVpxFileName(uploadDescriptor.getOriginalUploadFileName()));
+        targetVPXFile = new File(tablesFolder, analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName()));
         break;
       }
     }

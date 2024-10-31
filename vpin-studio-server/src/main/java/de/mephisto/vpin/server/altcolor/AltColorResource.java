@@ -56,7 +56,6 @@ public class AltColorResource {
                                  @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.ALT_COLOR);
       descriptor.upload();
       universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.ALT_COLOR);
       gameService.resetUpdate(gameId, VpsDiffTypes.altColor);

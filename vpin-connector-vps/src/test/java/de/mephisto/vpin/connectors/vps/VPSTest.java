@@ -139,15 +139,12 @@ public class VPSTest {
     VPS vps = newInstance();
     List<VpsTable> tables = vps.getTables();
     for (VpsTable table : tables) {
-//      List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
-//      if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
-//        System.out.println(table.getName());
-//      }
-
-//      List<VpsAuthoredUrls> pupPackFiles = table.getPupPackFiles();
-//      if (pupPackFiles != null && !pupPackFiles.isEmpty()) {
-//        System.out.println(table.getName());
-//      }
+      List<VpsTutorialUrls> tutorialFiles = table.getTutorialFiles();
+      if (tutorialFiles != null && !tutorialFiles.isEmpty()) {
+        for (VpsTutorialUrls tutorialFile : tutorialFiles) {
+          assertNotEquals(0, tutorialFile.getUrls());
+        }
+      }
     }
   }
 

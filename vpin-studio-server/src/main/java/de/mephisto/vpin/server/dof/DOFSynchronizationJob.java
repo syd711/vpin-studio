@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.dof;
 
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
@@ -69,24 +69,13 @@ public class DOFSynchronizationJob implements Job {
           result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
           return;
         }
-        LOG.info("Extracting DOF config for 64-bit folder " + settings.getInstallationPath());
-        result.setStatus("Extracting DOF config for 64-bit folder " + settings.getInstallationPath());
+        LOG.info("Extracting DOF config folder " + settings.getInstallationPath());
+        result.setStatus("Extracting DOF config folder " + settings.getInstallationPath());
         ZipUtil.unzip(zipFile, targetFolder);
       }
 
       if (result.isCancelled()) {
         return;
-      }
-
-      if (!StringUtils.isEmpty(settings.getInstallationPath32())) {
-        File targetFolder = new File(settings.getInstallationPath32(), "Config");
-        if (!targetFolder.exists()) {
-          result.setError("Invalid target folder for synchronization: " + targetFolder.getAbsolutePath());
-          return;
-        }
-        LOG.info("Extracting DOF config for 32-bit folder " + settings.getInstallationPath32());
-        result.setStatus("Extracting DOF config for 32-bit folder " + settings.getInstallationPath32());
-        ZipUtil.unzip(zipFile, targetFolder);
       }
 
       result.setProgress(1);

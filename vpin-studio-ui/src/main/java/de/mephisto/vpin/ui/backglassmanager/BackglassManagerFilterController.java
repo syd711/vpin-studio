@@ -10,6 +10,7 @@ import java.util.function.Predicate;
 
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
+import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.ui.tables.TablesSidebarDirectB2SController;
 import de.mephisto.vpin.ui.tables.models.B2SVisibility;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -105,8 +106,8 @@ public class BackglassManagerFilterController extends BaseFilterController<Direc
   }
 
   @Override
-  public Predicate<DirectB2SModel> buildPredicate(String searchTerm) {
-    return predicateFactory.buildPredicate(searchTerm);
+  public Predicate<DirectB2SModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
+    return predicateFactory.buildPredicate(searchTerm, playlist);
   }
 
   //--------------------------------
@@ -115,7 +116,7 @@ public class BackglassManagerFilterController extends BaseFilterController<Direc
 
     predicateFactory = new BackglassManagerPredicateFactory();
 
-    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getVpxGameEmulators();
+    List<GameEmulatorRepresentation> emulators = client.getFrontendService().getBackglassGameEmulators();
     for (GameEmulatorRepresentation gameEmulator: emulators) {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");

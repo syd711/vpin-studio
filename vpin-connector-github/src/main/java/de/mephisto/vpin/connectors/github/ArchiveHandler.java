@@ -24,15 +24,19 @@ public class ArchiveHandler {
   @NonNull
   private final List<String> excludedFiles;
 
+  @NonNull
+  private final List<String> includedFiles;
+
   private List<String> rootFileIndicators;
 
   private boolean diff = false;
   private boolean simulate = false;
 
-  public ArchiveHandler(@NonNull File archiveFile, @NonNull ReleaseArtifactActionLog installLog, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles) {
+  public ArchiveHandler(@NonNull File archiveFile, @NonNull ReleaseArtifactActionLog installLog, @NonNull List<String> rootFileIndicators, @NonNull List<String> excludedFiles, @NonNull List<String> includedFiles) {
     this.archiveFile = archiveFile;
     this.installLog = installLog;
     this.rootFileIndicators = rootFileIndicators;
+    this.includedFiles = includedFiles;
     this.excludedFiles = excludedFiles;
   }
 
@@ -99,7 +103,8 @@ public class ArchiveHandler {
       fileInputStream.close();
       zis.closeEntry();
       zis.close();
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       installLog.setStatus("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage());
       throw new UnsupportedOperationException("Unzipping of " + archiveFile.getAbsolutePath() + " failed: " + e.getMessage(), e);
     }
@@ -121,7 +126,7 @@ public class ArchiveHandler {
         }
 
         zis.closeEntry();
-        if(doSkip) {
+        if (doSkip) {
           break;
         }
 
@@ -131,7 +136,8 @@ public class ArchiveHandler {
       zis.closeEntry();
       zis.close();
       fileInputStream.close();
-    } catch (IOException e) {
+    }
+    catch (IOException e) {
       LOG.error("Error determining root folder of \"" + archiveFile.getAbsolutePath() + "\": " + e.getMessage(), e);
     }
     return doSkip;
@@ -220,7 +226,22 @@ public class ArchiveHandler {
   }
 
   private boolean isExcluded(String name) {
-    return this.excludedFiles.contains(name);
+    for (String includedFile : includedFiles) {
+      if (name.contains(includedFile)) {
+        return false;
+      }
+    }
+
+    if (this.excludedFiles.contains(name)) {
+      return true;
+    }
+
+    for (String excludedFile : this.excludedFiles) {
+      if (excludedFile.startsWith(".") && name.endsWith(excludedFile)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   private void unzipFile(File newFile, ZipInputStream zis, byte[] buffer) throws IOException {

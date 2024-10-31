@@ -24,7 +24,6 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -131,7 +130,7 @@ public class FrontendStatusService implements InitializingBean {
 
   public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
     TableStatusChangedEvent event = new TableStatusChangedEvent() {
-      @NotNull
+      @NonNull
       @Override
       public Game getGame() {
         return game;
@@ -424,27 +423,27 @@ public class FrontendStatusService implements InitializingBean {
         String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
         if (!existingName.equalsIgnoreCase(name)) {
           if (game.getGameFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getGameFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getGameFile(), name);
           }
 
           if (game.getDirectB2SFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
           }
 
           if (game.getPOVFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getPOVFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getPOVFile(), name);
           }
 
           if (game.getResFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getResFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getResFile(), name);
           }
 
           if (game.getIniFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getIniFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getIniFile(), name);
           }
 
           if (game.getVBSFile().exists()) {
-            de.mephisto.vpin.commons.utils.FileUtils.renameToBaseName(game.getVBSFile(), name);
+            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getVBSFile(), name);
           }
           LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
         }
@@ -551,7 +550,7 @@ public class FrontendStatusService implements InitializingBean {
             augmenter.deAugment();
           }
 
-          if (de.mephisto.vpin.commons.utils.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
+          if (de.mephisto.vpin.restclient.util.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
             assetRenameCounter++;
             LOG.info("[" + screen + "] Renamed media asset from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
           }

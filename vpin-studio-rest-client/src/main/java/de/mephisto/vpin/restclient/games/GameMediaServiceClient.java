@@ -1,13 +1,13 @@
 package de.mephisto.vpin.restclient.games;
 
 import de.mephisto.vpin.connectors.assets.TableAsset;
+import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.frontend.TableAssetSearch;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.FileUploadProgressListener;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -78,23 +78,8 @@ public class GameMediaServiceClient extends VPinStudioClientService {
   public JobDescriptor uploadMedia(File file, int gameId, VPinScreen screen, boolean append, FileUploadProgressListener listener) throws Exception {
     try {
       String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/upload/" + screen.name() + "/" + append;
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
+      HttpEntity upload = createUpload(file, gameId, null, AssetType.FRONTEND_MEDIA, listener);
       ResponseEntity<JobDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, JobDescriptor.class);
-      finalizeUpload(upload);
-      return exchange.getBody();
-    }
-    catch (Exception e) {
-      LOG.error("Media upload failed: " + e.getMessage(), e);
-      throw e;
-    }
-  }
-
-
-  public UploadDescriptor uploadPack(File file, int gameId, FileUploadProgressListener listener) throws Exception {
-    try {
-      String url = getRestClient().getBaseUrl() + API + API_SEGMENT_MEDIA + "/packupload";
-      HttpEntity upload = createUpload(file, gameId, null, AssetType.POPPER_MEDIA, listener);
-      ResponseEntity<UploadDescriptor> exchange = new RestTemplate().exchange(url, HttpMethod.POST, upload, UploadDescriptor.class);
       finalizeUpload(upload);
       return exchange.getBody();
     }
@@ -106,6 +91,9 @@ public class GameMediaServiceClient extends VPinStudioClientService {
 
   //---------------- Assets---------------------------------------------------------------------------------------------
 
+  public TableAssetConf getTableAssetsConf() {
+    return getRestClient().get(API + API_SEGMENT_MEDIA + "/assets/search/conf", TableAssetConf.class);
+  }
 
   public synchronized TableAssetSearch searchTableAsset(int gameId, VPinScreen screen, String term) throws Exception {
     term = term.replaceAll("/", "");

@@ -19,4 +19,17 @@ public class WinRegistryTest {
     assertTrue(WinRegistry.isValidDotNetVersion("v3.5"));
     assertFalse(WinRegistry.isValidDotNetVersion("v2.0.4"));
   }
+
+  @Test
+  public void testStickKeys() throws Exception {
+    boolean stickyKeysEnabled = WinRegistry.isStickyKeysEnabled();
+    if(stickyKeysEnabled) {
+      WinRegistry.setStickyKeysEnabled(false);
+      assertFalse(WinRegistry.isStickyKeysEnabled());
+    }
+    else {
+      WinRegistry.setStickyKeysEnabled(true);
+      assertTrue(WinRegistry.isStickyKeysEnabled());
+    }
+  }
 }

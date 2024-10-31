@@ -31,7 +31,7 @@ public class VPXCommandLineService {
 
   public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getVPXExe();
+    File vpxExe = game.getEmulator().getExe();
 
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
@@ -63,7 +63,7 @@ public class VPXCommandLineService {
 
   public File export(@NonNull Game game, @NonNull String commandParam, @NonNull String fileSuffix) {
     File gameFile = game.getGameFile();
-    File vpxExe = game.getEmulator().getVPXExe();
+    File vpxExe = game.getEmulator().getExe();
     File target = new File(gameFile.getParentFile(), FilenameUtils.getBaseName(gameFile.getName()) + "." + fileSuffix);
 
     try {
@@ -101,7 +101,7 @@ public class VPXCommandLineService {
 
   public boolean launch() {
     GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
-    File vpxExe = defaultGameEmulator.getVPXExe();
+    File vpxExe = defaultGameEmulator.getExe();
     try {
       List<String> strings = Arrays.asList(vpxExe.getName());
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);

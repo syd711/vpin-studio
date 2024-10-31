@@ -42,6 +42,7 @@
       <ToolBar fx:id="bottomToolbar" nodeOrientation="RIGHT_TO_LEFT" prefHeight="33.0" prefWidth="492.0" styleClass="subpanel" stylesheets="@stylesheet.css" BorderPane.alignment="CENTER">
         <items>
           <Button fx:id="cancelButton" mnemonicParsing="false" styleClass="submit-button" stylesheets="@stylesheet.css" text="Cancel" />
+          <Button fx:id="backgroundButton" mnemonicParsing="false" styleClass="default-button" stylesheets="@stylesheet.css" text="Run in Background" />
         </items>
          <BorderPane.margin>
             <Insets bottom="6.0" right="6.0" top="6.0" />

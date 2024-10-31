@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.dropins;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
@@ -11,6 +11,7 @@ import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.UploadAnalysisDispatcher;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -20,14 +21,15 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 
 import org.controlsfx.control.Notifications;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class DropInManager implements LocalSettingsChangeListener, StudioEventListener, FolderChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(DropInManager.class);
@@ -54,7 +56,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     if (dropInPath != null) {
       this.dropinsFolder = new File(dropInPath);
     }
-    dropinsMonitor = new FolderMonitoringThread(this, false);
+    dropinsMonitor = new FolderMonitoringThread(this, false, true);
     dropinsMonitor.setFolder(dropinsFolder);
     dropinsMonitor.startMonitoring();
   }
@@ -65,6 +67,7 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     EventManager.getInstance().addListener(this);
 
     this.dropInsBtn = dropInsBtn;
+    this.dropInsBtn.setVisible(false);
     this.dropInsBtn.getGraphic().setVisible(false);
     this.dropInsBtn.setOnMouseClicked(new EventHandler<MouseEvent>() {
       @Override
@@ -83,31 +86,33 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
     this.dropInsBtn.getItems().clear();
 
     if (dropinsFolder != null && dropinsFolder.exists() && dropinsFolder.isDirectory()) {
-      File[] files = dropinsFolder.listFiles(pathname -> pathname.isFile());
-      if (files != null) {
-        for (File file : files) {
-          if (!FileUtils.isTempFile(file)) {
-            try {
-              FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
-              BorderPane root = loader.load();
-              root.getStyleClass().add("dropin-menu-item");
-              DropInContainerController containerController = loader.getController();
-              containerController.setData(dropInsBtn, file);
-              CustomMenuItem item = new CustomMenuItem();
-              item.setContent(root);
-              dropInsBtn.getItems().add(item);
-            }
-            catch (IOException e) {
-              LOG.error("Failed to load drop in container: " + e.getMessage(), e);
-            }
-          }
-        }
+
+      try (Stream<Path> stream = Files.walk(dropinsFolder.toPath())) {
+        stream.filter((p) -> Files.isRegularFile(p) && !FileUtils.isTempFile(p.toFile()))
+            .forEach((p) -> {
+              try {
+                FXMLLoader loader = new FXMLLoader(DropInContainerController.class.getResource("dropin-container.fxml"));
+                BorderPane root = loader.load();
+                root.getStyleClass().add("dropin-menu-item");
+                DropInContainerController containerController = loader.getController();
+                containerController.setData(dropInsBtn, p.toFile());
+                CustomMenuItem item = new CustomMenuItem();
+                item.setContent(root);
+                dropInsBtn.getItems().add(item);
+              }
+              catch (IOException e) {
+                LOG.error("Failed to load drop in container: " + e.getMessage(), e);
+              }
+            });
+      }
+      catch (IOException e) {
+        LOG.error("Failed to walk through drop in container: " + e.getMessage(), e);
       }
     }
   }
 
   @Override
-  public void localSettingsChanged(@NotNull String key, @Nullable String value) {
+  public void localSettingsChanged(@NonNull String key, @Nullable String value) {
     if (key.equals(LocalUISettings.DROP_IN_FOLDER_ENABLED)) {
       if (value != null) {
         boolean enabled = Boolean.parseBoolean(value);
@@ -156,23 +161,19 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
   }
 
   public void install(File file) {
-    if (gameSelection != null) {
-      UploadAnalysisDispatcher.dispatch(file, gameSelection);
-    }
+    UploadAnalysisDispatcher.dispatch(file, gameSelection, () -> {
+      //TODO move to installed folder
+    });
   }
 
   @Override
   public void notifyFolderChange(@NonNull File folder, @Nullable File file) {
-    if (file == null || FileUtils.isTempFile(file)) {
-      return;
-    }
-
     Platform.runLater(() -> {
       reload();
-      if (file != null) {
-        dropInsBtn.getGraphic().setVisible(true);
+      dropInsBtn.getGraphic().setVisible(file != null);
+      if (file != null && FileUtils.isTempFile(file)) {
         Notifications.create()
-            .title("New Drop-In Detected!")
+            .title("Drop-In Modification Detected!")
             .text(file.getAbsolutePath())
             .graphic(WidgetFactory.createCheckboxIcon())
             .showInformation();

@@ -2,20 +2,15 @@ package de.mephisto.vpin.ui.preferences;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.directb2s.DirectB2ServerSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.ui.Studio;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class BackglassPreferencesController implements Initializable {
@@ -36,42 +31,23 @@ public class BackglassPreferencesController implements Initializable {
   @FXML
   private Label noMatchFound;
 
-  @FXML
-  private ComboBox<GameEmulatorRepresentation> emulatorCombo;
-
   private DirectB2ServerSettings backglassServerSettings;
 
-  private GameEmulatorRepresentation emulatorRepresentation;
-
   private boolean saveEnabled = false;
-
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     try {
-      List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-      noMatchFound.setVisible(gameEmulators.isEmpty());
-      if (!gameEmulators.isEmpty()) {
-        emulatorRepresentation = gameEmulators.get(0);
-        ObservableList<GameEmulatorRepresentation> emulators = FXCollections.observableList(gameEmulators);
-        emulatorCombo.setItems(emulators);
-        emulatorCombo.setValue(emulatorRepresentation);
-      }
-      else {
-        emulatorCombo.setDisable(true);
-        pluginsCheckbox.setDisable(true);
-        backglassMissingCheckbox.setDisable(true);
-        fuzzyMatchingCheckbox.setDisable(true);
-        startModeCheckbox.setDisable(true);
-      }
+      backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings();
+      boolean serverInstalled = backglassServerSettings != null;
 
-      emulatorCombo.valueProperty().addListener((observableValue, gameEmulatorRepresentation, t1) -> {
-        emulatorRepresentation = t1;
-        refresh();
-      });
+      noMatchFound.setVisible(!serverInstalled);
+      pluginsCheckbox.setDisable(!serverInstalled);
+      backglassMissingCheckbox.setDisable(!serverInstalled);
+      fuzzyMatchingCheckbox.setDisable(!serverInstalled);
+      startModeCheckbox.setDisable(!serverInstalled);
 
-      if (emulatorRepresentation != null) {
-        backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
+      if (serverInstalled) {
         pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
         pluginsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
           backglassServerSettings.setPluginsOn(newValue);
@@ -99,28 +75,19 @@ public class BackglassPreferencesController implements Initializable {
           backglassServerSettings.setDefaultStartMode(mode);
           saveSettings();
         });
-      }
 
-      saveEnabled = true;
+        saveEnabled = true;
+      }
     } catch (Exception e) {
       LOG.info("Failed to initialize backglass setting preferences: " + e.getMessage(), e);
       WidgetFactory.showAlert(Studio.stage, "Error", "Failed to initialize backglass setting preferences: " + e.getMessage());
     }
   }
 
-  private void refresh() {
-    saveEnabled = false;
-    backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings(emulatorRepresentation.getId());
-    backglassMissingCheckbox.setSelected(backglassServerSettings.isShowStartupError());
-    pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
-    fuzzyMatchingCheckbox.setSelected(backglassServerSettings.isDisableFuzzyMatching());
-    saveEnabled = true;
-  }
-
   private void saveSettings() {
     try {
       if (saveEnabled) {
-        Studio.client.getBackglassServiceClient().saveServerSettings(emulatorRepresentation.getId(), backglassServerSettings);
+        Studio.client.getBackglassServiceClient().saveServerSettings(backglassServerSettings);
       }
     } catch (Exception e) {
       LOG.error("Failed to save backglass server settings: " + e.getMessage(), e);

@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
-import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
@@ -47,8 +46,7 @@ public class DOFService implements InitializingBean {
   public DOFSettings getSettings() {
     try {
       DOFSettings settings = preferencesService.getJsonPreference(PreferenceNames.DOF_SETTINGS, DOFSettings.class);
-      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutput.dll").exists());
-      settings.setValidDOFFolder32(StringUtils.isEmpty(settings.getInstallationPath32()) || new File(settings.getInstallationPath32(), "DirectOutput.dll").exists());
+      settings.setValidDOFFolder(StringUtils.isEmpty(settings.getInstallationPath()) || new File(settings.getInstallationPath(), "DirectOutputShapes.xml").exists());
       return settings;
     }
     catch (Exception e) {
@@ -81,6 +79,10 @@ public class DOFService implements InitializingBean {
     return asyncSync();
   }
 
+  private boolean isValidInstallation(DOFSettings settings) {
+    return !StringUtils.isEmpty(settings.getInstallationPath()) && (new File(settings.getInstallationPath(), "x64").exists() || new File(settings.getInstallationPath(), "x32").exists());
+  }
+
   private boolean doSync(String installationPath, int interval) {
     File configFolder = new File(installationPath, "Config");
     File mappingsFile = new File(configFolder, "tablemappings.xml");
@@ -110,11 +112,11 @@ public class DOFService implements InitializingBean {
         String key = settings.getApiKey();
         if (interval > 0 && !StringUtils.isEmpty(key)) {
           boolean doSync = false;
-          if (!StringUtils.isEmpty(settings.getInstallationPath())) {
+          if (isValidInstallation(settings)) {
             doSync = doSync(settings.getInstallationPath(), interval);
           }
-          if (!doSync && !StringUtils.isEmpty(settings.getInstallationPath32())) {
-            doSync = doSync(settings.getInstallationPath32(), interval);
+          else {
+            LOG.info("Skipped DOF sync, because the config is not valid or set.");
           }
 
           if (doSync) {

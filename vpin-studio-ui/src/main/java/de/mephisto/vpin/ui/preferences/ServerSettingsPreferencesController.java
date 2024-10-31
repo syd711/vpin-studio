@@ -38,22 +38,19 @@ public class ServerSettingsPreferencesController implements Initializable {
   private CheckBox useOriginalVbsFilesCheckbox;
 
   @FXML
+  private CheckBox keepModificationDateCheckbox;
+
+  @FXML
   private CheckBox vpxMonitoringCheckbox;
 
   @FXML
   private CheckBox uploadTableBackups;
 
   @FXML
-  private Spinner<Integer> idleSpinner;
-
-  @FXML
   private CheckBox launchFrontendCheckbox;
 
   @FXML
   private Node launchOnExitOption;
-
-  @FXML
-  private Button shutdownBtn;
 
   @FXML
   private VBox vpxMonitorSettings;
@@ -71,15 +68,6 @@ public class ServerSettingsPreferencesController implements Initializable {
   private VBox popperDataMappingFields;
 
   @FXML
-  private void onShutdown() {
-    Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Remote System Shutdown", "Cancel", "Shutdown System", "Are you sure you want to shutdown the remote system?", null);
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      client.getSystemService().systemShutdown();
-      WidgetFactory.showInformation(Studio.stage, "Remote System Shutdown", "The remote system will shutdown in less than a minute.");
-    }
-  }
-
-  @FXML
   private void onMediaIndex() {
     Optional<ButtonType> result = WidgetFactory.showAlertOption(Studio.stage, "Media Cache", "Cancel", "Regenerate Media Cache", "Regenerate the media cache?", null);
     if (result.isPresent() && result.get().equals(ButtonType.OK)) {
@@ -88,7 +76,6 @@ public class ServerSettingsPreferencesController implements Initializable {
       });
     }
   }
-
 
   @FXML
   private void onRestart() {
@@ -122,22 +109,11 @@ public class ServerSettingsPreferencesController implements Initializable {
     FrontendType frontendType = frontend.getFrontendType();
     popperDataMappingFields.setVisible(frontendType.supportExtendedFields());
     launchOnExitOption.setVisible(frontendType.supportMedias());
-    shutdownBtn.setDisable(client.getSystemService().isLocal());
     launchFrontendCheckbox.setText("Launch " + frontend.getName() +  " on maintenance exit.");
 
     Date startupTime = client.getSystemService().getStartupTime();
     startupTimeLabel.setText(DateFormat.getDateTimeInstance().format(startupTime));
     versionLabel.setText(client.getSystemService().getVersion());
-
-    PreferenceEntryRepresentation idle = ServerFX.client.getPreference(PreferenceNames.IDLE_TIMEOUT);
-    int timeout = idle.getIntValue();
-    SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 60, timeout);
-    idleSpinner.setValueFactory(factory);
-    factory.valueProperty().addListener((observableValue, integer, t1) -> debouncer.debounce(PreferenceNames.IDLE_TIMEOUT, () -> {
-      int value1 = Integer.parseInt(String.valueOf(t1));
-      client.getPreferenceService().setPreference(PreferenceNames.IDLE_TIMEOUT, String.valueOf(value1));
-    }, 1000));
-
 
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
 
@@ -177,6 +153,12 @@ public class ServerSettingsPreferencesController implements Initializable {
     useOriginalVbsFilesCheckbox.setSelected(serverSettings.isKeepVbsFiles());
     useOriginalVbsFilesCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
       serverSettings.setKeepVbsFiles(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
+    });
+
+    keepModificationDateCheckbox.setSelected(serverSettings.isKeepModificationDate());
+    keepModificationDateCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      serverSettings.setKeepModificationDate(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.SERVER_SETTINGS, serverSettings);
     });
 

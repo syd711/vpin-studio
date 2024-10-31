@@ -125,8 +125,9 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   }
 
   @Override
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm) {
-    return predicateFactory.buildPredicate(searchTerm, filterSettings);
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist) {
+    GameEmulatorRepresentation emulatorSelection = getEmulatorSelection();
+    return predicateFactory.buildPredicate(searchTerm, playlist, emulatorSelection, filterSettings);
   }
 
   protected void resetFilters() {
@@ -305,11 +306,6 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     tableAssetFilters.setVisible(vpxMode);
     vpsFilters.setVisible(vpxMode);
     configurationIssuesFilter.setVisible(vpxMode);
-  }
- 
-  public void setFilterPlaylist(PlaylistRepresentation playlist) {
-    predicateFactory.setFilterPlaylist(playlist);
-    super.applyFilters();
   }
 
 }

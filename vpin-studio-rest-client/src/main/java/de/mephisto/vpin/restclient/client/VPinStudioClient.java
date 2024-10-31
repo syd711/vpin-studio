@@ -20,6 +20,8 @@ import de.mephisto.vpin.restclient.discord.DiscordServer;
 import de.mephisto.vpin.restclient.discord.DiscordServiceClient;
 import de.mephisto.vpin.restclient.dmd.DMDServiceClient;
 import de.mephisto.vpin.restclient.dof.DOFServiceClient;
+import de.mephisto.vpin.restclient.doflinx.DOFLinxServiceClient;
+import de.mephisto.vpin.restclient.doflinx.DOFLinxSettings;
 import de.mephisto.vpin.restclient.frontend.FrontendServiceClient;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -76,6 +78,7 @@ public class VPinStudioClient implements OverlayClient {
   private final DiscordServiceClient discordServiceClient;
   private final DMDServiceClient dmdServiceClient;
   private final DOFServiceClient dofServiceClient;
+  private final DOFLinxServiceClient dofLinxServiceClient;
   private final GamesServiceClient gamesServiceClient;
   private final GameMediaServiceClient gameMediaServiceClient;
   private final GameStatusServiceClient gameStatusServiceClient;
@@ -120,6 +123,7 @@ public class VPinStudioClient implements OverlayClient {
     this.backglassServiceClient = new BackglassServiceClient(this);
     this.dmdServiceClient = new DMDServiceClient(this);
     this.dofServiceClient = new DOFServiceClient(this);
+    this.dofLinxServiceClient = new DOFLinxServiceClient(this);
     this.discordServiceClient = new DiscordServiceClient(this);
     this.gamesServiceClient = new GamesServiceClient(this);
     this.gameMediaServiceClient = new GameMediaServiceClient(this);
@@ -171,6 +175,10 @@ public class VPinStudioClient implements OverlayClient {
       preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
     }
     return preset;
+  }
+
+  public DOFLinxServiceClient getDofLinxService() {
+    return dofLinxServiceClient;
   }
 
   public PlaylistMediaServiceClient getPlaylistMediaService() {

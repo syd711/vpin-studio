@@ -55,6 +55,10 @@ public class InstallationDialogController implements Initializable, DialogContro
   private RadioButton radioC;
 
   @FXML
+  private RadioButton radioD;
+
+
+  @FXML
   private VBox validationError;
 
   private boolean result = false;
@@ -84,6 +88,9 @@ public class InstallationDialogController implements Initializable, DialogContro
       store.set(SystemInfo.PINBALLX_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
     }
     else if (radioC.isSelected()) {
+      store.set(SystemInfo.PINBALLY_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
+    }
+    else if (radioD.isSelected()) {
       store.set(SystemInfo.STANDALONE_INSTALLATION_DIR_INST_DIR, installationFolder.getAbsolutePath());
     }
 
@@ -115,6 +122,7 @@ public class InstallationDialogController implements Initializable, DialogContro
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.installBtn.setDisable(true);
+    this.validationError.setVisible(false);
     Font font = Font.font("Impact", FontPosture.findByName("regular"), 28);
     studioLabel.setFont(font);
     versionLabel.setText(Studio.getVersion());
@@ -123,15 +131,11 @@ public class InstallationDialogController implements Initializable, DialogContro
     propertiesFile.getParentFile().mkdirs();
     store = PropertiesStore.create(propertiesFile);
 
-    if (radioA.isSelected()) {
-      installationFolder = systemInfo.resolvePinUPSystemInstallationFolder();
-      installationFolderField.setText(installationFolder.getAbsolutePath());
-    }
-
     ToggleGroup toggleGroup = new ToggleGroup();
     radioA.setToggleGroup(toggleGroup);
     radioB.setToggleGroup(toggleGroup);
     radioC.setToggleGroup(toggleGroup);
+    radioD.setToggleGroup(toggleGroup);
 
     toggleGroup.selectedToggleProperty().addListener(new ChangeListener<Toggle>() {
       @Override
@@ -142,22 +146,24 @@ public class InstallationDialogController implements Initializable, DialogContro
         }
 
         if (radioB.isSelected()) {
-          installationFolder = new File("C:\\PinballX");
+          installationFolder = systemInfo.resolvePinballXInstallationFolder();
           installationFolderField.setText(installationFolder.getAbsolutePath());
-          validateFolders();
         }
 
         if (radioC.isSelected()) {
-          installationFolder = new File("C:\\VisualPinball");
+          installationFolder = systemInfo.resolvePinballYInstallationFolder();
           installationFolderField.setText(installationFolder.getAbsolutePath());
-          validateFolders();
+        }
+
+        if (radioD.isSelected()) {
+          installationFolder = systemInfo.resolveVpx64InstallFolder();
+          installationFolderField.setText(installationFolder.getAbsolutePath());
         }
 
         validateFolders();
       }
     });
-
-    validateFolders();
+    toggleGroup.selectToggle(radioA);
   }
 
   private void validateFolders() {
@@ -185,6 +191,9 @@ public class InstallationDialogController implements Initializable, DialogContro
       error = validatePinballXInstallation();
     }
     else if (radioC.isSelected()) {
+      error = validatePinballYInstallation();
+    }
+    else if (radioD.isSelected()) {
       error = validateStandaloneInstallation();
     }
 
@@ -224,8 +233,13 @@ public class InstallationDialogController implements Initializable, DialogContro
   }
 
   private String validatePinballXInstallation() {
-    return hasValidExe("Game Manager.exe") ? null : 
+    return hasValidExe("PinballX.exe") ? null : 
       "No PinballX installation found in this folder.";
+  }
+
+  private String validatePinballYInstallation() {
+    return hasValidExe("PinballY.exe") ? null : 
+      "No PinballY installation found in this folder.";
   }
 
   private String validateStandaloneInstallation() {

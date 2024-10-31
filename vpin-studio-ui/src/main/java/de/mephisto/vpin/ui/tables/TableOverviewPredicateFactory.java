@@ -10,23 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.function.Predicate;
 
 public class TableOverviewPredicateFactory {
-
-  private PlaylistRepresentation playlist;
-
-  private GameEmulatorRepresentation emulator;
-
-  public void setFilterPlaylist(PlaylistRepresentation playlist) {
-    this.playlist = playlist;
-  }
-
-  public void setFilterEmulator(GameEmulatorRepresentation emulator) {
-    this.emulator = emulator;
-  }
-
   /**
    * We need a new Predicate each time else TableView does not detect the changes
    */
-  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, FilterSettings filterSettings) {
+  public Predicate<GameRepresentationModel> buildPredicate(String searchTerm, PlaylistRepresentation playlist, GameEmulatorRepresentation emulator, FilterSettings filterSettings) {
     return new Predicate<GameRepresentationModel>() {
       @Override
       public boolean test(GameRepresentationModel model) {
@@ -49,27 +36,30 @@ public class TableOverviewPredicateFactory {
           if (filterSettings.isWithAltColor() && game.getAltColorType() == null) {
             return false;
           }
-          if (filterSettings.isWithBackglass() && game.getDirectB2SPath() == null) {
-            return false;
-          }
-          if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
-            return false;
-          }
           if (filterSettings.isWithIni() && game.getIniPath() == null) {
             return false;
           }
           if (filterSettings.isWithPov() && game.getPovPath() == null) {
             return false;
           }
-          if (filterSettings.isWithRes() && game.getResPath() == null) {
-            return false;
-          }
-          if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
-            return false;
-          }
-          if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
-            return false;
-          }
+        }
+
+        if (filterSettings.isWithBackglass() && game.getDirectB2SPath() == null) {
+          return false;
+        }
+        if (filterSettings.isWithRes() && game.getResPath() == null) {
+          return false;
+        }
+
+        if (filterSettings.isWithPupPack() && game.getPupPackPath() == null) {
+          return false;
+        }
+
+        if (filterSettings.isVpsUpdates() && game.getVpsUpdates() != null && game.getVpsUpdates().isEmpty()) {
+          return false;
+        }
+        if (filterSettings.isVersionUpdates() && !game.isUpdateAvailable()) {
+          return false;
         }
 
         NoteType noteType = filterSettings.getNoteType();
@@ -92,22 +82,23 @@ public class TableOverviewPredicateFactory {
           return false;
         }
 
+        if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
+          return false;
+        }
+        if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtTableVersionId())) {
+          return false;
+        }
+
+        if (filterSettings.isNotPlayed() && game.isPlayed()) {
+          return false;
+        }
+
+        if (filterSettings.getGameStatus() != -1 && game.getGameStatus() != filterSettings.getGameStatus()) {
+          return false;
+        }
+
         if (vpxGame) {
           if (filterSettings.isOtherIssues() && !game.isHasOtherIssues()) {
-            return false;
-          }
-          if (filterSettings.isNoVpsTableMapping() && !StringUtils.isEmpty(game.getExtTableId())) {
-            return false;
-          }
-          if (filterSettings.isNoVpsVersionMapping() && !StringUtils.isEmpty(game.getExtTableVersionId())) {
-            return false;
-          }
-
-          if (filterSettings.isNotPlayed() && game.isPlayed()) {
-            return false;
-          }
-
-          if (filterSettings.getGameStatus() != -1 && game.getGameStatus() != filterSettings.getGameStatus()) {
             return false;
           }
 
@@ -119,9 +110,6 @@ public class TableOverviewPredicateFactory {
         //--------------------------
 
         if (emulator != null && game.getEmulatorId() != emulator.getId()) {
-          return false;
-        }
-        if (emulator != null && !game.isVpxGame()) {
           return false;
         }
 

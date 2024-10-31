@@ -5,7 +5,6 @@ import de.mephisto.vpin.commons.utils.FolderChangeListener;
 import de.mephisto.vpin.commons.utils.FolderMonitoringThread;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,7 +24,7 @@ public class MediaMonitor implements FolderChangeListener {
   public MediaMonitor(@NonNull File folder) {
     this.folder = folder;
     if (folder.exists()) {
-      FolderMonitoringThread monitoringThread = new FolderMonitoringThread(this, true);
+      FolderMonitoringThread monitoringThread = new FolderMonitoringThread(this, true, false);
       monitoringThread.setFolder(folder);
       monitoringThread.startMonitoring();
 
@@ -43,8 +42,8 @@ public class MediaMonitor implements FolderChangeListener {
   }
 
   @Override
-  public void notifyFolderChange(@NotNull File folder, @Nullable File file) {
-//    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
+  public void notifyFolderChange(@NonNull File f, @Nullable File file) {
+    LOG.info("Notified change for \"" + folder.getAbsolutePath() + "\"");
     File[] list = folder.listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {

@@ -1,8 +1,9 @@
 package de.mephisto.vpin.ui.backglassmanager;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.directb2s.DirectB2S;
 import de.mephisto.vpin.restclient.directb2s.DirectB2SData;
 import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
@@ -11,12 +12,9 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -65,7 +63,10 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 import static de.mephisto.vpin.ui.Studio.stage;
@@ -148,6 +149,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private Button uploadDMDBtn;
+
+  @FXML
+  private Button resBtn;
   @FXML
   private Button downloadDMDBtn;
   @FXML
@@ -230,6 +234,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button openBtn;
 
   @FXML
+  private Button tableNavigateBtn;
+
+  @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> statusColumn;
 
   @FXML
@@ -259,15 +266,31 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void onUpload(ActionEvent e) {
     if (game != null) {
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
-      TableDialogs.directBackglassUpload(stage, game);
-      // when done, force refresh
-      refreshBackglass();
+      TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, () -> {
+        // when done, force refresh
+        refreshBackglass();
+      });
+    }
+  }
+
+  @FXML
+  private void onOpenTable(ActionEvent e) {
+    if (game != null) {
+      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
     }
   }
 
   @FXML
   private void onBackglassReload(ActionEvent e) {
     refreshBackglass();
+  }
+
+  @FXML
+  private void onResEdit(ActionEvent e) {
+    DirectB2S selection = getSelection();
+    if(selection != null) {
+      BackglassManagerDialogs.openResGenerator(selection);
+    }
   }
 
   public void refreshBackglass() {
@@ -530,7 +553,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           if (client.getBackglassServiceClient().deleteBackglass(selection.getBacklass())) {
             // remove from the list if successfully deleted
             models.remove(selection);
-            
+
             applyFilter();
 
             // then notify changes
@@ -564,6 +587,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void doReload() {
     startReload("Loading Backglasses...");
 
+    refreshPlaylists();
+
     JFXFuture.supplyAsync(() -> {
       return client.getBackglassServiceClient().getBackglasses();
     }).thenAcceptLater(data -> {
@@ -576,18 +601,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
+    this.resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
     EventManager.getInstance().addListener(this);
 
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getBackglassGameEmulators();
-    if (gameEmulators.isEmpty()) {
-      LOG.error("No backglass server game emulator found!");
-    }
-    else {
-      serverSettings = client.getBackglassServiceClient().getServerSettings(gameEmulators.get(0).getId());
-    }
+    serverSettings = client.getBackglassServiceClient().getServerSettings();
 
+    this.resBtn.setVisible(false);
     this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);
+    this.tableNavigateBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
@@ -608,6 +630,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     bindTable();
 
     super.loadFilterPanel("scene-directb2s-admin-filter.fxml");
+
+    super.loadPlaylistCombo();
 
     hideGrill.setItems(FXCollections.observableList(TablesSidebarDirectB2SController.VISIBILITIES));
     hideGrill.valueProperty().addListener((observableValue, aBoolean, t1) -> {
@@ -676,7 +700,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     startAsExe.selectedProperty().addListener((observable, oldValue, newValue) -> {
       if (!refreshing && tableSettings != null) {
-        save(() -> tableSettings.setStartAsEXE(newValue? newValue : null));
+        save(() -> tableSettings.setStartAsEXE(newValue ? newValue : null));
       }
     });
 
@@ -691,8 +715,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       if (!refreshing && tableSettings != null) {
         save(() -> {
           tableSettings.setUsedLEDType(t1 != null ? t1.getId() : 0);
-          glowing.setDisable(t1 != null ? t1.getId() == 1 : true);
-          lightBulbOn.setDisable(t1 != null ? t1.getId() == 1 : true);
+          glowing.setDisable(t1 != null && t1.getId() == 1);
+          lightBulbOn.setDisable(t1 != null && t1.getId() == 1);
           lightBulbOn.setSelected(false);
         });
       }
@@ -777,12 +801,12 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
       @Override
       protected int isChecked(DirectB2SModel model) {
-        return model.hasDmd() ? (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ? 1 : 2) : 0;
+        return model.hasDmd() ? (model.isFullDmd() ? 1 : 2) : 0;
       }
 
       @Override
       protected String getTooltip(DirectB2SModel model) {
-        return (isFullDmd(model.getDmdWidth(), model.getDmdHeight()) ?
+        return (model.isFullDmd() ?
             "Full DMD backglass" : "DMD backglass present, but not Full-DMD Aspect Ratio")
             + ", resolution " + model.getDmdWidth() + "x" + model.getDmdHeight();
       }
@@ -823,12 +847,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     });
   }
 
-
-  static boolean isFullDmd(double imageWidth, double imageHeight) {
-    double ratio = imageWidth / imageHeight;
-    return ratio < 3.0;
-  }
-
   private void refresh(@Nullable DirectB2S newValue) {
     if (newValue != null) {
       fileDragEventHandler.setDisabled(false);
@@ -840,17 +858,17 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
 
     this.refreshing = true;
-    boolean disable = newValue == null;
 
     //both these depend on the game selection
     this.uploadBtn.setDisable(true);
     this.dataManagerBtn.setDisable(true);
+    this.tableNavigateBtn.setDisable(true);
 
-    this.openBtn.setDisable(disable);
-    this.renameBtn.setDisable(disable);
-    this.duplicateBtn.setDisable(disable);
-    this.deleteBtn.setDisable(disable);
-    this.reloadBackglassBtn.setDisable(disable);
+    this.openBtn.setDisable(true);
+    this.renameBtn.setDisable(true);
+    this.duplicateBtn.setDisable(true);
+    this.deleteBtn.setDisable(true);
+    this.reloadBackglassBtn.setDisable(true);
 
     nameLabel.setText("-");
     typeLabel.setText("-");
@@ -871,26 +889,35 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     downloadDMDBtn.setDisable(true);
     useAsMediaDMDBtn.setDisable(true);
     deleteDMDBtn.setDisable(true);
+    resBtn.setDisable(true);
     resolutionLabel.setText("");
     dmdResolutionLabel.setText("");
     fullDmdLabel.setText("");
     gameLabel.setText("-");
     gameFilenameLabel.setText("-");
 
-    glowing.setDisable(disable);
-    startAsExe.setDisable(disable);
-    hideB2SDMD.setDisable(disable);
-    hideB2SBackglass.setDisable(disable);
-    hideGrill.setDisable(disable);
-    hideDMD.setDisable(disable);
-    startBackground.setDisable(disable);
-    bringBGFromTop.setDisable(disable);
-    skipGIFrames.setDisable(disable);
-    skipLampFrames.setDisable(disable);
-    skipSolenoidFrames.setDisable(disable);
-    skipLEDFrames.setDisable(disable);
-    bulbsLabel.setDisable(disable);
-    usedLEDType.setDisable(disable);
+    hideGrill.setDisable(true);
+    hideB2SBackglass.setDisable(true);
+    hideB2SDMD.setDisable(true);
+    hideDMD.setDisable(true);
+    startBackground.setDisable(true);
+    bringBGFromTop.setDisable(true);
+    skipGIFrames.setDisable(true);
+    skipLampFrames.setDisable(true);
+    skipSolenoidFrames.setDisable(true);
+    skipLEDFrames.setDisable(true);
+    usedLEDType.setDisable(true);
+    lightBulbOn.setDisable(true);
+    glowing.setDisable(true);
+    startAsExe.setDisable(true);
+
+    skipLampFrames.getValueFactory().valueProperty().set(0);
+    skipGIFrames.getValueFactory().valueProperty().set(0);
+    skipSolenoidFrames.getValueFactory().valueProperty().set(0);
+    skipLEDFrames.getValueFactory().valueProperty().set(0);
+    lightBulbOn.selectedProperty().setValue(false);
+    bringBGFromTop.selectedProperty().setValue(false);
+    startBackground.selectedProperty().setValue(false);
 
     this.refreshing = false;
 
@@ -908,6 +935,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
             this.game = client.getGame(this.tableData.getGameId());
             this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
             this.dataManagerBtn.setDisable(false);
+            this.tableNavigateBtn.setDisable(false);
             this.uploadBtn.setDisable(false);
           }
         }
@@ -921,10 +949,18 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
         this.refreshing = true;
 
+        this.openBtn.setDisable(false);
+        this.renameBtn.setDisable(false);
+        this.duplicateBtn.setDisable(false);
+        this.deleteBtn.setDisable(false);
+        this.resBtn.setDisable(false);
+        this.reloadBackglassBtn.setDisable(false);
+
         if (game != null) {
           gameLabel.setText(game.getGameDisplayName());
           gameFilenameLabel.setText(game.getGameFileName());
           dataManagerBtn.setDisable(false);
+          tableNavigateBtn.setDisable(false);
           this.uploadBtn.setDisable(false);
         }
         else {
@@ -945,60 +981,46 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         playersLabel.setText(String.valueOf(tableData.getNumberOfPlayers()));
         filesizeLabel.setText(FileUtils.readableFileSize(tableData.getFilesize()));
         bulbsLabel.setText(String.valueOf(tableData.getIlluminations()));
-        hideGrill.setDisable(tableData.getGrillHeight() == 0);
-
-        hideB2SDMD.selectedProperty().setValue(false);
-        hideB2SBackglass.selectedProperty().setValue(false);
-        skipLampFrames.getValueFactory().valueProperty().set(0);
-        skipGIFrames.getValueFactory().valueProperty().set(0);
-        skipSolenoidFrames.getValueFactory().valueProperty().set(0);
-        skipLEDFrames.getValueFactory().valueProperty().set(0);
-        lightBulbOn.selectedProperty().setValue(false);
-        startBackground.selectedProperty().setValue(false);
-        bringBGFromTop.selectedProperty().setValue(false);
 
         modificationDateLabel.setText(SimpleDateFormat.getDateTimeInstance().format(tableData.getModificationDate()));
 
         if (tableSettings != null) {
           boolean serverLaunchAsExe = serverSettings != null && serverSettings.getDefaultStartMode() == DirectB2ServerSettings.EXE_START_MODE;
           boolean tableLaunchAsExe = tableSettings.getStartAsEXE() != null && tableSettings.getStartAsEXE();
+          startAsExe.setDisable(false);
           startAsExe.setSelected(tableLaunchAsExe);
           startAsExeServer.setSelected(serverLaunchAsExe);
           startAsExeServer.setDisable(true);
 
+          hideGrill.setDisable(tableData.getGrillHeight() == 0);
           hideGrill.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideGrill()).findFirst().orElse(null));
-          hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
+          hideB2SBackglass.setDisable(false);
           hideB2SBackglass.selectedProperty().setValue(tableSettings.isHideB2SBackglass());
+          hideB2SDMD.setDisable(false);
+          hideB2SDMD.selectedProperty().setValue(tableSettings.isHideB2SDMD());
           hideDMD.setDisable(false);
           hideDMD.setValue(TablesSidebarDirectB2SController.VISIBILITIES.stream().filter(v -> v.getId() == tableSettings.getHideDMD()).findFirst().orElse(null));
-          skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
-          skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
-          skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
-          skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
-          lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
-          glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+          usedLEDType.setDisable(false);
           usedLEDType.setValue(TablesSidebarDirectB2SController.LED_TYPES.stream().filter(v -> v.getId() == tableSettings.getUsedLEDType()).findFirst().orElse(null));
+
+          skipLampFrames.setDisable(tableData.getIlluminations() == 0);
+          skipLampFrames.getValueFactory().valueProperty().set(tableSettings.getLampsSkipFrames());
+          skipGIFrames.setDisable(tableData.getIlluminations() == 0);
+          skipGIFrames.getValueFactory().valueProperty().set(tableSettings.getGiStringsSkipFrames());
+          skipSolenoidFrames.setDisable(tableData.getIlluminations() == 0);
+          skipSolenoidFrames.getValueFactory().valueProperty().set(tableSettings.getSolenoidsSkipFrames());
+          skipLEDFrames.setDisable(tableData.getIlluminations() == 0);
+          skipLEDFrames.getValueFactory().valueProperty().set(tableSettings.getLedsSkipFrames());
+          lightBulbOn.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
+          lightBulbOn.selectedProperty().setValue(tableSettings.isGlowBulbOn());
+          glowing.setDisable(usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1);
+          glowing.setValue(TablesSidebarDirectB2SController.GLOWINGS.stream().filter(v -> v.getId() == tableSettings.getGlowIndex()).findFirst().get());
+
+          startBackground.setDisable(false);
           startBackground.selectedProperty().setValue(tableSettings.isStartBackground());
+          bringBGFromTop.setDisable(false);
           bringBGFromTop.selectedProperty().setValue(tableSettings.isFormToFront());
         }
-        else {
-          usedLEDType.setDisable(true);
-          hideDMD.setDisable(true);
-          startBackground.setDisable(true);
-          startAsExe.setDisable(true);
-          bringBGFromTop.setDisable(true);
-          hideB2SBackglass.setDisable(true);
-          hideB2SDMD.setDisable(true);
-        }
-
-        skipLampFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipGIFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipSolenoidFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-        skipLEDFrames.setDisable(tableSettings == null || tableData.getIlluminations() == 0);
-
-        lightBulbOn.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1));
-        glowing.setDisable(tableSettings == null || (usedLEDType.getValue() != null && usedLEDType.getValue().getId() == 1));
-        bringBGFromTop.setSelected(false);
 
         this.refreshing = false;
       });
@@ -1067,7 +1089,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         useAsMediaDMDBtn.setDisable(game == null);
         deleteDMDBtn.setDisable(false);
         dmdResolutionLabel.setText("Resolution: " + (int) _dmdThumbnail.getWidth() + " x " + (int) _dmdThumbnail.getHeight());
-        fullDmdLabel.setText(isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
+        fullDmdLabel.setText(DirectB2SData.isFullDmd(_dmdThumbnail.getWidth(), _dmdThumbnail.getHeight()) ? "Yes" : "No");
       }
       else {
         dmdThumbnailImage.setImage(null);

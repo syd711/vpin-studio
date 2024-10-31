@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.dmd.DMDPackage;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -142,7 +142,7 @@ public class TablesSidebarDMDController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.openDMDUploadDialog(game.get(), null, null);
+      TableDialogs.openDMDUploadDialog(game.get(), null, null, null);
     }
   }
 

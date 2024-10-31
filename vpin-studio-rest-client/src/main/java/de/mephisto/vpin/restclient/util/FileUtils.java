@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -24,6 +24,15 @@ public class FileUtils {
       }
     }
     return name;
+  }
+
+  public static boolean isFileBelowFolder(String folder, String file) {
+    String path = folder;
+    if (!path.endsWith("/")) {
+      path += "/";
+    }
+
+    return file.startsWith(path);
   }
 
   public static boolean isTempFile(File file) {

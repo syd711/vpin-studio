@@ -1,4 +1,4 @@
-package de.mephisto.vpin.commons.utils;
+package de.mephisto.vpin.restclient.util;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
@@ -168,7 +168,8 @@ public class ZipUtil {
             }
           });
       zs.close();
-    } finally {
+    }
+    finally {
       if (outputStream != null) {
         outputStream.close();
       }
@@ -308,7 +309,8 @@ public class ZipUtil {
     catch (Exception e) {
       LOG.error("Search of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
       return null;
-    } finally {
+    }
+    finally {
       LOG.info("Contains check for \"" + file.getAbsolutePath() + "\" took " + (System.currentTimeMillis() - start) + "ms.");
     }
 
@@ -353,5 +355,48 @@ public class ZipUtil {
     }
 
     return fileFound;
+  }
+
+  public static byte[] readFile(File file, String name) {
+    byte[] bytes = null;
+    try {
+      byte[] buffer = new byte[1024];
+      FileInputStream fileInputStream = new FileInputStream(file);
+      ZipInputStream zis = new ZipInputStream(fileInputStream);
+      ZipEntry zipEntry = zis.getNextEntry();
+
+      while (zipEntry != null) {
+        if (zipEntry.isDirectory()) {
+          //ignore
+        }
+        else {
+          String entryName = zipEntry.getName();
+          if (entryName.equals(name)) {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int len;
+            while ((len = zis.read(buffer)) > 0) {
+              baos.write(buffer, 0, len);
+            }
+            baos.close();
+            bytes = baos.toByteArray();
+          }
+        }
+        zis.closeEntry();
+
+        if (bytes != null) {
+          break;
+        }
+
+        zipEntry = zis.getNextEntry();
+      }
+      fileInputStream.close();
+      zis.closeEntry();
+      zis.close();
+    }
+    catch (Exception e) {
+      LOG.error("Reading of " + file.getAbsolutePath() + " failed: " + e.getMessage(), e);
+    }
+
+    return bytes;
   }
 }

@@ -6,7 +6,7 @@
 
     <groupId>de.mephisto.vpin</groupId>
     <artifactId>studio</artifactId>
-    <version>3.7.2</version>
+    <version>3.9.0</version>
     <packaging>pom</packaging>
 
     <properties>
@@ -74,5 +74,24 @@
         </pluginManagement>
 
     </build>
+
+    <repositories>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/59936705/packages/maven</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/59936705/packages/maven</url>
+        </repository>
+
+        <snapshotRepository>
+            <id>gitlab-maven</id>
+            <url>https://gitlab.com/api/v4/projects/59936705/packages/maven</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>

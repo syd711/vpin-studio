@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
@@ -48,6 +49,9 @@ public class AltSoundResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @GetMapping("{id}")
   public AltSound getAltSound(@PathVariable("id") int id) {
@@ -99,10 +103,9 @@ public class AltSoundResource {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     descriptor.setEmulatorId(emulatorId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.ALT_SOUND);
       descriptor.upload();
 
-      UploaderAnalysis analysis = new UploaderAnalysis(new File(descriptor.getTempFilename()));
+      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.getFrontend(), new File(descriptor.getTempFilename()));
       analysis.analyze();
 
       universalUploadService.importArchiveBasedAssets(descriptor, analysis, AssetType.ALT_SOUND);

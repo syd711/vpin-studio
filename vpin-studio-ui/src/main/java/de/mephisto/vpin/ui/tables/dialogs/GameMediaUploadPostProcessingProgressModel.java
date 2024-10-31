@@ -12,13 +12,13 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.Iterator;
 
-public class TableUploadProcessingProgressModel extends ProgressModel<UploadDescriptor> {
-  private final static Logger LOG = LoggerFactory.getLogger(TableUploadProcessingProgressModel.class);
+public class GameMediaUploadPostProcessingProgressModel extends ProgressModel<UploadDescriptor> {
+  private final static Logger LOG = LoggerFactory.getLogger(GameMediaUploadPostProcessingProgressModel.class);
 
   private final Iterator<UploadDescriptor> iterator;
   private final UploadDescriptor uploadDescriptor;
 
-  public TableUploadProcessingProgressModel(String title, UploadDescriptor uploadDescriptor) {
+  public GameMediaUploadPostProcessingProgressModel(String title, UploadDescriptor uploadDescriptor) {
     super(title);
     this.uploadDescriptor = uploadDescriptor;
     iterator = Arrays.asList(uploadDescriptor).iterator();

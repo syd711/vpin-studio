@@ -5,23 +5,15 @@ import de.mephisto.vpin.restclient.directb2s.DirectB2STableSettings;
 import de.mephisto.vpin.server.directb2s.BackglassService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
-import de.mephisto.vpin.server.system.DefaultPictureService;
-import de.mephisto.vpin.server.util.ImageUtil;
-import javafx.scene.image.Image;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.csv.CSVPrinter;
-import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.xml.bind.DatatypeConverter;
-import java.awt.image.BufferedImage;
 import java.beans.PropertyDescriptor;
-import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -40,10 +32,6 @@ public class BackglassExportService extends ExporterService {
   @Autowired
   private GameService gameService;
 
-  @Autowired
-  private DefaultPictureService defaultPictureService;
-
-  private final boolean forceBackglassExtraction = false;
 
   public String export(Map<String, String> customQuery) throws IOException {
     try {
@@ -64,10 +52,10 @@ public class BackglassExportService extends ExporterService {
         }
       }
 
-      headers.add("backgroundWidth");
-      headers.add("backgroundHeight");
-      headers.add("dmdWidth");
-      headers.add("dmdHeight");
+      //headers.add("backgroundWidth");
+      //headers.add("backgroundHeight");
+      //headers.add("dmdWidth");
+      //headers.add("dmdHeight");
 
       CSVPrinter printer = createPrinter(customQuery, headers, builder);
 
@@ -128,9 +116,6 @@ public class BackglassExportService extends ExporterService {
               }
             }
 
-            exportBackgroundData(game, records, game.getEmulatorId());
-            exportDMDData(game, directB2SData, records, game.getEmulatorId());
-
             printer.printRecord(records);
             LOG.info("Finished backglass export of " + game);
           }
@@ -145,78 +130,6 @@ public class BackglassExportService extends ExporterService {
     catch (Exception e) {
       LOG.error("Failed to export highscore data: " + e.getMessage(), e);
       return "Failed to export highscore data: " + e.getMessage();
-    }
-  }
-
-  private void exportBackgroundData(Game game, List<String> records, int emulatorId) throws IOException {
-    if (!forceBackglassExtraction) {
-      File rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-      if (!rawDefaultPicture.exists()) {
-        defaultPictureService.extractDefaultPicture(game);
-        rawDefaultPicture = defaultPictureService.getRawDefaultPicture(game);
-      }
-
-      if (rawDefaultPicture.exists()) {
-        BufferedImage image = ImageUtil.loadImage(rawDefaultPicture);
-        int backgroundWidth = (int) image.getWidth();
-        int backgroundHeight = (int) image.getHeight();
-        records.add(String.valueOf(backgroundWidth));
-        records.add(String.valueOf(backgroundHeight));
-      }
-      else {
-        records.add(String.valueOf(0));
-        records.add(String.valueOf(0));
-      }
-    }
-    else {
-      String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-      String backgroundBase64 = backglassService.getBackgroundBase64(emulatorId, filename);
-      if (backgroundBase64 != null) {
-        byte[] imageData = DatatypeConverter.parseBase64Binary(backgroundBase64);
-        Image image = new Image(new ByteArrayInputStream(imageData));
-        int backgroundWidth = (int) image.getWidth();
-        int backgroundHeight = (int) image.getHeight();
-        records.add(String.valueOf(backgroundWidth));
-        records.add(String.valueOf(backgroundHeight));
-      }
-      else {
-        records.add(String.valueOf(0));
-        records.add(String.valueOf(0));
-      }
-    }
-  }
-
-  private void exportDMDData(Game game, DirectB2SData data, List<String> records, int emulatorId) throws IOException {
-    if (!forceBackglassExtraction) {
-      File picture = defaultPictureService.getDMDPicture(game);
-      if (picture.exists()) {
-        BufferedImage image = ImageUtil.loadImage(picture);
-        int backgroundWidth = (int) image.getWidth();
-        int backgroundHeight = (int) image.getHeight();
-        records.add(String.valueOf(backgroundWidth));
-        records.add(String.valueOf(backgroundHeight));
-      }
-      else {
-        records.add(String.valueOf(0));
-        records.add(String.valueOf(0));
-      }
-    }
-    else if (data.isDmdImageAvailable()) {
-      String filename = FilenameUtils.getBaseName(game.getGameFileName()) + ".directb2s";
-
-      String dmdBase64 = backglassService.getDmdBase64(emulatorId, filename);
-      if (dmdBase64 != null) {
-        byte[] dmdData = DatatypeConverter.parseBase64Binary(dmdBase64);
-        Image dmdImage = new Image(new ByteArrayInputStream(dmdData));
-        int dmdWidth = (int) dmdImage.getWidth();
-        int dmdHeight = (int) dmdImage.getHeight();
-        records.add(String.valueOf(dmdWidth));
-        records.add(String.valueOf(dmdHeight));
-      }
-      else {
-        records.add(String.valueOf(0));
-        records.add(String.valueOf(0));
-      }
     }
   }
 }

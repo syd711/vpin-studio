@@ -1,6 +1,6 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.utils.FileUtils;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
@@ -160,16 +160,14 @@ public class TablesSidebarPUPPackController implements Initializable {
         JobDescriptor jobExecutionResult = null;
         try {
           jobExecutionResult = client.getPupPackService().option(game.get().getId(), option);
+
           if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
-            WidgetFactory.showAlert(Studio.stage, "Option Execution Failed", jobExecutionResult.getError());
+            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getError());
           }
 
           client.getPupPackService().clearCache();
           EventManager.getInstance().notifyTableChange(this.game.get().getId(), this.game.get().getRom());
 
-          if (!StringUtils.isEmpty(jobExecutionResult.getError())) {
-            WidgetFactory.showOutputDialog(Studio.stage, "Option Command Result", option, "The command returned this output:", jobExecutionResult.getError());
-          }
         }
         catch (Exception e) {
           LOG.error("Failed to execute PUP command: " + e.getMessage(), e);
@@ -239,7 +237,7 @@ public class TablesSidebarPUPPackController implements Initializable {
         return;
       }
 
-      TableDialogs.openPupPackUploadDialog(game.get(), null, null);
+      TableDialogs.openPupPackUploadDialog(g, null, null, null);
     }
   }
 

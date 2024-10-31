@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.TableDeleteProgressModel;
 import de.mephisto.vpin.ui.tables.TableOverviewController;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -131,6 +132,7 @@ public class TableDeleteController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       ProgressDialog.createProgressDialog(new TableDeleteProgressModel(tableOverviewController, descriptor));
+      EventManager.getInstance().notifyTablesChanged();
     });
 
     stage.close();

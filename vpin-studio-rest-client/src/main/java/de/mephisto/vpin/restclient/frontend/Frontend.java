@@ -11,9 +11,6 @@ public class Frontend {
   private String frontendExe;
   private String iconName;
 
-  private boolean assetSearchEnabled;
-  private String assetSearchLabel;
-  private String assetSearchIcon;
   /**
    * Wether playfield media should be 180 rotated vs Popper standard layout
    */
@@ -103,30 +100,6 @@ public class Frontend {
 
   public void setIconName(String iconName) {
     this.iconName = iconName;
-  }
-
-  public boolean isAssetSearchEnabled() {
-    return assetSearchEnabled;
-  }
-
-  public void setAssetSearchEnabled(boolean assetSearchEnabled) {
-    this.assetSearchEnabled = assetSearchEnabled;
-  }
-
-  public String getAssetSearchLabel() {
-    return assetSearchLabel;
-  }
-
-  public void setAssetSearchLabel(String assetSearchLabel) {
-    this.assetSearchLabel = assetSearchLabel;
-  }
-
-  public String getAssetSearchIcon() {
-    return assetSearchIcon;
-  }
-
-  public void setAssetSearchIcon(String assetSearchIcon) {
-    this.assetSearchIcon = assetSearchIcon;
   }
 
   public boolean isPlayfieldMediaInverted() {

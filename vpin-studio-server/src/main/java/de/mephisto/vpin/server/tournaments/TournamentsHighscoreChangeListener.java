@@ -17,8 +17,8 @@ import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.players.PlayerService;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -49,7 +49,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   private ManiaService maniaService;
 
   @Override
-  public void highscoreChanged(@NotNull HighscoreChangeEvent event) {
+  public void highscoreChanged(@NonNull HighscoreChangeEvent event) {
     if (event.getEventOrigin().equals(EventOrigin.TABLE_SCAN)) {
       LOG.info("Ignored tournament highscore change, because of table scans are skipped.");
       return;
@@ -191,7 +191,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
   }
 
   @Override
-  public void highscoreUpdated(@NotNull Game game, @NotNull Highscore highscore) {
+  public void highscoreUpdated(@NonNull Game game, @NonNull Highscore highscore) {
 
   }
 

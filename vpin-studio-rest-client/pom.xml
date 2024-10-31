@@ -5,7 +5,7 @@
     <parent>
         <artifactId>studio</artifactId>
         <groupId>de.mephisto.vpin</groupId>
-        <version>3.7.2</version>
+        <version>3.9.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>jar</packaging>
@@ -24,6 +24,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
             <version>2.7.4</version>
+        </dependency>
+        <dependency>
+            <groupId>com.github.spotbugs</groupId>
+            <artifactId>spotbugs-annotations</artifactId>
+            <version>4.7.2</version>
         </dependency>
 
         <dependency>
@@ -52,7 +57,7 @@
             <version>16.02-2.01</version>
         </dependency>
         <dependency>
-            <groupId>net.sf.sevenzipjbinding</groupId>
+            <groupId>com.github.shayartzi.sevenzipjbinding</groupId>
             <artifactId>sevenzipjbinding-all-platforms</artifactId>
             <version>16.02-2.01</version>
         </dependency>

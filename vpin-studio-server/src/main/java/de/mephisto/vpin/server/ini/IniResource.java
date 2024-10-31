@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.ini.IniRepresentation;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.slf4j.Logger;
@@ -53,7 +54,6 @@ public class IniResource {
                                     @RequestParam("objectId") Integer gameId) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
-      descriptor.getAssetsToImport().add(AssetType.INI);
       descriptor.upload();
       universalUploadService.importFileBasedAssets(descriptor, AssetType.INI);
       return descriptor;

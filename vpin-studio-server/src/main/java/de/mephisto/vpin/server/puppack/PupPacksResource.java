@@ -10,6 +10,7 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.games.GameValidationService;
@@ -50,6 +51,9 @@ public class PupPacksResource {
 
   @Autowired
   private UniversalUploadService universalUploadService;
+
+  @Autowired
+  private FrontendService frontendService;
 
 
   @DeleteMapping("{id}")
@@ -116,11 +120,10 @@ public class PupPacksResource {
   public UploadDescriptor upload(@RequestParam(value = "file", required = false) MultipartFile file) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file);
     try {
-      descriptor.getAssetsToImport().add(AssetType.PUP_PACK);
       descriptor.upload();
 
       File tempFile = new File(descriptor.getTempFilename());
-      UploaderAnalysis analysis = new UploaderAnalysis(tempFile);
+      UploaderAnalysis analysis = new UploaderAnalysis(frontendService.getFrontend(), tempFile);
       analysis.analyze();
 
       descriptor.setAsync(true);

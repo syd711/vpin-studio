@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.highscores.parsing.text.adapters;
 
-import org.jetbrains.annotations.NotNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class FourPlayersAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public boolean isApplicable(@NotNull File file, @NotNull List<String> lines) {
+  public boolean isApplicable(@NonNull File file, @NonNull List<String> lines) {
     if (fileNames != null && fileNames.contains(file.getName())) {
       return true;
     }
@@ -48,7 +48,7 @@ public class FourPlayersAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public List<String> resetHighscore(@NotNull File file, @NotNull List<String> lines) {
+  public List<String> resetHighscore(@NonNull File file, @NonNull List<String> lines) {
     List<String> newScoreText = new ArrayList<>();
 
     for (int i = 0; i < lines.size(); i++) {
@@ -63,7 +63,7 @@ public class FourPlayersAdapter implements ScoreTextFileAdapter {
   }
 
   @Override
-  public String convert(@NotNull File file, @NotNull List<String> lines) {
+  public String convert(@NonNull File file, @NonNull List<String> lines) {
     StringBuilder builder = new StringBuilder("HIGHEST SCORES\n");
     String score1 = lines.get(start);
     String score2 = lines.get(start + 1);

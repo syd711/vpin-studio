@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.ini.IniRepresentation;
 import de.mephisto.vpin.restclient.ini.IniSectionRepresentation;
@@ -54,7 +55,7 @@ public class TablesSidebarIniController implements Initializable {
   @FXML
   private void onUpload() {
     if (game.isPresent()) {
-      TableDialogs.directIniUpload(Studio.stage, game.get());
+      TableDialogs.directUpload(Studio.stage, AssetType.INI, game.get(), null);
     }
   }
 

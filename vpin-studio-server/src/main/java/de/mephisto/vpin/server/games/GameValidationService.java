@@ -26,8 +26,6 @@ import de.mephisto.vpin.server.puppack.PupPacksService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -239,7 +237,7 @@ public class GameValidationService implements InitializingBean, PreferenceChange
     return result;
   }
 
-  private @Nullable List<ValidationState> validateScreenAssets(@NotNull Game game, boolean findFirst, List<ValidationState> result) {
+  private @NonNull List<ValidationState> validateScreenAssets(@NonNull Game game, boolean findFirst, List<ValidationState> result) {
     if (isValidationEnabled(game, CODE_NO_AUDIO)) {
       if (!validScreenAssets(game, VPinScreen.Audio)) {
         result.add(GameValidationStateFactory.create(CODE_NO_AUDIO));
@@ -362,24 +360,22 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       for (File file : screenAssets) {
         String mimeType = MimeTypeUtil.determineMimeType(file);
         if (mimeType != null) {
-          if (mimeType.contains("audio") && !config.getMedia().equals(ValidatorMedia.audio)) {
-            return false;
+          if (mimeType.contains("audio") && config.getMedia().equals(ValidatorMedia.audio)) {
+            return true;
           }
-          if (mimeType.contains("video") && (!config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-            return false;
+          if (mimeType.contains("video") && (config.getMedia().equals(ValidatorMedia.video) || config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return true;
           }
-          if (mimeType.contains("image") && (!config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
-            return false;
+          if (mimeType.contains("image") && (config.getMedia().equals(ValidatorMedia.image) || config.getMedia().equals(ValidatorMedia.imageOrVideo))) {
+            return true;
           }
         }
       }
+      return false;
     }
     else {
-      if (config.getOption().equals(ValidatorOption.mandatory)) {
-        return false;
-      }
+      return !config.getOption().equals(ValidatorOption.mandatory);
     }
-    return true;
   }
 
   private List<ValidationState> validateForceStereo(Game game) {

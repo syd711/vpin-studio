@@ -75,4 +75,8 @@ public class WaitOverlay {
     toggle(b);
   }
 
+  public void setMessage(String message) {
+    controller.setLoadingMessage(message);
+  }
+
 }

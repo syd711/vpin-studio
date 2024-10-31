@@ -5,10 +5,7 @@ import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.tables.TableDialogs;
@@ -21,14 +18,11 @@ import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,17 +39,6 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     implements Initializable, StudioFXController, StudioEventListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(VpsTablesController.class);
-
-  private final static List<VpsTableFormat> TABLE_FORMATS = new ArrayList<>();
-
-  static {
-    TABLE_FORMATS.add(new VpsTableFormat("VPX", "Visual Pinball X"));
-    TABLE_FORMATS.add(new VpsTableFormat("VP9", "Visual Pinball 9"));
-    TABLE_FORMATS.add(new VpsTableFormat("FP", "Future Pinball"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX", "Pinball FX"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX2", "Pinball FX2"));
-    TABLE_FORMATS.add(new VpsTableFormat("FX3", "Pinball FX3"));
-  }
 
   @FXML
   private ComboBox<VpsTableFormat> emulatorCombo;
@@ -100,10 +83,13 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   TableColumn<VpsTableModel, VpsTableModel> updatedColumn;
 
   @FXML
-  private Button openBtn;
+  private Button vpsOpenBtn;
 
   @FXML
-  private Button editBtn;
+  private Button tableEditBtn;
+
+  @FXML
+  private Button tableDataBtn;
 
   //------------------------
 
@@ -117,13 +103,26 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   public VpsTablesController() {
   }
 
+
+  @FXML
+  private void onOpenTable() {
+    VpsTable vpstable = getSelection();
+    if (vpstable != null) {
+      GameRepresentation game = client.getGameService().getGameByVpsTable(vpstable, null);
+      if (game != null) {
+        Platform.runLater(() -> {
+          NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
+        });
+      }
+    }
+  }
+
   @FXML
   private void onTableEdit() {
     VpsTable vpstable = getSelection();
     if (vpstable != null) {
       GameRepresentation game = client.getGameService().getGameByVpsTable(vpstable, null);
       if (game != null) {
-        //tablesController.getTableOverviewController().setSelection(game);
         Platform.runLater(() -> {
           TableDialogs.openTableDataDialog(tablesController.getTableOverviewController(), game);
         });
@@ -178,7 +177,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     }
 
     // calculate unmapped in a non blocking thread
-     JFXFuture.runAsync(()-> {
+    JFXFuture.runAsync(() -> {
       this.unmapped = 0;
       List<GameRepresentation> gamesCached = client.getGameService().getVpxGamesCached();
       for (GameRepresentation gameRepresentation : gamesCached) {
@@ -192,12 +191,8 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
 
     //-----------
     // load tables in parallel
-    JFXFuture.supplyAsync(()-> {
-      // get all tables and filter by format
-      VpsTableFormat value = emulatorCombo.getValue();
-      String tableFormat = value.getAbbrev();
-      return ListUtils.select(client.getVpsService().getTables(), t -> t.getAvailableTableFormats().contains(tableFormat));
-
+    JFXFuture.supplyAsync(() -> {
+      return client.getVpsService().getTables();
     }).thenAcceptLater(data -> {
 
       setItems(data);
@@ -230,41 +225,51 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       return model.isInstalled() ? WidgetFactory.createCheckIcon() : null;
     });
 
-    BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> new Label(value.getDisplayName()), true);
+    BaseLoadingColumn.configureColumn(nameColumn, (value, model) -> {
+      Label label = new Label(value.getDisplayName());
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
 
     BaseLoadingColumn.configureLoadingColumn(statusColumn, "Loading...", (value, model) -> {
       return model.isInstalled() ? new VpsTableColumn(value.getId(), model.getVersionId(), model.getUpdates(), null) : null;
     });
 
-    BaseLoadingColumn.configureColumn(versionsColumn, (value, model) -> 
-      new Label(Integer.toString(CollectionUtils.size(value.getTableFiles()))), true);
+    BaseLoadingColumn.configureColumn(versionsColumn, (value, model) -> {
+      Label label = new Label(Integer.toString(CollectionUtils.size(value.getTableFiles())));
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
 
     BaseLoadingColumn.configureColumn(directB2SColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getB2sFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getB2sFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(pupPackColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getPupPackFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getPupPackFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(topperColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getTopperFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getTopperFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(povColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getPovFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getPovFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(romColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getRomFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getRomFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(altSoundColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getAltSoundFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getAltSoundFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(altColorColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getAltColorFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getAltColorFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
     BaseLoadingColumn.configureColumn(tutorialColumn, (value, model) ->
-      VpsUtil.isDataAvailable(value.getTutorialFiles())? WidgetFactory.createCheckboxIcon() : null, true);
+        VpsUtil.isDataAvailable(value.getTutorialFiles()) ? WidgetFactory.createCheckboxIcon() : null, true);
 
-    BaseLoadingColumn.configureColumn(updatedColumn, (value, model) ->
-      new Label(dateFormat.format(new Date(value.getUpdatedAt()))), true);
+    BaseLoadingColumn.configureColumn(updatedColumn, (value, model) -> {
+      Label label = new Label(dateFormat.format(new Date(value.getUpdatedAt())));
+      label.getStyleClass().add("default-text");
+      return label;
+    }, true);
 
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
@@ -283,14 +288,16 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       return row;
     });
 
-    emulatorCombo.setItems(FXCollections.observableList(TABLE_FORMATS));
+    List<VpsTableFormat> tableFormats = new ArrayList<>();
+    tableFormats.add(new VpsTableFormat("All Emulators", (String[]) null));
+    tableFormats.add(new VpsTableFormat("Visual Pinball X", "VPX"));
+    tableFormats.add(new VpsTableFormat("Visual Pinball 9", "VP9"));
+    tableFormats.add(new VpsTableFormat("Future Pinball", "FP"));
+    tableFormats.add(new VpsTableFormat("Zen Studios", "FX", "FX2", "FX3"));
+
+    emulatorCombo.setItems(FXCollections.observableList(tableFormats));
     emulatorCombo.getSelectionModel().select(0);
-    emulatorCombo.valueProperty().addListener(new ChangeListener<VpsTableFormat>() {
-      @Override
-      public void changed(ObservableValue<? extends VpsTableFormat> observable, VpsTableFormat oldValue, VpsTableFormat newValue) {
-        doReload(false);
-      }
-    });
+    ((VpsTablesFilterController) filterController).bindEmulatorCombo(emulatorCombo);
 
     EventManager.getInstance().addListener(this);
   }
@@ -313,24 +320,25 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables"));
     }
 
-    openBtn.setDisable(newSelection == null);
+    vpsOpenBtn.setDisable(newSelection == null);
+    tableEditBtn.setDisable(newSelection == null || !newSelection.isInstalled());
+    tableDataBtn.setDisable(newSelection == null || !newSelection.isInstalled());
 
-    editBtn.setDisable(newSelection == null || !newSelection.isInstalled());
-
-    VpsTable vpsTable = newSelection != null? newSelection.getVpsTable(): null;
-    tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable));
+    VpsTable vpsTable = newSelection != null ? newSelection.getVpsTable() : null;
+    VpsTablesPredicateFactory predicates = ((VpsTablesFilterController) filterController).getPredicateFactory();
+    tablesController.getVpsTablesSidebarController().setTable(Optional.ofNullable(vpsTable), predicates);
   }
 
   static class VpsTableFormat {
-    private final String abbrev;
+    private final String[] abbrev;
     private final String name;
 
-    VpsTableFormat(String abbrev, String name) {
+    VpsTableFormat(String name, String... abbrev) {
       this.abbrev = abbrev;
       this.name = name;
     }
 
-    public String getAbbrev() {
+    public String[] getAbbrev() {
       return abbrev;
     }
 
@@ -390,9 +398,9 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     @Override
     public void load() {
       GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(bean, null);
-      installed  = (gameByVpsTable != null);
+      installed = (gameByVpsTable != null);
       versionId = (gameByVpsTable != null) ? gameByVpsTable.getExtTableVersionId() : null;
       updates = (gameByVpsTable != null) ? gameByVpsTable.getVpsUpdates() : null;
     }
-   }
+  }
 }

@@ -36,7 +36,7 @@
                      </VBox.margin>
                   </Label>
                   <Hyperlink onAction="#onLink" text="http://configtool.vpuniverse.com" />
-                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle" text="DOF Installation (64-bit)" textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="198.0" styleClass="preference-subtitle" text="DOF Installation" textFill="WHITE">
                      <VBox.margin>
                         <Insets top="24.0" />
                      </VBox.margin>
@@ -68,52 +68,7 @@
                            </children>
                         </HBox>
                         <Label styleClass="default-text" text="Folder:" />
-                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;DirectOutput.dll&quot; file found." GridPane.columnIndex="1" GridPane.rowIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                           <padding>
-                              <Insets left="3.0" right="3.0" />
-                           </padding>
-                        </Label>
-                     </children>
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </GridPane>
-                  <Label styleClass="preference-subtitle" text="DOF Installation (32-bit)" textFill="WHITE">
-                     <VBox.margin>
-                        <Insets top="12.0" />
-                     </VBox.margin>
-                  </Label>
-                  <Label styleClass="preference-description" text="If you have both variants installed (32 and 64 bit), you can specify the second installation folder here." textFill="WHITE" />
-                  <GridPane vgap="3.0">
-                     <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="80.0" minWidth="80.0" prefWidth="80.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="550.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="631.9999679565428" minWidth="10.0" prefWidth="99.19989624023435" />
-                     </columnConstraints>
-                     <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                     </rowConstraints>
-                     <children>
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1">
-                           <children>
-                              <TextField fx:id="installationFolderText32" prefHeight="30.0" prefWidth="472.0">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </TextField>
-                              <Button fx:id="folderBtn32" mnemonicParsing="false" onAction="#onFolder32" styleClass="external-component" text="Folder...">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font>
-                              </Button>
-                           </children>
-                        </HBox>
-                        <Label styleClass="default-text" text="Folder:" />
-                        <Label fx:id="dofFolderErrorLabel32" styleClass="error-message" text="Invalid DOF installation folder, no &quot;DirectOutput.dll&quot; file found." GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Label fx:id="dofFolderErrorLabel" styleClass="error-message" text="Invalid DOF installation folder, no &quot;x64&quot; or &quot;x32&quot; folder found." GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font size="14.0" />
                            </font>

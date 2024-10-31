@@ -4,9 +4,11 @@ import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -20,14 +22,12 @@ import java.util.Optional;
 public class TableAssetsService {
   private final static Logger LOG = LoggerFactory.getLogger(TableAssetsService.class);
 
-  private TableAssetsAdapter adapter = null;
-
-  public void registerAdapter(@NonNull TableAssetsAdapter adapter) {
-    this.adapter = adapter;
-  }
+  @Autowired
+  private FrontendService frontendService;
 
 
   public List<TableAsset> search(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String term) throws Exception {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       return adapter.search(emulatorType.name(), screen.getSegment(), term);
     }
@@ -37,6 +37,7 @@ public class TableAssetsService {
   }
 
   public Optional<TableAsset> get(@NonNull EmulatorType emulatorType, @NonNull VPinScreen screen, @NonNull String folder, @NonNull String name) throws Exception {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       return adapter.get(emulatorType.name(), screen.getSegment(), folder, name);
     }
@@ -44,6 +45,7 @@ public class TableAssetsService {
   }
 
   public void download(@NonNull TableAsset asset, @NonNull File target) {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       if (target.exists()) {
         LOG.info("Asset " + target.getName() + " already exists and will be replaced.");
@@ -65,6 +67,7 @@ public class TableAssetsService {
   }
 
   public void download(OutputStream out, String url) {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       try {
         adapter.writeAsset(out, url);
@@ -77,6 +80,7 @@ public class TableAssetsService {
   }
 
   public boolean testConnection() {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       return adapter.testConnection();
     }
@@ -84,6 +88,7 @@ public class TableAssetsService {
   }
 
   public boolean invalidateMediaCache() {
+    TableAssetsAdapter adapter = frontendService.getTableAssetAdapter();
     if (adapter != null) {
       adapter.invalidateMediaCache();
       LOG.info("Invalidated media cache.");

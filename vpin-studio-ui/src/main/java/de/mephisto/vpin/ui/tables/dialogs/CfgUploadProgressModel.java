@@ -21,8 +21,8 @@ public class CfgUploadProgressModel extends UploadProgressModel {
   private final List<File> files;
   private double percentage = 0;
 
-  public CfgUploadProgressModel(String title, List<File> files, int emuId) {
-    super(files, title);
+  public CfgUploadProgressModel(String title, List<File> files, int emuId, Runnable finalizer) {
+    super(files, title, finalizer);
     this.files = files;
     this.iterator = files.iterator();
     this.emuId = emuId;

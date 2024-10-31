@@ -30,6 +30,7 @@ public class GameEmulator {
 
   private File romFolder;
 
+  private final EmulatorType type;
   private final String name;
   private final String description;
   private final String displayName;
@@ -37,33 +38,31 @@ public class GameEmulator {
   private final String tablesDirectory;
   private final String altSoundDirectory;
   private final String altColorDirectory;
+  private final String romDirectory;
   private final String nvramDirectory;
   private final String mameDirectory;
   private final String userDirectory;
   private final String mediaDirectory;
   private final int id;
   private final boolean visible;
-  private final String vpxExeName;
+  private String exeName;
   private final String gameExt;
 
-  private String backglassServerFolder;
-  private boolean vpxEmulator;
-  private boolean fpEmulator;
   private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
+    this.type = emulator.getType();
     this.name = emulator.getName();
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
-    this.vpxExeName = emulator.getExeName();
+    this.exeName = emulator.getExeName();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
 
     this.installationDirectory = emulator.getEmuLaunchDir();
     this.tablesDirectory = emulator.getDirGames();
     this.mediaDirectory = emulator.getDirMedia();
-    this.backglassServerFolder = StringUtils.defaultString(emulator.getDirB2S(), emulator.getDirGames());
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
@@ -83,9 +82,6 @@ public class GameEmulator {
 
     if (emulator.getDirGames() != null) {
       this.tablesFolder = new File(emulator.getDirGames().trim());
-    }
-    if (this.backglassServerFolder != null) {
-      this.backglassServerDirectory = new File(this.backglassServerFolder);
     }
 
     this.musicFolder = new File(installationFolder, "Music");
@@ -111,17 +107,7 @@ public class GameEmulator {
     if (!StringUtils.isEmpty(emulator.getDirRoms())) {
       this.romFolder = new File(emulator.getDirRoms());
     }
-
-    this.vpxEmulator = emulator.isVisualPinball();
-    this.fpEmulator = emulator.isFuturePinball();
-  }
-
-  public boolean isFpEmulator() {
-    return fpEmulator;
-  }
-
-  public void setFpEmulator(boolean fpEmulator) {
-    this.fpEmulator = fpEmulator;
+    this.romDirectory = this.romFolder.getAbsolutePath();
   }
 
   public List<String> getAltVPXExeNames() {
@@ -132,18 +118,23 @@ public class GameEmulator {
     this.altVPXExeNames = altVPXExeNames;
   }
 
+  @JsonIgnore
   public boolean isVpxEmulator() {
-    return vpxEmulator;
+    return type.isVpxEmulator();
   }
 
-  public void setVpxEmulator(boolean vpxEmulator) {
-    this.vpxEmulator = vpxEmulator;
+  @JsonIgnore
+  public boolean isFpEmulator() {
+    return type.isFpEmulator();
+  }
+
+  @JsonIgnore
+  public boolean isFxEmulator() {
+    return type.isFxEmulator();
   }
 
   public EmulatorType getEmulatorType() {
-    return isVpxEmulator() ? EmulatorType.VisualPinball :
-          isFpEmulator() ? EmulatorType.FuturePinball : 
-          null;
+    return type;
   }
 
   public String getGameFileName(@NonNull File file) {
@@ -186,6 +177,10 @@ public class GameEmulator {
     return altColorDirectory;
   }
 
+  public String getRomDirectory() {
+    return romDirectory;
+  }
+
   public String getInstallationDirectory() {
     return installationDirectory;
   }
@@ -207,12 +202,11 @@ public class GameEmulator {
   }
 
   @JsonIgnore
-  public File getVPXExe() {
-    return new File(installationFolder, vpxExeName);
-  }
-
-  public boolean isVpx() {
-    return true;
+  public File getExe() {
+    if (exeName == null && isFpEmulator()) {
+      this.exeName = "Future Pinball.exe";
+    }
+    return new File(installationFolder, exeName);
   }
 
   public List<String> getAltExeNames() {
@@ -225,39 +219,6 @@ public class GameEmulator {
     }
 
     return Collections.emptyList();
-  }
-
-  public String getBackglassServerFolder() {
-    return backglassServerFolder;
-  }
-
-  public void setBackglassServerFolder(String backglassServerFolder) {
-    this.backglassServerFolder = backglassServerFolder;
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getBackglassServerDirectory() {
-    return backglassServerDirectory;
-  }
-
-  public void setBackglassServerDirectory(@NonNull File backglassServerDirectory) {
-    this.backglassServerDirectory = backglassServerDirectory;
-    this.backglassServerFolder = backglassServerDirectory.getAbsolutePath();
-  }
-
-  @NonNull
-  @JsonIgnore
-  public File getB2STableSettingsXml() {
-    if (this.backglassServerDirectory != null) {
-      File xml = new File(this.backglassServerDirectory, "B2STableSettings.xml");
-      if (xml.exists()) {
-        return xml;
-      }
-    }
-
-    //simply assume the legacy default
-    return new File(this.tablesFolder, "B2STableSettings.xml");
   }
 
   @NonNull

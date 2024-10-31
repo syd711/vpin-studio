@@ -34,17 +34,6 @@ public class VpxServiceClient extends VPinStudioClientService {
     super(client);
   }
 
-  public void playGame(int id, String altExe) {
-    try {
-      Map<String, Object> params = new HashMap<>();
-      params.put("altExe", altExe);
-      getRestClient().put(API + "vpx/play/" + id, params);
-    } catch (Exception e) {
-      LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
-    }
-  }
-
-
   public POVRepresentation getPOV(int gameId) {
     Map<String, Object> povData = getRestClient().get(API + "vpx/pov/" + gameId, Map.class);
     return new POVRepresentation(povData);

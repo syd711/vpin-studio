@@ -1,6 +1,6 @@
 package de.mephisto.vpin.server.archiving;
 
-import de.mephisto.vpin.commons.utils.ZipUtil;
+import de.mephisto.vpin.restclient.util.ZipUtil;
 import de.mephisto.vpin.restclient.archiving.ArchiveDescriptorRepresentation;
 import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;

@@ -1,25 +1,19 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
-import de.mephisto.vpin.commons.fx.UIDefaults;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.frontend.pinballx.PinballXSettings;
-import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.frontend.GameEntry;
 import de.mephisto.vpin.server.playlists.Playlist;
-import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.resources.ResourceLoader;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -30,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -50,19 +43,20 @@ public class PinballXConnector extends BaseConnector {
   //private PinballXAssetsAdapter assetsAdapter;
   private PinballXAssetsIndexAdapter assetsAdapter;
 
-  private PinballXMediaAccessStrategy pinballXMediaAccessStrategy;
-
-  @Autowired
-  private PreferencesService preferencesService;
-
   private Map<String, TableDetails> mapTableDetails = new HashMap<>();
 
 
   @Override
   public void initializeConnector() {
+    super.setMediaAccessStrategy(new PinballXMediaAccessStrategy(getInstallationFolder()));
+
     PinballXSettings ps = getSettings();
-    if (ps != null) {
+    if (ps != null && ps.isGameExEnabled()) {
       assetsAdapter.configureCredentials(ps.getGameExMail(), ps.getGameExPassword());
+      super.setTableAssetAdapter(assetsAdapter);
+    }
+    else {
+      super.setTableAssetAdapter(null);
     }
     LOG.info("Finished initialization of " + this);
   }
@@ -81,7 +75,7 @@ public class PinballXConnector extends BaseConnector {
     frontend.setSupportedRecordingScreens(Collections.emptyList());
     frontend.setFrontendType(FrontendType.PinballX);
 
-    frontend.setFrontendExe("PinballX.exe");
+    frontend.setFrontendExe(getFrontendExe());
     frontend.setAdminExe("Settings.exe");
     frontend.setIconName("pinballx.png");
     List<VPinScreen> screens = new ArrayList<>(Arrays.asList(VPinScreen.values()));
@@ -92,9 +86,6 @@ public class PinballXConnector extends BaseConnector {
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
 
-    PinballXSettings ps = getSettings();
-    frontend.setAssetSearchEnabled(ps != null && ps.isGameExEnabled());
-    frontend.setAssetSearchLabel("GameEx Assets Search for PinballX");
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
   }
@@ -237,35 +228,6 @@ public class PinballXConnector extends BaseConnector {
     String executable = s.getString("Executable");
     //String parameters = s.getString("Parameters");
 
-    String gameext = null;
-    if (s.containsKey("SystemType")) {
-      int systemType = s.getInt("SystemType");
-      switch (systemType) {
-        case 1:
-          gameext = "vpx";
-          break; // Visual Pinball
-        case 2:
-          gameext = "vpx";
-          break; // Future Pinball
-        case 4:
-          gameext = "exe";
-          break; // Custom Exe
-      }
-    }
-    else {
-      gameext = getEmulatorExtension(emuname);
-    }
-
-    Emulator e = new Emulator();
-    e.setId(emuId);
-    e.setName(emuname);
-    e.setDisplayName(emuname);
-
-    File mediaDir = new File(installDir, "Media/" + emuname);
-    if (mediaDir.exists() && mediaDir.isDirectory()) {
-      e.setDirMedia(mediaDir.getAbsolutePath());
-    }
-
     if (tablePath == null || !new File(tablePath).exists()) {
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
       return null;
@@ -276,11 +238,40 @@ public class PinballXConnector extends BaseConnector {
       return null;
     }
 
+    EmulatorType type = null;
+    if (s.containsKey("SystemType")) {
+      int systemType = s.getInt("SystemType");
+      switch (systemType) {
+        case 1:
+          type = EmulatorType.VisualPinball;
+          break; // Visual Pinball
+        case 2:
+          type = EmulatorType.FuturePinball;
+          break; // Future Pinball
+        default:
+          type = EmulatorType.OTHER;
+          break; // Custom Exe
+      }
+    }
+    else {
+      type = EmulatorType.fromName(emuname);
+    }
+
+    Emulator e = new Emulator(type);
+    e.setId(emuId);
+    e.setName(emuname);
+    e.setDisplayName(emuname);
+
+    File mediaDir = new File(installDir, "Media/" + emuname);
+    if (mediaDir.exists() && mediaDir.isDirectory()) {
+      e.setDirMedia(mediaDir.getAbsolutePath());
+    }
+
     e.setDirGames(tablePath);
     e.setEmuLaunchDir(workingPath);
     e.setExeName(executable);
 
-    e.setGamesExt(gameext);
+    e.setGamesExt(type.getExtension());
     e.setVisible(enabled);
 
     return e;
@@ -346,19 +337,6 @@ public class PinballXConnector extends BaseConnector {
   //------------------------------------------------------------
 
   @Override
-  public MediaAccessStrategy getMediaAccessStrategy() {
-    if (pinballXMediaAccessStrategy == null) {
-      pinballXMediaAccessStrategy = new PinballXMediaAccessStrategy(getInstallationFolder());
-    }
-    return pinballXMediaAccessStrategy;
-  }
-
-  @Override
-  public TableAssetsAdapter getTableAssetAdapter() {
-    return assetsAdapter;
-  }
-
-  @Override
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {
     INIConfiguration iniConfiguration = loadPinballXIni();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
@@ -379,6 +357,20 @@ public class PinballXConnector extends BaseConnector {
       displayList.add(createDisplay(apron, VPinScreen.Menu));
     }
     return displayList;
+  }
+
+  private FrontendPlayerDisplay createDisplay(SubnodeConfiguration display, VPinScreen screen) {
+    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+    player.setName(screen.name());
+    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
+    player.setX(Integer.parseInt(display.getString("x", "0")));
+    player.setY(Integer.parseInt(display.getString("y", "0")));
+    player.setWidth(Integer.parseInt(display.getString("width", "0")));
+    player.setHeight(Integer.parseInt(display.getString("height", "0")));
+    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+
+    LOG.info("Created PinballX player display \"" + screen.name() + "\"");
+    return player;
   }
 
   //----------------------------------
@@ -409,7 +401,7 @@ public class PinballXConnector extends BaseConnector {
           parser.addGames(f, _games, _tabledetails, emu);
 
           List<PlaylistGame> pg = _games.stream()
-              .map(g -> toPlaylistGame(filenameToId(emu.getId(), g)))
+              .map(g -> toPlaylistGame(findIdFromFilename(emu.getId(), g)))
               .collect(Collectors.toList());
           p.setGames(pg);
 
@@ -421,11 +413,11 @@ public class PinballXConnector extends BaseConnector {
   }
 
   @Override
-  protected void savePlaylist(Playlist pl) {
+  protected void savePlaylist(int gameId, Playlist pl) {
     if (pl.getEmulatorId() != null) {
       Emulator emu = getEmulator(pl.getEmulatorId());
       PinballXTableParser parser = new PinballXTableParser();
-      List<String> games = pl.getGames().stream().map(pg -> getGameFilename(pg.getId())).collect(Collectors.toList());
+      List<GameEntry> games = pl.getGames().stream().map(pg -> getGameEntry(pg.getId())).collect(Collectors.toList());
 
       File pinballXFolder = getInstallationFolder();
       File playlistDb = new File(pinballXFolder, "/Databases/" + emu.getName() + "/" + pl.getName() + ".xml");
@@ -477,100 +469,14 @@ public class PinballXConnector extends BaseConnector {
 
   //----------------------------------
   // UI Management
-
+  
+  
   @Override
-  public boolean killFrontend() {
-    List<ProcessHandle> vpinProcesses = ProcessHandle
-        .allProcesses()
-        .filter(p -> p.info().command().isPresent() &&
-            (
-                p.info().command().get().contains("PinballX") ||
-                    p.info().command().get().contains("PinUpDisplay") ||
-                    p.info().command().get().contains("PinUpPlayer") ||
-                    p.info().command().get().contains("VPXStarter") ||
-                    p.info().command().get().contains("VPinballX") ||
-                    p.info().command().get().startsWith("VPinball") ||
-                    p.info().command().get().contains("B2SBackglassServerEXE") ||
-                    p.info().command().get().contains("DOF")))
-        .collect(Collectors.toList());
-
-    if (vpinProcesses.isEmpty()) {
-      LOG.info("No PinballX processes found, termination canceled.");
-      return false;
-    }
-
-    for (ProcessHandle pinUpProcess : vpinProcesses) {
-      String cmd = pinUpProcess.info().command().get();
-      boolean b = pinUpProcess.destroyForcibly();
-      LOG.info("Destroyed process '" + cmd + "', result: " + b);
-    }
-    return true;
-  }
-
-  @Override
-  public boolean isFrontendRunning() {
-    List<ProcessHandle> allProcesses = systemService.getProcesses();
-    for (ProcessHandle p : allProcesses) {
-      if (p.info().command().isPresent()) {
-        String cmdName = p.info().command().get();
-        if (cmdName.contains("PinballX")) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }
-
-  @Override
-  public boolean restartFrontend() {
-    killFrontend();
-
-    try {
-      List<String> params = Arrays.asList("cmd", "/c", "start", "PinballX.exe");
-      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-      executor.setDir(getInstallationFolder());
-      executor.executeCommandAsync();
-
-      //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-      StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-      if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-        LOG.error("PinballX restart failed: {}", standardErrorFromCommand);
-        return false;
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Failed to start PinballX again: " + e.getMessage(), e);
-      return false;
-    }
-    return true;
-  }
-
-  /**
-   * Ensures that the VPin Studio Logo is available for PinballX in the launcher.
-   */
-  public void setVPinStudioAppEnabled(boolean b) {
-    File pcWheelFolder = new File(this.getInstallationFolder(), "POPMedia/PC Games/Wheel/");
-    if (pcWheelFolder.exists()) {
-      File wheelIcon = new File(pcWheelFolder, UIDefaults.APP_TITLE + ".png");
-      if (!wheelIcon.exists()) {
-        try {
-          InputStream resourceAsStream = ResourceLoader.class.getResourceAsStream("logo-500.png");
-          FileUtils.copyInputStreamToFile(resourceAsStream, wheelIcon);
-          resourceAsStream.close();
-          LOG.info("Copied VPin Studio App icon.");
-
-          File thumbsFolder = new File(pcWheelFolder, "pthumbs");
-          de.mephisto.vpin.commons.utils.FileUtils.deleteFolder(thumbsFolder);
-        }
-        catch (Exception e) {
-          LOG.info("Failed to copy VPin App wheel icon: " + e.getMessage(), e);
-        }
-      }
-    }
+  protected String getFrontendExe() {
+    return "PinballX.exe";
   }
 
   //---------------- Utilities -----------------------------------------------------------------------------------------
-
 
   private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
     if (emulator.isVisualPinball()) {
@@ -639,19 +545,5 @@ public class PinballXConnector extends BaseConnector {
       LOG.info("Destroyed process '" + cmd + "', result: " + b);
     }
     return true;
-  }
-
-  private FrontendPlayerDisplay createDisplay(SubnodeConfiguration display, VPinScreen screen) {
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-    player.setName(screen.name());
-    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-    player.setX(Integer.parseInt(display.getString("x", "0")));
-    player.setY(Integer.parseInt(display.getString("y", "0")));
-    player.setWidth(Integer.parseInt(display.getString("width", "0")));
-    player.setHeight(Integer.parseInt(display.getString("height", "0")));
-    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
-
-    LOG.info("Created PinballX player display \"" + screen.name() + "\"");
-    return player;
   }
 }

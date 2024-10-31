@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.pinvol;
 
 import de.mephisto.vpin.commons.utils.NirCmd;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -54,7 +55,7 @@ public class PinVolService implements InitializingBean {
 
   private static void startPinVol() {
     try {
-      de.mephisto.vpin.commons.utils.FileUtils.writeBatch("./resources/PinVol.bat", "cd /d %~dp0\ncd resources\nstart /min PinVol.exe\nexit\n");
+      FileUtils.writeBatch("./resources/PinVol.bat", "cd /d %~dp0\ncd resources\nstart /min PinVol.exe\nexit\n");
       List<String> commands = Arrays.asList("cmd", "/c", "start", "PinVol.bat");
       SystemCommandExecutor executor = new SystemCommandExecutor(commands);
       executor.setDir(new File("./resources"));

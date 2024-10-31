@@ -56,17 +56,6 @@ public class GamesServiceClient extends VPinStudioClientService {
     this.loadingFlags.clear();
   }
 
-  public void clearVpxCache() {
-    // acceptable shortcut, else use below 
-    clearCache();
-
-    // ALTERNATIVE
-    //List<GameEmulatorRepresentation> gameEmulators = client.getFrontendService().getVpxGameEmulators();
-    //for (GameEmulatorRepresentation gameEmulator : gameEmulators) {
-    //  clearCache(gameEmulator.getId());
-    //}
-  }
-
   public void clearCache(int emulatorId) {
     this.allGames.remove(emulatorId);
     this.loadingFlags.remove(emulatorId);
@@ -76,9 +65,19 @@ public class GamesServiceClient extends VPinStudioClientService {
     getRestClient().get(API + "games/reload", Boolean.class);
   }
 
+  public void playGame(int id, String altExe) {
+    try {
+      Map<String, Object> params = new HashMap<>();
+      params.put("altExe", altExe);
+      getRestClient().put(API + "games/play/" + id, params);
+    } catch (Exception e) {
+      LOG.error("Failed to start game " + id + ": " + e.getMessage(), e);
+    }
+  }
+
   public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
-      String url = getRestClient().getBaseUrl() + API + "games/upload/table";
+      String url = getRestClient().getBaseUrl() + API + "games/upload";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
       map.add("mode", tableUploadDescriptor.name());
       map.add("gameId", gameId);
@@ -94,7 +93,7 @@ public class GamesServiceClient extends VPinStudioClientService {
 
   public UploadDescriptor proccessTableUpload(UploadDescriptor uploadDescriptor) throws Exception {
     try {
-      return getRestClient().post(API + "games/process/table", uploadDescriptor, UploadDescriptor.class);
+      return getRestClient().post(API + "games/process", uploadDescriptor, UploadDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed to process table: " + e.getMessage(), e);

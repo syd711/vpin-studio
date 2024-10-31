@@ -1,13 +1,14 @@
 package de.mephisto.vpin.server.altcolor;
 
-import de.mephisto.vpin.commons.utils.PackageUtil;
 import de.mephisto.vpin.restclient.altcolor.AltColor;
 import de.mephisto.vpin.restclient.altcolor.AltColorTypes;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.restclient.mame.MameOptions;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.mame.MameService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -38,6 +39,9 @@ public class AltColorService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   public boolean setAltColorEnabled(@NonNull String rom, boolean b) {
     if (!StringUtils.isEmpty(rom)) {
@@ -135,7 +139,7 @@ public class AltColorService implements InitializingBean {
 
   public void installAltColorFromArchive(UploaderAnalysis analysis, Game game, File out) throws IOException {
     if (analysis == null) {
-      analysis = new UploaderAnalysis(out);
+      analysis = new UploaderAnalysis(frontendService.getFrontend(), out);
       analysis.analyze();
     }
 

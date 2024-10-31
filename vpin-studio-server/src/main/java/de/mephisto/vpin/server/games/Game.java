@@ -172,6 +172,12 @@ public class Game {
   public boolean isVpxGame() {
     return this.emulator.isVpxEmulator();
   }
+  public boolean isFpGame() {
+    return this.emulator.isFpEmulator();
+  }
+  public boolean isFxGame() {
+    return this.emulator.isFxEmulator();
+  }
 
   public void setPupPackName(String pupPackName) {
     this.pupPackName = pupPackName;
@@ -358,7 +364,7 @@ public class Game {
     this.gameStatus = gameStatus;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public GameEmulator getEmulator() {
     return emulator;

@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.util.OSUtil;
 import de.mephisto.vpin.ui.PreferencesController;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -155,7 +156,7 @@ public class ClientSettingsPreferencesController implements Initializable {
   public static Debouncer debouncer = new Debouncer();
   private String networkShareTestPath;
   private UISettings uiSettings;
-  private final boolean supportsNetworkShare = SystemUtil.isWindows() || SystemUtil.isMac();
+  private final boolean supportsNetworkShare = OSUtil.isWindows() || OSUtil.isMac();
 
   @FXML
   private void onWinShareTest() {
@@ -609,7 +610,7 @@ public class ClientSettingsPreferencesController implements Initializable {
         return;
       }
 
-      String startsWith = SystemUtil.isWindows() ? "\\\\" : SystemUtil.isMac() ? "smb://" : null;
+      String startsWith = OSUtil.isWindows() ? "\\\\" : OSUtil.isMac() ? "smb://" : null;
       if (startsWith == null) {
         winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
       } else if (!newValue.startsWith(startsWith)) {
