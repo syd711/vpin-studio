@@ -6,8 +6,8 @@
 
 ## Changes
 
-- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available.
-- **Tables / Uploads**: Re-implemented the upload dialog for media packs and large parts of the backend here. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter dialog for table archive uploads.
+- **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. (http://mjrnet.org/pinscape/PinballY.php)
+- **Tables / Uploads**: Re-implemented the upload dialog for media packs and large parts of the backend here. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter/inspection dialog for table archive uploads.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/media-upload.png" width="650" />
 
@@ -21,13 +21,16 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/status-toggle.png" width="650" />
  
 - **Tables / Notes Box**: In notes dialog, the help texts //TODO, //ERROR and //OUTDATED are clickable and insert their text in the comment box.
-
-  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="600" />
-  
 - **Tables / VPS Entry**: In the VPS tab, the VPS table version links to VPF or VPU has a context menu that can be used to insert a TODO note in the table
-- **Tables / Future Pinball Support**: The support for Future Pinball has been massively improved. We have added the launch option, additional columns and the uploader can know also deal with FP bundles.
-- **Tables / Future Pinball VPS match**: Added ability to match future pinball tables against the VPS database. Also VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table. 
-- **Backglass Manager / Multiple Emulators**: The backglass manager now displays all backglasses coming from all VPX and FP emulators.
+  
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/vps/add-todo.png" width="600" />
+- **Tables / Future Pinball**: The support for Future Pinball has been massively improved.
+  - Added the launch button to launch Future Pinball tables.
+  - Added columns that were previously not shown for Future Pinball.
+  - Added the possibility to upload Future Pinball tables.
+  - Added ability to match Future Pinball tables against the VPS database. 
+  - The VPS versions dropdown has been filtered to show only versions of same emulator type as the selected table.
+  - The backglass manager now displays all backglasses coming from all VPX and FP emulators.
 - **Preferences / Backglass Server**: Selection of emulator is no more needed, uses instead the B2SServer installation folder.
 - **Preferences / System Settings**: Added the new preferences menu **System Settings** where operating relevant settings are configured. The auto-shutdown and shutdown options have been moved to this new preference page.
 - **Preferences / System Settings**: Added the new option **Disabled Sticky Keys** to disable the sticky key options of Windows.
@@ -45,8 +48,8 @@
 - **System KeyEvent Handling**: Fixed key handling to avoid table deletion on DEL key press in preference panel.
 - **Studio Client Exit Confirmations**: The question about launching the frontend on exit is now only shown if the server setting "Launch Frontend on exit" is set to _false_.
 - **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
-- **Drop-in Folder**: Fixed drop-in folder for **macOS and Linux**. The recursive watching of the filesystem doesn't work there, so right now only the flat folder is supported for these operating systems. 
-- **Drop-in Folder**: Fixed menu button initially enabled even though being disabled in the preferences. 
+- **Drop-in Folder**: Fixed drop-in folder for **macOS and Linux**. The recursive watching of filesystem changes also works for these operating systems now. 
+- **Drop-in Folder**: Fixed menu button being initially visible even though being disabled in the preferences. 
 - **VPS Data**: Fixed issue that caused all tutorial URLs being ignored.
 - **Highscore Cards**: Fixed missing status updates. When a backglass is uploaded, the default background information for a game is refreshed too.
 - **Dialog Positioning**: Dialogs are now always opened on the screen the main Studio Window is located. So only the size of a dialog is restored, not the previous position. 
