@@ -645,6 +645,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
+        if(mouseEvent.isShiftDown()) {
+          onMediaEdit();
+          return;
+        }
         onTableEdit();
       }
     }

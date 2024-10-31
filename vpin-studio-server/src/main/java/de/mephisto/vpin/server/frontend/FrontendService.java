@@ -470,7 +470,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return mediaStrategy != null ? mediaStrategy.getPlaylistMediaFolder(playList, screen) : null;
   }
 
-  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, String extension) {
+  public File getMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
     return mediaStrategy != null ? mediaStrategy.getGameMediaFolder(game, screen, extension) : null;
   }

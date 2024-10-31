@@ -1,12 +1,12 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.connectors.assets.TableAsset;
 import de.mephisto.vpin.connectors.assets.TableAssetConf;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.assets.TableAssetsService;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusEventsResource;
@@ -211,24 +211,6 @@ public class GameMediaResource {
     }
   }
 
-//  @PostMapping("/packupload")
-//  public UploadDescriptor uploadPack(@RequestParam(value = "file", required = false) MultipartFile file,
-//                                     @RequestParam("objectId") Integer gameId) {
-//    UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
-//    try {
-//      descriptor.upload();
-//      universalUploadService.importArchiveBasedAssets(descriptor, null, AssetType.FRONTEND_MEDIA);
-//      return descriptor;
-//    }
-//    catch (Exception e) {
-//      LOG.error(AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage(), e);
-//      throw new ResponseStatusException(INTERNAL_SERVER_ERROR, AssetType.FRONTEND_MEDIA.name() + " upload failed: " + e.getMessage());
-//    }
-//    finally {
-//      descriptor.finalizeUpload();
-//    }
-//  }
-
   @DeleteMapping("/media/{gameId}/{screen}/{file}")
   public boolean deleteMedia(@PathVariable("gameId") int gameId, @PathVariable("screen") VPinScreen screen, @PathVariable("file") String filename) {
     Game game = frontendService.getGame(gameId);
@@ -243,6 +225,28 @@ public class GameMediaResource {
       return media.delete();
     }
     return false;
+  }
+
+
+  @DeleteMapping("/media/{gameId}")
+  public boolean deleteMedia(@PathVariable("gameId") int gameId) {
+    Game game = frontendService.getGame(gameId);
+    VPinScreen[] values = VPinScreen.values();
+    for (VPinScreen screen : values) {
+      FrontendMedia gameMedia = frontendService.getGameMedia(game);
+      List<FrontendMediaItem> mediaItems = gameMedia.getMediaItems(screen);
+      for (FrontendMediaItem mediaItem : mediaItems) {
+        File file = mediaItem.getFile();
+        if (screen.equals(VPinScreen.Wheel)) {
+          WheelAugmenter augmenter = new WheelAugmenter(file);
+          augmenter.deAugment();
+        }
+        if (file.delete()) {
+          LOG.info("Deleted game media: {}", file.getAbsolutePath());
+        }
+      }
+    }
+    return true;
   }
 
   @PutMapping("/media/{gameId}/{screen}")
