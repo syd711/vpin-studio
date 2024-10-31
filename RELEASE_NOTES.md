@@ -7,7 +7,7 @@
 ## Changes
 
 - **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available.
-- **Tables / Uploads**: Re-implemented the upload dialog for media packs. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter dialog for table archive uploads.
+- **Tables / Uploads**: Re-implemented the upload dialog for media packs and large parts of the backend here. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter dialog for table archive uploads.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/media-upload.png" width="650" />
 
@@ -16,7 +16,7 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/preferences/modification-date.png" width="650" />
 
-- **Tables / Enable or Disable tables**: In the context menu of tables, added a one click enable / disable table menu
+- **Tables / Enable or Disable Tables**: In the context menu of tables, a menu item to enable/disable the selected table has been added. This action works as a bulk action and is applied to all selected games.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/status-toggle.png" width="650" />
  
@@ -45,7 +45,7 @@
 - **System KeyEvent Handling**: Fixed key handling to avoid table deletion on DEL key press in preference panel.
 - **Studio Client Exit Confirmations**: The question about launching the frontend on exit is now only shown if the server setting "Launch Frontend on exit" is set to _false_.
 - **Tables / PUP Packs**: Fixed duplicate showing of error messages for PUP pack option scripts.
-- **Drop-in Folder**: Fixed drop-in folder for macOS and Linux. The recursive watching of the filesystem doesn't work there, so right now only the flat folder is supported for these operating systems. 
+- **Drop-in Folder**: Fixed drop-in folder for **macOS and Linux**. The recursive watching of the filesystem doesn't work there, so right now only the flat folder is supported for these operating systems. 
 - **Drop-in Folder**: Fixed menu button initially enabled even though being disabled in the preferences. 
 - **VPS Data**: Fixed issue that caused all tutorial URLs being ignored.
 - **Highscore Cards**: Fixed missing status updates. When a backglass is uploaded, the default background information for a game is refreshed too.

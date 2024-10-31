@@ -563,6 +563,15 @@ public class TableUploadController implements Initializable, DialogController {
         keepNamesCheckbox.setDisable(!sameEmulator);
         backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
       }
+
+      EmulatorType emulatorType = emulatorRepresentation.getEmulatorType();
+      if (this.uploaderAnalysis != null) {
+        this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
+      }
+      else if(selection != null){
+        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendCached(), selection);
+        this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
+      }
     });
 
     ToggleGroup toggleGroup = new ToggleGroup();

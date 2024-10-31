@@ -13,6 +13,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
+import static de.mephisto.vpin.ui.Studio.client;
+
 public class TableDeleteProgressModel extends ProgressModel<Integer> {
   private final static Logger LOG = LoggerFactory.getLogger(TableDeleteProgressModel.class);
   private final TableOverviewController tableOverviewController;
@@ -69,9 +71,9 @@ public class TableDeleteProgressModel extends ProgressModel<Integer> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, Integer gameId) {
     try {
-      GameRepresentation game = Studio.client.getGameCached(gameId);
+      GameRepresentation game = client.getGameService().getGame(gameId);
       descriptor.setGameIds(Arrays.asList(gameId));
-      Studio.client.getGameService().deleteGame(descriptor, game);
+      client.getGameService().deleteGame(descriptor, game);
     }
     catch (Exception e) {
       LOG.error("Error during dismissal: " + e.getMessage(), e);
