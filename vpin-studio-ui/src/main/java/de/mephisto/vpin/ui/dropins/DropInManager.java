@@ -168,17 +168,16 @@ public class DropInManager implements LocalSettingsChangeListener, StudioEventLi
 
   @Override
   public void notifyFolderChange(@NonNull File folder, @Nullable File file) {
-    if (file == null || FileUtils.isTempFile(file)) {
-      return;
-    }
     Platform.runLater(() -> {
       reload();
       dropInsBtn.getGraphic().setVisible(true);
-      Notifications.create()
-          .title("Drop-In Modification Detected!")
-          .text(file.getAbsolutePath())
-          .graphic(WidgetFactory.createCheckboxIcon())
-          .showInformation();
+      if (file != null && FileUtils.isTempFile(file)) {
+        Notifications.create()
+            .title("Drop-In Modification Detected!")
+            .text(file.getAbsolutePath())
+            .graphic(WidgetFactory.createCheckboxIcon())
+            .showInformation();
+      }
     });
   }
 }
