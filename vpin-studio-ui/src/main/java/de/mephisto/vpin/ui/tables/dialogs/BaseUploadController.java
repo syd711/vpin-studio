@@ -128,10 +128,15 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       this.selection = fileChooser.showOpenMultipleDialog(stage);
     }
     else {
-      this.selection = Arrays.asList(fileChooser.showOpenDialog(stage));
+      File file = fileChooser.showOpenDialog(stage);
+      if (file != null) {
+        this.selection = Arrays.asList(file);
+      }
     }
 
-    refreshSelection(null);
+    if (selection != null) {
+      refreshSelection(null);
+    }
   }
 
   @Override

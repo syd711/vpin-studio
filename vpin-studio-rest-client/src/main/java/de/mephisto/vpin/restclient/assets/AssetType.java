@@ -116,13 +116,13 @@ public enum AssetType {
         return "PUP Pack";
       }
       case FRONTEND_MEDIA: {
-        return "Frontend Media File";
+        return "Frontend Media";
       }
       case MUSIC_BUNDLE: {
         return "Music Bundle";
       }
       case TABLE: {
-        return "Table File";
+        return "Table";
       }
       default: {
         return this.name();
