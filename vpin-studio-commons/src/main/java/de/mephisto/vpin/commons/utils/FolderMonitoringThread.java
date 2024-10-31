@@ -1,8 +1,6 @@
 package de.mephisto.vpin.commons.utils;
 
-import com.sun.nio.file.ExtendedWatchEventModifier;
 import de.mephisto.vpin.restclient.util.FileUtils;
-import de.mephisto.vpin.restclient.util.OSUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.*;
-import java.nio.file.WatchEvent.Kind;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
 public class FolderMonitoringThread {
   private final static Logger LOG = LoggerFactory.getLogger(FolderMonitoringThread.class);
@@ -59,27 +60,49 @@ public class FolderMonitoringThread {
     catch (IOException e) {
       LOG.error("Failed to create watch service: " + e.getMessage(), e);
     }
+
+   final Map<WatchKey, Path> keys = new HashMap<>();
+
+    Consumer<Path> register = p -> {
+      if (!p.toFile().exists() || !p.toFile().isDirectory()) {
+        throw new RuntimeException("folder " + p + " does not exist or is not a directory");
+      }
+      try {
+        Files.walkFileTree(p, new SimpleFileVisitor<Path>() {
+          @Override
+          public FileVisitResult preVisitDirectory(Path path, BasicFileAttributes attrs) throws IOException {
+            LOG.info("registering " + path + " in watcher service");
+            WatchKey watchKey = path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
+            keys.put(watchKey, path);
+            return FileVisitResult.CONTINUE;
+          }
+        });
+      } catch (IOException e) {
+        LOG.error("Error registering path " + p);
+      }
+    };
+
+    register.accept(folder.toPath());
+
     monitorThread = new Thread(() -> {
       Thread.currentThread().setName("Folder Monitoring Thread for \"" + folder + "\"");
       LOG.info("Launched " + Thread.currentThread().getName());
       try {
-        final Path path = folder.toPath();
-
-        if (OSUtil.isWindows()) {
-          path.register(watchService, new Kind[]{StandardWatchEventKinds.ENTRY_CREATE,
-                  StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY},
-              ExtendedWatchEventModifier.FILE_TREE);
-        }
-        else {
-          path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_DELETE, StandardWatchEventKinds.ENTRY_MODIFY);
-        }
-
         while (running.get()) {
           try {
             final WatchKey wk = watchService.take();
+
+            Path dir = keys.get(wk);
+
+            if (dir == null) {
+              LOG.info("WatchKey " + wk + " not recognized!");
+              continue;
+            }
+
+            boolean notifyGlobal = false;
             for (WatchEvent<?> event : wk.pollEvents()) {
               final Path filedropped = (Path) event.context();
-              File f = new File(folder, filedropped.toString());
+              File f = new File(dir.toFile(), filedropped.toString());
               if (f.isFile()) {
                 if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
                   if (FileUtils.isTempFile(f)) {
@@ -94,10 +117,21 @@ public class FolderMonitoringThread {
                   notifyUpdates(f);
                 }
               }
-
-              if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
-                notifyUpdates(null);
+              else if (f.isDirectory()) {
+                if (event.kind().equals(StandardWatchEventKinds.ENTRY_CREATE)) {
+                  Path absPath = dir.resolve(filedropped);
+                  register.accept(absPath);
+                  notifyGlobal = true;
+                }
               }
+              
+              if (event.kind().equals(StandardWatchEventKinds.ENTRY_DELETE)) {
+                notifyGlobal = true;
+              }
+            }
+
+            if (notifyGlobal) {
+              notifyUpdates(null);
             }
 
             wk.reset();
