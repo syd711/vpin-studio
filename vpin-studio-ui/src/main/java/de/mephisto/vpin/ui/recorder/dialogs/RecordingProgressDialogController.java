@@ -178,6 +178,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     JobPoller.getInstance().removeListener(this);
     jobDescriptor.setProgress(1);
 
+    //refetch finished job for errors status
+    jobDescriptor = client.getJobsService().getJob(jobDescriptor.getUuid());
+
     Platform.runLater(() -> {
       stopBtn.setVisible(false);
       progressBar.setDisable(true);
@@ -194,10 +197,10 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       });
 
       if (jobDescriptor.getError() != null) {
-        WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError());
+        WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError(), jobDescriptor.getErrorHint());
       }
       else if (cancelled) {
-        WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.");
+        WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.", jobDescriptor.getErrorHint());
       }
       else {
         WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + games.size() + " game(s).");

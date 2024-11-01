@@ -479,7 +479,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
-          while (isProcessRunning(name)) {
+          while (!isProcessRunning(name)) {
             Thread.sleep(1000);
           }
           return true;

@@ -65,4 +65,12 @@ public class JobService {
     }
     return new ArrayList<>(jobList);
   }
+
+  public JobDescriptor getJob(String uuid) {
+    Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getUuid().equals(uuid)).findFirst();
+    if (job.isPresent()) {
+      return job.get();
+    }
+    return null;
+  }
 }

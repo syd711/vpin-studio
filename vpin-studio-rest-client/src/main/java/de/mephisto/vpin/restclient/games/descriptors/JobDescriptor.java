@@ -14,6 +14,7 @@ public class JobDescriptor {
   private JobType jobType;
   private double progress;
   private String error;
+  private String errorHint;
   private int gameId;
   private boolean cancelled;
   private boolean cancelable;
@@ -24,6 +25,14 @@ public class JobDescriptor {
 
   @JsonIgnore
   private Job job;
+
+  public String getErrorHint() {
+    return errorHint;
+  }
+
+  public void setErrorHint(String errorHint) {
+    this.errorHint = errorHint;
+  }
 
   public int getTasksExecuted() {
     return tasksExecuted;
