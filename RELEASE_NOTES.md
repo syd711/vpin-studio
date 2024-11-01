@@ -1,10 +1,19 @@
-## Release Notes 3.9
+## Release Notes 3.9.1
 
-## Breaking Changes
+## Bugfixes
+
+- Fixed missing VPS table version resolving for Zen Studios games.
+- Fixed VPS auto matching for Zen Studios games.
+
+
+
+### Release Notes 3.9
+
+### Breaking Changes
 
 - **DOF Integration**: The VPin Studio no longer supports older DOF installations that have different configuration folders for 32 and 64 bit. Instead, only the new folder structure with a shared **Config** folder is support. Please update your installation by downloading the latest DOF version from https://github.com/mjrgh/DirectOutput/releases.
 
-## Changes
+### Changes
 
 - **PinballY Frontend**: Added support of the pinballY frontend, like others, possibility to manage tables, favorites, playlists and media, But no media search is available. (http://mjrnet.org/pinscape/PinballY.php)
 - **Tables / Uploads**: Re-implemented the upload dialog for media packs and large parts of the backend here. The big disadvantage of the previous version was, that archives with a backglass and frontend media must have been uploaded twice. The new dialog detects all assets types and lets you also select/de-select them for uploading. It is also used as filter/inspection dialog for table archive uploads.
@@ -42,7 +51,7 @@
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/misc/navi-buttons.png" width="100" />
 
 
-## Bugfixes
+### Bugfixes
 
 - **Studio Update/Restart Error** Fixed an issue where the macOS client update process would fail to restart client. Improved macOS upgrade process. **Note: the macOS update process will work correctly AFTER this release update.**
 - **System KeyEvent Handling**: Fixed key handling to avoid table deletion on DEL key press in preference panel.
@@ -54,7 +63,7 @@
 - **Highscore Cards**: Fixed missing status updates. When a backglass is uploaded, the default background information for a game is refreshed too.
 - **Dialog Positioning**: Dialogs are now always opened on the screen the main Studio Window is located. So only the size of a dialog is restored, not the previous position. 
 
-## VPin Mania
+### VPin Mania
 
 - Added **Delete Table Scores** button to the **Player Statistics** view. This way you can delete e.g. default highscores that have been pushed with your account name. I know this is not an optimal solution yet, but it helps users to at least clean up their own statistics. In the long run, some filtering must be provided to avoid the submission of default scores.
 

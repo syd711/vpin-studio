@@ -1,9 +1,11 @@
 package de.mephisto.vpin.restclient.games;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import de.mephisto.vpin.connectors.vps.model.VpsFeatures;
 import de.mephisto.vpin.restclient.frontend.EmulatorType;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class GameEmulatorRepresentation {
   private int id;
@@ -137,6 +139,25 @@ public class GameEmulatorRepresentation {
     this.descriptions = descriptions;
   }
 
+  public List<String> getVpsEmulatorFeatures() {
+    if (this.getEmulatorType() != null) {
+      switch (this.emulatorType) {
+        case VisualPinball: {
+          return Arrays.asList(VpsFeatures.VPX);
+        }
+        case FuturePinball: {
+          return Arrays.asList(VpsFeatures.FP);
+        }
+        case ZenFX:
+        case ZenFX2:
+        case ZenFX3: {
+          return Arrays.asList(VpsFeatures.FX, VpsFeatures.FX3);
+        }
+      }
+    }
+
+    return Arrays.asList(VpsFeatures.VPX);
+  }
 
   @Override
   public boolean equals(Object o) {

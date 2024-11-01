@@ -170,11 +170,28 @@ public class VpsTable implements VPSEntity {
     return tableFiles.stream().filter(t -> isValidTableVersion(t, tableFormat)).collect(Collectors.toList());
   }
 
+  public List<VpsTableVersion> getTableFilesForFormat(List<String> tableFormat) {
+    return tableFiles.stream().filter(t -> isValidTableVersion(t, tableFormat)).collect(Collectors.toList());
+  }
+
   private boolean isValidTableVersion(VpsTableVersion t, String tableFormat) {
     if (t.getTableFormat() == null || t.getTableFormat().length() == 0) {
       return true;
     }
     return t.getTableFormat().equals(tableFormat);
+  }
+
+  private boolean isValidTableVersion(VpsTableVersion t, List<String> tableFormats) {
+    for (String tableFormat : tableFormats) {
+      if (t.getTableFormat() == null || t.getTableFormat().length() == 0) {
+        return true;
+      }
+
+      if (t.getTableFormat().equals(tableFormat)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public void setTableFiles(List<VpsTableVersion> tableFiles) {

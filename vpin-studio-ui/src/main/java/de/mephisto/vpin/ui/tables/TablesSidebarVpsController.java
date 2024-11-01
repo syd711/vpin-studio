@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -308,7 +309,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
       VpsTable tableById = client.getVpsService().getTableById(vpsTableId);
       if (tableById != null) {
-        refreshTableView(tableById, game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX);
+        GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+        List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
+        refreshTableView(tableById, tableFormats);
         if (!StringUtils.isEmpty(vpsTableVersionId)) {
           VpsTableVersion version = tableById.getTableVersionById(vpsTableVersionId);
           tableVersionsCombo.setValue(version);
@@ -317,10 +320,11 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
     }
   }
 
-  private void refreshTableView(VpsTable vpsTable, String tableFormat) {
+  private void refreshTableView(VpsTable vpsTable, List<String> tableFormats) {
     versionAuthorsLabel.setText("-");
     versionAuthorsLabel.setTooltip(new Tooltip(null));
-    List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(tableFormat));
+
+    List<VpsTableVersion> tableFiles = new ArrayList<>(vpsTable.getTableFilesForFormat(tableFormats));
     if (!tableFiles.isEmpty()) {
       tableVersionsCombo.setItems(FXCollections.emptyObservableList());
       tableFiles.add(0, null);
@@ -452,9 +456,15 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
   }
 
   public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
-    final List<VpsTableVersion> tableVersions = game != null ?
-        vpsTable.getTableFilesForFormat(game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX) :
-        vpsTable.getTableFiles();
+    List<VpsTableVersion> tableVersions;
+    if(game != null) {
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      List<String> tableFormats  = emulatorRepresentation.getVpsEmulatorFeatures();
+      tableVersions = vpsTable.getTableFilesForFormat(tableFormats);
+    }
+    else {
+      tableVersions = vpsTable.getTableFiles();
+    }
 
     if (tableVersions == null || tableVersions.isEmpty()) {
       return;
