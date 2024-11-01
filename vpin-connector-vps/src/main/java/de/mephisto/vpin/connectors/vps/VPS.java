@@ -3,7 +3,9 @@ package de.mephisto.vpin.connectors.vps;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import de.mephisto.vpin.connectors.vps.model.*;
+import de.mephisto.vpin.connectors.vps.model.VPSChanges;
+import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +119,7 @@ public class VPS {
     List<VpsTable> results = new ArrayList<>();
     for (VpsTable table : this.tables) {
       List<VpsAuthoredUrls> romFiles = table.getRomFiles();
-      if (romFiles != null) {
+      if (romFiles != null && rom != null) {
         for (VpsAuthoredUrls romFile : romFiles) {
           if (romFile.getVersion() != null && romFile.getVersion().equalsIgnoreCase(rom)) {
             results.add(table);
@@ -153,9 +155,9 @@ public class VPS {
   public void loadTables(InputStream in) {
     try {
       VpsTable[] vpsTables = objectMapper.readValue(in, VpsTable[].class);
-      this.tables = Arrays.stream(vpsTables)
-          .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
-          .collect(Collectors.toList());
+      this.tables = Arrays.asList(vpsTables);
+//          .filter(t -> t.getFeatures() == null || t.getFeatures().isEmpty() || t.getFeatures().contains(VpsFeatures.VPX) || !t.getFeatures().contains(VpsFeatures.FP))
+//          .collect(Collectors.toList());
       LOG.info(this.tables.size() + " Tables loaded from database");
     }
     catch (Exception e) {
