@@ -77,6 +77,9 @@ public class ScreenRecorderPanelController implements Initializable {
 
     this.recordingScreen = recordingScreen;
     screenName.setText(recordingScreen.getScreen().name());
+    if(recordingScreen.getScreen().name().equalsIgnoreCase("Menu")) {
+      screenName.setText(recordingScreen.getScreen().name() + "/FullDMD");
+    }
 
     recordModeComboBox.setItems(FXCollections.observableList(RECORD_MODE_LIST));
 

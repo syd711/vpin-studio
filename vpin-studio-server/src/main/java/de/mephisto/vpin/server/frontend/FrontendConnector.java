@@ -153,12 +153,12 @@ public interface FrontendConnector {
 
   boolean restartFrontend(boolean wait);
 
+  //----------------------------------
+  // Recording
   boolean launchGame(Game game, boolean wait);
 
   boolean isEmulatorRunning(GameEmulator emulator);
 
-  //----------------------------------
-  // Pinup control management
   void initializeRecording();
 
   void finalizeRecording();

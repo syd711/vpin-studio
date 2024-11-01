@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> 
+public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel>
     implements Initializable {
 
   @FXML
@@ -120,7 +120,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     return !filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator());
   }
 
-  private GameEmulatorRepresentation getEmulatorSelection() {
+  protected GameEmulatorRepresentation getEmulatorSelection() {
     return ((TableOverviewController) tableController).getEmulatorSelection();
   }
 

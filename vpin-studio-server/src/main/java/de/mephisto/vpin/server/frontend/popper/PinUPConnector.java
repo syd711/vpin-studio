@@ -73,6 +73,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private int sqlVersion = DB_VERSION;
 
   private TableAssetsAdapter assetsAdapter;
+  private PupEventEmitter pupEventEmitter;
 
   @Override
   public void clearCache() {
@@ -2135,6 +2136,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public void finalizeRecording() {
+    pupEventEmitter.sendPupEvent(11, 2);
     pupServer.stopServer();
   }
 
@@ -2245,6 +2247,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    this.pupServer = new PupServer(this, systemService);
+    try {
+      this.pupServer = new PupServer(this, systemService);
+      this.pupEventEmitter = new PupEventEmitter(this.getInstallationFolder());
+    }
+    catch (Exception e) {
+      LOG.error("Failed to initialize PinUPConnector: {}", e.getMessage(), e);
+    }
   }
 }

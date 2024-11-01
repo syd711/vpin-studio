@@ -47,6 +47,9 @@ public enum VPinScreen {
     if ("Apron/FullDMD".equalsIgnoreCase(name)) {
       return Menu;
     }
+    if ("Menu".equalsIgnoreCase(name)) {
+      return Menu;
+    }
     if ("Music".equalsIgnoreCase(name)) {
       return Audio;
     }

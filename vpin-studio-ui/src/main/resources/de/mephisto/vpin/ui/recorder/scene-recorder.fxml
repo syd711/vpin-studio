@@ -89,24 +89,24 @@
             </items>
         </ToolBar>
     </top>
-   <left>
-        <BorderPane fx:id="tableWrapper" styleClass="subpanel" BorderPane.alignment="CENTER">
+    <center>
+        <BorderPane BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="6.0" />
+            </BorderPane.margin>
             <center>
                 <StackPane fx:id="loaderStack">
-                    <BorderPane.margin>
-                        <Insets bottom="6.0" />
-                    </BorderPane.margin>
                     <children>
                         <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
                             <children>
                                 <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
                                     <columns>
-                              <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="40.0" prefWidth="40.0" style="-fx-alignment: BASELINE_CENTER;">
-                                 <graphic>
-                                    <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
-                                 </graphic>
-                              </TableColumn>
-                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="290.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                        <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;">
+                                            <graphic>
+                                                <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
+                                            </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
                                         <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Playfield">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
@@ -139,35 +139,33 @@
                     </children>
                 </StackPane>
             </center>
-         <bottom>
-            <BorderPane BorderPane.alignment="CENTER">
-               <top>
-                  <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="TOP_RIGHT">
-                     <BorderPane.margin>
-                        <Insets bottom="3.0" />
-                     </BorderPane.margin>
-                  </Label>
-               </top>
-            </BorderPane>
-         </bottom>
+            <bottom>
+                <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                    <BorderPane.margin>
+                        <Insets bottom="3.0" right="3.0" />
+                    </BorderPane.margin>
+                </Label>
+            </bottom>
         </BorderPane>
-   </left>
-   <center>
-        <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+    </center>
+    <right>
+       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <ScrollPane>
+                <ScrollPane hbarPolicy="NEVER">
                     <content>
                         <VBox fx:id="recordingOptions" styleClass="base-component">
-                        </VBox>
+                            <padding>
+                         <Insets right="12.0" />
+                     </padding></VBox>
                     </content>
                 </ScrollPane>
             </center>
-         <BorderPane.margin>
-            <Insets />
+            <BorderPane.margin>
+             <Insets />
          </BorderPane.margin>
-         <padding>
-            <Insets bottom="12.0" />
+            <padding>
+             <Insets bottom="12.0" />
          </padding>
         </BorderPane>
-   </center>
+   </right>
 </BorderPane>

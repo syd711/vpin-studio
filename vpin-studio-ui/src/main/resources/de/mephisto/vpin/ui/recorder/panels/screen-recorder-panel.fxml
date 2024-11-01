@@ -6,6 +6,7 @@
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
@@ -15,6 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
 
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController">
    <center>
@@ -32,8 +34,8 @@
                   </BorderPane>
                   <GridPane hgap="3.0" vgap="3.0">
                     <columnConstraints>
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="143.2000732421875" minWidth="10.0" prefWidth="129.60009765625" />
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="168.0" minWidth="10.0" prefWidth="166.39990234375" />
                     </columnConstraints>
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -55,13 +57,24 @@
                            </font>
                         </CheckBox>
                         <Label styleClass="default-text" text="Recording Options:" GridPane.rowIndex="1" />
-                        <Label styleClass="default-text" text="Duration:" GridPane.rowIndex="2" />
+                        <Label styleClass="default-text" text="Recording Duration:" GridPane.rowIndex="2" />
                         <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Screen:" />
                         <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Recording Delay:" GridPane.rowIndex="3" />
                         <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <children>
                               <Spinner fx:id="delaySpinner" prefWidth="80.0" />
                               <Label styleClass="default-text" text="seconds" />
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="The amount of seconds to wait after the game has been loaded." wrapText="true" />
+                                 </tooltip>
+                              </Label>
                            </children>
                         </HBox>
                      </children>

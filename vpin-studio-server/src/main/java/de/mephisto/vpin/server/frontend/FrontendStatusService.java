@@ -8,6 +8,8 @@ import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.games.GameList;
 import de.mephisto.vpin.restclient.games.GameListItem;
 import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
+import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -65,6 +67,8 @@ public class FrontendStatusService implements InitializingBean {
 
   @Autowired
   private VpsService vpsService;
+
+  private boolean eventsEnabled = true;
 
   public FrontendControl getPinUPControlFor(VPinScreen screen) {
     return frontendService.getPinUPControlFor(screen);
@@ -129,6 +133,11 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
+    if (!eventsEnabled) {
+      LOG.info("Skipping table status change event, because the event handling is disabled");
+      return;
+    }
+
     TableStatusChangedEvent event = new TableStatusChangedEvent() {
       @NonNull
       @Override
@@ -161,22 +170,95 @@ public class FrontendStatusService implements InitializingBean {
   }
 
   public void notifyFrontendLaunch() {
+    if (!eventsEnabled) {
+      LOG.info("Skipping notifyFrontendLaunch, because the event handling is disabled");
+      return;
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendLaunched();
     }
   }
 
   public void notifyFrontendRestart() {
+    if (!eventsEnabled) {
+      LOG.info("Skipping notifyFrontendRestart, because the event handling is disabled");
+      return;
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendRestarted();
     }
   }
 
   public void notifyFrontendExit() {
+    if (!eventsEnabled) {
+      LOG.info("Skipping notifyFrontendExit, because the event handling is disabled");
+      return;
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendExited();
     }
   }
+
+  public boolean gameLaunch(String table) {
+    if (!eventsEnabled) {
+      LOG.info("Skipping gameLaunch, because the event handling is disabled");
+      return true;
+    }
+
+    LOG.info("Received game launch event for " + table.trim());
+    Game game = resolveGame(table);
+    if (game == null) {
+      LOG.warn("No game found for name '" + table);
+      return false;
+    }
+
+//    if (gameStatusService.getStatus().getGameId() == game.getId()) {
+//      LOG.info("Skipped launch event, since the game has been marked as active already.");
+//      return false;
+//    }
+
+    new Thread(() -> {
+      Thread.currentThread().setName("Game Launch Thread");
+      notifyTableStatusChange(game, true, TableStatusChangedOrigin.ORIGIN_POPPER);
+    }).start();
+    return game != null;
+  }
+
+  public boolean gameExit(String table) {
+    if (!eventsEnabled) {
+      LOG.info("Skipping gameExit, because the event handling is disabled");
+      return true;
+    }
+
+    LOG.info("Received game exit event for " + table.trim());
+    Game game = resolveGame(table);
+    new Thread(() -> {
+      Thread.currentThread().setName("Game Exit Thread");
+      if (game == null) {
+        LOG.warn("No game found for name '" + table);
+        return;
+      }
+
+      Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
+      SLOG.initLog(game.getId());
+//      if (!gameStatusService.getStatus().isActive()) {
+//        LOG.info("Skipped exit event, since the no game is currently running.");
+//        SLOG.info("Skipped event processing, since the no game is currently running.");
+//        return;
+//      }
+
+      notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
+      HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+      if (highscoreEventLog != null) {
+        gameService.saveEventLog(highscoreEventLog);
+      }
+    }).start();
+    return game != null;
+  }
+
 
   /**
    * moved from VpsService to break circular dependency.
@@ -192,6 +274,7 @@ public class FrontendStatusService implements InitializingBean {
     return vpsMatch;
   }
 
+  //TODO why here?
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
     String vpsTableId = game.getExtTableId();
@@ -199,6 +282,7 @@ public class FrontendStatusService implements InitializingBean {
     return autoFill(game, tableDetails, vpsTableId, vpsTableVersionId, simulate);
   }
 
+  //TODO why here?
   @NonNull
   public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate) {
     TableInfo tableInfo = vpxService.getTableInfo(game);
@@ -347,6 +431,7 @@ public class FrontendStatusService implements InitializingBean {
     return tableDetails;
   }
 
+  //TODO why here?
   public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
     // keep track of the match in the internal database
     if (gameService.vpsLink(gameId, extTableId, extTableVersionId)) {
@@ -355,6 +440,7 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
+  //TODO why here?
   public void fixGameVersion(int gameId, String version, boolean overwrite) {
     // keep track of the version  in the internal database
     if (gameService.fixVersion(gameId, version, overwrite)) {
@@ -366,6 +452,8 @@ public class FrontendStatusService implements InitializingBean {
       }
     }
   }
+
+  //TODO why here?
 
   /**
    * Some fallback: we use the VPX script metadata if the VPS version data has not been applied.
@@ -395,6 +483,7 @@ public class FrontendStatusService implements InitializingBean {
     frontendService.updateTableFileUpdated(gameId);
   }
 
+  //TODO why here?
   public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
     //fetch existing data first
     TableDetails oldDetails = getTableDetails(gameId);
@@ -459,6 +548,7 @@ public class FrontendStatusService implements InitializingBean {
 
     //rename the game name, which results in renaming all assets
     if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
+      //TODO this smells!
       renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
     }
 
@@ -537,6 +627,7 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
+  //TODO why here?
   public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {
     VPinScreen[] values = VPinScreen.values();
     int assetRenameCounter = 0;
@@ -589,6 +680,34 @@ public class FrontendStatusService implements InitializingBean {
 
   public int getVersion() {
     return frontendService.getVersion();
+  }
+
+  private Game resolveGame(String table) {
+    File tableFile = new File(table.trim());
+
+    // derive the emulator from the table folder
+    int emuId = -1;
+    for (GameEmulator emu : getGameEmulators()) {
+      if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
+        emuId = emu.getId();
+        break;
+      }
+    }
+
+    Game game = gameService.getGameByFilename(emuId, tableFile.getName());
+    if (game == null && tableFile.getParentFile() != null) {
+      game = gameService.getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+    }
+    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
+    return game;
+  }
+
+  public boolean isEventsEnabled() {
+    return eventsEnabled;
+  }
+
+  public void setEventsEnabled(boolean eventsEnabled) {
+    this.eventsEnabled = eventsEnabled;
   }
 
   @Override
