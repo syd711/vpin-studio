@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -47,13 +48,16 @@ public class RecorderService {
   @Autowired
   private FrontendStatusService frontendStatusService;
 
+  private JobDescriptor jobDescriptor;
+
 
   public JobDescriptor startRecording(RecordingData recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<Game> games = recordingData.getGameIds().stream().map(id -> gameService.getGame(id)).collect(Collectors.toList());
+    games.sort(Comparator.comparing(Game::getGameDisplayName));
 
     RecorderJob job = new RecorderJob(frontendService.getFrontendConnector(), frontendStatusService, settings, games, getRecordingScreens());
-    JobDescriptor jobDescriptor = new JobDescriptor(JobType.RECORDER);
+    jobDescriptor = new JobDescriptor(JobType.RECORDER);
     jobDescriptor.setTitle("Screen Recorder (" + games.size() + " games)");
     jobDescriptor.setJob(job);
 
@@ -89,5 +93,12 @@ public class RecorderService {
       RecordingScreen recordingScreen = recordingScreenOpt.get();
       screenPreviewService.capture(out, recordingScreen);
     }
+  }
+
+  public JobDescriptor isRecording() {
+    if (jobDescriptor != null && !jobDescriptor.isFinished() && !jobDescriptor.isCancelled()) {
+      return jobDescriptor;
+    }
+    return null;
   }
 }

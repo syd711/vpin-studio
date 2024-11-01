@@ -236,6 +236,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       }
     }
 
+    recordBtn.setDisable(screenCheckboxes.stream().noneMatch(CheckBox::isSelected));
+
     totalEstimatedSeconds = maxScreenRecordingLength * games.size();
     String totalDurationString = DurationFormatUtils.formatDuration(totalEstimatedSeconds * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false);
     pTotalTimeLabel.setText(totalDurationString);

@@ -80,7 +80,12 @@ public class ScreenRecorder {
       commandList.add("-f");
       commandList.add("gdigrab");
       commandList.add("-framerate");
-      commandList.add("30");
+      if(options.isFps60()) {
+        commandList.add("60");
+      }
+      else {
+        commandList.add("30");
+      }
       commandList.add("-t");
       commandList.add(duration);
       commandList.add("-draw_mouse");

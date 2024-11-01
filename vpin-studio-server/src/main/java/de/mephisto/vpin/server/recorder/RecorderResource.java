@@ -32,6 +32,11 @@ public class RecorderResource {
     return recorderService.getRecordingScreens();
   }
 
+  @GetMapping("/recording")
+  public JobDescriptor isRecording() {
+    return recorderService.isRecording();
+  }
+
   @GetMapping("/preview/{screen}")
   public ResponseEntity<byte[]> preview(@PathVariable("screen") VPinScreen screen) throws Exception {
     ByteArrayOutputStream out = new ByteArrayOutputStream();

@@ -6,6 +6,15 @@ public class RecordingScreenOptions {
   private int initialDelay;
   private RecordMode recordMode;
   private boolean enabled = true;
+  private boolean fps60 = false;
+
+  public boolean isFps60() {
+    return fps60;
+  }
+
+  public void setFps60(boolean fps60) {
+    this.fps60 = fps60;
+  }
 
   public int getInitialDelay() {
     return initialDelay;

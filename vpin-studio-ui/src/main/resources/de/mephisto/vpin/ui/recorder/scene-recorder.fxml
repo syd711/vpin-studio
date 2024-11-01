@@ -151,7 +151,7 @@
     <right>
        <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
             <center>
-                <ScrollPane hbarPolicy="NEVER">
+                <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #222222;">
                     <content>
                         <VBox fx:id="recordingOptions" styleClass="base-component">
                             <padding>

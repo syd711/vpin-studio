@@ -3,6 +3,7 @@ package de.mephisto.vpin.restclient.recorder;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.Job;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,5 +36,9 @@ public class RecorderServiceClient extends VPinStudioClientService {
 
   public boolean stopRecording(JobDescriptor jobDescriptor) {
     return getRestClient().get(API + "recorder/stop/" + jobDescriptor.getUuid(), Boolean.class);
+  }
+
+  public JobDescriptor isRecording() {
+    return getRestClient().get(API + "recorder/recording", JobDescriptor.class);
   }
 }

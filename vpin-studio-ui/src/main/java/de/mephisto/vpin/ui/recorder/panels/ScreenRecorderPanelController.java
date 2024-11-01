@@ -59,6 +59,9 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox enabledCheckbox;
 
   @FXML
+  private CheckBox fps60Checkbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -77,7 +80,7 @@ public class ScreenRecorderPanelController implements Initializable {
 
     this.recordingScreen = recordingScreen;
     screenName.setText(recordingScreen.getScreen().name());
-    if(recordingScreen.getScreen().name().equalsIgnoreCase("Menu")) {
+    if (recordingScreen.getScreen().name().equalsIgnoreCase("Menu")) {
       screenName.setText(recordingScreen.getScreen().name() + "/FullDMD");
     }
 
@@ -113,10 +116,19 @@ public class ScreenRecorderPanelController implements Initializable {
     enabledCheckboxListener = getEnabledCheckboxListener(recorderController, recordingScreen);
     enabledCheckbox.selectedProperty().addListener(enabledCheckboxListener);
 
+    fps60Checkbox.setSelected(option.isFps60());
+    fps60Checkbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+      option2.setFps60(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+    });
+
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
     durationSpinner.setValueFactory(factory);
+    String key = "duration" + option.getDisplayName();
     durationSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("duration", () -> {
+      debouncer.debounce(key, () -> {
         RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
         RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
         option2.setRecordingDuration(newValue);
@@ -126,8 +138,9 @@ public class ScreenRecorderPanelController implements Initializable {
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3600, option.getInitialDelay());
     delaySpinner.setValueFactory(factory1);
+    String spinnerKey = "delay" + option.getDisplayName();
     delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
-      debouncer.debounce("delay", () -> {
+      debouncer.debounce(spinnerKey, () -> {
         RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
         RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
         option2.setInitialDelay(newValue);
@@ -139,7 +152,7 @@ public class ScreenRecorderPanelController implements Initializable {
   }
 
   @NotNull
-  private  ChangeListener<Boolean> getEnabledCheckboxListener(RecorderController recorderController, RecordingScreen recordingScreen) {
+  private ChangeListener<Boolean> getEnabledCheckboxListener(RecorderController recorderController, RecordingScreen recordingScreen) {
     return new ChangeListener<Boolean>() {
       @Override
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -161,6 +174,12 @@ public class ScreenRecorderPanelController implements Initializable {
   public void refresh() {
     previewTitle.setText("Screen Preview (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
 
+    fps60Checkbox.setDisable(!enabledCheckbox.isSelected());
+    recordModeComboBox.setDisable(!enabledCheckbox.isSelected());
+    delaySpinner.setDisable(!enabledCheckbox.isSelected());
+    durationSpinner.setDisable(!enabledCheckbox.isSelected());
+
+
     preview.setVisible(Studio.stage.widthProperty().intValue() > 1500);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
@@ -168,15 +187,6 @@ public class ScreenRecorderPanelController implements Initializable {
     enabledCheckbox.selectedProperty().removeListener(enabledCheckboxListener);
     enabledCheckbox.setSelected(option.isEnabled());
     enabledCheckbox.selectedProperty().addListener(enabledCheckboxListener);
-
-    if (option.isEnabled()) {
-      if (!root.getStyleClass().contains("selection-panel-selected")) {
-        root.getStyleClass().add("selection-panel-selected");
-      }
-    }
-    else {
-      root.getStyleClass().remove("selection-panel-selected");
-    }
 
     if (preview.isVisible()) {
       double w = preview.widthProperty().get();

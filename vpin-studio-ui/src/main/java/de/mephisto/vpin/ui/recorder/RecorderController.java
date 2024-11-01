@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
@@ -40,7 +41,6 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,6 +125,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private void onRecord() {
+    JobDescriptor recording = client.getRecorderService().isRecording();
+    if (recording != null) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Recorder Active", "Another recording is still active.", "Please wait or cancel all active recordings.", "Stop Recordings");
+      if (!result.isPresent() || !result.get().equals(ButtonType.OK)) {
+        client.getRecorderService().stopRecording(recording);
+      }
+    }
+
     RecorderDialogs.openRecordingDialog(this, selection);
   }
 

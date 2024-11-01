@@ -26,7 +26,7 @@ public class GameRecorder {
   private final RecorderSettings recorderSettings;
   private final List<RecordingScreen> supportedRecodingScreens;
   private final JobDescriptor jobDescriptor;
-  private final int totalRecordings;
+  private final int totalGamesToRecord;
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
@@ -37,13 +37,13 @@ public class GameRecorder {
   private int waitingTime;
   private int totalTime;
 
-  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalRecordings) {
+  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalGamesToRecord) {
     this.frontend = frontend;
     this.game = game;
     this.recorderSettings = recorderSettings;
     this.supportedRecodingScreens = supportedRecodingScreens;
     this.jobDescriptor = jobDescriptor;
-    this.totalRecordings = totalRecordings;
+    this.totalGamesToRecord = totalGamesToRecord;
   }
 
   public RecordingResult startRecording() {
@@ -96,14 +96,22 @@ public class GameRecorder {
 
           int processed = totalTime - waitingTime;
           double thisProgress = (processed * 100d / totalTime);
-          double relativeProgress = thisProgress / 100 / totalRecordings;
-          double baseProgress = jobDescriptor.getTasksExecuted() * 100d / totalRecordings / 100;
+          double relativeProgress = thisProgress / 100 / totalGamesToRecord;
+          double baseProgress = jobDescriptor.getTasksExecuted() * 100d / totalGamesToRecord / 100;
 
-//          System.out.println("This: " + thisProgress);
-//          System.out.println("Relative: " + relativeProgress);
-//          System.out.println("------------------------");
+          System.out.println("This: " + thisProgress);
+          System.out.println("Relative: " + relativeProgress);
+          System.out.println("------------------------");
 
-          jobDescriptor.setProgress(baseProgress + relativeProgress);
+          if(relativeProgress >= 1) {
+            relativeProgress = 0.99;
+          }
+
+          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+            finished = true;
+            return;
+          }
+          jobDescriptor.setProgress(relativeProgress);
         }
         catch (Exception e) {
           //ignore
