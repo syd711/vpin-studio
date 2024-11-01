@@ -87,6 +87,12 @@ public class VPS {
     return find(searchTerm, null);
   }
 
+  /**
+   * The ROM is only used for the asset search in the asset dialog.
+   * @param searchTerm
+   * @param rom
+   * @return
+   */
   public List<VpsTable> find(String searchTerm, String rom) {
     String term = searchTerm;
     term = term.replaceAll("_", " ");
