@@ -8,7 +8,7 @@ import java.util.List;
 
 public class RecorderSettings extends JsonSettings {
 
-  private int startDelay;
+  private int startDelay = 2;
   private int refreshInterval = 2;
   private List<RecordingScreenOptions> recordingScreenOptions = new ArrayList<>();
 

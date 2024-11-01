@@ -5,17 +5,18 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 
 import java.util.List;
 
 public class RecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderJob.class);
 
-  private final MediaAccessStrategy mediaAccessStrategy;
+  private final FrontendConnector frontend;
   private final RecorderSettings settings;
   private final List<Game> games;
   private final List<RecordingScreen> supportedRecodingScreens;
@@ -23,8 +24,8 @@ public class RecorderJob implements Job {
 
   private GameRecorder gameRecorder;
 
-  public RecorderJob(MediaAccessStrategy mediaAccessStrategy, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens, List<FrontendPlayerDisplay> frontendPlayerDisplays) {
-    this.mediaAccessStrategy = mediaAccessStrategy;
+  public RecorderJob(FrontendConnector frontend, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens, List<FrontendPlayerDisplay> frontendPlayerDisplays) {
+    this.frontend = frontend;
     this.settings = settings;
     this.games = games;
     this.supportedRecodingScreens = supportedRecodingScreens;
@@ -39,9 +40,26 @@ public class RecorderJob implements Job {
           break;
         }
 
-        long start = System.currentTimeMillis();
+        frontend.initializeRecording();
+
         jobDescriptor.setGameId(game.getId());
-        gameRecorder = new GameRecorder(mediaAccessStrategy, game, settings, supportedRecodingScreens, jobDescriptor, games.size());
+        jobDescriptor.setStatus("Launching Frontend");
+        if (!frontend.restartFrontend(true)) {
+          jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
+          LOG.error("Recording cancelled, the frontend could not be launched.");
+          return;
+        }
+
+        jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+        if (!frontend.launchGame(game, true)) {
+          jobDescriptor.setError("Recording cancelled, the game could not be launched.");
+          LOG.error("Recording cancelled, the game could not be launched.");
+          return;
+        }
+
+        long start = System.currentTimeMillis();
+        jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+        gameRecorder = new GameRecorder(frontend, game, settings, supportedRecodingScreens, jobDescriptor, games.size());
         gameRecorder.startRecording();
 
         double progress = (double) (jobDescriptor.getTasksExecuted() * 100) / games.size() / 100;
@@ -56,6 +74,10 @@ public class RecorderJob implements Job {
       }
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
+      }
+      finally {
+        frontend.killFrontend();
+        frontend.finalizeRecording();
       }
     }
     LOG.info("Recordings for " + games.size() + " games finished.");

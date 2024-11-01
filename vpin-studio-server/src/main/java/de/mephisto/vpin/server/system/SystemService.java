@@ -45,6 +45,7 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -469,6 +470,26 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       }
     }
 
+    return false;
+  }
+
+  public boolean waitForProcess(String name, int seconds) {
+    try {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+          while (isProcessRunning(name)) {
+            Thread.sleep(1000);
+          }
+          return true;
+        }
+      });
+      return submit.get(seconds, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Waiting for process \"{}\" failed: {}", name, e.getMessage());
+    }
     return false;
   }
 

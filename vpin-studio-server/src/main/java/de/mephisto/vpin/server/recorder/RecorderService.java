@@ -9,7 +9,6 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
@@ -44,13 +43,13 @@ public class RecorderService {
   @Autowired
   private PreferencesService preferencesService;
 
+
   public JobDescriptor startRecording(RecordingData recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();
     List<Game> games = recordingData.getGameIds().stream().map(id -> gameService.getGame(id)).collect(Collectors.toList());
-    MediaAccessStrategy mediaAccessStrategy = frontendService.getFrontendConnector().getMediaAccessStrategy();
 
-    RecorderJob job = new RecorderJob(mediaAccessStrategy, settings, games, getRecordingScreens(), frontendPlayerDisplays);
+    RecorderJob job = new RecorderJob(frontendService.getFrontendConnector(), settings, games, getRecordingScreens(), frontendPlayerDisplays);
     JobDescriptor jobDescriptor = new JobDescriptor(JobType.RECORDER);
     jobDescriptor.setTitle("Screen Recorder (" + games.size() + " games)");
     jobDescriptor.setJob(job);

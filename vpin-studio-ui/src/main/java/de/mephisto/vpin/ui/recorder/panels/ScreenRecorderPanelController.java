@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -96,10 +97,12 @@ public class ScreenRecorderPanelController implements Initializable {
     recordModeComboBox.valueProperty().addListener(new ChangeListener<RecordMode>() {
       @Override
       public void changed(ObservableValue<? extends RecordMode> observable, RecordMode oldValue, RecordMode newValue) {
-        RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
-        option2.setRecordMode(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+        Platform.runLater(() -> {
+          RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+          option2.setRecordMode(newValue);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+        });
       }
     });
 
@@ -115,7 +118,7 @@ public class ScreenRecorderPanelController implements Initializable {
         RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
         option2.setRecordingDuration(newValue);
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
-      }, 500);
+      }, 300);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory1 = new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 3600, option.getInitialDelay());
@@ -126,7 +129,7 @@ public class ScreenRecorderPanelController implements Initializable {
         RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
         option2.setInitialDelay(newValue);
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
-      }, 500);
+      }, 300);
     });
 
     refresh();

@@ -17,10 +17,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.time.DurationFormatUtils;
@@ -64,6 +61,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private Label pTotalTimeLabel;
 
   @FXML
+  private Label statusLabel;
+
+  @FXML
   private ProgressBar progressBar;
 
   private final List<CheckBox> screenCheckboxes = new ArrayList<>();
@@ -99,6 +99,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
     stopBtn.setVisible(true);
     progressBar.setDisable(false);
 
+    progressBar.setProgress(ProgressIndicator.INDETERMINATE_PROGRESS);
     screenCheckboxes.stream().forEach(c -> c.setDisable(true));
 
     RecordingData status = new RecordingData();
@@ -141,6 +142,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       progressBar.setProgress(jobDescriptor.getProgress());
     }
 
+    statusLabel.setText(jobDescriptor.getStatus());
     int gameId = jobDescriptor.getGameId();
     if (gameId > 0) {
       if (this.game == null || this.game.getId() != gameId) {
@@ -186,13 +188,20 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       recorderController.doReload();
       progressBar.setProgress(1);
 
-      if (cancelled) {
-        WidgetFactory.showAlert(stage, "Job Cancelled", "The recording has been cancelled.");
+
+      Platform.runLater(() -> {
+        stage.close();
+      });
+
+      if (jobDescriptor.getError() != null) {
+        WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError());
+      }
+      else if (cancelled) {
+        WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.");
       }
       else {
-        WidgetFactory.showInformation(stage, "Recording Finished", "Finished recording of " + games.size() + " game(s).");
+        WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + games.size() + " game(s).");
       }
-      stage.close();
     });
   }
 

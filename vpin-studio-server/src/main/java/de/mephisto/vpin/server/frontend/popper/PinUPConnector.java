@@ -1,5 +1,7 @@
 package de.mephisto.vpin.server.frontend.popper;
 
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -12,6 +14,7 @@ import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
@@ -23,6 +26,7 @@ import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -35,12 +39,13 @@ import java.sql.Date;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service("Popper")
-public class PinUPConnector implements FrontendConnector {
+public class PinUPConnector implements FrontendConnector, InitializingBean {
   private final static Logger LOG = LoggerFactory.getLogger(PinUPConnector.class);
 
   private final static String CURL_COMMAND_POPPER_START = "curl -X POST --data-urlencode \"system=\" http://localhost:" + SystemService.SERVER_PORT + "/service/popperLaunch";
@@ -52,6 +57,7 @@ public class PinUPConnector implements FrontendConnector {
   public static final int DB_VERSION = 64;
   public static final String IS_FAV = "isFav";
   public static final String POPPER_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss.SSS";
+  public static final String PIN_UP_MENU = "PinUpMenu";
   public String dbFilePath;
 
   @Autowired
@@ -59,6 +65,8 @@ public class PinUPConnector implements FrontendConnector {
 
   @Autowired
   private PreferencesService preferencesService;
+
+  private PupServer pupServer;
 
   private PinUPMediaAccessStrategy pinUPMediaAccessStrategy;
 
@@ -128,7 +136,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = connect();
     Game info = null;
     try {
-      PreparedStatement statement = connect.prepareStatement(
+      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID where g.GameID = ?");
 
@@ -158,7 +166,7 @@ public class PinUPConnector implements FrontendConnector {
   public List<String> getAltExeList() {
     Connection connect = connect();
     try {
-      PreparedStatement statement = connect.prepareStatement("SELECT Altexe FROM PupLookups");
+      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT Altexe FROM PupLookups");
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         String altExe = rs.getString("Altexe");
@@ -187,7 +195,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = connect();
     TableDetails manifest = null;
     try {
-      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
+      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT * FROM Games where GameID = ?");
       statement.setInt(1, id);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
@@ -282,7 +290,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     try {
       String stmt = "UPDATE Games SET DateFileUpdated=? WHERE GameID=?";
-      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement(stmt);
 
       SimpleDateFormat sdf = new SimpleDateFormat(POPPER_DATE_FORMAT);
       Timestamp timestamp = new Timestamp(System.currentTimeMillis());
@@ -391,7 +399,7 @@ public class PinUPConnector implements FrontendConnector {
       stmtBuilder.append("DateUpdated=? WHERE GameID=?");
 
       String stmt = stmtBuilder.toString();
-      PreparedStatement preparedStatement = connect.prepareStatement(stmt);
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement(stmt);
       int index = 1;
       for (Object param : params) {
         preparedStatement.setObject(index, param);
@@ -423,7 +431,7 @@ public class PinUPConnector implements FrontendConnector {
 
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE Games SET "
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE Games SET "
           + "'" + serverSettings.getMappingVpsTableId() + "'=?, "
           + "'" + serverSettings.getMappingVpsTableVersionId() + "'=?, "
           + "DateUpdated=? WHERE GameID=?");
@@ -457,7 +465,7 @@ public class PinUPConnector implements FrontendConnector {
     Game info = null;
     try {
       String gameName = filename.replaceAll("'", "''");
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID "
@@ -485,7 +493,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<Game> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
@@ -514,7 +522,7 @@ public class PinUPConnector implements FrontendConnector {
     List<Game> result = new ArrayList<>();
     try {
       String gameName = filename.replaceAll("'", "''");
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
@@ -542,7 +550,7 @@ public class PinUPConnector implements FrontendConnector {
     Game info = null;
     try {
       gameName = gameName.replaceAll("'", "''");
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID"
@@ -569,7 +577,7 @@ public class PinUPConnector implements FrontendConnector {
     String script = null;
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
       rs.next();
       script = rs.getString("StartupBatch");
@@ -594,7 +602,7 @@ public class PinUPConnector implements FrontendConnector {
     int version = -1;
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM GlobalSettings;");
       rs.next();
       version = rs.getInt("SQLVersion");
@@ -613,7 +621,7 @@ public class PinUPConnector implements FrontendConnector {
   public void updateStartupScript(@NonNull String content) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'StartupBatch'=?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'StartupBatch'=?");
       preparedStatement.setString(1, content);
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -632,7 +640,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = connect();
     PopperSettings settings = null;
     try {
-      PreparedStatement statement = connect.prepareStatement("SELECT * FROM GlobalSettings");
+      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT * FROM GlobalSettings");
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
         String optionString = rs.getString("GlobalOptions");
@@ -643,7 +651,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed get custom settings: " + e.getMessage(), e);
+      LOG.error("Failed get custom settings: {}", e.getMessage(), e);
     }
     finally {
       disconnect(connect);
@@ -655,7 +663,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     try {
       PopperSettings options = JsonSettings.objectMapper.convertValue(data, PopperSettings.class);
-      PreparedStatement preparedStatement = connect.prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE GlobalSettings SET 'GlobalOptions'=?");
       preparedStatement.setString(1, options.toString());
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -675,12 +683,12 @@ public class PinUPConnector implements FrontendConnector {
     try {
       PreparedStatement preparedStatement;
       if (enable) {
-        preparedStatement = connect.prepareStatement("UPDATE Games SET 'ROM'=?, 'LaunchCustomVar'='' WHERE GameID=?");
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE Games SET 'ROM'=?, 'LaunchCustomVar'='' WHERE GameID=?");
         preparedStatement.setString(1, game.getRom());
         preparedStatement.setInt(2, game.getId());
       }
       else {
-        preparedStatement = connect.prepareStatement("UPDATE Games SET 'LaunchCustomVar'='HIDEPUP' WHERE GameID=?");
+        preparedStatement = Objects.requireNonNull(connect).prepareStatement("UPDATE Games SET 'LaunchCustomVar'='HIDEPUP' WHERE GameID=?");
         preparedStatement.setInt(1, game.getId());
       }
       preparedStatement.executeUpdate();
@@ -704,7 +712,7 @@ public class PinUPConnector implements FrontendConnector {
 //
 //    Connection connect = this.connect();
 //    try {
-//      PreparedStatement statement = connect.prepareStatement("SELECT * FROM Games where GameID = ?");
+//      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT * FROM Games where GameID = ?");
 //      statement.setInt(1, game.getId());
 //      ResultSet rs = statement.executeQuery();
 //      String rom = null;
@@ -805,7 +813,7 @@ public class PinUPConnector implements FrontendConnector {
   public int importGame(int emulatorId, @NonNull String gameName, @NonNull String gameFileName, @NonNull String gameDisplayName, @Nullable String launchCustomVar, @NonNull java.util.Date dateFileUpdated) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO Games (EMUID, GameName, GameFileName, GameDisplay, Visible, LaunchCustomVar, DateAdded, DateFileUpdated, " +
           "Author, TAGS, Category, MediaSearch, IPDBNum, AltRunMode) " +
           "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
       preparedStatement.setInt(1, emulatorId);
@@ -858,7 +866,7 @@ public class PinUPConnector implements FrontendConnector {
   private void deleteFromGames(int gameId) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM Games where GameID = ?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM Games where GameID = ?");
       preparedStatement.setInt(1, gameId);
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -876,7 +884,7 @@ public class PinUPConnector implements FrontendConnector {
   private void deleteStats(int gameId) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM GamesStats where GameID = ?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM GamesStats where GameID = ?");
       preparedStatement.setInt(1, gameId);
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -897,7 +905,7 @@ public class PinUPConnector implements FrontendConnector {
     String sql = "SELECT * FROM PlayListDetails WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
     PlaylistGame game = null;
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = stmt.executeQuery(sql);
       while (rs.next()) {
         game = new PlaylistGame();
@@ -925,7 +933,7 @@ public class PinUPConnector implements FrontendConnector {
     Playlist playlist = new Playlist();
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1 AND PlayListID = " + id + ";");
       while (rs.next()) {
         playlist = createPlaylist(rs);
@@ -947,7 +955,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<Playlist> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Playlists WHERE Visible = 1;");
       while (rs.next()) {
         Playlist playlist = createPlaylist(rs);
@@ -995,7 +1003,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     String sql = "UPDATE PlayLists SET 'MenuColor'=" + color + " WHERE PlayListID = " + playlistId + ";";
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
     }
@@ -1010,7 +1018,7 @@ public class PinUPConnector implements FrontendConnector {
   public void addToPlaylist(int playlistId, int gameId, int favMode) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, " + IS_FAV + ") VALUES (?,?,?,?,?,?)");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("INSERT INTO PlayListDetails (PlayListID, GameID, Visible, DisplayOrder, NumPlayed, " + IS_FAV + ") VALUES (?,?,?,?,?,?)");
       preparedStatement.setInt(1, playlistId);
       preparedStatement.setInt(2, gameId);
       preparedStatement.setInt(3, 1);
@@ -1034,7 +1042,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     String sql = "UPDATE PlayListDetails SET " + IS_FAV + " = " + favMode + " WHERE GameID=" + gameId + " AND PlayListID=" + playlistId + ";";
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
     }
@@ -1049,7 +1057,7 @@ public class PinUPConnector implements FrontendConnector {
   public void deleteFromPlaylists(int gameId) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ?");
       preparedStatement.setInt(1, gameId);
       preparedStatement.executeUpdate();
       preparedStatement.close();
@@ -1057,7 +1065,7 @@ public class PinUPConnector implements FrontendConnector {
       LOG.info("Removed game " + gameId + " from all playlists");
     }
     catch (SQLException e) {
-      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1067,7 +1075,7 @@ public class PinUPConnector implements FrontendConnector {
   public void deleteFromPlaylist(int playlistId, int gameId) {
     Connection connect = this.connect();
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ? AND PlayListID = ?");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("DELETE FROM PlayListDetails WHERE GameID = ? AND PlayListID = ?");
       preparedStatement.setInt(1, gameId);
       preparedStatement.setInt(2, playlistId);
       preparedStatement.executeUpdate();
@@ -1076,7 +1084,7 @@ public class PinUPConnector implements FrontendConnector {
       LOG.info("Removed game " + gameId + " from playlist " + playlistId);
     }
     catch (SQLException e) {
-      LOG.error("Failed to update playlist details: " + e.getMessage(), e);
+      LOG.error("Failed to update playlist details: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1088,7 +1096,7 @@ public class PinUPConnector implements FrontendConnector {
     Playlist result = null;
     Connection connect = connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE GameID = " + gameId);
       while (rs.next()) {
         Playlist playlist = new Playlist();
@@ -1114,7 +1122,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<Emulator> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
         String emuName = rs.getString("EmuName");
@@ -1162,7 +1170,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get function: " + e.getMessage(), e);
+      LOG.error("Failed to get function: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1211,7 +1219,7 @@ public class PinUPConnector implements FrontendConnector {
           });
         }
         catch (IOException ioe) {
-          LOG.error("Encountered exception while traversing " + dirGames, ioe);
+          LOG.error("Encountered exception while traversing {}", dirGames, ioe);
         }
         if (fileFound[0] != null) {
           return t;
@@ -1226,7 +1234,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<TableAlxEntry> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("select * from GamesStats JOIN GAMES ON GAMES.GameID = GamesStats.GameID;");
       while (rs.next()) {
         TableAlxEntry e = new TableAlxEntry();
@@ -1242,7 +1250,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get alx data: " + e.getMessage(), e);
+      LOG.error("Failed to get alx data: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1255,7 +1263,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<TableAlxEntry> result = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("select * from GamesStats JOIN GAMES ON GAMES.GameID = GamesStats.GameID where GamesStats.GameID = " + gameId + ";");
       while (rs.next()) {
         TableAlxEntry e = new TableAlxEntry();
@@ -1271,7 +1279,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get alx data: " + e.getMessage(), e);
+      LOG.error("Failed to get alx data: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1284,7 +1292,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     String sql = "UPDATE GamesStats SET 'NumberPlays'=" + value + " WHERE GameID = " + gameId;
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
       LOG.info("Update of NumberPlays for '" + gameId + "' successful.");
@@ -1304,7 +1312,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     String sql = "UPDATE GamesStats SET 'TimePlayedSecs'=" + seconds + " WHERE GameID = " + gameId;
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
       LOG.info("Update of TimePlayedSecs for '" + gameId + "' successful.");
@@ -1330,7 +1338,7 @@ public class PinUPConnector implements FrontendConnector {
 //    Connection connect = this.connect();
 //    String sql = "UPDATE Emulators SET 'VISIBLE'=1 WHERE EmuName = '" + EmulatorType.PC_GAMES + "';";
 //    try {
-//      Statement stmt = connect.createStatement();
+//      Statement stmt = Objects.requireNonNull(connect).createStatement();
 //      stmt.executeUpdate(sql);
 //      stmt.close();
 //      LOG.info("Enabled PC Games emulator for popper.");
@@ -1347,7 +1355,7 @@ public class PinUPConnector implements FrontendConnector {
     FrontendControl f = null;
     Connection connect = this.connect();
     try {
-      PreparedStatement statement = connect.prepareStatement("SELECT * FROM PinUPFunctions WHERE Descript = ?");
+      PreparedStatement statement = Objects.requireNonNull(connect).prepareStatement("SELECT * FROM PinUPFunctions WHERE Descript = ?");
       statement.setString(1, description);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
@@ -1363,7 +1371,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get function: " + e.getMessage(), e);
+      LOG.error("Failed to get function: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1396,7 +1404,7 @@ public class PinUPConnector implements FrontendConnector {
     FrontendControls controls = new FrontendControls();
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PinUPFunctions;");
       while (rs.next()) {
         FrontendControl f = new FrontendControl();
@@ -1411,7 +1419,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to functions: " + e.getMessage(), e);
+      LOG.error("Failed to functions: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1424,7 +1432,7 @@ public class PinUPConnector implements FrontendConnector {
     int count = 0;
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT count(*) as count FROM Games WHERE EMUID = " + emuId + ";");
       while (rs.next()) {
         count = count + rs.getInt("count");
@@ -1446,7 +1454,7 @@ public class PinUPConnector implements FrontendConnector {
     List<Integer> result = new ArrayList<>();
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT GameID FROM Games WHERE EMUID = " + emuId + ";");
       while (rs.next()) {
         result.add(rs.getInt("GameID"));
@@ -1455,7 +1463,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read game count: " + e.getMessage(), e);
+      LOG.error("Failed to read game count: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1469,7 +1477,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     List<Game> results = new ArrayList<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(
           "SELECT g.*, s.*, e.Visible as EmuVisible, e.DirGames FROM Games g"
               + " left join Emulators e on g.EMUID=e.EMUID left join GamesStats s on s.GameID = g.GameID ");
@@ -1499,7 +1507,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     Date date = null;
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT DateAdded from Games asc limit 1;");
       while (rs.next()) {
         date = getDate(rs, "DateAdded");
@@ -1508,7 +1516,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to get start time: " + e.getMessage(), e);
+      LOG.error("Failed to get start time: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1521,12 +1529,12 @@ public class PinUPConnector implements FrontendConnector {
   public void deleteGames(int emuId) {
     Connection connect = this.connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       statement.execute("DELETE FROM Games WHERE EMUID = " + emuId);
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to delete games: " + e.getMessage(), e);
+      LOG.error("Failed to delete games: {}", e.getMessage(), e);
     }
     finally {
       this.disconnect(connect);
@@ -1538,7 +1546,7 @@ public class PinUPConnector implements FrontendConnector {
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails;");
 
       while (rs.next()) {
@@ -1550,7 +1558,7 @@ public class PinUPConnector implements FrontendConnector {
       statement.close();
     }
     catch (SQLException e) {
-      LOG.error("Failed to read playlists: " + e.getMessage(), e);
+      LOG.error("Failed to read playlists: {}", e.getMessage(), e);
     }
     finally {
       disconnect(connect);
@@ -1563,7 +1571,7 @@ public class PinUPConnector implements FrontendConnector {
     Map<Integer, PlaylistGame> result = new LinkedHashMap<>();
     Connection connect = connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PlayListDetails WHERE PlayListID = " + id);
 
       while (rs.next()) {
@@ -1598,7 +1606,7 @@ public class PinUPConnector implements FrontendConnector {
     List<Integer> result = new ArrayList<>();
     Connection connect = connect();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery(sql);
       while (rs.next()) {
         int gameId = rs.getInt("GameID");
@@ -1622,7 +1630,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(LAUNCH_SCRIPT);
@@ -1647,7 +1655,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     try {
       emuName = emuName.replaceAll("'", "''");
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators where EmuName = '" + emuName + "';");
       rs.next();
       script = rs.getString(POST_SCRIPT);
@@ -1670,7 +1678,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     String sql = "UPDATE Emulators SET '" + scriptName + "'='" + content + "' WHERE EmuName = '" + emuName + "';";
     try {
-      Statement stmt = connect.createStatement();
+      Statement stmt = Objects.requireNonNull(connect).createStatement();
       stmt.executeUpdate(sql);
       stmt.close();
       LOG.info("Update of " + scriptName + " for '" + emuName + "' successful.");
@@ -1836,7 +1844,7 @@ public class PinUPConnector implements FrontendConnector {
     Connection connect = this.connect();
     Map<String, String> results = new HashMap<>();
     try {
-      Statement statement = connect.createStatement();
+      Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM PupLookups;");
       while (rs.next()) {
         results.put("GameType", rs.getString("GameType"));
@@ -1862,7 +1870,7 @@ public class PinUPConnector implements FrontendConnector {
 
   private void importGameExtraValues(Connection connect, int gameId, String gLog, String gNotes, String gPlayLog, String gDetails) {
     try {
-      PreparedStatement preparedStatement = connect.prepareStatement("insert or replace into GamesExtra (GameID, gLOG, gNotes, gPlayLog, gDetails) values (?,?,?,?,?)");
+      PreparedStatement preparedStatement = Objects.requireNonNull(connect).prepareStatement("insert or replace into GamesExtra (GameID, gLOG, gNotes, gPlayLog, gDetails) values (?,?,?,?,?)");
       preparedStatement.setInt(1, gameId);
       preparedStatement.setString(2, gLog);
       preparedStatement.setString(3, gNotes);
@@ -2106,12 +2114,28 @@ public class PinUPConnector implements FrontendConnector {
     for (ProcessHandle p : allProcesses) {
       if (p.info().command().isPresent()) {
         String cmdName = p.info().command().get();
-        if (cmdName.contains("PinUpMenu")) {
+        if (cmdName.contains(PIN_UP_MENU)) {
           return true;
         }
       }
     }
     return false;
+  }
+
+  @Override
+  public boolean isEmulatorRunning(GameEmulator emulator) {
+    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
+  }
+
+  @Override
+  public void initializeRecording() {
+    pupServer.startServer();
+  }
+
+  @Override
+  public void finalizeRecording() {
+    pupServer.stopServer();
   }
 
   @Override
@@ -2138,12 +2162,67 @@ public class PinUPConnector implements FrontendConnector {
     return false;
   }
 
+  @Override
+  public boolean restartFrontend(boolean wait) {
+    restartFrontend();
+    if (wait) {
+      if (!systemService.waitForProcess(PIN_UP_MENU, 10)) {
+        LOG.warn("Failed to launch frontend, timeout.");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Alternative
+   * <p>
+   * <p>
+   * Thread.sleep(4000);
+   * WinDef.HWND pinUPMenuPlayer = User32.INSTANCE.FindWindow(null, "PinUP Menu Player");
+   * LOG.info("Found PopUP Menu player, sending window command");
+   * DesktopWindow desktopWindow = player.get();
+   * WinDef.HWND hwnd = desktopWindow.getHWND();
+   * final int msg = 0x400 + 42;
+   * User32.INSTANCE.PostMessage(hwnd, msg, new WinDef.WPARAM(6), new WinDef.LPARAM(game.getId()));
+   *
+   * @param game
+   * @param wait
+   * @return
+   */
+  @Override
+  public boolean launchGame(Game game, boolean wait) {
+    pupServer.launchGame(game.getId());
+    if (!wait) {
+      return true;
+    }
+
+    try {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+          while (!isEmulatorRunning(game.getEmulator())) {
+            Thread.sleep(1000);
+          }
+          return true;
+        }
+      });
+
+      return submit.get(30, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Waiting for frontend launch failed: {}", e.getMessage(), e);
+    }
+    return false;
+  }
+
   private Date getDate(ResultSet set, String field) {
     try {
       return set.getDate(field);
     }
     catch (Exception e) {
-      LOG.warn("Failed to parse date from database: " + e.getMessage());
+      LOG.warn("Failed to parse date from database: {}", e.getMessage());
     }
     return new Date(new java.util.Date().getTime());
   }
@@ -2153,14 +2232,19 @@ public class PinUPConnector implements FrontendConnector {
       return set.getTimestamp(field);
     }
     catch (Exception e) {
-      LOG.warn("Failed to parse timestapm from database: " + e.getMessage());
+      LOG.warn("Failed to parse timestapm from database: {}", e.getMessage());
       try {
         return set.getDate(field);
       }
       catch (Exception ex) {
-        LOG.warn("Failed to parse date from database: " + e.getMessage());
+        LOG.warn("Failed to parse date from database: {}", e.getMessage());
       }
     }
     return new Date(new java.util.Date().getTime());
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    this.pupServer = new PupServer(this, systemService);
   }
 }

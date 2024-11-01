@@ -2,8 +2,10 @@
 
 ## Changes
 
-## Bugfixes
 
-- **Table Media**: Shit and double-click 
+- **Table Media**: Shit and double-click
+- **Table Asset Manager**: Delete screen and delete all
+
+## Bugfixes
 
   

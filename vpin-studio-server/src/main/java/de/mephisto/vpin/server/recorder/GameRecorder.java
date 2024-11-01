@@ -4,7 +4,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameMediaService;
 import org.slf4j.Logger;
@@ -21,7 +21,7 @@ import java.util.concurrent.Future;
 public class GameRecorder {
   private final static Logger LOG = LoggerFactory.getLogger(GameRecorder.class);
 
-  private final MediaAccessStrategy mediaAccessStrategy;
+  private final FrontendConnector frontend;
   private final Game game;
   private final RecorderSettings recorderSettings;
   private final List<RecordingScreen> supportedRecodingScreens;
@@ -37,8 +37,8 @@ public class GameRecorder {
   private int waitingTime;
   private int totalTime;
 
-  public GameRecorder(MediaAccessStrategy mediaAccessStrategy, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalRecordings) {
-    this.mediaAccessStrategy = mediaAccessStrategy;
+  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalRecordings) {
+    this.frontend = frontend;
     this.game = game;
     this.recorderSettings = recorderSettings;
     this.supportedRecodingScreens = supportedRecodingScreens;
@@ -48,7 +48,6 @@ public class GameRecorder {
 
   public RecordingResult startRecording() {
     LOG.info("Launching recording of \"" + game.getGameDisplayName() + "\"");
-
     RecordingResult status = new RecordingResult();
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
@@ -62,7 +61,7 @@ public class GameRecorder {
         Callable<RecordingResult> screenRecordable = new Callable<>() {
           @Override
           public RecordingResult call() {
-            File mediaFolder = mediaAccessStrategy.getGameMediaFolder(game, screen.getScreen(), null);
+            File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen.getScreen(), null);
             File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
 
             LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.getScreen().name() + ": " + target.getAbsolutePath());
@@ -122,8 +121,6 @@ public class GameRecorder {
     catch (Exception e) {
       LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
     }
-
-    finished = true;
     return status;
   }
 
