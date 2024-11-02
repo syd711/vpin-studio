@@ -198,7 +198,6 @@ public class PINemHiService implements InitializingBean {
               File check = new File(PINEMHI_FOLDER, resource);
               LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
-              break;
             }
           }
         }
