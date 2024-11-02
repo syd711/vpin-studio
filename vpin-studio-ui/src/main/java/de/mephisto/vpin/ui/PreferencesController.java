@@ -140,7 +140,7 @@ public class PreferencesController implements Initializable, StudioEventListener
         PreferencesController controller = loader.getController();
         preferencesRoot.setUserData(controller);
         preferencesRoot.addEventHandler(KeyEvent.ANY, ke -> {
-          if (ke.getCode() == KeyCode.ESCAPE) {
+          if (ke.getCode() == KeyCode.ESCAPE && !ke.isConsumed()) {
             instance.onClose(null);
           }
           // consume all other events, preventing them to bubble up

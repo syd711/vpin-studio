@@ -14,12 +14,12 @@ public class PreferencesDialogs {
   }
 
   public static void openBotServerIdTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-server-id-tutorial.fxml", "Server ID Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-server-id-tutorial.fxml", "Server ID Instructions");
     stage.showAndWait();
   }
 
   public static void openBotTokenTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-token-tutorial.fxml", "Bot Token Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-token-tutorial.fxml", "Bot Token Instructions");
     stage.showAndWait();
   }
 
@@ -30,7 +30,7 @@ public class PreferencesDialogs {
   }
 
   public static void openBotTutorial() {
-    Stage stage = Dialogs.createStudioDialogStage("dialog-bot-tutorial.fxml", "Discord Bot Instructions");
+    Stage stage = Dialogs.createStudioDialogStage(PreferencesDialogs.class, "dialog-bot-tutorial.fxml", "Discord Bot Instructions");
     stage.showAndWait();
   }
 
