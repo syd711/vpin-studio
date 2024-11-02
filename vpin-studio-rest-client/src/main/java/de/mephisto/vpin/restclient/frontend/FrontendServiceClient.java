@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.File;
 import java.util.*;
@@ -238,6 +239,12 @@ public class FrontendServiceClient extends VPinStudioClientService {
     Map<String, Object> params = new HashMap<>();
     params.put("version", version);
     getRestClient().put(API + API_SEGMENT_FRONTEND + "/tabledetails/fixVersion/" + gameId, params, Boolean.class);
+  }
+
+
+  public boolean clearCache() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + API_SEGMENT_FRONTEND + "/clearcache", Boolean.class);
   }
 
   //-----------------------------

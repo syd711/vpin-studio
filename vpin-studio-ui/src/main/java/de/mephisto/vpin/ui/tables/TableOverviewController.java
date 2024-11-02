@@ -4,7 +4,6 @@ import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.altsound.AltSound;
 import de.mephisto.vpin.restclient.assets.AssetType;
@@ -21,13 +20,11 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.validation.*;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
-import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import de.mephisto.vpin.ui.tables.actions.BulkActions;
 import de.mephisto.vpin.ui.tables.editors.AltSound2EditorController;
 import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
-import de.mephisto.vpin.ui.tables.panels.BaseLoadingModel;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
@@ -78,6 +75,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(TableOverviewController.class);
+
+  public static final int ALL_VPX_ID = -10;
 
   @FXML
   private Separator deleteSeparator;
@@ -646,6 +645,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
+        if(mouseEvent.isShiftDown()) {
+          onMediaEdit();
+          return;
+        }
         onTableEdit();
       }
     }
@@ -1290,18 +1293,42 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
 
     List<VPinScreen> supportedScreens = client.getFrontendService().getFrontendCached().getSupportedScreens();
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField), supportedScreens.contains(VPinScreen.PlayField));
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass), supportedScreens.contains(VPinScreen.BackGlass));
-    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading), supportedScreens.contains(VPinScreen.Loading));
-    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel), supportedScreens.contains(VPinScreen.Wheel));
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD), supportedScreens.contains(VPinScreen.DMD));
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper), supportedScreens.contains(VPinScreen.Topper));
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu), supportedScreens.contains(VPinScreen.Menu));
-    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, model, VPinScreen.Audio), supportedScreens.contains(VPinScreen.Audio));
-    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, model, VPinScreen.AudioLaunch), supportedScreens.contains(VPinScreen.AudioLaunch));
-    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, model, VPinScreen.GameInfo), supportedScreens.contains(VPinScreen.GameInfo));
-    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, model, VPinScreen.GameHelp), supportedScreens.contains(VPinScreen.GameHelp));
-    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2), supportedScreens.contains(VPinScreen.Other2));
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
+      showAssetDetails(value, VPinScreen.PlayField);
+    }), supportedScreens.contains(VPinScreen.PlayField));
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass, event -> {
+      showAssetDetails(value, VPinScreen.BackGlass);
+    }), supportedScreens.contains(VPinScreen.BackGlass));
+    BaseLoadingColumn.configureColumn(columnLoading, (value, model) -> createAssetStatus(value, model, VPinScreen.Loading, event -> {
+      showAssetDetails(value, VPinScreen.Loading);
+    }), supportedScreens.contains(VPinScreen.Loading));
+    BaseLoadingColumn.configureColumn(columnWheel, (value, model) -> createAssetStatus(value, model, VPinScreen.Wheel, event -> {
+      showAssetDetails(value, VPinScreen.Wheel);
+    }), supportedScreens.contains(VPinScreen.Wheel));
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD, event -> {
+      showAssetDetails(value, VPinScreen.DMD);
+    }), supportedScreens.contains(VPinScreen.DMD));
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper, event -> {
+      showAssetDetails(value, VPinScreen.Topper);
+    }), supportedScreens.contains(VPinScreen.Topper));
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu, event -> {
+      showAssetDetails(value, VPinScreen.Menu);
+    }), supportedScreens.contains(VPinScreen.Menu));
+    BaseLoadingColumn.configureColumn(columnAudio, (value, model) -> createAssetStatus(value, model, VPinScreen.Audio, event -> {
+      showAssetDetails(value, VPinScreen.Audio);
+    }), supportedScreens.contains(VPinScreen.Audio));
+    BaseLoadingColumn.configureColumn(columnAudioLaunch, (value, model) -> createAssetStatus(value, model, VPinScreen.AudioLaunch, event -> {
+      showAssetDetails(value, VPinScreen.AudioLaunch);
+    }), supportedScreens.contains(VPinScreen.AudioLaunch));
+    BaseLoadingColumn.configureColumn(columnInfo, (value, model) -> createAssetStatus(value, model, VPinScreen.GameInfo, event -> {
+      showAssetDetails(value, VPinScreen.GameInfo);
+    }), supportedScreens.contains(VPinScreen.GameInfo));
+    BaseLoadingColumn.configureColumn(columnHelp, (value, model) -> createAssetStatus(value, model, VPinScreen.GameHelp, event -> {
+      showAssetDetails(value, VPinScreen.GameHelp);
+    }), supportedScreens.contains(VPinScreen.GameHelp));
+    BaseLoadingColumn.configureColumn(columnOther2, (value, model) -> createAssetStatus(value, model, VPinScreen.Other2, event -> {
+      showAssetDetails(value, VPinScreen.Other2);
+    }), supportedScreens.contains(VPinScreen.Other2));
 
     tableView.setEditable(true);
     tableView.setRowFactory(
@@ -1331,7 +1358,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   //------------------------------
 
-  private Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
+  public static Node createAssetStatus(GameRepresentation value, GameRepresentationModel model, VPinScreen screen, EventHandler eventHandler) {
+    ValidationSettings validationSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.VALIDATION_SETTINGS, ValidationSettings.class);
     FrontendMediaItemRepresentation defaultMediaItem = model.getFrontendMedia().getDefaultMediaItem(screen);
     ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
     ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
@@ -1420,9 +1448,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Tooltip tooltip = new Tooltip(tt.toString());
     tooltip.setWrapText(true);
     btn.setTooltip(tooltip);
-    btn.setOnAction(event -> {
-      showAssetDetails(value, screen);
-    });
+    btn.setOnAction(eventHandler);
 
     return btn;
   }
@@ -1583,7 +1609,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return null;
   }
 
-  private String getLabelCss(GameRepresentation value) {
+  public static String getLabelCss(GameRepresentation value) {
     String status = "";
     if (value.isDisabled()) {
       status = WidgetFactory.DISABLED_TEXT_STYLE;
@@ -1862,103 +1888,22 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     return new GameRepresentationModel(game);
   }
 
-  public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation, GameRepresentationModel> {
-
-    VpsTable vpsTable;
-
-    GameEmulatorRepresentation gameEmulator;
-
-    FrontendMediaRepresentation frontendMedia;
-
-    public GameRepresentationModel(GameRepresentation game) {
-      super(game);
+  public class PlaylistBackgroundImageListCell extends ListCell<PlaylistRepresentation> {
+    public PlaylistBackgroundImageListCell() {
     }
 
-    public GameRepresentation getGame() {
-      return getBean();
-    }
+    protected void updateItem(PlaylistRepresentation item, boolean empty) {
+      super.updateItem(item, empty);
+      setGraphic(null);
+      setText(null);
+      if (item != null) {
+        Label playlistIcon = WidgetFactory.createPlaylistIcon(item, uiSettings);
+        setGraphic(playlistIcon);
 
-    public int getGameId() {
-      return bean.getId();
-    }
-
-    @Override
-    public boolean sameBean(GameRepresentation other) {
-      return bean.getId() == other.getId();
-    }
-
-    public FrontendMediaRepresentation getFrontendMedia() {
-      if (frontendMedia == null) {
-        frontendMedia = client.getFrontendMedia(bean.getId());
+        setText(" " + item.toString());
       }
-      return frontendMedia;
-    }
-
-    public String getStatusColor(VPinScreen screen) {
-      FrontendMediaItemRepresentation defaultMediaItem = getFrontendMedia().getDefaultMediaItem(screen);
-      ValidationProfile defaultProfile = validationSettings.getDefaultProfile();
-      ValidationConfig config = defaultProfile.getOrCreateConfig(screen.getValidationCode());
-      boolean ignored = bean.getIgnoredValidations().contains(screen.getValidationCode());
-
-      if (defaultMediaItem != null) {
-        String mimeType = defaultMediaItem.getMimeType();
-        if (mimeType.contains("audio")) {
-          if (!ignored && !config.getMedia().equals(ValidatorMedia.audio)) {
-            return WidgetFactory.ERROR_COLOR;
-          }
-        }
-        else if (mimeType.contains("image")) {
-          if (!ignored && !config.getMedia().equals(ValidatorMedia.image) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-            return WidgetFactory.ERROR_COLOR;
-          }
-        }
-        else if (mimeType.contains("video")) {
-          if (!ignored && !config.getMedia().equals(ValidatorMedia.video) && !config.getMedia().equals(ValidatorMedia.imageOrVideo)) {
-            return WidgetFactory.ERROR_COLOR;
-          }
-        }
-
-        if (!ignored && config.getOption().equals(ValidatorOption.empty)) {
-          return WidgetFactory.ERROR_COLOR;
-        }
-      }
-      else {
-        if (!ignored) {
-          if (config.getOption().equals(ValidatorOption.empty)) {
-            return DISABLED_COLOR;
-          }
-          else if (config.getOption().equals(ValidatorOption.optional)) {
-            return DISABLED_COLOR;
-          }
-          else if (config.getOption().equals(ValidatorOption.mandatory)) {
-            return WidgetFactory.ERROR_COLOR;
-          }
-        }
-      }
-
-      return "#FFFFFF";
-    }
-
-    public VpsTable getVpsTable() {
-      return vpsTable;
-    }
-
-    public GameEmulatorRepresentation getGameEmulator() {
-      return gameEmulator;
-    }
-
-    @Override
-    public String getName() {
-      return bean.getGameDisplayName();
-    }
-
-    @Override
-    public void load() {
-      this.vpsTable = client.getVpsService().getTableById(bean.getExtTableId());
-      this.gameEmulator = client.getFrontendService().getGameEmulator(bean.getEmulatorId());
     }
   }
-
 
   @Override
   public void onKeyEvent(KeyEvent event) {

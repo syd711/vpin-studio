@@ -17,6 +17,7 @@ public class Frontend {
   private boolean playfieldMediaInverted;
 
   private List<VPinScreen> supportedScreens = new ArrayList<>();
+  private List<VPinScreen> supportedRecordingScreens = new ArrayList<>();
   private List<Integer> ignoredValidations = new ArrayList<>();
 
   private FieldLookups fieldLookups = new FieldLookups();
@@ -35,6 +36,14 @@ public class Frontend {
 
   public void setIgnoredValidations(List<Integer> ignoredValidations) {
     this.ignoredValidations = ignoredValidations;
+  }
+
+  public List<VPinScreen> getSupportedRecodingScreens() {
+    return supportedRecordingScreens;
+  }
+
+  public void setSupportedRecordingScreens(List<VPinScreen> supportedRecordingScreens) {
+    this.supportedRecordingScreens = supportedRecordingScreens;
   }
 
   public List<VPinScreen> getSupportedScreens() {

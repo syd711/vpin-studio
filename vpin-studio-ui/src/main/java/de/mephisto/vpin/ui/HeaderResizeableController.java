@@ -48,7 +48,10 @@ public class HeaderResizeableController implements Initializable {
   }
 
   private Stage getStage() {
-    return (Stage) header.getScene().getWindow();
+    if (header.getScene() != null) {
+      return (Stage) header.getScene().getWindow();
+    }
+    return null;
   }
 
   @FXML
@@ -98,10 +101,13 @@ public class HeaderResizeableController implements Initializable {
     titleLabel.setText("VPin Studio (" + Studio.getVersion() + ") - " + name);
 
     Platform.runLater(() -> {
-      getStage().xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
-      getStage().heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+      Stage stage = getStage();
+      if (stage != null) {
+        stage.xProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+        stage.yProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+        stage.widthProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+        stage.heightProperty().addListener((observable, oldValue, newValue) -> onDragDone());
+      }
 
       header.setOnMouseMoved(new EventHandler<MouseEvent>() {
         @Override

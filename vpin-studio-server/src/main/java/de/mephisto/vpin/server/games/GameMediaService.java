@@ -71,7 +71,8 @@ public class GameMediaService {
   }
 
   public File uniqueMediaAsset(Game game, VPinScreen screen, String suffix) {
-    return buildMediaAsset(game, screen, suffix, true);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    return buildMediaAsset(mediaFolder, game, suffix, true);
   }
 
   public File buildMediaAsset(Game game, VPinScreen screen, boolean append) {
@@ -79,11 +80,12 @@ public class GameMediaService {
     if (screen.equals(VPinScreen.AudioLaunch) || screen.equals(VPinScreen.Audio)) {
       suffix = "mp3";
     }
-    return buildMediaAsset(game, screen, suffix, append);
+    File mediaFolder = frontendService.getMediaFolder(game, screen, suffix);
+    return buildMediaAsset(mediaFolder, game, suffix, append);
   }
 
-  public File buildMediaAsset(Game game, VPinScreen screen, String suffix, boolean append) {
-    File out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
+  public static File buildMediaAsset(File mediaFolder, Game game, String suffix, boolean append) {
+    File out = new File(mediaFolder, game.getGameName() + "." + suffix);
     if (append) {
       int index = 1;
       while (out.exists()) {

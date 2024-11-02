@@ -162,7 +162,7 @@ public class SystemCommandExecutor {
         LOG.info("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage());
       }
       else {
-        LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage(), e);
+        LOG.error("Failed to execute system command '" + Joiner.on(" ").join(commandInformation) + "': exit code " + exitValue + ", " + e.getMessage());
         throw e;
       }
     }

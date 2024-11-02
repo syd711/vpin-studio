@@ -14,12 +14,31 @@ public class JobDescriptor {
   private JobType jobType;
   private double progress;
   private String error;
+  private String errorHint;
   private int gameId;
   private boolean cancelled;
   private boolean cancelable;
 
+  private int tasksExecuted;
+
   @JsonIgnore
   private Job job;
+
+  public String getErrorHint() {
+    return errorHint;
+  }
+
+  public void setErrorHint(String errorHint) {
+    this.errorHint = errorHint;
+  }
+
+  public int getTasksExecuted() {
+    return tasksExecuted;
+  }
+
+  public void setTasksExecuted(int tasksExecuted) {
+    this.tasksExecuted = tasksExecuted;
+  }
 
   public JobDescriptor() {
 
@@ -123,7 +142,7 @@ public class JobDescriptor {
   }
 
   public boolean isFinished() {
-    return error != null || progress == 1;
+    return error != null || progress >= 1;
   }
 
   @Override

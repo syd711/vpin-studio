@@ -38,6 +38,7 @@ import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
 import de.mephisto.vpin.restclient.playlists.PlaylistsServiceClient;
 import de.mephisto.vpin.restclient.preferences.PreferencesServiceClient;
 import de.mephisto.vpin.restclient.puppacks.PupPackServiceClient;
+import de.mephisto.vpin.restclient.recorder.RecorderServiceClient;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
 import de.mephisto.vpin.restclient.res.ResServiceClient;
 import de.mephisto.vpin.restclient.system.SystemServiceClient;
@@ -93,6 +94,7 @@ public class VPinStudioClient implements OverlayClient {
   private final PlayersServiceClient playersServiceClient;
   private final FrontendServiceClient frontendServiceClient;
   private final PreferencesServiceClient preferencesServiceClient;
+  private final RecorderServiceClient recorderServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
@@ -136,6 +138,7 @@ public class VPinStudioClient implements OverlayClient {
     this.nvRamsServiceClient = new NVRamsServiceClient(this);
     this.playersServiceClient = new PlayersServiceClient(this);
     this.resServiceClient = new ResServiceClient(this);
+    this.recorderServiceClient = new RecorderServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
     this.frontendServiceClient = new FrontendServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
@@ -151,6 +154,10 @@ public class VPinStudioClient implements OverlayClient {
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public RecorderServiceClient getRecorderService() {
+    return recorderServiceClient;
   }
 
   public VideoConversionServiceClient getVideoConversionService() {
@@ -485,6 +492,7 @@ public class VPinStudioClient implements OverlayClient {
     getMameService().clearCache();
     getPupPackService().clearCache();
     getDmdService().clearCache();
+    getFrontendService().clearCache();
   }
 
   public void clearWheelCache() {

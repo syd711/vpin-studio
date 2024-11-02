@@ -10,4 +10,6 @@ public class Features {
   public static boolean VP_FORUMS = false;
   public static boolean AUTO_INSTALLER = false;
   public static boolean DROP_IN_FOLDER = true;
+
+  public static boolean RECORDER = true;
 }

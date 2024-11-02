@@ -45,6 +45,8 @@ public interface PreferenceNames {
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
   String TOURNAMENTS_SETTINGS = "tournamentSettings";
 
+  String RECORDER_SETTINGS = "recorderSettings";
+
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";
   String PREVIEW_ENABLED = "previewEnabled";

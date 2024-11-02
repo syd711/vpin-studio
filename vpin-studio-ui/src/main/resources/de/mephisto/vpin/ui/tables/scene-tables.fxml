@@ -79,6 +79,17 @@
                               <Tooltip text="Table Backups (F6)" />
                            </tooltip>
                                 </Tab>
+                        <Tab fx:id="recorderTab" text=" Media Recorder">
+                           <content>
+                              <BorderPane />
+                           </content>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2v-video-outline" iconSize="18" />
+                           </graphic>
+                           <tooltip>
+                              <Tooltip text="Media Recorder (F7)" />
+                           </tooltip>
+                        </Tab>
                             </tabs>
                         </TabPane>
                   <Button fx:id="toggleSidebarBtn" mnemonicParsing="false" onAction="#toggleSidebar" StackPane.alignment="TOP_RIGHT">

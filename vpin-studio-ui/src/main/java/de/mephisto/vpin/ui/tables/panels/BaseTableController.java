@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.tables.panels;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.ui.WaitOverlay;
@@ -107,9 +108,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     registerKeyPressed();
   }
 
-  protected void loadFilterPanel(String resource) {
+  protected void loadFilterPanel(Class clazz, String resource) {
     try {
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(resource));
+      FXMLLoader loader = new FXMLLoader(clazz.getResource(resource));
       loader.load();
       filterController = loader.getController();
       filterController.setTableController(this);
@@ -119,6 +120,10 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     catch (IOException e) {
       LOG.error("Failed to load loading filter: " + e.getMessage(), e);
     }
+  }
+
+  protected void loadFilterPanel(String resource) {
+    loadFilterPanel(this.getClass(), resource);
   }
 
   @FXML
@@ -200,8 +205,12 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     if (this.filteredModels != null) {
       this.filteredModels.setPredicate(filterController.buildPredicate());
       // update data count
-      labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
+      applyTableCount();
     }
+  }
+
+  protected void applyTableCount() {
+    labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
   }
 
   public void startReload(String message) {
@@ -442,5 +451,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         setText(" " + item.toString());
       }
     }
+  }
+
+  public GameEmulatorRepresentation getEmulatorSelection() {
+    return null;
   }
 }

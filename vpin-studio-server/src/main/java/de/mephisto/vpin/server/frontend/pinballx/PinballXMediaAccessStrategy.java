@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.util.StringUtils;
 
@@ -71,12 +72,12 @@ public class PinballXMediaAccessStrategy extends DefaultMediaAccessStrategy {
   }
 
   @Override
-  public File getGameMediaFolder(Game game, VPinScreen screen, String extension) {
+  public File getGameMediaFolder(@NonNull Game game, @NonNull VPinScreen screen, @Nullable String extension) {
     String mediaDirectory = game.getEmulator().getMediaDirectory();
     return getMediaFolder(mediaDirectory, screen, extension);
   }
 
-  private File getMediaFolder(String mediaDirectory, VPinScreen screen, String extension) {
+  private File getMediaFolder(String mediaDirectory,@NonNull  VPinScreen screen, @Nullable String extension) {
     String[] _folders = folders.get(screen);
     if (_folders == null) {
       return null;

@@ -31,8 +31,8 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   private boolean invertPlayfield;
 
-  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName, 
-      @NonNull String mimeType, boolean invertPlayfield) {
+  public VideoMediaPlayer(@NonNull BorderPane parent, @NonNull String url, @NonNull String screenName,
+                          @NonNull String mimeType, boolean invertPlayfield) {
     this(parent, null, screenName, url, mimeType, invertPlayfield, true);
   }
 
@@ -42,7 +42,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
   }
 
   private VideoMediaPlayer(@NonNull BorderPane parent, @NonNull FrontendMediaItemRepresentation mediaItem, @NonNull String screenName,
-                          @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
+                           @NonNull String url, @NonNull String mimeType, boolean invertPlayfield, boolean dialogRendering) {
     super(parent, url);
     this.mediaItem = mediaItem;
     this.mimeType = mimeType;
@@ -70,6 +70,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     parent.setCenter(this);
 
     media = new Media(url);
+    LOG.info("Streaming media: " + url);
     mediaPlayer = new MediaPlayer(media);
 
     mediaPlayer.setOnError(() -> {
@@ -95,7 +96,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
       mediaView.setVisible(true);
 
       this.setCenter(mediaView);
-    });    
+    });
   }
 
   private void scaleMediaView() {
@@ -113,7 +114,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
     if (prefHeight <= 0) {
       prefHeight = ((Pane) parent.getParent()).getHeight();
     }
-        
+
     prefWidth = prefWidth - 12;
     prefHeight = prefHeight - 12;
 
@@ -123,7 +124,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
     if (VPinScreen.PlayField.equals(screen)) {
       if (media.getWidth() > media.getHeight()) {
-        mediaView.setRotate(90 + (invertPlayfield? 180: 0));
+        mediaView.setRotate(90 + (invertPlayfield ? 180 : 0));
         mediaView.setFitWidth(prefHeight);
         mediaView.setFitHeight(prefWidth);
 
@@ -180,7 +181,7 @@ public class VideoMediaPlayer extends AssetMediaPlayer {
 
   @Override
   public void setMediaViewSize(double fitWidth, double fitHeight) {
-    if(this.mediaView != null) {
+    if (this.mediaView != null) {
       this.mediaView.setFitHeight(fitHeight);
       this.mediaView.setFitWidth(fitWidth);
     }

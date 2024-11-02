@@ -20,6 +20,10 @@ public class JobsServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "jobs", JobDescriptor[].class));
   }
 
+  public JobDescriptor getJob(String uuid) {
+    return getRestClient().get(API + "jobs/job/" + uuid, JobDescriptor.class);
+  }
+
   public boolean dismissAll() {
     return getRestClient().get(API + "jobs/dismiss", Boolean.class);
   }

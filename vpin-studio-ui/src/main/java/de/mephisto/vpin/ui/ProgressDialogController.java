@@ -64,6 +64,7 @@ public class ProgressDialogController implements Initializable, DialogController
   public void setProgressModel(Stage stage, ProgressModel model) {
     this.model = model;
     titleLabel.setText(model.getTitle());
+    cancelButton.setVisible(model.isCancelable());
 
     if (model.isIndeterminate()) {
       progressBar.setProgress(ProgressBar.INDETERMINATE_PROGRESS);

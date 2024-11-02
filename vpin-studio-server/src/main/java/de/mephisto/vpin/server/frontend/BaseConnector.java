@@ -75,7 +75,7 @@ public abstract class BaseConnector implements FrontendConnector {
    */
   private Map<Integer, Playlist> playlists = new HashMap<>();
 
-    /**
+  /**
    * map between gameId and stat
    */
   private Map<Integer, TableAlxEntry> gameStats = new HashMap<>();
@@ -149,10 +149,10 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private GameEntry popGameEntry(List<GameEntry> entries, int emuId, String filename) {
     GameEntry entry = entries.stream()
-      .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
-      .findFirst().orElse(null);
+        .filter(e -> e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename))
+        .findFirst().orElse(null);
 
-      // new discovered entry, create id
+    // new discovered entry, create id
     if (entry == null) {
       int id = filenameToId(emuId, filename);
       entry = new GameEntry(emuId, filename, id);
@@ -167,8 +167,9 @@ public abstract class BaseConnector implements FrontendConnector {
   private int filenameToId(int emuId, String filename) {
     return (emuId + "@" + filename).hashCode() & Integer.MAX_VALUE;
   }
+
   protected GameEntry findEntryFromFilename(int emuId, String filename) {
-    for (Map.Entry<Integer, GameEntry> entry: mapFilenames.entrySet()) {
+    for (Map.Entry<Integer, GameEntry> entry : mapFilenames.entrySet()) {
       GameEntry e = entry.getValue();
       if (e.getEmuId() == emuId && StringUtils.equalsIgnoreCase(e.getFilename(), filename)) {
         return e;
@@ -176,9 +177,10 @@ public abstract class BaseConnector implements FrontendConnector {
     }
     return null;
   }
+
   protected int findIdFromFilename(int emuId, String filename) {
-    GameEntry entry = findEntryFromFilename(emuId,  filename);
-    return entry != null? entry.getId() : -1;
+    GameEntry entry = findEntryFromFilename(emuId, filename);
+    return entry != null ? entry.getId() : -1;
   }
 
 
@@ -235,7 +237,7 @@ public abstract class BaseConnector implements FrontendConnector {
     game.setGameName(details != null ? details.getGameName() : gameName);
     game.setGameFileName(details != null ? details.getGameFileName() : filename);
     game.setGameDisplayName(details != null ? details.getGameDisplayName() : gameName);
-    game.setGameStatus(details != null ? details.getStatus(): 1);
+    game.setGameStatus(details != null ? details.getStatus() : 1);
     game.setDisabled(details != null ? details.getStatus() == 0 : false);
     game.setVersion(details != null ? details.getGameVersion() : null);
 
@@ -329,13 +331,13 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public TableDetails getTableDetails(int id) {
     GameEntry e = mapFilenames.get(id);
-    return (e != null ? getGameFromDb(e.getEmuId(), e.getFilename()): null);
+    return (e != null ? getGameFromDb(e.getEmuId(), e.getFilename()) : null);
   }
 
   @Override
   public void saveTableDetails(int id, TableDetails tableDetails) {
     GameEntry e = mapFilenames.get(id);
-    if (e==null) {
+    if (e == null) {
       return;
     }
 
@@ -474,6 +476,7 @@ public abstract class BaseConnector implements FrontendConnector {
     favs.setGames(favspg);
     return favs;
   }
+
   private Playlist getJustAddedPlaylist() {
     Playlist pl = new Playlist();
     pl.setId(PLAYLIST_JUSTADDED_ID);
@@ -481,8 +484,8 @@ public abstract class BaseConnector implements FrontendConnector {
     pl.setSqlPlayList(true);
     long dayMinus7 = System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000;
     List<PlaylistGame> games = getGames().stream().filter(g -> {
-        return g.getDateAdded() != null? g.getDateAdded().getTime() > dayMinus7 : false;
-      }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
+      return g.getDateAdded() != null ? g.getDateAdded().getTime() > dayMinus7 : false;
+    }).map(g -> toPlaylistGame(g.getId())).collect(Collectors.toList());
     pl.setGames(games);
     return pl;
   }
@@ -492,17 +495,17 @@ public abstract class BaseConnector implements FrontendConnector {
     pl.setId(PLAYLIST_MOSTPLAYED_ID);
     pl.setName("Most Played");
     pl.setSqlPlayList(true);
-    
+
     // extract stats, sort by number of plays, take first 10 and return PLaylistGames
-    Comparator<TableAlxEntry> c = (s1, s2) -> s1.getNumberOfPlays() == s2.getNumberOfPlays()? 
-        s2.getTimePlayedSecs()-s1.getTimePlayedSecs():
+    Comparator<TableAlxEntry> c = (s1, s2) -> s1.getNumberOfPlays() == s2.getNumberOfPlays() ?
+        s2.getTimePlayedSecs() - s1.getTimePlayedSecs() :
         s2.getNumberOfPlays() - s1.getNumberOfPlays();
 
     List<TableAlxEntry> games = getAlxData().stream().sorted(c).limit(10)
         .collect(Collectors.toList());
 
     List<PlaylistGame> plgames = games.stream().map(s -> toPlaylistGame(s.getGameId()))
-      .collect(Collectors.toList());
+        .collect(Collectors.toList());
 
     pl.setGames(plgames);
     return pl;
@@ -511,10 +514,10 @@ public abstract class BaseConnector implements FrontendConnector {
   @NonNull
   @Override
   public Playlist getPlayList(int id) {
-    return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() : 
-          id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
-          id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
-          playlists.get(id);
+    return id == PLAYLIST_FAVORITE_ID ? getFavPlaylist() :
+        id == PLAYLIST_JUSTADDED_ID ? getJustAddedPlaylist() :
+            id == PLAYLIST_MOSTPLAYED_ID ? getMostPlayedPlaylist() :
+                playlists.get(id);
   }
 
   @Override
@@ -628,13 +631,13 @@ public abstract class BaseConnector implements FrontendConnector {
   private JsonObject getPlaylistConf(Playlist playlist) {
     JsonObject conf = getPlaylistConf();
     JsonObject playlistConf = conf.getAsJsonObject(playlist.getName());
-    if (playlistConf == null) {    
+    if (playlistConf == null) {
       return new JsonObject();
     }
     return playlistConf;
   }
 
-  private void savePlaylistConf(Playlist playlist,JsonObject playlistConf) {
+  private void savePlaylistConf(Playlist playlist, JsonObject playlistConf) {
     JsonObject o = getPlaylistConf();
     o.add(playlist.getName(), playlistConf);
 
@@ -696,7 +699,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean updateNumberOfPlaysForGame(int gameId, long value) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setNumberOfPlays((int) value); 
+    stat.setNumberOfPlays((int) value);
     return true;
   }
 
@@ -704,7 +707,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean updateSecondsPlayedForGame(int gameId, long seconds) {
     // update internal cache
     TableAlxEntry stat = gameStats.get(gameId);
-    stat.setTimePlayedSecs((int) seconds); 
+    stat.setTimePlayedSecs((int) seconds);
     return true;
   }
 
@@ -785,14 +788,14 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected File resolveExe(EmulatorType type) {
     switch (type) {
-    case VisualPinball:
-      return getVPXExe(); 
-    case VisualPinball9:
-      return getVPTExe();
-    case FuturePinball:
-      return getFpExe();
-    default:
-      return null;
+      case VisualPinball:
+        return getVPXExe();
+      case VisualPinball9:
+        return getVPTExe();
+      case FuturePinball:
+        return getFpExe();
+      default:
+        return null;
     }
   }
 
@@ -829,10 +832,10 @@ public abstract class BaseConnector implements FrontendConnector {
   @Override
   public boolean isFrontendRunning() {
     Optional<ProcessHandle> process = ProcessHandle
-      .allProcesses()
-      .filter(p -> p.info().command().isPresent() && 
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
             p.info().command().get().contains(getFrontendExe()))
-      .findFirst();
+        .findFirst();
     return process.isPresent();
   }
 
@@ -859,5 +862,30 @@ public abstract class BaseConnector implements FrontendConnector {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public boolean restartFrontend(boolean wait) {
+    throw new UnsupportedOperationException("restartFrontend not supported for " + this.getClass().getSimpleName());
+  }
+
+  @Override
+  public boolean launchGame(Game game, boolean wait) {
+    throw new UnsupportedOperationException("launchGame not supported for " + this.getClass().getSimpleName());
+  }
+
+  @Override
+  public boolean isEmulatorRunning(GameEmulator emulator) {
+    throw new UnsupportedOperationException("isEmulatorRunning not supported for " + this.getClass().getSimpleName());
+  }
+
+  @Override
+  public void initializeRecording() {
+
+  }
+
+  @Override
+  public void finalizeRecording() {
+
   }
 }

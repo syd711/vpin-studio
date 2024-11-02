@@ -47,11 +47,20 @@ public enum VPinScreen {
     if ("Apron/FullDMD".equalsIgnoreCase(name)) {
       return Menu;
     }
+    if ("Menu".equalsIgnoreCase(name)) {
+      return Menu;
+    }
     if ("Music".equalsIgnoreCase(name)) {
       return Audio;
     }
     if (Topper.name().equalsIgnoreCase(name)) {
       return Topper;
+    }
+    if (DMD.name().equalsIgnoreCase(name)) {
+      return DMD;
+    }
+    if (PlayField.name().equalsIgnoreCase(name)) {
+      return PlayField;
     }
     return null;
   }

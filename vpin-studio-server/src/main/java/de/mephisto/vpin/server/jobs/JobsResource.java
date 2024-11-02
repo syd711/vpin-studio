@@ -32,6 +32,11 @@ public class JobsResource {
     return true;
   }
 
+  @GetMapping("/job/{uuid}")
+  public JobDescriptor getJob(@PathVariable("uuid") String uuid) {
+    return jobService.getJob(uuid);
+  }
+
   @GetMapping("/dismiss/{uuid}")
   public boolean dismiss(@PathVariable("uuid") String uuid) {
     jobService.dismiss(uuid);

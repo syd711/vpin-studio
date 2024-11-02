@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import de.mephisto.vpin.ui.tables.GameRepresentationModel;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;

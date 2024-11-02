@@ -2,12 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
-import de.mephisto.vpin.restclient.games.FilterSettings;
-import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.NoteType;
-import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
-import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.ui.tables.dialogs.TableDataController;
 import de.mephisto.vpin.ui.tables.models.TableStatus;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -27,7 +22,7 @@ import java.util.function.Predicate;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel> 
+public class TableFilterController extends BaseFilterController<GameRepresentation, GameRepresentationModel>
     implements Initializable {
 
   @FXML
@@ -125,8 +120,8 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
     return !filterSettings.isResetted(emulatorSelection == null || emulatorSelection.isVpxEmulator());
   }
 
-  private GameEmulatorRepresentation getEmulatorSelection() {
-    return ((TableOverviewController) tableController).getEmulatorSelection();
+  protected GameEmulatorRepresentation getEmulatorSelection() {
+    return tableController.getEmulatorSelection();
   }
 
   @Override

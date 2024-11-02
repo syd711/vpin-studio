@@ -41,6 +41,16 @@ public class JobPoller implements StudioEventListener {
   private final AtomicBoolean polling = new AtomicBoolean(false);
   private JobsMenuHeaderController headerController;
 
+  private final List<JobUpdatesListener> listeners = new ArrayList<>();
+
+  public void addListener(JobUpdatesListener listener) {
+    this.listeners.add(listener);
+  }
+
+  public void removeListener(JobUpdatesListener listener) {
+    this.listeners.remove(listener);
+  }
+
   public static void destroy() {
     if (instance != null) {
       instance.service.cancel();
@@ -88,10 +98,11 @@ public class JobPoller implements StudioEventListener {
             while (poll) {
               Thread.sleep(600);
               List<JobDescriptor> allJobs = getAllJobs();
-              List<JobDescriptor> activeJobs = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
+              List<JobDescriptor> activeJobs = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
               LOG.info("JobPoller is waiting for " + activeJobs.size() + " running jobs.");
               refreshJobsUI();
               poll = !activeJobs.isEmpty();
+              notifyListeners(activeJobs);
             }
             LOG.info("JobPoller finished all jobs");
             refreshJobsUI();
@@ -109,6 +120,12 @@ public class JobPoller implements StudioEventListener {
     setPolling();
   }
 
+  private void notifyListeners(List<JobDescriptor> activeJobs) {
+    for (JobUpdatesListener listener : listeners) {
+      listener.jobsRefreshed(activeJobs);
+    }
+  }
+
   public static JobPoller getInstance() {
     return instance;
   }
@@ -118,19 +135,21 @@ public class JobPoller implements StudioEventListener {
   }
 
   public void setPolling() {
-    jobProgress.setProgress(-1);
-    jobProgress.setVisible(true);
-    jobProgress.setDisable(false);
+    if (!polling.get()) {
+      jobProgress.setProgress(-1);
+      jobProgress.setVisible(true);
+      jobProgress.setDisable(false);
 
-    if (!service.isRunning()) {
-      service.restart();
+      if (!service.isRunning()) {
+        service.restart();
+      }
+      polling.set(true);
     }
-    polling.set(true);
   }
 
   public void refreshJobsUI() {
     List<JobDescriptor> allJobs = getAllJobs();
-    List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> !j.isFinished()).collect(Collectors.toList());
+    List<JobDescriptor> activeJobList = allJobs.stream().filter(j -> (!j.isFinished() && !j.isCancelled())).collect(Collectors.toList());
     polling.set(!activeJobList.isEmpty());
     jobMenu.setDisable(allJobs.isEmpty());
     headerController.setVisible(!allJobs.isEmpty());
@@ -201,7 +220,7 @@ public class JobPoller implements StudioEventListener {
   public void dismissAll() {
     client.getJobsService().dismissAll();
     for (JobDescriptor clientJob : new ArrayList<>(clientJobs)) {
-      if (clientJob.isFinished()) {
+      if (clientJob.isFinished() || clientJob.isCancelled()) {
         clientJobs.remove(clientJob);
       }
     }
