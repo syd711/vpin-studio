@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="900.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -50,7 +50,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="458.0" fitWidth="800.0" layoutX="34.0" layoutY="185.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="458.0" fitWidth="400.0" layoutX="34.0" layoutY="185.0" pickOnBounds="true" preserveRatio="true">
                      <image>
                         <Image url="@../../screenshots/bot/new2.png" />
                      </image>
@@ -82,20 +82,15 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="1507.0" styleClass="preference-description" text="Click on &quot;Add Bot&quot;.">
-                     <font>
-                        <Font size="14.0" />
-                     </font>
-                  </Label>
-                  <ImageView fitHeight="328.0" fitWidth="800.0" layoutX="34.0" layoutY="1167.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="466.0" fitWidth="800.0" layoutX="34.0" layoutY="1362.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../screenshots/bot/add-bot.png" />
+                        <Image url="@../../screenshots/bot/general-information-2.png" />
                      </image>
                      <VBox.margin>
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                   </ImageView>
-                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="You have created a new bot. Choose an icon and name here. ">
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="Choose an icon and name here. ">
                      <font>
                         <Font size="14.0" />
                      </font>
@@ -105,14 +100,6 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="466.0" fitWidth="800.0" layoutX="34.0" layoutY="1539.0" pickOnBounds="true" preserveRatio="true">
-                     <image>
-                        <Image url="@../../screenshots/bot/general-information-2.png" />
-                     </image>
-                     <VBox.margin>
-                        <Insets bottom="12.0" top="12.0" />
-                     </VBox.margin>
-                  </ImageView>
                   <Label layoutX="34.0" layoutY="1077.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="3. Set Bot Permissions" />
                   <Label layoutX="34.0" layoutY="2409.0" styleClass="preference-description" text="Our bot should read the member names and send messages. ">
                      <font>
@@ -138,19 +125,32 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="Select &quot;OAuth2&quot; -&gt; &quot;URL Generator&quot; in the navigation section.">
+                  <Label layoutX="34.0" layoutY="2487.0" styleClass="preference-description" text="Select &quot;OAuth2&quot; and scroll to the &quot;URL Generator&quot; section.">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="Set &quot;SCOPES&quot; to &quot;bot&quot; and &quot;BOT PERMISSIONS&quot; to &quot;Administrator&quot;.">
+                  <Label layoutX="34.0" layoutY="2936.0" styleClass="preference-description" text="Set &quot;SCOPES&quot; to &quot;bot&quot;.">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <ImageView fitHeight="468.0" fitWidth="800.0" layoutX="34.0" layoutY="2479.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@../../screenshots/bot/bot-permissions.png" />
+                        <Image url="@../../screenshots/bot/url-1.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Label layoutX="34.0" layoutY="2379.0" styleClass="preference-description" text="Scroll further down to &quot;Bot Permissions&quot; and set the following flags:">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="468.0" fitWidth="800.0" layoutX="34.0" layoutY="2412.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../screenshots/bot/url-2.png" />
                      </image>
                      <VBox.margin>
                         <Insets bottom="12.0" top="12.0" />

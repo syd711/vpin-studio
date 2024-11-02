@@ -12,6 +12,8 @@
 - **Tables / PUP Packs**: Added option to remote edit the available option and additional files that are listed for a PUP pack in the PUP pack section.
 - **System Manager / Visual Pinball**: Edit button to remote edit the **VPinballX.ini** file.
 - **Drop-in Folder**: Fixed **new** star icon again.
+- **PINemHi**: Fixed auto-updater which did not update all .exe files, but only the **pinemhi.exe**.
+- **Preferences / Discord Bot FAQ**: Updated FAQ with updates screenshots and the concrete permissions info which was only available in the wiki before.
 
 ### Release Notes 3.9
 
