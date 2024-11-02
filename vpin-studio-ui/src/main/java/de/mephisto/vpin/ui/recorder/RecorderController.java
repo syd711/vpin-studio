@@ -389,7 +389,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     client.getPreferenceService().addListener(this);
     NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
 
-    super.loadFilterPanel("scene-recorder-filter.fxml");
+    super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
 
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());

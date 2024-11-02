@@ -121,7 +121,7 @@ public class TableFilterController extends BaseFilterController<GameRepresentati
   }
 
   protected GameEmulatorRepresentation getEmulatorSelection() {
-    return ((TableOverviewController) tableController).getEmulatorSelection();
+    return tableController.getEmulatorSelection();
   }
 
   @Override
