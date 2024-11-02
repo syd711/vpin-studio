@@ -21,6 +21,7 @@ import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
@@ -132,7 +133,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         client.getRecorderService().stopRecording(recording);
       }
     }
-
     RecorderDialogs.openRecordingDialog(this, selection);
   }
 

@@ -40,9 +40,11 @@ public class ScreenRecorder {
     try {
       if (options.getInitialDelay() > 0) {
         LOG.info(this + " is waiting for the initial recording delay of " + options.getInitialDelay() + " seconds.");
-        Thread.sleep(options.getInitialDelay() * 1000);
-        if (cancelled) {
-          return result;
+        for (int i = 0; i < options.getInitialDelay(); i++) {
+          Thread.sleep(1000);
+          if (cancelled) {
+            return result;
+          }
         }
       }
 
@@ -80,7 +82,7 @@ public class ScreenRecorder {
       commandList.add("-f");
       commandList.add("gdigrab");
       commandList.add("-framerate");
-      if(options.isFps60()) {
+      if (options.isFps60()) {
         commandList.add("60");
       }
       else {

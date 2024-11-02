@@ -13,6 +13,7 @@ import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
+import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -80,6 +81,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private int totalEstimatedSeconds;
   private int maxScreenRecordingLength;
   private Thread jobRefreshThread;
+  private boolean finished = false;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -94,6 +96,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   @FXML
   private void onRecord(ActionEvent e) {
+    finished = false;
     recordBtn.setVisible(false);
     cancelBtn.setVisible(false);
     stopBtn.setVisible(true);
@@ -121,7 +124,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         }
       }
 
-      finishRecording(false);
+      if (!finished) {
+        finishRecording(false);
+      }
     });
     jobRefreshThread.start();
   }
@@ -175,6 +180,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   }
 
   private void finishRecording(boolean cancelled) {
+    finished = true;
     JobPoller.getInstance().removeListener(this);
     jobDescriptor.setProgress(1);
 
@@ -200,6 +206,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
         WidgetFactory.showAlert(Studio.stage, "Recording Failed", jobDescriptor.getError(), jobDescriptor.getErrorHint());
       }
       else if (cancelled) {
+        ProgressDialog.createProgressDialog(new CancelRecordingProgressModel());
         WidgetFactory.showAlert(Studio.stage, "Recording Cancelled", "The recording has been cancelled.", jobDescriptor.getErrorHint());
       }
       else {

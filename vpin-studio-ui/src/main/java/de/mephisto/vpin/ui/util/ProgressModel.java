@@ -24,6 +24,10 @@ abstract public class ProgressModel<T> {
     return false;
   }
 
+  public boolean isCancelable() {
+    return true;
+  }
+
   abstract public int getMax();
 
   abstract public T getNext();
