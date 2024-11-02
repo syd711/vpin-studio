@@ -54,15 +54,12 @@
                         <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Label styleClass="default-text" text="Time Remaining:" GridPane.rowIndex="2" />
-                        <Label styleClass="default-text" text="Estimated Time Remaining:" GridPane.rowIndex="3" />
+                        <Label styleClass="default-text" text="Total Recordings:" GridPane.rowIndex="2" />
                         <Label styleClass="default-text" text="Active Table:" GridPane.rowIndex="1" />
                         <Label fx:id="pTableLabel" layoutX="10.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Label fx:id="pTimeLabel" layoutX="156.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Label fx:id="pTotalTimeLabel" layoutX="156.0" layoutY="33.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label fx:id="totalRecordingsLabel" layoutX="156.0" layoutY="10.0" styleClass="default-text" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <Label layoutX="10.0" layoutY="44.0" styleClass="default-text" text="Status:" />
                         <Label fx:id="statusLabel" layoutX="198.0" layoutY="33.0" styleClass="default-text" text="-" GridPane.columnIndex="1" />
                      </children>

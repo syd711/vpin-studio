@@ -82,44 +82,6 @@ public class GameRecorder {
       futures.add(submit);
     }
 
-
-    jobUpdater = new Thread(() -> {
-      Thread.currentThread().setName("Game Recorder JobDescriptor Updater");
-      while (!finished) {
-        try {
-          Thread.sleep(1000);
-          waitingTime--;
-
-          if (waitingTime >= 0) {
-            jobDescriptor.setTaskRemainingSeconds(waitingTime);
-          }
-
-          int processed = totalTime - waitingTime;
-          double thisProgress = (processed * 100d / totalTime);
-          double relativeProgress = thisProgress / 100 / totalGamesToRecord;
-          double baseProgress = jobDescriptor.getTasksExecuted() * 100d / totalGamesToRecord / 100;
-
-          System.out.println("This: " + thisProgress);
-          System.out.println("Relative: " + relativeProgress);
-          System.out.println("------------------------");
-
-          if(relativeProgress >= 1) {
-            relativeProgress = 0.99;
-          }
-
-          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-            finished = true;
-            return;
-          }
-          jobDescriptor.setProgress(relativeProgress);
-        }
-        catch (Exception e) {
-          //ignore
-        }
-      }
-    });
-    jobUpdater.start();
-
     try {
       for (Future<RecordingResult> future : futures) {
         RecordingResult recordingResult = future.get();

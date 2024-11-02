@@ -21,7 +21,6 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,10 +55,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private Label pTableLabel;
 
   @FXML
-  private Label pTimeLabel;
-
-  @FXML
-  private Label pTotalTimeLabel;
+  private Label totalRecordingsLabel;
 
   @FXML
   private Label statusLabel;
@@ -73,13 +69,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
   private RecorderController recorderController;
   private List<GameRepresentation> games;
 
-  //just a guess!
-  private int popperInitAndLoadingTimeSeconds = 6;
-
   private GameRepresentation game;
   private JobDescriptor jobDescriptor;
-  private int totalEstimatedSeconds;
-  private int maxScreenRecordingLength;
   private Thread jobRefreshThread;
   private boolean finished = false;
 
@@ -115,6 +106,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       while (!this.jobDescriptor.isFinished() && !this.jobDescriptor.isCancelled()) {
         Platform.runLater(() -> {
           refreshJobStatus();
+          progressBar.setProgress(jobDescriptor.getProgress());
         });
         try {
           Thread.sleep(1000);
@@ -156,27 +148,9 @@ public class RecordingProgressDialogController implements Initializable, DialogC
           this.pTableLabel.setText(game.getGameDisplayName());
         }
       }
-
-      if (jobDescriptor.getTaskRemainingSeconds() > 0) {
-        this.pTimeLabel.setText(DurationFormatUtils.formatDuration(jobDescriptor.getTaskRemainingSeconds() * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
-      }
-      else {
-        this.pTimeLabel.setText("?");
-      }
-
-      int taskDurationSeconds = jobDescriptor.getTaskDurationSeconds();
-      if (taskDurationSeconds > 0) {
-        int estimatedTotalTime = jobDescriptor.getTaskDurationSeconds() * games.size();
-        int estimatedRemainingTime = estimatedTotalTime - (jobDescriptor.getTaskDurationSeconds() * ((games.size() - jobDescriptor.getTasksExecuted()) + 1)) + jobDescriptor.getTaskRemainingSeconds();
-        this.pTotalTimeLabel.setText(DurationFormatUtils.formatDuration(estimatedRemainingTime * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
-      }
-      else {
-        if (jobDescriptor.getTaskRemainingSeconds() > 0) {
-          int remaining = totalEstimatedSeconds - (maxScreenRecordingLength - jobDescriptor.getTaskRemainingSeconds());
-          this.pTotalTimeLabel.setText(DurationFormatUtils.formatDuration(remaining * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false));
-        }
-      }
     }
+
+    totalRecordingsLabel.setText("Finished " + jobDescriptor.getTasksExecuted() + " of " + games.size() + " recordings.");
   }
 
   private void finishRecording(boolean cancelled) {
@@ -193,7 +167,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       cancelBtn.setVisible(true);
 
       this.pTableLabel.setText("-");
-      this.pTimeLabel.setText("-");
+      this.totalRecordingsLabel.setText("-");
       recorderController.doReload();
       progressBar.setProgress(1);
 
@@ -229,25 +203,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
   private void refresh() {
     this.recorderController.refreshScreens();
-
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
-
-    maxScreenRecordingLength = popperInitAndLoadingTimeSeconds;
-    for (RecordingScreen recordingScreen : recordingScreens) {
-      RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
-
-      int screenDuration = option.getInitialDelay() + option.getRecordingDuration();
-      if (screenDuration > maxScreenRecordingLength) {
-        maxScreenRecordingLength = screenDuration;
-      }
-    }
-
+    totalRecordingsLabel.setText("Finished 0 of " + games.size() + " recordings.");
     recordBtn.setDisable(screenCheckboxes.stream().noneMatch(CheckBox::isSelected));
-
-    totalEstimatedSeconds = maxScreenRecordingLength * games.size();
-    String totalDurationString = DurationFormatUtils.formatDuration(totalEstimatedSeconds * 1000, "HH 'hours', mm 'minutes', ss 'seconds'", false);
-    pTotalTimeLabel.setText(totalDurationString);
   }
 
   @Override

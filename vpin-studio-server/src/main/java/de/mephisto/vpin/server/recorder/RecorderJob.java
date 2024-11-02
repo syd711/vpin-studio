@@ -53,6 +53,7 @@ public class RecorderJob implements Job {
         }
         else {
           frontend.initializeRecording();
+          updateSingleProgress(jobDescriptor, games, 10);
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
@@ -68,6 +69,7 @@ public class RecorderJob implements Job {
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
+          updateSingleProgress(jobDescriptor, games, 25);
 
           jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
           if (!jobDescriptor.isCancelled() && !frontend.launchGame(game, true)) {
@@ -79,22 +81,17 @@ public class RecorderJob implements Job {
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
-
-          long start = System.currentTimeMillis();
+          updateSingleProgress(jobDescriptor, games, 35);
 
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
           gameRecorder = new GameRecorder(frontend, game, settings, supportedRecodingScreens, jobDescriptor, games.size());
           gameRecorder.startRecording();
 
-          double progress = (double) (jobDescriptor.getTasksExecuted() * 100) / games.size() / 100;
-          if (jobDescriptor.getProgress() < 1) {
-            jobDescriptor.setProgress(progress);
-          }
+          updateSingleProgress(jobDescriptor, games, 90);
           LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
           jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
-
-          long duration = System.currentTimeMillis() - start;
-          jobDescriptor.setTaskDurationSeconds((int) (duration / 1000));
+          double progress = jobDescriptor.getTasksExecuted() * 100d / games.size() / 100d;
+          jobDescriptor.setProgress(progress);
         }
       }
       catch (Exception e) {
@@ -103,14 +100,27 @@ public class RecorderJob implements Job {
       finally {
         frontend.finalizeRecording();
         frontend.killFrontend();
-
-        frontendStatusService.setEventsEnabled(true);
       }
     }
     LOG.info("Recordings for " + games.size() + " games finished.");
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
+
+    frontendStatusService.setEventsEnabled(true);
     LOG.info("***************************** /Game Recording Log *****************************************************");
+  }
+
+  /**
+   * Manual update progress when there is only one game recorded.
+   *
+   * @param jobDescriptor
+   * @param games
+   * @param progress
+   */
+  private void updateSingleProgress(JobDescriptor jobDescriptor, List<Game> games, double progress) {
+    if(games.size() == 1) {
+      jobDescriptor.setProgress(progress / 100d);
+    }
   }
 
   @Override

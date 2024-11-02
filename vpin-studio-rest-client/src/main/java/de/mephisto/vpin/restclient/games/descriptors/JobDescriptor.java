@@ -20,8 +20,6 @@ public class JobDescriptor {
   private boolean cancelable;
 
   private int tasksExecuted;
-  private int taskRemainingSeconds;
-  private int taskDurationSeconds;
 
   @JsonIgnore
   private Job job;
@@ -42,24 +40,8 @@ public class JobDescriptor {
     this.tasksExecuted = tasksExecuted;
   }
 
-  public int getTaskRemainingSeconds() {
-    return taskRemainingSeconds;
-  }
-
-  public void setTaskRemainingSeconds(int taskRemainingSeconds) {
-    this.taskRemainingSeconds = taskRemainingSeconds;
-  }
-
   public JobDescriptor() {
 
-  }
-
-  public int getTaskDurationSeconds() {
-    return taskDurationSeconds;
-  }
-
-  public void setTaskDurationSeconds(int taskDurationSeconds) {
-    this.taskDurationSeconds = taskDurationSeconds;
   }
 
   public boolean isCancelable() {
