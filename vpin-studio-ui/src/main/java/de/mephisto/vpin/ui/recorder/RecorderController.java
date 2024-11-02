@@ -3,6 +3,7 @@ package de.mephisto.vpin.ui.recorder;
 import de.mephisto.vpin.commons.fx.Debouncer;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
+import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -12,16 +13,14 @@ import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
 import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import javafx.application.Platform;
@@ -68,19 +67,19 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnDisplayName;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnPlayfield;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnBackglass;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnDMD;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnTopper;
 
   @FXML
-  private TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
+  TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
 
   @FXML
   private CheckBox selectAllCheckbox;
@@ -104,6 +103,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Button reloadBtn;
 
   @FXML
+  private Button dataManagerBtn;
+
+  @FXML
+  private Button tableNavigateBtn;
+
+  @FXML
   private Spinner<Integer> refreshInterval;
 
   private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
@@ -122,6 +127,25 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   // Add a public no-args constructor
   public RecorderController() {
+  }
+
+
+  @FXML
+  private void onOpenTable(ActionEvent e) {
+    GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
+    if (selectedItem != null) {
+      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(selectedItem.getGame().getId()));
+    }
+  }
+
+  @FXML
+  public void onStop() {
+    Frontend frontend = client.getFrontendService().getFrontendCached();
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage,
+        FrontendUtil.replaceNames("Stop all emulators and [Frontend] processes?", frontend, null));
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      client.getFrontendService().terminateFrontend();
+    }
   }
 
   @FXML
@@ -161,6 +185,20 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void onDelete() {
   }
 
+  @FXML
+  public void onTableEdit() {
+    GameRepresentation selectedItems = getSelection();
+    if (selectedItems != null) {
+      if (Studio.client.getFrontendService().isFrontendRunning()) {
+        if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
+          TableDialogs.openTableDataDialog(null, selectedItems);
+        }
+        return;
+      }
+      TableDialogs.openTableDataDialog(null, selectedItems);
+    }
+  }
+
   public void doReload(boolean clearCache) {
     startReload("Loading Tables...");
 
@@ -168,6 +206,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     this.searchTextField.setDisable(true);
     this.reloadBtn.setDisable(true);
+    this.dataManagerBtn.setDisable(true);
+    this.tableNavigateBtn.setDisable(true);
 
     GameRepresentation selection = getSelection();
     GameRepresentationModel selectedItem = tableView.getSelectionModel().getSelectedItem();
@@ -234,7 +274,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-        //TODO
+        onTableEdit();
       }
     }
   }
@@ -445,6 +485,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
           selection.addAll(items.stream().map(GameRepresentationModel::getGame).collect(Collectors.toList()));
         }
         refreshSelection();
+      }
+    });
+
+    tableView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<GameRepresentationModel>() {
+      @Override
+      public void changed(ObservableValue<? extends GameRepresentationModel> observable, GameRepresentationModel oldValue, GameRepresentationModel newValue) {
+        dataManagerBtn.setDisable(newValue == null);
+        tableNavigateBtn.setDisable(newValue == null);
       }
     });
 

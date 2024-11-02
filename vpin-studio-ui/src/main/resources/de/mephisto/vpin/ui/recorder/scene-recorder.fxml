@@ -67,6 +67,29 @@
             <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                 <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
                 <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Edit table data" />
+               </tooltip>
+            </Button>
+            <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Show table in table overview" />
+               </tooltip>
+            </Button>
+            <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start Recording" textFill="#ff3333">
                <font>
                   <Font size="14.0" />
@@ -79,11 +102,23 @@
                </graphic>
             </Button>
             <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+               </tooltip>
+            </Button>
+            <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
                   <Label styleClass="default-text" text="Preview Refresh:" />
                   <Spinner fx:id="refreshInterval" prefWidth="70.0" />
-                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="sec." />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="seconds" />
                </children>
             </HBox>
             </items>
@@ -107,27 +142,27 @@
                                             </graphic>
                                         </TableColumn>
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" sortable="false" style="-fx-alignment: CENTER;" text="Playfield">
+                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="Playfield">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" sortable="false" style="-fx-alignment: CENTER;" text="Backglass">
+                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="Backglass">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" sortable="false" style="-fx-alignment: CENTER;" text="DMD">
+                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="DMD">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" sortable="false" style="-fx-alignment: CENTER;" text="Topper">
+                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="Topper">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                             </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" sortable="false" style="-fx-alignment: CENTER;" text="Full DMD">
+                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="Full DMD">
                                             <graphic>
                                                 <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
                                             </graphic>
