@@ -518,6 +518,7 @@ public class WidgetFactory {
         if (controller != null) {
           controller.onDialogCancel();
         }
+        t.consume();
         stage.close();
       }
     });

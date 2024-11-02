@@ -79,6 +79,11 @@ public class VpxServiceClient extends VPinStudioClientService {
     return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/sources/" + game.getId(), String.class);
   }
 
+  public String getVpxFile() {
+    final RestTemplate restTemplate = new RestTemplate();
+    return restTemplate.getForObject(getRestClient().getBaseUrl() + API + "vpx/vpinballx", String.class);
+  }
+
   public TableInfo getTableInfo(GameRepresentation game) {
     return getRestClient().get(API + "vpx/tableinfo/" + game.getId(), TableInfo.class);
   }

@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -50,6 +51,9 @@ public class TextEditService {
   @Autowired
   private DOFLinxService dofLinxService;
 
+  @Autowired
+  private VPXService vpxService;
+
   public TextFile getText(TextFile textFile) {
     try {
       ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
@@ -83,8 +87,7 @@ public class TextEditService {
           break;
         }
         case VPinballXIni: {
-          String user = System.getProperty("user.name");
-          File init = new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
+          File init = vpxService.getVPXFile();
           Path filePath = init.toPath();
           String iniText = Files.readString(filePath);
           textFile.setContent(iniText);
@@ -216,8 +219,7 @@ public class TextEditService {
           return textFile;
         }
         case VPinballXIni: {
-          String user = System.getProperty("user.name");
-          File f = new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
+          File f = vpxService.getVPXFile();
           String[] lines = textFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);
