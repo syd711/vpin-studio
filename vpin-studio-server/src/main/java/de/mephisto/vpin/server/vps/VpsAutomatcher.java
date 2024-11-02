@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.vps;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -69,10 +70,22 @@ public class VpsAutomatcher {
     if (useDisplayName) {
       gameFileName = game.getGameDisplayName();
     }
-    gameFileName = FilenameUtils.getBaseName(gameFileName);
+    gameFileName = cleanFilename(FilenameUtils.getBaseName(gameFileName));
 
     autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, tableInfo, overwrite);
     return vpsMatch;
+  }
+
+  /**
+   * Remove obvious file hints not related to the actual name.
+   * @param baseName the file base name
+   * @return
+   */
+  private String cleanFilename(String baseName) {
+    String name = baseName;
+    name = name.replace("VR Room", "");
+    name = name.replace("VRRoom", "");
+    return name;
   }
 
   /**
@@ -80,7 +93,6 @@ public class VpsAutomatcher {
    */
   public void autoMatch(GameVpsMatch vpsMatch, VPS vpsDatabase, String gameFileName, String rom, boolean checkall, TableInfo tableInfo, boolean overwrite) {
     try {
-
       LOG.info("Find closest table for " + gameFileName);
 
       //------------------------------------------------------
