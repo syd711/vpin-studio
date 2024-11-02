@@ -13,6 +13,8 @@ import de.mephisto.vpin.restclient.util.FileUtils;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.embed.swing.SwingFXUtils;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -29,6 +31,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -402,6 +406,51 @@ public class WidgetFactory {
     return createDialogStage(fxmlLoader, owner, title, null);
   }
 
+  public static void addToTextListener(Label label) {
+    label.managedProperty().bindBidirectional(label.visibleProperty());
+    label.textProperty().addListener(new ChangeListener<String>() {
+      @Override
+      public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+        if (!label.isVisible()) {
+          TextField textarea = (TextField) label.getUserData();
+          if (textarea != null) {
+            ((Pane) label.getParent()).getChildren().remove(textarea);
+            label.setVisible(true);
+          }
+        }
+      }
+    });
+
+    label.setOnMouseClicked(new EventHandler<MouseEvent>() {
+      @Override
+      public void handle(MouseEvent mouseEvent) {
+        if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
+          if (mouseEvent.getClickCount() == 2) {
+            label.setVisible(false);
+            TextField textarea = new TextField(label.getText());
+            textarea.setEditable(false);
+            textarea.setPrefHeight(label.getHeight());
+            textarea.setStyle("-fx-font-size: 14px;");
+            label.setUserData(textarea);
+            int i = ((Pane) label.getParent()).getChildren().indexOf(label);
+            ((Pane) label.getParent()).getChildren().add(i, textarea);
+            Platform.runLater(() -> {
+              textarea.requestFocus();
+              textarea.selectAll();
+            });
+
+            textarea.setOnKeyPressed(event -> {
+              if (event.getCode().toString().equals("ENTER") || event.getCode().toString().equalsIgnoreCase("ESCAPE")) {
+                ((Pane) label.getParent()).getChildren().remove(textarea);
+                label.setVisible(true);
+              }
+            });
+          }
+        }
+      }
+    });
+  }
+
   public static Stage createDialogStage(FXMLLoader fxmlLoader, Stage owner, String title, String stateId) {
     Parent root = null;
 
@@ -451,10 +500,10 @@ public class WidgetFactory {
 //        stage.setX(position.getX());
 //        stage.setY(position.getY());
 
-        if(position.getWidth() > 0 && position.getWidth() < owner.getWidth()) {
+        if (position.getWidth() > 0 && position.getWidth() < owner.getWidth()) {
           stage.setWidth(position.getWidth());
         }
-        if(position.getHeight() > 0) {
+        if (position.getHeight() > 0) {
           stage.setHeight(position.getHeight());
         }
       }
@@ -776,7 +825,8 @@ public class WidgetFactory {
     if (nodeMaxY < 0) {
       // currently located above (remember, top left is (0,0))
       vValueDelta = (nodeMinY - viewport.getHeight()) / contentHeight;
-    } else if (nodeMinY > viewport.getHeight()) {
+    }
+    else if (nodeMinY > viewport.getHeight()) {
       // currently located below
       vValueDelta = (nodeMinY + viewport.getHeight()) / contentHeight;
     }
