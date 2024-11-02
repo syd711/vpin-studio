@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -95,13 +96,26 @@ public class TextEditService {
           textFile.setContent(vbs);
           return textFile;
         }
+        case LOCAL: {
+          textFile.setLastModified(new Date());
+          File f = new File(textFile.getPath());
+          if (!f.exists()) {
+            throw new UnsupportedOperationException("No such file: " + f.getAbsolutePath());
+          }
+          String iniText = Files.readString(f.toPath());
+          textFile.setContent(iniText);
+          textFile.setPath(f.getAbsolutePath());
+          textFile.setSize(f.length());
+          textFile.setLastModified(new Date(f.lastModified()));
+          return textFile;
+        }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
         }
       }
 
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Error reading text file: " + e.getMessage(), e);
     }
     return textFile;
@@ -178,6 +192,17 @@ public class TextEditService {
           else {
             LOG.error("No game found with game name '" + textFile.getFileId() + "'");
           }
+        }
+        case LOCAL: {
+          File f = new File(textFile.getPath());
+          String[] lines = textFile.getContent().split("\n");
+          List<String> allLines = Arrays.asList(lines);
+          String content = String.join("\n", allLines);
+          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          LOG.info("Written " + f.getAbsolutePath());
+          textFile.setLastModified(new Date(f.lastModified()));
+          textFile.setSize(textFile.getContent().getBytes().length);
+          return textFile;
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);

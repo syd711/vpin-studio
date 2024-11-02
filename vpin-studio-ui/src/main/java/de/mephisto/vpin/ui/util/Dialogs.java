@@ -24,7 +24,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -75,16 +74,27 @@ public class Dialogs {
   }
 
   public static boolean openTextEditor(TextFile file, String title) throws Exception {
-    FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
-    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, title, TextEditorController.class.getSimpleName());
-    TextEditorController controller = (TextEditorController) stage.getUserData();
-    controller.load(file);
+    return openTextEditor(Studio.stage, file, title);
+  }
 
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
+  public static boolean openTextEditor(Stage s, TextFile file, String title) {
+    try {
+      FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
+      Stage stage = WidgetFactory.createDialogStage(fxmlLoader, s, title, TextEditorController.class.getSimpleName());
+      TextEditorController controller = (TextEditorController) stage.getUserData();
+      controller.load(file);
 
-    stage.showAndWait();
-    return controller.isSaved();
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+      stage.setUserData(fxResizeHelper);
+
+      stage.showAndWait();
+      return controller.isSaved();
+    }
+    catch (Exception e) {
+      LOG.error("Failed to open file: {}", e.getMessage(), e);
+      WidgetFactory.showAlert(s, "Error", "Failed to open file: " + e.getMessage());
+    }
+    return false;
   }
 
   public static PlayerRepresentation openPlayerDialog(PlayerRepresentation selection, List<PlayerRepresentation> players) {

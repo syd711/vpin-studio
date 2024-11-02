@@ -205,10 +205,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     getFrontendConnector().saveSettings(data);
   }
 
-  public void setPupPackEnabled(Game game, boolean enable) {
+  public boolean setPupPackEnabled(Game game, boolean enable) {
     if (game != null) {
       getFrontendConnector().setPupPackEnabled(game, enable);
+      return enable;
     }
+    return false;
   }
 
   public boolean isPupPackDisabled(Game game) {

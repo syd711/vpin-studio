@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.ScreenMode;
@@ -8,21 +7,22 @@ import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.puppacks.PupPackRepresentation;
+import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
-import de.mephisto.vpin.ui.util.DismissalUtil;
-import de.mephisto.vpin.ui.util.LocalizedValidation;
-import de.mephisto.vpin.ui.util.ProgressDialog;
-import de.mephisto.vpin.ui.util.ProgressResultModel;
+import de.mephisto.vpin.ui.util.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.kordamp.ikonli.javafx.FontIcon;
 import org.slf4j.Logger;
@@ -53,6 +53,9 @@ public class TablesSidebarPUPPackController implements Initializable {
 
   @FXML
   private Button openBtn;
+
+  @FXML
+  private Button optionEditBtn;
 
   @FXML
   private Label lastModifiedLabel;
@@ -202,11 +205,22 @@ public class TablesSidebarPUPPackController implements Initializable {
   }
 
   @FXML
-  private void onOpen() {
+  private void onOpen(ActionEvent e) {
     String value = txtsCombo.getValue();
     if (!StringUtils.isEmpty(value)) {
       File file = new File(pupPack.getPath(), value);
-      Studio.edit(file);
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      Dialogs.openTextEditor(stage, new TextFile(file), file.getName());
+    }
+  }
+
+  @FXML
+  private void onOptionEdit(ActionEvent e) {
+    String value = optionsCombo.getValue();
+    if (!StringUtils.isEmpty(value)) {
+      File file = new File(pupPack.getPath(), value + ".bat");
+      Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+      Dialogs.openTextEditor(stage, new TextFile(file), file.getName());
     }
   }
 
@@ -251,15 +265,16 @@ public class TablesSidebarPUPPackController implements Initializable {
     dataScrollPane.setVisible(false);
     emptyDataBox.setVisible(true);
 
-    openBtn.setText("View");
-    if (client.getSystemService().isLocal()) {
-      openBtn.setText("Edit");
-    }
-
     pupPackEditorBtn.setDisable(!client.getSystemService().isLocal());
 
-    optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> applyBtn.setDisable(StringUtils.isEmpty(newValue)));
-    txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> openBtn.setDisable(StringUtils.isEmpty(newValue)));
+    optionsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      optionEditBtn.setDisable(StringUtils.isEmpty(newValue));
+      applyBtn.setDisable(StringUtils.isEmpty(newValue));
+    });
+
+    txtsCombo.valueProperty().addListener((observable, oldValue, newValue) -> {
+      openBtn.setDisable(StringUtils.isEmpty(newValue));
+    });
   }
 
   public void setGame(Optional<GameRepresentation> game) {
@@ -282,6 +297,7 @@ public class TablesSidebarPUPPackController implements Initializable {
     uploadBtn.setDisable(true);
     deleteBtn.setDisable(true);
     openBtn.setDisable(true);
+    optionEditBtn.setDisable(true);
 
     txtsCombo.getItems().clear();
     txtsCombo.setItems(FXCollections.emptyObservableList());
@@ -317,6 +333,7 @@ public class TablesSidebarPUPPackController implements Initializable {
       boolean pupPackAvailable = pupPack != null;
       scriptOnlyCheckbox.setSelected(pupPackAvailable && pupPack.isScriptOnly());
       screensPanel.setVisible(pupPackAvailable && !pupPack.isScriptOnly());
+      enabledCheckbox.setSelected(false);
       enabledCheckbox.setDisable(!pupPackAvailable || StringUtils.isEmpty(game.getRom()));
 
       dataBox.setVisible(pupPackAvailable);
@@ -325,8 +342,6 @@ public class TablesSidebarPUPPackController implements Initializable {
 
       uploadBtn.setDisable(StringUtils.isEmpty(game.getRom()));
       deleteBtn.setDisable(!pupPackAvailable);
-      enabledCheckbox.setSelected(false);
-      enabledCheckbox.setDisable(StringUtils.isEmpty(tableDetails.getRomName()));
 
       if (pupPackAvailable) {
         nameLabel.setText(pupPack.getName());

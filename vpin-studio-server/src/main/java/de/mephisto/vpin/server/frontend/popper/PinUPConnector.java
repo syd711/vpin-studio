@@ -1754,7 +1754,7 @@ public class PinUPConnector implements FrontendConnector {
     game.setTableName(tableName);
 
     String custom = rs.getString("LaunchCustomVar");
-    game.setPupPackDisabled(rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP"));
+    game.setPupPackDisabled(!StringUtils.isEmpty(custom) && custom.equals("HIDEPUP"));
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
