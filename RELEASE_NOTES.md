@@ -7,8 +7,11 @@
 - **VPS Tables**: Removed (already half broken) table filtering from the days where only VPX games were allowed.
 - **VPS Tables**: On the VPS tab, the name of the table inside the sidepanel can be double-clicked in order to select the text.
 - **Tables / Uploads**: Fixed table upload dialog so that the option are shown independent of the selected upload option. The filtering is applied to all uploads, so the filter button and asset list was at the wrong location.
+- **Tables / Uploads**: Fixed VPS auto-matching. The config flag in the upload dialog has been ignored so that an auto-match was executed for every upload type.
 - **Tables / PUP Packs**: Fixed the checkbox for enabling/disabling of PUP packs again.
 - **Tables / PUP Packs**: Added option to remote edit the available option and additional files that are listed for a PUP pack in the PUP pack section.
+- **System Manager / Visual Pinball**: Edit button to remote edit the **VPinballX.ini** file.
+- **Drop-in Folder**: Fixed **new** star icon again.
 
 ### Release Notes 3.9
 
