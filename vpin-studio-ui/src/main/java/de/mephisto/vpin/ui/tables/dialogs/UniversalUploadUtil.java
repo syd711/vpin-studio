@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
@@ -17,8 +16,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Optional;
 
-public class UniversalUploader {
-  private final static Logger LOG = LoggerFactory.getLogger(UniversalUploader.class);
+public class UniversalUploadUtil {
+  private final static Logger LOG = LoggerFactory.getLogger(UniversalUploadUtil.class);
 
   public static Optional<UploadDescriptor> upload(File selection, int gameId, TableUploadType tableUploadType, GameEmulatorRepresentation emulatorRepresentation) {
     Optional<UploadDescriptor> result = Optional.empty();

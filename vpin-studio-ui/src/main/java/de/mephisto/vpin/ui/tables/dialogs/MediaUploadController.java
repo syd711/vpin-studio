@@ -144,7 +144,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       else {
         stage.close();
         Platform.runLater(() -> {
-          Optional<UploadDescriptor> result = UniversalUploader.upload(selection, game.getId(), TableUploadType.uploadAndImport, emulator);
+          Optional<UploadDescriptor> result = UniversalUploadUtil.upload(selection, game.getId(), TableUploadType.uploadAndImport, emulator);
           if (result.isPresent()) {
             UploadDescriptor uploadDescriptor = result.get();
             uploadDescriptor.setSubfolderName(null);
@@ -153,7 +153,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
             uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
             uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-            result = UniversalUploader.postProcess(uploadDescriptor);
+            result = UniversalUploadUtil.postProcess(uploadDescriptor);
 
             EventManager.getInstance().notifyTableChange(game.getId(), game.getRom(), game.getGameName());
           }

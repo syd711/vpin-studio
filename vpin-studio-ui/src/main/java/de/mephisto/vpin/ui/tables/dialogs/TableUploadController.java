@@ -15,7 +15,6 @@ import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.textedit.TextFile;
-import de.mephisto.vpin.restclient.textedit.VPinFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
@@ -209,7 +208,7 @@ public class TableUploadController implements Initializable, DialogController {
         onCancelClick(event);
       });
 
-      result = UniversalUploader.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
+      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
       if (result.isPresent()) {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setSubfolderName(subFolder);
@@ -218,7 +217,7 @@ public class TableUploadController implements Initializable, DialogController {
 
         uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-        result = UniversalUploader.postProcess(uploadDescriptor);
+        result = UniversalUploadUtil.postProcess(uploadDescriptor);
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
