@@ -82,6 +82,17 @@ public class TextEditService {
           textFile.setLastModified(new Date(init.lastModified()));
           break;
         }
+        case VPinballXIni: {
+          String user = System.getProperty("user.name");
+          File init = new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
+          Path filePath = init.toPath();
+          String iniText = Files.readString(filePath);
+          textFile.setContent(iniText);
+          textFile.setPath(init.getAbsolutePath());
+          textFile.setSize(init.length());
+          textFile.setLastModified(new Date(init.lastModified()));
+          break;
+        }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
@@ -195,6 +206,18 @@ public class TextEditService {
         }
         case LOCAL: {
           File f = new File(textFile.getPath());
+          String[] lines = textFile.getContent().split("\n");
+          List<String> allLines = Arrays.asList(lines);
+          String content = String.join("\n", allLines);
+          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          LOG.info("Written " + f.getAbsolutePath());
+          textFile.setLastModified(new Date(f.lastModified()));
+          textFile.setSize(textFile.getContent().getBytes().length);
+          return textFile;
+        }
+        case VPinballXIni: {
+          String user = System.getProperty("user.name");
+          File f = new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
           String[] lines = textFile.getContent().split("\n");
           List<String> allLines = Arrays.asList(lines);
           String content = String.join("\n", allLines);

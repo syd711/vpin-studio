@@ -5,8 +5,8 @@ import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.PlaylistFrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import edu.umd.cs.findbugs.annotations.NonNull;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -38,7 +38,7 @@ public class PlaylistMediaService {
     if (playlist == null) {
       return null;
     }
-    
+
     FrontendMedia frontendMedia = new FrontendMedia();
     List<VPinScreen> screens = frontendService.getFrontend().getSupportedScreens();
     for (VPinScreen screen : screens) {
@@ -74,7 +74,13 @@ public class PlaylistMediaService {
     Playlist playlist = playlistService.getPlaylist(playlistId);
     File mediaFolder = frontendService.getPlaylistMediaFolder(playlist, screen);
     File media = new File(mediaFolder, filename);
-    return media.exists() && media.delete();
+
+    boolean result = media.exists() && media.delete();
+    if (result && screen.equals(VPinScreen.Wheel)) {
+      WheelAugmenter augmenter = new WheelAugmenter(media);
+      augmenter.deAugment();
+    }
+    return result;
   }
 
   public File buildMediaAsset(Playlist playlist, VPinScreen screen, String suffix, boolean append) {

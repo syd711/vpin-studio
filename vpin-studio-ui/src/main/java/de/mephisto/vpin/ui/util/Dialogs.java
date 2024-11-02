@@ -81,6 +81,8 @@ public class Dialogs {
     try {
       FXMLLoader fxmlLoader = new FXMLLoader(TextEditorController.class.getResource("text-editor.fxml"));
       Stage stage = WidgetFactory.createDialogStage(fxmlLoader, s, title, TextEditorController.class.getSimpleName());
+      stage.setMinWidth(800);
+      stage.setMinHeight(600);
       TextEditorController controller = (TextEditorController) stage.getUserData();
       controller.load(file);
 

@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefWidth="1024.0" styleClass="base-component" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.TextEditorController">
+<BorderPane minHeight="600.0" minWidth="800.0" prefWidth="1124.0" styleClass="base-component" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.TextEditorController">
     <top>
         <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
     </top>
@@ -21,7 +21,7 @@
       <BorderPane fx:id="root">
       
           <center>
-              <BorderPane fx:id="centerPane" minHeight="600.0" styleClass="subpanel" BorderPane.alignment="CENTER">
+              <BorderPane fx:id="centerPane" styleClass="subpanel" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
                       <Insets />
                   </BorderPane.margin>

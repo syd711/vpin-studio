@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.textedit;
 
 public enum VPinFile {
-  DmdDeviceIni, VPMAliasTxt, VBScript, DOFLinxINI, LOCAL;
+  DmdDeviceIni, VPinballXIni, VPMAliasTxt, VBScript, DOFLinxINI, LOCAL;
 
 
   @Override
@@ -9,6 +9,9 @@ public enum VPinFile {
     switch (this) {
       case DmdDeviceIni: {
         return "DmdDevice.ini";
+      }
+      case VPinballXIni: {
+        return "VPinballX.ini";
       }
       case VPMAliasTxt: {
         return "VPMAlias.txt";
