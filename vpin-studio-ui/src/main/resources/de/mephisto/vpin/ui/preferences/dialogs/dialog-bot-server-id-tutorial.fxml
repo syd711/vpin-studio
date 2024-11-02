@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1200.0" styleClass="base-component" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1200.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -24,7 +24,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-subtitle" stylesheets="@stylesheet.css" text="1. Enable &quot;Developer Mode&quot; in Discord" />
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Enable &quot;Developer Mode&quot; in Discord" />
                   <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Select &quot;Edit Server Profile&quot; via context menu click on your server. You have to be an administrator for the server in order to do that.">
                      <font>
                         <Font size="14.0" />
@@ -42,7 +42,7 @@
                      <children>
                         <ImageView fitHeight="458.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@screenshots/bot/server-profile.png" />
+                              <Image url="@../../screenshots/bot/server-profile.png" />
                            </image>
                            <HBox.margin>
                               <Insets right="36.0" />
@@ -50,7 +50,7 @@
                         </ImageView>
                         <ImageView fitHeight="458.0" fitWidth="800.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@screenshots/bot/developer-mode.png" />
+                              <Image url="@../../screenshots/bot/developer-mode.png" />
                            </image>
                         </ImageView>
                      </children>
@@ -60,7 +60,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@stylesheet.css" text="2. Apply Server ID" />
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Apply Server ID" />
                   <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="You can now execute a context click on your server in the server list and select &quot;Copy ID&quot;.">
                      <font>
                         <Font size="14.0" />
@@ -68,7 +68,7 @@
                   </Label>
                   <ImageView fitHeight="500.0" fitWidth="258.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@screenshots/bot/copy-id.png" />
+                        <Image url="@../../screenshots/bot/copy-id.png" />
                      </image>
                      <VBox.margin>
                         <Insets bottom="12.0" top="12.0" />
