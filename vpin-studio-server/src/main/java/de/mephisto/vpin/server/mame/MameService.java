@@ -275,6 +275,7 @@ public class MameService implements InitializingBean, ApplicationContextAware {
         throw new IOException("Failed to delete existing " + assetType.name() + " file " + out.getAbsolutePath());
       }
       ZipUtil.unzipTargetFile(tempFile, out, nvFileName);
+      LOG.info("Installed " + assetType.name() + ": " + out.getAbsolutePath());
     }
     else {
       if (out.exists() && !out.delete()) {

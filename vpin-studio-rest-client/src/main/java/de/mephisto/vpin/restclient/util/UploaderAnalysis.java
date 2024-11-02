@@ -1,8 +1,10 @@
 package de.mephisto.vpin.restclient.util;
 
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
@@ -48,6 +50,10 @@ public class UploaderAnalysis<T> {
   public UploaderAnalysis(Frontend frontend, File file) {
     this.frontend = frontend;
     this.file = file;
+  }
+
+  public boolean isArchive() {
+    return PackageUtil.isSupportedArchive(FilenameUtils.getExtension(file.getName()));
   }
 
   public void setExclusions(List<String> excludedFiles, List<String> excludedFolders) {
@@ -158,12 +164,13 @@ public class UploaderAnalysis<T> {
 
   public String getMusicFolder() {
     String path = null;
+    String pupPackFolder = getPupPackRootDirectory();
     for (String filenameWithPath : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(filenameWithPath);
       if (!musicSuffixes.contains(suffix)) {
         continue;
       }
-      if (getPupPackRootDirectory() != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
+      if (pupPackFolder != null && isFileBelowFolder(getPupPackRootDirectory(), filenameWithPath)) {
         continue;
       }
       if (filenameWithPath.toLowerCase().contains("music/")) {
@@ -174,6 +181,18 @@ public class UploaderAnalysis<T> {
       }
     }
     return path;
+  }
+
+  public String getAltSoundFolder() {
+    for (String name : getFilteredFilenamesWithPath()) {
+      if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
+        if (name.contains("/")) {
+          return name.substring(0, name.lastIndexOf("/"));
+        }
+        return "/";
+      }
+    }
+    return null;
   }
 
   public String getPUPPackFolder() {
@@ -402,7 +421,7 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-  public String validateAssetType(AssetType assetType) {
+  public String validateAssetTypeInArchive(AssetType assetType) {
     switch (assetType) {
       case VPX: {
         if (hasFileWithSuffix("vpx")) {
@@ -505,67 +524,68 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public AssetType getSingleAssetType() {
+  public List<AssetType> getAssetTypes() {
+    List<AssetType> result = new ArrayList<>();
     if (hasFileWithSuffix("vpx")) {
-      return AssetType.VPX;
+      result.add(AssetType.VPX);
     }
 
     if (hasFileWithSuffix("fpt")) {
-      return AssetType.FPT;
+      result.add(AssetType.FPT);
     }
 
     if (hasFileWithSuffix("directb2s")) {
-      return AssetType.DIRECTB2S;
+      result.add(AssetType.DIRECTB2S);
     }
 
     if (hasFileWithSuffix("res")) {
-      return AssetType.RES;
+      result.add(AssetType.RES);
     }
 
     if (isAltSound()) {
-      return AssetType.ALT_SOUND;
+      result.add(AssetType.ALT_SOUND);
     }
 
     if (isPUPPack()) {
-      return AssetType.PUP_PACK;
+      result.add(AssetType.PUP_PACK);
     }
 
     if (isDMD()) {
-      return AssetType.DMD_PACK;
+      result.add(AssetType.DMD_PACK);
     }
 
-    if (isMusic()) {
-      return AssetType.MUSIC;
+    if (!isAltSound() && isMusic()) {
+      result.add(AssetType.MUSIC);
     }
 
     if (isAltColor()) {
-      return getAltColor();
+      result.add(getAltColor());
     }
 
     if (isRom()) {
-      return AssetType.ROM;
+      result.add(AssetType.ROM);
     }
 
     if (isMediaPack()) {
-      return AssetType.FRONTEND_MEDIA;
+      result.add(AssetType.FRONTEND_MEDIA);
     }
 
     if (hasFileWithSuffix("pov")) {
-      return AssetType.POV;
+      result.add(AssetType.POV);
     }
 
     if (hasFileWithSuffix(NVRAM_SUFFIX)) {
-      return AssetType.NV;
+      result.add(AssetType.NV);
     }
 
     if (hasFileWithSuffix(CFG_SUFFIX)) {
-      return AssetType.CFG;
+      result.add(AssetType.CFG);
     }
 
     if (hasFileWithSuffix("ini")) {
-      return AssetType.INI;
+      result.add(AssetType.INI);
     }
-    return null;
+    return result;
   }
 
   private boolean isPUPPack() {
@@ -595,14 +615,28 @@ public class UploaderAnalysis<T> {
 
 
   public boolean isTable() {
-    return validateAssetType(AssetType.FPT) == null || validateAssetType(AssetType.VPX) == null;
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
+      return true;
+    }
+
+    return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
+  }
+
+  @Nullable
+  public EmulatorType getEmulatorType() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (validateAssetTypeInArchive(AssetType.FPT) == null || ext.equalsIgnoreCase(AssetType.FPT.name())) {
+      return EmulatorType.FuturePinball;
+    }
+    if (validateAssetTypeInArchive(AssetType.VPX) == null || ext.equalsIgnoreCase(AssetType.VPX.name())) {
+      return EmulatorType.VisualPinball;
+    }
+    return null;
   }
 
   private boolean isAltSound() {
     for (String name : getFilteredFilenamesWithPath()) {
-//      if (name.endsWith(".ogg") || name.endsWith(".mp3") || name.endsWith(".csv")) {
-//
-//      }
       if (name.contains("altsound.csv") || name.contains("g-sound.csv")) {
         return true;
       }
@@ -700,7 +734,7 @@ public class UploaderAnalysis<T> {
   private boolean hasFileWithSuffix(String s) {
     for (String fileName : getFilteredFilenamesWithPath()) {
       String suffix = FilenameUtils.getExtension(fileName);
-      if (suffix.equalsIgnoreCase(s)) {
+      if (suffix.equalsIgnoreCase(s) && !fileName.toLowerCase().endsWith("altsound.ini")) {
         return true;
       }
     }

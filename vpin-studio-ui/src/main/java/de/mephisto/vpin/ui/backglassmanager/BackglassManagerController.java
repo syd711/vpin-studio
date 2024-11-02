@@ -13,10 +13,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.FrontendMediaItemRepresentation;
 import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.ui.NavigationController;
-import de.mephisto.vpin.ui.NavigationOptions;
-import de.mephisto.vpin.ui.Studio;
-import de.mephisto.vpin.ui.StudioFXController;
+import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.backglassmanager.dialogs.BackglassManagerDialogs;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
@@ -237,6 +234,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private Button openBtn;
 
   @FXML
+  private Button tableNavigateBtn;
+
+  @FXML
   TableColumn<DirectB2SModel, DirectB2SModel> statusColumn;
 
   @FXML
@@ -270,6 +270,13 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
         // when done, force refresh
         refreshBackglass();
       });
+    }
+  }
+
+  @FXML
+  private void onOpenTable(ActionEvent e) {
+    if (game != null) {
+      NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
     }
   }
 
@@ -594,12 +601,15 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   public void initialize(URL url, ResourceBundle resourceBundle) {
     super.initialize("backglass", "backglasses", new BackglassManagerColumnSorter(this));
 
+    this.resBtn.managedProperty().bindBidirectional(resBtn.visibleProperty());
     EventManager.getInstance().addListener(this);
 
     serverSettings = client.getBackglassServiceClient().getServerSettings();
 
+    this.resBtn.setVisible(false);
     this.clearBtn.setVisible(false);
     this.dataManagerBtn.setDisable(true);
+    this.tableNavigateBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.uploadBtn.setDisable(true);
     this.duplicateBtn.setDisable(true);
@@ -852,6 +862,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     //both these depend on the game selection
     this.uploadBtn.setDisable(true);
     this.dataManagerBtn.setDisable(true);
+    this.tableNavigateBtn.setDisable(true);
 
     this.openBtn.setDisable(true);
     this.renameBtn.setDisable(true);
@@ -924,6 +935,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
             this.game = client.getGame(this.tableData.getGameId());
             this.tableSettings = client.getBackglassServiceClient().getTableSettings(this.tableData.getGameId());
             this.dataManagerBtn.setDisable(false);
+            this.tableNavigateBtn.setDisable(false);
             this.uploadBtn.setDisable(false);
           }
         }
@@ -948,6 +960,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
           gameLabel.setText(game.getGameDisplayName());
           gameFilenameLabel.setText(game.getGameFileName());
           dataManagerBtn.setDisable(false);
+          tableNavigateBtn.setDisable(false);
           this.uploadBtn.setDisable(false);
         }
         else {

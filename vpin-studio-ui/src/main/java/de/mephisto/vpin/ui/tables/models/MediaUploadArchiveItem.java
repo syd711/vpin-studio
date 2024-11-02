@@ -67,12 +67,12 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   public void load() {
     String fileNameWithPath = getName();
     this.selected = !uploaderAnalysis.getExclusions().contains(fileNameWithPath);
-//      LOG.info("Loading " + name);
+    LOG.info("Loading " + name);
 
     String pupPackDir = uploaderAnalysis.getPUPPackFolder();
     if (pupPackDir != null) {
       //check if we have the PUP pack folder here
-      if (pupPackDir.equals(this.getName()) && uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null) {
+      if (pupPackDir.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null) {
         assetType = AssetType.PUP_PACK;
         target = client.getFrontendService().getFrontendCached().getInstallationDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
@@ -85,7 +85,7 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     }
 
     String dmdDir = uploaderAnalysis.getDMDPath();
-    if (dmdDir != null && uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null) {
+    if (dmdDir != null && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null) {
       //check if we have the DMD bundle here
       if (dmdDir.equals(this.getName())) {
         assetType = AssetType.DMD_PACK;
@@ -98,10 +98,23 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       }
     }
 
+    String altSoundFolder = uploaderAnalysis.getAltSoundFolder();
+    if (altSoundFolder != null) {
+      if (altSoundFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null) {
+        assetType = AssetType.ALT_SOUND;
+        target = emulator.getMameDirectory() + "...";
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+
+      if (FileUtils.isFileBelowFolder(altSoundFolder, fileNameWithPath)) {
+        return;
+      }
+    }
+
     String musicFolder = uploaderAnalysis.getMusicFolder();
     if (musicFolder != null) {
       //check if we have the musicFolder bundle here
-      if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null) {
+      if (musicFolder.equals(this.getName()) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null) {
         assetType = AssetType.MUSIC_BUNDLE;
         target = emulator.getTablesDirectory() + "...";
         LOG.info(fileNameWithPath + ": " + assetType.name());
@@ -140,22 +153,22 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
         return;
       }
 
-      if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetType(AssetType.NV) == null) {
+      if (asset.equals(AssetType.NV) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null) {
         this.assetType = asset;
         this.target = client.getFrontendService().getDefaultGameEmulator().getNvramDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetType(AssetType.ROM) == null) {
+      else if (asset.equals(AssetType.ROM) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = asset;
         this.target = client.getFrontendService().getDefaultGameEmulator().getRomDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.VNI))) {
+      else if (uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null && (asset.equals(AssetType.PAL) || asset.equals(AssetType.PAC) || asset.equals(AssetType.CRZ) || asset.equals(AssetType.VNI))) {
         this.assetType = asset;
         this.target = client.getFrontendService().getDefaultGameEmulator().getAltColorDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
-      else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetType(AssetType.ROM) == null) {
+      else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = AssetType.ROM;
         this.target = client.getFrontendService().getDefaultGameEmulator().getRomDirectory();
         LOG.info(fileNameWithPath + ": " + assetType.name());

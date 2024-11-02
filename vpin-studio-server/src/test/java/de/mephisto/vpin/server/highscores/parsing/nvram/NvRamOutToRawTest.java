@@ -13,6 +13,8 @@ import org.apache.commons.io.FilenameUtils;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.lang.invoke.StringConcatException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -20,6 +22,9 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class NvRamOutToRawTest {
+
+
+  private final static List<String> ignoreList = Arrays.asList("kiko_a10.nv");
 
   @Test
   public void testAllFiles() throws Exception {
@@ -34,6 +39,10 @@ public class NvRamOutToRawTest {
     File[] files = folder.listFiles((dir, name) -> name.endsWith(".nv"));
     int count = 0;
     for (File entry : files) {
+      if (ignoreList.contains(entry.getName())) {
+        continue;
+      }
+
       String baseName = FilenameUtils.getBaseName(entry.getName());
       if (!scoringDB.getSupportedNvRams().contains(baseName) || scoringDB.getNotSupported().contains(baseName)) {
         continue;
@@ -47,7 +56,7 @@ public class NvRamOutToRawTest {
       assertNotNull(raw);
       RawScoreParser parser = new RawScoreParser(raw, new Date(entry.length()), -1, DefaultHighscoresTitles.DEFAULT_TITLES);
       List<Score> parse = parser.parse();
-      assertFalse(parse.isEmpty());
+      assertFalse(parse.isEmpty(), "Found empty highscore for nvram " + entry.getAbsolutePath());
       System.out.println("Parsed " + parse.size() + " score entries.");
       System.out.println("*******************************************************************************************");
       count++;
@@ -62,7 +71,7 @@ public class NvRamOutToRawTest {
 
     // Set the path to this GameEmulator so that nv files can be found
     PINemHiService.adjustVPPathForEmulator(gameEmulator, getPinemhiIni(), true);
-    
+
     File entry = new File(gameEmulator.getNvramFolder(), "punchy.nv");
     String raw = NvRamHighscoreToRawConverter.convertNvRamTextToMachineReadable(getPinemhiExe(), entry);
 

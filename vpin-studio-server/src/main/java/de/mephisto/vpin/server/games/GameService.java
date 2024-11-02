@@ -225,6 +225,7 @@ public class GameService implements InitializingBean {
   }
 
   public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
+    LOG.info("************* Game Deletion ************");
     boolean success = false;
     try {
       List<Integer> gameIds = descriptor.getGameIds();
@@ -397,6 +398,7 @@ public class GameService implements InitializingBean {
     catch (Exception e) {
       LOG.error("Game deletion failed: " + e.getMessage(), e);
     }
+    LOG.info("*********** /Game Deletion End **********");
     return success;
   }
 
@@ -674,8 +676,10 @@ public class GameService implements InitializingBean {
     game.setVpsUpdates(VPSChanges.fromJson(updates));
     vpsService.applyVersionInfo(game);
 
-    Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
-    highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
+    if (game.isVpxGame()) {
+      Optional<Highscore> highscore = this.highscoreService.getHighscore(game, forceScoreScan, EventOrigin.USER_INITIATED);
+      highscore.ifPresent(value -> game.setHighscoreType(value.getType() != null ? HighscoreType.valueOf(value.getType()) : null));
+    }
 
     //run validations at the end!!!
     List<ValidationState> validate = gameValidationService.validate(game, true);

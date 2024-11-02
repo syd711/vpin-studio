@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
@@ -13,10 +14,6 @@ import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameList;
-import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -719,7 +716,7 @@ public class TableDataController implements Initializable, DialogController, Aut
     this.stage = stage;
     this.game = game;
     this.serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-    this.uiSettings =client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
+    this.uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     scoringDB = client.getSystemService().getScoringDatabase();
     tableDetails = client.getFrontendService().getTableDetails(game.getId());
 
@@ -731,19 +728,22 @@ public class TableDataController implements Initializable, DialogController, Aut
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
 
-    if (game.isVpxGame()) {
-      HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
-
-      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+    if (game.isVpxGame() || game.isFpGame()) {
       propperRenamingController.setData(752, tableDetails, uiSettings, gameDisplayName, gameFileName, gameName);
     }
     else {
       autoFillBtn.setVisible(false);
       detailsRoot.getChildren().remove(propertRenamingRoot);
-      this.tabPane.getTabs().remove(scoreDataTab);
-      //this.fixVersionBtn.setVisible(false);
-      //this.vpsPanel.setVisible(false);
     }
+
+    if (game.isVpxGame()) {
+      HighscoreFiles highscoreFiles = client.getGameService().getHighscoreFiles(game.getId());
+      tableDataTabScoreDataController.setGame(this, game, tableDetails, highscoreFiles, serverSettings);
+    }
+    else {
+      this.tabPane.getTabs().remove(scoreDataTab);
+    }
+
 
     this.scene = stage.getScene();
 
@@ -803,7 +803,7 @@ public class TableDataController implements Initializable, DialogController, Aut
       });
       gameName.setDisable(frontendType.isStandalone());
 
-      if (game.isVpxGame()) {
+      if (game.isVpxGame() || game.isFpGame()) {
         gameFileName.setText(tableDetails.getGameFileName());
         gameFileName.setDisable(StringUtils.contains(tableDetails.getGameFileName(), "/") || StringUtils.contains(tableDetails.getGameFileName(), "\\"));
         gameFileName.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -1130,7 +1130,8 @@ public class TableDataController implements Initializable, DialogController, Aut
 
   private void refreshVersionsCombo(VpsTable tableById) {
     if (tableById != null) {
-      String tableFormat = game.isFpGame() ? VpsFeatures.FP : VpsFeatures.VPX;
+      GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      List<String> tableFormat  = emulatorRepresentation.getVpsEmulatorFeatures();
       List<VpsTableVersion> tableFiles = new ArrayList<>(tableById.getTableFilesForFormat(tableFormat));
 
       if (!tableFiles.isEmpty()) {
@@ -1198,6 +1199,6 @@ public class TableDataController implements Initializable, DialogController, Aut
   }
 
   public static List<TableStatus> supportedStatuses(FrontendType frontendType) {
-      return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
+    return frontendType.supportExtendedStatuses() ? TABLE_STATUSES_FULL : frontendType.supportStatuses() ? TABLE_STATUSES_MINI : Collections.emptyList();
   }
 }

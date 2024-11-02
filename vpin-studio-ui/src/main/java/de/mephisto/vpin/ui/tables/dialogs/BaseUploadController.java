@@ -12,6 +12,7 @@ import de.mephisto.vpin.ui.util.FilesSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
 import de.mephisto.vpin.ui.util.UploadProgressModel;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -62,10 +63,8 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   private Stage stage;
 
-  private boolean result = false;
-
   private AssetType assetType;
-  
+
   private boolean multiSelection;
 
   private boolean useEmulators;
@@ -99,9 +98,10 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
         stage.close();
 
-        UploadProgressModel model = createUploadModel();
-        ProgressDialog.createProgressDialog(model);
-        result = true;
+        Platform.runLater(() -> {
+          UploadProgressModel model = createUploadModel();
+          ProgressDialog.createProgressDialog(model);
+        });
       }
       catch (Exception e) {
         LOG.error("Upload failed: " + e.getMessage(), e);
@@ -128,15 +128,19 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       this.selection = fileChooser.showOpenMultipleDialog(stage);
     }
     else {
-      this.selection = Arrays.asList(fileChooser.showOpenDialog(stage));
+      File file = fileChooser.showOpenDialog(stage);
+      if (file != null) {
+        this.selection = Arrays.asList(file);
+      }
     }
- 
-    refreshSelection(null);
+
+    if (selection != null) {
+      refreshSelection(null);
+    }
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    this.result = false;
     this.selection = null;
 
     this.uploadBtn.setDisable(true);
@@ -164,17 +168,13 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   @Override
   public void onDialogCancel() {
-    result = false;
-  }
 
-  public boolean uploadFinished() {
-    return result;
   }
 
   public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     this.stage = stage;
     this.finalizer = finalizer;
-    if(file != null) {
+    if (file != null) {
       this.selection = Arrays.asList(file);
       refreshSelection(analysis);
     }
@@ -183,6 +183,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   public GameEmulatorRepresentation getSelectedEmulator() {
     return emulator;
   }
+
   public int getSelectedEmulatorId() {
     return emulator != null ? emulator.getId() : -1;
   }
@@ -190,6 +191,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   public File getSelection() {
     return this.selection != null && !this.selection.isEmpty() ? selection.get(0) : null;
   }
+
   public List<File> getSelections() {
     return this.selection;
   }
@@ -202,13 +204,13 @@ public abstract class BaseUploadController implements Initializable, DialogContr
       // No analysis provided, start one
       if (analysis == null) {
         startAnalysis();
-        if (multiSelection) {
+        if (multiSelection && selection.size() != 1) {
           // no validation for multi-selections ?
         }
         else {
           File file = getSelection();
-          if (file !=null && UploadAnalysisDispatcher.isArchive(file)) {
-            analysis = UploadAnalysisDispatcher.analyzeArchive(file);
+          if (file != null && UploadAnalysisDispatcher.isArchive(file)) {
+            analysis = UploadAnalysisDispatcher.analyzeArchive(stage, file);
             if (analysis != null) {
               validation = validateAnalysis(analysis);
             }
@@ -216,7 +218,9 @@ public abstract class BaseUploadController implements Initializable, DialogContr
         }
       }
       else {
-        validation = validateAnalysis(analysis);
+        if (analysis.isArchive()) {
+          validation = validateAnalysis(analysis);
+        }
       }
       endAnalysis(validation);
     }
@@ -232,6 +236,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
     this.fileNameField.setText("Analyzing, please wait...");
     this.fileNameField.setDisable(true);
     this.fileBtn.setDisable(true);
+    this.uploadBtn.setDisable(true);
     this.cancelBtn.setDisable(true);
   }
 
@@ -239,18 +244,19 @@ public abstract class BaseUploadController implements Initializable, DialogContr
    * Perform the analysis, by default just validateAssetType
    */
   protected String validateAnalysis(UploaderAnalysis<?> analysis) {
-    return analysis.validateAssetType(assetType);
+    return analysis.validateAssetTypeInArchive(assetType);
   }
 
   /**
    * Called after analysis is done on javafx thread to update specific fields
+   *
    * @param analysis The result of the analysis
-  */
+   */
   protected void endAnalysis(String analysis) {
     if (analysis == null) {
-      String collect = multiSelection ? 
-        this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :
-        getSelection().getAbsolutePath();
+      String collect = multiSelection ?
+          this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :
+          getSelection().getAbsolutePath();
 
       this.fileNameField.setText(collect);
       this.uploadBtn.setDisable(false);

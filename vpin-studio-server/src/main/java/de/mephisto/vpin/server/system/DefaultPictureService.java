@@ -52,11 +52,6 @@ public class DefaultPictureService implements PreferenceChangedListener, Initial
   private CardSettings cardSettings;
 
   public void extractDefaultPicture(@NonNull Game game) {
-    //TODO @Matt check if needed or legacy from old times when default image was using rom as name ?
-    //if (StringUtils.isEmpty(game.getRom())) {
-    //  return;
-    //}
-
     File rawDefaultPicture = getRawDefaultPicture(game);
     if (!rawDefaultPicture.getParentFile().exists() && !rawDefaultPicture.getParentFile().mkdirs()) {
       LOG.error("Failed to create raw default picture folder: " + rawDefaultPicture.getParentFile().getAbsolutePath());

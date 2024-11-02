@@ -364,7 +364,7 @@ public class Game {
     this.gameStatus = gameStatus;
   }
 
-  @NonNull
+  @Nullable
   @JsonIgnore
   public GameEmulator getEmulator() {
     return emulator;

@@ -18,7 +18,7 @@ import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 
 @Service
-public class VpsAutomatcher  {
+public class VpsAutomatcher {
   private final static Logger LOG = LoggerFactory.getLogger(VpsAutomatcher.class);
 
   private static VpsAutomatcher instance = new VpsAutomatcher();
@@ -29,18 +29,18 @@ public class VpsAutomatcher  {
 
   private VpsAutomatcher() {
   }
-  
+
   //-------------------------------
 
   /**
    * pattern : Table (ManufacturerYear) info
    */
-  static Pattern filePattern1 = Pattern.compile("([^(]+)\\((.*)(\\d\\d\\d\\d)\\)(.*)" );
+  static Pattern filePattern1 = Pattern.compile("([^(]+)\\((.*)(\\d\\d\\d\\d)\\)(.*)");
   /**
    * pattern : Table (Year Manufacturer) info
    */
   static Pattern filePattern2 = Pattern.compile("([^(]+)\\((\\d\\d\\d\\d)(.*)\\)(.*)");
-    /**
+  /**
    * pattern : Table Year info
    */
   static Pattern filePattern3 = Pattern.compile("(.*)(\\d\\d\\d\\d)(.*)");
@@ -55,20 +55,24 @@ public class VpsAutomatcher  {
 
   /**
    * Match game and return a GameVpsMatch with the VPS Database mapping
+   *
    * @return GameVpsMatch of ids
    */
-  public GameVpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite) {
-      GameVpsMatch vpsMatch = new GameVpsMatch();
-      vpsMatch.setGameId(game.getId());
-      vpsMatch.setExtTableId(game.getExtTableId());
-      vpsMatch.setExtTableVersionId(game.getExtTableVersionId());
-      vpsMatch.setVersion(game.getVersion());
+  public GameVpsMatch autoMatch(VPS vpsDatabase, Game game, TableInfo tableInfo, boolean checkall, boolean overwrite, boolean useDisplayName) {
+    GameVpsMatch vpsMatch = new GameVpsMatch();
+    vpsMatch.setGameId(game.getId());
+    vpsMatch.setExtTableId(game.getExtTableId());
+    vpsMatch.setExtTableVersionId(game.getExtTableVersionId());
+    vpsMatch.setVersion(game.getVersion());
 
-      String gameFileName =  game.getGameFileName();
-      gameFileName = FilenameUtils.getBaseName(gameFileName);
+    String gameFileName = game.getGameFileName();
+    if (useDisplayName) {
+      gameFileName = game.getGameDisplayName();
+    }
+    gameFileName = FilenameUtils.getBaseName(gameFileName);
 
-      autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, tableInfo, overwrite);
-      return vpsMatch;
+    autoMatch(vpsMatch, vpsDatabase, gameFileName, game.getRom(), checkall, tableInfo, overwrite);
+    return vpsMatch;
   }
 
   /**
@@ -83,7 +87,7 @@ public class VpsAutomatcher  {
       // Step 1, decompose the filename in elements:
       // tablename (manuf year) author version extra
       TableNameParts parts = parseFilename(gameFileName);
-      
+
       String _version = null;
 
       Matcher match = null;
@@ -96,9 +100,9 @@ public class VpsAutomatcher  {
             parts.extra = StringUtils.remove(parts.extra, _version);
           }
         }
-      } 
-        // when not found in extra, check in table name 
-        if (_version == null) {
+      }
+      // when not found in extra, check in table name
+      if (_version == null) {
         match = versionPattern.matcher(parts.tableName);
         if (match.find()) {
           _version = match.group(1);
@@ -126,9 +130,9 @@ public class VpsAutomatcher  {
       }
 
       String _cleanTableName = cleanTable(parts.tableName);
- 
-      LOG.info("parsed : Table="+_cleanTableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year 
-        + " | version=" + _version + " | extra=" + parts.extra );
+
+      LOG.info("parsed : Table=" + _cleanTableName + " | Manuf=" + parts.manufacturer + " | year=" + parts.year
+          + " | version=" + _version + " | extra=" + parts.extra);
 
       //------------------------------------------------------
       // Step 2, match the table elements with VPS database
@@ -168,7 +172,8 @@ public class VpsAutomatcher  {
           // table found => update the TableId
           LOG.info(gameFileName + ": matched to VPS table \"" + vpsTable.getId() + "\"");
           vpsMatch.setExtTableId(vpsTable.getId());
-        } else {
+        }
+        else {
           LOG.info(gameFileName + ": Emptied table version");
           vpsMatch.setExtTableVersionId(null);
         }
@@ -180,15 +185,16 @@ public class VpsAutomatcher  {
 
       //------------------------------------------------------
       // Step 3, match the elements with VPS database
-   
-      if (vpsTable!=null && (StringUtils.isEmpty(vpsMatch.getExtTableVersionId()) || overwrite)) {  
+
+      if (vpsTable != null && (StringUtils.isEmpty(vpsMatch.getExtTableVersionId()) || overwrite)) {
 
         if (parts.extra == null) {
           // extra being null, take table name but remove the vps table name
           parts.extra = cleanTable(parts.tableName).replace(cleanTable(vpsTable.getName().toLowerCase()), "").trim();
-        } else {
+        }
+        else {
           parts.extra = cleanChars(parts.extra);
-        }      
+        }
 
         VpsTableVersion vpsVersion = tableVersionMatcher.findVersion(vpsTable, parts.extra, _version, tableInfo);
         if (vpsVersion != null) {
@@ -208,7 +214,8 @@ public class VpsAutomatcher  {
       }
 
       LOG.info("Finished auto-match for \"" + gameFileName + "\"");
-    } catch (Exception e) {
+    }
+    catch (Exception e) {
       LOG.error("Error auto-matching table data: " + e.getMessage(), e);
     }
   }
@@ -223,13 +230,13 @@ public class VpsAutomatcher  {
 
     return tableMatcher.findClosest(parts.displayName, null, true, _cleanTableName, parts.manufacturer, parts.year, vpsDatabase.getTables());
   }
- 
+
   //-------------------------------------------------
 
   private TableNameParts parseFilename(String gameFileName) {
 
     TableNameParts parts = new TableNameParts();
-    
+
     parts.displayName = gameFileName
         // remove reference VP10, VP9.2, VPX08....
         .replaceAll("VPX?[\\d\\.]+", "")

@@ -56,11 +56,10 @@ public class VpsService implements InitializingBean {
    * @return non null array of ids if matching was done
    */
   public GameVpsMatch autoMatch(Game game, boolean overwrite) {
-
     TableInfo tableInfo = vpxService.getTableInfo(game);
 
     VpsAutomatcher automatcher = VpsAutomatcher.getInstance();
-    return automatcher.autoMatch(vpsDatabase, game, tableInfo, false, overwrite);
+    return automatcher.autoMatch(vpsDatabase, game, tableInfo, false, overwrite, game.isFxGame());
   }
 
   /**

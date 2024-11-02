@@ -1,19 +1,18 @@
 package de.mephisto.vpin.server.frontend;
 
-import de.mephisto.vpin.commons.utils.WinRegistry;
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.server.games.*;
+import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -444,14 +443,16 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Override
   public void afterPropertiesSet() {
+    try {
+      getFrontendConnector().initializeConnector();
+      this.loadEmulators();
 
-    getFrontendConnector().initializeConnector();
-
-    this.loadEmulators();
-
-    getFrontendConnector().getFrontendPlayerDisplays();
-
-    preferencesService.addChangeListener(this);
+      getFrontendConnector().getFrontendPlayerDisplays();
+      preferencesService.addChangeListener(this);
+    }
+    catch (Exception e) {
+      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
+    }
   }
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
@@ -473,7 +474,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @NonNull
   public List<File> getMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
     MediaAccessStrategy mediaStrategy = getFrontendConnector().getMediaAccessStrategy();
-    if (mediaStrategy != null) {
+    if (mediaStrategy != null && game.getEmulator() != null) {
       return mediaStrategy.getScreenMediaFiles(game, screen);
     }
     return Collections.emptyList();
@@ -519,7 +520,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public TableAssetsAdapter getTableAssetAdapter() {
-    return getFrontendConnector().getTableAssetAdapter();  
+    return getFrontendConnector().getTableAssetAdapter();
   }
 
   @Override

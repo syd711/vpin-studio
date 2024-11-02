@@ -5,6 +5,9 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.ui.NavigationController;
+import de.mephisto.vpin.ui.NavigationItem;
+import de.mephisto.vpin.ui.NavigationOptions;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.vps.VpsUtil;
@@ -120,18 +123,29 @@ public class VpsEntry extends HBox {
         typeLabel.setText(tableFormat);
       }
       authorBox.getChildren().add(typeLabel);
-      authorBox.getChildren().add(spacer(5));
     }
 
-    Label authorLabel = WidgetFactory.createDefaultLabel("");
     if (authors != null && !authors.isEmpty()) {
-      authorLabel.setText(String.join(", ", authors));
-      authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
+      if (installed) {
+        Hyperlink hyperlink = new Hyperlink(String.join(", ", authors));
+        hyperlink.setTooltip(new Tooltip(String.join(", ", authors)));
+        hyperlink.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
+        hyperlink.setOnAction(new EventHandler<ActionEvent>() {
+          @Override
+          public void handle(ActionEvent event) {
+            NavigationController.navigateTo(NavigationItem.Tables, new NavigationOptions(game.getId()));
+          }
+        });
+        authorBox.getChildren().add(hyperlink);
+      }
+      else {
+        authorBox.getChildren().add(spacer(1));
+        Label authorLabel = WidgetFactory.createDefaultLabel("");
+        authorLabel.setText(String.join(", ", authors));
+        authorLabel.setTooltip(new Tooltip(String.join(", ", authors)));
+        authorBox.getChildren().add(authorLabel);
+      }
     }
-    if (installed) {
-      authorLabel.setStyle("-fx-font-weight:bold; -fx-font-size: 14px; -fx-text-fill: #66FF66;");
-    }
-    authorBox.getChildren().add(authorLabel);
 
     if (link != null) {
       String abb = VpsUtil.abbreviate(link);

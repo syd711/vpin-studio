@@ -38,7 +38,7 @@ public class MusicUploadController extends BaseUploadController {
       return "Failed to analyze music bundle: " + e.getMessage();
     }
     
-    String analyze = analysis.validateAssetType(AssetType.MUSIC_BUNDLE);
+    String analyze = analysis.validateAssetTypeInArchive(AssetType.MUSIC_BUNDLE);
     if (analyze == null) {
       String relativeMusicPath = analysis.getRelativeMusicPath(true);
       File musicFolder= new File(getSelectedEmulator().getTablesDirectory(), "Music");

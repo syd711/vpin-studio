@@ -63,9 +63,9 @@ public class NvRamUploadProgressModel extends UploadProgressModel {
       }
     }
     catch (Exception e) {
-      LOG.error("ROM upload failed: " + e.getMessage(), e);
+      LOG.error("NV upload failed: " + e.getMessage(), e);
       Platform.runLater(() -> {
-        WidgetFactory.showAlert(Studio.stage, "Error", "ROM upload failed: " + e.getMessage());
+        WidgetFactory.showAlert(Studio.stage, "Error", "NV upload failed: " + e.getMessage());
       });
     }
   }

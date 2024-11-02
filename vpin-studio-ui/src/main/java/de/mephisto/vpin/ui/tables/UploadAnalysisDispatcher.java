@@ -2,6 +2,7 @@ package de.mephisto.vpin.ui.tables;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -12,6 +13,8 @@ import de.mephisto.vpin.ui.util.ProgressResultModel;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
+import javafx.stage.Stage;
+
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +53,7 @@ public class UploadAnalysisDispatcher {
   }
 
   private static void dispatchBySuffix(@NonNull File file, @Nullable GameRepresentation game, @NonNull AssetType assetType,
-      @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
+                                       @NonNull UploaderAnalysis<?> analysis, @Nullable Runnable finalizer) {
     switch (assetType) {
       case ROM: {
         TableDialogs.onRomUploads(file, finalizer);
@@ -73,11 +76,11 @@ public class UploadAnalysisDispatcher {
         return;
       }
       case VPX: {
-        TableDialogs.openTableUploadDialog(game, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.VisualPinball, null, analysis);
         return;
       }
       case FPT: {
-        TableDialogs.openTableUploadDialog(game, null, analysis);
+        TableDialogs.openTableUploadDialog(game, EmulatorType.FuturePinball, null, analysis);
         return;
       }
       default: {
@@ -149,20 +152,24 @@ public class UploadAnalysisDispatcher {
   }
 
   public static UploaderAnalysis<?> analyzeArchive(File file) {
+    return analyzeArchive(null, file);
+  }
+
+  public static UploaderAnalysis<?> analyzeArchive(Stage parentStage, File file) {
     try {
       ProgressModel<?> model = createProgressModel(file);
-      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(model);
+      ProgressResultModel progressDialog = ProgressDialog.createProgressDialog(parentStage, model);
       List<Object> results = progressDialog.getResults();
       if (!results.isEmpty()) {
         return (UploaderAnalysis<?>) results.get(0);
       }
       else {
-        WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
+        WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: Upload likely cancelled.");
       }
     }
     catch (Exception e) {
       LOG.error("Error opening archive: {}", e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Error", "Error opening archive: " + e.getMessage());
+      WidgetFactory.showAlert(parentStage != null ? parentStage : Studio.stage, "Error", "Error opening archive: " + e.getMessage());
     }
     return null;
   }
@@ -170,20 +177,22 @@ public class UploadAnalysisDispatcher {
 
   public static String validateArchive(File file, AssetType assetType) {
     UploaderAnalysis<?> analysis = analyzeArchive(file);
-    return analysis != null ? analysis.validateAssetType(assetType) : null;
+    return analysis != null ? analysis.validateAssetTypeInArchive(assetType) : null;
   }
 
   public static String validateArchive(@NonNull File file, @Nullable GameRepresentation game, @Nullable Runnable finalizer) {
     UploaderAnalysis<?> analysis = analyzeArchive(file);
     if (analysis != null) {
-      AssetType singleAssetType = analysis.getSingleAssetType();
-      if (singleAssetType != null) {
-        String s = analysis.validateAssetType(singleAssetType);
-        if (s == null) {
-          dispatchBySuffix(file, game, singleAssetType, analysis, finalizer);
+      List<AssetType> assetTypes = analysis.getAssetTypes();
+      if (!assetTypes.isEmpty()) {
+        if (analysis.isTable()) {
+          TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
+        }
+        else if (assetTypes.size() == 1) {
+          dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
         }
         else {
-          WidgetFactory.showAlert(Studio.stage, "Invalid", "The selected file is not valid.", s);
+          TableDialogs.openMediaUploadDialog(game, file, analysis, false);
         }
       }
       else {

@@ -13,6 +13,7 @@ import de.mephisto.vpin.restclient.archiving.ArchiveSourceRepresentation;
 import de.mephisto.vpin.restclient.assets.AssetRequest;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
@@ -146,10 +147,14 @@ public class TableDialogs {
   }
 
   public static void onRomUploads(File file, Runnable finalizer) {
-    boolean uploaded = TableDialogs.openRomUploadDialog(file, finalizer);
-    if (uploaded) {
+    TableDialogs.openRomUploadDialog(file, () -> {
       EventManager.getInstance().notifyTablesChanged();
-    }
+      Platform.runLater(() -> {
+        if (finalizer != null) {
+          finalizer.run();
+        }
+      });
+    });
   }
 
   public static void onMusicUploads(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
@@ -340,10 +345,9 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openAltColorUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
-      return false;
     }
 
     Stage stage = Dialogs.createStudioDialogStage(AltColorUploadController.class, "dialog-altcolor-upload.fxml", "ALT Color Upload");
@@ -351,22 +355,17 @@ public class TableDialogs {
     controller.setGame(game);
     controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
-  public static boolean openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+  public static void openPupPackUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
     if (StringUtils.isEmpty(game.getRom())) {
       WidgetFactory.showAlert(Studio.stage, "No ROM", "Table \"" + game.getGameDisplayName() + "\" has no ROM name set.", "The ROM name is required for this upload type.");
-      return false;
     }
 
     Stage stage = Dialogs.createStudioDialogStage(PupPackUploadController.class, "dialog-puppack-upload.fxml", "PUP Pack Upload");
     PupPackUploadController controller = (PupPackUploadController) stage.getUserData();
     controller.setFile(stage, file, analysis, finalizer);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
   public static void openDMDUploadDialog(GameRepresentation game, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
@@ -377,9 +376,12 @@ public class TableDialogs {
   }
 
   public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, boolean filterMode) {
-    String title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+    String title = "Media Pack";
+    if (game != null) {
+      title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+    }
     if (filterMode) {
-      title = "Assets for \"" + game.getGameDisplayName() + "\"";
+      title = "Media Pack";
     }
     Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", title);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
@@ -389,16 +391,16 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
-    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getVpxGameEmulators();
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
+    List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
       return Optional.empty();
     }
 
-    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", "VPX Table Upload");
+    Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, tableUploadType, analysis);
+    controller.setGame(stage, game, emutype, tableUploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -582,13 +584,11 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openRomUploadDialog(File file, Runnable finalizer) {
+  public static void openRomUploadDialog(File file, Runnable finalizer) {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
     stage.showAndWait();
-
-    return controller.uploadFinished();
   }
 
   public static void openMusicUploadDialog(File file, UploaderAnalysis<?> analysis, Runnable finalizer) {

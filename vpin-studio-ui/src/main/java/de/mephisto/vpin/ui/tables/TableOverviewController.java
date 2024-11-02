@@ -357,10 +357,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onAltColorUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, null);
-      if (b) {
+      TableDialogs.openAltColorUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneAltColor().setExpanded(true);
-      }
+      }));
     }
   }
 
@@ -390,10 +389,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onPupPackUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      boolean b = TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, null);
-      if (b) {
+      TableDialogs.openPupPackUploadDialog(selectedItems.get(0), null, null, () -> Platform.runLater(() -> {
         tablesController.getTablesSideBarController().getTitledPaneDirectB2s().setExpanded(true);
-      }
+      }));
     }
   }
 
@@ -494,9 +492,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
    * Not mapped to a button in toolbar, but could be. Useful for context menu
    */
   @FXML
-  public void onTableToggle() {
-    GameRepresentation game = getSelection();
-    if (game != null) {
+  public void onTableStatusToggle() {
+    List<GameRepresentation> selections = getSelections();
+    toggleTableStatus(selections);
+  }
+
+  private static void toggleTableStatus(List<GameRepresentation> games) {
+    for (GameRepresentation game : games) {
       TableDetails detail = client.getFrontendService().getTableDetails(game.getId());
       boolean isDisable = game.isDisabled();
       detail.setStatus(isDisable ? 1 : 0);
@@ -504,10 +506,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         client.getFrontendService().saveTableDetails(detail, game.getId());
         EventManager.getInstance().notifyTableChange(game.getId(), null);
       }
-      catch(Exception e) {
+      catch (Exception e) {
         LOG.error("Cannot " + (isDisable ? "enable" : "disable") + " the game " + game.getGameFileName(), e);
         WidgetFactory.showAlert(Studio.stage, "The table \"" + game.getGameDisplayName()
-          + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
+            + "\" couldn't be " + (isDisable ? "enabled" : "disabled") + ".", "Please try again.");
       }
     }
   }
@@ -577,7 +579,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
   private void openUploadDialog(@Nullable TableUploadType uploadType) {
     GameRepresentation game = getSelection();
-    TableDialogs.openTableUploadDialog(game, uploadType, null);
+    GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+    TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
   }
 
   public void refreshFilters() {
@@ -744,8 +747,11 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         }
       }
       else {
-        // new table, add it to the list 
-        models.add(new GameRepresentationModel(refreshedGame));
+        // new table, add it to the list only if the emulator is matching
+        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        if (value != null && value.getId() == refreshedGame.getEmulatorId()) {
+          models.add(new GameRepresentationModel(refreshedGame));
+        }
       }
 
       // force refresh the view for elements not observed by the table
@@ -890,6 +896,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
               : client.getGameService().getGamesByEmulator(value.getId());
         })
         .onErrorSupply(e -> {
+          LOG.error("Loading tables failed", e);
           Platform.runLater(() -> WidgetFactory.showAlert(stage, "Error", "Loading tables failed: " + e.getMessage()));
           return Collections.emptyList();
         })
@@ -1591,6 +1598,22 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.tableView.getSelectionModel().clearSelection();
       this.tableView.getSelectionModel().select(model.get());
       this.tableView.scrollTo(model.get());
+    }
+    else {
+      GameRepresentation game = client.getGameService().getGame(gameId);
+      GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
+      GameEmulatorRepresentation value = emulatorCombo.getValue();
+      if (value.getId() != gameEmulator.getId()) {
+        reloadConsumers.add(new Consumer<GameRepresentation>() {
+          @Override
+          public void accept(GameRepresentation gameRepresentation) {
+            Platform.runLater(() -> {
+              selectGameInModel(gameId);
+            });
+          }
+        });
+        emulatorCombo.setValue(gameEmulator);
+      }
     }
   }
 

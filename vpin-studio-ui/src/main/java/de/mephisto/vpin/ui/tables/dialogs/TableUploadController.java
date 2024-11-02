@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
@@ -173,6 +174,7 @@ public class TableUploadController implements Initializable, DialogController {
   private UploaderAnalysis<?> uploaderAnalysis;
   private Stage stage;
   private UISettings uiSettings;
+  private EmulatorType emuType;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -322,15 +324,16 @@ public class TableUploadController implements Initializable, DialogController {
         Platform.runLater(() -> {
           if (rescan) {
             this.uploaderAnalysis = UploadAnalysisDispatcher.analyzeArchive(selection);
-            if (!selectMatchingEmulator()) {
-              return;
-            }
           }
 
           // If null the analysis was not successful.
           if (this.uploaderAnalysis != null) {
-            String analyzeVpx = uploaderAnalysis.validateAssetType(AssetType.VPX);
-            String analyzeFpt = uploaderAnalysis.validateAssetType(AssetType.FPT);
+            if (!selectMatchingEmulator()) {
+              return;
+            }
+
+            String analyzeVpx = uploaderAnalysis.validateAssetTypeInArchive(AssetType.VPX);
+            String analyzeFpt = uploaderAnalysis.validateAssetTypeInArchive(AssetType.FPT);
             subfolderCheckbox.setDisable(analyzeVpx != null);
 
             uploadBtn.setDisable(false);
@@ -374,9 +377,17 @@ public class TableUploadController implements Initializable, DialogController {
         });
       }
       else {
+        this.uploaderAnalysis = new UploaderAnalysis<>(client.getFrontendService().getFrontendCached(), this.selection);
+        if (!selectMatchingEmulator()) {
+          return;
+        }
+        EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
+        this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
+        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);
+        updateAnalysis();
       }
     }
     else {
@@ -385,11 +396,10 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private boolean selectMatchingEmulator() {
-    boolean vpx = this.uploaderAnalysis.validateAssetType(AssetType.VPX) == null;
-    boolean fp = this.uploaderAnalysis.validateAssetType(AssetType.FPT) == null;
+    EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
     GameEmulatorRepresentation value = emulatorCombo.getValue();
 
-    if (vpx) {
+    if (emulatorType != null && emulatorType.isVpxEmulator()) {
       if (value != null && value.isVpxEmulator()) {
         return true;
       }
@@ -405,7 +415,7 @@ public class TableUploadController implements Initializable, DialogController {
         setSelection(false);
       }
     }
-    else if (fp) {
+    else if (emulatorType != null && emulatorType.isFpEmulator()) {
       if (value != null && value.isFpEmulator()) {
         return true;
       }
@@ -426,6 +436,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   private void updateAnalysis() {
     if (uploaderAnalysis == null) {
+      assetFilterBtn.setVisible(false);
       return;
     }
 
@@ -440,19 +451,19 @@ public class TableUploadController implements Initializable, DialogController {
       }
     }
 
-    assetPupPackLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.PUP_PACK) == null);
-    assetAltSoundLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_SOUND) == null);
-    assetAltColorLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ALT_COLOR) == null);
-    assetMediaLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.FRONTEND_MEDIA) == null);
-    assetMusicLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.MUSIC) == null);
-    assetBackglassLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DIRECTB2S) == null);
-    assetIniLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.INI) == null);
-    assetPovLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.POV) == null);
-    assetResLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.RES) == null);
-    assetDmdLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.DMD_PACK) == null);
-    assetRomLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.ROM) == null);
-    assetCfgLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.CFG) == null);
-    assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetType(AssetType.NV) == null);
+    assetPupPackLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.PUP_PACK) == null);
+    assetAltSoundLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_SOUND) == null);
+    assetAltColorLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ALT_COLOR) == null);
+    assetMediaLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.FRONTEND_MEDIA) == null);
+    assetMusicLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.MUSIC) == null);
+    assetBackglassLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIRECTB2S) == null);
+    assetIniLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.INI) == null);
+    assetPovLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.POV) == null);
+    assetResLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.RES) == null);
+    assetDmdLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.DMD_PACK) == null);
+    assetRomLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null);
+    assetCfgLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.CFG) == null);
+    assetNvRamLabel.setVisible(uploaderAnalysis.validateAssetTypeInArchive(AssetType.NV) == null);
 
 
     assetCfgLabel.setText("- .cfg File");
@@ -548,6 +559,19 @@ public class TableUploadController implements Initializable, DialogController {
         boolean sameEmulator = t1.getId() == game.getEmulatorId();
         uploadAndImportRadio.setSelected(true);
         uploadAndReplaceRadio.setDisable(!sameEmulator);
+        uploadAndCloneRadio.setDisable(!sameEmulator);
+        keepDisplayNamesCheckbox.setDisable(!sameEmulator);
+        keepNamesCheckbox.setDisable(!sameEmulator);
+        backupTableOnOverwriteCheckbox.setDisable(!sameEmulator);
+      }
+
+      EmulatorType emulatorType = emulatorRepresentation.getEmulatorType();
+      if (this.uploaderAnalysis != null) {
+        this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
+      }
+      else if(selection != null){
+        UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendCached(), selection);
+        this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
       }
     });
 
@@ -675,9 +699,10 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
+    this.emuType = emuType;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
       uploadType = TableUploadType.valueOf(uiSettings.getDefaultUploadMode());

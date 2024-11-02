@@ -53,7 +53,7 @@ jobs:
 
       - name: Run maven build for popper client
         working-directory: ./vpin-studio-popper-client
-        run: mvn clean install -D
+        run: mvn clean install
 
       - name: Cache local Maven repository
         uses: actions/cache@v2
@@ -73,7 +73,15 @@ jobs:
 
       - name: List files in the repository
         run: |
-          ls ${{ github.workspace }}                    
+          ls ${{ github.workspace }}
+
+      - name: List JDK
+        run: |
+          ls "C:\hostedtoolcache\windows\Java_Zulu_jdk\11.0.25-9\x64"
+
+      - name: Copy .dll
+        run: |
+          copy ${{ github.workspace }}/resources/jvm/jinput-dx8_64.dll "C:\hostedtoolcache\windows\Java_Zulu_jdk\11.0.25-9\x64\bin\"
 
       - name: Build with Maven
         run: mvn --batch-mode --update-snapshots clean package

@@ -81,13 +81,13 @@ public class TableOverviewContextMenu {
 
     if (frontendType.supportStandardFields()) {
       boolean isDisabled = game.isDisabled();
-      String txt = isDisabled ? "Enable Table Data" : "Disable Table Data";
+      String txt = isDisabled ? "Enable Table" : "Disable Table";
       String icon = isDisabled ? "mdi2c-checkbox-marked-outline" : "mdi2c-checkbox-blank-off-outline";
       //icon = isDisabled ? "mdi2m-microsoft-xbox-controller" : "mdi2m-microsoft-xbox-controller-off";
       MenuItem enableItem = new MenuItem(txt, WidgetFactory.createIcon(icon));
       KeyCombination enableItemKey = new KeyCodeCombination(KeyCode.E, KeyCombination.ALT_DOWN);
       enableItem.setAccelerator(enableItemKey);
-      enableItem.setOnAction(actionEvent -> tableOverviewController.onTableToggle());
+      enableItem.setOnAction(actionEvent -> tableOverviewController.onTableStatusToggle());
       ctxMenu.getItems().add(enableItem);
     }
 
