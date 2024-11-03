@@ -162,16 +162,17 @@ public class UniversalUploadResource {
 
     //Determine target name
     File target = new File(existingVPXFile.getParentFile(), existingVPXFile.getName());
+    File targetSubFolder = null;
     String fileName = target.getName();
     if (uploadDescriptor.isFolderBasedImport()) {
       //use the parents parent so that we are back inside the tables folder
-      File targetFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
-      targetFolder = FileUtils.uniqueFolder(targetFolder);
-      targetFolder.mkdirs();
-      target = new File(targetFolder, target.getName());
-      fileName = targetFolder.getName() + "\\" + target.getName();
+      targetSubFolder = new File(gameEmulator.getTablesFolder(), uploadDescriptor.getSubfolderName());
+      targetSubFolder = FileUtils.uniqueFolder(targetSubFolder);
+      targetSubFolder.mkdirs();
+      target = new File(targetSubFolder, target.getName());
+      fileName = targetSubFolder.getName() + "\\" + target.getName();
 
-      LOG.info("Clone of " + existingVPXFile.getName() + " is created into subfolder \"" + targetFolder.getAbsolutePath() + "\"");
+      LOG.info("Clone of " + existingVPXFile.getName() + " is created into subfolder \"" + targetSubFolder.getAbsolutePath() + "\"");
     }
     else {
       target = FileUtils.uniqueFile(target);
@@ -204,12 +205,12 @@ public class UniversalUploadResource {
       frontendStatusService.cloneGameMedia(original, importedGame);
 
       //clone additional files
-      FileUtils.cloneFile(original.getDirectB2SFile(), target.getName());
-      FileUtils.cloneFile(original.getPOVFile(), target.getName());
-      FileUtils.cloneFile(original.getIniFile(), target.getName());
-      FileUtils.cloneFile(original.getResFile(), target.getName());
+      FileUtils.cloneFile(original.getDirectB2SFile(), targetSubFolder, target.getName());
+      FileUtils.cloneFile(original.getPOVFile(), targetSubFolder, target.getName());
+      FileUtils.cloneFile(original.getIniFile(), targetSubFolder, target.getName());
+      FileUtils.cloneFile(original.getResFile(), targetSubFolder, target.getName());
 
-      if(uploadDescriptor.isAutoFill()) {
+      if (uploadDescriptor.isAutoFill()) {
         frontendStatusService.autoMatch(importedGame, true, false);
       }
 

@@ -221,7 +221,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public int importGame(@NonNull File file, int emuId) {
-
     String baseName = FilenameUtils.getBaseName(file.getName());
     String formattedBaseName = baseName;//.replaceAll(" ", "-");
     Game gameByName = getGameByName(emuId, formattedBaseName);
@@ -230,6 +229,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       formattedBaseName = FilenameUtils.getBaseName(file.getName()) + count;
       LOG.info("Found existing gamename that exists while importing \"" + file.getName() + "\", trying again with \"" + formattedBaseName + "\"");
       gameByName = getGameByName(emuId, formattedBaseName);
+      count++;
     }
 
     GameEmulator gameEmulator = emulators.get(emuId);
