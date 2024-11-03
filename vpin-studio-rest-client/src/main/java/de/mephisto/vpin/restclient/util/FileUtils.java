@@ -73,11 +73,14 @@ public class FileUtils {
     return tempFile;
   }
 
-  public static void cloneFile(File original, String updatedName) throws IOException {
+  public static void cloneFile(File original, File targetSubFolder, String updatedName) throws IOException {
     if (original.exists()) {
       String suffix = FilenameUtils.getExtension(original.getName());
       String directB2SFileName = FilenameUtils.getBaseName(updatedName) + "." + suffix;
       File clone = new File(original.getParentFile(), directB2SFileName);
+      if (targetSubFolder != null) {
+        clone = new File(targetSubFolder, directB2SFileName);
+      }
       org.apache.commons.io.FileUtils.copyFile(original, clone);
       LOG.info("Cloned " + clone.getAbsolutePath());
     }

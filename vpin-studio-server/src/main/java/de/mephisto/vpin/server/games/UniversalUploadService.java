@@ -244,13 +244,22 @@ public class UniversalUploadService {
   private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
-    if (gameAssetFile.exists() && !gameAssetFile.delete()) {
-      LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
-      throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+    boolean replaced = false;
+    if (gameAssetFile.exists()) {
+      if (!gameAssetFile.delete()) {
+        LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+        throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+      }
+      replaced = true;
     }
 
     org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
-    LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+    if (replaced) {
+      LOG.info("Replaced \"" + gameAssetFile.getAbsolutePath() + "\" with \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\"");
+    }
+    else {
+      LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+    }
   }
 
 

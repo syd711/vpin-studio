@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import de.mephisto.vpin.server.vpx.VPXUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
@@ -20,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.*;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +50,9 @@ public class TextEditService {
 
   @Autowired
   private DOFLinxService dofLinxService;
+
+  @Autowired
+  private VPXService vpxService;
 
   public TextFile getText(TextFile textFile) {
     try {
@@ -81,6 +86,16 @@ public class TextEditService {
           textFile.setLastModified(new Date(init.lastModified()));
           break;
         }
+        case VPinballXIni: {
+          File init = vpxService.getVPXFile();
+          Path filePath = init.toPath();
+          String iniText = Files.readString(filePath);
+          textFile.setContent(iniText);
+          textFile.setPath(init.getAbsolutePath());
+          textFile.setSize(init.length());
+          textFile.setLastModified(new Date(init.lastModified()));
+          break;
+        }
         case VPMAliasTxt: {
           GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
           return mameRomAliasService.loadAliasFile(defaultGameEmulator);
@@ -95,13 +110,26 @@ public class TextEditService {
           textFile.setContent(vbs);
           return textFile;
         }
+        case LOCAL: {
+          textFile.setLastModified(new Date());
+          File f = new File(textFile.getPath());
+          if (!f.exists()) {
+            throw new UnsupportedOperationException("No such file: " + f.getAbsolutePath());
+          }
+          String iniText = Files.readString(f.toPath());
+          textFile.setContent(iniText);
+          textFile.setPath(f.getAbsolutePath());
+          textFile.setSize(f.length());
+          textFile.setLastModified(new Date(f.lastModified()));
+          return textFile;
+        }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);
         }
       }
 
     }
-    catch (IOException e) {
+    catch (Exception e) {
       LOG.error("Error reading text file: " + e.getMessage(), e);
     }
     return textFile;
@@ -178,6 +206,28 @@ public class TextEditService {
           else {
             LOG.error("No game found with game name '" + textFile.getFileId() + "'");
           }
+        }
+        case LOCAL: {
+          File f = new File(textFile.getPath());
+          String[] lines = textFile.getContent().split("\n");
+          List<String> allLines = Arrays.asList(lines);
+          String content = String.join("\n", allLines);
+          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          LOG.info("Written " + f.getAbsolutePath());
+          textFile.setLastModified(new Date(f.lastModified()));
+          textFile.setSize(textFile.getContent().getBytes().length);
+          return textFile;
+        }
+        case VPinballXIni: {
+          File f = vpxService.getVPXFile();
+          String[] lines = textFile.getContent().split("\n");
+          List<String> allLines = Arrays.asList(lines);
+          String content = String.join("\n", allLines);
+          FileUtils.writeStringToFile(f, content, Charset.defaultCharset());
+          LOG.info("Written " + f.getAbsolutePath());
+          textFile.setLastModified(new Date(f.lastModified()));
+          textFile.setSize(textFile.getContent().getBytes().length);
+          return textFile;
         }
         default: {
           throw new UnsupportedOperationException("Unknown VPin file: " + vPinFile);

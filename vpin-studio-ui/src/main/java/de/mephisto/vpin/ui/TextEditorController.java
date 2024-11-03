@@ -14,6 +14,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import org.apache.commons.lang3.StringUtils;
 import org.fxmisc.flowless.VirtualizedScrollPane;
@@ -31,7 +32,7 @@ public class TextEditorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(TextEditorController.class);
 
   @FXML
-  private BorderPane root;
+  private GridPane dataGrid;
 
   @FXML
   private BorderPane centerPane;
@@ -94,6 +95,8 @@ public class TextEditorController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     this.saveBtn.setDisable(true);
     this.saveAndCloseBtn.setDisable(true);
+    this.saveBtn.managedProperty().bindBidirectional(saveBtn.visibleProperty());
+    this.saveAndCloseBtn.managedProperty().bindBidirectional(saveAndCloseBtn.visibleProperty());
   }
 
   @FXML
@@ -125,17 +128,26 @@ public class TextEditorController implements Initializable, DialogController {
 
   public void load(TextFile file) throws Exception {
     this.file = file;
-    TextFile value = client.getTextEditorService().getText(file);
-    lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
-    size.setText(FileUtils.readableFileSize(value.getSize()));
+    if(file.getvPinFile() == null) {
+      richText = new RichText(file.getContent());
+      richText.getCodeArea().setEditable(false);
+      size.setVisible(false);
+      saveBtn.setVisible(false);
+      saveAndCloseBtn.setVisible(false);
+      dataGrid.setVisible(false);
+    }
+    else {
+      TextFile value = client.getTextEditorService().getText(file);
+      lastModified.setText(DateFormat.getDateTimeInstance().format(value.getLastModified()));
+      size.setText(FileUtils.readableFileSize(value.getSize()));
+      richText = new RichText(value.getContent());
 
-    richText = new RichText(value.getContent());
+      this.saveBtn.setDisable(false);
+      this.saveAndCloseBtn.setDisable(false);
+    }
 
     VirtualizedScrollPane scrollPane = new VirtualizedScrollPane(richText.getCodeArea());
     centerPane.setCenter(scrollPane);
-
-    this.saveBtn.setDisable(false);
-    this.saveAndCloseBtn.setDisable(false);
   }
 
   @Override

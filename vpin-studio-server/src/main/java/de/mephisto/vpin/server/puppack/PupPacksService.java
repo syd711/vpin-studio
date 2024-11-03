@@ -140,8 +140,7 @@ public class PupPacksService implements InitializingBean {
   }
 
   public boolean setPupPackEnabled(Game game, boolean enable) {
-    frontendService.setPupPackEnabled(game, enable);
-    return true;
+    return frontendService.setPupPackEnabled(game, enable);
   }
 
   public boolean isPupPackDisabled(@Nullable Game game) {

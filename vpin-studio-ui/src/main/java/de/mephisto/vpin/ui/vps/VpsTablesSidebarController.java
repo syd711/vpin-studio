@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -105,6 +106,8 @@ public class VpsTablesSidebarController implements Initializable {
         }
       });
     }
+
+    WidgetFactory.addToTextListener(nameLabel);
   }
 
   @Override

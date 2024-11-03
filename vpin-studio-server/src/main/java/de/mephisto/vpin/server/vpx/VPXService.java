@@ -54,6 +54,11 @@ public class VPXService {
     }
   }
 
+  public File getVPXFile() {
+    String user = System.getProperty("user.name");
+    return new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
+  }
+
   public boolean savePOVPreference(Game game, Map<String, Object> values) {
     POV pov = getPOV(game);
     if (pov != null) {

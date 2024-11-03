@@ -114,7 +114,7 @@
                               </Label>
                               <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
                                  <children>
-                                    <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="290.0" />
+                                    <ComboBox fx:id="optionsCombo" prefHeight="30.0" prefWidth="200.0" />
                                     <Button fx:id="applyBtn" mnemonicParsing="false" onAction="#onOptionApply" prefWidth="80.0" text="Apply" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
@@ -122,6 +122,17 @@
                                        <graphic>
                                           <FontIcon iconColor="WHITE" iconLiteral="mdi2d-database-check-outline" />
                                        </graphic>
+                                    </Button>
+                                    <Button fx:id="optionEditBtn" mnemonicParsing="false" onAction="#onOptionEdit" styleClass="text-button" text="Edit" textFill="WHITE">
+                                       <font>
+                                          <Font size="14.0" />
+                                       </font>
+                                       <graphic>
+                                          <FontIcon iconColor="WHITE" iconLiteral="mdi2c-card-text-outline" iconSize="18" />
+                                       </graphic>
+                                       <tooltip>
+                                          <Tooltip text="Open VPMAlias.txt file" />
+                                       </tooltip>
                                     </Button>
                                     <Label textFill="WHITE">
                                        <font>
@@ -146,8 +157,8 @@
                               </Label>
                               <HBox layoutX="174.0" layoutY="77.0" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="5">
                                  <children>
-                                    <ComboBox fx:id="txtsCombo" prefHeight="30.0" prefWidth="290.0" />
-                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" text="Open" textFill="WHITE">
+                                    <ComboBox fx:id="txtsCombo" prefHeight="30.0" prefWidth="200.0" />
+                                    <Button fx:id="openBtn" mnemonicParsing="false" onAction="#onOpen" prefWidth="80.0" styleClass="text-button" text="Edit" textFill="WHITE">
                                        <font>
                                           <Font size="14.0" />
                                        </font>

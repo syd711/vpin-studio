@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="900.0" prefWidth="1200.0" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="TOP_LEFT">
+         <content>
+            <VBox>
+               <children>
+                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="This tutorial assumes that you have successfully created a new Discord bot for your server.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="It will show you how to get the ID of your server that is required to communicate with the bot.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Enable &quot;Developer Mode&quot; in Discord" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Select &quot;Edit Server Profile&quot; via context menu click on your server. You have to be an administrator for the server in order to do that.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="Switch to the &quot;Advanced&quot; section and enable the &quot;Developer Mode&quot;.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                     <children>
+                        <ImageView fitHeight="458.0" fitWidth="800.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../screenshots/bot/server-profile.png" />
+                           </image>
+                           <HBox.margin>
+                              <Insets right="36.0" />
+                           </HBox.margin>
+                        </ImageView>
+                        <ImageView fitHeight="458.0" fitWidth="800.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../screenshots/bot/developer-mode.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="The developer mode enables some additional features in the Discord UI.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Apply Server ID" />
+                  <Label layoutX="34.0" layoutY="54.0" styleClass="preference-description" text="You can now execute a context click on your server in the server list and select &quot;Copy ID&quot;.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="500.0" fitWidth="258.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../screenshots/bot/copy-id.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="Paste the ID into the &quot;Server ID&quot; field of the VPin Studio preferences.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="252.0" fitWidth="746.0" layoutX="34.0" layoutY="724.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@screenshots/bot/input-server-id.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+</BorderPane>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.String?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
+   <top>
+      <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
+   </top>
+
+   <center>
+      <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="TOP_LEFT">
+         <content>
+            <VBox>
+               <children>
+                  <Label layoutX="34.0" layoutY="109.0" styleClass="preference-description" text="This tutorial assumes that you have successfully created a new Discord bot for your server.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-description" text="It will show you how to get the token that is required to communicate with the bot.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Reset Bot Token" />
+                  <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Login into the Discord developer portal.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="72.0" styleClass="preference-description" text="Select your bot from the aplication list and select the &quot;Bot&quot; section.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label layoutX="34.0" layoutY="1879.0" styleClass="preference-description" text="Press the &quot;Reset Token&quot; button and copy the new token to your clipboard.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <HBox>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                     <children>
+                        <ImageView fitWidth="900.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../screenshots/bot/reset-token.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Apply Bot Token" />
+                  <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="Paste the newly created bot token into the &quot;Bot Token&quot; field of the VPin Studio preferences.">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <ImageView fitHeight="252.0" fitWidth="600.0" layoutX="34.0" layoutY="724.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../../screenshots/bot/input-token.png" />
+                     </image>
+                     <VBox.margin>
+                        <Insets bottom="12.0" top="12.0" />
+                     </VBox.margin>
+                  </ImageView>
+               </children>
+               <padding>
+                  <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />
+               </padding>
+            </VBox>
+         </content>
+      </ScrollPane>
+   </center>
+   <styleClass>
+      <String fx:value="base-component" />
+      <String fx:value="dialog" />
+   </styleClass>
+</BorderPane>
