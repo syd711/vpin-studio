@@ -4,6 +4,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.tables.TableDialogs;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -73,7 +74,7 @@ public class AssetFilterPanelController implements Initializable {
 
 
   private void updateAnalysis() {
-    if (uploaderAnalysis == null) {
+    if (uploaderAnalysis == null || this.file == null) {
       assetsView.setVisible(false);
       return;
     }
@@ -171,7 +172,7 @@ public class AssetFilterPanelController implements Initializable {
     this.filteringMode = filteringMode;
   }
 
-  public boolean refresh(File file, UploaderAnalysis uploaderAnalysis) {
+  public boolean refresh(@Nullable File file, UploaderAnalysis uploaderAnalysis) {
     this.file = file;
     this.uploaderAnalysis = uploaderAnalysis;
     updateAnalysis();

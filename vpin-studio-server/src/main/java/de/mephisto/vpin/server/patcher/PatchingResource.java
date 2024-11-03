@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.patcher;
 
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
@@ -28,10 +29,15 @@ public class PatchingResource {
   public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Patcher Upload Thread");
     long start = System.currentTimeMillis();
-    LOG.info("*********** Patching " + uploadDescriptor.getTempFilename() + " ************************");
+    Game game = gameService.getGame(uploadDescriptor.getGameId());
+    LOG.info("*********** Patching " + game.getGameDisplayName() + " ****************");
     try {
-      Game game = gameService.getGame(uploadDescriptor.getGameId());
+
 //      patchingService.patch(game, )
+
+      if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndClone)) {
+
+      }
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);

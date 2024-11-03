@@ -14,7 +14,7 @@
       <Label styleClass="preference-description" text="The following assets have been found:" textFill="WHITE" wrapText="true" />
       <ScrollPane hbarPolicy="NEVER" maxHeight="130.0">
          <content>
-            <VBox fx:id="assetsBox" spacing="6.0">
+            <VBox fx:id="assetsBox" prefWidth="240.0" spacing="6.0">
                <children>
                   <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="- ALT Sound" textFill="WHITE">
                      <font>

@@ -123,6 +123,7 @@ public class PatchUploadController extends BaseUploadController {
     patchAndCloneRadio.setToggleGroup(toggleGroup);
 
     patchAndReplaceRadio.setSelected(true);
+    uploadDescriptor.setUploadType(UploadType.uploadAndReplace);
     uploadReplaceBox.getStyleClass().add("selection-panel-selected");
 
     patchAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -172,9 +173,11 @@ public class PatchUploadController extends BaseUploadController {
   protected void endAnalysis(@Nullable String analysis, @Nullable UploaderAnalysis<?> uploaderAnalysis) {
     super.endAnalysis(analysis, uploaderAnalysis);
     assetsFilterPanel.setVisible(uploaderAnalysis != null && uploaderAnalysis.isArchive());
-    assetFilterPanelController.refresh(getSelection(), uploaderAnalysis);
+    assetFilterPanelController.refresh(analysis == null ? getSelection() : null, uploaderAnalysis);
 
-    if (uploaderAnalysis != null) {
+    this.readmeBtn.setVisible(false);
+    this.readmeLabel.setVisible(true);
+    if (uploaderAnalysis != null && analysis == null) {
       String readmeText = uploaderAnalysis.getReadMeText();
       if (!StringUtils.isEmpty(readmeText)) {
         this.readmeBtn.setUserData(readmeText);

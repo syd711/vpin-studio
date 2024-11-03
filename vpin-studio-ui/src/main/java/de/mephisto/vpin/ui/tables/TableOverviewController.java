@@ -241,6 +241,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private MenuItem cfgUploadItem;
 
   @FXML
+  private MenuItem patchItem;
+
+  @FXML
   private MenuItem altColorUploadItem;
 
   @FXML
@@ -370,6 +373,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   public void onCfgUpload() {
     TableDialogs.openCfgUploads(null, null);
+  }
+
+  @FXML
+  public void onPatchUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.openPatchUpload(selectedItems.get(0), null, null, null);
+    }
   }
 
   @FXML
@@ -645,7 +656,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-        if(mouseEvent.isShiftDown()) {
+        if (mouseEvent.isShiftDown()) {
           onMediaEdit();
           return;
         }
@@ -1766,6 +1777,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     altSoundUploadItem.setVisible(vpxEmulator);
     altColorUploadItem.setVisible(vpxEmulator);
     dmdUploadItem.setVisible(vpxEmulator);
+    patchItem.setVisible(vpxEmulator);
     iniUploadMenuItem.setVisible(vpxEmulator);
     povItem.setVisible(vpxEmulator);
     nvUploadMenuItem.setVisible(vpxEmulator);
