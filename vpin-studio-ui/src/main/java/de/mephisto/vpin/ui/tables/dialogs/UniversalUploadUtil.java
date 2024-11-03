@@ -2,7 +2,7 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -19,10 +19,10 @@ import java.util.Optional;
 public class UniversalUploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UniversalUploadUtil.class);
 
-  public static Optional<UploadDescriptor> upload(File selection, int gameId, TableUploadType tableUploadType, GameEmulatorRepresentation emulatorRepresentation) {
+  public static Optional<UploadDescriptor> upload(File selection, int gameId, UploadType uploadType, GameEmulatorRepresentation emulatorRepresentation) {
     Optional<UploadDescriptor> result = Optional.empty();
     try {
-      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel("Game Media Upload", selection, gameId, tableUploadType, emulatorRepresentation.getId());
+      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel("Game Media Upload", selection, gameId, uploadType, emulatorRepresentation.getId());
       ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
       List<Object> results = uploadResultModel.getResults();

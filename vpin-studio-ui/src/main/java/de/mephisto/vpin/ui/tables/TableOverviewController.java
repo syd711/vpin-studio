@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -565,18 +565,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     openUploadDialogWithCheck(null);
   }
 
-  public void openUploadDialogWithCheck(@Nullable TableUploadType tableUploadType) {
+  public void openUploadDialogWithCheck(@Nullable UploadType uploadType) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        openUploadDialog(tableUploadType);
+        openUploadDialog(uploadType);
       }
       return;
     }
 
-    openUploadDialog(tableUploadType);
+    openUploadDialog(uploadType);
   }
 
-  private void openUploadDialog(@Nullable TableUploadType uploadType) {
+  private void openUploadDialog(@Nullable UploadType uploadType) {
     GameRepresentation game = getSelection();
     GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
     TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);

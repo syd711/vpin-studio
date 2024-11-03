@@ -4,7 +4,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -144,7 +144,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       else {
         stage.close();
         Platform.runLater(() -> {
-          Optional<UploadDescriptor> result = UniversalUploadUtil.upload(selection, game.getId(), TableUploadType.uploadAndImport, emulator);
+          Optional<UploadDescriptor> result = UniversalUploadUtil.upload(selection, game.getId(), UploadType.uploadAndImport, emulator);
           if (result.isPresent()) {
             UploadDescriptor uploadDescriptor = result.get();
             uploadDescriptor.setSubfolderName(null);

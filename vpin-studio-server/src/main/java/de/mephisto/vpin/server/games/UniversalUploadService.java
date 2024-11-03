@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -293,7 +293,7 @@ public class UniversalUploadService {
         if (imgUrl != null) {
           embed.setImage(imgUrl);
         }
-        if (uploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+        if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndImport)) {
           embed.addField("New Table Installed", "", false);
         }
         else {

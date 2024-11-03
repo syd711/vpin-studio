@@ -17,7 +17,7 @@ import java.util.List;
 public class UploadDescriptor {
   private final static Logger LOG = LoggerFactory.getLogger(UploadDescriptor.class);
 
-  private TableUploadType uploadType;
+  private UploadType uploadType;
   private String tempFilename;
   private String originalUploadedFileName;
   private String error;
@@ -204,11 +204,11 @@ public class UploadDescriptor {
     this.error = error;
   }
 
-  public TableUploadType getUploadType() {
+  public UploadType getUploadType() {
     return uploadType;
   }
 
-  public void setUploadType(TableUploadType uploadType) {
+  public void setUploadType(UploadType uploadType) {
     this.uploadType = uploadType;
   }
 

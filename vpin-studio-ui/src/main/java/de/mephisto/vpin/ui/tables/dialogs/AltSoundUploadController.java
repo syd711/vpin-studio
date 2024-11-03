@@ -51,7 +51,7 @@ public class AltSoundUploadController extends BaseUploadController {
   }
 
   @Override
-  protected void endAnalysis(String validation) {
+  protected void endAnalysis(String validation, UploaderAnalysis<?> uploaderAnalysis) {
     if (rom != null) {
         //TODO Question here, seems that rom is not mandatory for altsound upload
         // but if rom is mandatory, simply return an error message 
@@ -61,6 +61,6 @@ public class AltSoundUploadController extends BaseUploadController {
         tableLabel.setText(gameRepresentation.getGameDisplayName());
       }
     }
-    super.endAnalysis(validation);
+    super.endAnalysis(validation, uploaderAnalysis);
   }
 }

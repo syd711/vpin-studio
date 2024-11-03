@@ -459,6 +459,12 @@ public class UploaderAnalysis<T> {
         }
         return "This archive does not not contain a DMD bundle.";
       }
+      case DIF: {
+        if (hasFileWithSuffix("dif")) {
+          return null;
+        }
+        return "This archive does not not contain a .dif file.";
+      }
       case ALT_SOUND: {
         if (isAltSound()) {
           return null;
@@ -519,7 +525,7 @@ public class UploaderAnalysis<T> {
         return "This archive does not not contain a .ini file.";
       }
       default: {
-        throw new UnsupportedOperationException("Unmapped asset type: " + assetType);
+        throw new UnsupportedOperationException("Unmapped asset type: " + assetType + "/" + assetType.name());
       }
     }
   }
@@ -532,6 +538,10 @@ public class UploaderAnalysis<T> {
 
     if (hasFileWithSuffix("fpt")) {
       result.add(AssetType.FPT);
+    }
+
+    if (hasFileWithSuffix("dif")) {
+      result.add(AssetType.DIF);
     }
 
     if (hasFileWithSuffix("directb2s")) {
@@ -613,7 +623,6 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-
   public boolean isTable() {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
     if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
@@ -621,6 +630,14 @@ public class UploaderAnalysis<T> {
     }
 
     return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
+  }
+
+  public boolean isPatch() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.DIF.name())) {
+      return true;
+    }
+    return validateAssetTypeInArchive(AssetType.DIF) == null;
   }
 
   @Nullable

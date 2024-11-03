@@ -2,7 +2,7 @@ package de.mephisto.vpin.server.games;
 
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
@@ -44,7 +44,7 @@ public class GameMediaService {
 
         String suffix = FilenameUtils.getExtension(mediaFile);
         File out = uniqueMediaAsset(game, screen, suffix);
-        if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+        if (uploadDescriptor.getUploadType() != null && uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
           out = new File(frontendService.getMediaFolder(game, screen, suffix), game.getGameName() + "." + suffix);
           if (out.exists() && !out.delete()) {
             out = uniqueMediaAsset(game, screen, suffix);

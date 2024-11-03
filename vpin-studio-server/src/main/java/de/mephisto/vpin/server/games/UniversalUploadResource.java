@@ -4,7 +4,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -51,7 +51,7 @@ public class UniversalUploadResource {
   public UploadDescriptor upload(@RequestParam(value = "file") MultipartFile file,
                                  @RequestParam(value = "gameId") int gameId,
                                  @RequestParam(value = "emuId") int emuId,
-                                 @RequestParam(value = "mode") TableUploadType mode) {
+                                 @RequestParam(value = "mode") UploadType mode) {
     UploadDescriptor descriptor = UploadDescriptorFactory.create(file, gameId);
     try {
       descriptor.setUploadType(mode);
@@ -128,7 +128,7 @@ public class UniversalUploadResource {
 
 
   private void importVPXFile(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
-    TableUploadType uploadType = uploadDescriptor.getUploadType();
+    UploadType uploadType = uploadDescriptor.getUploadType();
     switch (uploadType) {
       case uploadAndImport: {
         uploadAndImport(temporaryVPXFile, uploadDescriptor, analysis);

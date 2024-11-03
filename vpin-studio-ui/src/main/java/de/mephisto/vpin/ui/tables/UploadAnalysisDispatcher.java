@@ -67,6 +67,10 @@ public class UploadAnalysisDispatcher {
         TableDialogs.openCfgUploads(file, finalizer);
         return;
       }
+      case DIF: {
+        TableDialogs.openPatchUpload(game, file, analysis, finalizer);
+        return;
+      }
       case DMD_PACK: {
         TableDialogs.openDMDUploadDialog(game, file, analysis, finalizer);
         return;
@@ -187,6 +191,10 @@ public class UploadAnalysisDispatcher {
       if (!assetTypes.isEmpty()) {
         if (analysis.isTable()) {
           TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
+        }
+        else if(analysis.isPatch() && game == null) {
+          WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a game selected.", "Select the matching game for the patch file and try again.");
+          return null;
         }
         else if (assetTypes.size() == 1) {
           dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);

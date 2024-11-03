@@ -222,7 +222,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
           validation = validateAnalysis(analysis);
         }
       }
-      endAnalysis(validation);
+      endAnalysis(validation, analysis);
     }
     else {
       this.fileNameField.setText("");
@@ -250,9 +250,10 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   /**
    * Called after analysis is done on javafx thread to update specific fields
    *
-   * @param analysis The result of the analysis
+   * @param analysis         The result of the analysis
+   * @param uploaderAnalysis
    */
-  protected void endAnalysis(String analysis) {
+  protected void endAnalysis(String analysis, UploaderAnalysis<?> uploaderAnalysis) {
     if (analysis == null) {
       String collect = multiSelection ?
           this.selection.stream().map(f -> f.getName()).collect(Collectors.joining(", ")) :
