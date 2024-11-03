@@ -23,17 +23,17 @@ public class GameMediaUploadProgressModel extends ProgressModel<File> {
   private final List<File> files;
   private final File file;
   private final int gameId;
-  private final UploadType tableUploadDescriptor;
+  private final UploadType uploadType;
   private final int emuId;
   private double percentage = 0;
 
-  public GameMediaUploadProgressModel(String title, File file, int gameId, UploadType tableUploadDescriptor, int emuId) {
+  public GameMediaUploadProgressModel(String title, File file, int gameId, UploadType uploadType, int emuId) {
     super(title);
     this.files = Collections.singletonList(file);
     this.file = file;
     this.gameId = gameId;
     this.emuId = emuId;
-    this.tableUploadDescriptor = tableUploadDescriptor;
+    this.uploadType = uploadType;
     iterator = this.files.iterator();
   }
 
@@ -66,7 +66,7 @@ public class GameMediaUploadProgressModel extends ProgressModel<File> {
   @Override
   public void processNext(ProgressResultModel progressResultModel, File next) {
     try {
-      UploadDescriptor uploadDescriptor = Studio.client.getGameService().uploadTable(next, tableUploadDescriptor, gameId, emuId, percent -> {
+      UploadDescriptor uploadDescriptor = Studio.client.getGameService().uploadTable(next, uploadType, gameId, emuId, percent -> {
         double total = percentage + percent;
         progressResultModel.setProgress(total / this.files.size());
       });

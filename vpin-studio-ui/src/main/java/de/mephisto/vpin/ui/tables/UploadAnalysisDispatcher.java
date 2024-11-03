@@ -14,7 +14,6 @@ import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.stage.Stage;
-
 import org.apache.commons.io.FilenameUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,7 +129,7 @@ public class UploadAnalysisDispatcher {
         break;
       }
       case FRONTEND_MEDIA: {
-        TableDialogs.openMediaUploadDialog(game, file, analysis, false);
+        TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
         break;
       }
       default: {
@@ -192,15 +191,18 @@ public class UploadAnalysisDispatcher {
         if (analysis.isTable()) {
           TableDialogs.openTableUploadDialog(game, analysis.getEmulatorType(), null, analysis);
         }
-        else if(analysis.isPatch() && game == null) {
-          WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a game selected.", "Select the matching game for the patch file and try again.");
-          return null;
+        else if (analysis.isPatch()) {
+          if (game == null || !game.isVpxGame()) {
+            WidgetFactory.showInformation(Studio.stage, "Can not apply a patch without a VPX table selected.", "Select the matching table for the patch file and try again.");
+            return null;
+          }
+          TableDialogs.openPatchUpload(game, file, analysis, finalizer);
         }
         else if (assetTypes.size() == 1) {
           dispatchBySuffix(file, game, assetTypes.get(0), analysis, finalizer);
         }
         else {
-          TableDialogs.openMediaUploadDialog(game, file, analysis, false);
+          TableDialogs.openMediaUploadDialog(Studio.stage, game, file, analysis, null);
         }
       }
       else {

@@ -420,7 +420,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onMediaUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openMediaUploadDialog(selectedItems.get(0), null, null, false);
+      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.get(0), null, null, null);
     }
   }
 

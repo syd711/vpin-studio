@@ -375,15 +375,15 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, boolean filterMode) {
+  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode) {
     String title = "Media Pack";
     if (game != null) {
-      title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+      title = "Media for \"" + game.getGameDisplayName() + "\"";
     }
-    if (filterMode) {
-      title = "Media Pack";
+    if (filterMode != null) {
+      title = "Media Selection";
     }
-    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", title);
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
     controller.setData(game, analysis, file, stage, filterMode);
     stage.showAndWait();

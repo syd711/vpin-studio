@@ -32,6 +32,7 @@ import de.mephisto.vpin.restclient.ini.IniServiceClient;
 import de.mephisto.vpin.restclient.jobs.JobsServiceClient;
 import de.mephisto.vpin.restclient.mame.MameServiceClient;
 import de.mephisto.vpin.restclient.mania.ManiaServiceClient;
+import de.mephisto.vpin.restclient.patcher.PatcherServiceClient;
 import de.mephisto.vpin.restclient.players.PlayersServiceClient;
 import de.mephisto.vpin.restclient.players.RankedPlayerRepresentation;
 import de.mephisto.vpin.restclient.playlists.PlaylistMediaServiceClient;
@@ -96,6 +97,7 @@ public class VPinStudioClient implements OverlayClient {
   private final PreferencesServiceClient preferencesServiceClient;
   private final RecorderServiceClient recorderServiceClient;
   private final PupPackServiceClient pupPackServiceClient;
+  private final PatcherServiceClient patcherServiceClient;
   private final SystemServiceClient systemServiceClient;
   private final TournamentsServiceClient tournamentsServiceClient;
   private final TextEditorServiceClient textEditorServiceClient;
@@ -140,6 +142,7 @@ public class VPinStudioClient implements OverlayClient {
     this.resServiceClient = new ResServiceClient(this);
     this.recorderServiceClient = new RecorderServiceClient(this);
     this.pupPackServiceClient = new PupPackServiceClient(this);
+    this.patcherServiceClient = new PatcherServiceClient(this);
     this.frontendServiceClient = new FrontendServiceClient(this);
     this.systemServiceClient = new SystemServiceClient(this);
     this.textEditorServiceClient = new TextEditorServiceClient(this);
@@ -154,6 +157,10 @@ public class VPinStudioClient implements OverlayClient {
     this.videoConversionServiceClient = new VideoConversionServiceClient(this);
 
     this.tournamentsServiceClient = new TournamentsServiceClient(this, preferencesServiceClient);
+  }
+
+  public PatcherServiceClient getPatcherService() {
+    return patcherServiceClient;
   }
 
   public RecorderServiceClient getRecorderService() {

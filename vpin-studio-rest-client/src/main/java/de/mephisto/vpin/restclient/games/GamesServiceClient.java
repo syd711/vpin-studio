@@ -75,11 +75,11 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadTable(File file, UploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadTable(File file, UploadType uploadType, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("mode", tableUploadDescriptor.name());
+      map.add("mode", uploadType.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);

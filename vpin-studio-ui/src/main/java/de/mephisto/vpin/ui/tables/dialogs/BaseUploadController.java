@@ -61,7 +61,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
 
   private List<File> selection;
 
-  private Stage stage;
+  protected Stage stage;
 
   private AssetType assetType;
 
@@ -92,7 +92,7 @@ public abstract class BaseUploadController implements Initializable, DialogContr
   }
 
   @FXML
-  private void onUploadClick(ActionEvent event) {
+  protected void onUploadClick(ActionEvent event) {
     if (selection != null && !selection.isEmpty()) {
       try {
         Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();

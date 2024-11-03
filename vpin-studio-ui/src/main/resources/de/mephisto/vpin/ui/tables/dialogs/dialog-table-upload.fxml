@@ -83,7 +83,7 @@
                                     </Label>
                                     <HBox spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                                        <children>
-                                          <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="450.0">
+                                          <TextField fx:id="fileNameField" editable="false" prefHeight="30.0" prefWidth="450.0" promptText="Select or drop a table or archive file here.">
                                              <font>
                                                 <Font size="14.0" />
                                              </font>

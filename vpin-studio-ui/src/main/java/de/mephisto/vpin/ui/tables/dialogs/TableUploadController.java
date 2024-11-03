@@ -208,7 +208,7 @@ public class TableUploadController implements Initializable, DialogController {
         onCancelClick(event);
       });
 
-      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
+      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
       if (result.isPresent()) {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setSubfolderName(subFolder);
@@ -217,7 +217,10 @@ public class TableUploadController implements Initializable, DialogController {
 
         uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-        result = UniversalUploadUtil.postProcess(uploadDescriptor);
+
+
+        GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+        result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -228,7 +231,7 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(this.game, selection, uploaderAnalysis, true);
+    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE);
     updateAnalysis();
   }
 
