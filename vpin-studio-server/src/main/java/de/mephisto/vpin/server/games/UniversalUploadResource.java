@@ -68,8 +68,8 @@ public class UniversalUploadResource {
         LOG.info("Importing table bundle, not media bundle.");
 
         String tableFileName = analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName());
-        File temporaryVPXFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
-        importGame(temporaryVPXFile, uploadDescriptor, analysis);
+        File temporaryGameFile = universalUploadService.writeTableFilenameBasedEntry(uploadDescriptor, tableFileName);
+        importGame(temporaryGameFile, uploadDescriptor, analysis);
       }
 
       if (uploadDescriptor.getGameId() > 0) {

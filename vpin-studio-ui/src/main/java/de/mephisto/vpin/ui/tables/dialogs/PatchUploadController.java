@@ -122,9 +122,9 @@ public class PatchUploadController extends BaseUploadController {
     patchAndReplaceRadio.setToggleGroup(toggleGroup);
     patchAndCloneRadio.setToggleGroup(toggleGroup);
 
-    patchAndReplaceRadio.setSelected(true);
-    uploadDescriptor.setUploadType(UploadType.uploadAndReplace);
-    uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+    patchAndCloneRadio.setSelected(true);
+    uploadDescriptor.setUploadType(UploadType.uploadAndClone);
+    uploadCloneBox.getStyleClass().add("selection-panel-selected");
 
     patchAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
       @Override

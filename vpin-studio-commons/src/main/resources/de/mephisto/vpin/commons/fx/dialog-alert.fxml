@@ -14,7 +14,7 @@
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
    <center>
-      <VBox alignment="BASELINE_LEFT" prefHeight="90.0" BorderPane.alignment="TOP_LEFT">
+      <VBox alignment="BASELINE_LEFT" maxWidth="600.0" BorderPane.alignment="TOP_LEFT">
          <children>
             <Label fx:id="textLabel" text="Label" textFill="WHITE">
                <font>
@@ -24,7 +24,7 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label fx:id="helpLabel1" maxWidth="800.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
+            <Label fx:id="helpLabel1" maxWidth="800.0" prefWidth="600.0" styleClass="preference-description" text="Label" textFill="WHITE" wrapText="true">
                <VBox.margin>
                   <Insets top="12.0" />
                </VBox.margin></Label>

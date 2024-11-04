@@ -2,10 +2,12 @@ package de.mephisto.vpin.server.patcher;
 
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,19 @@ public class PatchingResource {
       analysis.analyze();
       analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
-//      patchingService.patch(game, )
+      File difFile = tempFile;
+      if (analysis.isArchive()) {
+        String patchFile = analysis.getPatchFile();
+        difFile = File.createTempFile(uploadDescriptor.getTempFilename(), ".dif");
+        PackageUtil.unpackTargetFile(tempFile, difFile, patchFile);
+      }
+
+      File temporaryVpxFile = File.createTempFile(uploadDescriptor.getTempFilename(), ".dif");
+
+      String error = patchingService.patch(game, difFile, temporaryVpxFile);
+      if (!StringUtils.isEmpty(error)) {
+        throw new UnsupportedOperationException(error);
+      }
 
       if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndClone)) {
 
@@ -52,7 +66,7 @@ public class PatchingResource {
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
-      uploadDescriptor.setError("Processing failed: " + e.getMessage());
+      uploadDescriptor.setError(e.getMessage());
     }
     finally {
       uploadDescriptor.finalizeUpload();

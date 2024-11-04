@@ -22,10 +22,10 @@ public class PatchingService {
 
   private final static String JPTCH_EXE = "jptch.exe";
 
-  public String patch(@NonNull Game game, @NonNull File patchFile) {
+  public String patch(@NonNull Game game, @NonNull File patchFile, @NonNull File targetVpxFile) {
     try {
-      List<String> params = Arrays.asList(JPTCH_EXE, game.getGameFile().getAbsolutePath(), patchFile.getAbsolutePath());
-      SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+      List<String> params = Arrays.asList(JPTCH_EXE, game.getGameFile().getAbsolutePath(), patchFile.getAbsolutePath(), targetVpxFile.getAbsolutePath());
+      SystemCommandExecutor executor = new SystemCommandExecutor(params, true);
       executor.setDir(new File(SystemInfo.RESOURCES));
       executor.executeCommand();
 
@@ -33,11 +33,12 @@ public class PatchingService {
       StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
       if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
         LOG.error("Patching failed: {}", standardErrorFromCommand);
-        return standardErrorFromCommand.toString();
+        return "Patching failed: " + standardErrorFromCommand;
       }
     }
     catch (Exception e) {
       LOG.error("Failed to patch {}: {}", game.getGameFile().getAbsolutePath(), e.getMessage(), e);
+      return "Patching failed: " + e.getMessage();
     }
     return null;
   }

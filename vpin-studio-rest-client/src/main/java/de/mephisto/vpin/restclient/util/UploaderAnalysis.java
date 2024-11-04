@@ -242,6 +242,15 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
+  public String getPatchFile() {
+    for (String fileNameWithPath : getFilteredFilenamesWithPath()) {
+      if (fileNameWithPath.endsWith(".dif")) {
+        return fileNameWithPath;
+      }
+    }
+    return null;
+  }
+
   public String getTableFileName(String fallback) {
     String fileNameForAssetType = getFileNameForAssetType(AssetType.VPX);
     if (fileNameForAssetType == null) {

@@ -114,22 +114,6 @@
             </HBox>
             <HBox prefHeight="150.0" spacing="12.0">
                <children>
-                  <VBox fx:id="uploadReplaceBox" prefWidth="430.0" styleClass="selection-panel">
-                     <children>
-                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="Patch and Replace" textFill="WHITE" wrapText="true">
-                           <font>
-                              <Font name="System Bold" size="14.0" />
-                           </font>
-                           <VBox.margin>
-                              <Insets />
-                           </VBox.margin>
-                        </RadioButton>
-                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="The game file will be patched, the existing game file will be overwritten." textFill="WHITE" wrapText="true" />
-                     </children>
-                     <padding>
-                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
-                     </padding>
-                  </VBox>
                   <VBox fx:id="uploadCloneBox" prefWidth="430.0" styleClass="selection-panel">
                      <children>
                         <RadioButton fx:id="patchAndCloneRadio" mnemonicParsing="false" text="Patch and Clone" textFill="WHITE" wrapText="true">
@@ -148,6 +132,22 @@
                      <HBox.margin>
                         <Insets />
                      </HBox.margin>
+                  </VBox>
+                  <VBox fx:id="uploadReplaceBox" prefWidth="430.0" styleClass="selection-panel">
+                     <children>
+                        <RadioButton fx:id="patchAndReplaceRadio" mnemonicParsing="false" text="Patch and Replace" textFill="WHITE" wrapText="true">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin>
+                        </RadioButton>
+                        <Label fx:id="uploadAndReplaceDescription" styleClass="checkbox-description" text="The game file will be patched, the existing game file will be overwritten." textFill="WHITE" wrapText="true" />
+                     </children>
+                     <padding>
+                        <Insets bottom="12.0" left="12.0" right="12.0" top="12.0" />
+                     </padding>
                   </VBox>
                </children>
             </HBox>

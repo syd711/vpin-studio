@@ -54,7 +54,7 @@ public class UniversalUploadUtil {
         UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
         if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, "Error", "Error: " + uploadedAndImportedDescriptor.getError());
           });
           return result;
         }
