@@ -361,6 +361,7 @@ public class GameMediaService {
   }
 
   public void uploadAndClone(File temporaryVPXFile, UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    LOG.info("Starting cloning for {}", temporaryVPXFile.getAbsolutePath());
     GameEmulator gameEmulator = frontendService.getGameEmulator(uploadDescriptor.getEmulatorId());
     TableDetails tableDetails = getTableDetails(uploadDescriptor.getGameId());
     tableDetails.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
@@ -399,12 +400,13 @@ public class GameMediaService {
     int returningGameId = frontendService.importGame(target, true, -1, gameEmulator.getId());
     if (returningGameId >= 0) {
       Game importedGame = gameService.scanGame(returningGameId);
+      Game original = gameService.getGame(uploadDescriptor.getGameId());
 
       //update table details after new entry creation
       TableDetails tableDetailsClone = getTableDetails(returningGameId);
       tableDetailsClone.setEmulatorId(gameEmulator.getId()); //update emulator id in case it has changed too
       tableDetailsClone.setGameFileName(fileName);
-      tableDetailsClone.setGameDisplayName(FilenameUtils.getBaseName(analysis.getTableFileName(uploadDescriptor.getOriginalUploadFileName())));
+      tableDetailsClone.setGameDisplayName(original.getGameDisplayName() + " (cloned)");
       tableDetailsClone.setGameName(importedGame.getGameName()); //update the game name since this has changed
 
       saveTableDetails(tableDetailsClone, returningGameId, false);
@@ -412,7 +414,6 @@ public class GameMediaService {
       LOG.info("Created database clone entry with game name \"" + tableDetailsClone.getGameName() + "\"");
 
       //clone media
-      Game original = gameService.getGame(uploadDescriptor.getGameId());
       LOG.info("Cloning assets from game name \"" + original.getGameName() + "\" to \"" + importedGame.getGameName() + "\"");
       cloneGameMedia(original, importedGame);
 
@@ -429,6 +430,9 @@ public class GameMediaService {
       tableDetails = getTableDetails(importedGame.getId());
       if (tableDetails != null && autoFill) {
         frontendService.autoFill(importedGame, tableDetails, false);
+      }
+      else {
+        frontendService.vpsLink(importedGame.getId(), original.getExtTableId(), original.getExtTableVersionId());
       }
       LOG.info("Cloning of \"" + importedGame.getGameDisplayName() + "\" successful.");
     }

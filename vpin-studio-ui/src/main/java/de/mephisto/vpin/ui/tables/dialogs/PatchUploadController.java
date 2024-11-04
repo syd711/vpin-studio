@@ -88,11 +88,12 @@ public class PatchUploadController extends BaseUploadController {
       stage.close();
     });
 
-    result = UniversalUploadUtil.upload(getSelection(), game.getId(), uploadDescriptor.getUploadType(), -1);
+    result = UniversalUploadUtil.upload(getSelection(), game.getId(), uploadDescriptor.getUploadType(), game.getEmulatorId());
     if (result.isPresent()) {
       UploadDescriptor uploadDescriptor = result.get();
       uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
       uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
+      uploadDescriptor.setAutoFill(false);
 
       GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
       result = UniversalUploadUtil.postProcess(progressModel);

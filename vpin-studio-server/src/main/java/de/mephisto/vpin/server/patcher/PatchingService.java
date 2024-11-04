@@ -35,6 +35,7 @@ public class PatchingService {
         LOG.error("Patching failed: {}", standardErrorFromCommand);
         return "Patching failed: " + standardErrorFromCommand;
       }
+      LOG.info("Successfully patched \"{}\"", game.getGameDisplayName());
     }
     catch (Exception e) {
       LOG.error("Failed to patch {}: {}", game.getGameFile().getAbsolutePath(), e.getMessage(), e);

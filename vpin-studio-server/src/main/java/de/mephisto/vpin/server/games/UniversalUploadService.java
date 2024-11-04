@@ -263,6 +263,31 @@ public class UniversalUploadService {
     }
   }
 
+  public void processGameAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    if (uploadDescriptor.getGameId() > 0) {
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
+    }
+    else {
+      LOG.info("Skipped table based assets since no gameId was set for the upload.");
+    }
+
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
+
+    if (analysis.isTable()) {
+      notifyUpdates(uploadDescriptor);
+    }
+  }
 
   /**
    * Responsible for emitting updates about the newly installed table.

@@ -385,7 +385,7 @@ public class TableUploadController implements Initializable, DialogController {
         }
         EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
         this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
-        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
+        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator() || !subfolderCheckbox.isSelected());
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);

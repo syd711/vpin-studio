@@ -763,8 +763,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        if (value != null && value.getId() == refreshedGame.getEmulatorId()) {
-          models.add(new GameRepresentationModel(refreshedGame));
+        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+          models.add(0, new GameRepresentationModel(refreshedGame));
         }
       }
 

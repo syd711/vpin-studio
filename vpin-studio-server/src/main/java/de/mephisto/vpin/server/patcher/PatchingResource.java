@@ -6,7 +6,9 @@ import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
+import de.mephisto.vpin.server.games.UniversalUploadService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,13 @@ public class PatchingResource {
   private GameService gameService;
 
   @Autowired
+  private GameMediaService gameMediaService;
+
+  @Autowired
   private FrontendService frontendService;
+
+  @Autowired
+  private UniversalUploadService universalUploadService;
 
   @PostMapping("/process")
   public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
@@ -55,13 +63,34 @@ public class PatchingResource {
 
       File temporaryVpxFile = File.createTempFile(uploadDescriptor.getTempFilename(), ".dif");
 
+      //patch table
       String error = patchingService.patch(game, difFile, temporaryVpxFile);
       if (!StringUtils.isEmpty(error)) {
         throw new UnsupportedOperationException(error);
       }
 
+      //apply game media or replace file
       if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndClone)) {
+        gameMediaService.uploadAndClone(temporaryVpxFile, uploadDescriptor, analysis);
+      }
+      else if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
+        File originalGameFile = game.getGameFile();
+        if (originalGameFile.delete()) {
+          LOG.info("Deleted existing game file {}", originalGameFile.getAbsolutePath());
+          org.apache.commons.io.FileUtils.copyFile(temporaryVpxFile, originalGameFile);
+          LOG.info("Replace game file {} with {}", originalGameFile.getAbsolutePath(), temporaryVpxFile.getAbsolutePath());
+        }
+        else {
+          throw new UnsupportedOperationException("Failed to delete existing game file \"" + originalGameFile.getAbsolutePath() + "\"");
+        }
+      }
+      else {
+        throw new UnsupportedOperationException("Invalid upload type: " + uploadDescriptor.getUploadType());
+      }
 
+      //process additional assets of the archive
+      if (analysis.isArchive()) {
+        universalUploadService.processGameAssets(uploadDescriptor, analysis);
       }
     }
     catch (Exception e) {

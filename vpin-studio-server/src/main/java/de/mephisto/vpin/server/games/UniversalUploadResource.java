@@ -72,30 +72,7 @@ public class UniversalUploadResource {
         importGame(temporaryGameFile, uploadDescriptor, analysis);
       }
 
-      if (uploadDescriptor.getGameId() > 0) {
-        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
-        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
-        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
-        universalUploadService.importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
-      }
-      else {
-        LOG.info("Skipped table based assets since no gameId was set for the upload.");
-      }
-
-
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
-      universalUploadService.importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
-
-      if (analysis.isTable()) {
-        universalUploadService.notifyUpdates(uploadDescriptor);
-      }
+      universalUploadService.processGameAssets(uploadDescriptor, analysis);
     }
     catch (Exception e) {
       LOG.error("Processing \"" + uploadDescriptor.getTempFilename() + "\" failed: " + e.getMessage(), e);
