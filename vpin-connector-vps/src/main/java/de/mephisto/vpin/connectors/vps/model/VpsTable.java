@@ -276,6 +276,32 @@ public class VpsTable implements VPSEntity {
     return features;
   }
 
+  public List<String> getAllFeatures() {
+    List<String> featureList = new ArrayList<>();
+    if (features != null) {
+      for (String tableFeature : features) {
+        if (!featureList.contains(tableFeature)) {
+          featureList.add(tableFeature);
+        }
+      }
+    }
+
+    List<VpsTableVersion> tableFiles = getTableFiles();
+    if (tableFiles != null) {
+      for (VpsTableVersion tableFile : tableFiles) {
+        List<String> versionFeatures = tableFile.getFeatures();
+        if (versionFeatures != null) {
+          for (String versionFeature : versionFeatures) {
+            if (!featureList.contains(versionFeature)) {
+              featureList.add(versionFeature);
+            }
+          }
+        }
+      }
+    }
+    return featureList;
+  }
+
   public void setFeatures(List<String> features) {
     this.features = features;
   }
