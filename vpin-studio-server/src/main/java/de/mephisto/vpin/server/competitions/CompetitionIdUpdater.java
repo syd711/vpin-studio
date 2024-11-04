@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.server.discord.DiscordService;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.players.Player;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import edu.umd.cs.findbugs.annotations.NonNull;
@@ -30,6 +31,9 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
 
   @Autowired
   private DiscordService discordService;
+
+  @Autowired
+  private GameMediaService gameMediaService;
 
   @Override
   public void competitionStarted(@NonNull Competition competition) {
@@ -69,7 +73,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
   }
 
   private void setGamesTournamentId(@NonNull Competition competition) {
-    TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
+    TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
     if (tableDetails != null) {
       boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
       String competitionId = CompetitionIdFactory.createId(competition, isOwner);
@@ -90,13 +94,13 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
         tableDetails.setTourneyId(String.join(",", updated));
       }
 
-      frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
+      gameMediaService.saveTableDetails(tableDetails, competition.getGameId(), false);
       LOG.info("Written competition id of game " + competition.getGameId() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
     }
   }
 
   private void unsetGamesTournamentId(@NonNull Competition competition) {
-    TableDetails tableDetails = frontendStatusService.getTableDetails(competition.getGameId());
+    TableDetails tableDetails = gameMediaService.getTableDetails(competition.getGameId());
     if (tableDetails != null) {
       boolean isOwner = competition.getOwner() == null || competition.getOwner().equals(String.valueOf(discordService.getBotId()));
       String competitionId = CompetitionIdFactory.createId(competition, isOwner);
@@ -114,7 +118,7 @@ public class CompetitionIdUpdater implements CompetitionChangeListener, Initiali
           updated.add(s);
         }
         tableDetails.setTourneyId(String.join(",", updated));
-        frontendStatusService.saveTableDetails(tableDetails, competition.getGameId(), false);
+        gameMediaService.saveTableDetails(tableDetails, competition.getGameId(), false);
         LOG.info("Removed competition id from game " + competition.getGameId() + ", updated TourneyId to \"" + tableDetails.getTourneyId() + "\"");
       }
     }

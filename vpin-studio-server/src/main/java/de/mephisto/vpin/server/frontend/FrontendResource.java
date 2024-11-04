@@ -9,6 +9,7 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobDescriptorFactory;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameMediaService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import org.slf4j.Logger;
@@ -38,6 +39,9 @@ public class FrontendResource {
 
   @Autowired
   private GameService gameService;
+
+  @Autowired
+  private GameMediaService gameMediaService;
 
   @GetMapping
   public Frontend getFrontend() {
@@ -71,14 +75,14 @@ public class FrontendResource {
 
   @GetMapping("/imports/{emuId}")
   public GameList getImportTables(@PathVariable("emuId") int emuId) {
-    return frontendStatusService.getImportTables(emuId);
+    return gameService.getImportableTables(emuId);
   }
 
   @PostMapping("/import")
   public JobDescriptor importTable(@RequestBody GameListItem item) {
     File tableFile = new File(item.getFileName());
     if (tableFile.exists()) {
-      int result = frontendStatusService.importVPXGame(tableFile, true, -1, item.getEmuId());
+      int result = frontendService.importGame(tableFile, true, -1, item.getEmuId());
       if (result > 0) {
         gameService.scanGame(result);
       }
@@ -98,7 +102,7 @@ public class FrontendResource {
 
   @GetMapping("/emulators")
   public List<GameEmulator> getGameEmulators() {
-    return frontendStatusService.getGameEmulators();
+    return frontendService.getGameEmulators();
   }
 
   @GetMapping("/backglassemulators")
@@ -123,7 +127,7 @@ public class FrontendResource {
 
   @GetMapping("/tabledetails/{gameId}")
   public TableDetails getTableDetails(@PathVariable("gameId") int gameId) {
-    return frontendStatusService.getTableDetails(gameId);
+    return gameMediaService.getTableDetails(gameId);
   }
 
   @GetMapping("/screen/{name}")
@@ -159,20 +163,20 @@ public class FrontendResource {
 
   @PostMapping("/tabledetails/vpsLink/{gameId}")
   public boolean vpsLink(@PathVariable("gameId") int gameId, @RequestBody GameVpsMatch vpsmatch) throws Exception {
-    frontendStatusService.vpsLink(gameId, vpsmatch.getExtTableId(), vpsmatch.getExtTableVersionId());
+    gameService.vpsLink(gameId, vpsmatch.getExtTableId(), vpsmatch.getExtTableVersionId());
     return true;
   }
 
   @PutMapping("/tabledetails/fixVersion/{gameId}")
   public boolean fixVersion(@PathVariable("gameId") int gameId, @RequestBody Map<String, String> data) throws Exception {
-    frontendStatusService.fixGameVersion(gameId, data.get("version"), true);
+    gameMediaService.fixGameVersion(gameId, data.get("version"), true);
     return true;
   }
 
   @PutMapping("/tabledetails/autofill/{gameId}")
   public TableDetails autofill(@PathVariable("gameId") int gameId) {
-    TableDetails tableDetails = frontendStatusService.getTableDetails(gameId);
-    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, false);
+    TableDetails tableDetails = gameMediaService.getTableDetails(gameId);
+    return frontendService.autoFill(gameService.getGame(gameId), tableDetails, false);
   }
 
   @PostMapping("/tabledetails/autofillsimulate/{vpsTableId}/{vpsVersionId}/{gameId}")
@@ -186,22 +190,22 @@ public class FrontendResource {
     if (vpsVersionId.equals("-")) {
       vpsVersionId = null;
     }
-    return frontendStatusService.autoFill(gameService.getGame(gameId), tableDetails, vpsTableId, vpsVersionId, true);
+    return frontendService.autoFill(gameService.getGame(gameId), tableDetails, vpsTableId, vpsVersionId, true);
   }
 
   @PostMapping("/tabledetails/{gameId}")
   public TableDetails save(@PathVariable("gameId") int gameId, @RequestBody TableDetails tableDetails) {
-    return frontendStatusService.saveTableDetails(tableDetails, gameId, true);
+    return gameMediaService.saveTableDetails(tableDetails, gameId, true);
   }
 
   @GetMapping("/tabledetails/automatch/{gameId}/{overwrite}")
   public GameVpsMatch autoMatch(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
-    return frontendStatusService.autoMatch(gameService.getGame(gameId), overwrite, false);
+    return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, false);
   }
 
   @GetMapping("/tabledetails/automatchsimulate/{gameId}/{overwrite}")
   public GameVpsMatch autoMatchSimulate(@PathVariable("gameId") int gameId, @PathVariable("overwrite") boolean overwrite) {
-    return frontendStatusService.autoMatch(gameService.getGame(gameId), overwrite, true);
+    return gameMediaService.autoMatch(gameService.getGame(gameId), overwrite, true);
   }
 
 }

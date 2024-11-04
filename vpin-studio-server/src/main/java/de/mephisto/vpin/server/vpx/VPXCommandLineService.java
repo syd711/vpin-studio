@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -12,7 +13,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -20,19 +24,19 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class VPXCommandLineService {
+public class VPXCommandLineService implements ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(VPXCommandLineService.class);
 
   @Autowired
   private SystemService systemService;
 
-  @Autowired
-  private FrontendService frontendService;
+  private ApplicationContext applicationContext;
 
   public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
     File gameFile = game.getGameFile();
     File vpxExe = game.getEmulator().getExe();
 
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
     if(altExe != null) {
@@ -100,6 +104,7 @@ public class VPXCommandLineService {
   }
 
   public boolean launch() {
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getExe();
     try {
@@ -116,5 +121,10 @@ public class VPXCommandLineService {
       LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }

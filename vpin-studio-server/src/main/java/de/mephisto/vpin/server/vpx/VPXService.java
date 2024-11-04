@@ -32,13 +32,7 @@ public class VPXService {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private VPXCommandLineService vpxCommandLineService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   public POV getPOV(Game game) {
     try {
@@ -204,8 +198,6 @@ public class VPXService {
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe) {
-    frontendService.killFrontend();
-
     if (game != null) {
       return vpxCommandLineService.execute(game, "-Play", altExe);
     }
@@ -227,8 +219,8 @@ public class VPXService {
     return null;
   }
 
-  public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unpack(out, frontendService.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+    MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

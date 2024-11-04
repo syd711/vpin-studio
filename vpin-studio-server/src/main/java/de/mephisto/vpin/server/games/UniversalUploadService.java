@@ -189,7 +189,8 @@ public class UniversalUploadService {
             rom = game.getRom();
           }
           //TODO better music bundle handling based on emulators
-          vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+          File musicFolder = frontendService.getDefaultGameEmulator().getMusicFolder();
+          vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         }
         break;
       }

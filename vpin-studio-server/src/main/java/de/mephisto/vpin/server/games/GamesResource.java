@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
@@ -33,7 +34,13 @@ public class GamesResource {
   private GameService gameService;
 
   @Autowired
+  private GameMediaService gameMediaService;
+
+  @Autowired
   private VPXService vpxService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   @Autowired
   private FPService fpService;
@@ -68,6 +75,7 @@ public class GamesResource {
     String altExe = (String) values.get("altExe");
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {
+      frontendService.killFrontend();
       return vpxService.play(game, altExe);
     }
     else if (game.getEmulator().isFpEmulator()) {
@@ -142,7 +150,7 @@ public class GamesResource {
 
   @PostMapping("/delete")
   public boolean delete(@RequestBody DeleteDescriptor descriptor) {
-    return gameService.deleteGame(descriptor);
+    return gameMediaService.deleteGame(descriptor);
   }
 
   @DeleteMapping("/reset/{gameId}")

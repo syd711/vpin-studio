@@ -2,6 +2,8 @@ package de.mephisto.vpin.server.patcher;
 
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.File;
 
 import static de.mephisto.vpin.server.VPinStudioServer.API_SEGMENT;
 
@@ -25,6 +29,9 @@ public class PatchingResource {
   @Autowired
   private GameService gameService;
 
+  @Autowired
+  private FrontendService frontendService;
+
   @PostMapping("/process")
   public UploadDescriptor processUploaded(@RequestBody UploadDescriptor uploadDescriptor) {
     Thread.currentThread().setName("Patcher Upload Thread");
@@ -32,6 +39,10 @@ public class PatchingResource {
     Game game = gameService.getGame(uploadDescriptor.getGameId());
     LOG.info("*********** Patching " + game.getGameDisplayName() + " ****************");
     try {
+      File tempFile = new File(uploadDescriptor.getTempFilename());
+      UploaderAnalysis analysis = new UploaderAnalysis<>(frontendService.getFrontend(), tempFile);
+      analysis.analyze();
+      analysis.setExclusions(uploadDescriptor.getExcludedFiles(), uploadDescriptor.getExcludedFiles());
 
 //      patchingService.patch(game, )
 
