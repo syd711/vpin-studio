@@ -1,7 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
-import de.mephisto.vpin.commons.fx.Features;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -12,7 +12,9 @@ import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
+import de.mephisto.vpin.ui.tables.dialogs.EventLogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
@@ -195,7 +197,15 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onMonitor() {
+    Stage stage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
+    CabMonitorController controller = (CabMonitorController) stage.getUserData();
+    controller.setData(stage);
+    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
+    stage.setUserData(fxResizeHelper);
+    stage.setMinWidth(600);
+    stage.setMinHeight(500);
 
+    stage.showAndWait();
   }
 
   @FXML
@@ -280,7 +290,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
-    this.monitorBtn.setVisible(!client.getSystemService().isLocal() && Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty());
+//    this.monitorBtn.setVisible(!client.getSystemService().isLocal() && Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty());
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
