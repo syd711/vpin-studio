@@ -1,3 +1,11 @@
+## Release Notes 3.9.2
+
+## Bugfixes / Changes
+
+- **Tables / VPS Tables**: Fixed features based filtering and showing all available table features in the table info of the sidebar.  
+
+---
+
 ## Release Notes 3.9.1
 
 ## Bugfixes / Changes
