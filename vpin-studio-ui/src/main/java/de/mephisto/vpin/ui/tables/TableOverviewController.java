@@ -1583,6 +1583,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
         playBtn.getItems().clear();
 
+        if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
+          MenuItem item = new MenuItem("Launch via PinUP Popper");
+          item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              GameRepresentation selection = getSelection();
+              if (selection != null) {
+                new Thread(() -> {
+                  client.getFrontendService().launchGame(selection.getId());
+                }).start();
+              }
+            }
+          });
+          playBtn.getItems().add(item);
+          playBtn.getItems().add(new SeparatorMenuItem());
+        }
+
         List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
         for (String altVPXExeName : altVPXExeNames) {
           MenuItem item = new MenuItem(altVPXExeName);

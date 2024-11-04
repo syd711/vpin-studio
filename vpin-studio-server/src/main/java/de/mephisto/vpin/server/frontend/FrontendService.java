@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
 import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
@@ -25,8 +24,11 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -35,7 +37,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendService implements InitializingBean, PreferenceChangedListener {
+public class FrontendService implements InitializingBean, PreferenceChangedListener, ApplicationContextAware {
 
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
@@ -56,6 +58,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
   private List<FrontendPlayerDisplay> frontendPlayerDisplays;
+  private ApplicationContext applicationContext;
 
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
@@ -613,33 +616,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     }
   }
 
-  public void restartFrontend() {
-    getFrontendConnector().restartFrontend();
-  }
-
   public boolean isFrontendRunning() {
     return getFrontendConnector().isFrontendRunning();
   }
 
   public boolean killFrontend() {
-    return getFrontendConnector().killFrontend();
+    getFrontendConnector().killFrontend();
+
+    FrontendStatusService frontendStatusService = applicationContext.getBean(FrontendStatusService.class);
+    frontendStatusService.notifyFrontendExit();
+    return true;
   }
 
   //--------------------------
-
-  @Override
-  public void afterPropertiesSet() {
-    try {
-      getFrontendConnector().initializeConnector();
-      this.loadEmulators();
-
-      getFrontendConnector().getFrontendPlayerDisplays();
-      preferencesService.addChangeListener(this);
-    }
-    catch (Exception e) {
-      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
-    }
-  }
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
     GameEmulator emu = getDefaultGameEmulator();
@@ -680,6 +669,18 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public List<FrontendMediaItem> getMediaItems(@NonNull Game game, @NonNull VPinScreen screen) {
     FrontendMedia media = getGameMedia(game);
     return media.getMediaItems(screen);
+  }
+
+  public boolean launchWithFrontend(Game game) {
+    if (game != null) {
+      getFrontendConnector().restartFrontend(true);
+      return getFrontendConnector().launchGame(game, false);
+    }
+    return false;
+  }
+
+  public void restartFrontend() {
+    getFrontendConnector().restartFrontend();
   }
 
   @NonNull
@@ -739,5 +740,24 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
         }
       }
     }
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    try {
+      getFrontendConnector().initializeConnector();
+      this.loadEmulators();
+
+      getFrontendConnector().getFrontendPlayerDisplays();
+      preferencesService.addChangeListener(this);
+    }
+    catch (Exception e) {
+      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }

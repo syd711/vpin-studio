@@ -2,6 +2,7 @@
 
 ## Changes
 
+- **Tables / Frontend Game Launch**:
 - **Tables / Patching**: 
 - **Tables / Table Media**: Shift and double-click
 - **Tables / Table Asset Manager**: Delete screen and delete all

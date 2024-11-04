@@ -474,6 +474,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean waitForProcess(String name, int seconds) {
+    return waitForProcess(name, seconds, 0);
+  }
+
+  public boolean waitForProcess(String name, int seconds, int postDelayMs) {
     try {
       ExecutorService executor = Executors.newSingleThreadExecutor();
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
@@ -481,6 +485,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         public Boolean call() throws Exception {
           while (!isProcessRunning(name)) {
             Thread.sleep(1000);
+          }
+          LOG.info("Found waiting process: {}", name);
+          if (postDelayMs > 0) {
+            Thread.sleep(postDelayMs);
           }
           return true;
         }

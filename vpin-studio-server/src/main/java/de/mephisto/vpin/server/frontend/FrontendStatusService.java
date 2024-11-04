@@ -30,9 +30,6 @@ public class FrontendStatusService implements InitializingBean {
   private final List<FrontendStatusChangeListener> frontendStatusChangeListeners = new ArrayList<>();
 
   @Autowired
-  private FrontendService frontendService;
-
-  @Autowired
   private GameService gameService;
 
   @Autowired
@@ -40,6 +37,9 @@ public class FrontendStatusService implements InitializingBean {
 
   @Autowired
   private GameStatusService gameStatusService;
+
+  @Autowired
+  private FrontendService frontendService;
 
   private boolean eventsEnabled = true;
 
@@ -103,6 +103,11 @@ public class FrontendStatusService implements InitializingBean {
       return;
     }
 
+    HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+    if (highscoreEventLog != null) {
+      gameService.saveEventLog(highscoreEventLog);
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendLaunched();
     }
@@ -123,6 +128,11 @@ public class FrontendStatusService implements InitializingBean {
     if (!eventsEnabled) {
       LOG.info("Skipping notifyFrontendExit, because the event handling is disabled");
       return;
+    }
+
+    HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+    if (highscoreEventLog != null) {
+      gameService.saveEventLog(highscoreEventLog);
     }
 
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {

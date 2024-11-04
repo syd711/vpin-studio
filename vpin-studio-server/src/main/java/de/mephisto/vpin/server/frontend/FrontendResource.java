@@ -78,6 +78,12 @@ public class FrontendResource {
     return gameService.getImportableTables(emuId);
   }
 
+  @GetMapping("/launch/{gameId}")
+  public boolean launchWithFrontend(@PathVariable("gameId") int gameId) {
+    Game game = gameService.getGame(gameId);
+    return frontendService.launchWithFrontend(game);
+  }
+
   @PostMapping("/import")
   public JobDescriptor importTable(@RequestBody GameListItem item) {
     File tableFile = new File(item.getFileName());
@@ -87,7 +93,7 @@ public class FrontendResource {
         gameService.scanGame(result);
       }
     }
-    return JobDescriptorFactory.ok( -1);
+    return JobDescriptorFactory.ok(-1);
   }
 
   @GetMapping("/pincontrol/{screen}")
