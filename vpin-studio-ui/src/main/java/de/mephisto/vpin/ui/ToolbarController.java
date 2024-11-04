@@ -14,7 +14,6 @@ import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
-import de.mephisto.vpin.ui.tables.dialogs.EventLogController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import javafx.application.Platform;
@@ -43,6 +42,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private final static Logger LOG = LoggerFactory.getLogger(ToolbarController.class);
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
+
+  private boolean monitorOpen = false;
 
   @FXML
   private Button updateBtn;
@@ -88,6 +89,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   public static String newVersion;
   public boolean muted = false;
+
+  public static ToolbarController INSTANCE;
+  private Stage monitorStage;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -196,16 +200,28 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   }
 
   @FXML
-  private void onMonitor() {
-    Stage stage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
-    CabMonitorController controller = (CabMonitorController) stage.getUserData();
-    controller.setData(stage);
-    FXResizeHelper fxResizeHelper = new FXResizeHelper(stage, 30, 6);
-    stage.setUserData(fxResizeHelper);
-    stage.setMinWidth(600);
-    stage.setMinHeight(500);
+  private void toggleMonitor() {
+    if(!monitorOpen) {
+      monitorOpen = true;
+      monitorBtn.getStyleClass().add("toggle-button-selected");
+      monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
+      CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
+      controller.setData(monitorStage);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);
+      monitorStage.setUserData(fxResizeHelper);
+      monitorStage.setMinWidth(600);
+      monitorStage.setMinHeight(500);
 
-    stage.showAndWait();
+      monitorStage.showAndWait();
+    }
+    else {
+      monitorStage.close();
+    }
+  }
+
+  public void onMonitorClose() {
+    monitorOpen = false;
+    monitorBtn.getStyleClass().remove("toggle-button-selected");
   }
 
   @FXML
@@ -252,6 +268,8 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    INSTANCE = this;
+
     monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());

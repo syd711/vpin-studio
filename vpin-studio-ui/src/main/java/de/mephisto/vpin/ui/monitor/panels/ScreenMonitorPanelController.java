@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.monitor.panels;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
@@ -39,6 +40,10 @@ public class ScreenMonitorPanelController implements Initializable {
   private Stage stage;
   private CabMonitorController recorderController;
   private double scaling = 1;
+
+  public VPinScreen getScreen() {
+    return recordingScreen.getScreen();
+  }
 
   public void setData(Stage stage, CabMonitorController recorderController, RecordingScreen recordingScreen) {
     this.stage = stage;
@@ -79,9 +84,14 @@ public class ScreenMonitorPanelController implements Initializable {
     }
   }
 
+  public void setVisible(boolean b) {
+    root.setVisible(b);
+  }
+
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     root.managedProperty().bindBidirectional(root.visibleProperty());
     imageView.managedProperty().bindBidirectional(imageView.visibleProperty());
   }
+
 }
