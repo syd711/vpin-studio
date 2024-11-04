@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.fx.Features;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
@@ -46,6 +47,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private Button frontendMenuBtn;
+
+  @FXML
+  private Button monitorBtn;
 
   @FXML
   private MenuButton jobBtn;
@@ -189,6 +193,10 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     PreferencesController.open();
   }
 
+  @FXML
+  private void onMonitor() {
+
+  }
 
   @FXML
   private void onClearCache() {
@@ -234,6 +242,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
@@ -266,11 +275,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     if (frontend.getFrontendExe() == null) {
       preferencesBtn.getItems().remove(frontendMenuItem);
     }
+
     if (client.getSystemService().isLocal()) {
       preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
-
+    this.monitorBtn.setVisible(!client.getSystemService().isLocal() && Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty());
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);

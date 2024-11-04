@@ -54,6 +54,17 @@
                               <Font size="14.0" />
                            </font>
                         </ToggleButton>
+                        <Button fx:id="monitorBtn" layoutX="533.0" layoutY="12.0" mnemonicParsing="false" onAction="#onMonitor" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open Cab-Monitor" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" iconSize="18" />
+                           </graphic>
+                        </Button>
                         <MenuButton fx:id="jobBtn" mnemonicParsing="false" prefWidth="160.0" text="No active jobs">
                            <tooltip>
                               <Tooltip text="Job Overview" />
