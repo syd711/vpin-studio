@@ -5,6 +5,7 @@ import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.ToolbarController;
@@ -12,6 +13,7 @@ import de.mephisto.vpin.ui.monitor.panels.ScreenMonitorPanelController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -47,6 +49,9 @@ public class CabMonitorController implements Initializable, DialogController {
   private MenuButton screenMenuButton;
 
   @FXML
+  private ComboBox<MonitoringMode> monitoringModeCombo;
+
+  @FXML
   private Spinner<Integer> refreshInterval;
   private Thread screenRefresher;
 
@@ -68,6 +73,7 @@ public class CabMonitorController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       refreshPreview();
+      saveScaling();
     });
   }
 
@@ -83,15 +89,39 @@ public class CabMonitorController implements Initializable, DialogController {
 
     Platform.runLater(() -> {
       refreshPreview();
+      saveScaling();
     });
+  }
+
+  private void saveScaling() {
+    MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+    settings.setScaling(scaling);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+    settings.setOpen(true);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
 
+    monitoringModeCombo.setItems(FXCollections.observableList(Arrays.asList(MonitoringMode.values())));
+    MonitoringMode monitoringMode = settings.getMonitoringMode();
+    if (monitoringMode == null) {
+      monitoringMode = MonitoringMode.frontendScreens;
+    }
+    monitoringModeCombo.setValue(monitoringMode);
+    monitoringModeCombo.valueProperty().addListener(new ChangeListener<MonitoringMode>() {
+      @Override
+      public void changed(ObservableValue<? extends MonitoringMode> observable, MonitoringMode oldValue, MonitoringMode newValue) {
+        settings.setMonitoringMode(newValue);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+      }
+    });
   }
 
   public void setData(Stage stage) {
+    MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
     for (RecordingScreen recordingScreen : recordingScreens) {
       try {
@@ -99,6 +129,7 @@ public class CabMonitorController implements Initializable, DialogController {
         Parent panelRoot = loader.load();
         ScreenMonitorPanelController screenPanelController = loader.getController();
         controllers.put(recordingScreen.getScreen(), screenPanelController);
+        screenPanelController.zoom(settings.getScaling());
         screenPanelController.setData(stage, this, recordingScreen);
         previewArea.getChildren().add(panelRoot);
       }
@@ -108,13 +139,13 @@ public class CabMonitorController implements Initializable, DialogController {
     }
 
 
-    MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, settings.getRefreshInterval());
     refreshInterval.setValueFactory(factory);
     refreshInterval.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce("refresh", () -> {
         refreshPreview();
         settings.setRefreshInterval(newValue.intValue());
+        MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(refreshInterval.getValue());
         client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
       }, 300);
     });
@@ -164,6 +195,12 @@ public class CabMonitorController implements Initializable, DialogController {
     stage.setOnHiding(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
+        MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(Integer.MAX_VALUE);
+
+        MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+        settings.setOpen(false);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+
         ToolbarController.INSTANCE.onMonitorClose();
       }
     });
@@ -176,8 +213,7 @@ public class CabMonitorController implements Initializable, DialogController {
             refreshPreview();
           });
 
-          MonitoringSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-          Thread.sleep(s.getRefreshInterval() * 1000);
+          Thread.sleep(500);
         }
       }
       catch (Exception e) {
@@ -190,6 +226,7 @@ public class CabMonitorController implements Initializable, DialogController {
     screenRefresher.start();
 
     refreshPreviewPanelVisibilities();
+    MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(refreshInterval.getValue());
   }
 
   private void refreshPreviewPanelVisibilities() {

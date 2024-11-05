@@ -7,6 +7,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -201,7 +202,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void toggleMonitor() {
-    if(!monitorOpen) {
+    if (!monitorOpen) {
       monitorOpen = true;
       monitorBtn.getStyleClass().add("toggle-button-selected");
       monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
@@ -212,7 +213,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
       monitorStage.setMinWidth(600);
       monitorStage.setMinHeight(500);
 
-      monitorStage.showAndWait();
+      monitorStage.show();
     }
     else {
       monitorStage.close();
@@ -341,6 +342,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+
+    Platform.runLater(() -> {
+      MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+      if (settings.isOpen()) {
+        toggleMonitor();
+      }
+    });
   }
 
   @Override

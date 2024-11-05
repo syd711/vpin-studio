@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.monitor.CabMonitorController;
+import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -36,7 +37,6 @@ public class ScreenMonitorPanelController implements Initializable {
 
   private RecordingScreen recordingScreen;
 
-  private Image imageCached = null;
   private Stage stage;
   private CabMonitorController recorderController;
   private double scaling = 1;
@@ -76,10 +76,8 @@ public class ScreenMonitorPanelController implements Initializable {
       imageView.setFitHeight(height * (scaling*100) / 100);
 
       if (root.isVisible()) {
-        if (imageCached == null) {
-          imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/preview/" + recordingScreen.getScreen().name());
-        }
-        imageView.setImage(imageCached);
+        Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
+        imageView.setImage(image);
       }
     }
   }
