@@ -1,6 +1,7 @@
 package de.mephisto.vpin.ui.monitor;
 
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.system.ScreenInfo;
 import javafx.scene.image.Image;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,7 @@ public class MonitoringManager {
   private final static MonitoringManager INSTANCE = new MonitoringManager();
 
   private Map<RecordingScreen, CachedImage> screenCache = new ConcurrentHashMap<>();
+  private Map<ScreenInfo, CachedImage> monitorCache = new ConcurrentHashMap<>();
   private int cacheTimeSeconds = 2;
   private int recordingRefresh = 2;
   private int monitoringRefresh = 2;
@@ -54,6 +56,16 @@ public class MonitoringManager {
     }
 
     return screenCache.get(recordingScreen).getImage();
+  }
+
+
+  public Image getMonitorImage(ScreenInfo screenInfo) {
+    if (!monitorCache.containsKey(screenInfo) || !monitorCache.get(screenInfo).isValid()) {
+      Image imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/previewmonitor/" + screenInfo.getId());
+      monitorCache.put(screenInfo, new CachedImage(imageCached));
+    }
+
+    return monitorCache.get(screenInfo).getImage();
   }
 
   private class CachedImage {

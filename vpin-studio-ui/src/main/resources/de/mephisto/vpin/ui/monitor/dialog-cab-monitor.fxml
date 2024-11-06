@@ -10,12 +10,11 @@
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="480.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.monitor.CabMonitorController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="480.0" prefHeight="700.0" prefWidth="1024.0" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.monitor.CabMonitorController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/dialog-header-resizeable.fxml" />
    </top>
@@ -27,6 +26,7 @@
          <top>
             <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
               <items>
+                  <ComboBox fx:id="monitoringModeCombo" prefWidth="200.0" />
                 <Button mnemonicParsing="false" onAction="#zoomIn" textFill="WHITE">
                      <font>
                         <Font size="14.0" />
@@ -52,7 +52,6 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
                      </graphic>
                   </MenuButton>
-                  <ComboBox fx:id="monitoringModeCombo" prefWidth="200.0" />
                   <Separator layoutX="93.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
@@ -65,10 +64,7 @@
             </ToolBar>
          </top>
          <center>
-            <ScrollPane styleClass="accordion-container" BorderPane.alignment="CENTER">
-               <content>
-                  <FlowPane fx:id="previewArea" hgap="12.0" prefHeight="200.0" prefWidth="200.0" prefWrapLength="0.0" vgap="12.0" />
-               </content>
+            <ScrollPane fx:id="scrollPane" styleClass="accordion-container" BorderPane.alignment="CENTER">
                <BorderPane.margin>
                   <Insets />
                </BorderPane.margin>

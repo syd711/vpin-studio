@@ -7,9 +7,8 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
-import de.mephisto.vpin.ui.monitor.panels.ScreenMonitorPanelController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,19 +16,17 @@ import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
@@ -40,10 +37,8 @@ public class CabMonitorController implements Initializable, DialogController {
 
   private double scaling = 1;
 
-  private final Map<VPinScreen, ScreenMonitorPanelController> controllers = new HashMap<>();
-
   @FXML
-  private Pane previewArea;
+  private ScrollPane scrollPane;
 
   @FXML
   private MenuButton screenMenuButton;
@@ -53,7 +48,11 @@ public class CabMonitorController implements Initializable, DialogController {
 
   @FXML
   private Spinner<Integer> refreshInterval;
+
   private Thread screenRefresher;
+  private Stage stage;
+  private IMonitoringView monitoringView;
+  private boolean refreshEnabled = true;
 
   @FXML
   private void onCancelClick(ActionEvent e) {
@@ -67,9 +66,7 @@ public class CabMonitorController implements Initializable, DialogController {
     if (scaling < 0.4) {
       scaling = 0.4;
     }
-    for (ScreenMonitorPanelController controller : controllers.values()) {
-      controller.zoom(scaling);
-    }
+    monitoringView.setZoom(scaling);
 
     Platform.runLater(() -> {
       refreshPreview();
@@ -83,9 +80,7 @@ public class CabMonitorController implements Initializable, DialogController {
     if (scaling > 1) {
       scaling = 1;
     }
-    for (ScreenMonitorPanelController controller : controllers.values()) {
-      controller.zoom(scaling);
-    }
+    monitoringView.setZoom(scaling);
 
     Platform.runLater(() -> {
       refreshPreview();
@@ -114,31 +109,19 @@ public class CabMonitorController implements Initializable, DialogController {
     monitoringModeCombo.valueProperty().addListener(new ChangeListener<MonitoringMode>() {
       @Override
       public void changed(ObservableValue<? extends MonitoringMode> observable, MonitoringMode oldValue, MonitoringMode newValue) {
-        settings.setMonitoringMode(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+        Platform.runLater(() -> {
+          settings.setMonitoringMode(newValue);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
+          updateMonitoringMode(newValue);
+        });
       }
     });
   }
 
   public void setData(Stage stage) {
+    this.stage = stage;
+
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
-    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
-    for (RecordingScreen recordingScreen : recordingScreens) {
-      try {
-        FXMLLoader loader = new FXMLLoader(ScreenMonitorPanelController.class.getResource("screen-monitor-panel.fxml"));
-        Parent panelRoot = loader.load();
-        ScreenMonitorPanelController screenPanelController = loader.getController();
-        controllers.put(recordingScreen.getScreen(), screenPanelController);
-        screenPanelController.zoom(settings.getScaling());
-        screenPanelController.setData(stage, this, recordingScreen);
-        previewArea.getChildren().add(panelRoot);
-      }
-      catch (IOException e) {
-        LOG.error("failed to load monitoring panel: " + e.getMessage(), e);
-      }
-    }
-
-
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, settings.getRefreshInterval());
     refreshInterval.setValueFactory(factory);
     refreshInterval.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -195,6 +178,7 @@ public class CabMonitorController implements Initializable, DialogController {
     stage.setOnHiding(new EventHandler<WindowEvent>() {
       @Override
       public void handle(WindowEvent event) {
+        refreshEnabled = false;
         MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(Integer.MAX_VALUE);
 
         MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
@@ -208,13 +192,14 @@ public class CabMonitorController implements Initializable, DialogController {
     screenRefresher = new Thread(() -> {
       try {
         LOG.info("Cabinet Monitor Refresh");
-        while (true) {
+        while (refreshEnabled) {
           Platform.runLater(() -> {
             refreshPreview();
           });
 
           Thread.sleep(500);
         }
+        LOG.info("Cab monitoring thread exited.");
       }
       catch (Exception e) {
         LOG.error("Error in monitor refresh thread: " + e.getMessage(), e);
@@ -225,25 +210,39 @@ public class CabMonitorController implements Initializable, DialogController {
     });
     screenRefresher.start();
 
+    updateMonitoringMode(monitoringModeCombo.getValue());
     refreshPreviewPanelVisibilities();
     MonitoringManager.getInstance().setMonitoringRefreshIntervalSec(refreshInterval.getValue());
+  }
+
+  private void updateMonitoringMode(MonitoringMode value) {
+    if (monitoringView != null) {
+      monitoringView.dispose();
+    }
+
+    switch (value) {
+      case monitors: {
+        monitoringView = new MonitorsView(Studio.stage, this, scrollPane);
+        break;
+      }
+      case frontendScreens: {
+        monitoringView = new ScreensView(stage, this, scrollPane);
+        break;
+      }
+    }
+    refreshPreviewPanelVisibilities();
   }
 
   private void refreshPreviewPanelVisibilities() {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     List<VPinScreen> disabledScreens = settings.getDisabledScreens();
-
-    for (ScreenMonitorPanelController controller : controllers.values()) {
-      controller.setVisible(!disabledScreens.contains(controller.getScreen()));
-    }
+    monitoringView.updateScreens(disabledScreens);
   }
 
   private void refreshPreview() {
     debouncer.debounce("resizeMonitors", () -> {
       Platform.runLater(() -> {
-        for (ScreenMonitorPanelController controller : controllers.values()) {
-          controller.refresh();
-        }
+        monitoringView.refresh();
       });
     }, DEBOUNCE_MS);
   }
