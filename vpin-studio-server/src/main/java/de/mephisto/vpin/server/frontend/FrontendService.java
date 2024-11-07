@@ -621,6 +621,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean killFrontend() {
+    //reset game status
     getFrontendConnector().killFrontend();
 
     FrontendStatusService frontendStatusService = applicationContext.getBean(FrontendStatusService.class);

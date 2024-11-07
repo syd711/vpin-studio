@@ -67,6 +67,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private PreferencesService preferencesService;
 
   private PupServer pupServer;
+  private PupLauncher pupLauncher;
 
   private PinUPMediaAccessStrategy pinUPMediaAccessStrategy;
 
@@ -2078,7 +2079,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("PinUpDisplay") ||
                     p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
-                    p.info().command().get().contains(PupServer.EXE_NAME) ||
+//                    p.info().command().get().contains(PupServer.EXE_NAME) ||
                     p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
@@ -2133,13 +2134,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public void initializeRecording() {
-    pupServer.startServer();
+
   }
 
   @Override
   public void finalizeRecording() {
     killFrontend();
-    pupServer.stopServer();
   }
 
   @Override
@@ -2196,7 +2196,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    */
   @Override
   public boolean launchGame(Game game, boolean wait) {
-    pupServer.launchGame(game.getId());
+    pupLauncher.launch(game.getId());
     if (!wait) {
       return true;
     }
@@ -2251,6 +2251,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public void afterPropertiesSet() throws Exception {
     try {
       this.pupServer = new PupServer(this, systemService);
+      this.pupLauncher = new PupLauncher();
       this.pupEventEmitter = new PupEventEmitter(this.getInstallationFolder());
     }
     catch (Exception e) {
