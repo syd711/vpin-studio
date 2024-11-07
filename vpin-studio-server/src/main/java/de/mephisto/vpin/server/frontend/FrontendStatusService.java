@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendControl;
 import de.mephisto.vpin.restclient.frontend.FrontendControls;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
 import de.mephisto.vpin.server.games.*;
@@ -130,6 +131,12 @@ public class FrontendStatusService implements InitializingBean {
       return;
     }
 
+    //reset game status
+    GameStatus status = gameStatusService.getStatus();
+    if (status != null && status.isActive()) {
+      gameStatusService.frontendExited();
+    }
+
     HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
     if (highscoreEventLog != null) {
       gameService.saveEventLog(highscoreEventLog);
@@ -173,13 +180,21 @@ public class FrontendStatusService implements InitializingBean {
 
     LOG.info("Received game exit event for " + table.trim());
     Game game = gameService.getGameByTableParameter(table);
-    new Thread(() -> {
-      Thread.currentThread().setName("Game Exit Thread");
-      if (game == null) {
-        LOG.warn("No game found for name '" + table);
-        return;
-      }
+    if (game == null) {
+      LOG.warn("No game found for name '" + table);
+      return false;
+    }
 
+    return onGameExit(game);
+  }
+
+  public boolean onGameExit(int gameId) {
+    Game game = gameService.getGame(gameId);
+    return onGameExit(game);
+  }
+
+  private boolean onGameExit(@NonNull Game game) {
+    new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
       SLOG.initLog(game.getId());
       if (!gameStatusService.getStatus().isActive()) {
