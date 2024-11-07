@@ -11,6 +11,7 @@ import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,9 @@ public class GamesResource {
   @Autowired
   private FPService fpService;
 
+  @Autowired
+  private SystemService systemService;
+
   @GetMapping
   public List<Game> getGames() {
     return gameService.getGames();
@@ -72,6 +76,8 @@ public class GamesResource {
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    systemService.setMaintenanceMode(false);
+
     String altExe = (String) values.get("altExe");
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {

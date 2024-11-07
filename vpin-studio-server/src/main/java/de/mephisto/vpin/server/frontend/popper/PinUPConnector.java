@@ -2069,6 +2069,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public boolean killFrontend() {
+    pupEventEmitter.sendPupEvent(11, 2);
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
@@ -2087,8 +2088,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
-      LOG.info("No PinUP processes found, termination canceled.");
-      return false;
+      LOG.info("No remaining PinUP processes found, termination finished.");
+      return true;
     }
 
     for (ProcessHandle pinUpProcess : pinUpProcesses) {
@@ -2137,7 +2138,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public void finalizeRecording() {
-    pupEventEmitter.sendPupEvent(11, 2);
+    killFrontend();
     pupServer.stopServer();
   }
 
