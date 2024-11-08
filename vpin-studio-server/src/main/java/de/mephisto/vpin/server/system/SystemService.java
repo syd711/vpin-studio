@@ -443,8 +443,14 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     if (screen.getOutputScaleX() > 1) {
       info.setOriginalWidth((int) (info.getWidth() * screen.getOutputScaleX()));
     }
+    else {
+      info.setOriginalWidth(info.getWidth());
+    }
     if (screen.getOutputScaleY() > 1) {
       info.setOriginalHeight((int) (info.getHeight() * screen.getOutputScaleY()));
+    }
+    else {
+      info.setOriginalHeight(info.getHeight());
     }
     return info;
   }

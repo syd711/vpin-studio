@@ -106,10 +106,12 @@ public class CabMonitorController implements Initializable, DialogController {
       monitoringMode = MonitoringMode.frontendScreens;
     }
     monitoringModeCombo.setValue(monitoringMode);
+    screenMenuButton.setDisable(monitoringMode.equals(MonitoringMode.monitors));
     monitoringModeCombo.valueProperty().addListener(new ChangeListener<MonitoringMode>() {
       @Override
       public void changed(ObservableValue<? extends MonitoringMode> observable, MonitoringMode oldValue, MonitoringMode newValue) {
         Platform.runLater(() -> {
+          screenMenuButton.setDisable(newValue.equals(MonitoringMode.monitors));
           settings.setMonitoringMode(newValue);
           client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
           updateMonitoringMode(newValue);
