@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -241,6 +241,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private MenuItem cfgUploadItem;
 
   @FXML
+  private MenuItem patchItem;
+
+  @FXML
   private MenuItem altColorUploadItem;
 
   @FXML
@@ -373,6 +376,14 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   }
 
   @FXML
+  public void onPatchUpload() {
+    List<GameRepresentation> selectedItems = getSelections();
+    if (selectedItems != null && !selectedItems.isEmpty()) {
+      TableDialogs.openPatchUpload(selectedItems.get(0), null, null, null);
+    }
+  }
+
+  @FXML
   public void onNvRamUpload() {
     TableDialogs.openNvRamUploads(null, null);
   }
@@ -420,7 +431,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onMediaUpload() {
     List<GameRepresentation> selectedItems = getSelections();
     if (selectedItems != null && !selectedItems.isEmpty()) {
-      TableDialogs.openMediaUploadDialog(selectedItems.get(0), null, null, false);
+      TableDialogs.openMediaUploadDialog(Studio.stage, selectedItems.get(0), null, null, null);
     }
   }
 
@@ -565,18 +576,18 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     openUploadDialogWithCheck(null);
   }
 
-  public void openUploadDialogWithCheck(@Nullable TableUploadType tableUploadType) {
+  public void openUploadDialogWithCheck(@Nullable UploadType uploadType) {
     if (client.getFrontendService().isFrontendRunning()) {
       if (Dialogs.openFrontendRunningWarning(Studio.stage)) {
-        openUploadDialog(tableUploadType);
+        openUploadDialog(uploadType);
       }
       return;
     }
 
-    openUploadDialog(tableUploadType);
+    openUploadDialog(uploadType);
   }
 
-  private void openUploadDialog(@Nullable TableUploadType uploadType) {
+  private void openUploadDialog(@Nullable UploadType uploadType) {
     GameRepresentation game = getSelection();
     GameEmulatorRepresentation emu = client.getFrontendService().getGameEmulator(game.getEmulatorId());
     TableDialogs.openTableUploadDialog(game, emu.getEmulatorType(), uploadType, null);
@@ -645,7 +656,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
-        if(mouseEvent.isShiftDown()) {
+        if (mouseEvent.isShiftDown()) {
           onMediaEdit();
           return;
         }
@@ -752,8 +763,8 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       else {
         // new table, add it to the list only if the emulator is matching
         GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        if (value != null && value.getId() == refreshedGame.getEmulatorId()) {
-          models.add(new GameRepresentationModel(refreshedGame));
+        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+          models.add(0, new GameRepresentationModel(refreshedGame));
         }
       }
 
@@ -1572,6 +1583,23 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
         GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
         playBtn.getItems().clear();
 
+        if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
+          MenuItem item = new MenuItem("Launch via PinUP Popper");
+          item.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+              GameRepresentation selection = getSelection();
+              if (selection != null) {
+                new Thread(() -> {
+                  client.getFrontendService().launchGame(selection.getId());
+                }).start();
+              }
+            }
+          });
+          playBtn.getItems().add(item);
+          playBtn.getItems().add(new SeparatorMenuItem());
+        }
+
         List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
         for (String altVPXExeName : altVPXExeNames) {
           MenuItem item = new MenuItem(altVPXExeName);
@@ -1766,6 +1794,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     altSoundUploadItem.setVisible(vpxEmulator);
     altColorUploadItem.setVisible(vpxEmulator);
     dmdUploadItem.setVisible(vpxEmulator);
+    patchItem.setVisible(vpxEmulator);
     iniUploadMenuItem.setVisible(vpxEmulator);
     povItem.setVisible(vpxEmulator);
     nvUploadMenuItem.setVisible(vpxEmulator);

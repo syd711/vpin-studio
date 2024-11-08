@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<VBox fx:id="assetsView" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController">
+   <children>
+      <Label styleClass="default-headline" text="Additional Assets" textFill="WHITE" wrapText="true" />
+      <Label styleClass="preference-description" text="The following assets have been found:" textFill="WHITE" wrapText="true" />
+      <ScrollPane hbarPolicy="NEVER" maxHeight="130.0">
+         <content>
+            <VBox fx:id="assetsBox" prefWidth="240.0" spacing="6.0">
+               <children>
+                  <Label fx:id="assetAltSoundLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="- ALT Sound" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetAltColorLabel" layoutX="10.0" layoutY="38.0" mnemonicParsing="false" text="- ALT Color" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetBackglassLabel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="- Backglass" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetCfgLabel" layoutX="10.0" layoutY="91.0" mnemonicParsing="false" text="- .cfg File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetDmdLabel" layoutX="10.0" layoutY="64.0" mnemonicParsing="false" text="- DMD" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetPatchFileLabel" layoutX="10.0" layoutY="116.0" mnemonicParsing="false" text="- .dif File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetIniLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="- .ini File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetMusicLabel" layoutX="10.0" layoutY="117.0" mnemonicParsing="false" text="- Music Pack" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetMediaLabel" mnemonicParsing="false" text="- Media Pack for Popper Screens" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetNvRamLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="- .nv File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetPupPackLabel" mnemonicParsing="false" text="- PUP Pack" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetPovLabel" layoutX="10.0" layoutY="89.0" mnemonicParsing="false" text="- .pov File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetResLabel" layoutX="10.0" layoutY="302.0" mnemonicParsing="false" text="- .res File" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Label fx:id="assetRomLabel" layoutX="10.0" layoutY="196.0" mnemonicParsing="false" text="- ROM" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+         </content>
+         <VBox.margin>
+            <Insets top="12.0" />
+         </VBox.margin>
+      </ScrollPane>
+      <Button fx:id="assetFilterBtn" mnemonicParsing="false" onAction="#onAssetFilter" text="Filter Selection" textFill="WHITE">
+         <font>
+            <Font size="14.0" />
+         </font>
+         <graphic>
+            <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-outline" iconSize="18" />
+         </graphic>
+         <VBox.margin>
+            <Insets top="12.0" />
+         </VBox.margin>
+      </Button>
+   </children>
+</VBox>

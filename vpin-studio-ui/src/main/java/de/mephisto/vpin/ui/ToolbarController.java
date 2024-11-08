@@ -1,16 +1,19 @@
 package de.mephisto.vpin.ui;
 
 import de.mephisto.vpin.commons.fx.Debouncer;
+import de.mephisto.vpin.commons.utils.FXResizeHelper;
 import de.mephisto.vpin.commons.utils.Updater;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.dof.DOFSettings;
 import de.mephisto.vpin.restclient.frontend.Frontend;
+import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.ui.dropins.DropInManager;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.jobs.JobPoller;
+import de.mephisto.vpin.ui.monitor.CabMonitorController;
 import de.mephisto.vpin.ui.preferences.PreferenceType;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
@@ -41,11 +44,16 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
 
+  private boolean monitorOpen = false;
+
   @FXML
   private Button updateBtn;
 
   @FXML
   private Button frontendMenuBtn;
+
+  @FXML
+  private Button monitorBtn;
 
   @FXML
   private MenuButton jobBtn;
@@ -82,6 +90,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   public static String newVersion;
   public boolean muted = false;
+
+  public static ToolbarController INSTANCE;
+  private Stage monitorStage;
 
   // Add a public no-args constructor
   public ToolbarController() {
@@ -189,6 +200,30 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     PreferencesController.open();
   }
 
+  @FXML
+  private void toggleMonitor() {
+    if (!monitorOpen) {
+      monitorOpen = true;
+      monitorBtn.getStyleClass().add("toggle-button-selected");
+      monitorStage = Dialogs.createStudioDialogStage(null, CabMonitorController.class, "dialog-cab-monitor.fxml", "Cabinet Monitor", "cabMonitor");
+      CabMonitorController controller = (CabMonitorController) monitorStage.getUserData();
+      controller.setData(monitorStage);
+      FXResizeHelper fxResizeHelper = new FXResizeHelper(monitorStage, 30, 6);
+      monitorStage.setUserData(fxResizeHelper);
+      monitorStage.setMinWidth(600);
+      monitorStage.setMinHeight(500);
+
+      monitorStage.show();
+    }
+    else {
+      monitorStage.close();
+    }
+  }
+
+  public void onMonitorClose() {
+    monitorOpen = false;
+    monitorBtn.getStyleClass().remove("toggle-button-selected");
+  }
 
   @FXML
   private void onClearCache() {
@@ -234,6 +269,9 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    INSTANCE = this;
+
+    monitorBtn.managedProperty().bindBidirectional(monitorBtn.visibleProperty());
     maintenanceBtn.managedProperty().bindBidirectional(maintenanceBtn.visibleProperty());
     updateBtn.managedProperty().bindBidirectional(updateBtn.visibleProperty());
     frontendMenuBtn.managedProperty().bindBidirectional(frontendMenuBtn.visibleProperty());
@@ -266,11 +304,12 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     if (frontend.getFrontendExe() == null) {
       preferencesBtn.getItems().remove(frontendMenuItem);
     }
+
     if (client.getSystemService().isLocal()) {
       preferencesBtn.getItems().remove(shutdownMenuItem);
     }
 
-
+//    this.monitorBtn.setVisible(!client.getSystemService().isLocal() && Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty());
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);
@@ -303,6 +342,13 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
     client.getPreferenceService().addListener(this);
     preferencesChanged(PreferenceNames.DOF_SETTINGS, null);
+
+    Platform.runLater(() -> {
+      MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
+      if (settings.isOpen()) {
+        toggleMonitor();
+      }
+    });
   }
 
   @Override

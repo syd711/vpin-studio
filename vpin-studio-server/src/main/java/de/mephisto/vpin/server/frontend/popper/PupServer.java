@@ -84,7 +84,7 @@ public class PupServer {
       LOG.error("PupServer.exe failed: {}", standardErrorFromCommand);
     }
 
-    boolean b = systemService.waitForProcess(EXE_NAME, 5);
+    boolean b = systemService.waitForProcess(EXE_NAME, 5, 3000);
     if(b) {
       LOG.info("Found server process: {}", EXE_NAME);
     }

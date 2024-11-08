@@ -1,9 +1,11 @@
 package de.mephisto.vpin.ui.vps;
 
+import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsAuthoredUrls;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.tables.TablesSidebarVpsController;
 import javafx.beans.value.ChangeListener;
@@ -23,7 +25,9 @@ import java.awt.*;
 import java.net.URI;
 import java.net.URL;
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.function.Predicate;
@@ -105,6 +109,8 @@ public class VpsTablesSidebarController implements Initializable {
         }
       });
     }
+
+    WidgetFactory.addToTextListener(nameLabel);
   }
 
   @Override
@@ -148,28 +154,24 @@ public class VpsTablesSidebarController implements Initializable {
       VpsTable table = selection.get();
       updated.setText(DateFormat.getDateInstance().format(new Date(table.getUpdatedAt())));
 
-      if (table.getFeatures() != null) {
-        for (String feature : table.getFeatures()) {
-          if (feature.equalsIgnoreCase("fp") || feature.equalsIgnoreCase("vpx")) {
-            continue;
-          }
 
-          Label badge = new Label(feature);
-          badge.getStyleClass().add("white-label");
-          badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
-          badge.getStyleClass().add("vps-badge");
-          
-          if (predicate.isFeaturesFilterEmpty()) {
-            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
-          }
-          else {
-            boolean isFilter = predicate.isSelectedFeature(feature);
-            badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, isFilter)  + ";");
-          }
-          
-          features.getChildren().add(badge);
+      for (String feature : table.getAllFeatures()) {
+        Label badge = new Label(feature);
+        badge.getStyleClass().add("white-label");
+        badge.setTooltip(new Tooltip(VpsUtil.getFeatureColorTooltip(feature)));
+        badge.getStyleClass().add("vps-badge");
+
+        if (predicate.isFeaturesFilterEmpty()) {
+          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature) + ";");
         }
+        else {
+          boolean isFilter = predicate.isSelectedFeature(feature);
+          badge.setStyle("-fx-background-color: " + VpsUtil.getFeatureColor(feature, isFilter) + ";");
+        }
+
+        features.getChildren().add(badge);
       }
+
 
       typeLabel.setText(StringUtils.isEmpty(table.getType()) ? "-" : table.getType());
       theme.setText(table.getTheme() == null ? "-" : String.join(", ", table.getTheme()));

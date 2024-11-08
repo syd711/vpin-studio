@@ -331,12 +331,17 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     tournamentsBtn.setVisible(false);
     maniaBtn.setVisible(false);
-    if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
-      TournamentSettings settings = client.getTournamentsService().getSettings();
-      tournamentsBtn.setVisible(settings.isEnabled());
+    try {
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+        TournamentSettings settings = client.getTournamentsService().getSettings();
+        tournamentsBtn.setVisible(settings.isEnabled());
+      }
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+        maniaBtn.setVisible(true);
+      }
     }
-    if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
-      maniaBtn.setVisible(true);
+    catch (Exception e) {
+      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
     }
 
     this.buttons.add(tablesBtn);

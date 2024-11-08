@@ -457,9 +457,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
 
   public static void addTablesSection(VBox dataRoot, String title, GameRepresentation game, VpsDiffTypes diffTypes, VpsTable vpsTable, boolean showUpdates, Predicate<VpsTableVersion> filterPredicate) {
     List<VpsTableVersion> tableVersions;
-    if(game != null) {
+    if (game != null) {
       GameEmulatorRepresentation emulatorRepresentation = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-      List<String> tableFormats  = emulatorRepresentation.getVpsEmulatorFeatures();
+      List<String> tableFormats = emulatorRepresentation.getVpsEmulatorFeatures();
       tableVersions = vpsTable.getTableFilesForFormat(tableFormats);
     }
     else {
@@ -538,8 +538,9 @@ public class TablesSidebarVpsController implements Initializable, AutoCompleteTe
       return (VBox) section.getChildren().get(2);
     }
     catch (IOException e) {
-      throw new RuntimeException(e);
+      LOG.error("Failed to load VPS sidebar section: {}", e.getMessage(), e);
     }
+    return null;
   }
 
   public void setSidebarController(TablesSidebarController tablesSidebarController) {

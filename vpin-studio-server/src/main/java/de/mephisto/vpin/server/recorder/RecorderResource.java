@@ -44,6 +44,13 @@ public class RecorderResource {
     return RequestUtil.serializeImage(out.toByteArray(), screen.name() + ".jpg");
   }
 
+  @GetMapping("/previewmonitor/{monitorId}")
+  public ResponseEntity<byte[]> preview(@PathVariable("monitorId") int monitorId) throws Exception {
+    ByteArrayOutputStream out = new ByteArrayOutputStream();
+    recorderService.refreshPreview(out, monitorId);
+    return RequestUtil.serializeImage(out.toByteArray(), "monitor-" + monitorId + ".jpg");
+  }
+
   @PostMapping("/start")
   public JobDescriptor startRecording(@RequestBody RecordingData recordingData) {
     return recorderService.startRecording(recordingData);

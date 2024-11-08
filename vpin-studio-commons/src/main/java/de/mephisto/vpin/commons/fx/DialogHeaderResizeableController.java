@@ -87,6 +87,7 @@ public class DialogHeaderResizeableController implements Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    minimizeBtn.setVisible(false);
     header.setUserData(this);
 
     Platform.runLater(() -> {

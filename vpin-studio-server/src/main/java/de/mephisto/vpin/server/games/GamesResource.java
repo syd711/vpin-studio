@@ -7,9 +7,11 @@ import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
 import de.mephisto.vpin.server.fp.FPService;
+import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.highscores.HighscoreMetadata;
 import de.mephisto.vpin.server.highscores.ScoreList;
 import de.mephisto.vpin.server.listeners.EventOrigin;
+import de.mephisto.vpin.server.system.SystemService;
 import de.mephisto.vpin.server.vpx.VPXService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +35,19 @@ public class GamesResource {
   private GameService gameService;
 
   @Autowired
+  private GameMediaService gameMediaService;
+
+  @Autowired
   private VPXService vpxService;
 
   @Autowired
+  private FrontendService frontendService;
+
+  @Autowired
   private FPService fpService;
+
+  @Autowired
+  private SystemService systemService;
 
   @GetMapping
   public List<Game> getGames() {
@@ -65,9 +76,12 @@ public class GamesResource {
 
   @PutMapping("/play/{id}")
   public boolean play(@PathVariable("id") int id, @RequestBody Map<String, Object> values) {
+    systemService.setMaintenanceMode(false);
+
     String altExe = (String) values.get("altExe");
     Game game = gameService.getGame(id);
     if (game.getEmulator().isVpxEmulator()) {
+      frontendService.killFrontend();
       return vpxService.play(game, altExe);
     }
     else if (game.getEmulator().isFpEmulator()) {
@@ -142,7 +156,7 @@ public class GamesResource {
 
   @PostMapping("/delete")
   public boolean delete(@RequestBody DeleteDescriptor descriptor) {
-    return gameService.deleteGame(descriptor);
+    return gameMediaService.deleteGame(descriptor);
   }
 
   @DeleteMapping("/reset/{gameId}")

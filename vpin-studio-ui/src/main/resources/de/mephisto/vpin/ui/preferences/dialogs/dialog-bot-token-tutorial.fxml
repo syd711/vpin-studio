@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
-<?import java.lang.String?>
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefWidth="1200.0" stylesheets="@stylesheet.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml/1">
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
    </top>
@@ -27,7 +31,7 @@
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <Label styleClass="preference-subtitle" stylesheets="@stylesheet.css" text="1. Reset Bot Token" />
+                  <Label styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="1. Reset Bot Token" />
                   <Label layoutX="34.0" layoutY="153.0" styleClass="preference-description" text="Login into the Discord developer portal.">
                      <font>
                         <Font size="14.0" />
@@ -48,22 +52,22 @@
                         <Insets bottom="12.0" top="12.0" />
                      </VBox.margin>
                      <children>
-                        <ImageView fitHeight="458.0" fitWidth="800.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitWidth="900.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@screenshots/bot/reset-token.png" />
+                              <Image url="@../../screenshots/bot/reset-token.png" />
                            </image>
                         </ImageView>
                      </children>
                   </HBox>
-                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@stylesheet.css" text="2. Apply Bot Token" />
+                  <Label layoutX="34.0" layoutY="34.0" styleClass="preference-subtitle" stylesheets="@../../stylesheet.css" text="2. Apply Bot Token" />
                   <Label layoutX="34.0" layoutY="112.0" styleClass="preference-description" text="Paste the newly created bot token into the &quot;Bot Token&quot; field of the VPin Studio preferences.">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
-                  <ImageView fitHeight="252.0" fitWidth="800.0" layoutX="34.0" layoutY="724.0" pickOnBounds="true" preserveRatio="true">
+                  <ImageView fitHeight="252.0" fitWidth="600.0" layoutX="34.0" layoutY="724.0" pickOnBounds="true" preserveRatio="true">
                      <image>
-                        <Image url="@screenshots/bot/input-token.png" />
+                        <Image url="@../../screenshots/bot/input-token.png" />
                      </image>
                      <VBox.margin>
                         <Insets bottom="12.0" top="12.0" />

@@ -331,7 +331,7 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
           rankedAccount = maniaClient.getAccountClient().getRankedAccount(account.getUuid());
         }
         catch (Exception e) {
-          throw new RuntimeException(e);
+          LOG.error("Failed to load VPin Mania account: {}", e.getMessage(), e);
         }
         InputStream in = ServerFX.client.getCachedUrlImage(maniaClient.getAccountClient().getAvatarUrl(account.getUuid()));
         if (in == null) {

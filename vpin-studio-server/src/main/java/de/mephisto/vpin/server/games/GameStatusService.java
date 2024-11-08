@@ -8,18 +8,19 @@ import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.frontend.TableStatusChangeListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import java.util.Date;
 
 @Service
-public class GameStatusService implements TableStatusChangeListener, FrontendStatusChangeListener, InitializingBean {
+public class GameStatusService implements TableStatusChangeListener, FrontendStatusChangeListener {
   private final static Logger LOG = LoggerFactory.getLogger(GameStatusService.class);
-
-  @Autowired
-  private FrontendStatusService frontendStatusService;
 
   @Autowired
   private HighscoreMonitoringService highscoreMonitoringService;
@@ -71,8 +72,7 @@ public class GameStatusService implements TableStatusChangeListener, FrontendSta
     highscoreMonitoringService.stopMonitoring();
   }
 
-  @Override
-  public void afterPropertiesSet() {
+  public void init(FrontendStatusService frontendStatusService) {
     frontendStatusService.addTableStatusChangeListener(this);
     frontendStatusService.addFrontendStatusChangeListener(this);
   }

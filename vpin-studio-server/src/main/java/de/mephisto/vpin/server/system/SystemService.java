@@ -26,6 +26,7 @@ import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -408,12 +409,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     List<ScreenInfo> result = new ArrayList<>();
 
     Screen primary = Screen.getPrimary();
-    ScreenInfo info = new ScreenInfo();
-    Rectangle2D screenBounds = primary.getBounds();
-    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-    info.setPrimary(true);
-    info.setHeight((int) screenBounds.getHeight());
-    info.setWidth((int) screenBounds.getWidth());
+    ScreenInfo info = createScreenInfo(primary);
+
     info.setId(1);
     result.add(info);
 
@@ -424,18 +421,38 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         continue;
       }
 
-      info = new ScreenInfo();
-      screenBounds = Screen.getPrimary().getBounds();
-      info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-      info.setPrimary(false);
-      info.setHeight((int) screenBounds.getHeight());
-      info.setWidth((int) screenBounds.getWidth());
+      info = createScreenInfo(screen);
       info.setId(index);
-
       result.add(info);
       index++;
     }
     return result;
+  }
+
+  @NotNull
+  private static ScreenInfo createScreenInfo(Screen screen) {
+    ScreenInfo info = new ScreenInfo();
+    Rectangle2D screenBounds = screen.getBounds();
+    info.setX(screenBounds.getMinX());
+    info.setY(screenBounds.getMinY());
+    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
+    info.setPrimary(true);
+    info.setHeight((int) screenBounds.getHeight());
+    info.setWidth((int) screenBounds.getWidth());
+
+    if (screen.getOutputScaleX() > 1) {
+      info.setOriginalWidth((int) (info.getWidth() * screen.getOutputScaleX()));
+    }
+    else {
+      info.setOriginalWidth(info.getWidth());
+    }
+    if (screen.getOutputScaleY() > 1) {
+      info.setOriginalHeight((int) (info.getHeight() * screen.getOutputScaleY()));
+    }
+    else {
+      info.setOriginalHeight(info.getHeight());
+    }
+    return info;
   }
 
   /**
@@ -474,6 +491,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean waitForProcess(String name, int seconds) {
+    return waitForProcess(name, seconds, 0);
+  }
+
+  public boolean waitForProcess(String name, int seconds, int postDelayMs) {
     try {
       ExecutorService executor = Executors.newSingleThreadExecutor();
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
@@ -481,6 +502,10 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         public Boolean call() throws Exception {
           while (!isProcessRunning(name)) {
             Thread.sleep(1000);
+          }
+          LOG.info("Found waiting process: {}", name);
+          if (postDelayMs > 0) {
+            Thread.sleep(postDelayMs);
           }
           return true;
         }

@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
@@ -92,6 +93,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @FXML
   private BorderPane root;
+
+  @FXML
+  private ComboBox<?> viewModeCombo;
 
   @FXML
   private VBox recordingOptions;
@@ -310,6 +314,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @Override
   public void onViewActivated(NavigationOptions options) {
+    MonitoringManager.getInstance().setRecordingRefreshIntervalSec(refreshInterval.getValue());
     NavigationController.setBreadCrumb(Arrays.asList("Media Recorder"));
     refreshEmulators();
 
@@ -330,11 +335,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         LOG.info("Launched preview refresh thread.");
         while (active) {
           Platform.runLater(() -> {
-            invalidateScreens();
+            refreshScreens();
           });
 
-          RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-          Thread.sleep(recorderSettings.getRefreshInterval() * 1000);
+          Thread.sleep(500);
         }
       }
       catch (Exception e) {
@@ -349,6 +353,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   @Override
   public void onViewDeactivated() {
+    MonitoringManager.getInstance().setRecordingRefreshIntervalSec(Integer.MAX_VALUE);
     Studio.stage.widthProperty().removeListener(screenSizeChangeListener);
     Studio.stage.heightProperty().removeListener(screenSizeChangeListener);
 
@@ -468,6 +473,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       debouncer.debounce("refresh", () -> {
         refreshScreens();
         settings.setRefreshInterval(newValue.intValue());
+        MonitoringManager.getInstance().setRecordingRefreshIntervalSec(refreshInterval.getValue());
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
       }, 300);
     });
@@ -523,16 +529,14 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   public void refreshScreens() {
+    long start = System.currentTimeMillis();
     for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
       screenRecorderPanelController.refresh();
     }
-  }
-
-  private void invalidateScreens() {
-    for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
-      screenRecorderPanelController.invalidate();
+    long end = System.currentTimeMillis() - start;
+    if (end > 0 && end > (refreshInterval.getValue() * 1000)) {
+      LOG.warn("Total refresh time {}ms vs refresh interval of {}", end, refreshInterval.getValue());
     }
-    refreshScreens();
   }
 
   class ScreenSizeChangeListener implements ChangeListener<Number> {

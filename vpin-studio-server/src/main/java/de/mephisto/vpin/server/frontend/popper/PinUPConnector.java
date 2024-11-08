@@ -67,6 +67,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   private PreferencesService preferencesService;
 
   private PupServer pupServer;
+  private PupLauncher pupLauncher;
 
   private PinUPMediaAccessStrategy pinUPMediaAccessStrategy;
 
@@ -1763,7 +1764,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     game.setTableName(tableName);
 
     String custom = rs.getString("LaunchCustomVar");
-    game.setPupPackDisabled(rom != null && !StringUtils.isEmpty(custom) && custom.equals("HIDEPUP"));
+    game.setPupPackDisabled(!StringUtils.isEmpty(custom) && custom.equals("HIDEPUP"));
 
     String gameDisplayName = rs.getString("GameDisplay");
     game.setGameDisplayName(gameDisplayName);
@@ -2069,6 +2070,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public boolean killFrontend() {
+    pupEventEmitter.sendPupEvent(11, 2);
     List<ProcessHandle> pinUpProcesses = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
@@ -2077,6 +2079,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
                     p.info().command().get().contains("PinUpDisplay") ||
                     p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
+//                    p.info().command().get().contains(PupServer.EXE_NAME) ||
                     p.info().command().get().contains("PinUpPackEditor") ||
                     p.info().command().get().contains("VPinballX") ||
                     p.info().command().get().startsWith("VPinball") ||
@@ -2086,8 +2089,8 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         .collect(Collectors.toList());
 
     if (pinUpProcesses.isEmpty()) {
-      LOG.info("No PinUP processes found, termination canceled.");
-      return false;
+      LOG.info("No remaining PinUP processes found, termination finished.");
+      return true;
     }
 
     for (ProcessHandle pinUpProcess : pinUpProcesses) {
@@ -2131,13 +2134,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   @Override
   public void initializeRecording() {
-    pupServer.startServer();
+
   }
 
   @Override
   public void finalizeRecording() {
-    pupEventEmitter.sendPupEvent(11, 2);
-    pupServer.stopServer();
+    killFrontend();
   }
 
   @Override
@@ -2194,7 +2196,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    */
   @Override
   public boolean launchGame(Game game, boolean wait) {
-    pupServer.launchGame(game.getId());
+    pupLauncher.launch(game.getId());
     if (!wait) {
       return true;
     }
@@ -2249,6 +2251,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   public void afterPropertiesSet() throws Exception {
     try {
       this.pupServer = new PupServer(this, systemService);
+      this.pupLauncher = new PupLauncher();
       this.pupEventEmitter = new PupEventEmitter(this.getInstallationFolder());
     }
     catch (Exception e) {

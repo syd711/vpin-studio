@@ -239,7 +239,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         // check for feature
         for (String f : features.keySet()) {
           if (features.get(f)) {
-            boolean hasFeature = containsIgnoreCase(table.getFeatures(), f);
+            boolean hasFeature = containsIgnoreCase(table.getAllFeatures(), f);
             /*if (!hasFeature) {
               // check at version level
               for (VpsTableVersion version: table.getTableFiles()) {

@@ -6,7 +6,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -189,7 +189,8 @@ public class UniversalUploadService {
             rom = game.getRom();
           }
           //TODO better music bundle handling based on emulators
-          vpxService.installMusic(tempFile, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
+          File musicFolder = frontendService.getDefaultGameEmulator().getMusicFolder();
+          vpxService.installMusic(tempFile, musicFolder, analysis, rom, uploadDescriptor.isAcceptAllAudioAsMusic());
         }
         break;
       }
@@ -244,15 +245,49 @@ public class UniversalUploadService {
   private static void copyGameFileAsset(File temporaryUploadDescriptorBundleFile, Game game, AssetType assetType) throws IOException {
     String fileName = FilenameUtils.getBaseName(game.getGameFileName()) + "." + assetType.name().toLowerCase();
     File gameAssetFile = new File(game.getGameFile().getParentFile(), fileName);
-    if (gameAssetFile.exists() && !gameAssetFile.delete()) {
-      LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
-      throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+    boolean replaced = false;
+    if (gameAssetFile.exists()) {
+      if (!gameAssetFile.delete()) {
+        LOG.error("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+        throw new UnsupportedOperationException("Failed to delete existing game asset file " + gameAssetFile.getAbsolutePath());
+      }
+      replaced = true;
     }
 
     org.apache.commons.io.FileUtils.copyFile(temporaryUploadDescriptorBundleFile, gameAssetFile);
-    LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+    if (replaced) {
+      LOG.info("Replaced \"" + gameAssetFile.getAbsolutePath() + "\" with \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\"");
+    }
+    else {
+      LOG.info("Copied \"" + temporaryUploadDescriptorBundleFile.getAbsolutePath() + "\" to \"" + gameAssetFile.getAbsolutePath() + "\"");
+    }
   }
 
+  public void processGameAssets(UploadDescriptor uploadDescriptor, UploaderAnalysis analysis) throws Exception {
+    if (uploadDescriptor.getGameId() > 0) {
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.DIRECTB2S);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.POV);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.INI);
+      importFileBasedAssets(uploadDescriptor, analysis, AssetType.RES);
+    }
+    else {
+      LOG.info("Skipped table based assets since no gameId was set for the upload.");
+    }
+
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.DMD_PACK, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.PUP_PACK, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.FRONTEND_MEDIA, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_SOUND, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ALT_COLOR, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.MUSIC, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.ROM, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.NV, true);
+    importArchiveBasedAssets(uploadDescriptor, analysis, AssetType.CFG, true);
+
+    if (analysis.isTable()) {
+      notifyUpdates(uploadDescriptor);
+    }
+  }
 
   /**
    * Responsible for emitting updates about the newly installed table.
@@ -284,7 +319,7 @@ public class UniversalUploadService {
         if (imgUrl != null) {
           embed.setImage(imgUrl);
         }
-        if (uploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+        if (uploadDescriptor.getUploadType().equals(UploadType.uploadAndImport)) {
           embed.addField("New Table Installed", "", false);
         }
         else {

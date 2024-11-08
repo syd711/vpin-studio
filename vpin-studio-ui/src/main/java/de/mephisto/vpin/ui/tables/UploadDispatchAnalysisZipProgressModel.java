@@ -83,7 +83,7 @@ public class UploadDispatchAnalysisZipProgressModel extends ProgressModel<ZipEnt
   @Override
   public void processNext(ProgressResultModel progressResultModel, ZipEntry next) {
     try {
-      uploaderAnalysis.analyze(zis, next, next.getName(), next.isDirectory());
+      uploaderAnalysis.analyze(zis, next, next.getName(), next.isDirectory(), next.getSize());
     } catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);
     }

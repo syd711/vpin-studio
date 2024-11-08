@@ -3,10 +3,9 @@ package de.mephisto.vpin.server.frontend;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * Legacy URls:
@@ -43,6 +42,12 @@ public class FrontendStatusEventsResource {
   @PostMapping("/frontendLaunch")
   public boolean frontendLaunch() {
     frontendStatusService.notifyFrontendLaunch();
+    return true;
+  }
+
+  @PostMapping("/menuUpdate")
+  public boolean menuUpdate(@RequestBody Map<String, Object> parameters) {
+    System.out.println(parameters);
     return true;
   }
 }

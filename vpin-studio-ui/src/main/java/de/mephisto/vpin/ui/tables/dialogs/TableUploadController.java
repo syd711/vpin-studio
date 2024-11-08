@@ -9,11 +9,12 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
@@ -120,9 +121,6 @@ public class TableUploadController implements Initializable, DialogController {
   private VBox uploadCloneBox;
 
   @FXML
-  private Label noAssetsLabel;
-
-  @FXML
   private Label assetPupPackLabel;
   @FXML
   private Label assetAltSoundLabel;
@@ -150,6 +148,9 @@ public class TableUploadController implements Initializable, DialogController {
   private Label assetDmdLabel;
 
   @FXML
+  private VBox assetsView;
+
+  @FXML
   private VBox assetsBox;
 
   @FXML
@@ -159,10 +160,10 @@ public class TableUploadController implements Initializable, DialogController {
   private Label tableTitleLabel;
 
   @FXML
-  private TextArea readmeTextField;
+  private Label readmeLabel;
 
   @FXML
-  private VBox readmeBox;
+  private Button readmeBtn;
 
   private File selection;
   private Optional<UploadDescriptor> result = Optional.empty();
@@ -183,6 +184,13 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   @FXML
+  private void onReadme(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    String value = (String) ((Button) e.getSource()).getUserData();
+    Dialogs.openTextEditor(stage, new TextFile(value), "README");
+  }
+
+  @FXML
   private void onUploadClick(ActionEvent event) {
     Stage s = (Stage) ((Button) event.getSource()).getScene().getWindow();
     if (selection != null) {
@@ -200,7 +208,7 @@ public class TableUploadController implements Initializable, DialogController {
         onCancelClick(event);
       });
 
-      result = UniversalUploader.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
+      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
       if (result.isPresent()) {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setSubfolderName(subFolder);
@@ -209,7 +217,10 @@ public class TableUploadController implements Initializable, DialogController {
 
         uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-        result = UniversalUploader.postProcess(uploadDescriptor);
+
+
+        GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+        result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -220,14 +231,14 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(this.game, selection, uploaderAnalysis, true);
+    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE);
     updateAnalysis();
   }
 
   private boolean runPreChecks(Stage s) {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
-    if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+    if (game != null && tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
       boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName.replaceAll("_", " "), game.getGameDisplayName(), MATCHING_PERCENTAGE);
       if (!similarAtLeastToPercent) {
         similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
@@ -242,7 +253,7 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     //suggest table match
-    if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+    if (tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndImport)) {
       try {
         ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
             new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
@@ -298,25 +309,15 @@ public class TableUploadController implements Initializable, DialogController {
   }
 
   private void setSelection(boolean rescan) {
-    assetFilterBtn.setVisible(false);
-    if (this.selection != null) {
-      String extension = FilenameUtils.getExtension(selection.getName());
-      if (PackageUtil.isSupportedArchive(extension)) {
-        assetFilterBtn.setVisible(true);
-      }
-    }
-
-    tableNameLabel.setVisible(false);
-    tableTitleLabel.setVisible(false);
-    this.readmeTextField.setText("");
+    this.readmeLabel.setVisible(true);
+    this.readmeBtn.setVisible(false);
 
     subfolderCheckbox.setDisable(true);
     uploadBtn.setDisable(true);
+    this.assetsView.setVisible(false);
 
     if (this.selection != null) {
       String suffix = FilenameUtils.getExtension(this.selection.getName());
-      readmeBox.setVisible(PackageUtil.isSupportedArchive(suffix));
-
       if (PackageUtil.isSupportedArchive(suffix)) {
         this.fileBtn.setDisable(true);
         this.cancelBtn.setDisable(true);
@@ -343,17 +344,18 @@ public class TableUploadController implements Initializable, DialogController {
               WidgetFactory.showAlert(Studio.stage, "No table file found in this archive.");
               this.selection = null;
 
-              this.assetFilterBtn.setVisible(false);
               this.fileNameField.setText("");
               this.subfolderText.setText("");
               this.uploaderAnalysis.reset();
             }
             else {
               String readmeText = uploaderAnalysis.getReadMeText();
-              this.readmeTextField.setText(readmeText);
+              if (!StringUtils.isEmpty(readmeText)) {
+                this.readmeBtn.setUserData(readmeText);
+                this.readmeBtn.setVisible(true);
+                this.readmeLabel.setVisible(false);
+              }
 
-              tableTitleLabel.setVisible(true);
-              tableNameLabel.setVisible(true);
               tableNameLabel.setText(uploaderAnalysis.getTableFileName(null));
 
               this.fileNameField.setText(this.selection.getAbsolutePath());
@@ -383,7 +385,7 @@ public class TableUploadController implements Initializable, DialogController {
         }
         EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
         this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
-        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
+        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator() || !subfolderCheckbox.isSelected());
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);
@@ -436,11 +438,10 @@ public class TableUploadController implements Initializable, DialogController {
 
   private void updateAnalysis() {
     if (uploaderAnalysis == null) {
-      assetFilterBtn.setVisible(false);
+      assetsView.setVisible(false);
       return;
     }
 
-    assetFilterBtn.setVisible(selection != null);
     assetFilterBtn.setText("Filter Selection");
     if (!uploaderAnalysis.getExclusions().isEmpty()) {
       if (uploaderAnalysis.getExclusions().size() == 1) {
@@ -506,7 +507,7 @@ public class TableUploadController implements Initializable, DialogController {
       assetAltSoundLabel.setText("- ALT Sound (" + uploaderAnalysis.getRomFromAltSoundPack() + ")");
     }
 
-    assetsBox.setVisible(assetBackglassLabel.isVisible()
+    assetsView.setVisible(assetBackglassLabel.isVisible()
         || assetAltSoundLabel.isVisible()
         || assetAltColorLabel.isVisible()
         || assetPovLabel.isVisible()
@@ -519,12 +520,15 @@ public class TableUploadController implements Initializable, DialogController {
         || assetBackglassLabel.isVisible()
         || assetPupPackLabel.isVisible()
         || assetRomLabel.isVisible());
-    noAssetsLabel.setVisible(!assetsBox.isVisible());
   }
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
-    assetFilterBtn.setVisible(false);
+    assetsView.setVisible(false);
+    readmeLabel.managedProperty().bindBidirectional(readmeLabel.visibleProperty());
+    readmeBtn.managedProperty().bindBidirectional(readmeBtn.visibleProperty());
+
+    readmeBtn.setVisible(false);
 
     uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
 
@@ -540,8 +544,7 @@ public class TableUploadController implements Initializable, DialogController {
     ServerSettings serverSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
     Frontend frontend = client.getFrontendService().getFrontendCached();
 
-    tableNameLabel.setVisible(false);
-    tableTitleLabel.setVisible(false);
+    tableNameLabel.setText("-");
 
     this.selection = null;
     this.uploadBtn.setDisable(true);
@@ -569,7 +572,7 @@ public class TableUploadController implements Initializable, DialogController {
       if (this.uploaderAnalysis != null) {
         this.uploadBtn.setDisable(!this.uploaderAnalysis.getEmulatorType().equals(emulatorType));
       }
-      else if(selection != null){
+      else if (selection != null) {
         UploaderAnalysis analysis = new UploaderAnalysis(client.getFrontendService().getFrontendCached(), selection);
         this.uploadBtn.setDisable(!analysis.getEmulatorType().equals(emulatorType));
       }
@@ -619,8 +622,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadCloneBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndClone);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndClone.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndClone);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndClone.name());
         }
         else {
           uploadCloneBox.getStyleClass().remove("selection-panel-selected");
@@ -633,8 +636,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadReplaceBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndReplace);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndReplace.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndReplace);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndReplace.name());
         }
         else {
           uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
@@ -647,8 +650,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadImportBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndImport);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndImport.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndImport);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndImport.name());
         }
         else {
           uploadImportBox.getStyleClass().remove("selection-panel-selected");
@@ -664,11 +667,6 @@ public class TableUploadController implements Initializable, DialogController {
     });
 
     uploadImportBox.getStyleClass().add("selection-panel-selected");
-
-    noAssetsLabel.setVisible(true);
-    noAssetsLabel.managedProperty().bindBidirectional(noAssetsLabel.visibleProperty());
-    assetsBox.setVisible(false);
-    assetsBox.managedProperty().bindBidirectional(assetsBox.visibleProperty());
 
     assetPupPackLabel.managedProperty().bindBidirectional(assetPupPackLabel.visibleProperty());
     assetMusicLabel.managedProperty().bindBidirectional(assetMusicLabel.visibleProperty());
@@ -699,17 +697,17 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
     this.emuType = emuType;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
-      uploadType = TableUploadType.valueOf(uiSettings.getDefaultUploadMode());
+      uploadType = UploadType.valueOf(uiSettings.getDefaultUploadMode());
     }
 
     if (game == null) {
-      uploadType = TableUploadType.uploadAndImport;
+      uploadType = UploadType.uploadAndImport;
     }
 
     tableUploadDescriptor.setUploadType(uploadType);

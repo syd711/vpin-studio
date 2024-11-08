@@ -36,3 +36,10 @@ Assuming you use IDEA:
 
 - Execute the Studio Server DEV runtime config.
 - Start the Studio via the provided runtime config.
+
+## How to update pinemhi
+
+- Check the method PINEmHiService#checkForUpdates method
+- Download and extract the new pinemhi version in the file **scoringdb.json**.
+- Upload everything on main.
+- 

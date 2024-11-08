@@ -94,7 +94,7 @@ public class UploadDispatchAnalysisRarProgressModel extends ProgressModel<ISimpl
   @Override
   public void processNext(ProgressResultModel progressResultModel, ISimpleInArchiveItem next) {
     try {
-      uploaderAnalysis.analyze(inArchive, next, next.getPath(), next.isFolder());
+      uploaderAnalysis.analyze(inArchive, next, next.getPath(), next.isFolder(), next.getSize());
     }
     catch (Exception e) {
       LOG.error("Error reading zip file: " + e.getMessage(), e);

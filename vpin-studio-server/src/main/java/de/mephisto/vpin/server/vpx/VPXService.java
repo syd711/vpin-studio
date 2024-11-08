@@ -32,13 +32,7 @@ public class VPXService {
   private final static Logger LOG = LoggerFactory.getLogger(VPXService.class);
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
   private VPXCommandLineService vpxCommandLineService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   public POV getPOV(Game game) {
     try {
@@ -52,6 +46,11 @@ public class VPXService {
     } catch (VPinStudioException e) {
       throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getMessage());
     }
+  }
+
+  public File getVPXFile() {
+    String user = System.getProperty("user.name");
+    return new File("C:/Users/" + user + "/AppData/Roaming/VPinballX", "VPinballX.ini");
   }
 
   public boolean savePOVPreference(Game game, Map<String, Object> values) {
@@ -199,8 +198,6 @@ public class VPXService {
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe) {
-    frontendService.killFrontend();
-
     if (game != null) {
       return vpxCommandLineService.execute(game, "-Play", altExe);
     }
@@ -222,8 +219,8 @@ public class VPXService {
     return null;
   }
 
-  public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unpack(out, frontendService.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+    MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.RecorderController;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -35,7 +36,6 @@ public class ScreenRecorderPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorderPanelController.class);
 
   private final static List<RecordMode> RECORD_MODE_LIST = Arrays.asList(RecordMode.ifMissing, RecordMode.overwrite);
-  private static final int DEBOUNCE_MS = 100;
 
   @FXML
   private Pane root;
@@ -72,7 +72,6 @@ public class ScreenRecorderPanelController implements Initializable {
 
   private RecordingScreen recordingScreen;
 
-  private Image imageCached = null;
   private ChangeListener<Boolean> enabledCheckboxListener;
 
   public void setData(RecorderController recorderController, RecordingScreen recordingScreen) {
@@ -167,10 +166,6 @@ public class ScreenRecorderPanelController implements Initializable {
     };
   }
 
-  public void invalidate() {
-    imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/preview/" + recordingScreen.getScreen().name());
-  }
-
   public void refresh() {
     previewTitle.setText("Screen Preview (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
 
@@ -214,10 +209,8 @@ public class ScreenRecorderPanelController implements Initializable {
       imageView.setVisible(option.isEnabled());
       previewLabel.setVisible(!option.isEnabled());
       if (option.isEnabled()) {
-        if (imageCached == null) {
-          imageCached = new Image(client.getRestClient().getBaseUrl() + API + "recorder/preview/" + recordingScreen.getScreen().name());
-        }
-        imageView.setImage(imageCached);
+        Image image = MonitoringManager.getInstance().getRecordableScreenImage(recordingScreen);
+        imageView.setImage(image);
       }
       else {
         previewLabel.setText("Recording not enabled");

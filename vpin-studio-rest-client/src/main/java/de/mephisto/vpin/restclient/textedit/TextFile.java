@@ -1,5 +1,6 @@
 package de.mephisto.vpin.restclient.textedit;
 
+import java.io.File;
 import java.util.Date;
 
 public class TextFile {
@@ -12,6 +13,15 @@ public class TextFile {
 
   public TextFile(VPinFile vPinFile) {
     this.vPinFile = vPinFile;
+  }
+
+  public TextFile(File file) {
+    this.path = file.getAbsolutePath();
+    this.vPinFile = VPinFile.LOCAL;
+  }
+
+  public TextFile(String text) {
+    this.content = text;
   }
 
   public TextFile() {

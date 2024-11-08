@@ -70,6 +70,8 @@ public class Preferences {
 
   private String recorderSettings;
 
+  private String monitoringSettings;
+
   private String uiSettings;
 
   private String serverSettings;
@@ -120,6 +122,14 @@ public class Preferences {
 
   public void setDofLinxSettings(String dofLinxSettings) {
     this.dofLinxSettings = dofLinxSettings;
+  }
+
+  public String getMonitoringSettings() {
+    return monitoringSettings;
+  }
+
+  public void setMonitoringSettings(String monitoringSettings) {
+    this.monitoringSettings = monitoringSettings;
   }
 
   public String getDiscordUpdatesChannelId() {

@@ -13,13 +13,13 @@ If you wanna go for SPECIAL SCORES the use of a new,clean nvram might be handy a
 If you have a nice score, just don't start a new game but just quit the game, PINemHi LeaderBoard will do the rest.
 When quitting a game you don't have to rush , just as long as you don't start a new game the score(s) can be retrieved.
 
-The scores are sent to the website http://pinemhi.com/hiscores.php
+The scores are sent to the website http://pinemhi.com/
 Here you can look at your scores and the scores from others and even do challenges.
 
 In the new version of PINemHi Leaderboard it is not necessary to use a plugin for a frontend.
 There is a monitor that you start and that will monitor for activity.
 You can play in a frontend or just by starting visual pinball. 
-The monitor wil register your scores. At the moment 131 games are supported.
+The monitor wil register your scores. 
 
 During a game it now also is possible to see your top 10 best scores that are on pinemhi leaderboard by pressing a button
 and of course special scores that you made (for example 20 loops), 
@@ -34,13 +34,12 @@ Installation
 
 You can unzip the files to any folder you like, but if you use pinemhi in your frontend then it is best to put it in the same place as before.
 If you have an older version of pinemhi installed then i would recommend to rename the old pinemhi.ini as you might need some data from that to put in the new pinemhi.ini file.
-
-First thing to do after the unzip is to set the pinemhi_rom_monitor file to always execute with administrator rights.
-You can do this bij right clicking and then properties,compatibility and there you will see the option to turn on execute as administrator
+Copy Paste he values not the entire lines or blocks in pinemhi.ini
 
 After that you have to adjust pinemhi.ini to your needs:
 ********
-First up is the paths to Visual pinball and Future pinball nvrams and fprams
+First up is the paths to Visual pinball and Future pinball nvrams and fprams and the Visual Pinball user path
+The user path is for games that use no rom (for pinemhi leaderboard)
 Set the paths and remember that the last character must be a \
 ********
 
@@ -56,7 +55,7 @@ These can all be activated together if you like of course
 Now for the PINemHi LeaderBoard section
 ********
 your user and code need to be filled in
-use the website http://www.pinemhi.com/hiscores.php to register your name and get a code if you don't have one yet
+use the website http://www.pinemhi.com/ to register your name and get a code if you don't have one yet
 ********
 
 ********
@@ -68,6 +67,8 @@ challengekey, this is the key to start your challenges with
 weeklychallengekey, this will show the game of the week and interim scores + previous week's winner
 5min_key , to enter 5 minute-mode and exit it again (only works outside of gameplay)
 pinupsystem_exit_key , to let 5 minute-mode work properly with Pinup System , you need to fill in your defined exit key from Pinup System
+send_button , to send your score (you don't have to quit the table)
+You can also use shift-key and a key using the + , for instance +M is shift M
 You can also choose joystick buttons here by the way , for instance Joy1, Joy2 etc
 Not sure of course which button is which on your joystick so you will have to figure out the number yourself
 ********
@@ -85,7 +86,10 @@ Options for voice are:
 ***    4 - man (deutsch)                ***
 ***    5 - femme (francais)             ***
 ***    6 - homme (francais)             ***
-***    7 - man (nederlands)             ***
+***    7 - vrouw (nederlands)           ***
+***    8 - man (nederlands)             ***
+***    9 - mujer (español)              ***
+***   10 - hombre (español)             ***
 ********
 
 ********
@@ -118,7 +122,7 @@ friend_scores gives the top 10 best scores from you and your friend(s)
 cup_scores gives the top 10 cup standings and your position in it
 badges gives you the badges you've earned for the table
 1 means it on, 0 means it's off
-challengeskill is the level of challenges you want (1 = kiddie , 2 = normal , 3 = insane) would recommend kiddie to start with 
+challengeskill is the level of challenges you want (1 = kiddie , 2 = normal) would recommend kiddie to start with 
 ********
 
 
@@ -128,16 +132,12 @@ then you can add your friends, up to 9
 use the name that they use on pinemhi leaderboard
 ********
 
-********
-and last there is an option to let it send tweets under the name of pinemhi_leaderboard.
-********
-
-The rest of the pinemhi.ini should not be altered  
-
 ------------
 HOW TO START
 ------------
-If all has been filled in then you simply run the pinemhi_rom_monitor.exe (always execute this with administrator rights) and then you can start visual pinball or your frontend
+For the rom-less supported games (for instance guardians of the Galaxy) to work you need to copy romsub.exe into your tables directory and add some code to the tablescripts for these tables
+The rom-less code snippets can be found on http://pinemhi.com/ (also where to put the code in the script is mentioned)
+If all has been filled in then you simply run the pinemhi_rom_monitor.exe and then you can start visual pinball or your frontend
 You can even let the frontend start up this process everytime you start the frontend or even when you start the computer (for example in your cabinet). This way you are always insured to send the scores out you've made.
 
 *** Badges can only be seen when someone is playing a game (key only works when a game is being played) ***

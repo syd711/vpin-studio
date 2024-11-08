@@ -1,24 +1,36 @@
 package de.mephisto.vpin.server.frontend;
 
 import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
+import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
+import de.mephisto.vpin.restclient.games.GameStatus;
+import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
+import de.mephisto.vpin.restclient.preferences.UISettings;
+import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
+import de.mephisto.vpin.server.games.GameStatusService;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
+import de.mephisto.vpin.server.vps.VpsService;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -27,7 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendService implements InitializingBean, PreferenceChangedListener {
+public class FrontendService implements InitializingBean, PreferenceChangedListener, ApplicationContextAware {
 
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
@@ -38,10 +50,17 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   private PreferencesService preferencesService;
 
   @Autowired
+  private VPXService vpxService;
+
+  @Autowired
+  private VpsService vpsService;
+
+  @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
   private List<FrontendPlayerDisplay> frontendPlayerDisplays;
+  private ApplicationContext applicationContext;
 
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
@@ -206,10 +225,12 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     getFrontendConnector().saveSettings(data);
   }
 
-  public void setPupPackEnabled(Game game, boolean enable) {
+  public boolean setPupPackEnabled(Game game, boolean enable) {
     if (game != null) {
       getFrontendConnector().setPupPackEnabled(game, enable);
+      return enable;
     }
+    return false;
   }
 
   public boolean isPupPackDisabled(Game game) {
@@ -219,8 +240,173 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return false;
   }
 
-  public int importGame(@NonNull File file, int emuId) {
+  @NonNull
+  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
+    String vpsTableId = game.getExtTableId();
+    String vpsTableVersionId = game.getExtTableVersionId();
+    return autoFill(game, tableDetails, vpsTableId, vpsTableVersionId, simulate);
+  }
 
+  @NonNull
+  public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate) {
+    TableInfo tableInfo = vpxService.getTableInfo(game);
+
+    AutoFillSettings autoFillSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class).getAutoFillSettings();
+    boolean overwrite = autoFillSettings.isOverwrite();
+
+    if (!StringUtils.isEmpty(vpsTableId)) {
+      VpsTable vpsTable = vpsService.getTableById(vpsTableId);
+      if (vpsTable != null) {
+
+        if (autoFillSettings.isGameYear()) {
+          if (vpsTable.getYear() > 0 && (tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite)) {
+            tableDetails.setGameYear(vpsTable.getYear());
+          }
+        }
+
+        if (autoFillSettings.isNumberOfPlayers()) {
+          if (vpsTable.getPlayers() == 0 || overwrite) {
+            tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
+          }
+        }
+
+        if (autoFillSettings.isIpdbNumber()) {
+          if (!StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
+            if (StringUtils.isEmpty(tableDetails.getUrl()) || overwrite) {
+              tableDetails.setUrl(vpsTable.getIpdbUrl());
+            }
+
+            String url = vpsTable.getIpdbUrl();
+            if (url.contains("id=")) {
+              if (StringUtils.isEmpty(tableDetails.getIPDBNum()) || overwrite) {
+                tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
+              }
+            }
+          }
+        }
+
+        if (autoFillSettings.isGameTheme()) {
+          if (vpsTable.getTheme() != null && !vpsTable.getTheme().isEmpty() && (StringUtils.isEmpty(tableDetails.getGameTheme()) || overwrite)) {
+            tableDetails.setGameTheme(String.join(",", vpsTable.getTheme()));
+          }
+        }
+
+
+        if (autoFillSettings.isDesignBy()) {
+          if (vpsTable.getDesigners() != null && !vpsTable.getDesigners().isEmpty() && (StringUtils.isEmpty(tableDetails.getDesignedBy()) || overwrite)) {
+            tableDetails.setDesignedBy(String.join(",", vpsTable.getDesigners()));
+          }
+        }
+
+        if (autoFillSettings.isManufacturer()) {
+          if (!StringUtils.isEmpty(vpsTable.getManufacturer()) && (StringUtils.isEmpty(tableDetails.getManufacturer()) || overwrite)) {
+            tableDetails.setManufacturer(vpsTable.getManufacturer());
+          }
+        }
+
+        if (autoFillSettings.isGameType()) {
+          if (!StringUtils.isEmpty(vpsTable.getType())) {
+            try {
+              String gameType = vpsTable.getType();
+              if (!StringUtils.isEmpty(gameType) && (StringUtils.isEmpty(tableDetails.getGameType()) || overwrite)) {
+                tableDetails.setGameType(gameType);
+              }
+            }
+            catch (Exception e) {
+              //ignore
+            }
+          }
+        }
+
+        if (!StringUtils.isEmpty(vpsTableVersionId)) {
+          VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
+          if (tableVersion != null) {
+            if (autoFillSettings.isGameVersion()) {
+              if (!StringUtils.isEmpty(tableVersion.getVersion()) && (StringUtils.isEmpty(tableDetails.getGameVersion()) || overwrite)) {
+                tableDetails.setGameVersion(tableVersion.getVersion());
+              }
+            }
+
+            if (autoFillSettings.isAuthor()) {
+              List<String> authors = tableVersion.getAuthors();
+              if (authors != null && !authors.isEmpty() && (StringUtils.isEmpty(tableDetails.getAuthor()) || overwrite)) {
+                tableDetails.setAuthor(String.join(", ", authors));
+              }
+            }
+
+            if (autoFillSettings.isDetails()) {
+              StringBuilder details = new StringBuilder();
+              if (!StringUtils.isEmpty(tableVersion.getComment())) {
+                details.append("VPS Comment:\n");
+                details.append(tableVersion.getComment());
+              }
+              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableDescription())) {
+                String tableDescription = tableInfo.getTableDescription();
+                details.append("\n\n");
+                details.append(tableDescription);
+              }
+
+              if (StringUtils.isEmpty(tableDetails.getgDetails()) || overwrite) {
+                tableDetails.setgDetails(details.toString());
+              }
+
+            }
+
+            if (autoFillSettings.isNotes()) {
+              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableRules()) && (StringUtils.isEmpty(tableDetails.getgNotes()) || overwrite)) {
+                tableDetails.setgNotes(tableInfo.getTableRules());
+              }
+            }
+
+            if (autoFillSettings.isTags()) {
+              if (tableVersion.getFeatures() != null && !tableVersion.getFeatures().isEmpty()) {
+                String tags = String.join(", ", tableVersion.getFeatures());
+                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
+                if (!tableDetailTags.contains(tags)) {
+                  tableDetailTags = tableDetailTags + ", " + tags;
+                }
+
+                if (StringUtils.isEmpty(tableDetails.getTags()) || overwrite) {
+                  tableDetails.setTags(tableDetailTags);
+                }
+              }
+            }
+
+            LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
+          }
+        }
+        else {
+          fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
+        }
+      }
+    }
+    else {
+      fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
+    }
+
+    if (simulate) {
+      LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+    else {
+      saveTableDetails(game.getId(), tableDetails);
+      LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
+    }
+
+    return tableDetails;
+  }
+
+  public int importGame(File file, boolean importToFrontend, int playListId, int emuId) {
+    if (importToFrontend) {
+      int gameId = importGame(file, emuId);
+      if (gameId >= 0 && playListId >= 0) {
+        addToPlaylist(playListId, gameId, 0);
+      }
+      return gameId;
+    }
+    return -1;
+  }
+
+  public int importGame(@NonNull File file, int emuId) {
     String baseName = FilenameUtils.getBaseName(file.getName());
     String formattedBaseName = baseName;//.replaceAll(" ", "-");
     Game gameByName = getGameByName(emuId, formattedBaseName);
@@ -229,6 +415,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
       formattedBaseName = FilenameUtils.getBaseName(file.getName()) + count;
       LOG.info("Found existing gamename that exists while importing \"" + file.getName() + "\", trying again with \"" + formattedBaseName + "\"");
       gameByName = getGameByName(emuId, formattedBaseName);
+      count++;
     }
 
     GameEmulator gameEmulator = emulators.get(emuId);
@@ -431,33 +618,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     }
   }
 
-  public void restartFrontend() {
-    getFrontendConnector().restartFrontend();
-  }
-
   public boolean isFrontendRunning() {
     return getFrontendConnector().isFrontendRunning();
   }
 
   public boolean killFrontend() {
-    return getFrontendConnector().killFrontend();
+    getFrontendConnector().killFrontend();
+
+    FrontendStatusService frontendStatusService = applicationContext.getBean(FrontendStatusService.class);
+    frontendStatusService.notifyFrontendExit();
+    return true;
   }
 
   //--------------------------
-
-  @Override
-  public void afterPropertiesSet() {
-    try {
-      getFrontendConnector().initializeConnector();
-      this.loadEmulators();
-
-      getFrontendConnector().getFrontendPlayerDisplays();
-      preferencesService.addChangeListener(this);
-    }
-    catch (Exception e) {
-      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
-    }
-  }
 
   public File getDefaultMediaFolder(@NonNull VPinScreen screen) {
     GameEmulator emu = getDefaultGameEmulator();
@@ -500,6 +673,19 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return media.getMediaItems(screen);
   }
 
+  public boolean launchWithFrontend(Game game) {
+    if (game != null) {
+      systemService.setMaintenanceMode(false);
+      getFrontendConnector().restartFrontend(true);
+      return getFrontendConnector().launchGame(game, false);
+    }
+    return false;
+  }
+
+  public void restartFrontend() {
+    getFrontendConnector().restartFrontend();
+  }
+
   @NonNull
   public FrontendMedia getGameMedia(int gameId) {
     Game game = getGame(gameId);
@@ -537,5 +723,44 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     if (propertyName.equals(PreferenceNames.PINBALLX_SETTINGS)) {
       getFrontendConnector().initializeConnector();
     }
+  }
+
+  /**
+   * Some fallback: we use the VPX script metadata if the VPS version data has not been applied.
+   */
+  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, @NonNull AutoFillSettings autoFillSettings) {
+    boolean overwrite = autoFillSettings.isOverwrite();
+    if (tableInfo != null) {
+      if (autoFillSettings.isGameVersion()) {
+        if (!StringUtils.isEmpty(tableInfo.getTableVersion()) && (StringUtils.isEmpty(tableDetails.getGameVersion()) || overwrite)) {
+          tableDetails.setGameVersion(tableInfo.getTableVersion());
+        }
+      }
+
+      if (autoFillSettings.isAuthor()) {
+        if (!StringUtils.isEmpty(tableInfo.getAuthorName()) && (StringUtils.isEmpty(tableDetails.getAuthor()) || overwrite)) {
+          tableDetails.setAuthor(tableInfo.getAuthorName());
+        }
+      }
+    }
+  }
+
+  @Override
+  public void afterPropertiesSet() {
+    try {
+      getFrontendConnector().initializeConnector();
+      this.loadEmulators();
+
+      getFrontendConnector().getFrontendPlayerDisplays();
+      preferencesService.addChangeListener(this);
+    }
+    catch (Exception e) {
+      LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
+    }
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }

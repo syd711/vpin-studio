@@ -83,6 +83,17 @@
                               <FontIcon iconColor="#66ff66" iconLiteral="mdi2a-asterisk" iconSize="18" visible="false" />
                            </graphic>
                         </MenuButton>
+                        <Button fx:id="monitorBtn" layoutX="533.0" layoutY="12.0" mnemonicParsing="false" onAction="#toggleMonitor" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <tooltip>
+                              <Tooltip text="Open Cab-Monitor" />
+                           </tooltip>
+                           <graphic>
+                              <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" iconSize="18" />
+                           </graphic>
+                        </Button>
                         <Button fx:id="frontendMenuBtn" mnemonicParsing="false" onAction="#onFrontendMenu" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

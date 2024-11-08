@@ -1,31 +1,17 @@
 package de.mephisto.vpin.server.frontend;
 
-import de.mephisto.vpin.connectors.vps.model.VpsTable;
-import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.restclient.JsonSettings;
-import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.frontend.*;
-import de.mephisto.vpin.restclient.games.GameList;
-import de.mephisto.vpin.restclient.games.GameListItem;
-import de.mephisto.vpin.restclient.games.GameVpsMatch;
+import de.mephisto.vpin.restclient.frontend.FrontendControl;
+import de.mephisto.vpin.restclient.frontend.FrontendControls;
+import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.highscores.logging.SLOG;
-import de.mephisto.vpin.restclient.preferences.AutoFillSettings;
-import de.mephisto.vpin.restclient.preferences.UISettings;
-import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.games.*;
-import de.mephisto.vpin.server.highscores.HighscoreService;
-import de.mephisto.vpin.server.highscores.cards.CardService;
-import de.mephisto.vpin.server.listeners.EventOrigin;
-import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.vps.VpsService;
-import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -33,9 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class FrontendStatusService implements InitializingBean {
@@ -45,28 +31,16 @@ public class FrontendStatusService implements InitializingBean {
   private final List<FrontendStatusChangeListener> frontendStatusChangeListeners = new ArrayList<>();
 
   @Autowired
-  private SystemService systemService;
-
-  @Autowired
-  private FrontendService frontendService;
-
-  @Autowired
   private GameService gameService;
 
   @Autowired
-  private VPXService vpxService;
+  private SystemService systemService;
 
   @Autowired
-  private CardService cardService;
+  private GameStatusService gameStatusService;
 
   @Autowired
-  private HighscoreService highscoreService;
-
-  @Autowired
-  private PreferencesService preferencesService;
-
-  @Autowired
-  private VpsService vpsService;
+  private FrontendService frontendService;
 
   private boolean eventsEnabled = true;
 
@@ -85,51 +59,6 @@ public class FrontendStatusService implements InitializingBean {
 
   public void addFrontendStatusChangeListener(FrontendStatusChangeListener listener) {
     this.frontendStatusChangeListeners.add(listener);
-  }
-
-  public GameList getImportTables(int emuId) {
-    GameEmulator emulator = frontendService.getGameEmulator(emuId);
-    if (emulator == null) {
-      LOG.warn("No emulator found for id " + emuId);
-      return new GameList();
-    }
-
-    GameList list = new GameList();
-    File vpxTablesFolder = emulator.getTablesFolder();
-
-    List<File> files = new ArrayList<>();
-    if (emulator.isVpxEmulator()) {
-      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
-    }
-    else if (emulator.isFpEmulator()) {
-      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"fpt"}, true));
-    }
-
-    List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
-    List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
-    for (File file : files) {
-      String gameFileName = emulator.getGameFileName(file);
-      if (!emulatorGameFileNames.contains(gameFileName)) {
-        GameListItem item = new GameListItem();
-        item.setName(file.getName());
-        item.setFileName(file.getAbsolutePath());
-        item.setEmuId(emulator.getId());
-        list.getItems().add(item);
-      }
-    }
-    Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
-    return list;
-  }
-
-  public int importVPXGame(File file, boolean importToFrontend, int playListId, int emuId) {
-    if (importToFrontend) {
-      int gameId = frontendService.importGame(file, emuId);
-      if (gameId >= 0 && playListId >= 0) {
-        frontendService.addToPlaylist(playListId, gameId, 0);
-      }
-      return gameId;
-    }
-    return -1;
   }
 
   public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
@@ -175,6 +104,11 @@ public class FrontendStatusService implements InitializingBean {
       return;
     }
 
+    HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+    if (highscoreEventLog != null) {
+      gameService.saveEventLog(highscoreEventLog);
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendLaunched();
     }
@@ -197,6 +131,17 @@ public class FrontendStatusService implements InitializingBean {
       return;
     }
 
+    //reset game status
+    GameStatus status = gameStatusService.getStatus();
+    if (status != null && status.isActive()) {
+      gameStatusService.frontendExited();
+    }
+
+    HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
+    if (highscoreEventLog != null) {
+      gameService.saveEventLog(highscoreEventLog);
+    }
+
     for (FrontendStatusChangeListener listener : frontendStatusChangeListeners) {
       listener.frontendExited();
     }
@@ -209,16 +154,16 @@ public class FrontendStatusService implements InitializingBean {
     }
 
     LOG.info("Received game launch event for " + table.trim());
-    Game game = resolveGame(table);
+    Game game = gameService.getGameByTableParameter(table);
     if (game == null) {
       LOG.warn("No game found for name '" + table);
       return false;
     }
 
-//    if (gameStatusService.getStatus().getGameId() == game.getId()) {
-//      LOG.info("Skipped launch event, since the game has been marked as active already.");
-//      return false;
-//    }
+    if (gameStatusService.getStatus().getGameId() == game.getId()) {
+      LOG.info("Skipped launch event, since the game has been marked as active already.");
+      return false;
+    }
 
     new Thread(() -> {
       Thread.currentThread().setName("Game Launch Thread");
@@ -234,21 +179,29 @@ public class FrontendStatusService implements InitializingBean {
     }
 
     LOG.info("Received game exit event for " + table.trim());
-    Game game = resolveGame(table);
-    new Thread(() -> {
-      Thread.currentThread().setName("Game Exit Thread");
-      if (game == null) {
-        LOG.warn("No game found for name '" + table);
-        return;
-      }
+    Game game = gameService.getGameByTableParameter(table);
+    if (game == null) {
+      LOG.warn("No game found for name '" + table);
+      return false;
+    }
 
+    return onGameExit(game);
+  }
+
+  public boolean onGameExit(int gameId) {
+    Game game = gameService.getGame(gameId);
+    return onGameExit(game);
+  }
+
+  private boolean onGameExit(@NonNull Game game) {
+    new Thread(() -> {
       Thread.currentThread().setName("Game Exit Thread [" + game.getGameDisplayName() + "]");
       SLOG.initLog(game.getId());
-//      if (!gameStatusService.getStatus().isActive()) {
-//        LOG.info("Skipped exit event, since the no game is currently running.");
-//        SLOG.info("Skipped event processing, since the no game is currently running.");
-//        return;
-//      }
+      if (!gameStatusService.getStatus().isActive()) {
+        LOG.info("Skipped exit event, since the no game is currently running.");
+        SLOG.info("Skipped event processing, since the no game is currently running.");
+        return;
+      }
 
       notifyTableStatusChange(game, false, TableStatusChangedOrigin.ORIGIN_POPPER);
       HighscoreEventLog highscoreEventLog = SLOG.finalizeEventLog();
@@ -257,322 +210,6 @@ public class FrontendStatusService implements InitializingBean {
       }
     }).start();
     return game != null;
-  }
-
-
-  /**
-   * moved from VpsService to break circular dependency.
-   */
-  public GameVpsMatch autoMatch(Game game, boolean overwrite, boolean simulate) {
-    GameVpsMatch vpsMatch = vpsService.autoMatch(game, overwrite);
-    if (vpsMatch != null && !simulate) {
-      vpsLink(game.getId(), vpsMatch.getExtTableId(), vpsMatch.getExtTableVersionId());
-      if (StringUtils.isNotEmpty(vpsMatch.getVersion())) {
-        fixGameVersion(game.getId(), vpsMatch.getVersion(), false);
-      }
-    }
-    return vpsMatch;
-  }
-
-  //TODO why here?
-  @NonNull
-  public TableDetails autoFill(Game game, TableDetails tableDetails, boolean simulate) {
-    String vpsTableId = game.getExtTableId();
-    String vpsTableVersionId = game.getExtTableVersionId();
-    return autoFill(game, tableDetails, vpsTableId, vpsTableVersionId, simulate);
-  }
-
-  //TODO why here?
-  @NonNull
-  public TableDetails autoFill(Game game, TableDetails tableDetails, String vpsTableId, String vpsTableVersionId, boolean simulate) {
-    TableInfo tableInfo = vpxService.getTableInfo(game);
-
-    AutoFillSettings autoFillSettings = preferencesService.getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class).getAutoFillSettings();
-    boolean overwrite = autoFillSettings.isOverwrite();
-
-    if (!StringUtils.isEmpty(vpsTableId)) {
-      VpsTable vpsTable = vpsService.getTableById(vpsTableId);
-      if (vpsTable != null) {
-
-        if (autoFillSettings.isGameYear()) {
-          if (vpsTable.getYear() > 0 && (tableDetails.getGameYear() == null || tableDetails.getGameYear() == 0 || overwrite)) {
-            tableDetails.setGameYear(vpsTable.getYear());
-          }
-        }
-
-        if (autoFillSettings.isNumberOfPlayers()) {
-          if (vpsTable.getPlayers() == 0 || overwrite) {
-            tableDetails.setNumberOfPlayers(vpsTable.getPlayers());
-          }
-        }
-
-        if (autoFillSettings.isIpdbNumber()) {
-          if (!StringUtils.isEmpty(vpsTable.getIpdbUrl())) {
-            if (StringUtils.isEmpty(tableDetails.getUrl()) || overwrite) {
-              tableDetails.setUrl(vpsTable.getIpdbUrl());
-            }
-
-            String url = vpsTable.getIpdbUrl();
-            if (url.contains("id=")) {
-              if (StringUtils.isEmpty(tableDetails.getIPDBNum()) || overwrite) {
-                tableDetails.setIPDBNum(url.substring(url.indexOf("id=") + 3));
-              }
-            }
-          }
-        }
-
-        if (autoFillSettings.isGameTheme()) {
-          if (vpsTable.getTheme() != null && !vpsTable.getTheme().isEmpty() && (StringUtils.isEmpty(tableDetails.getGameTheme()) || overwrite)) {
-            tableDetails.setGameTheme(String.join(",", vpsTable.getTheme()));
-          }
-        }
-
-
-        if (autoFillSettings.isDesignBy()) {
-          if (vpsTable.getDesigners() != null && !vpsTable.getDesigners().isEmpty() && (StringUtils.isEmpty(tableDetails.getDesignedBy()) || overwrite)) {
-            tableDetails.setDesignedBy(String.join(",", vpsTable.getDesigners()));
-          }
-        }
-
-        if (autoFillSettings.isManufacturer()) {
-          if (!StringUtils.isEmpty(vpsTable.getManufacturer()) && (StringUtils.isEmpty(tableDetails.getManufacturer()) || overwrite)) {
-            tableDetails.setManufacturer(vpsTable.getManufacturer());
-          }
-        }
-
-        if (autoFillSettings.isGameType()) {
-          if (!StringUtils.isEmpty(vpsTable.getType())) {
-            try {
-              String gameType = vpsTable.getType();
-              if (!StringUtils.isEmpty(gameType) && (StringUtils.isEmpty(tableDetails.getGameType()) || overwrite)) {
-                tableDetails.setGameType(gameType);
-              }
-            }
-            catch (Exception e) {
-              //ignore
-            }
-          }
-        }
-
-        if (!StringUtils.isEmpty(vpsTableVersionId)) {
-          VpsTableVersion tableVersion = vpsTable.getTableVersionById(vpsTableVersionId);
-          if (tableVersion != null) {
-            if (autoFillSettings.isGameVersion()) {
-              if (!StringUtils.isEmpty(tableVersion.getVersion()) && (StringUtils.isEmpty(tableDetails.getGameVersion()) || overwrite)) {
-                tableDetails.setGameVersion(tableVersion.getVersion());
-              }
-            }
-
-            if (autoFillSettings.isAuthor()) {
-              List<String> authors = tableVersion.getAuthors();
-              if (authors != null && !authors.isEmpty() && (StringUtils.isEmpty(tableDetails.getAuthor()) || overwrite)) {
-                tableDetails.setAuthor(String.join(", ", authors));
-              }
-            }
-
-            if (autoFillSettings.isDetails()) {
-              StringBuilder details = new StringBuilder();
-              if (!StringUtils.isEmpty(tableVersion.getComment())) {
-                details.append("VPS Comment:\n");
-                details.append(tableVersion.getComment());
-              }
-              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableDescription())) {
-                String tableDescription = tableInfo.getTableDescription();
-                details.append("\n\n");
-                details.append(tableDescription);
-              }
-
-              if (StringUtils.isEmpty(tableDetails.getgDetails()) || overwrite) {
-                tableDetails.setgDetails(details.toString());
-              }
-
-            }
-
-            if (autoFillSettings.isNotes()) {
-              if (tableInfo != null && !StringUtils.isEmpty(tableInfo.getTableRules()) && (StringUtils.isEmpty(tableDetails.getgNotes()) || overwrite)) {
-                tableDetails.setgNotes(tableInfo.getTableRules());
-              }
-            }
-
-            if (autoFillSettings.isTags()) {
-              if (tableVersion.getFeatures() != null && !tableVersion.getFeatures().isEmpty()) {
-                String tags = String.join(", ", tableVersion.getFeatures());
-                String tableDetailTags = tableDetails.getTags() != null ? tableDetails.getTags() : "";
-                if (!tableDetailTags.contains(tags)) {
-                  tableDetailTags = tableDetailTags + ", " + tags;
-                }
-
-                if (StringUtils.isEmpty(tableDetails.getTags()) || overwrite) {
-                  tableDetails.setTags(tableDetailTags);
-                }
-              }
-            }
-
-            LOG.info("Auto-applied VPS table version \"" + tableVersion + "\" (" + tableVersion.getId() + ")");
-          }
-        }
-        else {
-          fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
-        }
-      }
-    }
-    else {
-      fillTableInfoWithVpxData(tableInfo, game, tableDetails, autoFillSettings);
-    }
-
-    if (simulate) {
-      LOG.info("Finished simulated auto-fill for \"" + game.getGameDisplayName() + "\"");
-    }
-    else {
-      frontendService.saveTableDetails(game.getId(), tableDetails);
-      LOG.info("Finished auto-fill for \"" + game.getGameDisplayName() + "\"");
-    }
-
-    return tableDetails;
-  }
-
-  //TODO why here?
-  public void vpsLink(int gameId, String extTableId, String extTableVersionId) {
-    // keep track of the match in the internal database
-    if (gameService.vpsLink(gameId, extTableId, extTableVersionId)) {
-      // update the table in the frontend
-      frontendService.vpsLink(gameId, extTableId, extTableVersionId);
-    }
-  }
-
-  //TODO why here?
-  public void fixGameVersion(int gameId, String version, boolean overwrite) {
-    // keep track of the version  in the internal database
-    if (gameService.fixVersion(gameId, version, overwrite)) {
-      // update the table in the frontend
-      TableDetails tableDetails = getTableDetails(gameId);
-      if (tableDetails != null) {
-        tableDetails.setGameVersion(version);
-        saveTableDetails(tableDetails, gameId, false);
-      }
-    }
-  }
-
-  //TODO why here?
-
-  /**
-   * Some fallback: we use the VPX script metadata if the VPS version data has not been applied.
-   */
-  private void fillTableInfoWithVpxData(TableInfo tableInfo, @NonNull Game game, @NonNull TableDetails tableDetails, @NonNull AutoFillSettings autoFillSettings) {
-    boolean overwrite = autoFillSettings.isOverwrite();
-    if (tableInfo != null) {
-      if (autoFillSettings.isGameVersion()) {
-        if (!StringUtils.isEmpty(tableInfo.getTableVersion()) && (StringUtils.isEmpty(tableDetails.getGameVersion()) || overwrite)) {
-          tableDetails.setGameVersion(tableInfo.getTableVersion());
-        }
-      }
-
-      if (autoFillSettings.isAuthor()) {
-        if (!StringUtils.isEmpty(tableInfo.getAuthorName()) && (StringUtils.isEmpty(tableDetails.getAuthor()) || overwrite)) {
-          tableDetails.setAuthor(tableInfo.getAuthorName());
-        }
-      }
-    }
-  }
-
-  public TableDetails getTableDetails(int gameId) {
-    return frontendService.getTableDetails(gameId);
-  }
-
-  public void updateTableFileUpdated(int gameId) {
-    frontendService.updateTableFileUpdated(gameId);
-  }
-
-  //TODO why here?
-  public TableDetails saveTableDetails(TableDetails updatedTableDetails, int gameId, boolean renamingChecks) {
-    //fetch existing data first
-    TableDetails oldDetails = getTableDetails(gameId);
-    Game game = frontendService.getGame(gameId);
-
-    //fix input and save input
-    String gameFilename = updatedTableDetails.getGameFileName();
-    if (game.isVpxGame() && !gameFilename.endsWith(".vpx")) {
-      gameFilename = gameFilename + ".vpx";
-      updatedTableDetails.setGameFileName(gameFilename);
-    }
-
-    gameService.fixVersion(gameId, updatedTableDetails.getGameVersion(), true);
-    frontendService.saveTableDetails(gameId, updatedTableDetails);
-
-    //for upload and replace, we do not need any renaming
-    if (game.isVpxGame()) {
-      if (!renamingChecks) {
-        runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
-        return updatedTableDetails;
-      }
-
-      //rename game filename which results in renaming VPX related files
-      if (!updatedTableDetails.getGameFileName().equals(oldDetails.getGameFileName())) {
-        String name = FilenameUtils.getBaseName(updatedTableDetails.getGameFileName());
-        String existingName = FilenameUtils.getBaseName(game.getGameFile().getName());
-        if (!existingName.equalsIgnoreCase(name)) {
-          if (game.getGameFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getGameFile(), name);
-          }
-
-          if (game.getDirectB2SFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getDirectB2SFile(), name);
-          }
-
-          if (game.getPOVFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getPOVFile(), name);
-          }
-
-          if (game.getResFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getResFile(), name);
-          }
-
-          if (game.getIniFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getIniFile(), name);
-          }
-
-          if (game.getVBSFile().exists()) {
-            de.mephisto.vpin.restclient.util.FileUtils.renameToBaseName(game.getVBSFile(), name);
-          }
-          LOG.info("Finished game file renaming from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\"");
-        }
-        else {
-          //revert to old value
-          updatedTableDetails.setGameFileName(oldDetails.getGameFileName());
-          frontendService.saveTableDetails(gameId, updatedTableDetails);
-          LOG.info("Renaming game file from \"" + oldDetails.getGameFileName() + "\" to \"" + updatedTableDetails.getGameFileName() + "\" failed, VPX renaming failed.");
-        }
-      }
-    }
-
-
-    //rename the game name, which results in renaming all assets
-    if (!updatedTableDetails.getGameName().equals(oldDetails.getGameName())) {
-      //TODO this smells!
-      renameGameMedia(game, oldDetails.getGameName(), updatedTableDetails.getGameName());
-    }
-
-    if (game.isVpxGame()) {
-      runHighscoreRefreshCheck(game, oldDetails, updatedTableDetails);
-    }
-
-    return updatedTableDetails;
-  }
-
-  public void runHighscoreRefreshCheck(Game game, TableDetails oldDetails, TableDetails newDetails) {
-    boolean romChanged = !StringUtils.equalsIgnoreCase(oldDetails.getRomName(), newDetails.getRomName());
-    boolean hsChanged = !StringUtils.equalsIgnoreCase(oldDetails.getHsFilename(), newDetails.getHsFilename());
-
-    if (romChanged || hsChanged) {
-      LOG.info("Game highscore data fields have been changed, triggering score check.");
-      highscoreService.scanScore(game, EventOrigin.USER_INITIATED);
-      cardService.generateCard(game);
-    }
-  }
-
-  public boolean restart() {
-    frontendService.restartFrontend();
-    return true;
   }
 
   public void augmentWheel(Game game, String badge) {
@@ -597,61 +234,9 @@ public class FrontendStatusService implements InitializingBean {
     }
   }
 
-  public void cloneGameMedia(Game original, Game clone) {
-    VPinScreen[] values = VPinScreen.values();
-    for (VPinScreen originalScreenValue : values) {
-      try {
-        List<FrontendMediaItem> frontendMediaItems = frontendService.getGameMedia(original).getMediaItems(originalScreenValue);
-        for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
-          if (frontendMediaItem.getFile().exists()) {
-            File mediaFile = frontendMediaItem.getFile();
-            String suffix = FilenameUtils.getExtension(mediaFile.getName());
-            File cloneTarget = new File(frontendService.getMediaFolder(clone, originalScreenValue, suffix), clone.getGameName() + "." + suffix);
-            if (mediaFile.getName().equals(cloneTarget.getName())) {
-              LOG.warn("Source name and target name of media asset " + mediaFile.getAbsolutePath() + " are identical, skipping cloning.");
-              return;
-            }
-
-            if (cloneTarget.exists() && !cloneTarget.delete()) {
-              LOG.error("Failed to clone media asset " + cloneTarget.getAbsolutePath() + ": deletion of existing asset failed.");
-              return;
-            }
-            FileUtils.copyFile(mediaFile, cloneTarget);
-            LOG.info("Cloned media asset: " + mediaFile.getAbsolutePath() + " to " + cloneTarget.getAbsolutePath());
-          }
-        }
-      }
-      catch (IOException e) {
-        LOG.info("Failed to clone media asset: " + e.getMessage(), e);
-      }
-    }
-  }
-
-  //TODO why here?
-  public void renameGameMedia(Game game, String oldBaseName, String newBaseName) {
-    VPinScreen[] values = VPinScreen.values();
-    int assetRenameCounter = 0;
-    for (VPinScreen screen : values) {
-      List<FrontendMediaItem> frontendMediaItems = frontendService.getGameMedia(game).getMediaItems(screen);
-      for (FrontendMediaItem frontendMediaItem : frontendMediaItems) {
-        File gameMediaFile = frontendMediaItem.getFile();
-        if (gameMediaFile.exists()) {
-          if (screen.equals(VPinScreen.Wheel)) {
-            WheelAugmenter augmenter = new WheelAugmenter(gameMediaFile);
-            augmenter.deAugment();
-          }
-
-          if (de.mephisto.vpin.restclient.util.FileUtils.assetRename(gameMediaFile, oldBaseName, newBaseName)) {
-            assetRenameCounter++;
-            LOG.info("[" + screen + "] Renamed media asset from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\"");
-          }
-          else {
-            LOG.warn("[" + screen + "] Renaming media asset from \"" + gameMediaFile.getName() + "\" to name \"" + newBaseName + "\" failed.");
-          }
-        }
-      }
-    }
-    LOG.info("Finished asset renaming for \"" + oldBaseName + "\" to \"" + newBaseName + "\", renamed " + assetRenameCounter + " assets.");
+  public boolean restart() {
+    frontendService.restartFrontend();
+    return true;
   }
 
   public JsonSettings getSettings() {
@@ -661,11 +246,6 @@ public class FrontendStatusService implements InitializingBean {
   public boolean saveSettings(Map<String, Object> options) {
     frontendService.saveSettings(options);
     return true;
-  }
-
-  @NonNull
-  public List<GameEmulator> getGameEmulators() {
-    return frontendService.getGameEmulators();
   }
 
   @NonNull
@@ -682,26 +262,6 @@ public class FrontendStatusService implements InitializingBean {
     return frontendService.getVersion();
   }
 
-  private Game resolveGame(String table) {
-    File tableFile = new File(table.trim());
-
-    // derive the emulator from the table folder
-    int emuId = -1;
-    for (GameEmulator emu : getGameEmulators()) {
-      if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
-        emuId = emu.getId();
-        break;
-      }
-    }
-
-    Game game = gameService.getGameByFilename(emuId, tableFile.getName());
-    if (game == null && tableFile.getParentFile() != null) {
-      game = gameService.getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
-    }
-    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
-    return game;
-  }
-
   public boolean isEventsEnabled() {
     return eventsEnabled;
   }
@@ -714,5 +274,7 @@ public class FrontendStatusService implements InitializingBean {
   public void afterPropertiesSet() throws Exception {
     Thread shutdownHook = new Thread(this::notifyFrontendExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+    gameStatusService.init(this);
   }
 }

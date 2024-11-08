@@ -7,7 +7,6 @@ import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.UISettings;
-
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -160,6 +159,10 @@ public class FrontendServiceClient extends VPinStudioClientService {
 
   public boolean isFrontendRunning() {
     return getRestClient().get(API + API_SEGMENT_FRONTEND + "/running", Boolean.class);
+  }
+
+  public boolean launchGame(int gameId) {
+    return getRestClient().get(API + API_SEGMENT_FRONTEND + "/launch/" + gameId, Boolean.class);
   }
 
   public boolean terminateFrontend() {

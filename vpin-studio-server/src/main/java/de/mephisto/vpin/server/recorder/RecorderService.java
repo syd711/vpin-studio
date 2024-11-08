@@ -8,12 +8,14 @@ import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +50,10 @@ public class RecorderService {
   @Autowired
   private FrontendStatusService frontendStatusService;
 
-  private JobDescriptor jobDescriptor;
+  @Autowired
+  private SystemService systemService;
 
+  private JobDescriptor jobDescriptor;
 
   public JobDescriptor startRecording(RecordingData recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
@@ -92,6 +96,13 @@ public class RecorderService {
     if (recordingScreenOpt.isPresent()) {
       RecordingScreen recordingScreen = recordingScreenOpt.get();
       screenPreviewService.capture(out, recordingScreen);
+    }
+  }
+
+  public void refreshPreview(OutputStream out, int monitorId) {
+    Optional<ScreenInfo> monitor = systemService.getScreenInfos().stream().filter(s -> s.getId() == monitorId).findFirst();
+    if (monitor.isPresent()) {
+      screenPreviewService.capture(out, monitor.get());
     }
   }
 

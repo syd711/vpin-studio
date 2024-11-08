@@ -6,7 +6,7 @@ import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.client.VPinStudioClient;
 import de.mephisto.vpin.restclient.client.VPinStudioClientService;
 import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreMetadataRepresentation;
@@ -75,11 +75,11 @@ public class GamesServiceClient extends VPinStudioClientService {
     }
   }
 
-  public UploadDescriptor uploadTable(File file, TableUploadType tableUploadDescriptor, int gameId, int emuId, FileUploadProgressListener listener) {
+  public UploadDescriptor uploadTable(File file, UploadType uploadType, int gameId, int emuId, FileUploadProgressListener listener) {
     try {
       String url = getRestClient().getBaseUrl() + API + "games/upload";
       LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
-      map.add("mode", tableUploadDescriptor.name());
+      map.add("mode", uploadType.name());
       map.add("gameId", gameId);
       map.add("emuId", emuId);
       ResponseEntity<UploadDescriptor> exchange = createUploadTemplate().exchange(url, HttpMethod.POST, createUpload(map, file, -1, null, AssetType.TABLE, listener), UploadDescriptor.class);

@@ -5,7 +5,43 @@ public class ScreenInfo {
   private boolean primary;
   private int width;
   private int height;
+  private int originalWidth;
+  private int originalHeight;
   private int id;
+  private double x;
+  private double y;
+
+  public int getOriginalWidth() {
+    return originalWidth;
+  }
+
+  public void setOriginalWidth(int originalWidth) {
+    this.originalWidth = originalWidth;
+  }
+
+  public int getOriginalHeight() {
+    return originalHeight;
+  }
+
+  public void setOriginalHeight(int originalHeight) {
+    this.originalHeight = originalHeight;
+  }
+
+  public double getX() {
+    return x;
+  }
+
+  public void setX(double x) {
+    this.x = x;
+  }
+
+  public double getY() {
+    return y;
+  }
+
+  public void setY(double y) {
+    this.y = y;
+  }
 
   public int getId() {
     return id;
