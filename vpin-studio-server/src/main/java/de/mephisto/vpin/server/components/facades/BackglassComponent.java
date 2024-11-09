@@ -44,11 +44,7 @@ public class BackglassComponent implements ComponentFacade {
   @Nullable
   @Override
   public File getTargetFolder(@NonNull GameEmulator gameEmulator) {
-    File folder = backglassService.getBackglassServerFolder();
-    if (folder == null) {
-      folder = new File("c:/vPinball/B2SServer");
-    }
-    return folder;
+    return backglassService.getBackglassServerFolder();
   }
 
   @Nullable

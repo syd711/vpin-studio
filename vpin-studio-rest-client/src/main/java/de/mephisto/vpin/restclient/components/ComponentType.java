@@ -4,7 +4,9 @@ public enum ComponentType {
   //do not change order of declaration, ordinal is used in DB
   vpinmame(1), vpinball(0), b2sbackglass(2), freezy(3), flexdmd(4), serum(5), doflinx(6);
 
-  /** The order for display */
+  /**
+   * The order for display
+   */
   private int order;
 
   ComponentType(int order) {
@@ -13,6 +15,10 @@ public enum ComponentType {
 
   public int getOrder() {
     return order;
+  }
+
+  public static ComponentType[] getValues() {
+    return new ComponentType[]{vpinmame, vpinball, b2sbackglass, freezy, flexdmd, doflinx};
   }
 
   @Override
