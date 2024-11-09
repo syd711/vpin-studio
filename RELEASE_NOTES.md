@@ -4,6 +4,7 @@
 
 - **Tables / VPS Tables**: Fixed features based filtering and showing all available table features in the table info of the sidebar.  
 - **Tables / Asset Columns**: Fixed missing status refresh.
+- **System Manager / Serum**: Disabled Serum integration since this is coming with freezy 2.3 now. Existing serum dll files will be deleted from your VPinMAME directory on freezy update.
 
 ---
 
