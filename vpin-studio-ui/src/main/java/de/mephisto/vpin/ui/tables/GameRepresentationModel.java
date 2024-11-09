@@ -105,6 +105,7 @@ public class GameRepresentationModel extends BaseLoadingModel<GameRepresentation
 
   @Override
   public void load() {
+    this.frontendMedia = null;
     this.vpsTable = client.getVpsService().getTableById(bean.getExtTableId());
     this.gameEmulator = client.getFrontendService().getGameEmulator(bean.getEmulatorId());
   }

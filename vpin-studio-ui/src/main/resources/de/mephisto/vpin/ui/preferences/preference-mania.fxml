@@ -111,6 +111,15 @@
                            </VBox.margin>
                         </Label>
                         <Label layoutX="10.0" layoutY="172.0" styleClass="preference-description" text="If you want to organize tournaments, you can set some pre-configured values here." textFill="WHITE" />
+                        <CheckBox fx:id="tournamentsCheckbox" layoutX="10.0" layoutY="215.0" mnemonicParsing="false" text="Tournaments Enabled">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </CheckBox>
+                        <Label layoutX="10.0" layoutY="235.0" styleClass="checkbox-description" text="Tournaments are hidden by default, you can enable the menu entry here." textFill="WHITE" />
                         <Label styleClass="default-headline" text="Dashboard URL">
                            <VBox.margin>
                               <Insets top="12.0" />

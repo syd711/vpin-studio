@@ -155,7 +155,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
     loadTab(mameTab, "tab-mame.fxml");
     loadTab(flexDMDTab, "tab-flexdmd.fxml");
     loadTab(freezyTab, "tab-freezy.fxml");
-    loadTab(serumTab, "tab-serum.fxml");
+//    loadTab(serumTab, "tab-serum.fxml");
     loadTab(doflinxTab, "tab-doflinx.fxml");
 
     tabPane.getSelectionModel().selectedIndexProperty().addListener((observableValue, number, t1) -> {

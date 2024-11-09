@@ -9,6 +9,7 @@
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Font?>
@@ -52,6 +53,17 @@
                         <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
                      </graphic>
                   </MenuButton>
+                  <Button layoutX="256.0" layoutY="11.0" mnemonicParsing="false" onAction="#onClearCache" textFill="WHITE">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                     <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-refresh" iconSize="18" />
+                     </graphic>
+                     <tooltip>
+                        <Tooltip text="Reload screen positioning" />
+                     </tooltip>
+                  </Button>
                   <Separator layoutX="93.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <HBox alignment="CENTER_LEFT" spacing="6.0">
                      <children>
@@ -66,7 +78,7 @@
          <center>
             <ScrollPane fx:id="scrollPane" styleClass="accordion-container" BorderPane.alignment="CENTER">
                <BorderPane.margin>
-                  <Insets />
+                  <Insets bottom="6.0" left="6.0" right="6.0" />
                </BorderPane.margin>
             </ScrollPane>
          </center>

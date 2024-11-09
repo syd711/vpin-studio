@@ -88,6 +88,11 @@ public class CabMonitorController implements Initializable, DialogController {
     });
   }
 
+  @FXML
+  private void onClearCache() {
+    client.getFrontendService().clearCache();
+  }
+
   private void saveScaling() {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     settings.setScaling(scaling);
