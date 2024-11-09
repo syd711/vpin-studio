@@ -3,6 +3,7 @@
 ## Bugfixes / Changes
 
 - **Tables / VPS Tables**: Fixed features based filtering and showing all available table features in the table info of the sidebar.  
+- **Tables / Asset Columns**: Fixed missing status refresh.
 
 ---
 
