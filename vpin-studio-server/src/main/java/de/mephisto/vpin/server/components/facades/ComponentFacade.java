@@ -46,6 +46,12 @@ public interface ComponentFacade {
     return true;
   }
 
+  /**
+   * Executed after the installation of an update.
+   * @param gameEmulator
+   * @param releaseArtifact
+   * @param install
+   */
   default void postProcess(@NonNull GameEmulator gameEmulator, @NonNull ReleaseArtifact releaseArtifact, @NonNull ReleaseArtifactActionLog install) {
 
   }

@@ -29,7 +29,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
   public ComponentChecksProgressModel(boolean forceDownload) {
     super("Fetching Latest Github Releases");
     this.forceDownload = forceDownload;
-    this.iterator = Arrays.asList(ComponentType.values()).iterator();
+    this.iterator = Arrays.asList(ComponentType.getValues()).iterator();
   }
 
   @Override
@@ -54,7 +54,7 @@ public class ComponentChecksProgressModel extends ProgressModel<ComponentType> {
 
   @Override
   public int getMax() {
-    return ComponentType.values().length;
+    return ComponentType.getValues().length;
   }
 
   @Override

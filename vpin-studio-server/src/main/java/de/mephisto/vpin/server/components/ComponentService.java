@@ -61,7 +61,7 @@ public class ComponentService implements InitializingBean {
 
   public List<Component> getComponents() {
     List<Component> result = new ArrayList<>();
-    ComponentType[] values = ComponentType.values();
+    ComponentType[] values = ComponentType.getValues();
     // sort by visibility order
     Arrays.sort(values, (a, b) -> a.getOrder() - b.getOrder());
 
@@ -291,7 +291,7 @@ public class ComponentService implements InitializingBean {
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    ComponentType[] values = ComponentType.values();
+    ComponentType[] values = ComponentType.getValues();
     for (ComponentType value : values) {
       this.releaseCache.put(value, new ArrayList<>());
       Optional<Component> byName = componentRepository.findByType(value);

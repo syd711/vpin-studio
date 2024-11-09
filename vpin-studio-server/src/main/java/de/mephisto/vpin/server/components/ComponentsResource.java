@@ -7,14 +7,15 @@ import de.mephisto.vpin.restclient.components.ComponentRepresentation;
 import de.mephisto.vpin.restclient.components.ComponentType;
 import de.mephisto.vpin.restclient.components.GithubReleaseRepresentation;
 import de.mephisto.vpin.server.components.facades.ComponentFacade;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.frontend.FrontendService;
+import de.mephisto.vpin.server.games.GameEmulator;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -121,9 +122,16 @@ public class ComponentsResource {
     if (defaultGameEmulator != null) {
       try {
         representation.setLastModified(componentFacade.getModificationDate(defaultGameEmulator));
-        representation.setTargetFolder(componentFacade.getTargetFolder(defaultGameEmulator).getAbsolutePath());
-      } catch (Exception e) {
-        LOG.error("Error returning component data: " + e.getMessage(), e);
+        File targetFolder = componentFacade.getTargetFolder(defaultGameEmulator);
+        if (targetFolder != null) {
+          representation.setTargetFolder(targetFolder.getAbsolutePath());
+        }
+        else {
+          LOG.warn("No target folder resolved for {}", component);
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error returning component data for " + component + ": " + e.getMessage(), e);
       }
     }
     return representation;

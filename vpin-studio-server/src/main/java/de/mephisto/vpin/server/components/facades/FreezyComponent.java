@@ -2,9 +2,13 @@ package de.mephisto.vpin.server.components.facades;
 
 import de.mephisto.vpin.connectors.github.GithubRelease;
 import de.mephisto.vpin.connectors.github.GithubReleaseFactory;
+import de.mephisto.vpin.connectors.github.ReleaseArtifact;
+import de.mephisto.vpin.connectors.github.ReleaseArtifactActionLog;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.server.games.GameEmulator;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -16,6 +20,9 @@ import java.util.List;
 
 @Service
 public class FreezyComponent implements ComponentFacade {
+
+  private final static List<String> INVALID_MAME_FILES = Arrays.asList("serum.dll", "serum.exp", "serum.lib", "serum64.dll", "serum64.exp", "serum64.lib");
+
   @NonNull
   @Override
   public String[] getDiffList() {
@@ -50,6 +57,13 @@ public class FreezyComponent implements ComponentFacade {
       return new Date(file.lastModified());
     }
     return null;
+  }
+
+  @Override
+  public void postProcess(@NotNull GameEmulator gameEmulator, @NotNull ReleaseArtifact releaseArtifact, @NotNull ReleaseArtifactActionLog install) {
+    for (String deleteFile : INVALID_MAME_FILES) {
+      FileUtils.delete(new File(gameEmulator.getMameFolder(), deleteFile));
+    }
   }
 
   @Nullable
