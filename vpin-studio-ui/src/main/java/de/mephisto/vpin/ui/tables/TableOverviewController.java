@@ -1954,6 +1954,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     @Override
     public void load() {
+      frontendMedia = null;
       this.vpsTable = client.getVpsService().getTableById(bean.getExtTableId());
       this.gameEmulator = client.getFrontendService().getGameEmulator(bean.getEmulatorId());
     }
