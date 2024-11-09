@@ -88,7 +88,7 @@
                               <Font size="14.0" />
                            </font>
                            <tooltip>
-                              <Tooltip text="Open Cab-Monitor" />
+                              <Tooltip text="Toggle Cabinet Monitor" />
                            </tooltip>
                            <graphic>
                               <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-multiple" iconSize="18" />
