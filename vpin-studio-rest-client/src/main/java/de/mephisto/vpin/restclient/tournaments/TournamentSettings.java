@@ -4,11 +4,20 @@ import de.mephisto.vpin.restclient.JsonSettings;
 
 public class TournamentSettings extends JsonSettings {
   private boolean enabled;
+  private boolean tournamentsEnabled = false;
   private String defaultDiscordLink;
   private String defaultDashboardUrl;
   private String defaultDescription;
   private String defaultWebsite;
   private boolean submitAllScores = true;
+
+  public boolean isTournamentsEnabled() {
+    return tournamentsEnabled;
+  }
+
+  public void setTournamentsEnabled(boolean tournamentsEnabled) {
+    this.tournamentsEnabled = tournamentsEnabled;
+  }
 
   public boolean isSubmitAllScores() {
     return submitAllScores;

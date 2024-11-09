@@ -57,6 +57,9 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
   private CheckBox submitAllCheckbox;
 
   @FXML
+  private CheckBox tournamentsCheckbox;
+
+  @FXML
   private TextField dashboardUrl;
 
   @FXML
@@ -193,6 +196,19 @@ public class ManiaPreferencesController implements Initializable, PreferenceChan
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         try {
           settings.setSubmitAllScores(newValue);
+          settings = client.getTournamentsService().saveSettings(settings);
+        } catch (Exception e) {
+          LOG.error("Failed to save tournament settings: " + e.getMessage(), e);
+        }
+      }
+    });
+
+    tournamentsCheckbox.setSelected(settings.isTournamentsEnabled());
+    tournamentsCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        try {
+          settings.setTournamentsEnabled(newValue);
           settings = client.getTournamentsService().saveSettings(settings);
         } catch (Exception e) {
           LOG.error("Failed to save tournament settings: " + e.getMessage(), e);

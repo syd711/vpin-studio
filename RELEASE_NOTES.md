@@ -2,11 +2,11 @@
 
 ## Changes
 
-- **Tables / Remote Recording**: 
+- **Tables / Remote Recording**: The Studio supports remote recording of frontend screens now. You find the recorder as an additional tab in the tables section. The recorder supports single and bulk recording and gives a preview of the screens that are recorded. 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder.png" width="800" />
 
-- **Tables / Cab Monitor**: The Studio supports the screen monitoring of cabinets now. You can invoke the cabinet monitor from the main toolbar. The dialog offers two different view modes right now: monitoring the actual monitors or monitoring the configured frontend screens.
+- **Tables / Cabinet Monitor**: The Studio supports the screen monitoring of cabinets now. You can invoke the cabinet monitor from the main toolbar. The dialog offers two different view modes right now: monitoring the actual monitors or monitoring the configured frontend screens.
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/monitor/monitor-toolbar.png" width="400" />
   
@@ -31,3 +31,8 @@
 
 - **Tables / Uploads**: Improved **cloning** behaviour so that the original name is kept and the existing VPS mapping too, if the auto-match flag has been disabled.
 - **PinUP Popper Integration**: More gracefully stopping of PinUP Popper by calling the regular exit command first (instead of simply killing all processes).
+
+
+## VPin Mania
+
+- **Tournaments**: Tournaments have been hidden by default and must be enabled in the preferences. This improves the boot-up time of the server a bit.

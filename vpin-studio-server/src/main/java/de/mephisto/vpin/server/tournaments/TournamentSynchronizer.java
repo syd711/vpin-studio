@@ -4,12 +4,15 @@ import de.mephisto.vpin.connectors.mania.VPinManiaClient;
 import de.mephisto.vpin.connectors.mania.model.Cabinet;
 import de.mephisto.vpin.connectors.mania.model.Tournament;
 import de.mephisto.vpin.connectors.mania.model.TournamentTable;
+import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.tournaments.TournamentMetaData;
+import de.mephisto.vpin.restclient.tournaments.TournamentSettings;
 import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.highscores.HighscoreService;
 import de.mephisto.vpin.server.mania.ManiaService;
+import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +41,9 @@ public class TournamentSynchronizer {
   private HighscoreService highscoreService;
 
   @Autowired
+  private PreferencesService preferencesService;
+
+  @Autowired
   private TournamentTablesRepository tournamentTablesRepository;
 
   @Autowired
@@ -46,20 +52,23 @@ public class TournamentSynchronizer {
   public synchronized boolean synchronize(TournamentMetaData metaData) {
     VPinManiaClient maniaClient = maniaService.getClient();
     if (maniaClient.getCabinetClient().getCabinet() != null) {
-      Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
-      if (tournament != null) {
-        List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
-        for (TournamentTable tournamentTable : tournamentTables) {
-          TournamentTableInfo info = createTournamentTableInfo(metaData, tournamentTable);
-          if (info.getGameId() != 0) {
-            TournamentTableInfo tournamentTableInfo = tournamentTablesRepository.saveAndFlush(info);
-            LOG.info("\tWritten " + tournamentTableInfo);
+      TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
+      if (tournamentSettings.isTournamentsEnabled()) {
+        Tournament tournament = maniaClient.getTournamentClient().getTournament(metaData.getTournamentId());
+        if (tournament != null) {
+          List<TournamentTable> tournamentTables = maniaClient.getTournamentClient().getTournamentTables(tournament.getId());
+          for (TournamentTable tournamentTable : tournamentTables) {
+            TournamentTableInfo info = createTournamentTableInfo(metaData, tournamentTable);
+            if (info.getGameId() != 0) {
+              TournamentTableInfo tournamentTableInfo = tournamentTablesRepository.saveAndFlush(info);
+              LOG.info("\tWritten " + tournamentTableInfo);
+            }
           }
+          return true;
         }
-        return true;
-      }
-      else {
-        LOG.error("Tournament tables initialization failed, no tournament found with id " + metaData.getTournamentId());
+        else {
+          LOG.error("Tournament tables initialization failed, no tournament found with id " + metaData.getTournamentId());
+        }
       }
     }
 
@@ -89,8 +98,11 @@ public class TournamentSynchronizer {
       VPinManiaClient maniaClient = maniaService.getClient();
       Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
       if (cabinet != null) {
-        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-        synchronize(tournaments);
+        TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
+        if (tournamentSettings.isTournamentsEnabled()) {
+          List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+          synchronize(tournaments);
+        }
       }
     }
     catch (Exception e) {
@@ -102,20 +114,23 @@ public class TournamentSynchronizer {
     VPinManiaClient maniaClient = maniaService.getClient();
     Cabinet cabinet = maniaClient.getCabinetClient().getCabinet();
     if (cabinet != null) {
-      List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
-      List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
-      List<Tournament> filtered = new ArrayList<>();
-      for (TournamentTableInfo tournamentTableInfo : byGameId) {
-        Optional<Tournament> first = tournaments.stream().filter(t -> t.getId() == tournamentTableInfo.getTournamentId()).findFirst();
-        if (first.isPresent()) {
-          Tournament tournament = first.get();
-          if (!filtered.contains(tournament)) {
-            filtered.add(tournament);
+      TournamentSettings tournamentSettings = preferencesService.getJsonPreference(PreferenceNames.TOURNAMENTS_SETTINGS, TournamentSettings.class);
+      if (tournamentSettings.isTournamentsEnabled()) {
+        List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
+        List<TournamentTableInfo> byGameId = tournamentTablesRepository.findByGameId(game.getId());
+        List<Tournament> filtered = new ArrayList<>();
+        for (TournamentTableInfo tournamentTableInfo : byGameId) {
+          Optional<Tournament> first = tournaments.stream().filter(t -> t.getId() == tournamentTableInfo.getTournamentId()).findFirst();
+          if (first.isPresent()) {
+            Tournament tournament = first.get();
+            if (!filtered.contains(tournament)) {
+              filtered.add(tournament);
+            }
           }
         }
-      }
 
-      synchronize(filtered);
+        synchronize(filtered);
+      }
     }
   }
 
