@@ -242,7 +242,7 @@ public class TemplateEditorController implements Initializable, BindingChangedLi
     CardSettings cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
     String targetScreen = cardSettings.getPopperScreen();
     if (StringUtils.isEmpty(targetScreen)) {
-      WidgetFactory.showAlert(stage, "Not target screen selected.", "Select a target screen in the preferences.");
+      WidgetFactory.showAlert(stage, "No target screen selected.", "Select a target screen in the preferences.");
     }
     else {
       ProgressDialog.createProgressDialog(new HighscoreGeneratorProgressModel(client, "Generating Highscore Cards"));
