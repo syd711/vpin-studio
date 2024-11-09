@@ -37,6 +37,7 @@ public class PlayButtonController implements Initializable {
   @Override
   public void initialize(URL location, ResourceBundle resources) {
     this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
+    this.playBtn.setDisable(true);
   }
 
   public void setVisible(boolean b) {

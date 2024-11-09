@@ -36,3 +36,4 @@
 ## VPin Mania
 
 - **Tournaments**: Tournaments have been hidden by default and must be enabled in the preferences. This improves the boot-up time of the server a bit.
+- **Table Views**: Added more convenience for VR users by adding launch button to the different table views.
