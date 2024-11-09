@@ -2,10 +2,9 @@
 
 ## Changes
 
-- **Tables / Cab Monitor**: The Studio supports the screen monitoring of cabinets now. You can invoke the cabinet monitor from the main toolbar. The dialog offers two different view modes right now: monitoring the actual monitors or monitoring the configured frontend screens.
+- **Tables / Remote Recording**: 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/recorder/recorder.png" width="800" />
-
 
 - **Tables / Cab Monitor**: The Studio supports the screen monitoring of cabinets now. You can invoke the cabinet monitor from the main toolbar. The dialog offers two different view modes right now: monitoring the actual monitors or monitoring the configured frontend screens.
 
