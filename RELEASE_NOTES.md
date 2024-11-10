@@ -1,3 +1,10 @@
+## Release Notes 3.9.3
+
+## Bugfixes / Changes
+
+- **PINemHI Updater**: Fixed issue that the pinemhi.ini file is overwritten on update with a wrong path to VPX. You can fix this problem by simply restarting the server which self-heals the path.
+
+---
 ## Release Notes 3.9.2
 
 ## Bugfixes / Changes
