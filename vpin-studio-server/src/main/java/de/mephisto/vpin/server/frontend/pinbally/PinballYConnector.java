@@ -1,13 +1,10 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
 import de.mephisto.vpin.server.playlists.Playlist;

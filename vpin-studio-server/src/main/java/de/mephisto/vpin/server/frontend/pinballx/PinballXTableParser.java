@@ -13,12 +13,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.helpers.DefaultHandler;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -34,12 +36,13 @@ public class PinballXTableParser extends DefaultHandler {
   @Nullable
   public int addGames(File xmlFile, List<String> games, Map<String, TableDetails> tabledetails, Emulator emu) {
     int gamecount = 0;
-    try {
+    //try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.forName("UTF-8")))) {
+    try (Reader reader = new BufferedReader(new FileReader(xmlFile, Charset.defaultCharset()))) {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
 
       DocumentBuilder db = dbf.newDocumentBuilder();
-      Document doc = db.parse(xmlFile);
+      Document doc = db.parse(new InputSource(reader));
 
       Element root = doc.getDocumentElement();
       root.normalize();
@@ -55,10 +58,7 @@ public class PinballXTableParser extends DefaultHandler {
             String gameFileName =  gameName + "." + emu.getGamesExt();
 
             TableDetails detail = new TableDetails();
-            detail.setGameName(gameName);
             detail.setGameFileName(gameFileName);
-            // will be overriden by description but in case the tag is absent
-            detail.setGameDisplayName(gameName); 
             detail.setEmulatorId(emu.getId());
             // will be overriden but enabled by default
             detail.setStatus(1);  // STATUS_NORMAL
@@ -77,6 +77,19 @@ public class PinballXTableParser extends DefaultHandler {
                 }
               }
             }
+
+            // three cases supported (third used by pinballY only for handling specific mediaName 
+            // <game name= />  
+            // <game name= > <description /> </game>
+            // <game name= > <description /> </title > </game>
+            // form xml parsing <title> => gameDisplayName and <description> => gameName
+            
+            // if no title provided, displayName should be description and gameName defaulted from filename 
+            if (StringUtils.isEmpty(detail.getGameDisplayName())) {
+              detail.setGameDisplayName(StringUtils.defaultIfBlank(detail.getGameName(), gameName)); 
+              detail.setGameName(gameName);
+            }
+
             games.add(gameFileName);
             tabledetails.put(PinballXConnector.compose(emu.getId(), gameFileName), detail);
           }
@@ -116,6 +129,10 @@ public class PinballXTableParser extends DefaultHandler {
   private void readNode(TableDetails detail, String qName, String content) throws ParseException {
     switch (qName) {
       case "description": {
+        detail.setGameName(content);
+        break;
+      }
+      case "title": {
         detail.setGameDisplayName(content);
         break;
       }
@@ -226,9 +243,24 @@ public class PinballXTableParser extends DefaultHandler {
       for (GameEntry entry : games) {
         TableDetails detail = mapTableDetails.get(PinballXConnector.compose(emu.getId(), entry.getFilename()));
         if (detail!=null) {
-          writer.append("  <game name=\"").append(escapeXml(detail.getGameName())).append("\">\n");
+          String gameName =StringUtils.removeEndIgnoreCase(entry.getFilename(), "." + emu.getGamesExt());
+          writer.append("  <game name=\"").append(escapeXml(gameName)).append("\">\n");
 
-          appendValue(writer, "description", detail.getGameDisplayName());
+          // three cases supported (third used by pinballY only for handling specific mediaName 
+          // <game name= />  
+          // <game name= > <description /> </game>
+          // <game name= > <description /> </title > </game>
+          // if title provided, displayName should be title and gameName from description
+          // if no title provided, displayName should be description and gameName default from filename 
+
+          if (!StringUtils.equals(detail.getGameName(), gameName)) {
+            appendValue(writer, "description", detail.getGameName());
+            appendValue(writer, "title", detail.getGameDisplayName());
+          }
+          else if (!StringUtils.equals(detail.getGameDisplayName(), gameName)) {
+            appendValue(writer, "description", detail.getGameDisplayName());
+          }
+
           appendValue(writer, "rom", detail.getRomName());
           appendValue(writer, "manufacturer", detail.getManufacturer());
           appendValue(writer, "year", detail.getGameYear()!=null? detail.getGameYear().toString(): "");
