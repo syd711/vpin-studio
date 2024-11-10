@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class FrontendService implements InitializingBean, PreferenceChangedListener, ApplicationContextAware {
+public class FrontendService implements InitializingBean, PreferenceChangedListener {
 
   private final static Logger LOG = LoggerFactory.getLogger(FrontendService.class);
 
@@ -58,9 +58,14 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   @Autowired
   private Map<String, FrontendConnector> frontendsMap; // autowiring of Frontends
 
+  private FrontendStatusService frontendStatusService;
+
   private final Map<Integer, GameEmulator> emulators = new LinkedHashMap<>();
   private List<FrontendPlayerDisplay> frontendPlayerDisplays;
-  private ApplicationContext applicationContext;
+
+  public void setFrontendStatusService(FrontendStatusService frontendStatusService) {
+    this.frontendStatusService = frontendStatusService;
+  }
 
   public FrontendService(Map<String, FrontendConnector> frontends) {
     this.frontendsMap = frontends;
@@ -624,8 +629,6 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   public boolean killFrontend() {
     getFrontendConnector().killFrontend();
-
-    FrontendStatusService frontendStatusService = applicationContext.getBean(FrontendStatusService.class);
     frontendStatusService.notifyFrontendExit();
     return true;
   }
@@ -757,10 +760,5 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     catch (Exception e) {
       LOG.info("FrontendService initialization failed: {}", e.getMessage(), e);
     }
-  }
-
-  @Override
-  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-    this.applicationContext = applicationContext;
   }
 }
