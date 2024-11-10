@@ -86,7 +86,7 @@ public class CardGenerationPreferencesController implements Initializable {
       screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
     }
     if (frontendType.equals(FrontendType.PinballX)) {
-      screenNames.addAll("", VPinScreen.Topper.name(), VPinScreen.DMD.name());
+      screenNames.addAll("", VPinScreen.Topper.name(), VPinScreen.DMD.name(), VPinScreen.Menu.name());
     }
 
     cardSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.HIGHSCORE_CARD_SETTINGS, CardSettings.class);
