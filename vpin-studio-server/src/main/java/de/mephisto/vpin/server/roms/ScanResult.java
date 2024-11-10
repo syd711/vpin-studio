@@ -14,6 +14,24 @@ public class ScanResult {
   private String pupPackName;
   private boolean foundControllerStop = false;
   private boolean foundTableExit = false;
+  private boolean vrRoomSupport = false;
+  private boolean vrRoomDisabled = false;
+
+  public boolean isVrRoomSupport() {
+    return vrRoomSupport;
+  }
+
+  public void setVrRoomSupport(boolean vrRoomSupport) {
+    this.vrRoomSupport = vrRoomSupport;
+  }
+
+  public boolean isVrRoomDisabled() {
+    return vrRoomDisabled;
+  }
+
+  public void setVrRoomDisabled(boolean vrRoomDisabled) {
+    this.vrRoomDisabled = vrRoomDisabled;
+  }
 
   public boolean isFoundTableExit() {
     return foundTableExit;

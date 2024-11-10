@@ -24,6 +24,10 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-deletions.png" width="500" />
 
+- **Tables / Validators**: Introduced new validator for VR support. The validator checks if there is a VR room flag inside the script and returns an error if not enabled. If you do not use VR, please disable this validator as there is no option to disable it by default. Note that you need to re-scan all tables to find disabled VR rooms. 
+
+  <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vr-validator.png" width="500" />
+
 - **Tables / Script Editing**: Added info icon to the split menu button with a hint that .vbs files must be linked to a text editor in order to use that action.
 - **Tables / Usability Improvement**: Pressing the **shift key and double-clicking** on a table in the table overview will open the asset manager dialog.
 
@@ -36,4 +40,4 @@
 ## VPin Mania
 
 - **Tournaments**: Tournaments have been hidden by default and must be enabled in the preferences. This improves the boot-up time of the server a bit.
-- **Table Views**: Added more convenience for VR users by adding launch button to the different table views.
+- **Table Views**: Added more convenience for VR users by adding the launch game menu button to the different table views.

@@ -67,6 +67,26 @@ public class GameDetails {
 
   private Boolean foundTableExit = true;
 
+  private Boolean vrRoomSupport = false;
+
+  private Boolean vrRoomEnabled = false;
+
+  public Boolean getVrRoomSupport() {
+    return vrRoomSupport;
+  }
+
+  public void setVrRoomSupport(Boolean vrRoomSupport) {
+    this.vrRoomSupport = vrRoomSupport;
+  }
+
+  public Boolean getVrRoomEnabled() {
+    return vrRoomEnabled;
+  }
+
+  public void setVrRoomEnabled(Boolean vrRoomEnabled) {
+    this.vrRoomEnabled = vrRoomEnabled;
+  }
+
   public Boolean getFoundControllerStop() {
     return foundControllerStop;
   }

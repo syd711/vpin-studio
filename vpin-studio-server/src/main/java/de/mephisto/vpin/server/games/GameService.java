@@ -381,6 +381,8 @@ public class GameService implements InitializingBean {
         gameDetails.setTableName(scannedTableName);
         gameDetails.setNvOffset(scanResult.getNvOffset());
         gameDetails.setHsFileName(scanResult.getHsFileName());
+        gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
+        gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
 
         gameDetails.setPupPack(scanResult.getPupPackName());
         gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
@@ -437,6 +439,8 @@ public class GameService implements InitializingBean {
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
+    game.setVrRoomEnabled(gameDetails.getVrRoomEnabled() != null ? gameDetails.getVrRoomEnabled() : false);
+    game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
     game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
     game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
 
