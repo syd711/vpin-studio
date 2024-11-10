@@ -2042,7 +2042,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     frontend.setAdminExe("PinUpMenuSetup.exe");
     frontend.setIconName("popper.png");
     frontend.setSupportedScreens(Arrays.asList(VPinScreen.values()));
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.BackGlass, VPinScreen.Topper, VPinScreen.Menu, VPinScreen.DMD, VPinScreen.PlayField));
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD, VPinScreen.Topper, VPinScreen.Menu));
 
     Map<String, String> lookups = getLookups();
     frontend.getFieldLookups().getGameType().addAll(toList(lookups, "GameType"));

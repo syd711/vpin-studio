@@ -140,7 +140,7 @@ public class CabMonitorController implements Initializable, DialogController {
       }, 300);
     });
 
-    List<VPinScreen> supportedRecodingScreens = client.getFrontendService().getFrontendCached().getSupportedRecodingScreens();
+    List<VPinScreen> supportedRecodingScreens = client.getFrontendService().getFrontendCached().getSupportedRecordingScreens();
     for (VPinScreen screen : supportedRecodingScreens) {
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox();

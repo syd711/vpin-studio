@@ -38,7 +38,7 @@ public class Frontend {
     this.ignoredValidations = ignoredValidations;
   }
 
-  public List<VPinScreen> getSupportedRecodingScreens() {
+  public List<VPinScreen> getSupportedRecordingScreens() {
     return supportedRecordingScreens;
   }
 
