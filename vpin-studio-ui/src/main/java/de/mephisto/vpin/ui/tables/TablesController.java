@@ -264,6 +264,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         FXMLLoader loader = new FXMLLoader(RecorderController.class.getResource("scene-recorder.fxml"));
         Parent repositoryRoot = loader.load();
         recorderController = loader.getController();
+        recorderController.setRootController(this);
         recorderTab.setContent(repositoryRoot);
       }
       catch (IOException e) {
