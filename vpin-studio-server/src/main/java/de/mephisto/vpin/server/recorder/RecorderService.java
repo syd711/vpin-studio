@@ -6,12 +6,11 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
-import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
@@ -23,10 +22,8 @@ import org.springframework.stereotype.Service;
 
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class RecorderService {
@@ -55,14 +52,12 @@ public class RecorderService {
 
   private JobDescriptor jobDescriptor;
 
-  public JobDescriptor startRecording(RecordingData recordingData) {
+  public JobDescriptor startRecording(RecordingDataSummary recordingData) {
     RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-    List<Game> games = recordingData.getGameIds().stream().map(id -> gameService.getGame(id)).collect(Collectors.toList());
-    games.sort(Comparator.comparing(Game::getGameDisplayName));
 
-    RecorderJob job = new RecorderJob(frontendService.getFrontendConnector(), frontendStatusService, settings, games, getRecordingScreens());
+    RecorderJob job = new RecorderJob(gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
     jobDescriptor = new JobDescriptor(JobType.RECORDER);
-    jobDescriptor.setTitle("Screen Recorder (" + games.size() + " games)");
+    jobDescriptor.setTitle("Screen Recorder (" + recordingData.size() + " games)");
     jobDescriptor.setJob(job);
 
     jobService.offer(jobDescriptor);

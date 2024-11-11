@@ -36,11 +36,6 @@
          <children>
             <Label layoutX="22.0" layoutY="22.0" styleClass="preference-description" text="Tables selected for recording:" textFill="WHITE" />
             <Label fx:id="tablesLabel" layoutX="22.0" layoutY="121.0" styleClass="default-text" text="-" />
-            <Label layoutX="22.0" layoutY="700.0" styleClass="preference-description" text="Screens selected for recording:" textFill="WHITE">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin></Label>
-            <VBox fx:id="data" spacing="6.0" />
             <VBox spacing="6.0" styleClass="selection-panel-selected">
                <children>
                   <Label fx:id="durationLabel2" styleClass="default-headline" text="Recording Progress" />

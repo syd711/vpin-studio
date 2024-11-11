@@ -5,6 +5,7 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class RecorderSettings extends JsonSettings {
 
@@ -43,5 +44,27 @@ public class RecorderSettings extends JsonSettings {
       }
     }
     return null;
+  }
+
+  public RecordingScreenOptions getRecordingScreenOption(VPinScreen screen) {
+    for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
+      if (recordingScreenOption.getDisplayName().equalsIgnoreCase(screen.name())) {
+        return recordingScreenOption;
+      }
+    }
+    return null;
+  }
+
+  public boolean isEnabled(VPinScreen screen) {
+    return getRecordingScreenOption(screen).isEnabled();
+  }
+
+  public boolean isEnabled() {
+    for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
+      if(recordingScreenOption.isEnabled()) {
+        return true;
+      }
+    }
+    return false;
   }
 }

@@ -39,28 +39,21 @@
                     <rowConstraints>
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <ComboBox fx:id="recordModeComboBox" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+                        <ComboBox fx:id="recordModeComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Spinner fx:id="durationSpinner" prefWidth="80.0" />
                               <Label styleClass="default-text" text="seconds" />
                            </children>
                         </HBox>
-                        <CheckBox fx:id="enabledCheckbox" mnemonicParsing="false" text="Recording Enabled" textFill="WHITE" GridPane.columnIndex="1">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </CheckBox>
-                        <Label styleClass="default-text" text="Recording Options:" GridPane.rowIndex="1" />
-                        <Label styleClass="default-text" text="Recording Duration:" GridPane.rowIndex="2" />
-                        <Label layoutX="10.0" layoutY="49.0" styleClass="default-text" text="Screen:" />
-                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Recording Delay:" GridPane.rowIndex="3" />
-                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <Label styleClass="default-text" text="Recording Options:" />
+                        <Label styleClass="default-text" text="Recording Duration:" GridPane.rowIndex="1" />
+                        <Label layoutX="10.0" layoutY="83.0" styleClass="default-text" text="Recording Delay:" GridPane.rowIndex="2" />
+                        <HBox alignment="CENTER_LEFT" spacing="6.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
                            <children>
                               <Spinner fx:id="delaySpinner" prefWidth="80.0" />
                               <Label styleClass="default-text" text="seconds" />
@@ -77,12 +70,12 @@
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="fps60Checkbox" layoutX="144.0" layoutY="15.0" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
+                        <CheckBox fx:id="fps60Checkbox" layoutX="144.0" layoutY="15.0" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="FPS:" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="FPS:" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
                   <HBox spacing="12.0">

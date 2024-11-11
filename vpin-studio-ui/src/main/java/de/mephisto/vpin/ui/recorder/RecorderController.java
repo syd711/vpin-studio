@@ -11,8 +11,9 @@ import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.UISettings;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
@@ -34,14 +35,18 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -83,6 +88,21 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   TableColumn<GameRepresentationModel, GameRepresentationModel> columnFullDMD;
 
   @FXML
+  CheckBox checkBoxPlayfield;
+
+  @FXML
+  CheckBox checkBoxBackglass;
+
+  @FXML
+  CheckBox checkBoxDMD;
+
+  @FXML
+  CheckBox checkBoxTopper;
+
+  @FXML
+  CheckBox checkBoxFullDMD;
+
+  @FXML
   private CheckBox selectAllCheckbox;
 
   @FXML
@@ -113,6 +133,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Button tableNavigateBtn;
 
   @FXML
+  private MenuButton screenMenuButton;
+
+  @FXML
   private Spinner<Integer> refreshInterval;
 
   private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
@@ -127,7 +150,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Thread screenRefresher;
   private boolean active = false;
 
-  private List<GameRepresentation> selection = new ArrayList<>();
+  private RecordingDataSummary selection = new RecordingDataSummary();
 
   // Add a public no-args constructor
   public RecorderController() {
@@ -422,43 +445,31 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     BaseLoadingColumn.configureColumn(columnSelection, (value, model) -> {
       CheckBox columnCheckbox = new CheckBox();
       columnCheckbox.setUserData(value);
-      columnCheckbox.setSelected(selection.contains(value));
+      columnCheckbox.setSelected(selection.contains(value.getId()));
       columnCheckbox.getStyleClass().add("default-text");
       columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-          if (!newValue) {
-            selection.remove(value);
+          if (newValue) {
+            RecordingData recordingData = createRecordingData(value.getId());
+            selection.add(recordingData);
           }
-          else if (!selection.contains(value)) {
-            selection.add(value);
+          else {
+            selection.remove(value.getId());
           }
           refreshSelection();
         }
       });
       return columnCheckbox;
     }, true);
-    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createAssetStatus(value, model, VPinScreen.PlayField, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.PlayField);
-    }), true);
-    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createAssetStatus(value, model, VPinScreen.BackGlass, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.BackGlass);
-    }), true);
-    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.DMD, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.DMD);
-    }), true);
-    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createAssetStatus(value, model, VPinScreen.Topper, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.Topper);
-    }), true);
-    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createAssetStatus(value, model, VPinScreen.Menu, event -> {
-      TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.Menu);
-    }), true);
 
+
+    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createScreenCell(value, model, VPinScreen.PlayField), settings.isEnabled(VPinScreen.PlayField));
+    BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createScreenCell(value, model, VPinScreen.BackGlass), settings.isEnabled(VPinScreen.BackGlass));
+    BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createScreenCell(value, model, VPinScreen.DMD), settings.isEnabled(VPinScreen.DMD));
+    BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), settings.isEnabled(VPinScreen.Topper));
+    BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), settings.isEnabled(VPinScreen.Menu));
 
     List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
     for (RecordingScreen recordingScreen : recordingScreens) {
@@ -467,6 +478,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         Parent panelRoot = loader.load();
         ScreenRecorderPanelController screenPanelController = loader.getController();
         screenRecorderPanelControllers.add(screenPanelController);
+        screenPanelController.setVisible(settings.isEnabled(recordingScreen.getScreen()));
         screenPanelController.setData(this, recordingScreen);
         recordingOptions.getChildren().add(panelRoot);
       }
@@ -477,7 +489,6 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     screenSizeChangeListener = new ScreenSizeChangeListener();
 
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 60, settings.getRefreshInterval());
     refreshInterval.setValueFactory(factory);
     refreshInterval.valueProperty().addListener((observable, oldValue, newValue) -> {
@@ -497,9 +508,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         }
         else {
           selection.clear();
-
           ObservableList<GameRepresentationModel> items = tableView.getItems();
-          selection.addAll(items.stream().map(GameRepresentationModel::getGame).collect(Collectors.toList()));
+          selection.addAll(items.stream().map(g -> createRecordingData(g.getGameId())).collect(Collectors.toList()));
         }
         refreshSelection();
       }
@@ -513,8 +523,176 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
     });
 
+    List<VPinScreen> supportedRecodingScreens = client.getFrontendService().getFrontendCached().getSupportedRecordingScreens();
+    for (VPinScreen screen : supportedRecodingScreens) {
+      CustomMenuItem item = new CustomMenuItem();
+      CheckBox checkBox = new CheckBox();
+      checkBox.setText(screen.getSegment());
+      checkBox.getStyleClass().add("default-text");
+      checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
+      checkBox.setPrefHeight(30);
+      checkBox.setSelected(settings.isEnabled(screen));
+      item.setContent(checkBox);
+      item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
+      item.setOnAction(actionEvent -> {
+        RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        recorderSettings.getRecordingScreenOption(screen).setEnabled(checkBox.isSelected());
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, recorderSettings);
+
+        switch (screen) {
+          case PlayField: {
+            columnPlayfield.setVisible(checkBox.isSelected());
+            break;
+          }
+          case BackGlass: {
+            columnBackglass.setVisible(checkBox.isSelected());
+            break;
+          }
+          case DMD: {
+            columnDMD.setVisible(checkBox.isSelected());
+            break;
+          }
+          case Menu: {
+            columnFullDMD.setVisible(checkBox.isSelected());
+            break;
+          }
+          case Topper: {
+            columnTopper.setVisible(checkBox.isSelected());
+            break;
+          }
+        }
+        refreshSelection();
+      });
+      screenMenuButton.getItems().add(item);
+    }
+
+    checkBoxPlayfield.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.PlayField));
+        }
+        else {
+          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.PlayField));
+        }
+        refreshSelection();
+      }
+    });
+    checkBoxBackglass.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.BackGlass));
+        }
+        else {
+          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.BackGlass));
+        }
+        refreshSelection();
+      }
+    });
+    checkBoxFullDMD.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.Menu));
+        }
+        else {
+          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.Menu));
+        }
+        refreshSelection();
+      }
+    });
+    checkBoxTopper.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.Topper));
+        }
+        else {
+          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.Topper));
+        }
+        refreshSelection();
+      }
+    });
+    checkBoxDMD.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if(newValue) {
+          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.DMD));
+        }
+        else {
+          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.DMD));
+        }
+        refreshSelection();
+      }
+    });
+
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
+  }
+
+  @NotNull
+  private RecordingData createRecordingData(int id) {
+    RecordingData recordingData = new RecordingData();
+    recordingData.setGameId(id);
+    recordingData.setScreens(getEnabledScreens());
+    return recordingData;
+  }
+
+  @NotNull
+  private HBox createScreenCell(GameRepresentation value, GameRepresentationModel model, VPinScreen screen) {
+    HBox column = new HBox(3);
+    column.setAlignment(Pos.CENTER);
+    CheckBox columnCheckbox = new CheckBox();
+    columnCheckbox.setUserData(value);
+    columnCheckbox.setSelected(selection.contains(value.getId()) && selection.get(model.getGameId()).containsScreen(screen));
+    columnCheckbox.getStyleClass().add("default-text");
+    columnCheckbox.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (!newValue) {
+          if (selection.contains(value.getId())) {
+            selection.get(value.getId()).removeScreen(screen);
+          }
+        }
+        else {
+          if (!selection.contains(value.getId())) {
+            RecordingData recordingData = createRecordingData(value.getId());
+            recordingData.clear();
+            selection.add(recordingData);
+          }
+          selection.get(value.getId()).addScreen(screen);
+        }
+        refreshSelection();
+      }
+    });
+    Node assetStatus = createAssetStatus(value, model, VPinScreen.PlayField, event -> {
+      TableOverviewController overviewController = tablesController.getTableOverviewController();
+      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.PlayField);
+    });
+    column.getChildren().add(columnCheckbox);
+    column.getChildren().add(assetStatus);
+    return column;
+  }
+
+  private List<VPinScreen> getEnabledScreens() {
+    List<VPinScreen> result = new ArrayList<>();
+    if (columnPlayfield.isVisible()) {
+      result.add(VPinScreen.PlayField);
+    }
+    if (columnBackglass.isVisible()) {
+      result.add(VPinScreen.BackGlass);
+    }
+    if (columnDMD.isVisible()) {
+      result.add(VPinScreen.DMD);
+    }
+    if (columnFullDMD.isVisible()) {
+      result.add(VPinScreen.Menu);
+    }
+    if (columnTopper.isVisible()) {
+      result.add(VPinScreen.Topper);
+    }
+    return result;
   }
 
   @Override
@@ -523,8 +701,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   }
 
   public void refreshSelection() {
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-    boolean hasEnabledRecording = settings.getRecordingScreenOptions().stream().anyMatch(RecordingScreenOptions::isEnabled);
+    RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    for (ScreenRecorderPanelController screenRecorderPanelController : screenRecorderPanelControllers) {
+      screenRecorderPanelController.setVisible(recorderSettings.isEnabled(screenRecorderPanelController.getScreen()));
+    }
+
+    boolean hasEnabledRecording = recorderSettings.isEnabled() && !this.selection.isEmpty();
 
     this.recordBtn.setDisable(selection.isEmpty() || !hasEnabledRecording);
     labelCount.setText("No tables selected");

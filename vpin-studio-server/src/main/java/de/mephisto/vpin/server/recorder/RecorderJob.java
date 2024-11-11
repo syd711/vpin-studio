@@ -3,13 +3,11 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.Job;
-import de.mephisto.vpin.restclient.recorder.RecordMode;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.Game;
+import de.mephisto.vpin.server.games.GameService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,27 +17,30 @@ import java.util.List;
 public class RecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderJob.class);
 
+  private final GameService gameService;
   private final FrontendConnector frontend;
   private final FrontendStatusService frontendStatusService;
   private final RecorderSettings settings;
-  private final List<Game> games;
-  private final List<RecordingScreen> supportedRecodingScreens;
+  private final RecordingDataSummary recordingDataSummary;
+  private final List<RecordingScreen> recordingScreens;
 
   private GameRecorder gameRecorder;
 
-  public RecorderJob(FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, List<Game> games, List<RecordingScreen> supportedRecodingScreens) {
+  public RecorderJob(GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
+    this.gameService = gameService;
     this.frontend = frontend;
     this.frontendStatusService = frontendStatusService;
     this.settings = settings;
-    this.games = games;
-    this.supportedRecodingScreens = supportedRecodingScreens;
+    this.recordingDataSummary = recordingDataSummary;
+    this.recordingScreens = recordingScreens;
   }
 
   @Override
   public void execute(JobDescriptor jobDescriptor) {
     LOG.info("***************************** Game Recording Log ******************************************************");
     frontendStatusService.setEventsEnabled(false);
-    for (Game game : games) {
+    for (RecordingData data : recordingDataSummary.getRecordingData()) {
+      Game game = gameService.getGame(data.getGameId());
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
@@ -53,7 +54,7 @@ public class RecorderJob implements Job {
         }
         else {
           frontend.initializeRecording();
-          updateSingleProgress(jobDescriptor, games, 10);
+          updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
@@ -69,7 +70,7 @@ public class RecorderJob implements Job {
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
-          updateSingleProgress(jobDescriptor, games, 25);
+          updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
           jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
           if (!jobDescriptor.isCancelled() && !frontend.launchGame(game, true)) {
@@ -81,16 +82,16 @@ public class RecorderJob implements Job {
           if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
             break;
           }
-          updateSingleProgress(jobDescriptor, games, 35);
+          updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
-          gameRecorder = new GameRecorder(frontend, game, settings, supportedRecodingScreens, jobDescriptor, games.size());
+          gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
           gameRecorder.startRecording();
 
-          updateSingleProgress(jobDescriptor, games, 90);
+          updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
           LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
           jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
-          double progress = jobDescriptor.getTasksExecuted() * 100d / games.size() / 100d;
+          double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
           jobDescriptor.setProgress(progress);
         }
       }
@@ -102,7 +103,7 @@ public class RecorderJob implements Job {
         frontend.killFrontend();
       }
     }
-    LOG.info("Recordings for " + games.size() + " games finished.");
+    LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
     jobDescriptor.setProgress(1);
     jobDescriptor.setGameId(-1);
 
@@ -114,18 +115,18 @@ public class RecorderJob implements Job {
    * Manual update progress when there is only one game recorded.
    *
    * @param jobDescriptor
-   * @param games
+   * @param recordingDataSummary
    * @param progress
    */
-  private void updateSingleProgress(JobDescriptor jobDescriptor, List<Game> games, double progress) {
-    if(games.size() == 1) {
+  private void updateSingleProgress(JobDescriptor jobDescriptor, RecordingDataSummary recordingDataSummary, double progress) {
+    if(recordingDataSummary.size() == 1) {
       jobDescriptor.setProgress(progress / 100d);
     }
   }
 
   @Override
   public void cancel(JobDescriptor jobDescriptor) {
-    LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.games.size() + " processed.");
+    LOG.info("Cancelling recorder job, " + jobDescriptor.getTasksExecuted() + " of " + this.recordingDataSummary.size() + " processed.");
     if (gameRecorder != null) {
       gameRecorder.cancel(jobDescriptor);
     }

@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.recorder;
 
+import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecorderSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
@@ -24,26 +26,24 @@ public class GameRecorder {
   private final FrontendConnector frontend;
   private final Game game;
   private final RecorderSettings recorderSettings;
-  private final List<RecordingScreen> supportedRecodingScreens;
+  private final RecordingData recordingData;
   private final JobDescriptor jobDescriptor;
   private final int totalGamesToRecord;
+  private final List<RecordingScreen> recordingScreens;
 
   private final List<Future<RecordingResult>> futures = new ArrayList<>();
   private final List<ScreenRecorder> screenRecorders = new ArrayList<>();
-  private Thread jobUpdater;
 
-  private boolean finished = false;
-
-  private int waitingTime;
   private int totalTime;
 
-  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, List<RecordingScreen> supportedRecodingScreens, JobDescriptor jobDescriptor, int totalGamesToRecord) {
+  public GameRecorder(FrontendConnector frontend, Game game, RecorderSettings recorderSettings, RecordingData recordingData, JobDescriptor jobDescriptor, int totalGamesToRecord, List<RecordingScreen> recordingScreens) {
     this.frontend = frontend;
     this.game = game;
     this.recorderSettings = recorderSettings;
-    this.supportedRecodingScreens = supportedRecodingScreens;
+    this.recordingData = recordingData;
     this.jobDescriptor = jobDescriptor;
     this.totalGamesToRecord = totalGamesToRecord;
+    this.recordingScreens = recordingScreens;
   }
 
   public RecordingResult startRecording() {
@@ -51,8 +51,9 @@ public class GameRecorder {
     RecordingResult status = new RecordingResult();
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
-    for (RecordingScreen screen : supportedRecodingScreens) {
+    for (VPinScreen screen : recordingData.getScreens()) {
       RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+      RecordingScreen recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
       int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
       if (totalDuration > totalTime) {
         totalTime = totalDuration;
@@ -61,11 +62,12 @@ public class GameRecorder {
         Callable<RecordingResult> screenRecordable = new Callable<>() {
           @Override
           public RecordingResult call() {
-            File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen.getScreen(), null);
+            File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, null);
             File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
 
-            LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.getScreen().name() + ": " + target.getAbsolutePath());
-            ScreenRecorder screenRecorder = new ScreenRecorder(screen, target);
+            LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + target.getAbsolutePath());
+            recorderSettings.getRecordingScreenOption(screen);
+            ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, target);
             screenRecorders.add(screenRecorder);
             return screenRecorder.record(option);
           }
@@ -73,8 +75,6 @@ public class GameRecorder {
         callables.add(screenRecordable);
       }
     }
-
-    waitingTime = totalTime;
 
     ExecutorService executorService = Executors.newFixedThreadPool(callables.size());
     for (Callable<RecordingResult> callable : callables) {
@@ -96,8 +96,6 @@ public class GameRecorder {
 
   public void cancel(JobDescriptor jobDescriptor) {
     try {
-      finished = true;
-
       for (Future<RecordingResult> future : futures) {
         future.cancel(true);
       }

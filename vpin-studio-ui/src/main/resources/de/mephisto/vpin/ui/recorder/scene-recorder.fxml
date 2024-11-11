@@ -5,6 +5,7 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.Spinner?>
@@ -114,6 +115,15 @@
                </tooltip>
             </Button>
             <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="Screens" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
+               </graphic>
+            </MenuButton>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
             <HBox alignment="CENTER_LEFT" spacing="6.0">
                <children>
                   <Label styleClass="default-text" text="Preview Refresh:" />
@@ -142,30 +152,30 @@
                                             </graphic>
                                         </TableColumn>
                                         <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
-                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="89.5999755859375" style="-fx-alignment: CENTER;" text="Playfield">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                            </graphic>
+                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Playfield">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxPlayfield" mnemonicParsing="false" />
+                                 </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="91.199951171875" style="-fx-alignment: CENTER;" text="Backglass">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                            </graphic>
+                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Backglass">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxBackglass" mnemonicParsing="false" />
+                                 </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="65" style="-fx-alignment: CENTER;" text="DMD">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                            </graphic>
+                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="DMD">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxDMD" mnemonicParsing="false" />
+                                 </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="78" style="-fx-alignment: CENTER;" text="Topper">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                            </graphic>
+                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Topper">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxTopper" mnemonicParsing="false" />
+                                 </graphic>
                                         </TableColumn>
-                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="100.800048828125" style="-fx-alignment: CENTER;" text="Full DMD">
-                                            <graphic>
-                                                <FontIcon iconColor="WHITE" iconLiteral="mdi2m-movie-open-outline" iconSize="14" />
-                                            </graphic>
+                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Full DMD">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxFullDMD" mnemonicParsing="false" />
+                                 </graphic>
                                         </TableColumn>
                                     </columns>
                                 </TableView>

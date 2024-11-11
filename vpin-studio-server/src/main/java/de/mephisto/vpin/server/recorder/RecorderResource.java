@@ -3,6 +3,7 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
+import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.server.util.RequestUtil;
 import org.slf4j.Logger;
@@ -52,7 +53,7 @@ public class RecorderResource {
   }
 
   @PostMapping("/start")
-  public JobDescriptor startRecording(@RequestBody RecordingData recordingData) {
+  public JobDescriptor startRecording(@RequestBody RecordingDataSummary recordingData) {
     return recorderService.startRecording(recordingData);
   }
 

@@ -24,9 +24,9 @@ public class RecorderServiceClient extends VPinStudioClientService {
     return Arrays.asList(getRestClient().get(API + "recorder/screens", RecordingScreen[].class));
   }
 
-  public JobDescriptor startRecording(RecordingData status) {
+  public JobDescriptor startRecording(RecordingDataSummary data) {
     try {
-      return getRestClient().post(API + "recorder/start", status, JobDescriptor.class);
+      return getRestClient().post(API + "recorder/start", data, JobDescriptor.class);
     }
     catch (Exception e) {
       LOG.error("Failed to start recording: " + e.getMessage(), e);
