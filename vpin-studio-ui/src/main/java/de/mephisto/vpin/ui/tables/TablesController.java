@@ -56,12 +56,12 @@ import static de.mephisto.vpin.ui.Studio.client;
 public class TablesController implements Initializable, StudioFXController, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(TablesController.class);
 
-  public static final int TAB_TABLE = 0;
-  public static final int TAB_BACKGLASS = 1;
-  public static final int TAB_VPS = 2;
-  public static final int TAB_STATISTICS = 3;
-  public static final int TAB_REPOSITORY = 4;
-  public static final int TAB_RECORDER = 5;
+  private static final int TAB_TABLE = 0;
+  private static final int TAB_BACKGLASS = 1;
+  private static final int TAB_VPS = 2;
+  private static final int TAB_STATISTICS = 3;
+  private static final int TAB_REPOSITORY = 4;
+  private static final int TAB_RECORDER = 5;
 
   private TableOverviewController tableOverviewController;
   private BackglassManagerController backglassManagerController;
@@ -131,29 +131,29 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
   @FXML
   private void onTableSettings() {
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    switch (selectedIndex) {
-      case 0: {
+    int selectedTab = getSelectedTab();
+    switch (selectedTab) {
+      case TAB_TABLE: {
         PreferencesController.open("settings_client");
         break;
       }
-      case 1: {
+      case TAB_BACKGLASS: {
         PreferencesController.open("backglass");
         break;
       }
-      case 2: {
+      case TAB_VPS: {
         PreferencesController.open("settings_client");
         break;
       }
-      case 3: {
+      case TAB_STATISTICS: {
         PreferencesController.open("settings_client");
         break;
       }
-      case 4: {
+      case TAB_REPOSITORY: {
         PreferencesController.open("vpbm");
         break;
       }
-      case 5: {
+      case TAB_RECORDER: {
         PreferencesController.open("settings_client");
         break;
       }
@@ -335,13 +335,15 @@ public class TablesController implements Initializable, StudioFXController, Stud
 
 
   private void refreshTabSelection(Number oldValue, Number newValue) {
-    StudioFXController controller = getController(oldValue.intValue());
+    int oldTab = getSelectedTab(oldValue.intValue());
+    StudioFXController controller = getController(oldTab);
     if (controller != null) {
       controller.onViewDeactivated();
     }
 
+    int selectedTab = getSelectedTab(newValue.intValue());
     Platform.runLater(() -> {
-      if (newValue.intValue() == TAB_TABLE) {
+      if (selectedTab == TAB_TABLE) {
         tableOverviewController.setVisible(true);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -349,7 +351,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (newValue.intValue() == TAB_BACKGLASS) {
+      else if (selectedTab == TAB_BACKGLASS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -357,7 +359,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (newValue.intValue() == TAB_VPS) {
+      else if (selectedTab == TAB_VPS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(true);
@@ -365,7 +367,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (newValue.intValue() == TAB_STATISTICS) {
+      else if (selectedTab == TAB_STATISTICS) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -373,7 +375,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(null);
         toggleSidebarBtn.setDisable(true);
       }
-      else if (newValue.intValue() == TAB_REPOSITORY) {
+      else if (selectedTab == TAB_REPOSITORY) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(true);
         vpsTablesSidebarController.setVisible(false);
@@ -381,7 +383,7 @@ public class TablesController implements Initializable, StudioFXController, Stud
         root.setRight(sidePanelRoot);
         toggleSidebarBtn.setDisable(false);
       }
-      else if (newValue.intValue() == TAB_RECORDER) {
+      else if (selectedTab == TAB_RECORDER) {
         tableOverviewController.setVisible(false);
         repositorySideBarController.setVisible(false);
         vpsTablesSidebarController.setVisible(false);
@@ -391,6 +393,38 @@ public class TablesController implements Initializable, StudioFXController, Stud
         toggleSidebarBtn.setDisable(true);
       }
     });
+  }
+
+  private int getSelectedTab() {
+    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
+    return getSelectedTab(selectedIndex);
+  }
+
+  /**
+   * Convert the selected tab index into TAB id, managing invisible tabs
+   */
+  private int getSelectedTab(int index) {
+    int cnt = 0;
+    if (tabPane.getTabs().contains(tablesTab) && cnt++ == index) {
+      return TAB_TABLE;
+    }
+    if (tabPane.getTabs().contains(backglassManagerTab) && cnt++ == index) {
+      return TAB_BACKGLASS;
+    }
+    if (tabPane.getTabs().contains(vpsTablesTab) && cnt++ == index) {
+      return TAB_VPS;
+    }
+    if (tabPane.getTabs().contains(tablesStatisticsTab) && cnt++ == index) {
+      return TAB_STATISTICS;
+    }
+    if (tabPane.getTabs().contains(tableRepositoryTab) && cnt++ == index) {
+      return TAB_REPOSITORY;
+    }
+    if (tabPane.getTabs().contains(recorderTab) && cnt++ == index) {
+      return TAB_RECORDER;
+    }
+    // should not happen
+    return -1;
   }
 
   public TablesSidebarController getTablesSideBarController() {
@@ -504,8 +538,11 @@ public class TablesController implements Initializable, StudioFXController, Stud
     return editorRootStack;
   }
 
-  public boolean isTabSelected(int tab) {
-    return tabPane.getSelectionModel().getSelectedIndex() == tab;
+  public boolean isTabStatisticsSelected() {
+    return isTabSelected(TAB_STATISTICS);
+  }
+  private boolean isTabSelected(int tab) {
+    return getSelectedTab() == tab;
   }
 
   @Override
@@ -532,50 +569,53 @@ public class TablesController implements Initializable, StudioFXController, Stud
   @Override
   public void onKeyEvent(KeyEvent ke) {
     if (ke.getCode() == KeyCode.F2) {
-      tabPane.getSelectionModel().select(0);
+      tabPane.getSelectionModel().select(tablesTab);
     }
     else if (ke.getCode() == KeyCode.F3) {
-      tabPane.getSelectionModel().select(1);
+      tabPane.getSelectionModel().select(backglassManagerTab);
     }
     else if (ke.getCode() == KeyCode.F4) {
-      tabPane.getSelectionModel().select(2);
+      tabPane.getSelectionModel().select(vpsTablesTab);
     }
     else if (ke.getCode() == KeyCode.F5) {
-      tabPane.getSelectionModel().select(3);
+      tabPane.getSelectionModel().select(tablesStatisticsTab);
     }
     else if (ke.getCode() == KeyCode.F6) {
-      tabPane.getSelectionModel().select(4);
+      tabPane.getSelectionModel().select(tableRepositoryTab);
     }
     else if (ke.getCode() == KeyCode.F7 && Features.RECORDER) {
-      tabPane.getSelectionModel().select(5);
+      tabPane.getSelectionModel().select(recorderTab);
     }
 
     if (ke.isConsumed()) {
       return;
     }
 
-    int selectedIndex = tabPane.getSelectionModel().getSelectedIndex();
-    StudioFXController activeController = getController(selectedIndex);
+    int selectedTab = getSelectedTab();
+    StudioFXController activeController = getController(selectedTab);
     if (activeController != null) {
       activeController.onKeyEvent(ke);
     }
   }
 
-  private StudioFXController getController(int index) {
-    switch (index) {
-      case 0: {
+  private StudioFXController getController(int tab) {
+    switch (tab) {
+      case TAB_TABLE: {
         return tableOverviewController;
       }
-      case 1: {
+      case TAB_BACKGLASS: {
         return backglassManagerController;
       }
-      case 2: {
+      case TAB_VPS: {
         return vpsTablesController;
       }
-      case 4: {
+      case TAB_STATISTICS: {
+        return alxController;
+      }
+      case TAB_REPOSITORY: {
         return repositoryController;
       }
-      case 5: {
+      case TAB_RECORDER: {
         return recorderController;
       }
     }
