@@ -311,7 +311,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
     }
 
 //    this.monitorBtn.setVisible(!client.getSystemService().isLocal() && Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecodingScreens().isEmpty());
-    this.monitorBtn.setVisible(Features.RECORDER && !client.getFrontendService().getFrontendCached().getSupportedRecordingScreens().isEmpty());
+    this.monitorBtn.setVisible(Features.RECORDER && !client.getRecorderService().getRecordingScreens().isEmpty());
     this.maintenanceBtn.setVisible(!client.getSystemService().isLocal());
 
     EventManager.getInstance().addListener(this);

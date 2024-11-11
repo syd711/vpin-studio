@@ -781,6 +781,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             String name = sectionMappings.get(section);
             if (name != null) {
               display.setName(name);
+              display.setScreen(VPinScreen.valueOfScreen(name));
               display.setX(sectionNode.getInt("ScreenXPos"));
               display.setY(sectionNode.getInt("ScreenYPos"));
               display.setWidth(sectionNode.getInt("ScreenWidth"));
@@ -1930,6 +1931,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
             String name = sectionMappings.get(section);
             if (name != null) {
               display.setName(name);
+              display.setScreen(VPinScreen.valueOfScreen(name));
               display.setX(sectionNode.getInt("ScreenXPos"));
               display.setY(sectionNode.getInt("ScreenYPos"));
               display.setWidth(sectionNode.getInt("ScreenWidth"));

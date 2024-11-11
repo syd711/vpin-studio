@@ -542,14 +542,8 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
 
   @Nullable
   public FrontendPlayerDisplay getFrontendPlayerDisplays(@NonNull VPinScreen screen) {
-    List<FrontendPlayerDisplay> pupPlayerDisplays = getFrontendPlayerDisplays();
-    for (FrontendPlayerDisplay pupPlayerDisplay : pupPlayerDisplays) {
-      VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
-      if (vPinScreen != null && vPinScreen.equals(screen)) {
-        return pupPlayerDisplay;
-      }
-    }
-    return null;
+    List<FrontendPlayerDisplay> displays = getFrontendPlayerDisplays();
+    return VPinScreen.valueOfScreen(displays, screen);
   }
 
   public List<FrontendPlayerDisplay> getFrontendPlayerDisplays() {

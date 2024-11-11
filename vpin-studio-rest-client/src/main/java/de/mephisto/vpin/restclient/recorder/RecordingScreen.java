@@ -5,6 +5,8 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 public class RecordingScreen {
   private VPinScreen screen;
   private FrontendPlayerDisplay display;
@@ -25,6 +27,11 @@ public class RecordingScreen {
     this.display = display;
   }
 
+  @JsonIgnore
+  public String getName() {
+    return display != null? display.getName() : screen.getSegment();
+  }
+
   @Override
   public boolean equals(Object object) {
     if (this == object) return true;
@@ -42,4 +49,5 @@ public class RecordingScreen {
   public String toString() {
     return "Recording Screen '" + screen.name() + "'";
   }
+
 }

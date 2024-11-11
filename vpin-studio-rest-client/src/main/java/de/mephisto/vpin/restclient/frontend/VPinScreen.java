@@ -69,10 +69,9 @@ public enum VPinScreen {
   }
 
   public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    for (FrontendPlayerDisplay pupPlayerDisplay : displays) {
-      VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
-      if (vPinScreen != null && vPinScreen.equals(screen)) {
-        return pupPlayerDisplay;
+    for (FrontendPlayerDisplay display : displays) {
+      if (display.getScreen() != null && display.getScreen().equals(screen)) {
+        return display;
       }
     }
     return null;

@@ -523,11 +523,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       }
     });
 
-    List<VPinScreen> supportedRecodingScreens = client.getFrontendService().getFrontendCached().getSupportedRecordingScreens();
-    for (VPinScreen screen : supportedRecodingScreens) {
+    List<RecordingScreen> supportedRecordingScreens = client.getRecorderService().getRecordingScreens();
+    for (RecordingScreen recordingScreen : supportedRecordingScreens) {
+      VPinScreen screen = recordingScreen.getScreen();
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox();
-      checkBox.setText(screen.getSegment());
+      checkBox.setText(recordingScreen.getName());
       checkBox.getStyleClass().add("default-text");
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
       checkBox.setPrefHeight(30);
@@ -536,7 +537,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       item.setGraphic(WidgetFactory.createIcon("mdi2m-monitor"));
       item.setOnAction(actionEvent -> {
         RecorderSettings recorderSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        recorderSettings.getRecordingScreenOption(screen).setEnabled(checkBox.isSelected());
+        recorderSettings.getRecordingScreenOption(recordingScreen).setEnabled(checkBox.isSelected());
         client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, recorderSettings);
 
         switch (screen) {

@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.monitor.MonitoringMode;
 import de.mephisto.vpin.restclient.monitor.MonitoringSettings;
+import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.ToolbarController;
 import javafx.application.Platform;
@@ -140,11 +141,12 @@ public class CabMonitorController implements Initializable, DialogController {
       }, 300);
     });
 
-    List<VPinScreen> supportedRecodingScreens = client.getFrontendService().getFrontendCached().getSupportedRecordingScreens();
-    for (VPinScreen screen : supportedRecodingScreens) {
+    List<RecordingScreen> supportedRecordingScreens = client.getRecorderService().getRecordingScreens();
+    for (RecordingScreen recordingScreen : supportedRecordingScreens) {
+      VPinScreen screen = recordingScreen.getScreen();
       CustomMenuItem item = new CustomMenuItem();
       CheckBox checkBox = new CheckBox();
-      checkBox.setText(screen.getSegment());
+      checkBox.setText(recordingScreen.getName());
       checkBox.getStyleClass().add("default-text");
       checkBox.setStyle("-fx-font-size: 14px;-fx-padding: 0 6 0 6;");
       checkBox.setPrefHeight(30);

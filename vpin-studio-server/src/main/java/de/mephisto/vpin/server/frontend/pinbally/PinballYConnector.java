@@ -331,6 +331,7 @@ PlayfieldWindow.Minimized = 0
     if (isVisible) {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
       player.setName(screen.name());
+      player.setScreen(screen);
 
       String position = display.getProperty(displayName + ".Position");
       String[] positions = StringUtils.split(position, ",");

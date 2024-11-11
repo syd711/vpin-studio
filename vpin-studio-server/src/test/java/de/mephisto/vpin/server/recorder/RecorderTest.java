@@ -6,7 +6,6 @@ import de.mephisto.vpin.restclient.recorder.RecordMode;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
-import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -32,7 +31,7 @@ public class RecorderTest {
     assertFalse(frontendPlayerDisplays.isEmpty());
 
     RecordingScreen s = new RecordingScreen();
-    s.setDisplay(frontendPlayerDisplays.stream().filter(d -> d.getName().equals(VPinScreen.PlayField.name())).findFirst().get());
+    s.setDisplay(frontendPlayerDisplays.stream().filter(d -> d.getScreen().equals(VPinScreen.PlayField)).findFirst().get());
     s.setScreen(VPinScreen.PlayField);
 
     RecordingScreenOptions options = new RecordingScreenOptions();

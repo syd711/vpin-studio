@@ -367,6 +367,7 @@ public class PinballXConnector extends BaseConnector {
 
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
       player.setName(VPinScreen.PlayField.name());
+      player.setScreen(VPinScreen.PlayField);
       player.setMonitor(monitor);
       player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
 
@@ -384,8 +385,7 @@ public class PinballXConnector extends BaseConnector {
         player.setHeight((int) bounds.getHeight());
       }
 
-      LOG.info("Created PinballX player display \"PmayField\": {},{} {}*{}",
-          player.getX(), player.getY(), player.getWidth(), player.getHeight());
+      LOG.info("Created PinballX player display {}", player);
 
       players.add(player);
     }
@@ -405,7 +405,8 @@ public class PinballXConnector extends BaseConnector {
         int mY = (int) bounds.getY();
 
         FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-        player.setName(screen.name());
+        player.setName(sectionName);
+        player.setScreen(screen);
         player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
         player.setX(mX + Integer.parseInt(display.getString("x", "0")));
         player.setY(mY + Integer.parseInt(display.getString("y", "0")));
@@ -413,8 +414,7 @@ public class PinballXConnector extends BaseConnector {
         player.setHeight(Integer.parseInt(display.getString("height", "0")));
         player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
 
-        LOG.info("Created PinballX player display \"{}\": {},{} {}*{}", screen.name(), 
-            player.getX(), player.getY(), player.getWidth(), player.getHeight());
+        LOG.info("Created PinballX player display {}", player);
         players.add(player);
       }
     }
