@@ -11,6 +11,7 @@ import de.mephisto.vpin.connectors.mania.model.TableScore;
 import de.mephisto.vpin.connectors.mania.model.TableScoreDetails;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.players.PlayerRepresentation;
 import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.NavigationOptions;
@@ -19,6 +20,7 @@ import de.mephisto.vpin.ui.mania.ManiaController;
 import de.mephisto.vpin.ui.mania.ManiaDialogs;
 import de.mephisto.vpin.ui.mania.TableScoreLoadingProgressModel;
 import de.mephisto.vpin.ui.mania.TarcisioWheelsDB;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsTableContainer;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
@@ -116,10 +118,17 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
   @FXML
   private ImageView avatarView;
 
+  @FXML
+  private ToolBar toolbar;
+
+  @FXML
+  private Separator reloadSeparator;
+
   private Parent loadingOverlay;
   private Account account;
   private ManiaController maniaController;
   private RankedAccount rankedAccount;
+  private PlayButtonController playButtonController;
 
   // Add a public no-args constructor
   public ManiaWidgetPlayerStatsController() {
@@ -294,6 +303,14 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
       public void changed(ObservableValue<? extends TableScoreModel> observable, TableScoreModel oldValue, TableScoreModel newValue) {
         tableStatsBtn.setDisable(newValue == null);
         deleteBtn.setDisable(newValue == null);
+
+        if (newValue != null) {
+          GameRepresentation gameByVpsTable = client.getGameService().getGameByVpsTable(newValue.getVpsTable(), newValue.getVpsTableVersion());
+          playButtonController.setData(gameByVpsTable);
+        }
+        else {
+          playButtonController.setData(null);
+        }
       }
     });
 
@@ -305,6 +322,18 @@ public class ManiaWidgetPlayerStatsController extends WidgetController implement
     }
     catch (IOException e) {
       LOG.error("Failed to load loading overlay: " + e.getMessage());
+    }
+
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      SplitMenuButton playBtn = loader.load();
+      playButtonController = loader.getController();
+      int i = toolbar.getItems().indexOf(reloadSeparator);
+      toolbar.getItems().add(i + 1, playBtn);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load play button: " + e.getMessage(), e);
     }
   }
 

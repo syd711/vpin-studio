@@ -275,6 +275,7 @@ public class FrontendStatusService implements InitializingBean {
     Thread shutdownHook = new Thread(this::notifyFrontendExit);
     Runtime.getRuntime().addShutdownHook(shutdownHook);
 
+    frontendService.setFrontendStatusService(this);
     gameStatusService.init(this);
   }
 }

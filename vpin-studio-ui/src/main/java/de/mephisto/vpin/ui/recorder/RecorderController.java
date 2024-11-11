@@ -273,11 +273,22 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     return filterController;
   }
 
+  @FXML
+  public void onMediaEdit() {
+    GameRepresentation selectedItems = getSelection();
+    if (selectedItems != null) {
+      TableDialogs.openTableAssetsDialog(tablesController.getTableOverviewController(), selectedItems, VPinScreen.BackGlass);
+    }
+  }
 
   @FXML
   private void onTableMouseClicked(MouseEvent mouseEvent) {
     if (mouseEvent.getButton().equals(MouseButton.PRIMARY)) {
       if (mouseEvent.getClickCount() == 2) {
+        if (mouseEvent.isShiftDown()) {
+          onMediaEdit();
+          return;
+        }
         onTableEdit();
       }
     }
@@ -544,6 +555,10 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
       refreshScreens();
     }
+  }
+
+  public void setRootController(TablesController tablesController) {
+    this.tablesController = tablesController;
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {

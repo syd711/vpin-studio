@@ -50,6 +50,9 @@ public enum VPinScreen {
     if ("Menu".equalsIgnoreCase(name)) {
       return Menu;
     }
+    if ("Apron".equalsIgnoreCase(name)) {
+      return Menu;
+    }
     if ("Music".equalsIgnoreCase(name)) {
       return Audio;
     }

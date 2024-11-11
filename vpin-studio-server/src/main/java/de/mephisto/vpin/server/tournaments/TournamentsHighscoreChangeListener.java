@@ -98,7 +98,7 @@ public class TournamentsHighscoreChangeListener implements HighscoreChangeListen
           }
         }
 
-        if (createdTableScore != null) {
+        if (createdTableScore != null && tournamentSettings.isTournamentsEnabled()) {
           List<Tournament> tournaments = maniaClient.getTournamentClient().getTournaments();
           for (Tournament tournament : tournaments) {
             try {

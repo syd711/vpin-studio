@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.SplitMenuButton?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<SplitMenuButton fx:id="playBtn" onAction="#onPlay" styleClass="external-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.panels.PlayButtonController">
+    <font>
+        <Font size="14.0" />
+    </font>
+    <graphic>
+        <FontIcon iconColor="WHITE" iconLiteral="mdi2p-play" iconSize="18" />
+    </graphic>
+    <tooltip>
+        <Tooltip text="Launch default/configured emulator with the selected table." />
+    </tooltip>
+</SplitMenuButton>

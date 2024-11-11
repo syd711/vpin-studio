@@ -1,6 +1,5 @@
 package de.mephisto.vpin.ui.tables;
 
-import de.mephisto.vpin.commons.fx.ConfirmationResult;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
@@ -12,8 +11,8 @@ import de.mephisto.vpin.restclient.frontend.FrontendType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.preferences.PreferenceChangeListener;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
 import de.mephisto.vpin.restclient.preferences.UISettings;
@@ -26,6 +25,7 @@ import de.mephisto.vpin.ui.tables.editors.AltSoundEditorController;
 import de.mephisto.vpin.ui.tables.editors.TableScriptEditorController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tables.validation.GameValidationTexts;
 import de.mephisto.vpin.ui.tables.vps.VpsTableColumn;
 import de.mephisto.vpin.ui.util.*;
@@ -208,9 +208,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private MenuItem scanAllBtn;
 
   @FXML
-  private SplitMenuButton playBtn;
-
-  @FXML
   private Button stopBtn;
 
   @FXML
@@ -267,6 +264,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   @FXML
   private Hyperlink dismissBtn;
 
+  @FXML
+  private ToolBar toolbar;
+
   private boolean showVersionUpdates = true;
   private boolean showVpsUpdates = true;
   private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -281,6 +281,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   private TableOverviewContextMenu contextMenuController;
   private IgnoredValidationSettings ignoredValidations;
 
+  private PlayButtonController playButtonController;
 
   private GameEmulatorChangeListener gameEmulatorChangeListener;
   private GameStatus status;
@@ -528,37 +529,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public void onBackup() {
     List<GameRepresentation> selectedItems = getSelections();
     TableDialogs.openTablesBackupDialog(selectedItems);
-  }
-
-  @FXML
-  public void onPlay() {
-    onPlay(null);
-  }
-
-  public void onPlay(String altExe) {
-    GameRepresentation game = getSelection();
-    if (game != null) {
-      UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
-      if (uiSettings.isHideVPXStartInfo()) {
-        client.getGameService().playGame(game.getId(), altExe);
-        return;
-      }
-
-      Frontend frontend = client.getFrontendService().getFrontendCached();
-
-      ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
-          "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
-          FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
-          null, "Do not shown again", false);
-
-      if (!confirmationResult.isApplyClicked()) {
-        if (confirmationResult.isChecked()) {
-          uiSettings.setHideVPXStartInfo(true);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.UI_SETTINGS, uiSettings);
-        }
-        client.getGameService().playGame(game.getId(), altExe);
-      }
-    }
   }
 
   @FXML
@@ -882,7 +852,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.reloadBtn.setDisable(true);
     this.scanBtn.setDisable(true);
     this.scanAllBtn.setDisable(true);
-    this.playBtn.setDisable(true);
+    this.playButtonController.setDisable(true);
     this.validateBtn.setDisable(true);
     this.tableEditBtn.setDisable(true);
     this.deleteBtn.setDisable(true);
@@ -931,7 +901,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
             if (updatedGame.isPresent()) {
               GameRepresentation gameRepresentation = updatedGame.get().getBean();
               //tableView.getSelectionModel().select(gameRepresentation);
-              this.playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
+              this.playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
             }
           }
 
@@ -1565,7 +1535,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
 
     validateBtn.setDisable(c.getList().isEmpty());
     deleteBtn.setDisable(c.getList().isEmpty());
-    playBtn.setDisable(disable);
+    playButtonController.setDisable(disable);
     scanBtn.setDisable(c.getList().isEmpty());
     assetManagerBtn.setDisable(disable);
     tableEditBtn.setDisable(disable);
@@ -1576,42 +1546,9 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
     else {
       GameRepresentation gameRepresentation = c.getList().get(0).getGame();
-      playBtn.setDisable(gameRepresentation.getGameFilePath() == null);
+      playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
+      playButtonController.setData(gameRepresentation);
       refreshView(Optional.ofNullable(gameRepresentation));
-
-      if (gameRepresentation.getGameFilePath() != null) {
-        GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(gameRepresentation.getEmulatorId());
-        playBtn.getItems().clear();
-
-        if (client.getFrontendService().getFrontendCached().getFrontendType().equals(FrontendType.Popper)) {
-          MenuItem item = new MenuItem("Launch via PinUP Popper");
-          item.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-              GameRepresentation selection = getSelection();
-              if (selection != null) {
-                new Thread(() -> {
-                  client.getFrontendService().launchGame(selection.getId());
-                }).start();
-              }
-            }
-          });
-          playBtn.getItems().add(item);
-          playBtn.getItems().add(new SeparatorMenuItem());
-        }
-
-        List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
-        for (String altVPXExeName : altVPXExeNames) {
-          MenuItem item = new MenuItem(altVPXExeName);
-          item.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-              onPlay(altVPXExeName);
-            }
-          });
-          playBtn.getItems().add(item);
-        }
-      }
     }
 
     List<GameRepresentation> selection = new ArrayList<>(c.getList().stream().map(g -> g.getGame()).collect(Collectors.toList()));
@@ -1685,7 +1622,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.uploadTableBtn.managedProperty().bindBidirectional(this.uploadTableBtn.visibleProperty());
     this.deleteBtn.managedProperty().bindBidirectional(this.deleteBtn.visibleProperty());
     this.scanBtn.managedProperty().bindBidirectional(this.scanBtn.visibleProperty());
-    this.playBtn.managedProperty().bindBidirectional(this.playBtn.visibleProperty());
     this.stopBtn.managedProperty().bindBidirectional(this.stopBtn.visibleProperty());
     this.assetManagerSeparator.managedProperty().bindBidirectional(assetManagerSeparator.visibleProperty());
     this.assetManagerBtn.managedProperty().bindBidirectional(this.assetManagerBtn.visibleProperty());
@@ -1774,6 +1710,17 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     Platform.runLater(() -> {
       getTableFilterController().applyFilters();
     });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      SplitMenuButton playBtn = loader.load();
+      playButtonController = loader.getController();
+      int i = toolbar.getItems().indexOf(stopBtn);
+      toolbar.getItems().add(i, playBtn);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load play button: " + e.getMessage(), e);
+    }
   }
 
   private void refreshViewForEmulator() {
@@ -1788,7 +1735,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     this.deleteBtn.setVisible(vpxOrFpEmulator);
     this.uploadTableBtn.setVisible(vpxOrFpEmulator);
     this.scanBtn.setVisible(vpxEmulator);
-    this.playBtn.setVisible(vpxOrFpEmulator);
+    this.playButtonController.setVisible(vpxOrFpEmulator);
     this.stopBtn.setVisible(vpxOrFpEmulator);
 
     altSoundUploadItem.setVisible(vpxEmulator);
@@ -1894,6 +1841,10 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
   public GameEmulatorRepresentation getEmulatorSelection() {
     GameEmulatorRepresentation selectedEmu = this.emulatorCombo.getSelectionModel().getSelectedItem();
     return client.getFrontendService().isAllVpx(selectedEmu) ? null : selectedEmu;
+  }
+
+  public void onPlay() {
+    playButtonController.onPlay();
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {

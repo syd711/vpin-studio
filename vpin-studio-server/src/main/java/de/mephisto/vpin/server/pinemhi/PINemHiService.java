@@ -193,13 +193,13 @@ public class PINemHiService implements InitializingBean {
           }
           else {
             LOG.info("PINemHi is outdated (" + version + " vs. " + pinemhiVersion + "), checking for updates.");
-            List<String> resources = Arrays.asList("PINemHi.exe", PINEMHI_INI, "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
+            List<String> resources = Arrays.asList("PINemHi.exe", "pinemhi_rom_monitor.exe", "PINemHi_Leaderboard.exe");
             for (String resource : resources) {
               File check = new File(PINEMHI_FOLDER, resource);
               LOG.info("Downloading PINemHi file " + check.getAbsolutePath());
               Updater.downloadAndOverwrite("https://raw.githubusercontent.com/syd711/vpin-studio/main/resources/pinemhi/" + resource, check, true);
-              adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
             }
+            adjustVPPathForEmulator(frontendService.getDefaultGameEmulator(), getPinemhiIni(), true);
           }
         }
       }

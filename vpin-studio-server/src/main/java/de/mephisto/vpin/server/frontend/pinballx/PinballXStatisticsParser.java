@@ -1,5 +1,19 @@
 package de.mephisto.vpin.server.frontend.pinballx;
 
+import de.mephisto.vpin.restclient.alx.TableAlxEntry;
+import de.mephisto.vpin.restclient.frontend.Emulator;
+import de.mephisto.vpin.restclient.frontend.TableDetails;
+import de.mephisto.vpin.server.frontend.GameEntry;
+import de.mephisto.vpin.server.games.Game;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
+import org.apache.commons.lang3.BooleanUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -10,25 +24,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.function.Consumer;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
-import org.apache.commons.lang3.BooleanUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import de.mephisto.vpin.restclient.alx.TableAlxEntry;
-import de.mephisto.vpin.restclient.frontend.Emulator;
-import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.server.frontend.GameEntry;
-import de.mephisto.vpin.server.games.Game;
-
 public class PinballXStatisticsParser {
   private final static Logger LOG = LoggerFactory.getLogger(PinballXStatisticsParser.class);
 
   private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("dd/MM/yyyy HH:mm:ss");
+  private final FastDateFormat statisticsSdfAlt = FastDateFormat.getInstance("dd.MM.yyyy HH:mm:ss");
 
   private PinballXConnector connector;
 
@@ -86,7 +86,12 @@ public class PinballXStatisticsParser {
       e.setGameId(gameId);
       e.setUniqueId(gameId);
 
-      e.setLastPlayed(statisticsSdf.parse(s.getString("lastplayed")));
+      try {
+        e.setLastPlayed(statisticsSdf.parse(s.getString("lastplayed")));
+      }
+      catch (ParseException ex) {
+        e.setLastPlayed(statisticsSdfAlt.parse(s.getString("lastplayed")));
+      }
 
       if (s.containsKey("secondsplayed")) {
         e.setTimePlayedSecs(Integer.parseInt(s.getString("secondsplayed")));

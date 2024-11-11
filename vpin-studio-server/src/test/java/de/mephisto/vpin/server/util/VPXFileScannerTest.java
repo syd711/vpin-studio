@@ -13,7 +13,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class VPXFileScannerTest {
 
-  private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
+//  private final static File folder = new File("../testsystem/vPinball/VisualPinball/Tables");
+  private final static File folder = new File("C:\\vPinball\\VisualPinball\\Tables");
 
   @Test
   public void testScan() {
@@ -28,8 +29,8 @@ public class VPXFileScannerTest {
       System.out.println("Scanning " + vpxfiles.length + " vpx files.");
       for (File vpxfile : vpxfiles) {
         ScanResult scan = VPXFileScanner.scan(vpxfile);
-        if (scan.getRom() != null && !scan.isFoundControllerStop() && scan.isFoundTableExit()) {
-          System.err.println(vpxfile.getAbsolutePath());
+        if (scan.isVrRoomDisabled()) {
+          System.out.println(vpxfile.getAbsolutePath());
         }
       }
     }

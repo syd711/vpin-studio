@@ -18,6 +18,8 @@ import de.mephisto.vpin.restclient.util.ScoreFormatUtil;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.mania.HighscoreSynchronizeProgressModel;
 import de.mephisto.vpin.ui.mania.ManiaController;
+import de.mephisto.vpin.ui.tables.TableDialogs;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.tournaments.VpsVersionContainer;
 import de.mephisto.vpin.ui.util.ProgressDialog;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
@@ -33,10 +35,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.geometry.Rectangle2D;
 import javafx.scene.Parent;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
@@ -100,13 +99,20 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
   private Button showPlayerBtn;
 
   @FXML
+  private Separator reloadSeparator;
+
+  @FXML
   private Label titleLabel;
+
+  @FXML
+  private ToolBar toolbar;
 
   private Parent loadingOverlay;
   private List<TableScoreDetails> tableScores;
   private VpsTable vpsTable;
 
   private ManiaController maniaController;
+  private PlayButtonController playButtonController;
 
   // Add a public no-args constructor
   public ManiaWidgetVPSTableRankController() {
@@ -284,6 +290,17 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
         showPlayerBtn.setDisable(newValue == null);
       }
     });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      SplitMenuButton playBtn = loader.load();
+      playButtonController = loader.getController();
+      int i = toolbar.getItems().indexOf(reloadSeparator);
+      toolbar.getItems().add(i + 1, playBtn);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load play button: " + e.getMessage(), e);
+    }
   }
 
 
@@ -292,6 +309,15 @@ public class ManiaWidgetVPSTableRankController extends WidgetController implemen
     syncBtn.setDisable(vpsTable == null);
     showPlayerBtn.setDisable(true);
     this.vpsTable = vpsTable;
+
+    if (vpsTable != null) {
+      GameRepresentation gameByVpsTable = Studio.client.getGameService().getGameByVpsTable(vpsTable.getId(), null);
+      playButtonController.setData(gameByVpsTable);
+    }
+    else {
+      playButtonController.setData(null);
+    }
+
     if (vpsTable == null) {
       Platform.runLater(() -> {
         titleLabel.setText("Ranking");
