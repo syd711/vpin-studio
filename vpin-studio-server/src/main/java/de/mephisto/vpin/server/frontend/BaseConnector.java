@@ -751,7 +751,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public String toString() {
-    return "Frontend Connector \"" + this.getFrontend().getFrontendType().name() + "\"";
+    return getClass().getName();
   }
 
   //----------------------------

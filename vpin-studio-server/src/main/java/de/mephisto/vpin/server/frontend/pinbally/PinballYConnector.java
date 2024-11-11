@@ -61,6 +61,10 @@ public class PinballYConnector extends BaseConnector {
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
 
+    // recordings screens
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.BackGlass, VPinScreen.Topper, 
+      VPinScreen.Menu, VPinScreen.DMD, VPinScreen.PlayField));
+
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
   }
@@ -303,15 +307,11 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     Properties settings = loadPinballYSettings();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
     if (settings != null) {
-      displayList.add(createDisplay(settings, "PlayfieldWindow", VPinScreen.PlayField));
-
-      displayList.add(createDisplay(settings, "TopperWindow", VPinScreen.Topper));
-
-      displayList.add(createDisplay(settings, "DMDWindow", VPinScreen.DMD));
-
-      displayList.add(createDisplay(settings, "BackglassWindow", VPinScreen.BackGlass));
-
-      displayList.add(createDisplay(settings, "InstCardWindow", VPinScreen.Menu));
+      createDisplay(displayList, settings, "PlayfieldWindow", VPinScreen.PlayField, true);
+      createDisplay(displayList, settings, "BackglassWindow", VPinScreen.BackGlass, false);
+      createDisplay(displayList, settings, "DMDWindow", VPinScreen.DMD, false);
+      createDisplay(displayList, settings, "TopperWindow", VPinScreen.Topper, false);
+      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Menu, false);
     }
     return displayList;
   }
@@ -325,23 +325,27 @@ PlayfieldWindow.FullScreen = 0
 PlayfieldWindow.Maximized = 0
 PlayfieldWindow.Minimized = 0
    */
-  private FrontendPlayerDisplay createDisplay(Properties display, String displayName, VPinScreen screen) {
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-    player.setName(screen.name());
+  private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String displayName, VPinScreen screen, boolean defaultVisibility) {
+    String visible = display.getProperty(displayName + ".Visible");
+    boolean isVisible =  StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
+    if (isVisible) {
+      FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+      player.setName(screen.name());
 
-    String position = display.getProperty(displayName + ".Position");
-    String[] positions = StringUtils.split(position, ",");
-    String rotation = StringUtils.defaultString(display.getProperty(displayName + ".Rotation"), "0");
+      String position = display.getProperty(displayName + ".Position");
+      String[] positions = StringUtils.split(position, ",");
+      String rotation = StringUtils.defaultString(display.getProperty(displayName + ".Rotation"), "0");
 
-    //player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-    player.setX(Integer.parseInt(positions[0]));
-    player.setY(Integer.parseInt(positions[1]));
-    player.setWidth(Integer.parseInt(positions[2]));
-    player.setHeight(Integer.parseInt(positions[3]));
-    player.setRotation(Integer.parseInt(rotation));
+      //player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
+      player.setX(Integer.parseInt(positions[0]));
+      player.setY(Integer.parseInt(positions[1]));
+      player.setWidth(Integer.parseInt(positions[2]));
+      player.setHeight(Integer.parseInt(positions[3]));
+      player.setRotation(Integer.parseInt(rotation));
 
-    LOG.info("Created PinballY player display \"" + screen.name() + "\"");
-    return player;
+      LOG.info("Created PinballY player display \"" + screen.name() + "\"");
+      players.add(player);
+    }
   }
 
   //----------------------------------
