@@ -24,6 +24,8 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-deletions.png" width="500" />
 
+- **Tables / Table Asset Manager**: for pinballX and pinballY users, added video conversion services as it was proposed for PinUP Popper users.
+
 - **Tables / Validators**: Introduced new validator for VR support. The validator checks if there is a VR room flag inside the script and returns an error if not enabled. If you do not use VR, please disable this validator as there is no option to disable it by default. Note that you need to re-scan all tables to find disabled VR rooms. 
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/vr-validator.png" width="500" />

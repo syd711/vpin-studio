@@ -85,7 +85,8 @@ public class CardGenerationPreferencesController implements Initializable {
       menuPupPack = client.getPupPackService().getMenuPupPack();
       screenNames.addAll("", VPinScreen.Other2.name(), VPinScreen.GameInfo.name(), VPinScreen.GameHelp.name());
     }
-    if (frontendType.equals(FrontendType.PinballX)) {
+    // for other frontends supporting medias (pinballX and pinballY)
+    else if (frontendType.supportMedias()) {
       screenNames.addAll("", VPinScreen.Topper.name(), VPinScreen.DMD.name(), VPinScreen.Menu.name());
     }
 

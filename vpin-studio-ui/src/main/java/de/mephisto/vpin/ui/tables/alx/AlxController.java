@@ -131,7 +131,7 @@ public class AlxController implements Initializable, StudioFXController, StudioE
     Studio.stage.widthProperty().addListener(new ChangeListener<Number>() {
       @Override
       public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-        if (tablesController != null && tablesController.isTabSelected(TablesController.TAB_STATISTICS)) {
+        if (tablesController != null && tablesController.isTabStatisticsSelected()) {
           debouncer.debounce("prefWidth", () -> {
             Platform.runLater(() -> {
               refreshAlxData();
@@ -233,13 +233,13 @@ public class AlxController implements Initializable, StudioFXController, StudioE
   public void onViewActivated(NavigationOptions options) {
     NavigationController.setBreadCrumb(Arrays.asList("Table Statistics"));
     refreshEmulators();
-    // OLE don't call as refreshEmulators() select first item that triggers a refresh of data already
+    // OLE don't call as refreshEmulators() selects the first emulator item, that triggers a refresh of alx data 
     //refreshAlxData();
   }
 
   @Override
   public void alxDataUpdated(@Nullable GameRepresentation game) {
-    if (tablesController.isTabSelected(3)) {
+    if (tablesController.isTabStatisticsSelected()) {
       Platform.runLater(() -> {
         refreshAlxData();
       });
