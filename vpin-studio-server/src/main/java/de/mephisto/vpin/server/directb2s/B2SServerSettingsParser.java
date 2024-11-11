@@ -15,17 +15,20 @@ import java.io.File;
 
 public class B2SServerSettingsParser extends DefaultHandler {
   private final static Logger LOG = LoggerFactory.getLogger(B2SServerSettingsParser.class);
+
+  private final File backglassServerFolder;
+
   private final File xmlFile;
 
-  public B2SServerSettingsParser(@NonNull File xmlFile) {
+  public B2SServerSettingsParser(@NonNull File backglassServerFolder, @NonNull File xmlFile) {
+    this.backglassServerFolder = backglassServerFolder;
     this.xmlFile = xmlFile;
   }
 
   @Nullable
   public DirectB2ServerSettings getSettings() {
     DirectB2ServerSettings settings = new DirectB2ServerSettings();
-    settings.setBackglassServerFolder(xmlFile.getParentFile().getAbsolutePath());
-
+    settings.setBackglassServerFolder(backglassServerFolder.getAbsolutePath());
     try {
       DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
       dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);

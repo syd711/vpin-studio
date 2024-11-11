@@ -29,6 +29,9 @@ public class BackglassPreferencesController implements Initializable {
   private CheckBox startModeCheckbox;
 
   @FXML
+  private Label backglassServerFolder;
+
+  @FXML
   private Label noMatchFound;
 
   private DirectB2ServerSettings backglassServerSettings;
@@ -41,6 +44,7 @@ public class BackglassPreferencesController implements Initializable {
       backglassServerSettings = Studio.client.getBackglassServiceClient().getServerSettings();
       boolean serverInstalled = backglassServerSettings != null;
 
+      backglassServerFolder.setVisible(serverInstalled);
       noMatchFound.setVisible(!serverInstalled);
       pluginsCheckbox.setDisable(!serverInstalled);
       backglassMissingCheckbox.setDisable(!serverInstalled);
@@ -48,6 +52,9 @@ public class BackglassPreferencesController implements Initializable {
       startModeCheckbox.setDisable(!serverInstalled);
 
       if (serverInstalled) {
+
+        backglassServerFolder.setText(backglassServerSettings.getBackglassServerFolder());
+
         pluginsCheckbox.setSelected(backglassServerSettings.isPluginsOn());
         pluginsCheckbox.selectedProperty().addListener((observable, oldValue, newValue) -> {
           backglassServerSettings.setPluginsOn(newValue);

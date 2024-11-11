@@ -303,8 +303,13 @@ public class BackglassService {
   //-----------------------------
 
   public DirectB2ServerSettings getServerSettings() {
+
+    File b2sFolder = getBackglassServerFolder();
+    if (!b2sFolder.exists()) {
+      return null;
+    }
     File settingsXml = getB2STableSettingsXml();
-    B2SServerSettingsParser serverSettingsParser = new B2SServerSettingsParser(settingsXml);
+    B2SServerSettingsParser serverSettingsParser = new B2SServerSettingsParser(getBackglassServerFolder(), settingsXml);
     return serverSettingsParser.getSettings();
   }
 
@@ -347,12 +352,21 @@ public class BackglassService {
 
     // not found, check the legacy default : in tables folder of Vpx emulators
     for (GameEmulator emu : frontendService.getVpxGameEmulators()) {
-      xml = new File(emu.getTablesDirectory(), "B2STableSettings.xml");
-      if (xml.exists()) {
-        return xml;
+      File tableXml = new File(emu.getTablesDirectory(), "B2STableSettings.xml");
+      if (tableXml.exists()) {
+        return tableXml;
       }
     }
-    return null;
+
+    // else create a blank one
+    try {
+      Files.writeString(xml.toPath(), "<B2STableSettings></B2STableSettings>");
+      return xml;
+    }
+    catch (IOException e) {
+      LOG.error("Cannot find nor create file " + xml.getAbsolutePath(), e);
+      throw new RuntimeException("Cannot find nor create file " + xml.getAbsolutePath() +", " + e.getMessage());
+    }
   }
 
   //--------------------------
