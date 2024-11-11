@@ -24,6 +24,8 @@
 
   <img src="https://raw.githubusercontent.com/syd711/vpin-studio/main/documentation/tables/asset-deletions.png" width="500" />
 
+- **Tables / Table Asset Manager**: for pinballX and pinballY users, added video conversion services as it was proposed for PinUP Popper users.
+
 - **Tables / Script Editing**: Added info icon to the split menu button with a hint that .vbs files must be linked to a text editor in order to use that action.
 - **Tables / Usability Improvement**: Pressing the **shift key and double-clicking** on a table in the table overview will open the asset manager dialog.
 
