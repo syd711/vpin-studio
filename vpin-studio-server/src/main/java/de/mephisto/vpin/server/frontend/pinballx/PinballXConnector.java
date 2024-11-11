@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -356,47 +358,63 @@ public class PinballXConnector extends BaseConnector {
 
   private void createPlayfieldDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players) {
     SubnodeConfiguration display = iniConfiguration.getSection("Display");
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-    player.setName(VPinScreen.PlayField.name());
-    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+    int monitor = Integer.parseInt(display.getString("monitor", "0"));
+    GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+    if (monitor < gds.length) {
+      java.awt.Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
+      int mX = (int) bounds.getX();
+      int mY = (int) bounds.getY();
 
-    boolean windowed = display.getBoolean("Windowed", false);
-    if (windowed) {
-      player.setX(Integer.parseInt(display.getString("windowx", "0")));
-      player.setY(Integer.parseInt(display.getString("windowy", "0")));
-      player.setWidth(Integer.parseInt(display.getString("windowwidth", "0")));
-      player.setHeight(Integer.parseInt(display.getString("windowheight", "0")));
-    }
-    else {
-      GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
-      if (player.getMonitor() < gds.length) {
-        GraphicsDevice gd = gds[player.getMonitor()];
-        player.setX(0);
-        player.setY(0);
-        player.setWidth(gd.getDisplayMode().getWidth());
-        player.setHeight(gd.getDisplayMode().getHeight());
+      FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+      player.setName(VPinScreen.PlayField.name());
+      player.setMonitor(monitor);
+      player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+
+      boolean windowed = display.getBoolean("Windowed", false);
+      if (windowed) {
+        player.setX(mX + Integer.parseInt(display.getString("windowx", "0")));
+        player.setY(mY + Integer.parseInt(display.getString("windowy", "0")));
+        player.setWidth(Integer.parseInt(display.getString("windowwidth", "0")));
+        player.setHeight(Integer.parseInt(display.getString("windowheight", "0")));
       }
+      else {
+        player.setX(mX);
+        player.setY(mY);
+        player.setWidth((int) bounds.getWidth());
+        player.setHeight((int) bounds.getHeight());
+      }
+
+      LOG.info("Created PinballX player display \"PmayField\": {},{} {}*{}",
+          player.getX(), player.getY(), player.getWidth(), player.getHeight());
+
+      players.add(player);
     }
-    LOG.info("Created PinballX player display \"PlayField\"");
-    players.add(player);
   }
 
   private void createDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players, String sectionName, VPinScreen screen, boolean defaultEnabled) {
     SubnodeConfiguration display = iniConfiguration.getSection(sectionName);
     if (!display.isEmpty()) {
       boolean enabled = display.getBoolean("Enabled", defaultEnabled);
-      if (enabled) {
+
+      int monitor = Integer.parseInt(display.getString("monitor", "0"));
+      GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+      if (enabled && monitor < gds.length) {
+        Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
+        int mX = (int) bounds.getX();
+        int mY = (int) bounds.getY();
+
         FrontendPlayerDisplay player = new FrontendPlayerDisplay();
         player.setName(screen.name());
         player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-        player.setX(Integer.parseInt(display.getString("x", "0")));
-        player.setY(Integer.parseInt(display.getString("y", "0")));
+        player.setX(mX + Integer.parseInt(display.getString("x", "0")));
+        player.setY(mY + Integer.parseInt(display.getString("y", "0")));
         player.setWidth(Integer.parseInt(display.getString("width", "0")));
         player.setHeight(Integer.parseInt(display.getString("height", "0")));
         player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
 
-        LOG.info("Created PinballX player display \"" + screen.name() + "\"");
+        LOG.info("Created PinballX player display \"{}\": {},{} {}*{}", screen.name(), 
+            player.getX(), player.getY(), player.getWidth(), player.getHeight());
         players.add(player);
       }
     }
