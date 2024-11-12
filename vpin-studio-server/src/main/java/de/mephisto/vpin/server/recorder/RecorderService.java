@@ -74,7 +74,7 @@ public class RecorderService {
     List<VPinScreen> supportedRecodingScreens = frontendService.getFrontend().getSupportedRecordingScreens();
     List<FrontendPlayerDisplay> frontendPlayerDisplays = frontendService.getFrontendPlayerDisplays();
 
-    List<RecordingScreen> recordingOptions = new ArrayList<>();
+    List<RecordingScreen> result = new ArrayList<>();
     for (VPinScreen screen : supportedRecodingScreens) {
       FrontendPlayerDisplay display = VPinScreen.valueOfScreen(frontendPlayerDisplays, screen);
       // recording screen may not be among the effective displays
@@ -83,10 +83,10 @@ public class RecorderService {
         recordingScreen.setScreen(screen);
         recordingScreen.setDisplay(display);
 
-        recordingOptions.add(recordingScreen);
+        result.add(recordingScreen);
       }
     }
-    return recordingOptions;
+    return result;
   }
 
   public void refreshPreview(OutputStream out, VPinScreen screen) {
