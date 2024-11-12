@@ -146,7 +146,7 @@ public class ScreenRecorderPanelController implements Initializable {
 
     previewTitle.setText("Screen Preview (" + recordingScreen.getDisplay().getWidth() + " x " + recordingScreen.getDisplay().getHeight() + ")");
 
-    preview.setVisible(Studio.stage.widthProperty().intValue() > PREVIEW_WIDTH_THRESHOLD);
+    preview.setVisible(Studio.stage.widthProperty().intValue() >= PREVIEW_WIDTH_THRESHOLD);
     RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     RecordingScreenOptions option = settings.getRecordingScreenOption(recordingScreen);
 
