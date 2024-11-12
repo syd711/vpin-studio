@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.frontend.VPinScreen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class RecorderSettings extends JsonSettings {
 
@@ -56,7 +55,8 @@ public class RecorderSettings extends JsonSettings {
   }
 
   public boolean isEnabled(VPinScreen screen) {
-    return getRecordingScreenOption(screen).isEnabled();
+    RecordingScreenOptions option = getRecordingScreenOption(screen);
+    return option != null ? option.isEnabled() : false;
   }
 
   public boolean isEnabled() {

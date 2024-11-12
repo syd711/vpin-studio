@@ -14,6 +14,7 @@ import de.mephisto.vpin.restclient.recorder.RecorderSettings;
 import de.mephisto.vpin.restclient.recorder.RecordingData;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
@@ -471,6 +472,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), settings.isEnabled(VPinScreen.Topper));
     BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), settings.isEnabled(VPinScreen.Menu));
 
+    List<RecordingScreenOptions> options = new ArrayList<>();
     List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
     for (RecordingScreen recordingScreen : recordingScreens) {
       try {
@@ -485,7 +487,11 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       catch (IOException e) {
         LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
       }
+      options.add(settings.getRecordingScreenOption(recordingScreen));
     }
+    // get only the options that have a valid RecordingScreen and ignore all other ones
+    settings.setRecordingScreenOptions(options);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
 
     screenSizeChangeListener = new ScreenSizeChangeListener();
 
