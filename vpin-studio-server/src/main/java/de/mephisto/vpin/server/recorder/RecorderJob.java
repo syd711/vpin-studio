@@ -85,6 +85,8 @@ public class RecorderJob implements Job {
           updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
           jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+
+          //create the game recorder which includes all screens
           gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
           gameRecorder.startRecording();
 
@@ -146,6 +148,10 @@ public class RecorderJob implements Job {
       }
 
       if (recordingScreenOption.getRecordMode().equals(RecordMode.overwrite)) {
+        return true;
+      }
+
+      if (recordingScreenOption.getRecordMode().equals(RecordMode.append)) {
         return true;
       }
 

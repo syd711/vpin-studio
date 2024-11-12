@@ -33,7 +33,7 @@ import static de.mephisto.vpin.ui.util.PreferenceBindingUtil.debouncer;
 public class ScreenRecorderPanelController implements Initializable {
   private final static Logger LOG = LoggerFactory.getLogger(ScreenRecorderPanelController.class);
 
-  private final static List<RecordMode> RECORD_MODE_LIST = Arrays.asList(RecordMode.ifMissing, RecordMode.overwrite);
+  private final static List<RecordMode> RECORD_MODE_LIST = Arrays.asList(RecordMode.ifMissing, RecordMode.overwrite, RecordMode.append);
 
   @FXML
   private Pane root;

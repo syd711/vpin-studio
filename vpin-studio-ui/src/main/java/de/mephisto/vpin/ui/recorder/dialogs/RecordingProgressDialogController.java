@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.ui.Studio;
+import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.jobs.JobPoller;
 import de.mephisto.vpin.ui.jobs.JobUpdatesListener;
 import de.mephisto.vpin.ui.recorder.RecorderController;
@@ -163,6 +164,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
       Platform.runLater(() -> {
         stage.close();
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
       });
 
       if (jobDescriptor.getError() != null) {
@@ -175,6 +177,7 @@ public class RecordingProgressDialogController implements Initializable, DialogC
       else {
         WidgetFactory.showInformation(Studio.stage, "Recording Finished", "Finished recording of " + recordingDataSummary.size() + " game(s).");
       }
+
     });
   }
 

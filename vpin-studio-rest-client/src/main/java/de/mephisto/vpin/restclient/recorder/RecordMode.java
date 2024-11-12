@@ -1,7 +1,7 @@
 package de.mephisto.vpin.restclient.recorder;
 
 public enum RecordMode {
-  ifMissing, overwrite;
+  ifMissing, overwrite, append;
 
 
   @Override
@@ -11,6 +11,9 @@ public enum RecordMode {
     }
     else if(this.equals(overwrite)) {
       return "Overwrite";
+    }
+    else if(this.equals(append)) {
+      return "Append";
     }
 
     return this.name();

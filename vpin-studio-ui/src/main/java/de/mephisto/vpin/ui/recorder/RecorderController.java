@@ -16,6 +16,8 @@ import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
 import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.ui.*;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.events.StudioEventListener;
 import de.mephisto.vpin.ui.monitor.MonitoringManager;
 import de.mephisto.vpin.ui.recorder.panels.ScreenRecorderPanelController;
 import de.mephisto.vpin.ui.tables.*;
@@ -48,6 +50,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import org.apache.commons.collections4.ListUtils;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +65,7 @@ import static de.mephisto.vpin.ui.tables.TableOverviewController.ALL_VPX_ID;
 import static de.mephisto.vpin.ui.tables.TableOverviewController.createAssetStatus;
 
 public class RecorderController extends BaseTableController<GameRepresentation, GameRepresentationModel>
-    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener {
+    implements Initializable, StudioFXController, ListChangeListener<GameRepresentationModel>, PreferenceChangeListener, StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderController.class);
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
@@ -581,6 +584,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
+
+    EventManager.getInstance().addListener(this);
   }
 
   @NotNull
@@ -618,9 +623,9 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         refreshSelection();
       }
     });
-    Node assetStatus = createAssetStatus(value, model, VPinScreen.PlayField, event -> {
+    Node assetStatus = createAssetStatus(value, model, screen, event -> {
       TableOverviewController overviewController = tablesController.getTableOverviewController();
-      TableDialogs.openTableAssetsDialog(overviewController, value, VPinScreen.PlayField);
+      TableDialogs.openTableAssetsDialog(overviewController, value, screen);
     });
     column.getChildren().add(columnCheckbox);
     column.getChildren().add(assetStatus);
@@ -684,15 +689,40 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
+  public void setRootController(TablesController tablesController) {
+    this.tablesController = tablesController;
+  }
+
+  @Override
+  public void tableChanged(int id, @Nullable String rom, @Nullable String gameName) {
+    GameRepresentation refreshedGame = client.getGameService().getGame(id);
+    if (refreshedGame != null) {
+      GameRepresentationModel model = getModel(refreshedGame);
+      if (model != null) {
+        model.setBean(refreshedGame);
+        model.reload();
+      }
+      else {
+        // new table, add it to the list only if the emulator is matching
+        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+          models.add(0, new GameRepresentationModel(refreshedGame));
+        }
+      }
+
+      // force refresh the view for elements not observed by the table
+      tableView.refresh();
+    }
+  }
+
+
+  //----------------------- Model classes ------------------------------------------------------------------------------
+
   class ScreenSizeChangeListener implements ChangeListener<Number> {
     @Override
     public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
       refreshScreens();
     }
-  }
-
-  public void setRootController(TablesController tablesController) {
-    this.tablesController = tablesController;
   }
 
   class GameEmulatorChangeListener implements ChangeListener<GameEmulatorRepresentation> {
@@ -715,7 +745,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     @Override
     public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-      if(newValue) {
+      if (newValue) {
         selection.getRecordingData().forEach(data -> data.addScreen(screen));
       }
       else {
