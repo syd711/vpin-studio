@@ -33,6 +33,7 @@ import static de.mephisto.vpin.ui.Studio.client;
 
 public class CabMonitorController implements Initializable, DialogController {
   private final static Logger LOG = LoggerFactory.getLogger(CabMonitorController.class);
+  public static final double MIN_ZOOM = 0.2;
   private final Debouncer debouncer = new Debouncer();
   public static final int DEBOUNCE_MS = 200;
 
@@ -64,8 +65,8 @@ public class CabMonitorController implements Initializable, DialogController {
   @FXML
   private void zoomOut() {
     scaling = scaling - 0.1;
-    if (scaling < 0.4) {
-      scaling = 0.4;
+    if (scaling < MIN_ZOOM) {
+      scaling = MIN_ZOOM;
     }
     monitoringView.setZoom(scaling);
 
@@ -104,6 +105,7 @@ public class CabMonitorController implements Initializable, DialogController {
   public void initialize(URL url, ResourceBundle resourceBundle) {
     MonitoringSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.MONITORING_SETTINGS, MonitoringSettings.class);
     settings.setOpen(true);
+    scaling = settings.getScaling();
     client.getPreferenceService().setJsonPreference(PreferenceNames.MONITORING_SETTINGS, settings);
 
     monitoringModeCombo.setItems(FXCollections.observableList(Arrays.asList(MonitoringMode.values())));
