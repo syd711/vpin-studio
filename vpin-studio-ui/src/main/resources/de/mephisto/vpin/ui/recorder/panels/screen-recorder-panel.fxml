@@ -105,7 +105,7 @@
                               <Label fx:id="previewTitle" styleClass="default-text" text="Screen Preview" BorderPane.alignment="CENTER" />
                            </top>
                         </BorderPane>
-                        <Label fx:id="previewLabel" text="Label" />
+                        <Label fx:id="previewLabel" />
                      </children>
                   </StackPane>
                </center>

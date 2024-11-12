@@ -98,7 +98,7 @@ public class FrontendConnectorsTest extends AbstractVPinServerTest {
 
     // first one should be visual pinball and with id=1 else other tests will fail
     Emulator vpx = emulators.get(0);
-    assertTrue(vpx.isVisualPinball());
+    assertTrue(vpx.getType().isVpxEmulator());
     assertTrue(vpx.isEnabled());
     assertEquals(1, vpx.getId());
     assertTrue(StringUtils.startsWithIgnoreCase(vpx.getName().replace(" ", ""), "VisualPinball"));

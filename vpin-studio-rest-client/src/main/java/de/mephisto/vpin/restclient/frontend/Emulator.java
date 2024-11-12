@@ -146,10 +146,6 @@ public class Emulator {
     this.database = database;
   }
 
-  public boolean isVisualPinball() {
-    return type.isVpxEmulator();
-  }
-
 
   @Override
   public String toString() {

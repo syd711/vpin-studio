@@ -1147,24 +1147,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
         e.setVisible(rs.getInt("Visible") == 1);
 
         // specific initialization
-        if (e.isVisualPinball()) {
-          String exeName = SystemUtil.is64Bit(preferencesService) ? "VPinballX64.exe" : "VPinballX.exe";
-
-          //parsing of the specific popper script
-          String launchScript = rs.getString("LaunchScript");
-          if (StringUtils.isNotEmpty(launchScript)) {
-            Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
-            Matcher m = pattern.matcher(launchScript);
-            while (m.find()) {
-              String key = m.group(1);
-              String value = m.group(2);
-              if (key != null && key.equals("VPXEXE") && value != null) {
-                exeName = value.trim() + ".exe";
-              }
-            }
-          }
-          e.setExeName(exeName);
-        }
+        setEmulatorExe(e, rs);
 
         result.add(e);
       }
@@ -1181,12 +1164,36 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
     //this can not be executed within a fetch!!!
     for (Emulator emulator : result) {
-      if (emulator.isVisualPinball()) {
+      if (emulator.getType().isVpxEmulator()) {
         initVisualPinballXScripts(emulator);
       }
     }
 
     return result;
+  }
+
+  private void setEmulatorExe(Emulator e, ResultSet rs) throws SQLException {
+    if (e.getType().equals(EmulatorType.VisualPinball)) {
+      String exeName = SystemUtil.is64Bit(preferencesService) ? "VPinballX64.exe" : "VPinballX.exe";
+
+      //parsing of the specific popper script
+      String launchScript = rs.getString("LaunchScript");
+      if (StringUtils.isNotEmpty(launchScript)) {
+        Pattern pattern = Pattern.compile("\\b(\\w+)=(\\w+)\\b");
+        Matcher m = pattern.matcher(launchScript);
+        while (m.find()) {
+          String key = m.group(1);
+          String value = m.group(2);
+          if (key != null && key.equals("VPXEXE") && value != null) {
+            exeName = value.trim() + ".exe";
+          }
+        }
+      }
+      e.setExeName(exeName);
+    }
+    else if (e.getType().equals(EmulatorType.FuturePinball)) {
+      e.setExeName("Future Pinball.exe");
+    }
   }
 
   private @NonNull EmulatorType getEmulatorType(String emuName, String dirGames, String extension) {
@@ -1958,7 +1965,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
   }
 
   public static boolean isValidVPXEmulator(Emulator emulator) {
-    if (!emulator.isVisualPinball()) {
+    if (!emulator.getType().isVpxEmulator()) {
       return false;
     }
 

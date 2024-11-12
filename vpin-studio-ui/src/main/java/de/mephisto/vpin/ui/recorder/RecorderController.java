@@ -573,66 +573,11 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       screenMenuButton.getItems().add(item);
     }
 
-    checkBoxPlayfield.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
-          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.PlayField));
-        }
-        else {
-          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.PlayField));
-        }
-        refreshSelection();
-      }
-    });
-    checkBoxBackglass.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
-          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.BackGlass));
-        }
-        else {
-          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.BackGlass));
-        }
-        refreshSelection();
-      }
-    });
-    checkBoxFullDMD.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
-          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.Menu));
-        }
-        else {
-          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.Menu));
-        }
-        refreshSelection();
-      }
-    });
-    checkBoxTopper.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
-          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.Topper));
-        }
-        else {
-          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.Topper));
-        }
-        refreshSelection();
-      }
-    });
-    checkBoxDMD.selectedProperty().addListener(new ChangeListener<Boolean>() {
-      @Override
-      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
-        if(newValue) {
-          selection.getRecordingData().forEach(data -> data.addScreen(VPinScreen.DMD));
-        }
-        else {
-          selection.getRecordingData().forEach(data -> data.removeScreen(VPinScreen.DMD));
-        }
-        refreshSelection();
-      }
-    });
+    checkBoxPlayfield.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.PlayField));
+    checkBoxBackglass.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.BackGlass));
+    checkBoxFullDMD.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.Menu));
+    checkBoxTopper.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.Topper));
+    checkBoxDMD.selectedProperty().addListener(new ColumnCheckboxListener(VPinScreen.DMD));
 
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
@@ -758,6 +703,25 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
         // just reload from cache
         doReload(false);
       });
+    }
+  }
+
+  class ColumnCheckboxListener implements ChangeListener<Boolean> {
+    private final VPinScreen screen;
+
+    ColumnCheckboxListener(VPinScreen screen) {
+      this.screen = screen;
+    }
+
+    @Override
+    public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+      if(newValue) {
+        selection.getRecordingData().forEach(data -> data.addScreen(screen));
+      }
+      else {
+        selection.getRecordingData().forEach(data -> data.removeScreen(screen));
+      }
+      refreshSelection();
     }
   }
 }

@@ -554,7 +554,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   }
 
   public boolean isValidVPXEmulator(Emulator emulator) {
-    if (!emulator.isVisualPinball()) {
+    if (!emulator.getType().isVpxEmulator()) {
       return false;
     }
 
@@ -596,7 +596,7 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
           continue;
         }
 
-        if (emulator.isVisualPinball() && !isValidVPXEmulator(emulator)) {
+        if (emulator.getType().isVpxEmulator() && !isValidVPXEmulator(emulator)) {
           continue;
         }
 

@@ -9,6 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class GameEmulator {
@@ -177,13 +178,13 @@ public class GameEmulator {
     return id;
   }
 
+  @Nullable
   @JsonIgnore
   public File getExe() {
-    String _exe = exeName;
-    if (_exe == null && isFpEmulator()) {
-      _exe = "Future Pinball.exe";
+    if (exeName != null) {
+      return new File(installationFolder, exeName);
     }
-    return new File(installationFolder, _exe);
+    return null;
   }
 
   public String getExeParameters() {
@@ -198,9 +199,12 @@ public class GameEmulator {
       }
       return Arrays.asList(exeFiles);
     }
-    else {
+
+    if (getExe() != null) {
       return Arrays.asList(getExe().getName());
     }
+
+    return Collections.emptyList();
   }
 
   @NonNull

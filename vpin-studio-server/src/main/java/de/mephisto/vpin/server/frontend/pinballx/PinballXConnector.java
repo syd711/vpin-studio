@@ -527,7 +527,7 @@ public class PinballXConnector extends BaseConnector {
   //---------------- Utilities -----------------------------------------------------------------------------------------
 
   private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
-    if (emulator.isVisualPinball()) {
+    if (emulator.getType().isVpxEmulator()) {
       //VPX scripts
       SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
       visualPinball.setProperty("LaunchBeforeEnabled", "True");
