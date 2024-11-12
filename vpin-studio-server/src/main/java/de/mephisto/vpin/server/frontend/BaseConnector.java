@@ -36,6 +36,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
@@ -866,26 +872,91 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public boolean restartFrontend(boolean wait) {
-    throw new UnsupportedOperationException("restartFrontend not supported for " + this.getClass().getSimpleName());
+    restartFrontend();
+    if (!wait) {
+      return true;
+    }
+    return waitFor(() -> isFrontendRunning(), getFrontendExe(), 10, -1);
   }
 
   @Override
   public boolean launchGame(Game game, boolean wait) {
-    throw new UnsupportedOperationException("launchGame not supported for " + this.getClass().getSimpleName());
+    GameEmulator emu = game.getEmulator();
+
+    File exe = emu.getExe();  
+    String params = emu.getExeParameters();
+    TableDetails tableDetails = getGameFromDb(emu.getId(), game.getGameFileName());
+    String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
+    if (!StringUtils.isEmpty(altLaunchExe)) {
+      exe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
+      //?? params = tableDetails.getLaunchCustomVar();
+    }
+  
+    try {
+      List<String> commandList = new ArrayList<>();
+      commandList.add("\"" + exe.getAbsolutePath() + "\"");
+      if (StringUtils.isNotEmpty(params)) {
+        params = params.replace("[TABLEPATH]", emu.getTablesFolder().getAbsolutePath());
+        params = params.replace("[TABLEFILE]", game.getGameFileName());
+        commandList.add(params);
+      }
+
+      SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
+      executor.setDir(emu.getInstallationFolder());
+      executor.executeCommandAsync();
+      //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    }
+    catch (Exception e) {
+      LOG.error("Cannot launch emulator for game {}", game.getGameFileName(), e);
+      return false;
+    }
+
+    if (!wait) {
+      return true;
+    }
+    return waitFor(() -> isEmulatorRunning(game.getEmulator()), emu.getName(), 30, -1);
+  }
+
+  private boolean waitFor(Supplier<Boolean> isRunning, String name, int seconds, int postDelayMs) {
+    try {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+          while (!isRunning.get()) {
+            Thread.sleep(1000);
+          }
+          LOG.info("Found waiting process \"{}\"", name);
+          if (postDelayMs > 0) {
+            Thread.sleep(postDelayMs);
+          }
+          return true;
+        }
+      });
+      return submit.get(seconds, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Waiting for process \"{}\" failed: {}", name, e.getMessage());
+    }
+    return false;
   }
 
   @Override
   public boolean isEmulatorRunning(GameEmulator emulator) {
-    throw new UnsupportedOperationException("isEmulatorRunning not supported for " + this.getClass().getSimpleName());
+    String[] altexes = emulator.getAltExeNames().toArray(new String[0]);
+    Optional<ProcessHandle> process = ProcessHandle
+        .allProcesses()
+        .filter(p -> p.info().command().isPresent() &&
+            StringUtils.containsAnyIgnoreCase(p.info().command().get(), altexes))
+        .findFirst();
+    return process.isPresent();
   }
 
   @Override
   public void initializeRecording() {
-
   }
 
   @Override
   public void finalizeRecording() {
-
   }
 }

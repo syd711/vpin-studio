@@ -8,10 +8,7 @@ import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
-import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class GameEmulator {
@@ -19,7 +16,6 @@ public class GameEmulator {
 
   private File installationFolder;
   private File tablesFolder;
-  private File backglassServerDirectory;
   private final File mameFolder;
   private final File userFolder;
   private final File altSoundFolder;
@@ -46,9 +42,8 @@ public class GameEmulator {
   private final int id;
   private final boolean visible;
   private String exeName;
+  private String exeParameters;
   private final String gameExt;
-
-  private List<String> altVPXExeNames = new ArrayList<>();
 
   public GameEmulator(@NonNull Emulator emulator) {
     this.id = emulator.getId();
@@ -57,6 +52,7 @@ public class GameEmulator {
     this.description = emulator.getDescription();
     this.displayName = emulator.getDisplayName();
     this.exeName = emulator.getExeName();
+    this.exeParameters = emulator.getExeParameters();
     this.visible = emulator.isVisible();
     this.gameExt = emulator.getGamesExt();
 
@@ -66,18 +62,6 @@ public class GameEmulator {
 
     if (emulator.getEmuLaunchDir() != null) {
       this.installationFolder = new File(emulator.getEmuLaunchDir());
-      String[] files = this.installationFolder.list(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          if (!name.startsWith("VPinball")) {
-            return false;
-          }
-          return name.endsWith(".exe");
-        }
-      });
-      if (files != null) {
-        this.setAltVPXExeNames(Arrays.asList(files));
-      }
     }
 
     if (emulator.getDirGames() != null) {
@@ -108,14 +92,6 @@ public class GameEmulator {
       this.romFolder = new File(emulator.getDirRoms());
     }
     this.romDirectory = this.romFolder.getAbsolutePath();
-  }
-
-  public List<String> getAltVPXExeNames() {
-    return altVPXExeNames;
-  }
-
-  public void setAltVPXExeNames(List<String> altVPXExeNames) {
-    this.altVPXExeNames = altVPXExeNames;
   }
 
   @JsonIgnore
@@ -203,10 +179,15 @@ public class GameEmulator {
 
   @JsonIgnore
   public File getExe() {
-    if (exeName == null && isFpEmulator()) {
-      this.exeName = "Future Pinball.exe";
+    String _exe = exeName;
+    if (_exe == null && isFpEmulator()) {
+      _exe = "Future Pinball.exe";
     }
-    return new File(installationFolder, exeName);
+    return new File(installationFolder, _exe);
+  }
+
+  public String getExeParameters() {
+    return exeParameters;
   }
 
   public List<String> getAltExeNames() {
@@ -217,8 +198,9 @@ public class GameEmulator {
       }
       return Arrays.asList(exeFiles);
     }
-
-    return Collections.emptyList();
+    else {
+      return Arrays.asList(getExe().getName());
+    }
   }
 
   @NonNull

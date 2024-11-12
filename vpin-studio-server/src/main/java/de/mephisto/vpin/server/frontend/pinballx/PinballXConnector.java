@@ -232,7 +232,7 @@ public class PinballXConnector extends BaseConnector {
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
-    //String parameters = s.getString("Parameters");
+    String parameters = s.getString("Parameters");
 
     if (tablePath == null || !new File(tablePath).exists()) {
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
@@ -276,6 +276,7 @@ public class PinballXConnector extends BaseConnector {
     e.setDirGames(tablePath);
     e.setEmuLaunchDir(workingPath);
     e.setExeName(executable);
+    e.setExeParameters(parameters);
 
     e.setGamesExt(type.getExtension());
     e.setVisible(enabled);
