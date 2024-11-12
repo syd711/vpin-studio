@@ -2,13 +2,11 @@ package de.mephisto.vpin.server.recorder;
 
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingData;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
-import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
+import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameMediaService;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,6 +51,12 @@ public class GameRecorder {
     List<Callable<RecordingResult>> callables = new ArrayList<>();
     for (VPinScreen screen : recordingData.getScreens()) {
       RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+      File target = resolveTargetFile(game, screen, option.getRecordMode());
+      if (target == null) {
+        LOG.info("Skipped recording for " + screen + ", asset not missing.");
+        continue;
+      }
+
       RecordingScreen recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
       int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
       if (totalDuration > totalTime) {
@@ -62,9 +66,6 @@ public class GameRecorder {
         Callable<RecordingResult> screenRecordable = new Callable<>() {
           @Override
           public RecordingResult call() {
-            File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, null);
-            File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
-
             LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + target.getAbsolutePath());
             recorderSettings.getRecordingScreenOption(screen);
             ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, target);
@@ -110,5 +111,31 @@ public class GameRecorder {
       jobDescriptor.setError(e.getMessage());
       LOG.error("Cancellation failed: {}", e.getMessage(), e);
     }
+  }
+
+  @Nullable
+  private File resolveTargetFile(Game game, VPinScreen screen, RecordMode recordMode) {
+    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, null);
+    switch (recordMode) {
+      case overwrite: {
+        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+        if (!screenMediaFiles.isEmpty()) {
+          return screenMediaFiles.get(0);
+        }
+        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+      }
+      case ifMissing: {
+        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+        if (!screenMediaFiles.isEmpty()) {
+          return null;
+        }
+        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+      }
+      case append: {
+        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+      }
+    }
+
+    throw new UnsupportedOperationException("Invalid record mode " + recordMode);
   }
 }

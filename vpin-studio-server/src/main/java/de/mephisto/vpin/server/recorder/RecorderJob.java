@@ -41,61 +41,61 @@ public class RecorderJob implements Job {
     frontendStatusService.setEventsEnabled(false);
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
       Game game = gameService.getGame(data.getGameId());
+      boolean recordingRequired = isRecordingRequired(game);
+      if (!recordingRequired) {
+        LOG.info("Required assets have been found for \"{}\" or the overwrite option was not enabled, skipping recording.", game.getGameDisplayName());
+        jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
+        continue;
+      }
+
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
         }
 
-        boolean recordingRequired = isRecordingRequired(game);
-        if (!recordingRequired) {
-          LOG.info("Assets found or no overwrite not enabled, skipping recording.");
-          jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
+        frontend.initializeRecording();
+        updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          break;
         }
-        else {
-          frontend.initializeRecording();
-          updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
-          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-            break;
-          }
 
-          jobDescriptor.setGameId(game.getId());
-          jobDescriptor.setStatus("Launching Frontend");
-          if (!jobDescriptor.isCancelled() && !frontend.restartFrontend(true)) {
-            jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
-            jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
-            LOG.error("Recording cancelled, the frontend could not be launched.");
-            return;
-          }
-          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-            break;
-          }
-          updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
-
-          jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
-          if (!jobDescriptor.isCancelled() && !frontend.launchGame(game, true)) {
-            jobDescriptor.setError("Recording cancelled, the game could not be launched.");
-            jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
-            LOG.error("Recording cancelled, the game could not be launched.");
-            return;
-          }
-          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-            break;
-          }
-          updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
-
-          jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
-
-          //create the game recorder which includes all screens
-          gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
-          gameRecorder.startRecording();
-
-          updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
-          LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
-          jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
-          double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
-          jobDescriptor.setProgress(progress);
+        jobDescriptor.setGameId(game.getId());
+        jobDescriptor.setStatus("Launching Frontend");
+        if (!jobDescriptor.isCancelled() && !frontend.restartFrontend(true)) {
+          jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
+          jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
+          LOG.error("Recording cancelled, the frontend could not be launched.");
+          return;
         }
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          break;
+        }
+        updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
+
+        jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+        if (!jobDescriptor.isCancelled() && !frontend.launchGame(game, true)) {
+          jobDescriptor.setError("Recording cancelled, the game could not be launched.");
+          jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
+          LOG.error("Recording cancelled, the game could not be launched.");
+          return;
+        }
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          break;
+        }
+        updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
+
+        jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+
+        //create the game recorder which includes all screens
+        gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+        gameRecorder.startRecording();
+
+        updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
+        LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
+        jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
+        double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
+        jobDescriptor.setProgress(progress);
       }
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
@@ -121,7 +121,7 @@ public class RecorderJob implements Job {
    * @param progress
    */
   private void updateSingleProgress(JobDescriptor jobDescriptor, RecordingDataSummary recordingDataSummary, double progress) {
-    if(recordingDataSummary.size() == 1) {
+    if (recordingDataSummary.size() == 1) {
       jobDescriptor.setProgress(progress / 100d);
     }
   }
@@ -141,25 +141,28 @@ public class RecorderJob implements Job {
   }
 
   private boolean isRecordingRequired(Game game) {
-    List<RecordingScreenOptions> recordingScreenOptions = settings.getRecordingScreenOptions();
-    for (RecordingScreenOptions recordingScreenOption : recordingScreenOptions) {
-      if (!recordingScreenOption.isEnabled()) {
-        continue;
-      }
+    RecordingData recordingData = recordingDataSummary.get(game.getId());
+    if (recordingData != null) {
+      List<VPinScreen> screens = recordingData.getScreens();
+      for (VPinScreen screen : screens) {
+        RecordingScreenOptions recordingScreenOption = settings.getRecordingScreenOption(screen);
+        if (!recordingScreenOption.isEnabled()) {
+          continue;
+        }
 
-      if (recordingScreenOption.getRecordMode().equals(RecordMode.overwrite)) {
-        return true;
-      }
-
-      if (recordingScreenOption.getRecordMode().equals(RecordMode.append)) {
-        return true;
-      }
-
-      if (recordingScreenOption.getRecordMode().equals(RecordMode.ifMissing)) {
-        VPinScreen screen = VPinScreen.valueOfScreen(recordingScreenOption.getDisplayName());
-        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
-        if (screenMediaFiles.isEmpty()) {
+        if (recordingScreenOption.getRecordMode().equals(RecordMode.overwrite)) {
           return true;
+        }
+
+        if (recordingScreenOption.getRecordMode().equals(RecordMode.append)) {
+          return true;
+        }
+
+        if (recordingScreenOption.getRecordMode().equals(RecordMode.ifMissing)) {
+          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          if (screenMediaFiles.isEmpty()) {
+            return true;
+          }
         }
       }
     }

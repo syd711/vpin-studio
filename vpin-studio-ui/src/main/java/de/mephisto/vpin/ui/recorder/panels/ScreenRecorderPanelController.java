@@ -95,20 +95,20 @@ public class ScreenRecorderPanelController implements Initializable {
       @Override
       public void changed(ObservableValue<? extends RecordMode> observable, RecordMode oldValue, RecordMode newValue) {
         Platform.runLater(() -> {
-          RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-          RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+          RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+          RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
           option2.setRecordMode(newValue);
-          client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+          client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
         });
       }
     });
 
     fps60Checkbox.setSelected(option.isFps60());
     fps60Checkbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
-      RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-      RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
       option2.setFps60(t1);
-      client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
     });
 
     SpinnerValueFactory.IntegerSpinnerValueFactory factory = new SpinnerValueFactory.IntegerSpinnerValueFactory(3, 3600, option.getRecordingDuration());
@@ -116,10 +116,10 @@ public class ScreenRecorderPanelController implements Initializable {
     String key = "duration" + option.getDisplayName();
     durationSpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(key, () -> {
-        RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+        RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
         option2.setRecordingDuration(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
       }, 300);
     });
 
@@ -128,10 +128,10 @@ public class ScreenRecorderPanelController implements Initializable {
     String spinnerKey = "delay" + option.getDisplayName();
     delaySpinner.valueProperty().addListener((observable, oldValue, newValue) -> {
       debouncer.debounce(spinnerKey, () -> {
-        RecorderSettings settings2 = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
-        RecordingScreenOptions option2 = settings.getRecordingScreenOption(recordingScreen);
+        RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+        RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
         option2.setInitialDelay(newValue);
-        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings2);
+        client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
       }, 300);
     });
 
