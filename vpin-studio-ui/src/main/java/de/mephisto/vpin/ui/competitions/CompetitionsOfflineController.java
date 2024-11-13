@@ -346,7 +346,7 @@ public class CompetitionsOfflineController extends BaseCompetitionController imp
       return new SimpleObjectProperty(winner);
     });
 
-    tableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+    tableView.setPlaceholder(new Label("            Mmmh, not up for a challenge yet?\n" +
         "Create a new competition by pressing the '+' button."));
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
 

@@ -105,7 +105,7 @@ public class PlayButtonController implements Initializable {
       ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage,
           "Start playing table \"" + game.getGameDisplayName() + "\"?", "Start Table",
           FrontendUtil.replaceNames("All existing [Emulator] and [Frontend]  processes will be terminated.", frontend, "VPX"),
-          null, "Do not shown again", false);
+          null, "Do not show again", false);
 
       if (!confirmationResult.isApplyClicked()) {
         if (confirmationResult.isChecked()) {

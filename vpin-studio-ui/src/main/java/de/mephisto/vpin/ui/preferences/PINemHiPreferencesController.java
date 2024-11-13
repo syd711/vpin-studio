@@ -92,10 +92,10 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
   private ComboBox<String> keyKey;
 
   @FXML
-  private ComboBox<String> keyChallange;
+  private ComboBox<String> keyChallenge;
 
   @FXML
-  private ComboBox<String> keyWeeklyChallange;
+  private ComboBox<String> keyWeeklyChallenge;
 
   @FXML
   private ComboBox<String> key5Minutes;
@@ -197,13 +197,13 @@ public class PINemHiPreferencesController implements Initializable, IniSettingsC
     keyKey.setValue(settings.getString(SETTING_KEY));
     keyKey.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_KEY, toKeyValue(t1)));
 
-    keyChallange.setItems(FXCollections.observableList(keyNames));
-    keyChallange.setValue(settings.getString(SETTING_CHALLENGE_KEY));
-    keyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_CHALLENGE_KEY, toKeyValue(t1)));
+    keyChallenge.setItems(FXCollections.observableList(keyNames));
+    keyChallenge.setValue(settings.getString(SETTING_CHALLENGE_KEY));
+    keyChallenge.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_CHALLENGE_KEY, toKeyValue(t1)));
 
-    keyWeeklyChallange.setItems(FXCollections.observableList(keyNames));
-    keyWeeklyChallange.setValue(settings.getString(SETTING_WEEKLY_CHALLENGE_KEY));
-    keyWeeklyChallange.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_WEEKLY_CHALLENGE_KEY, toKeyValue(t1)));
+    keyWeeklyChallenge.setItems(FXCollections.observableList(keyNames));
+    keyWeeklyChallenge.setValue(settings.getString(SETTING_WEEKLY_CHALLENGE_KEY));
+    keyWeeklyChallenge.valueProperty().addListener((observableValue, aBoolean, t1) -> settings.set(SETTING_WEEKLY_CHALLENGE_KEY, toKeyValue(t1)));
 
     key5Minutes.setItems(FXCollections.observableList(keyNames));
     key5Minutes.setValue(settings.getString(SETTING_5MIN_KEY));
