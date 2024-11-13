@@ -670,11 +670,10 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
     return media.getMediaItems(screen);
   }
 
-  public boolean launchWithFrontend(Game game) {
+  public boolean launchGame(Game game) {
     if (game != null) {
       systemService.setMaintenanceMode(false);
-      getFrontendConnector().restartFrontend(true);
-      return getFrontendConnector().launchGame(game, false);
+      return getFrontendConnector().launchGame(game);
     }
     return false;
   }

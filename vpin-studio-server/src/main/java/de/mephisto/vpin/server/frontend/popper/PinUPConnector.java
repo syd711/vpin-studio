@@ -2135,21 +2135,35 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return false;
   }
 
-  @Override
-  public boolean isEmulatorRunning(GameEmulator emulator) {
+  private boolean isEmulatorRunning(GameEmulator emulator) {
     List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
     return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
   }
 
+  //-------------------------------
+  // Recording
+
   @Override
-  public void initializeRecording() {
+  public boolean startFrontendRecording() {
+    return restartFrontend(true);
+  }
+
+  @Override
+  public boolean startGameRecording(Game game) {
+    return launchGame(game, true);
+  }
+
+  @Override
+  public void endGameRecording(Game game) {
 
   }
 
   @Override
-  public void finalizeRecording() {
+  public void endFrontendRecording() {
     killFrontend();
   }
+
+  //-------------------------------
 
   @Override
   public boolean restartFrontend() {
@@ -2176,8 +2190,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return false;
   }
 
-  @Override
-  public boolean restartFrontend(boolean wait) {
+  private boolean restartFrontend(boolean wait) {
     restartFrontend();
     if (wait) {
       if (!systemService.waitForProcess(PIN_UP_MENU, 10)) {
@@ -2205,7 +2218,12 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
    * @return
    */
   @Override
-  public boolean launchGame(Game game, boolean wait) {
+  public boolean launchGame(Game game) {
+    restartFrontend(true);
+    return launchGame(game, false);
+  }
+
+  private boolean launchGame(Game game, boolean wait) {
     pupLauncher.launch(game.getId());
     if (!wait) {
       return true;

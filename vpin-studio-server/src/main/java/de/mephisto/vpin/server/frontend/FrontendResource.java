@@ -80,9 +80,9 @@ public class FrontendResource {
   }
 
   @GetMapping("/launch/{gameId}")
-  public boolean launchWithFrontend(@PathVariable("gameId") int gameId) {
+  public boolean launchGame(@PathVariable("gameId") int gameId) {
     Game game = gameService.getGame(gameId);
-    return frontendService.launchWithFrontend(game);
+    return frontendService.launchGame(game);
   }
 
   @PostMapping("/import")
