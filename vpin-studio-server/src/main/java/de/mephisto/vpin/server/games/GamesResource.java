@@ -85,6 +85,7 @@ public class GamesResource {
       return vpxService.play(game, altExe);
     }
     else if (game.getEmulator().isFpEmulator()) {
+      frontendService.killFrontend();
       return fpService.play(game, altExe);
     }
     throw new UnsupportedOperationException("Unsupported emulator: " + game.getEmulator());

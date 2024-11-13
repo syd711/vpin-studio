@@ -6,10 +6,11 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
+import de.mephisto.vpin.server.fp.FPService;
 import de.mephisto.vpin.server.games.*;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.preferences.PreferencesService;
-import de.mephisto.vpin.server.util.SystemUtil;
+import de.mephisto.vpin.server.vpx.VPXService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FilenameUtils;
@@ -21,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.sun.jna.platform.DesktopWindow;
-import com.sun.jna.platform.WindowUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,16 +37,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public abstract class BaseConnector implements FrontendConnector {
   private final static Logger LOG = LoggerFactory.getLogger(BaseConnector.class);
+
+  @Autowired
+  private VPXService vpxService;
+
+  @Autowired
+  private FPService fpService;
 
   @Autowired
   protected GameEntryRepository gameEntryRepository;
@@ -882,74 +881,19 @@ public abstract class BaseConnector implements FrontendConnector {
 
   private boolean launchGame(Game game, boolean wait) {
     GameEmulator emu = game.getEmulator();
-
-    File exe = emu.getExe();
-    String args = emu.getExeParameters();
-    TableDetails tableDetails = getGameFromDb(emu.getId(), game.getGameFileName());
-    String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
-    if (!StringUtils.isEmpty(altLaunchExe)) {
-      exe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
-    }
-
-    try {
-      List<String> commandList = new ArrayList<>();
-      commandList.add("\"" + exe.getAbsolutePath() + "\"");
-      if (StringUtils.isNotEmpty(args)) {
-        String[] params = StringUtils.split(args);
-        for (String param : params) {
-          param = param.replace("[TABLEPATH]", emu.getTablesFolder().getAbsolutePath());
-          param = param.replace("[TABLEFILE]", game.getGameFileName());
-          commandList.add(param);
-        }
+    if (emu.isVpxEmulator()) {
+      if (vpxService.play(game, null)) {
+        return !wait ? true : vpxService.waitForPlayer();
       }
-
-      SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
-      executor.setDir(emu.getInstallationFolder());
-      executor.executeCommandAsync();
-      //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-    }
-    catch (Exception e) {
-      LOG.error("Cannot launch emulator for game {}", game.getGameFileName(), e);
       return false;
     }
-
-    if (!wait) {
-      return true;
+    else if (emu.isFpEmulator()) {
+      return fpService.play(game, null);
     }
-    return waitFor(() -> isEmulatorRunning(game.getEmulator()), emu.getName(), 60, 2000);
-  }
-
-  private boolean waitFor(Supplier<Boolean> isRunning, String name, int seconds, int postDelayMs) {
-    try {
-      ExecutorService executor = Executors.newSingleThreadExecutor();
-      Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
-        @Override
-        public Boolean call() throws Exception {
-          while (!isRunning.get()) {
-            Thread.sleep(1000);
-          }
-          LOG.info("Found waiting process \"{}\"", name);
-          if (postDelayMs > 0) {
-            Thread.sleep(postDelayMs);
-          }
-          return true;
-        }
-      });
-      return submit.get(seconds, TimeUnit.SECONDS);
+    else {
+      LOG.error("Emulator {} for Game \"{}\" cannot be started", emu.getDisplayName(), game.getGameFileName());
+      return false;
     }
-    catch (Exception e) {
-      LOG.error("Waiting for process \"{}\" failed: {}", name, e.getMessage());
-    }
-    return false;
-  }
-
-  private boolean isEmulatorRunning(GameEmulator emulator) {
-    if (emulator.isVpxEmulator()) {
-      List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
-      return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
-    }
-    // else
-    return true;
   }
 
   //--------------------------------------
