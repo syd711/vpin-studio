@@ -74,8 +74,8 @@ public class BackglassService {
   }
 
   public DirectB2SData getDirectB2SData(@Nonnull DirectB2S directB2S) {
-    String vpxName = directB2S.getName() + ".vpx";
-    Game game = frontendService.getGameByFilename(directB2S.getEmulatorId(), vpxName);
+    Game game = frontendService.getGameByBaseFilename(directB2S.getEmulatorId(), 
+        FilenameUtils.getBaseName(directB2S.getName()));
     if (game != null) {
       return getDirectB2SData(game);
     }
@@ -227,6 +227,14 @@ public class BackglassService {
         updater.updateDmdImage(b2sFile, file, dmdBase64, false);
         // clean cache
         cacheDirectB2SData.remove(b2sFile.getPath());
+
+        // also clean then re-extract the default picture
+        Game game = frontendService.getGameByBaseFilename(emuId, FilenameUtils.getBaseName(filename));
+        if (game != null) {
+          defaultPictureService.deleteDefaultPictures(game);
+          defaultPictureService.extractDefaultPicture(game);
+        } 
+
         return true;
       }
       catch (Exception e) {

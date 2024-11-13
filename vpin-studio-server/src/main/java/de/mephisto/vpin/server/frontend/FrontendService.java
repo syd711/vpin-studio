@@ -196,6 +196,15 @@ public class FrontendService implements InitializingBean, PreferenceChangedListe
   public Game getGameByFilename(int emulatorId, String filename) {
     return setGameEmulator(getFrontendConnector().getGameByFilename(emulatorId, filename));
   }
+  /**
+   * Same as getGameByFilename() but filename has no extension
+   * Usefull to derive a game from a backglass name
+   */
+  public Game getGameByBaseFilename(int emulatorId, String filename) {
+    GameEmulator emu = getGameEmulator(emulatorId);
+    String gameFilename = filename + "." + emu.getGameExt();
+    return getGameByFilename(emulatorId, gameFilename);
+  }
 
   public List<Game> getGamesByEmulator(int emulatorId) {
     return setGameEmulator(getFrontendConnector().getGamesByEmulator(emulatorId));
