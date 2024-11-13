@@ -7,6 +7,9 @@ import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameMediaService;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +73,10 @@ public class GameRecorder {
             recorderSettings.getRecordingScreenOption(screen);
             ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, target);
             screenRecorders.add(screenRecorder);
-            return screenRecorder.record(option);
+            RecordingResult result =  screenRecorder.record(option);
+            // last renaming of file once done
+            switchTargetFile(game, screen, option.getRecordMode(), target);
+            return result;
           }
         };
         callables.add(screenRecordable);
@@ -102,6 +108,7 @@ public class GameRecorder {
       }
 
       for (ScreenRecorder screenRecorder : screenRecorders) {
+        // partially generated target file will be deleted here 
         screenRecorder.cancel();
       }
 
@@ -115,24 +122,63 @@ public class GameRecorder {
 
   @Nullable
   private File resolveTargetFile(Game game, VPinScreen screen, RecordMode recordMode) {
-    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, null);
+    // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4 
+    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
+    File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
     switch (recordMode) {
       case overwrite: {
-        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
-        if (!screenMediaFiles.isEmpty()) {
-          return screenMediaFiles.get(0);
-        }
-        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+        // even with overwrite, generate in a new file and do the switch at the end if success
+        return target;
       }
       case ifMissing: {
         List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
-        if (!screenMediaFiles.isEmpty()) {
-          return null;
-        }
-        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+        // even with ifMissing, generate in a new file, but only if there is no existing file
+        return !screenMediaFiles.isEmpty() ? null : target;
       }
       case append: {
-        return GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+        return target;
+      }
+    }
+    throw new UnsupportedOperationException("Invalid record mode " + recordMode);
+  }
+
+  @Nullable
+  private void switchTargetFile(Game game, VPinScreen screen, RecordMode recordMode, File recordedFile) {
+    // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4 
+    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
+    File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
+
+    switch (recordMode) {
+      case overwrite: {
+        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+        // delete existing files in the generated folder only whatever their format (and there maybe several, not only mp4)
+        // why only in the generated folder is because pinballX has separated folders for images that need to stay
+        if (!screenMediaFiles.isEmpty()) {
+          for (File screenMediaFile : screenMediaFiles) {
+            if (screenMediaFile.getParentFile().equals(mediaFolder) &&
+                StringUtils.equalsIgnoreCase(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
+              screenMediaFile.delete();
+            }
+          }
+        }
+        recordedFile.renameTo(target);
+      }
+      case ifMissing: {
+        // as no file was there (cf resolveTargetFile method), 
+        // nothing to do here because the recordedFile is the target file already
+        return;
+      }
+      case append: {
+        // simply switch recorded and target files and keep all other files and format
+        if (!StringUtils.equalsIgnoreCase(target.getName(), recordedFile.getName())) {
+          // another temporary not existing file that will be deleted
+          File tempFile = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+          if (target.renameTo(tempFile)) {
+            if (recordedFile.renameTo(target)) {
+              tempFile.renameTo(recordedFile);
+            }
+          }
+        }
       }
     }
 
