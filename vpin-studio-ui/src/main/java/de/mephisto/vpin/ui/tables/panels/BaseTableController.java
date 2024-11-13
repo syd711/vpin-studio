@@ -22,6 +22,7 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+
 import org.apache.commons.collections4.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +53,6 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   private String name;
   private String names;
-
 
   protected TablesController tablesController;
 
@@ -108,7 +108,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     registerKeyPressed();
   }
 
-  protected void loadFilterPanel(Class clazz, String resource) {
+  protected void loadFilterPanel(Class<?> clazz, String resource) {
     try {
       FXMLLoader loader = new FXMLLoader(clazz.getResource(resource));
       loader.load();
@@ -182,6 +182,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     });
   }
 
+  //----------------------
+  // Filtering
+
   @FXML
   private void onSearchKeyPressed(KeyEvent e) {
     if (e.getCode().equals(KeyCode.ENTER)) {
@@ -213,6 +216,9 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     labelCount.setText(filteredModels.size() + " " + (filteredModels.size() > 1 ? names : name));
   }
 
+  //----------------------
+  // Reload management (on tables)
+
   public void startReload(String message) {
     loadingOverlay.setBusy(message, true);
 
@@ -229,6 +235,44 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     this.labelCount.setText(null);
   }
 
+  /**
+   * Reload just the selected item in the table
+   */
+  public void reloadSelection() {
+    reloadItem(getSelection());
+  }
+
+  /**
+   * Reload just one item in the table
+   * @param The item in the table to be reloaded
+   */
+  public void reloadItem(T bean) {
+    if (bean != null) {
+      try {
+        M model = getModel(bean);
+        if (model != null) {
+          model.setBean(bean);
+          model.reload();
+
+          // refresh views too if the game is selected
+          T selected = getSelection();
+          if (selected != null && model.sameBean(selected)) {
+            refreshView(model.getBean());
+          }
+        }
+        else {
+          model = toModel(bean);
+          models.add(0, model);
+        }
+        // force refresh the view for elements not observed by the table
+        tableView.refresh();
+      }
+      catch (Exception ex) {
+        LOG.error("Reload of item failed: " + ex.getMessage(), ex);
+      }
+    }
+  }
+
   public void endReload() {
     if (searchTextField != null) {
       this.searchTextField.setDisable(false);
@@ -242,6 +286,14 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
     loadingOverlay.setBusy("", false);
     tableView.requestFocus();
   }
+
+  /**
+   * Refresh the sidebar view
+   */
+  protected void refreshView(T bean) {
+  }
+
+  //----------------------
 
   public void setBusy(String message, boolean b) {
     loadingOverlay.setBusy(message, b);

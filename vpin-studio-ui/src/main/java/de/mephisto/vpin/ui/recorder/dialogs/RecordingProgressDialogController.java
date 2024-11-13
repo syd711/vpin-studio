@@ -158,9 +158,8 @@ public class RecordingProgressDialogController implements Initializable, DialogC
 
       this.pTableLabel.setText("-");
       this.totalRecordingsLabel.setText("-");
-      recorderController.doReload();
+      //recorderController.doReload();
       progressBar.setProgress(1);
-
 
       Platform.runLater(() -> {
         stage.close();

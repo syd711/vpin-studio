@@ -571,7 +571,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     if (uploadResult != null && uploadResult.getGameId() != -1) {
       //the cache miss will result in caching the new table
       GameRepresentation game = client.getGameService().getGame(uploadResult.getGameId());
-      reload(game);
+      reloadItem(game);
 
       //required for new table that may or may not be part of the filtered view
       refreshFilters();
@@ -717,31 +717,6 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
   }
 
-  public void reload(GameRepresentation refreshedGame) {
-    if (refreshedGame != null) {
-      GameRepresentationModel model = getModel(refreshedGame);
-      if (model != null) {
-        model.setBean(refreshedGame);
-        model.reload();
-
-        // refresh views too if the game is selected
-        GameRepresentation selected = getSelection();
-        if (selected != null && selected.getId() == refreshedGame.getId()) {
-          refreshView(Optional.of(refreshedGame));
-        }
-      }
-      else {
-        // new table, add it to the list only if the emulator is matching
-        GameEmulatorRepresentation value = this.emulatorCombo.getValue();
-        if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
-          models.add(0, new GameRepresentationModel(refreshedGame));
-        }
-      }
-
-      // force refresh the view for elements not observed by the table
-      tableView.refresh();
-    }
-  }
 
   public void showScriptEditor(GameRepresentation game) {
     String tableSource = client.getVpxService().getTableSource(game);
@@ -1443,10 +1418,20 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     });
   }
 
+  @Override
+  public void reloadItem(GameRepresentation refreshedGame) {
+    // reload only if the emulator is matching
+    GameEmulatorRepresentation value = this.emulatorCombo.getValue();
+    if (value != null && (value.getId() == refreshedGame.getEmulatorId() || value.getEmulatorType().equals(value.getEmulatorType()))) {
+      super.reloadItem(refreshedGame);
+    }
+  }
+
   /**
    *
    */
-  private void refreshView(Optional<GameRepresentation> g) {
+  @Override
+  public void refreshView(GameRepresentation game) {
     dismissBtn.setVisible(true);
 
     validationError.setVisible(false);
@@ -1454,13 +1439,12 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationErrorText.setText("");
 
     if (assetManagerMode) {
-      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), g.orElse(null), assetScreenSelection);
+      this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     }
     else {
-      this.tablesController.getTablesSideBarController().setGame(g);
+      this.tablesController.getTablesSideBarController().setGame(Optional.of(game));
     }
-    if (g.isPresent()) {
-      GameRepresentation game = g.get();
+    if (game != null) {
       boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;
       validationError.setVisible(errorneous && !game.getIgnoredValidations().contains(-1));
       if (errorneous) {
@@ -1476,7 +1460,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     }
 
     if (getSelections().size() > 1) {
-      Optional<GameRepresentation> first = getSelections().stream().filter(game -> game.getValidationState() != null).findFirst();
+      Optional<GameRepresentation> first = getSelections().stream().filter(g -> g.getValidationState() != null).findFirst();
       if (first.isPresent()) {
         dismissBtn.setVisible(false);
 
@@ -1542,13 +1526,13 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
     validationError.setVisible(c.getList().size() != 1);
 
     if (c.getList().isEmpty()) {
-      refreshView(Optional.empty());
+      refreshView(null);
     }
     else {
       GameRepresentation gameRepresentation = c.getList().get(0).getGame();
       playButtonController.setDisable(gameRepresentation.getGameFilePath() == null);
       playButtonController.setData(gameRepresentation);
-      refreshView(Optional.ofNullable(gameRepresentation));
+      refreshView(gameRepresentation);
     }
 
     List<GameRepresentation> selection = new ArrayList<>(c.getList().stream().map(g -> g.getGame()).collect(Collectors.toList()));

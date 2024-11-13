@@ -195,21 +195,13 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   @FXML
   private void onReload() {
     ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
-    this.doReload();
+    this.doReload(true);
   }
-
 
   @FXML
   private void onReload(ActionEvent e) {
     ProgressDialog.createProgressDialog(new CacheInvalidationProgressModel());
-    this.doReload();
-  }
-
-  public void doReload() {
-    client.getGameService().clearCache();
-    doReload(true);
-
-    refreshScreens();
+    this.doReload(true);
   }
 
   @FXML
@@ -230,7 +222,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     }
   }
 
-  public void doReload(boolean clearCache) {
+  private void doReload(boolean clearCache) {
     startReload("Loading Tables...");
 
     refreshEmulators();
@@ -357,7 +349,7 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
     refreshEmulators();
 
     if (tableView.getItems().isEmpty()) {
-      doReload();
+      doReload(false);
     }
 
     Studio.stage.widthProperty().addListener(screenSizeChangeListener);

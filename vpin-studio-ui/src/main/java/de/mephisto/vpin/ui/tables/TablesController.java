@@ -503,7 +503,8 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByRom(rom);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game);
+        this.tableOverviewController.reloadItem(game);
+        this.recorderController.reloadItem(game);
       }
     }
 
@@ -511,18 +512,21 @@ public class TablesController implements Initializable, StudioFXController, Stud
       List<GameRepresentation> gamesByRom = client.getGameService().getGamesByGameName(gameName);
       for (GameRepresentation g : gamesByRom) {
         GameRepresentation game = client.getGameService().getGame(g.getId());
-        this.tableOverviewController.reload(game);
+        this.tableOverviewController.reloadItem(game);
+        this.recorderController.reloadItem(game);
       }
     }
 
     if (id > 0) {
       GameRepresentation refreshedGame = client.getGameService().getGame(id);
-      this.tableOverviewController.reload(refreshedGame);
+      this.tableOverviewController.reloadItem(refreshedGame);
+      this.recorderController.reloadItem(refreshedGame);
     }
     else {
       GameRepresentation selection = this.tableOverviewController.getSelection();
       if (selection != null) {
-        this.tableOverviewController.reload(selection);
+        this.tableOverviewController.reloadItem(selection);
+        this.recorderController.reloadItem(selection);
       }
     }
 

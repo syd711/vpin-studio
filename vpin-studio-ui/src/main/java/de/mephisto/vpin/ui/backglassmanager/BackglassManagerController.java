@@ -268,7 +268,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
       TableDialogs.directUpload(stage, AssetType.DIRECTB2S, game, () -> {
         // when done, force refresh
-        refreshBackglass();
+        reloadSelection();
       });
     }
   }
@@ -282,7 +282,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
   @FXML
   private void onBackglassReload(ActionEvent e) {
-    refreshBackglass();
+    reloadSelection();
   }
 
   @FXML
@@ -290,32 +290,6 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     DirectB2S selection = getSelection();
     if(selection != null) {
       BackglassManagerDialogs.openResGenerator(selection);
-    }
-  }
-
-  public void refreshBackglass() {
-    refreshBackglass(getSelection());
-  }
-
-  public void refreshBackglass(DirectB2S directB2s) {
-    if (directB2s != null) {
-      try {
-        DirectB2SModel model = getModel(directB2s);
-        if (model != null) {
-          model.setBean(directB2s);
-          model.reload();
-
-          // refresh views too if the directB2s is selected
-          DirectB2S selected = getSelection();
-          if (selected != null && model.sameBean(selected)) {
-            refresh(model.getBacklass());
-          }
-        }
-      }
-      catch (Exception ex) {
-        LOG.error("Refreshing backglass failed: " + ex.getMessage(), ex);
-        WidgetFactory.showAlert(stage, "Error", "Refreshing backglass failed: " + ex.getMessage());
-      }
     }
   }
 
@@ -435,7 +409,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void updateDMDImage(File selection) {
     DirectB2S b2s = tableData.toDirectB2S();
     ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Set DMD Image", b2s, selection));
-    refreshBackglass(b2s);
+    reloadItem(b2s);
     if (game != null) {
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
@@ -444,7 +418,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
   private void deleteDMDImage() {
     DirectB2S b2s = tableData.toDirectB2S();
     ProgressDialog.createProgressDialog(new BackglassManagerDmdUploadProgressModel("Delete DMD Image", b2s, null));
-    refreshBackglass(b2s);
+    reloadItem(b2s);
     if (game != null) {
       EventManager.getInstance().notifyTableChange(game.getId(), null);
     }
@@ -736,7 +710,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
 
     // Install the handler for backglass selection
     this.tableView.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-      refresh(newValue != null ? newValue.getBacklass() : null);
+      refreshView(newValue != null ? newValue.getBacklass() : null);
     });
 
     // add the overlay for drag and drop
@@ -769,9 +743,9 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
       else {
         this.tableView.getSelectionModel().select(0);
       }
-      refresh(null);
+      refreshView(null);
     }
-    refreshBackglass();
+    reloadSelection();
   }
 
   private void bindTable() {
@@ -847,7 +821,8 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     });
   }
 
-  private void refresh(@Nullable DirectB2S newValue) {
+  @Override
+  protected void refreshView(@Nullable DirectB2S newValue) {
     if (newValue != null) {
       fileDragEventHandler.setDisabled(false);
       NavigationController.setBreadCrumb(Arrays.asList("Backglasses", newValue.getName()));
@@ -1176,7 +1151,7 @@ public class BackglassManagerController extends BaseTableController<DirectB2S, D
     }
 
     if (selection != null && selection.getGameId() == id) {
-      refresh(selection.getBacklass());
+      refreshView(selection.getBacklass());
     }
   }
 
