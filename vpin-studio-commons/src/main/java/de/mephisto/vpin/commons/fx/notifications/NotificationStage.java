@@ -1,6 +1,7 @@
 package de.mephisto.vpin.commons.fx.notifications;
 
 import de.mephisto.vpin.commons.utils.TransitionUtil;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.animation.Transition;
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
@@ -45,7 +46,7 @@ public class NotificationStage {
     try {
       stage.getIcons().add(new Image(NotificationController.class.getResourceAsStream("logo-64.png")));
 
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
       FXMLLoader loader = new FXMLLoader(NotificationController.class.getResource("notification.fxml"));
       root = loader.load();
       notificationController = loader.getController();
@@ -112,7 +113,7 @@ public class NotificationStage {
 
 
   public void move() {
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
     Transition transition = null;
     if (screenBounds.getWidth() > screenBounds.getHeight() && !notification.isDesktopMode()) {
       transition = TransitionUtil.createTranslateByXTransition(root, 300, (int) (WIDTH * scaling / 3) + OFFSET);

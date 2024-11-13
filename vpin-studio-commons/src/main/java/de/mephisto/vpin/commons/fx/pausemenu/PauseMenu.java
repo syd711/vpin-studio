@@ -18,6 +18,7 @@ import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.preferences.PauseMenuSettings;
 import de.mephisto.vpin.restclient.preferences.PauseMenuStyle;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -89,7 +90,7 @@ public class PauseMenu extends Application {
 
       stage.getIcons().add(new Image(PauseMenu.class.getResourceAsStream("logo-64.png")));
 
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
       FXMLLoader loader = new FXMLLoader(MenuController.class.getResource("menu-main.fxml"));
       BorderPane root = loader.load();
 

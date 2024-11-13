@@ -6,6 +6,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreRepresentation;
 import de.mephisto.vpin.restclient.highscores.ScoreSummaryRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -72,7 +73,7 @@ public class WidgetLatestScoresController extends WidgetController implements In
 
     new Thread(() -> {
       int limit = 12;
-      Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+      Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
       if (screenBounds.getWidth() > 2000 && screenBounds.getWidth() < 3000) {
         limit = 10;
       }

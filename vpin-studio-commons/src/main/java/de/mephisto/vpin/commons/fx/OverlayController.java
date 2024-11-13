@@ -8,6 +8,7 @@ import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.competitions.CompetitionRepresentation;
 import de.mephisto.vpin.restclient.competitions.CompetitionType;
 import de.mephisto.vpin.restclient.representations.PreferenceEntryRepresentation;
+import de.mephisto.vpin.restclient.util.SystemUtil;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Rectangle2D;
@@ -55,7 +56,7 @@ public class OverlayController implements Initializable {
   }
 
   public void refreshData() {
-    Rectangle2D screenBounds = Screen.getPrimary().getBounds();
+    Rectangle2D screenBounds = SystemUtil.getPlayfieldScreen().getBounds();
     if(screenBounds.getWidth() < screenBounds.getHeight()) {
       rootStack.setRotate(0);
     }

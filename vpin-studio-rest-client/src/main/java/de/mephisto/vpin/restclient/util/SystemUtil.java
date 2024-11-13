@@ -1,5 +1,7 @@
 package de.mephisto.vpin.restclient.util;
 
+import javafx.collections.ObservableList;
+import javafx.stage.Screen;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,5 +79,17 @@ public class SystemUtil {
       }
     }
     return true;
+  }
+
+  public static Screen getPlayfieldScreen() {
+    Screen screen = Screen.getPrimary();
+
+    List<Screen> screens = Screen.getScreens();
+    for (Screen s : screens) {
+      if (s.getVisualBounds().getMinX() < screen.getVisualBounds().getMinX()) {
+        screen = s;
+      }
+    }
+    return screen;
   }
 }
