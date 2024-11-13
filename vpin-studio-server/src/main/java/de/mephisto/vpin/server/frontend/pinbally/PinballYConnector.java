@@ -11,6 +11,10 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.scene.shape.Rectangle;
+
+import org.apache.commons.configuration2.INIConfiguration;
+import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -307,11 +311,11 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     Properties settings = loadPinballYSettings();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
     if (settings != null) {
-      createDisplay(displayList, settings, "PlayfieldWindow", VPinScreen.PlayField, true);
-      createDisplay(displayList, settings, "BackglassWindow", VPinScreen.BackGlass, false);
-      createDisplay(displayList, settings, "DMDWindow", VPinScreen.DMD, false);
-      createDisplay(displayList, settings, "TopperWindow", VPinScreen.Topper, false);
-      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Menu, false);
+      createDisplay(displayList, settings, "PlayfieldWindow", VPinScreen.PlayField, "PlayField", true);
+      createDisplay(displayList, settings, "BackglassWindow", VPinScreen.BackGlass, "Backglass", false);
+      createDisplay(displayList, settings, "DMDWindow", VPinScreen.DMD, "DMD", false);
+      createDisplay(displayList, settings, "TopperWindow", VPinScreen.Topper, "Topper", false);
+      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Menu, "Apron", false);
     }
     return displayList;
   }
@@ -325,17 +329,17 @@ PlayfieldWindow.FullScreen = 0
 PlayfieldWindow.Maximized = 0
 PlayfieldWindow.Minimized = 0
    */
-  private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String displayName, VPinScreen screen, boolean defaultVisibility) {
-    String visible = display.getProperty(displayName + ".Visible");
+  private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String sectionName, VPinScreen screen, String name, boolean defaultVisibility) {
+    String visible = display.getProperty(sectionName + ".Visible");
     boolean isVisible =  StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
     if (isVisible) {
       FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-      player.setName(screen.name());
+      player.setName(name);
       player.setScreen(screen);
 
-      String position = display.getProperty(displayName + ".Position");
+      String position = display.getProperty(sectionName + ".Position");
       String[] positions = StringUtils.split(position, ",");
-      String rotation = StringUtils.defaultString(display.getProperty(displayName + ".Rotation"), "0");
+      String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
 
       //player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
       player.setX(Integer.parseInt(positions[0]));
@@ -344,7 +348,7 @@ PlayfieldWindow.Minimized = 0
       player.setHeight(Integer.parseInt(positions[3]));
       player.setRotation(Integer.parseInt(rotation));
 
-      LOG.info("Created PinballY player display \"" + screen.name() + "\"");
+      LOG.info("Created PinballY player display {}", player);
       players.add(player);
     }
   }

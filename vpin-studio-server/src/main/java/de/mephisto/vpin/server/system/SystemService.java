@@ -37,6 +37,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -47,6 +50,7 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -360,6 +364,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
+  public boolean isWindowOpened(String name) {
+    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
+  }
+
+
   public boolean isPinballEmulatorRunning() {
     return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
   }
@@ -495,15 +505,23 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
   }
 
   public boolean waitForProcess(String name, int seconds, int postDelayMs) {
+    return waitFor(() -> isProcessRunning(name), "process : " + name, seconds, postDelayMs);
+  }
+
+  public boolean waitForWindow(String name, int seconds, int postDelayMs) {
+    return waitFor(() -> isWindowOpened(name), "window : " + name, seconds, postDelayMs);
+  }
+
+  public boolean waitFor(Supplier<Boolean> isRunning, String name, int seconds, int postDelayMs) {
     try {
       ExecutorService executor = Executors.newSingleThreadExecutor();
       Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
         @Override
         public Boolean call() throws Exception {
-          while (!isProcessRunning(name)) {
+          while (!isRunning.get()) {
             Thread.sleep(1000);
           }
-          LOG.info("Found waiting process: {}", name);
+          LOG.info("Found waiting for {}", name);
           if (postDelayMs > 0) {
             Thread.sleep(postDelayMs);
           }
@@ -513,7 +531,7 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       return submit.get(seconds, TimeUnit.SECONDS);
     }
     catch (Exception e) {
-      LOG.error("Waiting for process \"{}\" failed: {}", name, e.getMessage());
+      LOG.error("Waiting for {}, failed: {}", name, e.getMessage());
     }
     return false;
   }
