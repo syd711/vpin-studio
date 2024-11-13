@@ -359,7 +359,7 @@ public class PinballXConnector extends BaseConnector {
 
   private void createPlayfieldDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players) {
     SubnodeConfiguration display = iniConfiguration.getSection("Display");
-    int monitor = Integer.parseInt(display.getString("monitor", "0"));
+    int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
     GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
     if (monitor < gds.length) {
       java.awt.Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
@@ -397,7 +397,7 @@ public class PinballXConnector extends BaseConnector {
     if (!display.isEmpty()) {
       boolean enabled = display.getBoolean("Enabled", defaultEnabled);
 
-      int monitor = Integer.parseInt(display.getString("monitor", "0"));
+      int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
       GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
 
       if (enabled && monitor < gds.length) {

@@ -54,6 +54,12 @@ public class RecorderJob implements Job {
           break;
         }
 
+        frontend.initializeRecording();
+        updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
+        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+          break;
+        }
+
         jobDescriptor.setGameId(game.getId());
         jobDescriptor.setStatus("Launching Frontend");
         if (!jobDescriptor.isCancelled() && !frontend.startFrontendRecording()) {
