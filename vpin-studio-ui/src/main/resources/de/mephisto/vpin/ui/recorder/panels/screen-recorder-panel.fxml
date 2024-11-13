@@ -41,6 +41,7 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
                         <ComboBox fx:id="recordModeComboBox" prefWidth="150.0" GridPane.columnIndex="1" />
@@ -70,12 +71,33 @@
                               </Label>
                            </children>
                         </HBox>
-                        <CheckBox fx:id="fps60Checkbox" layoutX="144.0" layoutY="15.0" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                        <CheckBox fx:id="fps60Checkbox" layoutX="144.0" layoutY="15.0" mnemonicParsing="false" text="Record with 60fps" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4">
                            <font>
                               <Font size="14.0" />
                            </font>
                         </CheckBox>
-                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="FPS:" GridPane.rowIndex="3" />
+                        <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="FPS:" GridPane.rowIndex="4" />
+                        <Label layoutX="10.0" layoutY="150.0" styleClass="default-text" text="In-Game Recording:" GridPane.rowIndex="3" />
+                        <HBox alignment="CENTER_LEFT" spacing="3.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                           <children>
+                              <CheckBox fx:id="inGameRecordingCheckbox" mnemonicParsing="false" text="Enabled" textFill="WHITE">
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                              </CheckBox>
+                              <Label>
+                                 <font>
+                                    <Font size="14.0" />
+                                 </font>
+                                 <graphic>
+                                    <FontIcon iconColor="WHITE" iconLiteral="mdi2h-help-circle-outline" iconSize="18" />
+                                 </graphic>
+                                 <tooltip>
+                                    <Tooltip prefWidth="300.0" text="If enabled, this screen will be recorded when the recoding button is pressed." wrapText="true" />
+                                 </tooltip>
+                              </Label>
+                           </children>
+                        </HBox>
                      </children>
                   </GridPane>
                   <HBox spacing="12.0">

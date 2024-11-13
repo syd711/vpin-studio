@@ -7,6 +7,15 @@ public class RecordingScreenOptions {
   private RecordMode recordMode;
   private boolean enabled = true;
   private boolean fps60 = false;
+  private boolean inGameRecording = false;
+
+  public boolean isInGameRecording() {
+    return inGameRecording;
+  }
+
+  public void setInGameRecording(boolean inGameRecording) {
+    this.inGameRecording = inGameRecording;
+  }
 
   public boolean isFps60() {
     return fps60;

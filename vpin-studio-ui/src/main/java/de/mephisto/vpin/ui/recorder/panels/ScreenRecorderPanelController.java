@@ -58,6 +58,9 @@ public class ScreenRecorderPanelController implements Initializable {
   private CheckBox fps60Checkbox;
 
   @FXML
+  private CheckBox inGameRecordingCheckbox;
+
+  @FXML
   private Spinner<Integer> durationSpinner;
 
   @FXML
@@ -109,6 +112,14 @@ public class ScreenRecorderPanelController implements Initializable {
       RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
       RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
       option2.setFps60(t1);
+      client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
+    });
+
+    inGameRecordingCheckbox.setSelected(option.isFps60());
+    inGameRecordingCheckbox.selectedProperty().addListener((observableValue, aBoolean, t1) -> {
+      RecorderSettings s = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+      RecordingScreenOptions option2 = s.getRecordingScreenOption(recordingScreen);
+      option2.setInGameRecording(t1);
       client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, s);
     });
 
