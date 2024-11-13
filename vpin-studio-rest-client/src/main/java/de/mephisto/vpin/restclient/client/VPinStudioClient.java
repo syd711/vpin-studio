@@ -175,15 +175,6 @@ public class VPinStudioClient implements OverlayClient {
     return maniaServiceClient;
   }
 
-  public String getSystemPreset() {
-    PreferenceEntryRepresentation preference = getPreference(PreferenceNames.SYSTEM_PRESET);
-    String preset = preference.getValue();
-    if (preset == null) {
-      preset = PreferenceNames.SYSTEM_PRESET_64_BIT;
-    }
-    return preset;
-  }
-
   public DOFLinxServiceClient getDofLinxService() {
     return dofLinxServiceClient;
   }

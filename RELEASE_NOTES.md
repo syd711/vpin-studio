@@ -32,6 +32,7 @@
 
 - **Tables / Script Editing**: Added info icon to the split menu button with a hint that .vbs files must be linked to a text editor in order to use that action.
 - **Tables / Usability Improvement**: Pressing the **shift key and double-clicking** on a table in the table overview will open the asset manager dialog.
+- **System Manager**: Removed the 32/64-bit preset combo from the "Overview" tab and removed the corresponding filtering from the release artifact comboboxes. Especially for freezy updates where you might want to install both versions, this switching was too tedious.
 
 ## Bugfixes
 

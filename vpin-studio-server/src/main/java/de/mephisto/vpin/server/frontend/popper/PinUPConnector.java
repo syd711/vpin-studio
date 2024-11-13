@@ -1174,7 +1174,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
 
   private void setEmulatorExe(Emulator e, ResultSet rs) throws SQLException {
     if (e.getType().equals(EmulatorType.VisualPinball)) {
-      String exeName = SystemUtil.is64Bit(preferencesService) ? "VPinballX64.exe" : "VPinballX.exe";
+      String exeName = "VPinballX64.exe";
 
       //parsing of the specific popper script
       String launchScript = rs.getString("LaunchScript");

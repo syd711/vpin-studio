@@ -31,7 +31,7 @@ import java.io.IOException;
 
 import static de.mephisto.vpin.ui.Studio.client;
 
-abstract public class AbstractComponentTab implements StudioEventListener, PreferenceChangeListener {
+abstract public class AbstractComponentTab implements StudioEventListener {
   private final static Logger LOG = LoggerFactory.getLogger(AbstractComponentTab.class);
 
   @FXML
@@ -70,8 +70,6 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
 
   protected void initialize() {
     openFolderButton.setDisable(!SystemUtil.isFolderActionSupported());
-
-    client.getPreferenceService().addListener(this);
 
     try {
       FXMLLoader loader = new FXMLLoader(ComponentUpdateController.class.getResource("component-update-panel.fxml"));
@@ -152,13 +150,6 @@ abstract public class AbstractComponentTab implements StudioEventListener, Prefe
 
   protected void editFile(File file) {
     Dialogs.editFile(file);
-  }
-
-  @Override
-  public void preferencesChanged(String key, Object value) {
-    if (key.equals(PreferenceNames.SYSTEM_PRESET)) {
-      componentUpdateController.refresh(null, null);
-    }
   }
 
   abstract protected ComponentType getComponentType();

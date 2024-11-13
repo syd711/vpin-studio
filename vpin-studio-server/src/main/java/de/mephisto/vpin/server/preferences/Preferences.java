@@ -24,8 +24,6 @@ public class Preferences {
 
   private String systemName;
 
-  private String systemPreset;
-
   private String overlayDesign;
 
   private String overlayPageUrl;
@@ -251,14 +249,6 @@ public class Preferences {
 
   public void setDoNotShowAgains(String doNotShowAgains) {
     this.doNotShowAgains = doNotShowAgains;
-  }
-
-  public String getSystemPreset() {
-    return systemPreset;
-  }
-
-  public void setSystemPreset(String systemPreset) {
-    this.systemPreset = systemPreset;
   }
 
   public String getUiSettings() {

@@ -201,22 +201,11 @@ public class ComponentUpdateController implements Initializable, StudioEventList
 
       List<String> artifacts = release.getArtifacts();
       artifactCombo.setItems(FXCollections.observableList(artifacts));
-      String systemPreset = client.getSystemPreset();
-      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT)) {
-        List<String> collect = release.getArtifacts().stream().filter(r -> r.contains("x64")).collect(Collectors.toList());
-        if (!collect.isEmpty()) {
-          artifactCombo.setItems(FXCollections.observableList(collect));
-          artifactCombo.setValue(collect.get(0));
-        }
+      List<String> collect = release.getArtifacts();
+      if (!collect.isEmpty()) {
+        artifactCombo.setItems(FXCollections.observableList(collect));
+        artifactCombo.setValue(collect.get(0));
       }
-      else {
-        List<String> collect = release.getArtifacts().stream().filter(r -> !r.contains("x64")).collect(Collectors.toList());
-        if (!collect.isEmpty()) {
-          artifactCombo.setItems(FXCollections.observableList(collect));
-          artifactCombo.setValue(collect.get(0));
-        }
-      }
-
       if (artifactId != null) {
         artifactCombo.setValue(artifactId);
       }
