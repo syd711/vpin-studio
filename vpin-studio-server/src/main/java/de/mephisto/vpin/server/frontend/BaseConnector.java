@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -807,11 +809,14 @@ public abstract class BaseConnector implements FrontendConnector {
 
   @Override
   public boolean killFrontend() {
+    return killEmulators(true);
+  }
+  private boolean killEmulators(boolean withFrontend) {
     List<ProcessHandle> processes = ProcessHandle
         .allProcesses()
         .filter(p -> p.info().command().isPresent() &&
             (
-                p.info().command().get().contains(getFrontendExe()) ||
+                withFrontend && p.info().command().get().contains(getFrontendExe()) ||
                     p.info().command().get().contains("PinUpDisplay") ||
                     p.info().command().get().contains("PinUpPlayer") ||
                     p.info().command().get().contains("VPXStarter") ||
@@ -871,34 +876,30 @@ public abstract class BaseConnector implements FrontendConnector {
   }
 
   @Override
-  public boolean restartFrontend(boolean wait) {
-    restartFrontend();
-    if (!wait) {
-      return true;
-    }
-    return waitFor(() -> isFrontendRunning(), getFrontendExe(), 10, -1);
+  public boolean launchGame(Game game) {
+    return launchGame(game, false);
   }
-
-  @Override
-  public boolean launchGame(Game game, boolean wait) {
+  private boolean launchGame(Game game, boolean wait) {
     GameEmulator emu = game.getEmulator();
 
     File exe = emu.getExe();  
-    String params = emu.getExeParameters();
+    String args = emu.getExeParameters();
     TableDetails tableDetails = getGameFromDb(emu.getId(), game.getGameFileName());
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (!StringUtils.isEmpty(altLaunchExe)) {
       exe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
-      //?? params = tableDetails.getLaunchCustomVar();
     }
   
     try {
       List<String> commandList = new ArrayList<>();
       commandList.add("\"" + exe.getAbsolutePath() + "\"");
-      if (StringUtils.isNotEmpty(params)) {
-        params = params.replace("[TABLEPATH]", emu.getTablesFolder().getAbsolutePath());
-        params = params.replace("[TABLEFILE]", game.getGameFileName());
-        commandList.add(params);
+      if (StringUtils.isNotEmpty(args)) {
+        String[] params = StringUtils.split(args);
+        for (String param : params) {
+          param = param.replace("[TABLEPATH]", emu.getTablesFolder().getAbsolutePath());
+          param = param.replace("[TABLEFILE]", game.getGameFileName());
+          commandList.add(param);
+        }
       }
 
       SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
@@ -914,7 +915,7 @@ public abstract class BaseConnector implements FrontendConnector {
     if (!wait) {
       return true;
     }
-    return waitFor(() -> isEmulatorRunning(game.getEmulator()), emu.getName(), 30, -1);
+    return waitFor(() -> isEmulatorRunning(game.getEmulator()), emu.getName(), 60, 2000);
   }
 
   private boolean waitFor(Supplier<Boolean> isRunning, String name, int seconds, int postDelayMs) {
@@ -941,22 +942,34 @@ public abstract class BaseConnector implements FrontendConnector {
     return false;
   }
 
+  private boolean isEmulatorRunning(GameEmulator emulator) {
+    if (emulator.isVpxEmulator()) {
+      List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+      return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), "Visual Pinball Player"));
+    }
+    // else
+    return true;
+  }
+
+  //--------------------------------------
+  // Recording
+
   @Override
-  public boolean isEmulatorRunning(GameEmulator emulator) {
-    String[] altexes = emulator.getAltExeNames().toArray(new String[0]);
-    Optional<ProcessHandle> process = ProcessHandle
-        .allProcesses()
-        .filter(p -> p.info().command().isPresent() &&
-            StringUtils.containsAnyIgnoreCase(p.info().command().get(), altexes))
-        .findFirst();
-    return process.isPresent();
+  public boolean startFrontendRecording() {
+    return true;
   }
 
   @Override
-  public void initializeRecording() {
+  public boolean startGameRecording(Game game) {
+    return launchGame(game, true);
   }
 
   @Override
-  public void finalizeRecording() {
+  public void endGameRecording(Game game) {
+    killEmulators(false);
+  }
+
+  @Override
+  public void endFrontendRecording() {
   }
 }

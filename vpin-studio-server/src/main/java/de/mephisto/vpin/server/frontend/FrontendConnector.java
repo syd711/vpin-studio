@@ -10,7 +10,6 @@ import de.mephisto.vpin.restclient.JsonSettings;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.playlists.Playlist;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -151,15 +150,17 @@ public interface FrontendConnector {
 
   boolean restartFrontend();
 
-  boolean restartFrontend(boolean wait);
+  boolean launchGame(Game game);
 
   //----------------------------------
   // Recording
-  boolean launchGame(Game game, boolean wait);
 
-  boolean isEmulatorRunning(GameEmulator emulator);
+  boolean startFrontendRecording();
 
-  void initializeRecording();
+  boolean startGameRecording(Game game);
 
-  void finalizeRecording();
+  void endGameRecording(Game game);
+
+  void endFrontendRecording();
+
 }

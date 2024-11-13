@@ -54,15 +54,9 @@ public class RecorderJob implements Job {
           break;
         }
 
-        frontend.initializeRecording();
-        updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
-        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-          break;
-        }
-
         jobDescriptor.setGameId(game.getId());
         jobDescriptor.setStatus("Launching Frontend");
-        if (!jobDescriptor.isCancelled() && !frontend.restartFrontend(true)) {
+        if (!jobDescriptor.isCancelled() && !frontend.startFrontendRecording()) {
           jobDescriptor.setError("Recording cancelled, the frontend could not be launched.");
           jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
           LOG.error("Recording cancelled, the frontend could not be launched.");
@@ -73,23 +67,28 @@ public class RecorderJob implements Job {
         }
         updateSingleProgress(jobDescriptor, recordingDataSummary, 25);
 
-        jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
-        if (!jobDescriptor.isCancelled() && !frontend.launchGame(game, true)) {
-          jobDescriptor.setError("Recording cancelled, the game could not be launched.");
-          jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
-          LOG.error("Recording cancelled, the game could not be launched.");
-          return;
-        }
-        if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
-          break;
-        }
-        updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
+        try {
+          jobDescriptor.setStatus("Launching \"" + game.getGameDisplayName() + "\"");
+          if (!jobDescriptor.isCancelled() && !frontend.startGameRecording(game)) {
+            jobDescriptor.setError("Recording cancelled, the game could not be launched.");
+            jobDescriptor.setErrorHint("Make sure that no frontend processes are running when the recording is started. Check the server logs for details.");
+            LOG.error("Recording cancelled, the game could not be launched.");
+            return;
+          }
+          if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
+            break;
+          }
+          updateSingleProgress(jobDescriptor, recordingDataSummary, 35);
 
-        jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
+          jobDescriptor.setStatus("Recording \"" + game.getGameDisplayName() + "\"");
 
-        //create the game recorder which includes all screens
-        gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
-        gameRecorder.startRecording();
+          //create the game recorder which includes all screens
+          gameRecorder = new GameRecorder(frontend, game, settings, data, jobDescriptor, recordingDataSummary.size(), recordingScreens);
+          gameRecorder.startRecording();
+        }
+        finally {
+          frontend.endGameRecording(game);
+        }
 
         updateSingleProgress(jobDescriptor, recordingDataSummary, 90);
         LOG.info("Recording for \"" + game.getGameDisplayName() + "\" finished.");
@@ -101,8 +100,7 @@ public class RecorderJob implements Job {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
       }
       finally {
-        frontend.finalizeRecording();
-        frontend.killFrontend();
+        frontend.endFrontendRecording();
       }
     }
     LOG.info("Recordings for " + recordingDataSummary.size() + " games finished.");
