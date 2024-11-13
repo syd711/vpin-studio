@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameEmulator;
-import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
@@ -20,6 +19,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -32,7 +32,7 @@ public class VPXCommandLineService implements ApplicationContextAware {
 
   private ApplicationContext applicationContext;
 
-  public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
+  public boolean execute(@NonNull Game game, @Nullable String altExe, @NonNull String... commandParams) {
     File gameFile = game.getGameFile();
     File vpxExe = game.getEmulator().getExe();
 
@@ -47,8 +47,13 @@ public class VPXCommandLineService implements ApplicationContextAware {
     }
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      List<String> strings = new ArrayList<>();
+      strings.add(vpxExe.getName());
+      for (String commandParam : commandParams) {
+        strings.add(commandParam);
+      }
+      strings.add("\"" + gameFile.getAbsolutePath() + "\"");
+      LOG.info("Executing VPX command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
