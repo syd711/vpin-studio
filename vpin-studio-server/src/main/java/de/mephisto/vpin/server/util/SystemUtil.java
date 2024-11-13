@@ -33,14 +33,4 @@ public class SystemUtil {
     }
     return null;
   }
-
-  /**
-   * Extract from Preferences the installation mode
-   * @param preferencesService The PreferencesService to extract SYSTEM_PRESET
-   * @return true for 64bit, false otherwise
-   */
-  public static final boolean is64Bit(PreferencesService preferencesService) {
-    String systemPreset = (String) preferencesService.getPreferenceValue(PreferenceNames.SYSTEM_PRESET);
-    return (systemPreset == null || systemPreset.equals(PreferenceNames.SYSTEM_PRESET_64_BIT));
-  }
 }

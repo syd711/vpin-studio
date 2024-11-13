@@ -5,10 +5,6 @@ public interface PreferenceNames {
   String VALIDATION_SETTINGS = "validationSettings";
 
   String SYSTEM_NAME = "systemName";
-  String SYSTEM_PRESET = "systemPreset";
-
-  String SYSTEM_PRESET_32_BIT = "32-bit";
-  String SYSTEM_PRESET_64_BIT = "64-bit";
 
   String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";

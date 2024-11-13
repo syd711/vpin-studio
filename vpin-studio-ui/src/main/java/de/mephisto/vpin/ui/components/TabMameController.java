@@ -42,10 +42,6 @@ public class TabMameController extends AbstractComponentTab implements Initializ
   private void onMameSetup() {
     GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
     File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-    String systemPreset = client.getSystemPreset();
-    if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
-      file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
-    }
 
     if (!file.exists()) {
       WidgetFactory.showAlert(Studio.stage, "Did not find Setup.exe", "The exe file " + file.getAbsolutePath() + " was not found.");
@@ -60,10 +56,6 @@ public class TabMameController extends AbstractComponentTab implements Initializ
     if (!simulate) {
       GameEmulatorRepresentation defaultGameEmulator = client.getFrontendService().getDefaultGameEmulator();
       File file = new File(defaultGameEmulator.getMameDirectory(), "Setup64.exe");
-      String systemPreset = client.getSystemPreset();
-      if (systemPreset.equals(PreferenceNames.SYSTEM_PRESET_32_BIT)) {
-        file = new File(defaultGameEmulator.getMameDirectory(), "Setup.exe");
-      }
       SystemCommandExecutor executor = new SystemCommandExecutor(Arrays.asList(file.getName()));
       executor.setDir(file.getParentFile());
       executor.executeCommandAsync();

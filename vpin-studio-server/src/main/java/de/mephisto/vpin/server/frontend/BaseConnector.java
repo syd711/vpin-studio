@@ -769,13 +769,12 @@ public abstract class BaseConnector implements FrontendConnector {
 
   protected File getVPXExe() {
     SystemInfo si = new SystemInfo();
-    if (SystemUtil.is64Bit(preferencesService)) {
-      File f = new File(si.resolveVpx64InstallFolder(), "VPinballX64.exe");
-      if (f.exists()) {
-        return f;
-      }
+    File f = new File(si.resolveVpx64InstallFolder(), "VPinballX64.exe");
+    if (f.exists()) {
+      return f;
     }
-    File f = new File(si.resolveVpxInstallFolder(), "VPinballX.exe");
+
+    f = new File(si.resolveVpxInstallFolder(), "VPinballX.exe");
     if (f.exists()) {
       return f;
     }
@@ -811,6 +810,7 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean killFrontend() {
     return killEmulators(true);
   }
+
   private boolean killEmulators(boolean withFrontend) {
     List<ProcessHandle> processes = ProcessHandle
         .allProcesses()
@@ -879,17 +879,18 @@ public abstract class BaseConnector implements FrontendConnector {
   public boolean launchGame(Game game) {
     return launchGame(game, false);
   }
+
   private boolean launchGame(Game game, boolean wait) {
     GameEmulator emu = game.getEmulator();
 
-    File exe = emu.getExe();  
+    File exe = emu.getExe();
     String args = emu.getExeParameters();
     TableDetails tableDetails = getGameFromDb(emu.getId(), game.getGameFileName());
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (!StringUtils.isEmpty(altLaunchExe)) {
       exe = new File(game.getEmulator().getInstallationFolder(), altLaunchExe);
     }
-  
+
     try {
       List<String> commandList = new ArrayList<>();
       commandList.add("\"" + exe.getAbsolutePath() + "\"");
