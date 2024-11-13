@@ -260,6 +260,9 @@ public class PinballXTableParser extends DefaultHandler {
           else if (!StringUtils.equals(detail.getGameDisplayName(), gameName)) {
             appendValue(writer, "description", detail.getGameDisplayName());
           }
+          else {
+            appendValue(writer, "description", detail.getGameName());
+          }
 
           appendValue(writer, "rom", detail.getRomName());
           appendValue(writer, "manufacturer", detail.getManufacturer());
