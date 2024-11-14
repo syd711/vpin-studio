@@ -56,7 +56,7 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
 
   protected TablesController tablesController;
 
-  protected ObservableList<M> models;
+  protected ObservableList<M> models = FXCollections.observableArrayList();
 
   protected FilteredList<M> filteredModels;
 
@@ -173,10 +173,12 @@ public abstract class BaseTableController<T, M extends BaseLoadingModel<T, M>> {
         text = lastKeyInput;
       }
 
-      for (M model : filteredModels) {
-        if (model.getName().toLowerCase().startsWith(text.toLowerCase())) {
-          setSelection(model, true);
-          break;
+      if (filteredModels != null) {
+        for (M model : filteredModels) {
+          if (model.getName().toLowerCase().startsWith(text.toLowerCase())) {
+            setSelection(model, true);
+            break;
+          }
         }
       }
     });

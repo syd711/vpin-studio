@@ -223,6 +223,7 @@ public abstract class BaseConnector implements FrontendConnector {
 
   //-------------------------------------------------
 
+  @Override
   public Emulator getEmulator(int emulatorId) {
     return emulators.get(emulatorId);
   }

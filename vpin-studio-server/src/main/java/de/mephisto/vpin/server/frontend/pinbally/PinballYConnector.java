@@ -11,10 +11,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
-import javafx.scene.shape.Rectangle;
 
-import org.apache.commons.configuration2.INIConfiguration;
-import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -22,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.*;
 
@@ -66,8 +66,8 @@ public class PinballYConnector extends BaseConnector {
     ));
 
     // recordings screens
-    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.BackGlass, VPinScreen.Topper, 
-      VPinScreen.Menu, VPinScreen.DMD, VPinScreen.PlayField));
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD,
+      VPinScreen.Topper, VPinScreen.Menu));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -341,11 +341,31 @@ PlayfieldWindow.Minimized = 0
       String[] positions = StringUtils.split(position, ",");
       String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
 
-      //player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-      player.setX(Integer.parseInt(positions[0]));
-      player.setY(Integer.parseInt(positions[1]));
-      player.setWidth(Integer.parseInt(positions[2]));
-      player.setHeight(Integer.parseInt(positions[3]));
+      boolean fullScreen = "1".equals(display.getProperty(sectionName + ".FullScreen"));
+
+      // identify the screen that contains our top let corner
+      GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+      for (int i = 0; i < gds.length; i++) {
+        GraphicsDevice gd  = gds[i];
+        Rectangle bounds = gd.getDefaultConfiguration().getBounds();
+        if (bounds.contains(Integer.parseInt(positions[0]), Integer.parseInt(positions[1]))) {
+          player.setMonitor(i);
+
+          if (fullScreen) {
+            player.setX((int) bounds.getX());
+            player.setY((int) bounds.getY());
+            player.setWidth((int) bounds.getWidth());
+            player.setHeight((int) bounds.getHeight());
+          }
+          else {
+            player.setX(Integer.parseInt(positions[0]));
+            player.setY(Integer.parseInt(positions[1]));
+            player.setWidth(Integer.parseInt(positions[2]) - player.getX());
+            player.setHeight(Integer.parseInt(positions[3]) - player.getY());
+          }
+          break;
+        }
+      }
       player.setRotation(Integer.parseInt(rotation));
 
       LOG.info("Created PinballY player display {}", player);
