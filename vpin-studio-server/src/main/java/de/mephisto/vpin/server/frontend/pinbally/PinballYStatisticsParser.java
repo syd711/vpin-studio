@@ -213,7 +213,7 @@ public class PinballYStatisticsParser {
 
   public void writePlaylistGame(Game game, Playlist pl) {
     writeGameData(game, (record, g) -> {
-      String categories = safeGet(record, "Categories");
+      String categories = record.get("Categories");
       List<String> cats= categories == null ? new ArrayList<>() :
         Stream.of(categories.split(",")).map(String::trim).collect(Collectors.toList());
       
