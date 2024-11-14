@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,6 +34,7 @@ import org.slf4j.LoggerFactory;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.Emulator;
 import de.mephisto.vpin.restclient.frontend.PlaylistGame;
+import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.playlists.Playlist;
 
@@ -41,11 +43,11 @@ public class PinballYStatisticsParser {
 
   private final FastDateFormat statisticsSdf = FastDateFormat.getInstance("yyyyMMddHHmmss");
 
-  private PinballYConnector connector;
+  private FrontendConnector connector;
 
   private String[] headers = StringUtils.split("Game,Last Played,Play Count,Play Time,Is Favorite,Rating,Audio Volume,Categories,Is Hidden,Date Added,High Score Style,Marked For Capture,Show When Running", ",");
 
-  public PinballYStatisticsParser(PinballYConnector connector) {
+  public PinballYStatisticsParser(FrontendConnector connector) {
     this.connector = connector;
   }
 
@@ -65,14 +67,14 @@ public class PinballYStatisticsParser {
     }
 
     // collect favorites
-    String fav = record.get("Is Favorite");
+    String fav = safeGet(record, "Is Favorite");
     boolean isFav = fav != null && BooleanUtils.toBoolean(fav);
     if (favs != null && isFav) {
       favs.add(game.getId());
     }
 
     // collect table stats
-    String lastPlayed = record.get("Last Played");
+    String lastPlayed = safeGet(record, "Last Played");
     if (stats != null && lastPlayed != null) {
       TableAlxEntry e = new TableAlxEntry();
       
@@ -87,11 +89,11 @@ public class PinballYStatisticsParser {
         LOG.error("Cannot parse date " + lastPlayed + "," + pe.getMessage());
       }
 
-      String playTime = record.get("Play Time");
+      String playTime = safeGet(record, "Play Time");
       if (StringUtils.isNotEmpty(playTime)) {
         e.setTimePlayedSecs(Integer.parseInt(playTime));
       }
-      String playCount = record.get("Play Count");
+      String playCount = safeGet(record, "Play Count");
       if (StringUtils.isNotEmpty(playCount)) {
         e.setNumberOfPlays(Integer.parseInt(playCount));
       }
@@ -99,7 +101,7 @@ public class PinballYStatisticsParser {
     }
 
     // collect playlists
-    String categories = record.get("Categories");
+    String categories = safeGet(record, "Categories");
     if (playlists != null && categories != null) {
       String[] cats = StringUtils.split(categories, ",");
       for (String cat: cats) {
@@ -122,6 +124,10 @@ public class PinballYStatisticsParser {
         p.addGame(pg);
       }
     }
+  }
+
+  private String safeGet(CSVRecord record, String name) {
+    return record.isSet(name) ? record.get(name) : null;
   }
 
   private Playlist getPlaylist(List<Playlist> playlists, String cat) {
@@ -158,7 +164,7 @@ public class PinballYStatisticsParser {
       Iterator<CSVRecord> iterator = parser.iterator();
       while (iterator.hasNext()) {
         CSVRecord record = iterator.next();
-        String game = record.get("Game");
+        String game = safeGet(record, "Game");
         for (Emulator emu : emus) {
           if (StringUtils.endsWith(game, "." + emu.getName())) {
             String gameName = StringUtils.substringBefore(game, "." + emu.getName());
@@ -207,7 +213,7 @@ public class PinballYStatisticsParser {
 
   public void writePlaylistGame(Game game, Playlist pl) {
     writeGameData(game, (record, g) -> {
-      String categories = record.get("Categories");
+      String categories = safeGet(record, "Categories");
       List<String> cats= categories == null ? new ArrayList<>() :
         Stream.of(categories.split(",")).map(String::trim).collect(Collectors.toList());
       
@@ -224,6 +230,14 @@ public class PinballYStatisticsParser {
       }
 
       record.put("Categories", String.join(",", cats));
+    });
+  }
+
+  public void writeStat(Game game, TableAlxEntry stat) {
+    writeGameData(game, (values, g) -> {
+      values.put("Play Time", Long.toString(stat.getTimePlayedSecs()));
+      values.put("Play Count", Long.toString(stat.getNumberOfPlays()));
+      values.put("Last Played", statisticsSdf.format(stat.getLastPlayed()));
     });
   }
 
@@ -264,11 +278,14 @@ public class PinballYStatisticsParser {
     }
 
     // now this is done, switch files
-    if (gamestats.delete()) {
+    try {
+      if (gamestats.exists()) {
+        Files.delete(gamestats.toPath());
+      }
       gamestatsW.renameTo(gamestats);
     }
-    else {
-      LOG.error("Cannot delete file " + gamestats + ", statistics not saved !");
+    catch (IOException ioe) {
+      LOG.error("Cannot delete file " + gamestats + ", statistics not saved !", ioe);
     }
   }
 
@@ -291,5 +308,4 @@ public class PinballYStatisticsParser {
   private static interface RecordBuilder {
     void collectValues(Map<String, String> values, Game game) throws Exception;
   }
-
 }

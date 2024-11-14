@@ -1120,6 +1120,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     return result;
   }
 
+  @Override
   @NonNull
   public List<Emulator> getEmulators() {
     Connection connect = this.connect();
@@ -1128,27 +1129,7 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
       Statement statement = Objects.requireNonNull(connect).createStatement();
       ResultSet rs = statement.executeQuery("SELECT * FROM Emulators;");
       while (rs.next()) {
-        String emuName = rs.getString("EmuName");
-        String dirGames = rs.getString("DirGames");
-        String extension = rs.getString("GamesExt");
-
-        EmulatorType type = getEmulatorType(emuName, dirGames, extension);
-
-        Emulator e = new Emulator(type);
-        e.setId(rs.getInt("EMUID"));
-        e.setName(emuName);
-        e.setDirGames(dirGames);
-        e.setGamesExt(extension);
-        e.setDisplayName(rs.getString("EmuDisplay"));
-        e.setDirMedia(rs.getString("DirMedia"));
-        e.setDirRoms(rs.getString("DirRoms"));
-        e.setDescription(rs.getString("Description"));
-        e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
-        e.setVisible(rs.getInt("Visible") == 1);
-
-        // specific initialization
-        setEmulatorExe(e, rs);
-
+        Emulator e = createEmulatorFromResultSet(rs);
         result.add(e);
       }
 
@@ -1170,6 +1151,56 @@ public class PinUPConnector implements FrontendConnector, InitializingBean {
     }
 
     return result;
+  }
+
+  @Override
+  @NonNull
+  public Emulator getEmulator(int emuId) {
+    Connection connect = this.connect();
+    Emulator emulator = null;
+    try {
+      Statement statement = Objects.requireNonNull(connect).createStatement();
+      ResultSet rs = statement.executeQuery("SELECT * FROM Emulators WHERE EMUID = " + emuId + ";");
+      if (rs.next()) {
+        emulator = createEmulatorFromResultSet(rs);
+      }
+      rs.close();
+      statement.close();
+    }
+    catch (SQLException e) {
+      LOG.error("Failed to getEmulator: {}", e.getMessage(), e);
+    }
+    finally {
+      this.disconnect(connect);
+    }
+    if (emulator != null && emulator.getType().isVpxEmulator()) {
+      initVisualPinballXScripts(emulator);
+    }
+    return emulator;
+  }
+
+  private Emulator createEmulatorFromResultSet(ResultSet rs) throws SQLException {
+    String emuName = rs.getString("EmuName");
+    String dirGames = rs.getString("DirGames");
+    String extension = rs.getString("GamesExt");
+
+    EmulatorType type = getEmulatorType(emuName, dirGames, extension);
+
+    Emulator e = new Emulator(type);
+    e.setId(rs.getInt("EMUID"));
+    e.setName(emuName);
+    e.setDirGames(dirGames);
+    e.setGamesExt(extension);
+    e.setDisplayName(rs.getString("EmuDisplay"));
+    e.setDirMedia(rs.getString("DirMedia"));
+    e.setDirRoms(rs.getString("DirRoms"));
+    e.setDescription(rs.getString("Description"));
+    e.setEmuLaunchDir(rs.getString("EmuLaunchDir"));
+    e.setVisible(rs.getInt("Visible") == 1);
+
+    // specific initialization
+    setEmulatorExe(e, rs);
+    return e;
   }
 
   private void setEmulatorExe(Emulator e, ResultSet rs) throws SQLException {

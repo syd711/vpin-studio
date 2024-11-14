@@ -30,6 +30,8 @@ public interface FrontendConnector {
 
   List<Emulator> getEmulators();
 
+  Emulator getEmulator(int emulatorId);
+
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators
    */
