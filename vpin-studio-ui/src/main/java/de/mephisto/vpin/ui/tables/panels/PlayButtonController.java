@@ -75,13 +75,13 @@ public class PlayButtonController implements Initializable {
     }
 
     GameEmulatorRepresentation gameEmulator = client.getFrontendService().getGameEmulator(game.getEmulatorId());
-    List<String> altVPXExeNames = gameEmulator.getAltVPXExeNames();
-    for (String altVPXExeName : altVPXExeNames) {
-      MenuItem item = new MenuItem(altVPXExeName);
+    List<String> altExeNames = gameEmulator.getAltExeNames();
+    for (String altExeName : altExeNames) {
+      MenuItem item = new MenuItem(altExeName);
       item.setOnAction(new EventHandler<ActionEvent>() {
         @Override
         public void handle(ActionEvent event) {
-          onPlay(altVPXExeName);
+          onPlay(altExeName);
         }
       });
       playBtn.getItems().add(item);
