@@ -3,16 +3,16 @@ package de.mephisto.vpin.server.recorder;
 import de.mephisto.vpin.restclient.PreferenceNames;
 import de.mephisto.vpin.restclient.frontend.FrontendPlayerDisplay;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
+import de.mephisto.vpin.restclient.games.GameStatus;
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
 import de.mephisto.vpin.restclient.jobs.JobType;
-import de.mephisto.vpin.restclient.recorder.RecorderSettings;
-import de.mephisto.vpin.restclient.recorder.RecordingDataSummary;
-import de.mephisto.vpin.restclient.recorder.RecordingScreen;
+import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.restclient.system.ScreenInfo;
 import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.frontend.FrontendStatusService;
 import de.mephisto.vpin.server.games.GameService;
 import de.mephisto.vpin.server.jobs.JobService;
+import de.mephisto.vpin.server.notifications.NotificationService;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
 import org.slf4j.Logger;
@@ -50,6 +50,9 @@ public class RecorderService {
   @Autowired
   private SystemService systemService;
 
+  @Autowired
+  private NotificationService notificationService;
+
   private JobDescriptor jobDescriptor;
 
   public JobDescriptor startRecording(RecordingDataSummary recordingData) {
@@ -62,6 +65,36 @@ public class RecorderService {
 
     jobService.offer(jobDescriptor);
     LOG.info("Offered screen recorder job.");
+    return jobDescriptor;
+  }
+
+  public JobDescriptor startInGameRecording() {
+    GameStatus gameStatus = frontendStatusService.getGameStatus();
+    int gameId = gameStatus.getGameId();
+
+    RecorderSettings settings = preferencesService.getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+
+    RecordingDataSummary recordingData = new RecordingDataSummary();
+    RecordingData recordingDataEntry = new RecordingData();
+    recordingData.add(recordingDataEntry);
+
+    recordingDataEntry.setGameId(gameId);
+
+    List<VPinScreen> supportedRecordingScreens = frontendService.getFrontend().getSupportedRecordingScreens();
+    for (VPinScreen supportedRecordingScreen : supportedRecordingScreens) {
+      RecordingScreenOptions option = settings.getRecordingScreenOption(supportedRecordingScreen);
+      if (option.isEnabled() && option.isInGameRecording()) {
+        recordingDataEntry.addScreen(supportedRecordingScreen);
+      }
+    }
+
+    RecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, recordingData, getRecordingScreens());
+    jobDescriptor = new JobDescriptor(JobType.RECORDER);
+    jobDescriptor.setTitle("In-Game Screen Recorder");
+    jobDescriptor.setJob(job);
+
+    jobService.offer(jobDescriptor);
+    LOG.info("Offered in-game screen recorder job.");
     return jobDescriptor;
   }
 

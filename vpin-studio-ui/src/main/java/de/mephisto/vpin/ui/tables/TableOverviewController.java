@@ -1442,7 +1442,7 @@ public class TableOverviewController extends BaseTableController<GameRepresentat
       this.tablesController.getAssetViewSideBarController().setGame(tablesController.getTableOverviewController(), game, assetScreenSelection);
     }
     else {
-      this.tablesController.getTablesSideBarController().setGame(Optional.of(game));
+      this.tablesController.getTablesSideBarController().setGame(game != null ? Optional.of(game) : Optional.empty());
     }
     if (game != null) {
       boolean errorneous = game.getValidationState() != null && game.getValidationState().getCode() > 0;

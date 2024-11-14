@@ -17,14 +17,14 @@ import java.util.List;
 public class RecorderJob implements Job {
   private final static Logger LOG = LoggerFactory.getLogger(RecorderJob.class);
 
-  private final GameService gameService;
-  private final FrontendConnector frontend;
-  private final FrontendStatusService frontendStatusService;
-  private final RecorderSettings settings;
-  private final RecordingDataSummary recordingDataSummary;
-  private final List<RecordingScreen> recordingScreens;
+  final GameService gameService;
+  final FrontendConnector frontend;
+  final FrontendStatusService frontendStatusService;
+  final RecorderSettings settings;
+  final RecordingDataSummary recordingDataSummary;
+  final List<RecordingScreen> recordingScreens;
 
-  private GameRecorder gameRecorder;
+  GameRecorder gameRecorder;
 
   public RecorderJob(GameService gameService, FrontendConnector frontend, FrontendStatusService frontendStatusService, RecorderSettings settings, RecordingDataSummary recordingDataSummary, List<RecordingScreen> recordingScreens) {
     this.gameService = gameService;
@@ -54,7 +54,6 @@ public class RecorderJob implements Job {
           break;
         }
 
-        frontend.initializeRecording();
         updateSingleProgress(jobDescriptor, recordingDataSummary, 10);
         if (jobDescriptor.isFinished() || jobDescriptor.isCancelled()) {
           break;
@@ -124,7 +123,7 @@ public class RecorderJob implements Job {
    * @param recordingDataSummary
    * @param progress
    */
-  private void updateSingleProgress(JobDescriptor jobDescriptor, RecordingDataSummary recordingDataSummary, double progress) {
+  protected void updateSingleProgress(JobDescriptor jobDescriptor, RecordingDataSummary recordingDataSummary, double progress) {
     if (recordingDataSummary.size() == 1) {
       jobDescriptor.setProgress(progress / 100d);
     }
@@ -144,7 +143,7 @@ public class RecorderJob implements Job {
     return true;
   }
 
-  private boolean isRecordingRequired(Game game) {
+  protected boolean isRecordingRequired(Game game) {
     RecordingData recordingData = recordingDataSummary.get(game.getId());
     if (recordingData != null) {
       List<VPinScreen> screens = recordingData.getScreens();

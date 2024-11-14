@@ -154,10 +154,6 @@ public interface FrontendConnector {
 
   //----------------------------------
   // Recording
-
-  default void initializeRecording() {
-  }
-
   boolean startFrontendRecording();
 
   boolean startGameRecording(Game game);

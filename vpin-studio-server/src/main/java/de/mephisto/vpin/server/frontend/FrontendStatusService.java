@@ -61,6 +61,10 @@ public class FrontendStatusService implements InitializingBean {
     this.frontendStatusChangeListeners.add(listener);
   }
 
+  public GameStatus getGameStatus() {
+    return gameStatusService.getStatus();
+  }
+
   public void notifyTableStatusChange(final Game game, final boolean started, TableStatusChangedOrigin origin) {
     if (!eventsEnabled) {
       LOG.info("Skipping table status change event, because the event handling is disabled");

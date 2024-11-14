@@ -14,6 +14,7 @@ import de.mephisto.vpin.server.games.TableStatusChangedEvent;
 import de.mephisto.vpin.server.jobs.JobQueue;
 import de.mephisto.vpin.server.preferences.PreferenceChangedListener;
 import de.mephisto.vpin.server.preferences.PreferencesService;
+import de.mephisto.vpin.server.recorder.RecorderService;
 import de.mephisto.vpin.server.system.SystemService;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
@@ -46,6 +47,9 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
 
   @Autowired
   private SystemService systemService;
+
+  @Autowired
+  private RecorderService recorderService;
 
   @Autowired
   private JobQueue queue;
@@ -84,6 +88,17 @@ public class InputEventService implements InitializingBean, TableStatusChangeLis
     boolean showPauseInsteadOfOverlay = pauseMenuSettings.isUseOverlayKey();
     String pauseBtn = pauseMenuSettings.getPauseButton();
     String overlayBtn = pauseMenuSettings.getOverlayButton();
+    String recordBtn = pauseMenuSettings.getRecordingButton();
+
+    if (name.equals(recordBtn)) {
+      if (frontendStatusService.getGameStatus().isActive()) {
+        LOG.info("Active game found for to recording, triggering recorder.");
+        recorderService.startInGameRecording();
+      }
+      else {
+        LOG.info("Record button pressed, but no active game found.");
+      }
+    }
 
     if (overlayBtn != null) {
       if (name.equals(overlayBtn) || (showPauseInsteadOfOverlay && name.equals(pauseBtn))) {
