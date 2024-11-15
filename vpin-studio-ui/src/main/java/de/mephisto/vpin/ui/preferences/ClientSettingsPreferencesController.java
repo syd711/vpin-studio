@@ -362,6 +362,9 @@ public class ClientSettingsPreferencesController implements Initializable {
       CheckBox checkBox = new CheckBox(gameEmulator.getName());
       checkBox.setUserData(gameEmulator);
       checkBox.setDisable(gameEmulator.isVpxEmulator() || backglassGameEmulators.contains(gameEmulator));
+      if (checkBox.isDisabled()) {
+        checkBox.setTooltip(new Tooltip("Emulators with backglasses can not be disabled here."));
+      }
       checkBox.setSelected(checkBox.isDisabled() || !uiSettings.getIgnoredEmulatorIds().contains(gameEmulator.getId()));
       checkBox.getStyleClass().add("default-text");
       checkBox.selectedProperty().addListener(new ChangeListener<Boolean>() {
@@ -613,7 +616,8 @@ public class ClientSettingsPreferencesController implements Initializable {
       String startsWith = OSUtil.isWindows() ? "\\\\" : OSUtil.isMac() ? "smb://" : null;
       if (startsWith == null) {
         winNetworkShareStatusLabel.setText("Network path is not supported on this OS.");
-      } else if (!newValue.startsWith(startsWith)) {
+      }
+      else if (!newValue.startsWith(startsWith)) {
         winNetworkShareStatusLabel.setText("Network path must begin with " + startsWith + ".");
       }
       else if (path == null) {

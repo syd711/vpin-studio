@@ -7,6 +7,7 @@ import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameMediaService;
 import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,9 +56,8 @@ public class GameRecorder {
     List<Callable<RecordingResult>> callables = new ArrayList<>();
     for (VPinScreen screen : recordingData.getScreens()) {
       try {
-        RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
-        if (!isRecordingRequired(game, screen, option.getRecordMode())) {
-          LOG.info("Skipped recording for " + screen + ", asset not missing.");
+        RecordingScreenOptions option = validateScreen(screen);
+        if (option == null) {
           continue;
         }
 
@@ -89,22 +89,42 @@ public class GameRecorder {
       }
     }
 
-    ExecutorService executorService = Executors.newFixedThreadPool(callables.size());
-    for (Callable<RecordingResult> callable : callables) {
-      Future<RecordingResult> submit = executorService.submit(callable);
-      futures.add(submit);
-    }
+    if (!callables.isEmpty()) {
+      ExecutorService executorService = Executors.newFixedThreadPool(callables.size());
+      for (Callable<RecordingResult> callable : callables) {
+        Future<RecordingResult> submit = executorService.submit(callable);
+        futures.add(submit);
+      }
 
-    try {
-      for (Future<RecordingResult> future : futures) {
-        RecordingResult recordingResult = future.get();
-        LOG.info("Recording finished: {}", recordingResult.toString());
+      try {
+        for (Future<RecordingResult> future : futures) {
+          RecordingResult recordingResult = future.get();
+          LOG.info("Recording finished: {}", recordingResult.toString());
+        }
+      }
+      catch (Exception e) {
+        LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
       }
     }
-    catch (Exception e) {
-      LOG.error("Error waiting for recording result: {}", e.getMessage(), e);
+    else {
+      LOG.info("Skipped recording of " + game.getGameDisplayName() + ", no screens to record.");
     }
     return status;
+  }
+
+  @Nullable
+  protected RecordingScreenOptions validateScreen(VPinScreen screen) {
+    RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+    if (!option.isEnabled()) {
+      LOG.info("Skipped recording for " + screen + ", screen is not enabled.");
+      return null;
+    }
+
+    if (!isRecordingRequired(game, screen, option.getRecordMode())) {
+      LOG.info("Skipped recording for " + screen + ", asset not missing.");
+      return null;
+    }
+    return option;
   }
 
   public void cancel(JobDescriptor jobDescriptor) {

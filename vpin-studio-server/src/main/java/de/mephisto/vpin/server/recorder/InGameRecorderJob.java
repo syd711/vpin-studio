@@ -93,10 +93,10 @@ public class InGameRecorderJob extends RecorderJob implements Job {
     if (notificationSettings.isRecordingStartNotification()) {
       int seconds = notificationSettings.getDurationSec();
 
-      int wait = Integer.MAX_VALUE;
+      int wait = 0;
       for (VPinScreen screen : data.getScreens()) {
         RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
-        if (option.getInitialDelay() < wait) {
+        if (option.getInitialDelay() > 0 && option.getInitialDelay() < wait) {
           wait = option.getInitialDelay();
         }
       }

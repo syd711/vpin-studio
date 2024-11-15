@@ -78,6 +78,19 @@ public class RecorderService {
     RecordingDataSummary recordingData = new RecordingDataSummary();
     RecordingData recordingDataEntry = new RecordingData();
     recordingData.add(recordingDataEntry);
+    for (VPinScreen screen : VPinScreen.values()) {
+      RecordingScreenOptions recordingScreenOption = settings.getRecordingScreenOption(screen);
+      if (recordingScreenOption == null) {
+        LOG.info("Skipped recording for {}, because screen is not enabled.", screen.name());
+        continue;
+      }
+      if (recordingScreenOption.isInGameRecording() && recordingScreenOption.isEnabled()) {
+        recordingDataEntry.addScreen(screen);
+      }
+      else {
+        LOG.info("Skipped recording for {}, because screen is not enabled for in-game recording.", screen.name());
+      }
+    }
 
     recordingDataEntry.setGameId(gameId);
 
@@ -89,14 +102,20 @@ public class RecorderService {
       }
     }
 
-    NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
-    RecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
-    jobDescriptor = new JobDescriptor(JobType.RECORDER);
-    jobDescriptor.setTitle("In-Game Screen Recorder");
-    jobDescriptor.setJob(job);
+    if (!recordingDataEntry.getScreens().isEmpty()) {
+      NotificationSettings notificationSettings = preferencesService.getJsonPreference(PreferenceNames.NOTIFICATION_SETTINGS, NotificationSettings.class);
+      RecorderJob job = new InGameRecorderJob(notificationService, gameService, frontendService.getFrontendConnector(), frontendStatusService, settings, notificationSettings, recordingData, getRecordingScreens());
+      jobDescriptor = new JobDescriptor(JobType.RECORDER);
+      jobDescriptor.setTitle("In-Game Screen Recorder");
+      jobDescriptor.setJob(job);
 
-    jobService.offer(jobDescriptor);
-    LOG.info("Offered in-game screen recorder job.");
+      jobService.offer(jobDescriptor);
+      LOG.info("Offered in-game screen recorder job.");
+      return jobDescriptor;
+    }
+
+    jobDescriptor.setProgress(1);
+    jobDescriptor.setStatus("Cancelled, no active screens");
     return jobDescriptor;
   }
 
