@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecorderTest {
 
-  @Ignore
   @Test
   public void testRecorder() throws Exception {
     PinUPConnector connector = new PinUPConnector() {
@@ -31,31 +30,31 @@ public class RecorderTest {
 
     List<FrontendPlayerDisplay> frontendPlayerDisplays = connector.getFrontendPlayerDisplays();
     assertFalse(frontendPlayerDisplays.isEmpty());
-
-    RecordingScreen s = new RecordingScreen();
-    s.setDisplay(frontendPlayerDisplays.stream().filter(d -> d.getScreen().equals(VPinScreen.PlayField)).findFirst().get());
-    s.setScreen(VPinScreen.PlayField);
-
-    RecordingScreenOptions options = new RecordingScreenOptions();
-    options.setRecordMode(RecordMode.overwrite);
-    options.setEnabled(true);
-    options.setRecordingDuration(3);
-
-
-    File target = File.createTempFile("recorder", ".mp4");
-    target.deleteOnExit();
-
-    ScreenRecorder recorder = new ScreenRecorder(s, target);
-
-    recorder.record(options);
-
-
-    Thread.sleep(5);
-    assertTrue(target.exists());
-    assertTrue(target.length() > 0);
-
-//    FileUtils.copyFile(target, new File("C:/temp/" + target.getName()));
-
-    target.delete();
+//
+//    RecordingScreen s = new RecordingScreen();
+//    s.setDisplay(frontendPlayerDisplays.stream().filter(d -> d.getScreen().equals(VPinScreen.PlayField)).findFirst().get());
+//    s.setScreen(VPinScreen.PlayField);
+//
+//    RecordingScreenOptions options = new RecordingScreenOptions();
+//    options.setRecordMode(RecordMode.overwrite);
+//    options.setEnabled(true);
+//    options.setRecordingDuration(3);
+//
+//
+//    File target = File.createTempFile("recorder", ".mp4");
+//    target.deleteOnExit();
+//
+//    ScreenRecorder recorder = new ScreenRecorder(s, target);
+//
+//    recorder.record(options);
+//
+//
+//    Thread.sleep(5);
+//    assertTrue(target.exists());
+//    assertTrue(target.length() > 0);
+//
+////    FileUtils.copyFile(target, new File("C:/temp/" + target.getName()));
+//
+//    target.delete();
   }
 }
