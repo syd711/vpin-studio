@@ -6,14 +6,15 @@ import de.mephisto.vpin.restclient.recorder.*;
 import de.mephisto.vpin.server.frontend.FrontendConnector;
 import de.mephisto.vpin.server.games.Game;
 import de.mephisto.vpin.server.games.GameMediaService;
-import edu.umd.cs.findbugs.annotations.Nullable;
-
+import edu.umd.cs.findbugs.annotations.NonNull;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
@@ -53,33 +54,38 @@ public class GameRecorder {
 
     List<Callable<RecordingResult>> callables = new ArrayList<>();
     for (VPinScreen screen : recordingData.getScreens()) {
-      RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
-      File target = resolveTargetFile(game, screen, option.getRecordMode());
-      if (target == null) {
-        LOG.info("Skipped recording for " + screen + ", asset not missing.");
-        continue;
-      }
+      try {
+        RecordingScreenOptions option = recorderSettings.getRecordingScreenOption(screen);
+        if (!isRecordingRequired(game, screen, option.getRecordMode())) {
+          LOG.info("Skipped recording for " + screen + ", asset not missing.");
+          continue;
+        }
 
-      RecordingScreen recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
-      int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
-      if (totalDuration > totalTime) {
-        totalTime = totalDuration;
+        File recordingTempFile = createTemporaryRecordingFile(game, screen, option.getRecordMode());
+        RecordingScreen recordingScreen = recordingScreens.stream().filter(s -> s.getScreen().equals(screen)).findFirst().get();
+        int totalDuration = option.getRecordingDuration() + option.getInitialDelay();
+        if (totalDuration > totalTime) {
+          totalTime = totalDuration;
+        }
+
+        if (option.isEnabled()) {
+          Callable<RecordingResult> screenRecordable = new Callable<>() {
+            @Override
+            public RecordingResult call() {
+              LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + recordingTempFile.getAbsolutePath());
+              recorderSettings.getRecordingScreenOption(screen);
+              ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, recordingTempFile);
+              screenRecorders.add(screenRecorder);
+              RecordingResult result = screenRecorder.record(option);
+              finalizeGameRecorder(game, screen, option.getRecordMode(), recordingTempFile);
+              return result;
+            }
+          };
+          callables.add(screenRecordable);
+        }
       }
-      if (option.isEnabled()) {
-        Callable<RecordingResult> screenRecordable = new Callable<>() {
-          @Override
-          public RecordingResult call() {
-            LOG.info("Starting recording for \"" + game.getGameDisplayName() + "\", " + screen.name() + ": " + target.getAbsolutePath());
-            recorderSettings.getRecordingScreenOption(screen);
-            ScreenRecorder screenRecorder = new ScreenRecorder(recordingScreen, target);
-            screenRecorders.add(screenRecorder);
-            RecordingResult result =  screenRecorder.record(option);
-            // last renaming of file once done
-            switchTargetFile(game, screen, option.getRecordMode(), target);
-            return result;
-          }
-        };
-        callables.add(screenRecordable);
+      catch (Exception e) {
+        LOG.info("Recording of {} failed: {}", screen.name(), e.getMessage(), e);
       }
     }
 
@@ -120,68 +126,78 @@ public class GameRecorder {
     }
   }
 
-  @Nullable
-  private File resolveTargetFile(Game game, VPinScreen screen, RecordMode recordMode) {
-    // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4 
-    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
-    File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
-    switch (recordMode) {
-      case overwrite: {
-        // even with overwrite, generate in a new file and do the switch at the end if success
-        return target;
-      }
-      case ifMissing: {
-        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
-        // even with ifMissing, generate in a new file, but only if there is no existing file
-        return !screenMediaFiles.isEmpty() ? null : target;
-      }
-      case append: {
-        return target;
-      }
+  private boolean isRecordingRequired(Game game, VPinScreen screen, RecordMode recordMode) {
+    if (recordMode.equals(RecordMode.ifMissing)) {
+      List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+      return screenMediaFiles.isEmpty();
     }
-    throw new UnsupportedOperationException("Invalid record mode " + recordMode);
+    return true;
   }
 
-  @Nullable
-  private void switchTargetFile(Game game, VPinScreen screen, RecordMode recordMode, File recordedFile) {
-    // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4 
-    File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
-    File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
+  /**
+   * Let's not create temporary files inside the screen assets folder.
+   */
+  @NonNull
+  private File createTemporaryRecordingFile(Game game, VPinScreen screen, RecordMode recordMode) throws IOException {
+    File tempFile = File.createTempFile(game.getGameDisplayName() + "-" + screen.name(), ".mp4");
+    tempFile.deleteOnExit();
+    return tempFile;
+  }
 
-    switch (recordMode) {
-      case overwrite: {
-        List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
-        // delete existing files in the generated folder only whatever their format (and there maybe several, not only mp4)
-        // why only in the generated folder is because pinballX has separated folders for images that need to stay
-        if (!screenMediaFiles.isEmpty()) {
-          for (File screenMediaFile : screenMediaFiles) {
-            if (screenMediaFile.getParentFile().equals(mediaFolder) &&
-                StringUtils.equalsIgnoreCase(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
-              screenMediaFile.delete();
+  private void finalizeGameRecorder(Game game, VPinScreen screen, RecordMode recordMode, File recordingTempFile) {
+    try {
+      // when several folder possible for a VpinScreen like in pinballX, get the ones for mp4
+      File mediaFolder = frontend.getMediaAccessStrategy().getGameMediaFolder(game, screen, "mp4");
+      File target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", false);
+
+      switch (recordMode) {
+        case overwrite: {
+          List<File> screenMediaFiles = frontend.getMediaAccessStrategy().getScreenMediaFiles(game, screen);
+          // delete existing files in the generated folder only whatever their format (and there maybe several, not only mp4)
+          // why only in the generated folder is because pinballX has separated folders for images that need to stay
+          if (!screenMediaFiles.isEmpty()) {
+            for (File screenMediaFile : screenMediaFiles) {
+              if (screenMediaFile.getParentFile().equals(mediaFolder) &&
+                  StringUtils.equalsIgnoreCase(FilenameUtils.getBaseName(screenMediaFile.getName()), game.getGameName())) {
+                if (!screenMediaFile.delete()) {
+                  LOG.error("Failed to delete {}, can't overwrite file with media recording for {}, file will be appended instead", screenMediaFile.getAbsolutePath(), screen.name());
+                }
+                else {
+                  target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+                }
+              }
             }
           }
+          FileUtils.copyFile(recordingTempFile, target);
+          LOG.info("Overwritten existing media file {} of screen {} with {}, used overwrite mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          break;
         }
-        recordedFile.renameTo(target);
-      }
-      case ifMissing: {
-        // as no file was there (cf resolveTargetFile method), 
-        // nothing to do here because the recordedFile is the target file already
-        return;
-      }
-      case append: {
-        // simply switch recorded and target files and keep all other files and format
-        if (!StringUtils.equalsIgnoreCase(target.getName(), recordedFile.getName())) {
-          // another temporary not existing file that will be deleted
-          File tempFile = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
-          if (target.renameTo(tempFile)) {
-            if (recordedFile.renameTo(target)) {
-              tempFile.renameTo(recordedFile);
-            }
+        case ifMissing: {
+          FileUtils.copyFile(recordingTempFile, target);
+          LOG.info("Added recorded file {} to screen {}, copied {}, used ifMissing mode.", target.getAbsolutePath(), recordingTempFile.getAbsolutePath(), screen.name());
+          break;
+        }
+        case append: {
+          // simply switch recorded and target files and keep all other files and format
+          if (!StringUtils.equalsIgnoreCase(target.getName(), recordingTempFile.getName())) {
+            // another temporary not existing file that will be deleted
+            target = GameMediaService.buildMediaAsset(mediaFolder, game, "mp4", true);
+            FileUtils.copyFile(recordingTempFile, target);
+            LOG.info("Appended recorded file {} of screen {} with {}, used overwrite mode.", recordingTempFile.getAbsolutePath(), target.getAbsolutePath(), screen.name());
           }
+          break;
         }
       }
     }
+    catch (Exception e) {
+      LOG.error("Error finalizing recording: {}", e.getMessage(), e);
+    }
 
-    throw new UnsupportedOperationException("Invalid record mode " + recordMode);
+    if (recordingTempFile.delete()) {
+      LOG.info("Deleted temporary recording file {}", recordingTempFile.getAbsolutePath());
+    }
+    else {
+      LOG.warn("Failed to delete temporary recording file {}", recordingTempFile.getAbsolutePath());
+    }
   }
 }

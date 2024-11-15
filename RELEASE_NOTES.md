@@ -34,6 +34,7 @@
 - **Tables / Usability Improvement**: Pressing the **shift key and double-clicking** on a table in the table overview will open the asset manager dialog.
 - **System Manager**: Removed the 32/64-bit preset combo from the "Overview" tab and removed the corresponding filtering from the release artifact comboboxes. Especially for freezy updates where you might want to install both versions, this switching was too tedious.
 - **Updates**: The release notes for the next update are now shown before (and after) updating. So for versions larger 3.10 you will see the release notes the next time when pressing the update button.
+- **VPX Game Launcher**: The VPX game launcher is launching the emulator window minimized now.
 
 ## Bugfixes
 

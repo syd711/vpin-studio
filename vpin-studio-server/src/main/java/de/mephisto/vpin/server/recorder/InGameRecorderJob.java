@@ -36,13 +36,6 @@ public class InGameRecorderJob extends RecorderJob implements Job {
     LOG.info("***************************** In-Game Recording Log ******************************************************");
     for (RecordingData data : recordingDataSummary.getRecordingData()) {
       Game game = gameService.getGame(data.getGameId());
-      boolean recordingRequired = isRecordingRequired(game);
-      if (!recordingRequired) {
-        LOG.info("Required assets have been found for \"{}\" or the overwrite option was not enabled, skipping recording.", game.getGameDisplayName());
-        jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
-        continue;
-      }
-
       LOG.info("************************ \"" + game.getGameDisplayName() + "\" ************************");
       try {
         if (showStartNotification(jobDescriptor, data)) {
@@ -73,6 +66,8 @@ public class InGameRecorderJob extends RecorderJob implements Job {
         jobDescriptor.setTasksExecuted(jobDescriptor.getTasksExecuted() + 1);
         double progress = jobDescriptor.getTasksExecuted() * 100d / recordingDataSummary.size() / 100d;
         jobDescriptor.setProgress(progress);
+
+        showEndNotification(jobDescriptor, data);
       }
       catch (Exception e) {
         LOG.error("Game recording failed: {}", e.getMessage(), e);
@@ -85,6 +80,13 @@ public class InGameRecorderJob extends RecorderJob implements Job {
     }
 
     LOG.info("***************************** /In-Game Recording Log *****************************************************");
+  }
+
+  private void showEndNotification(JobDescriptor jobDescriptor, RecordingData data) {
+    if (notificationSettings.isRecordingEndNotification()) {
+      Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder End", "The recording has been finished.");
+      notificationService.showNotificationNow(notification);
+    }
   }
 
   private boolean showStartNotification(JobDescriptor jobDescriptor, RecordingData data) throws InterruptedException {
@@ -101,6 +103,10 @@ public class InGameRecorderJob extends RecorderJob implements Job {
 
       seconds = seconds + wait;
       Notification notification = NotificationFactory.createNotification(null, "Media Recording", "Recorder Start", "The recorder will start in " + seconds + " seconds.");
+      if (seconds > 0) {
+        notification.setDurationSec(seconds - 1);
+      }
+
       notificationService.showNotificationNow(notification);
 
       while (seconds > 0) {

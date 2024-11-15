@@ -24,6 +24,7 @@ import de.mephisto.vpin.ui.tables.*;
 import de.mephisto.vpin.ui.tables.panels.BaseFilterController;
 import de.mephisto.vpin.ui.tables.panels.BaseLoadingColumn;
 import de.mephisto.vpin.ui.tables.panels.BaseTableController;
+import de.mephisto.vpin.ui.tables.panels.PlayButtonController;
 import de.mephisto.vpin.ui.util.Dialogs;
 import de.mephisto.vpin.ui.util.FrontendUtil;
 import de.mephisto.vpin.ui.util.JFXFuture;
@@ -137,10 +138,16 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
   private Button tableNavigateBtn;
 
   @FXML
+  private Button stopBtn;
+
+  @FXML
   private MenuButton screenMenuButton;
 
   @FXML
   private Spinner<Integer> refreshInterval;
+
+  @FXML
+  private ToolBar toolbar;
 
   private List<ScreenRecorderPanelController> screenRecorderPanelControllers = new ArrayList<>();
 
@@ -150,6 +157,8 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
   private TablesController tablesController;
   private ScreenSizeChangeListener screenSizeChangeListener;
+
+  private PlayButtonController playButtonController;
 
   private Thread screenRefresher;
   private boolean active = false;
@@ -521,6 +530,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       public void changed(ObservableValue<? extends GameRepresentationModel> observable, GameRepresentationModel oldValue, GameRepresentationModel newValue) {
         dataManagerBtn.setDisable(newValue == null);
         tableNavigateBtn.setDisable(newValue == null);
+        if(newValue != null) {
+          playButtonController.setData(newValue.getGame());
+        }
+        else {
+          playButtonController.setData(null);
+        }
       }
     });
 
@@ -576,6 +591,18 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     this.recordBtn.setDisable(true);
     labelCount.setText("No tables selected");
+
+    try {
+      FXMLLoader loader = new FXMLLoader(PlayButtonController.class.getResource("play-btn.fxml"));
+      SplitMenuButton playBtn = loader.load();
+      playButtonController = loader.getController();
+      int i = toolbar.getItems().indexOf(stopBtn);
+      toolbar.getItems().add(i, playBtn);
+      playBtn.setDisable(true);
+    }
+    catch (IOException e) {
+      LOG.error("Failed to load play button: " + e.getMessage(), e);
+    }
 
     EventManager.getInstance().addListener(this);
   }
