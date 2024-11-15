@@ -92,6 +92,9 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
   @FXML
   private CheckBox withTutorial;
 
+  @FXML
+  private CheckBox withPov;
+
   //------------------------------------------------------
 
   private VpsTablesPredicateFactory predicateFactory = new VpsTablesPredicateFactory();
@@ -135,6 +138,7 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
     withAltSound.setSelected(false);
     withAltColor.setSelected(false);
     withTutorial.setSelected(false);
+    withPov.setSelected(false);
   }
 
   protected boolean hasFilter() {
@@ -249,6 +253,11 @@ public class VpsTablesFilterController extends BaseFilterController<VpsTable, Vp
     withTutorial.setSelected(predicateFactory.isWithTutorial());
     withTutorial.selectedProperty().addListener((observable, oldValue, newValue) -> {
       predicateFactory.setWithTutorial(newValue);
+      applyFilters();
+    });
+    withPov.setSelected(predicateFactory.isWithPov());
+    withPov.selectedProperty().addListener((observable, oldValue, newValue) -> {
+      predicateFactory.setWithPov(newValue);
       applyFilters();
     });
 

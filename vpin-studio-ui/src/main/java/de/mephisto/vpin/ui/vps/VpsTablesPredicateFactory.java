@@ -14,7 +14,7 @@ import de.mephisto.vpin.connectors.vps.model.VpsTable;
 import de.mephisto.vpin.connectors.vps.model.VpsTableVersion;
 import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
- class VpsTablesPredicateFactory {
+class VpsTablesPredicateFactory {
 
   private String[] tableFormats;
 
@@ -39,6 +39,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   private boolean withAltSound;
   private boolean withAltColor;
   private boolean withTutorial;
+  private boolean withPov;
 
   private LinkedHashMap<String, Boolean> features = new LinkedHashMap<>();
 
@@ -49,6 +50,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isInstalledOnly() {
     return installedOnly;
   }
+
   public void setInstalledOnly(boolean installedOnly) {
     this.installedOnly = installedOnly;
   }
@@ -56,6 +58,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isNotInstalledOnly() {
     return notInstalledOnly;
   }
+
   public void setNotInstalledOnly(boolean notInstalledOnly) {
     this.notInstalledOnly = notInstalledOnly;
   }
@@ -63,6 +66,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public LocalDate getLastUpdateDate() {
     return lastUpdateDate;
   }
+
   public void setLastUpdateDate(LocalDate lastUpdateDate) {
     this.lastUpdateDate = lastUpdateDate;
   }
@@ -70,6 +74,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public String getAuthor() {
     return StringUtils.join(authors, ", ");
   }
+
   public void setAuthor(String author) {
     this.authors = splitAndTrim(author, ",;");
   }
@@ -77,6 +82,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isSearchAuthorInOtherAssetsToo() {
     return searchAuthorInOtherAssetsToo;
   }
+
   public void setSearchAuthorInOtherAssetsToo(boolean searchAuthorInOtherAssetsToo) {
     this.searchAuthorInOtherAssetsToo = searchAuthorInOtherAssetsToo;
   }
@@ -84,13 +90,15 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public String getManufacturer() {
     return StringUtils.join(manufacturers, ", ");
   }
+
   public void setManufacturer(String manufacturer) {
-    this.manufacturers =  splitAndTrim(manufacturer, ",;");
+    this.manufacturers = splitAndTrim(manufacturer, ",;");
   }
 
   public String getTheme() {
     return theme;
   }
+
   public void setTheme(String theme) {
     this.theme = theme;
   }
@@ -99,13 +107,23 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithTutorial() {
     return withTutorial;
   }
+
   public void setWithTutorial(boolean withRes) {
     this.withTutorial = withRes;
+  }
+
+  public boolean isWithPov() {
+    return withPov;
+  }
+
+  public void setWithPov(boolean withPov) {
+    this.withPov = withPov;
   }
 
   public boolean isWithRom() {
     return withRom;
   }
+
   public void setWithRom(boolean withPov) {
     this.withRom = withPov;
   }
@@ -113,6 +131,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithTopper() {
     return withTopper;
   }
+
   public void setWithTopper(boolean withIni) {
     this.withTopper = withIni;
   }
@@ -120,6 +139,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithBackglass() {
     return withBackglass;
   }
+
   public void setWithBackglass(boolean withBackglass) {
     this.withBackglass = withBackglass;
   }
@@ -127,6 +147,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithPupPack() {
     return withPupPack;
   }
+
   public void setWithPupPack(boolean withPupPack) {
     this.withPupPack = withPupPack;
   }
@@ -134,6 +155,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithAltSound() {
     return withAltSound;
   }
+
   public void setWithAltSound(boolean withAltSound) {
     this.withAltSound = withAltSound;
   }
@@ -141,6 +163,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithAltColor() {
     return withAltColor;
   }
+
   public void setWithAltColor(boolean withAltColor) {
     this.withAltColor = withAltColor;
   }
@@ -148,6 +171,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isWithWheel() {
     return withWheel;
   }
+
   public void setWithWheel(boolean withWheel) {
     this.withWheel = withWheel;
   }
@@ -155,6 +179,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public boolean isVpsUpdates() {
     return vpsUpdates;
   }
+
   public void setVpsUpdates(boolean vpsUpdates) {
     this.vpsUpdates = vpsUpdates;
   }
@@ -162,9 +187,11 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
   public void registerFeature(String feature) {
     features.put(feature, Boolean.FALSE);
   }
+
   public boolean isSelectedFeature(String feature) {
     return features.containsKey(feature) && features.get(feature);
   }
+
   public boolean toggleFeature(String feature) {
     if (features.containsKey(feature)) {
       boolean newstate = !features.get(feature);
@@ -176,21 +203,21 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
   public boolean isResetted() {
     return isFeaturesFilterEmpty()
-      && lastUpdateDate == null
-      && (authors == null || authors.length == 0)
-      && (manufacturers == null || manufacturers.length == 0)
-      && StringUtils.isEmpty(theme)
-      && !this.vpsUpdates
-      && !installedOnly
-      && !notInstalledOnly
-      && !this.withAltColor
-      && !this.withAltSound
-      && !this.withBackglass
-      && !this.withTopper
-      && !this.withWheel
-      && !this.withRom
-      && !this.withTutorial
-      && !this.withPupPack;
+        && lastUpdateDate == null
+        && (authors == null || authors.length == 0)
+        && (manufacturers == null || manufacturers.length == 0)
+        && StringUtils.isEmpty(theme)
+        && !this.vpsUpdates
+        && !installedOnly
+        && !notInstalledOnly
+        && !this.withAltColor
+        && !this.withAltSound
+        && !this.withBackglass
+        && !this.withTopper
+        && !this.withWheel
+        && !this.withRom
+        && !this.withTutorial
+        && !this.withPupPack;
   }
 
   public boolean isFeaturesFilterEmpty() {
@@ -223,7 +250,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
         if (lastUpdateDate != null) {
           LocalDate updated = Instant.ofEpochMilli(table.getUpdatedAt())
-            .atZone(ZoneId.systemDefault()).toLocalDate();
+              .atZone(ZoneId.systemDefault()).toLocalDate();
           if (lastUpdateDate.compareTo(updated) > 0) {
             return false;
           }
@@ -231,8 +258,8 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
         if (StringUtils.isNotEmpty(searchTerm)
             && !StringUtils.containsIgnoreCase(table.getName(), searchTerm)
-            //&& !StringUtils.containsIgnoreCase(table.getRom(), filterValue)
-            ) {
+          //&& !StringUtils.containsIgnoreCase(table.getRom(), filterValue)
+        ) {
           return false;
         }
 
@@ -286,21 +313,26 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
         if (isWithTutorial() && !VpsUtil.isDataAvailable(table.getTutorialFiles())) {
           return false;
         }
+        if (isWithPov() && !VpsUtil.isDataAvailable(table.getPovFiles())) {
+          return false;
+        }
 
         // As this filter is a bit heavy, keep it last
         if (searchAuthorInOtherAssetsToo) {
           if (!containsAnyAuthor(table.getTableFiles(), authors)
-            && !containsAnyAuthor(table.getB2sFiles(), authors)
-            && !containsAnyAuthor(table.getPupPackFiles(), authors)
-            && !containsAnyAuthor(table.getTopperFiles(), authors)
-            && !containsAnyAuthor(table.getWheelArtFiles(), authors)
-            && !containsAnyAuthor(table.getAltColorFiles(), authors)
-            && !containsAnyAuthor(table.getAltSoundFiles(), authors)
-            && !containsAnyAuthor(table.getTutorialFiles(), authors)
+              && !containsAnyAuthor(table.getB2sFiles(), authors)
+              && !containsAnyAuthor(table.getPupPackFiles(), authors)
+              && !containsAnyAuthor(table.getTopperFiles(), authors)
+              && !containsAnyAuthor(table.getWheelArtFiles(), authors)
+              && !containsAnyAuthor(table.getAltColorFiles(), authors)
+              && !containsAnyAuthor(table.getAltSoundFiles(), authors)
+              && !containsAnyAuthor(table.getTutorialFiles(), authors)
+              && !containsAnyAuthor(table.getPovFiles(), authors)
           ) {
             return false;
           }
-        } else {
+        }
+        else {
           if (!containsAnyAuthor(table.getTableFiles(), authors)) {
             return false;
           }
@@ -316,7 +348,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     return new Predicate<VpsTableVersion>() {
       @Override
       public boolean test(VpsTableVersion version) {
-        
+
         if (tableFormats != null && !containsIgnoreCase(tableFormats, version.getTableFormat())) {
           return false;
         }
@@ -331,7 +363,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
 
         if (lastUpdateDate != null) {
           LocalDate updated = Instant.ofEpochMilli(version.getUpdatedAt())
-            .atZone(ZoneId.systemDefault()).toLocalDate();
+              .atZone(ZoneId.systemDefault()).toLocalDate();
           if (lastUpdateDate.compareTo(updated) > 0) {
             return false;
           }
@@ -350,7 +382,7 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
     return new Predicate<VpsAuthoredUrls>() {
       @Override
       public boolean test(VpsAuthoredUrls url) {
-        
+
         if (searchAuthorInOtherAssetsToo && !containsAnyAuthor(url, authors)) {
           return false;
         }
@@ -430,26 +462,27 @@ import de.mephisto.vpin.ui.vps.VpsTablesController.VpsTableModel;
       }
     }
     return false;
- }
- protected boolean containsAnyAuthor(VpsAuthoredUrls url, String[] _authors) {
-  if (_authors == null || _authors.length == 0) {
-    return true;
   }
-  if (url != null) {
-    if (url.getAuthors() != null) {
-      for (String author : url.getAuthors()) {
-        if (containsAnyIgnoreCase(author, _authors)) {
-          return true;
+
+  protected boolean containsAnyAuthor(VpsAuthoredUrls url, String[] _authors) {
+    if (_authors == null || _authors.length == 0) {
+      return true;
+    }
+    if (url != null) {
+      if (url.getAuthors() != null) {
+        for (String author : url.getAuthors()) {
+          if (containsAnyIgnoreCase(author, _authors)) {
+            return true;
+          }
         }
       }
     }
+    return false;
   }
-  return false;
-}
 
 
   protected String[] splitAndTrim(String input, String separators) {
-    if(input != null) {
+    if (input != null) {
       String[] splitted = StringUtils.split(input, separators);
       for (int i = 0; i < splitted.length; i++) {
         splitted[i] = splitted[i].trim();

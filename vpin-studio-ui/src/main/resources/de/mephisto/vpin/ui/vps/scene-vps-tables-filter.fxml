@@ -11,8 +11,8 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.FlowPane?>
-<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
@@ -69,26 +69,26 @@
                                     <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
                                  </graphic>
                                  <StackPane.margin>
-                                    <Insets right="20"/>
+                                    <Insets right="20" />
                                  </StackPane.margin>
                               </Button>
                            </children>
                         </StackPane>
 
                         <Label styleClass="preference-checkbox" text="Author" />
-                        <TextField fx:id="author" maxWidth="204.0" >
+                        <TextField fx:id="author" maxWidth="204.0">
                            <Font size="14.0" />
                         </TextField>
 
                         <CheckBox fx:id="withAuthorInOtherAssetsToo" mnemonicParsing="false" styleClass="preference-checkbox" text="Search author in all Assets" />
 
                         <Label styleClass="preference-checkbox" text="Manufacturer" />
-                        <TextField fx:id="manufacturer" maxWidth="204.0" >
+                        <TextField fx:id="manufacturer" maxWidth="204.0">
                            <Font size="14.0" />
                         </TextField>
 
                         <Label styleClass="preference-checkbox" text="Theme" />
-                        <TextField fx:id="theme" maxWidth="204.0" >
+                        <TextField fx:id="theme" maxWidth="204.0">
                            <Font size="14.0" />
                         </TextField>
                      </children>
@@ -113,14 +113,15 @@
 
                   <VBox fx:id="assetFilters">
                      <children>
+                        <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Color" />
+                        <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Sound" />
                         <CheckBox fx:id="withDirectB2s" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Direct B2S" />
+                        <CheckBox fx:id="withPov" layoutX="10.0" layoutY="279.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of POV" />
                         <CheckBox fx:id="withPuppack" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Pup-pack" />
                         <CheckBox fx:id="withRom" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Rom" />
                         <CheckBox fx:id="withTopper" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Topper" />
-                        <CheckBox fx:id="withWheel" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Wheel Art" />
-                        <CheckBox fx:id="withAltSound" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Sound" />
-                        <CheckBox fx:id="withAltColor" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Alt Color" />
                         <CheckBox fx:id="withTutorial" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Tutorial" />
+                        <CheckBox fx:id="withWheel" mnemonicParsing="false" styleClass="preference-checkbox" text="Presence of Wheel Art" />
                      </children>
                   </VBox>
                </children>

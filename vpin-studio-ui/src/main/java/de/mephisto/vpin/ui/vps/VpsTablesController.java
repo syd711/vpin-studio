@@ -306,7 +306,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
   @Override
   public void onViewActivated(NavigationOptions options) {
     // first time activation
-    if (models == null) {
+    if (models == null || models.isEmpty()) {
       this.doReload(false);
     }
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
