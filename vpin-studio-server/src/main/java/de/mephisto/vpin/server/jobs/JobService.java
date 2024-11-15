@@ -1,6 +1,7 @@
 package de.mephisto.vpin.server.jobs;
 
 import de.mephisto.vpin.restclient.games.descriptors.JobDescriptor;
+import de.mephisto.vpin.restclient.jobs.JobType;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +23,7 @@ public class JobService {
   private final List<JobDescriptor> jobList = new ArrayList<>();
 
   public void dismissAll() {
-    List<JobDescriptor> collect = jobList.stream().filter(j -> j.isFinished()).collect(Collectors.toList());
+    List<JobDescriptor> collect = jobList.stream().filter(j -> j.isFinished() || j.isCancelled()).collect(Collectors.toList());
     for (JobDescriptor jobDescriptor : collect) {
       jobList.remove(jobDescriptor);
     }
@@ -49,10 +50,27 @@ public class JobService {
     }
   }
 
+  public void cancel(@NonNull JobType jobType) {
+    List<JobDescriptor> jobs = jobList.stream().filter(j -> j.getJobType().equals(jobType)).collect(Collectors.toList());
+    for (JobDescriptor job : jobs) {
+      if (!job.isCancelled() && !job.isFinished()) {
+        jobQueue.cancel(job);
+      }
+    }
+  }
+
   public List<JobDescriptor> getJobs() {
     for (JobDescriptor jobDescriptor : jobList) {
       jobDescriptor.setCancelable(jobDescriptor.getJob().isCancelable());
     }
     return new ArrayList<>(jobList);
+  }
+
+  public JobDescriptor getJob(String uuid) {
+    Optional<JobDescriptor> job = jobList.stream().filter(j -> j.getUuid().equals(uuid)).findFirst();
+    if (job.isPresent()) {
+      return job.get();
+    }
+    return null;
   }
 }

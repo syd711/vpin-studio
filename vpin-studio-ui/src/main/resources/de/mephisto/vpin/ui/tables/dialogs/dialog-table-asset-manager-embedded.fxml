@@ -17,6 +17,8 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
 <BorderPane fx:id="root" styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <center>
       <ScrollPane hbarPolicy="NEVER" BorderPane.alignment="CENTER">
@@ -361,14 +363,26 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
+                        <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                            <graphic>
                               <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                            </graphic>
-                        </Button>
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                           <items>
+                              <MenuItem fx:id="screenDeleteBtn" mnemonicParsing="false" onAction="#onScreenDelete" text="Delete Screen Assets">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                              <MenuItem fx:id="gameDeleteBtn" mnemonicParsing="false" onAction="#onGameDelete" text="Delete Game Assets">
+                                 <graphic>
+                                    <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                 </graphic>
+                              </MenuItem>
+                           </items>
+                        </SplitMenuButton>
                         <Button fx:id="addToPlaylistBtn" mnemonicParsing="false" onAction="#onPlaylistAdd" textFill="WHITE">
                            <font>
                               <Font size="14.0" />

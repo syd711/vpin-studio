@@ -8,7 +8,6 @@ import de.mephisto.vpin.server.components.facades.*;
 import de.mephisto.vpin.server.games.GameEmulator;
 import de.mephisto.vpin.server.preferences.PreferencesService;
 import de.mephisto.vpin.server.system.SystemService;
-import de.mephisto.vpin.server.util.SystemUtil;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
 import org.apache.commons.lang3.StringUtils;
@@ -169,14 +168,8 @@ public class ComponentService implements InitializingBean {
         releaseArtifact = githubRelease.getLatestArtifact();
       }
       else {
-        if (SystemUtil.is64Bit(preferencesService)) {
-          releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> r.getName().contains("x64")).findFirst().orElse(null);
-        }
-        else {
-          releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> !r.getName().contains("x64")).findFirst().orElse(null);
-        }
+        releaseArtifact = githubRelease.getArtifacts().stream().filter(r -> r.getName().contains("x64")).findFirst().orElse(null);
       }
-
     }
 
     if (releaseArtifact == null) {

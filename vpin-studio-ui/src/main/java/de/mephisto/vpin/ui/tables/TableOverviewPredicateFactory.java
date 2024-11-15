@@ -5,7 +5,6 @@ import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.NoteType;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
-import de.mephisto.vpin.ui.tables.TableOverviewController.GameRepresentationModel;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.function.Predicate;

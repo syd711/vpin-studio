@@ -1,0 +1,203 @@
+package de.mephisto.vpin.ui.tables.dialogs;
+
+import de.mephisto.vpin.restclient.assets.AssetType;
+import de.mephisto.vpin.restclient.games.GameRepresentation;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
+import de.mephisto.vpin.restclient.textedit.TextFile;
+import de.mephisto.vpin.restclient.util.UploaderAnalysis;
+import de.mephisto.vpin.ui.events.EventManager;
+import de.mephisto.vpin.ui.tables.panels.AssetFilterPanelController;
+import de.mephisto.vpin.ui.tables.panels.PropperRenamingController;
+import de.mephisto.vpin.ui.util.Dialogs;
+import de.mephisto.vpin.ui.util.UploadProgressModel;
+import edu.umd.cs.findbugs.annotations.Nullable;
+import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+public class PatchUploadController extends BaseUploadController {
+  private final static Logger LOG = LoggerFactory.getLogger(PropperRenamingController.class);
+
+  @FXML
+  private VBox uploadReplaceBox;
+
+  @FXML
+  private VBox uploadCloneBox;
+
+  @FXML
+  private RadioButton patchAndReplaceRadio;
+
+  @FXML
+  private RadioButton patchAndCloneRadio;
+
+  @FXML
+  private Label readmeLabel;
+
+  @FXML
+  private Label tableNameLabel;
+
+  @FXML
+  private Button readmeBtn;
+
+  private Parent assetsFilterPanel;
+
+  @FXML
+  private VBox assetsView;
+  private Optional<UploadDescriptor> result;
+
+  public PatchUploadController() {
+    super(AssetType.DIF, false, false, "zip", "7z", "rar", "dif");
+  }
+
+  private AssetFilterPanelController assetFilterPanelController;
+  private UploadDescriptor uploadDescriptor = UploadDescriptorFactory.create();
+  private GameRepresentation game;
+  private UploaderAnalysis<?> analysis;
+
+  @Override
+  protected UploadProgressModel createUploadModel() {
+    return null;
+  }
+
+  @Override
+  protected void onUploadClick(ActionEvent event) {
+    Stage stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+
+    Platform.runLater(() -> {
+      stage.close();
+    });
+
+    result = UniversalUploadUtil.upload(getSelection(), game.getId(), uploadDescriptor.getUploadType(), game.getEmulatorId());
+    if (result.isPresent()) {
+      UploadDescriptor uploadDescriptor = result.get();
+      uploadDescriptor.setExcludedFiles(analysis.getExcludedFiles());
+      uploadDescriptor.setExcludedFolders(analysis.getExcludedFolders());
+      uploadDescriptor.setAutoFill(false);
+
+      GamePatcherUploadPostProcessingProgressModel progressModel = new GamePatcherUploadPostProcessingProgressModel("Patching Game", uploadDescriptor);
+      result = UniversalUploadUtil.postProcess(progressModel);
+      if (result.isPresent()) {
+        // notify listeners of table import done
+        EventManager.getInstance().notifyTableUploaded(result.get());
+      }
+    }
+  }
+
+  @FXML
+  private void onReadme(ActionEvent e) {
+    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    String value = (String) ((Button) e.getSource()).getUserData();
+    Dialogs.openTextEditor(stage, new TextFile(value), "README");
+  }
+
+  @Override
+  public void initialize(URL url, ResourceBundle resourceBundle) {
+    super.initialize(url, resourceBundle);
+    readmeBtn.setVisible(false);
+
+    readmeLabel.managedProperty().bindBidirectional(readmeLabel.visibleProperty());
+    readmeBtn.managedProperty().bindBidirectional(readmeBtn.visibleProperty());
+
+    ToggleGroup toggleGroup = new ToggleGroup();
+    patchAndReplaceRadio.setToggleGroup(toggleGroup);
+    patchAndCloneRadio.setToggleGroup(toggleGroup);
+
+    patchAndCloneRadio.setSelected(true);
+    uploadDescriptor.setUploadType(UploadType.uploadAndClone);
+    uploadCloneBox.getStyleClass().add("selection-panel-selected");
+
+    patchAndReplaceRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!uploadReplaceBox.getStyleClass().contains("selection-panel-selected")) {
+            uploadReplaceBox.getStyleClass().add("selection-panel-selected");
+          }
+          uploadDescriptor.setUploadType(UploadType.uploadAndReplace);
+        }
+        else {
+          uploadCloneBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    patchAndCloneRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
+      @Override
+      public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
+        if (newValue) {
+          if (!uploadCloneBox.getStyleClass().contains("selection-panel-selected")) {
+            uploadCloneBox.getStyleClass().add("selection-panel-selected");
+          }
+          uploadDescriptor.setUploadType(UploadType.uploadAndClone);
+        }
+        else {
+          uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
+        }
+      }
+    });
+
+    try {
+      FXMLLoader loader = new FXMLLoader(AssetFilterPanelController.class.getResource("asset-filter-panel.fxml"));
+      assetsFilterPanel = loader.load();
+      assetsFilterPanel.managedProperty().bindBidirectional(assetsFilterPanel.visibleProperty());
+      assetFilterPanelController = loader.getController();
+      assetsView.getChildren().add(assetsFilterPanel);
+      assetsFilterPanel.setVisible(false);
+    }
+    catch (IOException e) {
+      LOG.error("failed to load table overview: " + e.getMessage(), e);
+    }
+  }
+
+  @Override
+  protected void endAnalysis(@Nullable String analysis, @Nullable UploaderAnalysis<?> uploaderAnalysis) {
+    super.endAnalysis(analysis, uploaderAnalysis);
+    assetsFilterPanel.setVisible(uploaderAnalysis != null && uploaderAnalysis.isArchive());
+    assetFilterPanelController.refresh(analysis == null ? getSelection() : null, uploaderAnalysis);
+
+    this.readmeBtn.setVisible(false);
+    this.readmeLabel.setVisible(true);
+    if (uploaderAnalysis != null && analysis == null) {
+      String readmeText = uploaderAnalysis.getReadMeText();
+      if (!StringUtils.isEmpty(readmeText)) {
+        this.readmeBtn.setUserData(readmeText);
+        this.readmeBtn.setVisible(true);
+        this.readmeLabel.setVisible(false);
+      }
+    }
+
+    this.analysis = uploaderAnalysis;
+  }
+
+  @Override
+  public void setFile(Stage stage, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+    super.setFile(stage, file, analysis, finalizer);
+    assetFilterPanelController.setData(stage, game, AssetType.DIF);
+  }
+
+  public void setData(GameRepresentation gameRepresentation) {
+    this.game = gameRepresentation;
+    this.tableNameLabel.setText(game.getGameDisplayName());
+  }
+}

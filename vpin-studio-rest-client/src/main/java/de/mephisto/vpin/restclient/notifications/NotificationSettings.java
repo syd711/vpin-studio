@@ -11,8 +11,26 @@ public class NotificationSettings extends JsonSettings {
   private boolean iScoredNotification = true;
   private boolean discordNotification = true;
   private boolean competitionNotification = true;
+  private boolean recordingStartNotification = true;
+  private boolean recordingEndNotification = true;
 
   private int durationSec = 5;
+
+  public boolean isRecordingStartNotification() {
+    return recordingStartNotification;
+  }
+
+  public void setRecordingStartNotification(boolean recordingStartNotification) {
+    this.recordingStartNotification = recordingStartNotification;
+  }
+
+  public boolean isRecordingEndNotification() {
+    return recordingEndNotification;
+  }
+
+  public void setRecordingEndNotification(boolean recordingEndNotification) {
+    this.recordingEndNotification = recordingEndNotification;
+  }
 
   public boolean isDesktopMode() {
     return desktopMode;

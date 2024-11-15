@@ -30,6 +30,8 @@ public interface FrontendConnector {
 
   List<Emulator> getEmulators();
 
+  Emulator getEmulator(int emulatorId);
+
   /**
    * Force refresh of the whole connector since they can have their own cache, e.g. emulators
    */
@@ -149,4 +151,17 @@ public interface FrontendConnector {
   boolean isFrontendRunning();
 
   boolean restartFrontend();
+
+  boolean launchGame(Game game);
+
+  //----------------------------------
+  // Recording
+  boolean startFrontendRecording();
+
+  boolean startGameRecording(Game game);
+
+  void endGameRecording(Game game);
+
+  void endFrontendRecording();
+
 }

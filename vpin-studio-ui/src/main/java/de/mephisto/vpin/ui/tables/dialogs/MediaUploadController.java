@@ -2,9 +2,10 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
+import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.PackageUtil;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
@@ -17,6 +18,7 @@ import de.mephisto.vpin.ui.util.FileSelectorDragEventHandler;
 import de.mephisto.vpin.ui.util.FileSelectorDropEventHandler;
 import de.mephisto.vpin.ui.util.JFXFuture;
 import de.mephisto.vpin.ui.util.StudioFileChooser;
+import edu.umd.cs.findbugs.annotations.Nullable;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -105,7 +107,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
   private List<String> allData;
   private List<MediaUploadArchiveItem> filteredData;
-  private boolean filterMode = false;
+  private AssetType filterMode;
 
   private List<String> excludedFiles = new ArrayList<>();
   private List<String> excludedFolders = new ArrayList<>();
@@ -138,13 +140,13 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       });
       uploaderAnalysis.setExclusions(excludedFiles, excludedFolders);
 
-      if (filterMode) {
+      if (filterMode != null) {
         stage.close();
       }
       else {
         stage.close();
         Platform.runLater(() -> {
-          Optional<UploadDescriptor> result = UniversalUploadUtil.upload(selection, game.getId(), TableUploadType.uploadAndImport, emulator);
+          Optional<UploadDescriptor> result = UniversalUploadUtil.upload(selection, game.getId(), UploadType.uploadAndImport, emulator.getId());
           if (result.isPresent()) {
             UploadDescriptor uploadDescriptor = result.get();
             uploadDescriptor.setSubfolderName(null);
@@ -153,7 +155,9 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
 
             uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
             uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-            result = UniversalUploadUtil.postProcess(uploadDescriptor);
+
+            GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+            result = UniversalUploadUtil.postProcess(progressModel);
 
             EventManager.getInstance().notifyTableChange(game.getId(), game.getRom(), game.getGameName());
           }
@@ -259,7 +263,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
     return result;
   }
 
-  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, boolean filterMode) {
+  public void setData(GameRepresentation game, UploaderAnalysis analysis, File file, Stage stage, @Nullable AssetType filterMode) {
     this.filterMode = filterMode;
     this.emulator = client.getFrontendService().getDefaultGameEmulator();
     this.game = game;
@@ -274,7 +278,7 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       this.tableFileLabel.setText(this.game.getGameFilePath());
     }
 
-    if (filterMode) {
+    if (filterMode != null) {
       this.uploadBtn.setText("Apply Selection");
       this.tableInfo.setVisible(false);
       this.stage.setTitle("Asset Selector");
@@ -319,8 +323,13 @@ public class MediaUploadController extends BaseTableController<String, MediaUplo
       });
 
       //you can't de-select on selection mode
-      if (filterMode && model.isTableAsset()) {
-        columnCheckbox.setDisable(true);
+      if (filterMode != null) {
+        if (filterMode.equals(AssetType.TABLE) && model.isTableAsset()) {
+          columnCheckbox.setDisable(true);
+        }
+        else if (filterMode.equals(AssetType.DIF) && model.isPatch()) {
+          columnCheckbox.setDisable(true);
+        }
       }
 
       return columnCheckbox;

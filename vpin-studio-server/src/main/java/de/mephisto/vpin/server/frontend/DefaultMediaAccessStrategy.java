@@ -32,7 +32,6 @@ abstract public class DefaultMediaAccessStrategy implements MediaAccessStrategy 
    */
   @Override
   public List<File> getScreenMediaFiles(@NonNull Game game, @NonNull VPinScreen screen) {
-
     File screenMediaFolder = getGameMediaFolder(game, screen, null);
     List<File> allFiles = getMediaFiles(screenMediaFolder);
 

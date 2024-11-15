@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.MenuButton?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import org.kordamp.ikonli.javafx.FontIcon?>
+
+<BorderPane fx:id="root" style="-fx-border-color: #111111; -fx-border-style: solid; -fx-background-color: #222222;" styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.recorder.RecorderController">
+    <top>
+        <ToolBar fx:id="toolbar" BorderPane.alignment="CENTER">
+            <items>
+                <Button fx:id="filterBtn" layoutX="636.0" layoutY="11.0" mnemonicParsing="false" onAction="#onFilter" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <tooltip>
+                        <Tooltip text="Toggle Filter View" />
+                    </tooltip>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2f-filter-menu-outline" iconSize="18" />
+                    </graphic>
+                </Button>
+                <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
+                    <font>
+                        <Font size="14.0" />
+                    </font>
+                    <graphic>
+                        <FontIcon iconColor="WHITE" iconLiteral="mdi2r-reload" iconSize="18" />
+                    </graphic>
+                    <tooltip>
+                        <Tooltip text="Reload all table data" />
+                    </tooltip>
+                </Button>
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
+                <StackPane alignment="CENTER_RIGHT">
+                    <children>
+                        <TextField fx:id="searchTextField" onKeyPressed="#onSearchKeyPressed" prefHeight="30.0" prefWidth="200.0" promptText="Search Table...">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                        </TextField>
+                        <Button fx:id="clearBtn" mnemonicParsing="false" onAction="#onClear" styleClass="ghost-icon-button" textFill="WHITE" visible="false">
+                            <font>
+                                <Font size="14.0" />
+                            </font>
+                            <graphic>
+                                <FontIcon iconColor="#222222" iconLiteral="mdi2c-close-thick" iconSize="18" />
+                            </graphic>
+                        </Button>
+                    </children>
+                </StackPane>
+            <Separator layoutX="462.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                <ComboBox fx:id="emulatorCombo" prefWidth="150.0" promptText="All VPX Tables" />
+                <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="dataManagerBtn" mnemonicParsing="false" onAction="#onTableEdit" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2l-lead-pencil" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Edit table data" />
+               </tooltip>
+            </Button>
+            <Button fx:id="tableNavigateBtn" mnemonicParsing="false" onAction="#onOpenTable" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2t-table-edit" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Show table in table overview" />
+               </tooltip>
+            </Button>
+            <Separator layoutX="474.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="recordBtn" mnemonicParsing="false" onAction="#onRecord" text="Start Recording" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <tooltip>
+                  <Tooltip text="Start recording of this screen" />
+               </tooltip>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2r-record" iconSize="18" />
+               </graphic>
+            </Button>
+            <Separator layoutX="478.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <Button fx:id="stopBtn" mnemonicParsing="false" onAction="#onStop" textFill="#ff3333">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="#ff3333" iconLiteral="mdi2s-stop" iconSize="18" />
+               </graphic>
+               <tooltip>
+                  <Tooltip text="Kill all emulator and [Frontend] processes (Ctrl + K)" />
+               </tooltip>
+            </Button>
+            <Separator layoutX="729.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <MenuButton fx:id="screenMenuButton" mnemonicParsing="false" text="Screens" textFill="WHITE">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <graphic>
+                  <FontIcon iconColor="WHITE" iconLiteral="mdi2m-monitor-edit" iconSize="18" />
+               </graphic>
+            </MenuButton>
+            <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+            <HBox alignment="CENTER_LEFT" spacing="6.0">
+               <children>
+                  <Label styleClass="default-text" text="Preview Refresh:" />
+                  <Spinner fx:id="refreshInterval" prefWidth="70.0" />
+                  <Label layoutX="10.0" layoutY="15.0" styleClass="default-text" text="seconds" />
+               </children>
+            </HBox>
+            </items>
+        </ToolBar>
+    </top>
+    <center>
+        <BorderPane BorderPane.alignment="CENTER">
+            <BorderPane.margin>
+                <Insets bottom="6.0" />
+            </BorderPane.margin>
+            <center>
+                <StackPane fx:id="loaderStack">
+                    <children>
+                        <StackPane fx:id="tableStack" style="-fx-background-color: #222222;">
+                            <children>
+                                <TableView fx:id="tableView" onMouseClicked="#onTableMouseClicked" style="-fx-background-color: #2a2a2a;" styleClass="base-component">
+                                    <columns>
+                                        <TableColumn fx:id="columnSelection" maxWidth="40.0" minWidth="30.0" prefWidth="30.0" style="-fx-alignment: BASELINE_CENTER;">
+                                            <graphic>
+                                                <CheckBox fx:id="selectAllCheckbox" mnemonicParsing="false" />
+                                            </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnDisplayName" minWidth="100.0" prefWidth="270.0" style="-fx-alignment: BASELINE_LEFT;" text="Display Name" />
+                                        <TableColumn fx:id="columnPlayfield" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Playfield">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxPlayfield" mnemonicParsing="false" />
+                                 </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnBackglass" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Backglass">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxBackglass" mnemonicParsing="false" />
+                                 </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnDMD" minWidth="10.4000244140625" prefWidth="85.0" style="-fx-alignment: CENTER;" text="DMD">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxDMD" mnemonicParsing="false" />
+                                 </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnTopper" minWidth="10.4000244140625" prefWidth="90.0" style="-fx-alignment: CENTER;" text="Topper">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxTopper" mnemonicParsing="false" />
+                                 </graphic>
+                                        </TableColumn>
+                                        <TableColumn fx:id="columnFullDMD" minWidth="10.4000244140625" prefWidth="110.0" style="-fx-alignment: CENTER;" text="Full DMD">
+                                 <graphic>
+                                    <CheckBox fx:id="checkBoxFullDMD" mnemonicParsing="false" />
+                                 </graphic>
+                                        </TableColumn>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </StackPane>
+                    </children>
+                </StackPane>
+            </center>
+            <bottom>
+                <Label fx:id="labelCount" textFill="WHITE" BorderPane.alignment="CENTER_RIGHT">
+                    <BorderPane.margin>
+                        <Insets bottom="3.0" right="3.0" />
+                    </BorderPane.margin>
+                </Label>
+            </bottom>
+        </BorderPane>
+    </center>
+    <right>
+       <BorderPane styleClass="subpanel" BorderPane.alignment="CENTER">
+            <center>
+                <ScrollPane hbarPolicy="NEVER" style="-fx-background-color: #222222;">
+                    <content>
+                        <VBox fx:id="recordingOptions" styleClass="base-component">
+                            <padding>
+                         <Insets right="12.0" />
+                     </padding></VBox>
+                    </content>
+                </ScrollPane>
+            </center>
+            <BorderPane.margin>
+             <Insets />
+         </BorderPane.margin>
+            <padding>
+             <Insets bottom="12.0" />
+         </padding>
+        </BorderPane>
+   </right>
+</BorderPane>

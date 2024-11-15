@@ -2,10 +2,11 @@ package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.util.ProgressDialog;
+import de.mephisto.vpin.ui.util.ProgressModel;
 import de.mephisto.vpin.ui.util.ProgressResultModel;
 import javafx.application.Platform;
 import org.apache.commons.lang3.StringUtils;
@@ -19,10 +20,10 @@ import java.util.Optional;
 public class UniversalUploadUtil {
   private final static Logger LOG = LoggerFactory.getLogger(UniversalUploadUtil.class);
 
-  public static Optional<UploadDescriptor> upload(File selection, int gameId, TableUploadType tableUploadType, GameEmulatorRepresentation emulatorRepresentation) {
+  public static Optional<UploadDescriptor> upload(File selection, int gameId, UploadType uploadType, int emulatorId) {
     Optional<UploadDescriptor> result = Optional.empty();
     try {
-      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel("Game Media Upload", selection, gameId, tableUploadType, emulatorRepresentation.getId());
+      GameMediaUploadProgressModel model = new GameMediaUploadProgressModel("Game Media Upload", selection, gameId, uploadType, emulatorId);
       ProgressResultModel uploadResultModel = ProgressDialog.createProgressDialog(model);
 
       List<Object> results = uploadResultModel.getResults();
@@ -45,16 +46,15 @@ public class UniversalUploadUtil {
     return result;
   }
 
-  public static Optional<UploadDescriptor> postProcess(UploadDescriptor descriptor) {
+  public static Optional<UploadDescriptor> postProcess(ProgressModel<?> progressModel) {
     Optional<UploadDescriptor> result = Optional.empty();
     try {
-      GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", descriptor);
       ProgressResultModel progressDialogResult = ProgressDialog.createProgressDialog(progressModel);
       if (!progressDialogResult.getResults().isEmpty()) {
         UploadDescriptor uploadedAndImportedDescriptor = (UploadDescriptor) progressDialogResult.getResults().get(0);
         if (!StringUtils.isEmpty(uploadedAndImportedDescriptor.getError())) {
           Platform.runLater(() -> {
-            WidgetFactory.showAlert(Studio.stage, "Error", "Error during import: " + uploadedAndImportedDescriptor.getError());
+            WidgetFactory.showAlert(Studio.stage, "Error", "Error: " + uploadedAndImportedDescriptor.getError());
           });
           return result;
         }
@@ -64,7 +64,7 @@ public class UniversalUploadUtil {
     }
     catch (Exception e) {
       LOG.error("Upload post processing failed: " + e.getMessage(), e);
-      WidgetFactory.showAlert(Studio.stage, "Post processing game media failed.", "Please check the log file for details.", "Error: " + e.getMessage());
+      WidgetFactory.showAlert(Studio.stage, "Post processing failed.", "Please check the log file for details.", "Error: " + e.getMessage());
     }
     return result;
   }

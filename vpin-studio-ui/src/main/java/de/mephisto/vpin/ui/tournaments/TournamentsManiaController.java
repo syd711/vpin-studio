@@ -398,7 +398,7 @@ public class TournamentsManiaController implements Initializable, StudioFXContro
         textfieldSearch.setDisable(false);
         reloadBtn.setDisable(false);
 
-        treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challange yet?\n" +
+        treeTableView.setPlaceholder(new Label("            Mmmh, not up for a challenge yet?\n" +
             "Create a new tournament by pressing the '+' button."));
 
         treeTableView.setRoot(null);

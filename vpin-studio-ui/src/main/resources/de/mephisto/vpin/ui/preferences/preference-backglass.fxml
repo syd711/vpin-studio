@@ -19,10 +19,12 @@
                   <Insets />
                </VBox.margin>
             </Label>
-            <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the Backglass server." textFill="WHITE">
+            <Label layoutX="34.0" layoutY="167.0" styleClass="preference-description" text="This section configures the Backglass server :" textFill="WHITE">
                <VBox.margin>
                   <Insets top="12.0" />
-               </VBox.margin></Label>
+               </VBox.margin>
+            </Label>
+            <Label fx:id="backglassServerFolder" styleClass="preference-description" text="..." textFill="WHITE"></Label>
             <VBox>
                <children>
                   <Label fx:id="noMatchFound" layoutX="10.0" layoutY="79.0" styleClass="error-title" text="No backglass server found." textFill="WHITE" wrapText="true">

@@ -26,6 +26,7 @@ import javafx.stage.Screen;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -36,6 +37,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.stereotype.Service;
 
+import com.sun.jna.platform.DesktopWindow;
+import com.sun.jna.platform.WindowUtils;
+
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +49,8 @@ import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -358,6 +364,12 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         .filter(p -> p.info().command().isPresent()).collect(Collectors.toList());
   }
 
+  public boolean isWindowOpened(String name) {
+    List<DesktopWindow> windows = WindowUtils.getAllWindows(true);
+    return windows.stream().anyMatch(wdw -> StringUtils.containsIgnoreCase(wdw.getTitle(), name));
+  }
+
+
   public boolean isPinballEmulatorRunning() {
     return isVPXRunning(getProcesses()) || isFPRunning(getProcesses());
   }
@@ -407,12 +419,8 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
     List<ScreenInfo> result = new ArrayList<>();
 
     Screen primary = Screen.getPrimary();
-    ScreenInfo info = new ScreenInfo();
-    Rectangle2D screenBounds = primary.getBounds();
-    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-    info.setPrimary(true);
-    info.setHeight((int) screenBounds.getHeight());
-    info.setWidth((int) screenBounds.getWidth());
+    ScreenInfo info = createScreenInfo(primary);
+
     info.setId(1);
     result.add(info);
 
@@ -423,18 +431,38 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
         continue;
       }
 
-      info = new ScreenInfo();
-      screenBounds = Screen.getPrimary().getBounds();
-      info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
-      info.setPrimary(false);
-      info.setHeight((int) screenBounds.getHeight());
-      info.setWidth((int) screenBounds.getWidth());
+      info = createScreenInfo(screen);
       info.setId(index);
-
       result.add(info);
       index++;
     }
     return result;
+  }
+
+  @NotNull
+  private static ScreenInfo createScreenInfo(Screen screen) {
+    ScreenInfo info = new ScreenInfo();
+    Rectangle2D screenBounds = screen.getBounds();
+    info.setX(screenBounds.getMinX());
+    info.setY(screenBounds.getMinY());
+    info.setPortraitMode(screenBounds.getWidth() < screenBounds.getHeight());
+    info.setPrimary(true);
+    info.setHeight((int) screenBounds.getHeight());
+    info.setWidth((int) screenBounds.getWidth());
+
+    if (screen.getOutputScaleX() > 1) {
+      info.setOriginalWidth((int) (info.getWidth() * screen.getOutputScaleX()));
+    }
+    else {
+      info.setOriginalWidth(info.getWidth());
+    }
+    if (screen.getOutputScaleY() > 1) {
+      info.setOriginalHeight((int) (info.getHeight() * screen.getOutputScaleY()));
+    }
+    else {
+      info.setOriginalHeight(info.getHeight());
+    }
+    return info;
   }
 
   /**
@@ -469,6 +497,42 @@ public class SystemService extends SystemInfo implements InitializingBean, Appli
       }
     }
 
+    return false;
+  }
+
+  public boolean waitForProcess(String name, int seconds) {
+    return waitForProcess(name, seconds, 0);
+  }
+
+  public boolean waitForProcess(String name, int seconds, int postDelayMs) {
+    return waitFor(() -> isProcessRunning(name), "process : " + name, seconds, postDelayMs);
+  }
+
+  public boolean waitForWindow(String name, int seconds, int postDelayMs) {
+    return waitFor(() -> isWindowOpened(name), "window : " + name, seconds, postDelayMs);
+  }
+
+  public boolean waitFor(Supplier<Boolean> isRunning, String name, int seconds, int postDelayMs) {
+    try {
+      ExecutorService executor = Executors.newSingleThreadExecutor();
+      Future<Boolean> submit = executor.submit(new Callable<Boolean>() {
+        @Override
+        public Boolean call() throws Exception {
+          while (!isRunning.get()) {
+            Thread.sleep(1000);
+          }
+          LOG.info("Found waiting for {}", name);
+          if (postDelayMs > 0) {
+            Thread.sleep(postDelayMs);
+          }
+          return true;
+        }
+      });
+      return submit.get(seconds, TimeUnit.SECONDS);
+    }
+    catch (Exception e) {
+      LOG.error("Waiting for {}, failed: {}", name, e.getMessage());
+    }
     return false;
   }
 

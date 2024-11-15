@@ -19,6 +19,8 @@ public class Emulator {
    * the executable to run the table
    */
   private String exeName;
+  private String exeParameters;
+
   private String gamesExt;
   private boolean visible;
   private boolean enabled = true;
@@ -80,6 +82,13 @@ public class Emulator {
     this.exeName = exeName;
   }
 
+  public String getExeParameters() {
+    return exeParameters;
+  }
+
+  public void setExeParameters(String exeParameters) {
+    this.exeParameters = exeParameters;
+  }
 
   public boolean isVisible() {
     return visible;
@@ -135,10 +144,6 @@ public class Emulator {
 
   public void setDatabase(String database) {
     this.database = database;
-  }
-
-  public boolean isVisualPinball() {
-    return type.isVpxEmulator();
   }
 
 

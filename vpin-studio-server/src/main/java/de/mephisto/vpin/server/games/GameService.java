@@ -1,29 +1,19 @@
 package de.mephisto.vpin.server.games;
 
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.StringSimilarity;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsDiffTypes;
 import de.mephisto.vpin.restclient.PreferenceNames;
-import de.mephisto.vpin.restclient.dmd.DMDPackage;
-import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
-import de.mephisto.vpin.restclient.frontend.VPinScreen;
-import de.mephisto.vpin.restclient.games.GameScoreValidation;
-import de.mephisto.vpin.restclient.games.GameValidationStateFactory;
-import de.mephisto.vpin.restclient.games.descriptors.DeleteDescriptor;
+import de.mephisto.vpin.restclient.games.*;
 import de.mephisto.vpin.restclient.highscores.HighscoreFiles;
 import de.mephisto.vpin.restclient.highscores.HighscoreType;
 import de.mephisto.vpin.restclient.highscores.logging.HighscoreEventLog;
 import de.mephisto.vpin.restclient.validation.ValidationState;
 import de.mephisto.vpin.server.altcolor.AltColorService;
 import de.mephisto.vpin.server.altsound.AltSoundService;
-import de.mephisto.vpin.server.assets.Asset;
-import de.mephisto.vpin.server.assets.AssetRepository;
 import de.mephisto.vpin.server.competitions.ScoreSummary;
-import de.mephisto.vpin.server.dmd.DMDService;
 import de.mephisto.vpin.server.frontend.FrontendService;
-import de.mephisto.vpin.server.frontend.WheelAugmenter;
 import de.mephisto.vpin.server.highscores.*;
 import de.mephisto.vpin.server.listeners.EventOrigin;
 import de.mephisto.vpin.server.mame.MameRomAliasService;
@@ -39,6 +29,7 @@ import de.mephisto.vpin.server.system.DefaultPictureService;
 import de.mephisto.vpin.server.vps.VpsService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -78,9 +69,6 @@ public class GameService implements InitializingBean {
   private PreferencesService preferencesService;
 
   @Autowired
-  private AssetRepository assetRepository;
-
-  @Autowired
   private PupPacksService pupPackService;
 
   @Autowired
@@ -103,9 +91,6 @@ public class GameService implements InitializingBean {
 
   @Autowired
   private MameService mameService;
-
-  @Autowired
-  private DMDService dmdService;
 
   @Autowired
   private DefaultPictureService defaultPictureService;
@@ -222,184 +207,6 @@ public class GameService implements InitializingBean {
     }
 
     return false;
-  }
-
-  public boolean deleteGame(@NonNull DeleteDescriptor descriptor) {
-    LOG.info("************* Game Deletion ************");
-    boolean success = false;
-    try {
-      List<Integer> gameIds = descriptor.getGameIds();
-      success = true;
-
-      for (Integer gameId : gameIds) {
-        Game game = this.getGame(gameId);
-        if (game == null) {
-          return false;
-        }
-
-        if (descriptor.isDeleteHighscores()) {
-          highscoreService.deleteScores(game.getId(), true);
-        }
-
-        if (descriptor.isDeleteTable()) {
-          if (!FileUtils.delete(game.getGameFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteDirectB2s()) {
-          if (!FileUtils.delete(defaultPictureService.getCroppedDefaultPicture(game))) {
-            success = false;
-          }
-          if (!FileUtils.delete(defaultPictureService.getRawDefaultPicture(game))) {
-            success = false;
-          }
-          if (!FileUtils.delete(defaultPictureService.getDMDPicture(game))) {
-            success = false;
-          }
-          if (!FileUtils.delete(game.getDirectB2SFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteIni()) {
-          if (!FileUtils.delete(game.getIniFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteRes()) {
-          if (!FileUtils.delete(game.getResFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteVbs()) {
-          if (!FileUtils.delete(game.getVBSFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeletePov()) {
-          if (!FileUtils.delete(game.getPOVFile())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeletePupPack()) {
-          PupPack pupPack = game.getPupPack();
-          if (pupPack != null && !pupPack.delete()) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteDMDs()) {
-          DMDPackage dmdPackage = dmdService.getDMDPackage(game);
-          if (dmdPackage != null) {
-            if (!dmdService.delete(game)) {
-              success = false;
-            }
-          }
-        }
-
-        if (descriptor.isDeleteAltSound()) {
-          if (altSoundService.delete(game)) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteAltColor()) {
-          if (game.getAltColorFolder() != null && !FileUtils.deleteFolder(game.getAltColorFolder())) {
-            success = false;
-          }
-        }
-
-        //cfg files belong to MAME
-        if (descriptor.isDeleteCfg()) {
-          if (game.getCfgFile() != null && !FileUtils.delete(game.getCfgFile())) {
-            success = false;
-          }
-
-          if (!StringUtils.isEmpty(game.getRom())) {
-            if (!mameService.deleteOptions(game.getRom())) {
-              success = false;
-            }
-          }
-        }
-
-        if (descriptor.isDeleteMusic()) {
-          if (game.getMusicFolder() != null && !FileUtils.deleteFolder(game.getMusicFolder())) {
-            success = false;
-          }
-        }
-
-        if (descriptor.isDeleteFromFrontend()) {
-          GameDetails byPupId = gameDetailsRepository.findByPupId(game.getId());
-          if (byPupId != null) {
-            gameDetailsRepository.delete(byPupId);
-          }
-
-          Optional<Asset> byId = assetRepository.findByExternalId(String.valueOf(gameId));
-          byId.ifPresent(asset -> assetRepository.delete(asset));
-
-          if (!frontendService.deleteGame(gameId)) {
-            success = false;
-          }
-
-          if (!descriptor.isKeepAssets()) {
-            //only delete the assets, if there is no other game with the same "Game Name".
-            List<Game> allOtherTables = this.frontendService.getGamesByEmulator(game.getEmulatorId())
-                .stream().filter(g -> g.getId() != game.getId())
-                .collect(Collectors.toList());
-            List<Game> duplicateGameNameTables = allOtherTables
-                .stream().filter(t -> t.getGameName().equalsIgnoreCase(game.getGameName()))
-                .collect(Collectors.toList());
-
-            if (duplicateGameNameTables.isEmpty()) {
-              LOG.info("Deleting screen assets for \"" + game.getGameDisplayName() + "\"");
-              VPinScreen[] values = VPinScreen.values();
-              for (VPinScreen originalScreenValue : values) {
-                List<FrontendMediaItem> frontendMediaItem = frontendService.getMediaItems(game, originalScreenValue);
-                for (FrontendMediaItem mediaItem : frontendMediaItem) {
-                  File mediaFile = mediaItem.getFile();
-
-                  if (originalScreenValue.equals(VPinScreen.Wheel)) {
-                    WheelAugmenter augmenter = new WheelAugmenter(mediaFile);
-                    augmenter.deAugment();
-                  }
-
-                  if (mediaFile.exists() && !mediaFile.delete()) {
-                    success = false;
-                    LOG.warn("Failed to delete media asset \"" + mediaFile.getAbsolutePath() + "\" for \"" + game.getGameDisplayName() + "\"");
-                  }
-                }
-              }
-            }
-            else {
-              LOG.info("Deletion of assets has been skipped, because there are " + duplicateGameNameTables.size() + " tables with the same GameName \"" + game.getGameName() + "\"");
-            }
-          }
-
-          LOG.info("Deleted \"" + game.getGameDisplayName() + "\" from frontend.");
-        }
-
-        //delete the game folder if it is empty
-        File gameFolder = game.getGameFile().getParentFile();
-        if (gameFolder.exists() && !gameFolder.equals(game.getEmulator().getTablesFolder())) {
-          String[] list = gameFolder.list();
-          if (list == null || list.length == 0) {
-            if (gameFolder.delete()) {
-              LOG.info("Deleted table folder " + gameFolder.getAbsolutePath());
-            }
-          }
-        }
-      }
-    }
-    catch (Exception e) {
-      LOG.error("Game deletion failed: " + e.getMessage(), e);
-    }
-    LOG.info("*********** /Game Deletion End **********");
-    return success;
   }
 
   public List<Integer> getGameIds() {
@@ -574,6 +381,8 @@ public class GameService implements InitializingBean {
         gameDetails.setTableName(scannedTableName);
         gameDetails.setNvOffset(scanResult.getNvOffset());
         gameDetails.setHsFileName(scanResult.getHsFileName());
+        gameDetails.setVrRoomEnabled(!scanResult.isVrRoomDisabled());
+        gameDetails.setVrRoomSupport(scanResult.isVrRoomSupport());
 
         gameDetails.setPupPack(scanResult.getPupPackName());
         gameDetails.setAssets(StringUtils.join(scanResult.getAssets(), ","));
@@ -630,6 +439,8 @@ public class GameService implements InitializingBean {
     game.setScannedRom(gameDetails.getRomName());
     game.setScannedHsFileName(gameDetails.getHsFileName());
     game.setScannedAltRom(gameDetails.getTableName());
+    game.setVrRoomEnabled(gameDetails.getVrRoomEnabled() != null ? gameDetails.getVrRoomEnabled() : false);
+    game.setVrRoomSupport(gameDetails.getVrRoomSupport() != null ? gameDetails.getVrRoomSupport() : false);
     game.setFoundControllerStop(gameDetails.getFoundControllerStop() != null ? gameDetails.getFoundControllerStop() : true);
     game.setFoundTableExit(gameDetails.getFoundTableExit() != null ? gameDetails.getFoundTableExit() : true);
 
@@ -697,6 +508,60 @@ public class GameService implements InitializingBean {
     return newGame;
   }
 
+  public GameList getImportableTables(int emuId) {
+    GameEmulator emulator = frontendService.getGameEmulator(emuId);
+    if (emulator == null) {
+      LOG.warn("No emulator found for id " + emuId);
+      return new GameList();
+    }
+
+    GameList list = new GameList();
+    File vpxTablesFolder = emulator.getTablesFolder();
+
+    List<File> files = new ArrayList<>();
+    if (emulator.isVpxEmulator()) {
+      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"vpx"}, true));
+    }
+    else if (emulator.isFpEmulator()) {
+      files.addAll(FileUtils.listFiles(vpxTablesFolder, new String[]{"fpt"}, true));
+    }
+
+    List<Game> games = frontendService.getGamesByEmulator(emulator.getId());
+    List<String> emulatorGameFileNames = games.stream().map(Game::getGameFileName).collect(Collectors.toList());
+    for (File file : files) {
+      String gameFileName = emulator.getGameFileName(file);
+      if (!emulatorGameFileNames.contains(gameFileName)) {
+        GameListItem item = new GameListItem();
+        item.setName(file.getName());
+        item.setFileName(file.getAbsolutePath());
+        item.setEmuId(emulator.getId());
+        list.getItems().add(item);
+      }
+    }
+    Collections.sort(list.getItems(), Comparator.comparing(o -> o.getName().toLowerCase()));
+    return list;
+  }
+
+  public Game getGameByTableParameter(String table) {
+    File tableFile = new File(table.trim());
+
+    // derive the emulator from the table folder
+    int emuId = -1;
+    for (GameEmulator emu : frontendService.getGameEmulators()) {
+      if (StringUtils.startsWithIgnoreCase(tableFile.getAbsolutePath(), emu.getTablesDirectory())) {
+        emuId = emu.getId();
+        break;
+      }
+    }
+
+    Game game = getGameByFilename(emuId, tableFile.getName());
+    if (game == null && tableFile.getParentFile() != null) {
+      game = getGameByFilename(emuId, tableFile.getParentFile().getName() + "\\" + tableFile.getName());
+    }
+    LOG.info("Resource Game Event Handler resolved \"" + game + "\" for table name \"" + table + "\"");
+    return game;
+  }
+
   public List<ValidationState> validate(Game game) {
     return gameValidationService.validate(game, false);
   }
@@ -735,6 +600,9 @@ public class GameService implements InitializingBean {
     gameDetails.setExtTableVersionId(extTableVersionId);
     gameDetailsRepository.saveAndFlush(gameDetails);
     LOG.info("Linked game " + gameId + " to " + extTableId);
+
+    // update the table in the frontend
+    frontendService.vpsLink(gameId, extTableId, extTableVersionId);
     return true;
   }
 

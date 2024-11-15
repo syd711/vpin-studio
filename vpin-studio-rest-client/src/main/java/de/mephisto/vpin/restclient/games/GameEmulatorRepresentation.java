@@ -25,14 +25,14 @@ public class GameEmulatorRepresentation {
   private String nvramDirectory;
   private String romDirectory;
 
-  private List<String> altVPXExeNames = new ArrayList<>();
+  private List<String> altExeNames = new ArrayList<>();
 
-  public List<String> getAltVPXExeNames() {
-    return altVPXExeNames;
+  public List<String> getAltExeNames() {
+    return altExeNames;
   }
 
-  public void setAltVPXExeNames(List<String> altVPXExeNames) {
-    this.altVPXExeNames = altVPXExeNames;
+  public void setAltExeNames(List<String> altExeNames) {
+    this.altExeNames = altExeNames;
   }
 
   public String getRomDirectory() {

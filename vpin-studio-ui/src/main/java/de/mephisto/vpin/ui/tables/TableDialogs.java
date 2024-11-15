@@ -17,7 +17,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.TableDetails;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.*;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.ui.Studio;
@@ -375,15 +375,15 @@ public class TableDialogs {
     stage.showAndWait();
   }
 
-  public static boolean openMediaUploadDialog(@Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, boolean filterMode) {
+  public static boolean openMediaUploadDialog(Stage parent, @Nullable GameRepresentation game, File file, @Nullable UploaderAnalysis<?> analysis, @Nullable AssetType filterMode) {
     String title = "Media Pack";
     if (game != null) {
-      title = "Media Pack Upload for \"" + game.getGameDisplayName() + "\"";
+      title = "Media for \"" + game.getGameDisplayName() + "\"";
     }
-    if (filterMode) {
-      title = "Media Pack";
+    if (filterMode != null) {
+      title = "Media Selection";
     }
-    Stage stage = Dialogs.createStudioDialogStage(MediaUploadController.class, "dialog-media-upload.fxml", title);
+    Stage stage = Dialogs.createStudioDialogStage(parent, MediaUploadController.class, "dialog-media-upload.fxml", title);
     MediaUploadController controller = (MediaUploadController) stage.getUserData();
     controller.setData(game, analysis, file, stage, filterMode);
     stage.showAndWait();
@@ -391,7 +391,7 @@ public class TableDialogs {
     return controller.uploadFinished();
   }
 
-  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable TableUploadType tableUploadType, UploaderAnalysis<?> analysis) {
+  public static Optional<UploadDescriptor> openTableUploadDialog(@Nullable GameRepresentation game, @Nullable EmulatorType emutype, @Nullable UploadType uploadType, UploaderAnalysis<?> analysis) {
     List<GameEmulatorRepresentation> gameEmulators = Studio.client.getFrontendService().getGameEmulatorsByType(emutype);
     if (gameEmulators.isEmpty()) {
       WidgetFactory.showAlert(Studio.stage, "Error", "No game emulator found.");
@@ -400,7 +400,7 @@ public class TableDialogs {
 
     Stage stage = Dialogs.createStudioDialogStage(TableUploadController.class, "dialog-table-upload.fxml", emutype.shortName() + " Table Upload");
     TableUploadController controller = (TableUploadController) stage.getUserData();
-    controller.setGame(stage, game, emutype, tableUploadType, analysis);
+    controller.setGame(stage, game, emutype, uploadType, analysis);
     stage.showAndWait();
 
     return controller.uploadFinished();
@@ -588,6 +588,14 @@ public class TableDialogs {
     Stage stage = Dialogs.createStudioDialogStage(ROMUploadController.class, "dialog-rom-upload.fxml", "Rom Upload");
     ROMUploadController controller = (ROMUploadController) stage.getUserData();
     controller.setFile(stage, file, null, finalizer);
+    stage.showAndWait();
+  }
+
+  public static void openPatchUpload(GameRepresentation gameRepresentation, File file, UploaderAnalysis<?> analysis, Runnable finalizer) {
+    Stage stage = Dialogs.createStudioDialogStage(PatchUploadController.class, "dialog-patch-upload.fxml", "Patch Upload");
+    PatchUploadController controller = (PatchUploadController) stage.getUserData();
+    controller.setFile(stage, file, analysis, finalizer);
+    controller.setData(gameRepresentation);
     stage.showAndWait();
   }
 

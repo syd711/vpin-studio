@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.NotificationsPreferencesController">
+<BorderPane styleClass="base-component" stylesheets="@../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.preferences.NotificationsPreferencesController">
    <center>
       <ScrollPane hbarPolicy="NEVER" hmin="800.0" BorderPane.alignment="CENTER">
          <content>
@@ -50,13 +50,18 @@
                   </CheckBox>
                   <Label layoutX="34.0" layoutY="318.0" styleClass="checkbox-description" text="Enable this mode when you play in desktop mode." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="229.0" styleClass="checkbox-description" text="Note that screens with scaling are not supported (the position will be off)." textFill="WHITE" />
-                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="Notifications Types">
+                  <Label layoutX="34.0" layoutY="66.0" styleClass="preference-subtitle" text="System Notifications">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin>
                   </Label>
                   <CheckBox fx:id="startUpCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Startup Notification" />
                   <Label layoutX="34.0" layoutY="104.0" styleClass="checkbox-description" text="Shows a notification once the VPin Studio Server has been started." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="284.0" styleClass="preference-subtitle" text="Highscore Notifications">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
                   <CheckBox fx:id="highscoresCheckbox" layoutX="34.0" layoutY="138.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Change" />
                   <Label layoutX="34.0" layoutY="176.0" styleClass="checkbox-description" text="Shows a notification for every highscore change that is detected." textFill="WHITE" />
                   <CheckBox fx:id="highscoresCheckedCheckbox" layoutX="34.0" layoutY="224.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Highscore Scan Completed" />
@@ -64,10 +69,15 @@
                   <Label layoutX="34.0" layoutY="322.0" styleClass="checkbox-description" text="No matter if a new score was found or not, the notification will show the result." textFill="WHITE" />
                   <VBox fx:id="discordSettings" layoutX="34.0" layoutY="399.0">
                      <children>
-                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Post" />
-                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
                         <CheckBox fx:id="competitionsCheckbox" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Competition Status Change" />
                         <Label layoutX="10.0" layoutY="48.0" styleClass="checkbox-description" text="Shows a notification every time a competition starts, ends or is cancelled." textFill="WHITE" />
+                        <Label styleClass="preference-subtitle" text="Online Notifications">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <CheckBox fx:id="discordCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Discord Post" />
+                        <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to a Discord server." textFill="WHITE" />
                      </children>
                   </VBox>
                   <VBox fx:id="iScoredSettings">
@@ -76,6 +86,16 @@
                         <Label styleClass="checkbox-description" text="Shows a notification every time a highscore is posted to iScored." textFill="WHITE" />
                      </children>
                   </VBox>
+                  <Label styleClass="preference-subtitle" text="In-Game Recorder Notifications">
+                     <VBox.margin>
+                        <Insets top="12.0" />
+                     </VBox.margin>
+                  </Label>
+                  <CheckBox fx:id="recordingStartCheckbox" mnemonicParsing="false" styleClass="preference-checkbox" text="Recording Start" />
+                  <Label styleClass="checkbox-description" text="Shows a notification when the in-game recording is about to start." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="The actual start of the recording will be delayed until the notification is hiding again." textFill="WHITE" />
+                  <CheckBox fx:id="recordingEndCheckbox" layoutX="34.0" layoutY="856.0" mnemonicParsing="false" styleClass="preference-checkbox" text="Recording End" />
+                  <Label layoutX="34.0" layoutY="894.0" styleClass="checkbox-description" text="Shows a notification when the in-game recording has been finished." textFill="WHITE" />
                </children>
                <padding>
                   <Insets bottom="24.0" left="24.0" right="24.0" top="24.0" />

@@ -198,19 +198,21 @@ public class SystemResource {
   @GetMapping("/maintenance/{enabled}")
   public boolean setMaintenanceMode(@PathVariable("enabled") boolean enabled, HttpServletRequest request) {
     boolean b = systemService.setMaintenanceMode(enabled);
-    if (enabled) {
-      frontendService.killFrontend();
-    }
-    else {
-      String url = request.getRequestURL().toString();
-      boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
-      if (remote) {
-        ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
-        if (serverSettings.isLaunchPopperOnExit()) {
-          frontendService.restartFrontend();
+    new Thread(() -> {
+      if (enabled) {
+        frontendService.killFrontend();
+      }
+      else {
+        String url = request.getRequestURL().toString();
+        boolean remote = !url.contains("localhost") && !url.contains("127.0.0.1");
+        if (remote) {
+          ServerSettings serverSettings = preferencesService.getJsonPreference(PreferenceNames.SERVER_SETTINGS, ServerSettings.class);
+          if (serverSettings.isLaunchPopperOnExit()) {
+            frontendService.restartFrontend();
+          }
         }
       }
-    }
+    }).start();
     return b;
   }
 

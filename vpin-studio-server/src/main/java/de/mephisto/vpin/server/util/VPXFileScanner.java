@@ -198,6 +198,7 @@ public class VPXFileScanner {
       lineSearchNvOffset(result, line);
       lineSearchHsFileName(result, line);
       lineSearchTextFileName(result, line);
+      lineSearchVRRoom(result, line);
     }
   }
 
@@ -256,6 +257,27 @@ public class VPXFileScanner {
     if (patternMatch != -1) {
       String pattern = PATTERN_ROM.get(patternMatch);
       result.setRom(extractLineValue(line, pattern));
+    }
+  }
+
+  /**
+   * Single line eval for rom name
+   */
+  private static void lineSearchVRRoom(@NonNull ScanResult result, @NonNull String line) {
+    if (result.isVrRoomSupport()) {
+      return;
+    }
+
+    if (line.toLowerCase().contains("const vrroom ") || line.toLowerCase().contains("const vr_room ")) {
+      result.setVrRoomSupport(true);
+
+      if (line.toLowerCase().contains("const vrroom = 0")
+          || line.toLowerCase().contains("const vrroom=0")
+          || line.toLowerCase().contains("const vr_room=0")
+          || line.toLowerCase().contains("const vr_room = 0")
+      ) {
+        result.setVrRoomDisabled(true);
+      }
     }
   }
 

@@ -23,6 +23,8 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SplitMenuButton?>
 <BorderPane styleClass="base-component" stylesheets="@../../stylesheet.css" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="de.mephisto.vpin.ui.tables.dialogs.TableAssetManagerDialogController">
    <top>
       <fx:include fx:id="header" source="/de/mephisto/vpin/commons/fx/scene-dialog-header.fxml" />
@@ -411,17 +413,26 @@
                                                    </graphic>
                                                 </Button>
                                                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="0.0" />
-                                                <Button fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete" textFill="#ff3333">
-                                                   <font>
-                                                      <Font size="14.0" />
-                                                   </font>
+                                                <SplitMenuButton fx:id="deleteBtn" mnemonicParsing="false" onAction="#onDelete">
                                                    <graphic>
                                                       <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
                                                    </graphic>
-                                                   <tooltip>
-                                                      <Tooltip text="Delete Asset" />
-                                                   </tooltip>
-                                                </Button>
+                                                   <font>
+                                                      <Font size="14.0" />
+                                                   </font>
+                                                   <items>
+                                                      <MenuItem fx:id="screenDeleteBtn" mnemonicParsing="false" onAction="#onScreenDelete" text="Delete Screen Assets">
+                                                         <graphic>
+                                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                                         </graphic>
+                                                      </MenuItem>
+                                                      <MenuItem fx:id="gameDeleteBtn" mnemonicParsing="false" onAction="#onGameDelete" text="Delete Game Assets">
+                                                         <graphic>
+                                                            <FontIcon iconColor="#ff3333" iconLiteral="mdi2d-delete-outline" iconSize="18" />
+                                                         </graphic>
+                                                      </MenuItem>
+                                                   </items>
+                                                </SplitMenuButton>
                                                 <Button fx:id="helpBtn" layoutX="489.0" layoutY="10.0" mnemonicParsing="false" onAction="#onHelp" textFill="WHITE">
                                                    <font>
                                                       <Font size="14.0" />

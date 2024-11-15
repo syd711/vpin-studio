@@ -12,6 +12,7 @@ import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.configuration2.INIConfiguration;
 import org.apache.commons.configuration2.SubnodeConfiguration;
 import org.apache.commons.io.FilenameUtils;
@@ -21,6 +22,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -83,6 +87,10 @@ public class PinballXConnector extends BaseConnector {
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
+
+    // recordings screens
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, 
+        VPinScreen.DMD, VPinScreen.Menu, VPinScreen.Topper));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -224,7 +232,7 @@ public class PinballXConnector extends BaseConnector {
     String tablePath = s.getString("TablePath");
     String workingPath = s.getString("WorkingPath");
     String executable = s.getString("Executable");
-    //String parameters = s.getString("Parameters");
+    String parameters = s.getString("Parameters");
 
     if (tablePath == null || !new File(tablePath).exists()) {
       LOG.warn("Skipped loading of \"" + emuname + "\" because the tablePath is invalid");
@@ -268,6 +276,7 @@ public class PinballXConnector extends BaseConnector {
     e.setDirGames(tablePath);
     e.setEmuLaunchDir(workingPath);
     e.setExeName(executable);
+    e.setExeParameters(parameters);
 
     e.setGamesExt(type.getExtension());
     e.setVisible(enabled);
@@ -339,36 +348,76 @@ public class PinballXConnector extends BaseConnector {
     INIConfiguration iniConfiguration = loadPinballXIni();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
     if (iniConfiguration != null) {
-      SubnodeConfiguration display = iniConfiguration.getSection("Display");
-      displayList.add(createDisplay(display, VPinScreen.PlayField));
-
-      SubnodeConfiguration topper = iniConfiguration.getSection("Topper");
-      displayList.add(createDisplay(topper, VPinScreen.Topper));
-
-      SubnodeConfiguration dmd = iniConfiguration.getSection("DMD");
-      displayList.add(createDisplay(dmd, VPinScreen.DMD));
-
-      SubnodeConfiguration backGlass = iniConfiguration.getSection("BackGlass");
-      displayList.add(createDisplay(backGlass, VPinScreen.BackGlass));
-
-      SubnodeConfiguration apron = iniConfiguration.getSection("Apron");
-      displayList.add(createDisplay(apron, VPinScreen.Menu));
+      createPlayfieldDisplay(iniConfiguration, displayList);
+      createDisplay(iniConfiguration, displayList, "BackGlass", VPinScreen.BackGlass, true);
+      createDisplay(iniConfiguration, displayList, "DMD", VPinScreen.DMD, false);
+      createDisplay(iniConfiguration, displayList, "Topper", VPinScreen.Topper, false);
+      createDisplay(iniConfiguration, displayList, "Apron", VPinScreen.Menu, false);
     }
     return displayList;
   }
 
-  private FrontendPlayerDisplay createDisplay(SubnodeConfiguration display, VPinScreen screen) {
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-    player.setName(screen.name());
-    player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-    player.setX(Integer.parseInt(display.getString("x", "0")));
-    player.setY(Integer.parseInt(display.getString("y", "0")));
-    player.setWidth(Integer.parseInt(display.getString("width", "0")));
-    player.setHeight(Integer.parseInt(display.getString("height", "0")));
-    player.setRotation(Integer.parseInt(display.getString("rotate", "0")));
+  private void createPlayfieldDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players) {
+    SubnodeConfiguration display = iniConfiguration.getSection("Display");
+    int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
+    GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+    if (monitor < gds.length) {
+      java.awt.Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
+      int mX = (int) bounds.getX();
+      int mY = (int) bounds.getY();
 
-    LOG.info("Created PinballX player display \"" + screen.name() + "\"");
-    return player;
+      FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+      player.setName(VPinScreen.PlayField.name());
+      player.setScreen(VPinScreen.PlayField);
+      player.setMonitor(monitor);
+      player.setRotation(Integer.parseInt(display.getString("Rotate", "0")));
+
+      boolean windowed = display.getBoolean("Windowed", false);
+      if (windowed) {
+        player.setX(mX + Integer.parseInt(display.getString("windowx", "0")));
+        player.setY(mY + Integer.parseInt(display.getString("windowy", "0")));
+        player.setWidth(Integer.parseInt(display.getString("windowwidth", "0")));
+        player.setHeight(Integer.parseInt(display.getString("windowheight", "0")));
+      }
+      else {
+        player.setX(mX);
+        player.setY(mY);
+        player.setWidth((int) bounds.getWidth());
+        player.setHeight((int) bounds.getHeight());
+      }
+
+      LOG.info("Created PinballX player display {}", player);
+
+      players.add(player);
+    }
+  }
+
+  private void createDisplay(INIConfiguration iniConfiguration, List<FrontendPlayerDisplay> players, String sectionName, VPinScreen screen, boolean defaultEnabled) {
+    SubnodeConfiguration display = iniConfiguration.getSection(sectionName);
+    if (!display.isEmpty()) {
+      boolean enabled = display.getBoolean("Enabled", defaultEnabled);
+
+      int monitor = Integer.parseInt(display.getString("Monitor", display.getString("monitor", "0")));
+      GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+
+      if (enabled && monitor < gds.length) {
+        Rectangle bounds = gds[monitor].getDefaultConfiguration().getBounds();
+        int mX = (int) bounds.getX();
+        int mY = (int) bounds.getY();
+
+        FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+        player.setName(sectionName);
+        player.setScreen(screen);
+        player.setMonitor(monitor);
+        player.setX(mX + Integer.parseInt(display.getString("x", "0")));
+        player.setY(mY + Integer.parseInt(display.getString("y", "0")));
+        player.setWidth(Integer.parseInt(display.getString("width", "0")));
+        player.setHeight(Integer.parseInt(display.getString("height", "0")));
+
+        LOG.info("Created PinballX player display {}", player);
+        players.add(player);
+      }
+    }
   }
 
   //----------------------------------
@@ -477,7 +526,7 @@ public class PinballXConnector extends BaseConnector {
   //---------------- Utilities -----------------------------------------------------------------------------------------
 
   private void initVisualPinballXScripts(Emulator emulator, INIConfiguration iniConfiguration) {
-    if (emulator.isVisualPinball()) {
+    if (emulator.getType().isVpxEmulator()) {
       //VPX scripts
       SubnodeConfiguration visualPinball = iniConfiguration.getSection("VisualPinball");
       visualPinball.setProperty("LaunchBeforeEnabled", "True");

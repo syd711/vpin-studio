@@ -1,7 +1,9 @@
 package de.mephisto.vpin.server.video;
 
+import de.mephisto.vpin.commons.SystemInfo;
 import de.mephisto.vpin.restclient.frontend.FrontendMediaItem;
 import de.mephisto.vpin.restclient.frontend.FrontendType;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.util.SystemCommandExecutor;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.restclient.video.VideoOperation;
@@ -49,28 +51,7 @@ public class VideoConverterService implements InitializingBean {
 
       File file = mediaItem.getFile();
       if (file.exists()) {
-        File batFile = new File(converterParams.getCommand().getFile());
-        if (batFile.exists()) {
-//          List<String> params = Arrays.asList("cmd", "/c", "start", "\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
-          List<String> params = Arrays.asList("\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
-          LOG.info("Executing: " + String.join(" ", params));
-          SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
-          executor.setDir(batFile.getParentFile());
-          executor.executeCommand();
-
-          StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
-          StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
-          if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
-            LOG.info("Conversion: {}", standardErrorFromCommand);
-            return null; //"Conversion failed: " + standardErrorFromCommand;
-          }
-
-          LOG.info("Video conversion output:");
-          LOG.info(standardOutputFromCommand.toString());
-        }
-        else {
-          LOG.warn("No matching conversion .bat file found for " + converterParams.getCommand());
-        }
+        return convert(converterParams.getCommand(), file);
       }
       else {
         LOG.warn("Video file \"" + file.getAbsolutePath() + "\" not found.");
@@ -83,8 +64,89 @@ public class VideoConverterService implements InitializingBean {
     return null;
   }
 
+  private String convert(VideoConversionCommand command, File mediaFile) throws Exception {
+    if (command.getType() == VideoConversionCommand.TYPE_FILE) {
+      File batFile = new File(command.getCommand());
+      if (batFile.exists()) {
+        return convertWithScript(batFile, mediaFile);
+      }
+      else {
+        LOG.warn("No matching conversion .bat file found for {}", command.getName());
+      }
+    }
+    else if (command.getType() == VideoConversionCommand.TYPE_FFMEPG) {
+      String[] args = StringUtils.split(command.getCommand());
+      return convertWithFfmpeg(args, mediaFile);
+    }
+    else {
+      LOG.warn("Not supported implementation of command {} for {}", command.getClass().getName(), command.getName());
+    }
+    return null;
+  }
+
+  private String convertWithScript(File batFile, File file) throws Exception {
+    // List<String> params = Arrays.asList("cmd", "/c", "start", "\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
+    List<String> params = Arrays.asList("\"" + batFile.getAbsolutePath() + "\"", "\"" + file.getAbsolutePath() + "\"");
+    LOG.info("Executing: " + String.join(" ", params));
+    SystemCommandExecutor executor = new SystemCommandExecutor(params, false);
+    executor.setDir(batFile.getParentFile());
+    executor.executeCommand();
+
+    StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    if (!StringUtils.isEmpty(standardErrorFromCommand.toString())) {
+      LOG.info("Conversion: {}", standardErrorFromCommand);
+      return null; //"Conversion failed: " + standardErrorFromCommand;
+    }
+    LOG.info("Video conversion output:");
+    LOG.info(standardOutputFromCommand.toString());
+    return null;
+  }
+
+  private String convertWithFfmpeg(String[] args, File mediaFile) throws Exception {
+        // "%_curloc%\ffmpeg" -y -i %1 -vf "transpose=1" "%2"
+
+    File targetFile = FileUtils.uniqueFile(mediaFile);
+
+    File resources = new File(SystemInfo.RESOURCES);
+    if (!resources.exists()) {
+      resources = new File("../" + SystemInfo.RESOURCES);
+    }
+
+    List<String> commandList = new ArrayList<>();
+    commandList.add("ffmpeg.exe");
+    commandList.add("-y");
+    commandList.add("-i");
+    commandList.add(mediaFile.getAbsolutePath());
+    for (String arg : args) {
+      commandList.add(arg);  
+    }
+
+    commandList.add(targetFile.getAbsolutePath());
+
+    LOG.info("Executing: " + String.join(" ", commandList));
+    SystemCommandExecutor executor = new SystemCommandExecutor(commandList, false);
+
+    executor = new SystemCommandExecutor(commandList);
+//      executor.enableLogging(true);
+    executor.setDir(resources);
+    executor.executeCommand();
+
+    //StringBuilder standardErrorFromCommand = executor.getStandardErrorFromCommand();
+    //LOG.info("Conversion failed: {}", standardErrorFromCommand);
+    //StringBuilder standardOutputFromCommand = executor.getStandardOutputFromCommand();
+    //LOG.info("Video conversion output: {}", standardOutputFromCommand);
+  
+    // now exchange files
+    if (mediaFile.delete()) {
+      targetFile.renameTo(mediaFile);
+    }
+    return null;
+  }
+
   @Override
   public void afterPropertiesSet() throws Exception {
+    commands.clear();
     boolean isPopper = frontendService.getFrontend().getFrontendType().equals(FrontendType.Popper);
     if (isPopper) {
       File recordingsFolder = new File(frontendService.getFrontendInstallationFolder(), "Recordings");
@@ -115,7 +177,14 @@ public class VideoConverterService implements InitializingBean {
         }
       }
     }
+    else {
+      commands.add(new VideoConversionCommand("Rotate Clockwise 90°").setFFmpegArgs("-vf \"transpose=1\""));
+      commands.add(new VideoConversionCommand("Rotate Counter Clockwise 90°").setFFmpegArgs("-vf \"transpose=2\""));
+      commands.add(new VideoConversionCommand("Rotate 180°").setFFmpegArgs("-vf \"transpose=2,transpose=2\""));
+      commands.add(new VideoConversionCommand("Mute Volume").setFFmpegArgs("-c:v copy -an"));    
+    }
   }
+
   public List<VideoConversionCommand> getCommandList() {
     return commands;
   }

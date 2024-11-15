@@ -45,6 +45,9 @@
                   <Label layoutX="34.0" layoutY="498.0" styleClass="checkbox-description" text="Checks for ROM based games, if the &quot;Controller.stop&quot; routine is called." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="630.0" styleClass="checkbox-description" text="This routine also triggers the writing of the nvram file which stores the highscores." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="652.0" styleClass="checkbox-description" text="You may need to re-scan your table(s) to update the status of this validation." textFill="WHITE" />
+                  <CheckBox fx:id="pref_7" layoutX="34.0" layoutY="652.0" mnemonicParsing="false" onAction="#onPreferenceChange" styleClass="preference-checkbox" text="&quot;VR Room&quot; Check" />
+                  <Label layoutX="34.0" layoutY="690.0" styleClass="checkbox-description" text="Checks if the script contains a variable for VR room settings and if it is enabled." textFill="WHITE" />
+                  <Label layoutX="34.0" layoutY="793.0" styleClass="checkbox-description" text="Disable this validator if you do not use VR." textFill="WHITE" />
                   <Label layoutX="34.0" layoutY="1043.0" styleClass="preference-subtitle" text="MAME Settings Validators">
                      <VBox.margin>
                         <Insets top="12.0" />

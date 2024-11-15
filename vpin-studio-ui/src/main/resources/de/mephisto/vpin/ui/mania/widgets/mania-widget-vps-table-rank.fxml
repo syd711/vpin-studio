@@ -41,7 +41,7 @@
             </TableView>
          </center>
          <top>
-            <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+            <ToolBar fx:id="toolbar" prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                <items>
                   <Button fx:id="reloadBtn" mnemonicParsing="false" onAction="#onReload" textFill="WHITE">
                      <font>
@@ -54,7 +54,8 @@
                         <Tooltip text="Reload all table data" />
                      </tooltip>
                   </Button>
-                  <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator fx:id="reloadSeparator" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
+                  <Separator layoutX="52.0" layoutY="10.0" orientation="VERTICAL" prefHeight="0.0" prefWidth="12.0" />
                   <Button fx:id="syncBtn" layoutX="10.0" layoutY="11.0" mnemonicParsing="false" onAction="#onScoreSync" text="Synchronize Table Scores" textFill="WHITE">
                      <font>
                         <Font size="14.0" />

@@ -242,6 +242,15 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
+  public String getPatchFile() {
+    for (String fileNameWithPath : getFilteredFilenamesWithPath()) {
+      if (fileNameWithPath.endsWith(".dif")) {
+        return fileNameWithPath;
+      }
+    }
+    return null;
+  }
+
   public String getTableFileName(String fallback) {
     String fileNameForAssetType = getFileNameForAssetType(AssetType.VPX);
     if (fileNameForAssetType == null) {
@@ -292,7 +301,7 @@ public class UploaderAnalysis<T> {
       zis = new ZipInputStream(fileInputStream);
       ZipEntry nextEntry = zis.getNextEntry();
       while (nextEntry != null) {
-        analyze(zis, (T) nextEntry, nextEntry.getName(), nextEntry.isDirectory());
+        analyze(zis, (T) nextEntry, nextEntry.getName(), nextEntry.isDirectory(), nextEntry.getSize());
         zis.closeEntry();
         nextEntry = zis.getNextEntry();
       }
@@ -318,7 +327,7 @@ public class UploaderAnalysis<T> {
     try {
       IInArchive inArchive = SevenZip.openInArchive(null, randomAccessFileStream);
       for (ISimpleInArchiveItem item : inArchive.getSimpleInterface().getArchiveItems()) {
-        analyze(inArchive, (T) item, item.getPath(), item.isFolder());
+        analyze(inArchive, (T) item, item.getPath(), item.isFolder(), item.getSize());
       }
       inArchive.close();
       randomAccessFileStream.close();
@@ -334,23 +343,23 @@ public class UploaderAnalysis<T> {
     }
   }
 
-  public void analyze(IInArchive in, T archiveEntry, String name, boolean directory) {
+  public void analyze(IInArchive in, T archiveEntry, String name, boolean directory, long size) {
     String formattedName = name.replaceAll("\\\\", "/");
-    boolean checkReadme = analyze(archiveEntry, formattedName, directory);
+    boolean checkReadme = analyze(archiveEntry, formattedName, directory, size);
     if (checkReadme) {
       readReadme((ISimpleInArchiveItem) archiveEntry, formattedName);
     }
   }
 
-  public void analyze(InputStream in, T archiveEntry, String name, boolean directory) {
+  public void analyze(InputStream in, T archiveEntry, String name, boolean directory, long size) {
     String formattedName = name.replaceAll("\\\\", "/");
-    boolean checkReadme = analyze(archiveEntry, formattedName, directory);
+    boolean checkReadme = analyze(archiveEntry, formattedName, directory, size);
     if (checkReadme) {
       readReadme(in, formattedName);
     }
   }
 
-  public boolean analyze(T archiveEntry, String formattedName, boolean directory) {
+  public boolean analyze(T archiveEntry, String formattedName, boolean directory, long size) {
     if (formattedName.contains("_MACOSX")) {
       return false;
     }
@@ -399,7 +408,7 @@ public class UploaderAnalysis<T> {
 
   private void readReadme(ISimpleInArchiveItem item, String fileName) {
     try {
-      if (fileName.toLowerCase().endsWith(".txt") && fileName.toLowerCase().contains("read")) {
+      if (isReadMe(fileName)) {
         ByteArrayStream fos = new ByteArrayStream(Integer.MAX_VALUE);
         item.extractSlow(fos);
         fos.close();
@@ -458,6 +467,12 @@ public class UploaderAnalysis<T> {
           return null;
         }
         return "This archive does not not contain a DMD bundle.";
+      }
+      case DIF: {
+        if (hasFileWithSuffix("dif")) {
+          return null;
+        }
+        return "This archive does not not contain a .dif file.";
       }
       case ALT_SOUND: {
         if (isAltSound()) {
@@ -519,7 +534,7 @@ public class UploaderAnalysis<T> {
         return "This archive does not not contain a .ini file.";
       }
       default: {
-        throw new UnsupportedOperationException("Unmapped asset type: " + assetType);
+        throw new UnsupportedOperationException("Unmapped asset type: " + assetType + "/" + assetType.name());
       }
     }
   }
@@ -532,6 +547,10 @@ public class UploaderAnalysis<T> {
 
     if (hasFileWithSuffix("fpt")) {
       result.add(AssetType.FPT);
+    }
+
+    if (hasFileWithSuffix("dif")) {
+      result.add(AssetType.DIF);
     }
 
     if (hasFileWithSuffix("directb2s")) {
@@ -613,7 +632,6 @@ public class UploaderAnalysis<T> {
     return null;
   }
 
-
   public boolean isTable() {
     String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
     if (ext.equalsIgnoreCase(AssetType.VPX.name()) || ext.equalsIgnoreCase(AssetType.FPT.name())) {
@@ -621,6 +639,14 @@ public class UploaderAnalysis<T> {
     }
 
     return validateAssetTypeInArchive(AssetType.FPT) == null || validateAssetTypeInArchive(AssetType.VPX) == null;
+  }
+
+  public boolean isPatch() {
+    String ext = FilenameUtils.getExtension(this.file.getName()).toLowerCase();
+    if (ext.equalsIgnoreCase(AssetType.DIF.name())) {
+      return true;
+    }
+    return validateAssetTypeInArchive(AssetType.DIF) == null;
   }
 
   @Nullable
@@ -815,6 +841,16 @@ public class UploaderAnalysis<T> {
     return PackageUtil.readFile(file, name);
   }
 
+  private boolean isReadMe(String fileName) {
+    if (fileName.toLowerCase().endsWith(".txt")) {
+      if (fileName.toLowerCase().contains("readme") || fileName.toLowerCase().contains("read me")) {
+        return true;
+      }
+
+      return !fileName.contains("/");
+    }
+    return false;
+  }
 
   private static boolean isPopperMediaFile(VPinScreen screen, String pupPackRootDirectory, String fileNameWithPath) {
     if (!screen.equals(VPinScreen.Menu) && !screen.equals(VPinScreen.DMD) && fileNameWithPath.contains("DMD/")) {

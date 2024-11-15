@@ -4,6 +4,7 @@ import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.connectors.vps.VPS;
 import de.mephisto.vpin.connectors.vps.model.VPSChanges;
 import de.mephisto.vpin.connectors.vps.model.VpsTable;
+import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.ui.*;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -274,7 +275,7 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
     tableView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     tableView.getSelectionModel().selectedItemProperty().addListener((obs, oldSelection, newSelection) -> {
       if (oldSelection == null || !oldSelection.equals(newSelection)) {
-        refresh(newSelection);
+        refreshModel(newSelection);
       }
     });
 
@@ -309,10 +310,10 @@ public class VpsTablesController extends BaseTableController<VpsTable, VpsTableM
       this.doReload(false);
     }
     VpsTableModel selection = tableView.getSelectionModel().getSelectedItem();
-    refresh(selection);
+    refreshModel(selection);
   }
 
-  public void refresh(@Nullable VpsTableModel newSelection) {
+  protected void refreshModel(@Nullable VpsTableModel newSelection) {
     if (newSelection != null) {
       NavigationController.setBreadCrumb(Arrays.asList("VPS Tables", newSelection.getName()));
     }

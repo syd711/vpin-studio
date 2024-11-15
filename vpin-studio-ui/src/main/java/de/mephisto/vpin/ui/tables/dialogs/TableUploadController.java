@@ -9,7 +9,7 @@ import de.mephisto.vpin.restclient.frontend.EmulatorType;
 import de.mephisto.vpin.restclient.frontend.Frontend;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
-import de.mephisto.vpin.restclient.games.descriptors.TableUploadType;
+import de.mephisto.vpin.restclient.games.descriptors.UploadType;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptor;
 import de.mephisto.vpin.restclient.games.descriptors.UploadDescriptorFactory;
 import de.mephisto.vpin.restclient.preferences.ServerSettings;
@@ -208,7 +208,7 @@ public class TableUploadController implements Initializable, DialogController {
         onCancelClick(event);
       });
 
-      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation);
+      result = UniversalUploadUtil.upload(selection, gameId, tableUploadDescriptor.getUploadType(), emulatorRepresentation.getId());
       if (result.isPresent()) {
         UploadDescriptor uploadDescriptor = result.get();
         uploadDescriptor.setSubfolderName(subFolder);
@@ -217,7 +217,10 @@ public class TableUploadController implements Initializable, DialogController {
 
         uploadDescriptor.setExcludedFiles(uploaderAnalysis.getExcludedFiles());
         uploadDescriptor.setExcludedFolders(uploaderAnalysis.getExcludedFolders());
-        result = UniversalUploadUtil.postProcess(uploadDescriptor);
+
+
+        GameMediaUploadPostProcessingProgressModel progressModel = new GameMediaUploadPostProcessingProgressModel("Importing Game Media", uploadDescriptor);
+        result = UniversalUploadUtil.postProcess(progressModel);
         if (result.isPresent()) {
           // notify listeners of table import done
           EventManager.getInstance().notifyTableUploaded(result.get());
@@ -228,14 +231,14 @@ public class TableUploadController implements Initializable, DialogController {
 
   @FXML
   private void onAssetFilter() {
-    TableDialogs.openMediaUploadDialog(this.game, selection, uploaderAnalysis, true);
+    TableDialogs.openMediaUploadDialog(stage, this.game, selection, uploaderAnalysis, AssetType.TABLE);
     updateAnalysis();
   }
 
   private boolean runPreChecks(Stage s) {
     //check accidental overwrite
     String fileName = FilenameUtils.getBaseName(selection.getName());
-    if (game != null && tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndReplace)) {
+    if (game != null && tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndReplace)) {
       boolean similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName.replaceAll("_", " "), game.getGameDisplayName(), MATCHING_PERCENTAGE);
       if (!similarAtLeastToPercent) {
         similarAtLeastToPercent = StringSimilarity.isSimilarAtLeastToPercent(fileName, FilenameUtils.getBaseName(game.getGameFileName()), MATCHING_PERCENTAGE);
@@ -250,7 +253,7 @@ public class TableUploadController implements Initializable, DialogController {
     }
 
     //suggest table match
-    if (tableUploadDescriptor.getUploadType().equals(TableUploadType.uploadAndImport)) {
+    if (tableUploadDescriptor.getUploadType().equals(UploadType.uploadAndImport)) {
       try {
         ProgressResultModel checkResult = ProgressDialog.createProgressDialog(s,
             new WaitProgressModel<>("Pre-Checks", "Running pre-checks before upload...", () -> {
@@ -382,7 +385,7 @@ public class TableUploadController implements Initializable, DialogController {
         }
         EmulatorType emulatorType = this.uploaderAnalysis.getEmulatorType();
         this.subfolderCheckbox.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
-        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator());
+        this.subfolderText.setDisable(emulatorType == null || !emulatorType.isVpxEmulator() || !subfolderCheckbox.isSelected());
         this.fileNameField.setText(this.selection.getAbsolutePath());
         this.subfolderText.setText(FilenameUtils.getBaseName(this.selection.getName()));
         this.uploadBtn.setDisable(false);
@@ -619,8 +622,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadCloneBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndClone);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndClone.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndClone);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndClone.name());
         }
         else {
           uploadCloneBox.getStyleClass().remove("selection-panel-selected");
@@ -633,8 +636,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadReplaceBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndReplace);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndReplace.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndReplace);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndReplace.name());
         }
         else {
           uploadReplaceBox.getStyleClass().remove("selection-panel-selected");
@@ -647,8 +650,8 @@ public class TableUploadController implements Initializable, DialogController {
       public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
         if (newValue) {
           uploadImportBox.getStyleClass().add("selection-panel-selected");
-          tableUploadDescriptor.setUploadType(TableUploadType.uploadAndImport);
-          uiSettings.setDefaultUploadMode(TableUploadType.uploadAndImport.name());
+          tableUploadDescriptor.setUploadType(UploadType.uploadAndImport);
+          uiSettings.setDefaultUploadMode(UploadType.uploadAndImport.name());
         }
         else {
           uploadImportBox.getStyleClass().remove("selection-panel-selected");
@@ -694,17 +697,17 @@ public class TableUploadController implements Initializable, DialogController {
     assetCfgLabel.setVisible(false);
   }
 
-  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable TableUploadType uploadType, UploaderAnalysis analysis) {
+  public void setGame(@NonNull Stage stage, @Nullable GameRepresentation game, EmulatorType emuType, @Nullable UploadType uploadType, UploaderAnalysis analysis) {
     this.stage = stage;
     this.uploaderAnalysis = analysis;
     this.emuType = emuType;
 
     if (!StringUtils.isEmpty(uiSettings.getDefaultUploadMode()) && uploadType == null) {
-      uploadType = TableUploadType.valueOf(uiSettings.getDefaultUploadMode());
+      uploadType = UploadType.valueOf(uiSettings.getDefaultUploadMode());
     }
 
     if (game == null) {
-      uploadType = TableUploadType.uploadAndImport;
+      uploadType = UploadType.uploadAndImport;
     }
 
     tableUploadDescriptor.setUploadType(uploadType);

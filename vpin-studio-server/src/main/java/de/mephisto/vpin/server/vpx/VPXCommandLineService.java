@@ -12,27 +12,31 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 @Service
-public class VPXCommandLineService {
+public class VPXCommandLineService implements ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(VPXCommandLineService.class);
 
   @Autowired
   private SystemService systemService;
 
-  @Autowired
-  private FrontendService frontendService;
+  private ApplicationContext applicationContext;
 
-  public boolean execute(@NonNull Game game, @NonNull String commandParam, @Nullable String altExe) {
+  public boolean execute(@NonNull Game game, @Nullable String altExe, @NonNull String... commandParams) {
     File gameFile = game.getGameFile();
     File vpxExe = game.getEmulator().getExe();
 
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails!=null? tableDetails.getAltLaunchExe(): null;
     if(altExe != null) {
@@ -43,8 +47,13 @@ public class VPXCommandLineService {
     }
 
     try {
-      List<String> strings = Arrays.asList(vpxExe.getName(), commandParam, "\"" + gameFile.getAbsolutePath() + "\"");
-      LOG.info("Executing VPX " + commandParam + "command: " + String.join(" ", strings));
+      List<String> strings = new ArrayList<>();
+      strings.add(vpxExe.getName());
+      for (String commandParam : commandParams) {
+        strings.add(commandParam);
+      }
+      strings.add("\"" + gameFile.getAbsolutePath() + "\"");
+      LOG.info("Executing VPX command: " + String.join(" ", strings));
       SystemCommandExecutor executor = new SystemCommandExecutor(strings);
       executor.setDir(vpxExe.getParentFile());
       executor.executeCommandAsync();
@@ -100,6 +109,7 @@ public class VPXCommandLineService {
   }
 
   public boolean launch() {
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     GameEmulator defaultGameEmulator = frontendService.getDefaultGameEmulator();
     File vpxExe = defaultGameEmulator.getExe();
     try {
@@ -116,5 +126,10 @@ public class VPXCommandLineService {
       LOG.error("Error executing VPX command: " + e.getMessage(), e);
     }
     return false;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }

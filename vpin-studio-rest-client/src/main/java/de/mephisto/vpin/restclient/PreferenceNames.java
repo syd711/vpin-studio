@@ -5,10 +5,6 @@ public interface PreferenceNames {
   String VALIDATION_SETTINGS = "validationSettings";
 
   String SYSTEM_NAME = "systemName";
-  String SYSTEM_PRESET = "systemPreset";
-
-  String SYSTEM_PRESET_32_BIT = "32-bit";
-  String SYSTEM_PRESET_64_BIT = "64-bit";
 
   String HIGHSCORE_TITLES = "highscoreTitles";
   String HIGHSCORE_FILTER_ENABLED = "highscoreFilterEnabled";
@@ -30,6 +26,7 @@ public interface PreferenceNames {
   String SERVER_SETTINGS = "serverSettings";
   String NOTIFICATION_SETTINGS = "notificationSettings";
   String FILTER_SETTINGS = "filterSettings";
+  String MONITORING_SETTINGS = "monitoringSettings";
 
   String PINBALLX_SETTINGS = "pinballXSettings";
   String VPU_SETTINGS = "vpuSettings";
@@ -44,6 +41,8 @@ public interface PreferenceNames {
   String DISCORD_BOT_ALLOW_LIST = "discordBotAllowList";
   String DISCORD_BOT_COMMANDS_ENABLED = "discordBotCommandsEnabled";
   String TOURNAMENTS_SETTINGS = "tournamentSettings";
+
+  String RECORDER_SETTINGS = "recorderSettings";
 
   String RANKING_POINTS = "rankingPoints";
   String ACTIVE_GAME = "activeGame";

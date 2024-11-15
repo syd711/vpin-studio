@@ -305,7 +305,7 @@ public class NavigationController implements Initializable, StudioEventListener,
   public void preferencesChanged(String key, Object value) {
     if (PreferenceNames.TOURNAMENTS_SETTINGS.equals(key)) {
       TournamentSettings settings = client.getTournamentsService().getSettings();
-      tournamentsBtn.setVisible(settings.isEnabled());
+      tournamentsBtn.setVisible(settings.isEnabled() && settings.isTournamentsEnabled());
       if (!tournamentsBtn.isVisible()) {
         navigateTo(NavigationItem.Tables);
       }
@@ -331,12 +331,17 @@ public class NavigationController implements Initializable, StudioEventListener,
 
     tournamentsBtn.setVisible(false);
     maniaBtn.setVisible(false);
-    if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+    try {
       TournamentSettings settings = client.getTournamentsService().getSettings();
-      tournamentsBtn.setVisible(settings.isEnabled());
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null && settings.isTournamentsEnabled()) {
+        tournamentsBtn.setVisible(settings.isEnabled());
+      }
+      if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
+        maniaBtn.setVisible(true);
+      }
     }
-    if (Features.MANIA_ENABLED && Studio.maniaClient != null && Studio.maniaClient.getCabinetClient().getCabinet() != null) {
-      maniaBtn.setVisible(true);
+    catch (Exception e) {
+      LOG.error("Mania initialization failed: {}", e.getMessage(), e);
     }
 
     this.buttons.add(tablesBtn);

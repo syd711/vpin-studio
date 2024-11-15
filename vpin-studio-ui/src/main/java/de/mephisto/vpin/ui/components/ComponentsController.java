@@ -86,7 +86,7 @@ public class ComponentsController implements Initializable, StudioFXController, 
 
   @FXML
   public void onDismiss() {
-    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Hide this warning?", "Hide Warning", "Select the checkbox below if you do not wish to see this warning anymore.", null, "Do not shown again", false);
+    ConfirmationResult confirmationResult = WidgetFactory.showConfirmationWithCheckbox(stage, "Hide this warning?", "Hide Warning", "Select the checkbox below if you do not wish to see this warning anymore.", null, "Do not show again", false);
     if (!confirmationResult.isApplyClicked()) {
       hint.setVisible(false);
     }

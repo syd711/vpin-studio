@@ -24,8 +24,6 @@ public class Preferences {
 
   private String systemName;
 
-  private String systemPreset;
-
   private String overlayDesign;
 
   private String overlayPageUrl;
@@ -68,6 +66,10 @@ public class Preferences {
 
   private String notificationSettings;
 
+  private String recorderSettings;
+
+  private String monitoringSettings;
+
   private String uiSettings;
 
   private String serverSettings;
@@ -104,12 +106,28 @@ public class Preferences {
   @Column(name = "discordDynamicSubscriptions", nullable = false, columnDefinition = "boolean default false")
   private boolean discordDynamicSubscriptions;
 
+  public String getRecorderSettings() {
+    return recorderSettings;
+  }
+
+  public void setRecorderSettings(String recorderSettings) {
+    this.recorderSettings = recorderSettings;
+  }
+
   public String getDofLinxSettings() {
     return dofLinxSettings;
   }
 
   public void setDofLinxSettings(String dofLinxSettings) {
     this.dofLinxSettings = dofLinxSettings;
+  }
+
+  public String getMonitoringSettings() {
+    return monitoringSettings;
+  }
+
+  public void setMonitoringSettings(String monitoringSettings) {
+    this.monitoringSettings = monitoringSettings;
   }
 
   public String getDiscordUpdatesChannelId() {
@@ -231,14 +249,6 @@ public class Preferences {
 
   public void setDoNotShowAgains(String doNotShowAgains) {
     this.doNotShowAgains = doNotShowAgains;
-  }
-
-  public String getSystemPreset() {
-    return systemPreset;
-  }
-
-  public void setSystemPreset(String systemPreset) {
-    this.systemPreset = systemPreset;
   }
 
   public String getUiSettings() {

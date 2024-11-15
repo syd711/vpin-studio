@@ -1,19 +1,17 @@
 package de.mephisto.vpin.server.frontend.pinbally;
 
 import de.mephisto.vpin.commons.SystemInfo;
-import de.mephisto.vpin.connectors.assets.TableAssetsAdapter;
 import de.mephisto.vpin.restclient.alx.TableAlxEntry;
 import de.mephisto.vpin.restclient.frontend.*;
 import de.mephisto.vpin.restclient.validation.GameValidationCode;
 import de.mephisto.vpin.server.frontend.BaseConnector;
-import de.mephisto.vpin.server.frontend.CacheTableAssetsAdapter;
-import de.mephisto.vpin.server.frontend.MediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXMediaAccessStrategy;
 import de.mephisto.vpin.server.frontend.pinballx.PinballXTableParser;
 import de.mephisto.vpin.server.playlists.Playlist;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -21,6 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.Rectangle;
 import java.io.File;
 import java.util.*;
 
@@ -63,6 +64,10 @@ public class PinballYConnector extends BaseConnector {
         GameValidationCode.CODE_PUP_PACK_FILE_MISSING,
         GameValidationCode.CODE_ALT_SOUND_FILE_MISSING
     ));
+
+    // recordings screens
+    frontend.setSupportedRecordingScreens(Arrays.asList(VPinScreen.PlayField, VPinScreen.BackGlass, VPinScreen.DMD,
+      VPinScreen.Topper, VPinScreen.Menu));
 
     frontend.setPlayfieldMediaInverted(true);
     return frontend;
@@ -306,15 +311,11 @@ System1.RunAfter = cmd /c echo Example Run After command! Path=[TABLEPATH], file
     Properties settings = loadPinballYSettings();
     List<FrontendPlayerDisplay> displayList = new ArrayList<>();
     if (settings != null) {
-      displayList.add(createDisplay(settings, "PlayfieldWindow", VPinScreen.PlayField));
-
-      displayList.add(createDisplay(settings, "TopperWindow", VPinScreen.Topper));
-
-      displayList.add(createDisplay(settings, "DMDWindow", VPinScreen.DMD));
-
-      displayList.add(createDisplay(settings, "BackglassWindow", VPinScreen.BackGlass));
-
-      displayList.add(createDisplay(settings, "InstCardWindow", VPinScreen.Menu));
+      createDisplay(displayList, settings, "PlayfieldWindow", VPinScreen.PlayField, "PlayField", true);
+      createDisplay(displayList, settings, "BackglassWindow", VPinScreen.BackGlass, "Backglass", false);
+      createDisplay(displayList, settings, "DMDWindow", VPinScreen.DMD, "DMD", false);
+      createDisplay(displayList, settings, "TopperWindow", VPinScreen.Topper, "Topper", false);
+      createDisplay(displayList, settings, "InstCardWindow", VPinScreen.Menu, "Apron", false);
     }
     return displayList;
   }
@@ -328,23 +329,48 @@ PlayfieldWindow.FullScreen = 0
 PlayfieldWindow.Maximized = 0
 PlayfieldWindow.Minimized = 0
    */
-  private FrontendPlayerDisplay createDisplay(Properties display, String displayName, VPinScreen screen) {
-    FrontendPlayerDisplay player = new FrontendPlayerDisplay();
-    player.setName(screen.name());
+  private void createDisplay(List<FrontendPlayerDisplay> players, Properties display, String sectionName, VPinScreen screen, String name, boolean defaultVisibility) {
+    String visible = display.getProperty(sectionName + ".Visible");
+    boolean isVisible =  StringUtils.isEmpty(visible) ? defaultVisibility : StringUtils.equals(visible, "1");
+    if (isVisible) {
+      FrontendPlayerDisplay player = new FrontendPlayerDisplay();
+      player.setName(name);
+      player.setScreen(screen);
 
-    String position = display.getProperty(displayName + ".Position");
-    String[] positions = StringUtils.split(position, ",");
-    String rotation = StringUtils.defaultString(display.getProperty(displayName + ".Rotation"), "0");
+      String position = display.getProperty(sectionName + ".Position");
+      String[] positions = StringUtils.split(position, ",");
+      String rotation = StringUtils.defaultString(display.getProperty(sectionName + ".Rotation"), "0");
 
-    //player.setMonitor(Integer.parseInt(display.getString("monitor", "0")));
-    player.setX(Integer.parseInt(positions[0]));
-    player.setY(Integer.parseInt(positions[1]));
-    player.setWidth(Integer.parseInt(positions[2]));
-    player.setHeight(Integer.parseInt(positions[3]));
-    player.setRotation(Integer.parseInt(rotation));
+      boolean fullScreen = "1".equals(display.getProperty(sectionName + ".FullScreen"));
 
-    LOG.info("Created PinballY player display \"" + screen.name() + "\"");
-    return player;
+      // identify the screen that contains our top let corner
+      GraphicsDevice[] gds = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices();
+      for (int i = 0; i < gds.length; i++) {
+        GraphicsDevice gd  = gds[i];
+        Rectangle bounds = gd.getDefaultConfiguration().getBounds();
+        if (bounds.contains(Integer.parseInt(positions[0]), Integer.parseInt(positions[1]))) {
+          player.setMonitor(i);
+
+          if (fullScreen) {
+            player.setX((int) bounds.getX());
+            player.setY((int) bounds.getY());
+            player.setWidth((int) bounds.getWidth());
+            player.setHeight((int) bounds.getHeight());
+          }
+          else {
+            player.setX(Integer.parseInt(positions[0]));
+            player.setY(Integer.parseInt(positions[1]));
+            player.setWidth(Integer.parseInt(positions[2]) - player.getX());
+            player.setHeight(Integer.parseInt(positions[3]) - player.getY());
+          }
+          break;
+        }
+      }
+      player.setRotation(Integer.parseInt(rotation));
+
+      LOG.info("Created PinballY player display {}", player);
+      players.add(player);
+    }
   }
 
   //----------------------------------

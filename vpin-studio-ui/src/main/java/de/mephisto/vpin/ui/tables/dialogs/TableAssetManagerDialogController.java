@@ -1,7 +1,6 @@
 package de.mephisto.vpin.ui.tables.dialogs;
 
 import de.mephisto.vpin.commons.fx.DialogController;
-import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.commons.utils.WidgetFactory;
 import de.mephisto.vpin.commons.utils.media.AudioMediaPlayer;
 import de.mephisto.vpin.commons.utils.media.ImageViewer;
@@ -18,6 +17,7 @@ import de.mephisto.vpin.restclient.games.FrontendMediaRepresentation;
 import de.mephisto.vpin.restclient.games.GameRepresentation;
 import de.mephisto.vpin.restclient.games.PlaylistRepresentation;
 import de.mephisto.vpin.restclient.games.descriptors.DownloadJobDescriptor;
+import de.mephisto.vpin.restclient.util.FileUtils;
 import de.mephisto.vpin.restclient.video.VideoConversionCommand;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.events.EventManager;
@@ -104,7 +104,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Button addToPlaylistBtn;
 
   @FXML
-  private Button deleteBtn;
+  private SplitMenuButton deleteBtn;
 
   @FXML
   private Button nextButton;
@@ -213,6 +213,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
   private Pane playlistSelection;
 
   @FXML
+  private MenuItem gameDeleteBtn;
+
+  @FXML
+  private MenuItem screenDeleteBtn;
+
+  @FXML
   private ComboBox<PlaylistRepresentation> playlistCombo;
 
   private Stage localStage;
@@ -240,6 +246,53 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     if (selection != null && !selection.equals(this.game)) {
       this.tablesCombo.setValue(selection);
     }
+  }
+
+  @FXML
+  private void onScreenDelete(ActionEvent e) {
+    if (!this.assetList.getItems().isEmpty()) {
+      Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete Screen Assets", "Delete all media for screen \"" + screen.getSegment() + "\"?");
+      if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+        for (FrontendMediaItemRepresentation item : assetList.getItems()) {
+          if (isPlaylistMode()) {
+
+          }
+          else {
+            client.getGameMediaService().deleteMedia(game.getId(), screen, item.getName());
+          }
+        }
+      }
+      Platform.runLater(() -> {
+        if (game != null) {
+          EventManager.getInstance().notifyTableChange(game.getId(), null);
+        }
+        refreshTableMediaView();
+      });
+    }
+  }
+
+
+  @FXML
+  private void onGameDelete(ActionEvent e) {
+    String msg = "Delete all media of game \"" + game.getGameDisplayName() + "\"?";
+    if (isPlaylistMode()) {
+      msg = "Delete all media of playlist \"" + playlist.getName() + "\"?";
+    }
+    Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete All Assets", msg);
+    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
+      if (isPlaylistMode()) {
+
+      }
+      else {
+        client.getGameMediaService().deleteMedia(game.getId());
+      }
+    }
+    Platform.runLater(() -> {
+      if (game != null) {
+        EventManager.getInstance().notifyTableChange(game.getId(), null);
+      }
+      refreshTableMediaView();
+    });
   }
 
   @FXML
@@ -301,12 +354,23 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onFolderBtn() {
+    FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (this.playlist != null && this.playlistsRadio != null && this.playlistsRadio.isSelected()) {
       File screenDir = client.getFrontendService().getPlaylistMediaDirectory(this.playlist.getId(), screen.name());
+      if (selectedItem != null) {
+        screenDir = new File(screenDir, selectedItem.getName());
+        SystemUtil.openFile(screenDir);
+        return;
+      }
       SystemUtil.openFolder(screenDir);
     }
     else if (this.game != null) {
       File screenDir = client.getFrontendService().getMediaDirectory(this.game.getId(), screen.name());
+      if (selectedItem != null) {
+        screenDir = new File(screenDir, selectedItem.getName());
+        SystemUtil.openFile(screenDir);
+        return;
+      }
       SystemUtil.openFolder(screenDir);
     }
   }
@@ -371,7 +435,7 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
 
   @FXML
   private void onDelete(ActionEvent e) {
-    Stage stage = (Stage) ((Button) e.getSource()).getScene().getWindow();
+    Stage stage = (Stage) ((Labeled) e.getSource()).getScene().getWindow();
     FrontendMediaItemRepresentation selectedItem = assetList.getSelectionModel().getSelectedItem();
     if (selectedItem != null) {
       Optional<ButtonType> result = WidgetFactory.showConfirmation(stage, "Delete \"" + selectedItem.getName() + "\"?", "The selected media will be deleted.", null, "Delete");
@@ -608,8 +672,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           else {
             setGame(localStage, overviewController, tablesCombo.getValue(), screen);
           }
+
+          screenDeleteBtn.setDisable(isPlaylistMode());
+          gameDeleteBtn.setDisable(isPlaylistMode());
         }
       });
+
       playlistsRadio.selectedProperty().addListener(new ChangeListener<Boolean>() {
         @Override
         public void changed(ObservableValue<? extends Boolean> observable, Boolean oldValue, Boolean newValue) {
@@ -619,8 +687,12 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
           else {
             setPlaylist(localStage, overviewController, playlistCombo.getValue(), screen);
           }
+
+          screenDeleteBtn.setDisable(isPlaylistMode());
+          gameDeleteBtn.setDisable(isPlaylistMode());
         }
       });
+
       playlistCombo.valueProperty().addListener(new ChangeListener<PlaylistRepresentation>() {
         @Override
         public void changed(ObservableValue<? extends PlaylistRepresentation> observable, PlaylistRepresentation oldValue, PlaylistRepresentation newValue) {
@@ -686,7 +758,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
     downloadBtn.setVisible(false);
     webPreviewBtn.setVisible(false);
 
-    this.deleteBtn.setDisable(true);
     this.renameBtn.setDisable(true);
     this.downloadAssetBtn.setDisable(true);
     this.addAudioBlank.setVisible(false);
@@ -734,7 +805,6 @@ public class TableAssetManagerDialogController implements Initializable, DialogC
         WidgetFactory.disposeMediaPane(mediaPane);
         infoBtn.setDisable(mediaItem == null);
         conversionMenu.setDisable(mediaItem == null || !mediaItem.getName().endsWith(".mp4"));
-        deleteBtn.setDisable(mediaItem == null);
         renameBtn.setDisable(mediaItem == null);
         downloadAssetBtn.setDisable(mediaItem == null);
 

@@ -6,10 +6,10 @@ import de.mephisto.vpin.restclient.util.UploaderAnalysis;
 import de.mephisto.vpin.restclient.vpx.TableInfo;
 import de.mephisto.vpin.server.VPinStudioException;
 import de.mephisto.vpin.server.games.Game;
-import de.mephisto.vpin.server.frontend.FrontendService;
 import de.mephisto.vpin.server.system.SystemService;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import edu.umd.cs.findbugs.annotations.Nullable;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanWrapper;
@@ -36,9 +36,6 @@ public class VPXService {
 
   @Autowired
   private VPXCommandLineService vpxCommandLineService;
-
-  @Autowired
-  private FrontendService frontendService;
 
   public POV getPOV(Game game) {
     try {
@@ -116,7 +113,9 @@ public class VPXService {
         LOG.error("Error executing shutdown: " + e.getMessage(), e);
       }
     }
-    LOG.error("No game found for pov creation of " + game.getGameDisplayName());
+    else {
+      LOG.error("No game found for pov creation");
+    }
     return null;
   }
 
@@ -136,9 +135,10 @@ public class VPXService {
           }
         }
       }
-
     }
-    LOG.error("No game found for script extraction for " + game.getGameDisplayName());
+    else {
+      LOG.error("No game found for script extraction");
+    }
     return null;
   }
 
@@ -168,7 +168,9 @@ public class VPXService {
         return Base64.getEncoder().encodeToString(sources.getBytes());
       }
     }
-    LOG.error("No game found for table sources for " + game.getGameDisplayName());
+    else {
+      LOG.error("No game found for table sources extraction");
+    }
     return null;
   }
 
@@ -199,18 +201,21 @@ public class VPXService {
         LOG.info("POV file " + povFile.getAbsolutePath() + " does not exist for deletion");
       }
     }
-    LOG.error("No game found for pov creation of " + game.getGameDisplayName());
+    else {
+      LOG.error("No game found for pov deletion");
+    }
     return false;
   }
 
   public boolean play(@Nullable Game game, @Nullable String altExe) {
-    frontendService.killFrontend();
-
     if (game != null) {
-      return vpxCommandLineService.execute(game, "-Play", altExe);
+      return vpxCommandLineService.execute(game, altExe, "-Minimized", "-Play");
     }
-
     return vpxCommandLineService.launch();
+  }
+
+  public boolean waitForPlayer() {
+    return systemService.waitForWindow("Visual Pinball Player", 60, 2000);
   }
 
   public String getChecksum(Game game) {
@@ -223,12 +228,14 @@ public class VPXService {
         LOG.info("Game file " + gameFile.getAbsolutePath() + " does not exist for reading the checksum.");
       }
     }
-    LOG.error("No game found reading checksum of " + game.getGameDisplayName());
+    else {
+      LOG.error("No game found reading checksum");
+    }
     return null;
   }
 
-  public Boolean installMusic(@NonNull File out, @NonNull UploaderAnalysis analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
-    MusicInstallationUtil.unpack(out, frontendService.getDefaultGameEmulator().getMusicFolder(), analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
+  public Boolean installMusic(@NonNull File out, @NonNull File musicFolder, @NonNull UploaderAnalysis<?> analysis, @Nullable String rom, boolean acceptAllAudio) throws IOException {
+    MusicInstallationUtil.unpack(out, musicFolder, analysis, rom, analysis.getRelativeMusicPath(acceptAllAudio));
     return true;
   }
 }

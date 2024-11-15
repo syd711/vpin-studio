@@ -38,6 +38,9 @@ public class GameMediaServiceClient extends VPinStudioClientService {
     return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId + "/" + screen.name() + "/" + name);
   }
 
+  public boolean deleteMedia(int gameId) {
+    return getRestClient().delete(API + API_SEGMENT_MEDIA + "/media/" + gameId);
+  }
 
   public boolean renameMedia(int gameId, VPinScreen screen, String name, String newName) throws Exception {
     Map<String, Object> params = new HashMap<>();

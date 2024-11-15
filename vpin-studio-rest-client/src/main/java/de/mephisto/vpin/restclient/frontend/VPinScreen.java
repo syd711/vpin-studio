@@ -47,6 +47,9 @@ public enum VPinScreen {
     if ("Apron/FullDMD".equalsIgnoreCase(name)) {
       return Menu;
     }
+    if ("Menu".equalsIgnoreCase(name)) {
+      return Menu;
+    }
     if ("Apron".equalsIgnoreCase(name)) {
       return Menu;
     }
@@ -56,14 +59,19 @@ public enum VPinScreen {
     if (Topper.name().equalsIgnoreCase(name)) {
       return Topper;
     }
+    if (DMD.name().equalsIgnoreCase(name)) {
+      return DMD;
+    }
+    if (PlayField.name().equalsIgnoreCase(name)) {
+      return PlayField;
+    }
     return null;
   }
 
   public static FrontendPlayerDisplay valueOfScreen(List<FrontendPlayerDisplay> displays, VPinScreen screen) {
-    for (FrontendPlayerDisplay pupPlayerDisplay : displays) {
-      VPinScreen vPinScreen = VPinScreen.valueOfScreen(pupPlayerDisplay.getName());
-      if (vPinScreen != null && vPinScreen.equals(screen)) {
-        return pupPlayerDisplay;
+    for (FrontendPlayerDisplay display : displays) {
+      if (display.getScreen() != null && display.getScreen().equals(screen)) {
+        return display;
       }
     }
     return null;

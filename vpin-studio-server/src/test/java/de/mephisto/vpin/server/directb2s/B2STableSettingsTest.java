@@ -49,8 +49,9 @@ public class B2STableSettingsTest {
 
   @Test
   public void testSettingsParser() {
-    File b2sFile = new File("../testsystem/vPinball/VisualPinball/Tables/B2STableSettings.xml");
-    B2SServerSettingsParser parser = new B2SServerSettingsParser(b2sFile);
+    File b2sFolder = new File("../testsystem/vPinball/VisualPinball/Tables");
+    File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
+    B2SServerSettingsParser parser = new B2SServerSettingsParser(b2sFolder, b2sFile);
     DirectB2ServerSettings settings = parser.getSettings();
     Assertions.assertNotNull(settings);
     Assertions.assertTrue(settings.isPluginsOn());
@@ -58,10 +59,11 @@ public class B2STableSettingsTest {
 
   @Test
   public void testSettingsSerializer() throws IOException {
-    File b2sFile = new File("../testsystem/vPinball/VisualPinball/Tables/B2STableSettings.xml");
+    File b2sFolder = new File("../testsystem/vPinball/VisualPinball/Tables");
+    File b2sFile = new File(b2sFolder, "B2STableSettings.xml");
     String before = FileUtils.readFileToString(b2sFile, Charset.defaultCharset());
 
-    B2SServerSettingsParser parser = new B2SServerSettingsParser(b2sFile);
+    B2SServerSettingsParser parser = new B2SServerSettingsParser(b2sFolder, b2sFile);
     DirectB2ServerSettings settings = parser.getSettings();
     Assertions.assertNotNull(settings);
 

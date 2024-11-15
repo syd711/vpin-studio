@@ -218,7 +218,7 @@ public class Studio extends Application {
           root = loader.load();
         }
         catch (IOException e) {
-          throw new RuntimeException(e);
+          LOG.error("Failed to load Studio: {}", e.getMessage(), e);
         }
 
         Rectangle position = LocalUISettings.getPosition();

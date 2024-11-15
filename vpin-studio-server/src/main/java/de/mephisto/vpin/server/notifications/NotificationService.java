@@ -65,6 +65,21 @@ public class NotificationService implements InitializingBean, PreferenceChangedL
     }
   }
 
+  public void showNotificationNow(Notification notification) {
+    //no support for standalone
+    if (frontendService.getFrontendType().isNotStandalone()) {
+      if (Features.NOTIFICATIONS_ENABLED && notificationSettings.getDurationSec() > 0) {
+        notification.setDesktopMode(notificationSettings.isDesktopMode());
+        notification.setDurationSec(notificationSettings.getDurationSec());
+
+        NotificationStageService.getInstance().queueNotification(notification, true);
+      }
+    }
+    else {
+      LOG.info("Notifications not supported in standalone mode.");
+    }
+  }
+
   @Override
   public void preferenceChanged(String propertyName, Object oldValue, Object newValue) throws Exception {
     if (propertyName.equals(PreferenceNames.NOTIFICATION_SETTINGS)) {

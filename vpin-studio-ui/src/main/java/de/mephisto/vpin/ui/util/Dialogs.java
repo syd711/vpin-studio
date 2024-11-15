@@ -12,7 +12,7 @@ import de.mephisto.vpin.restclient.textedit.TextFile;
 import de.mephisto.vpin.ui.ClientUpdatePostProcessing;
 import de.mephisto.vpin.ui.Studio;
 import de.mephisto.vpin.ui.TextEditorController;
-import de.mephisto.vpin.ui.UpdateInfoDialog;
+import de.mephisto.vpin.ui.UpdateInfoDialogController;
 import de.mephisto.vpin.ui.events.EventManager;
 import de.mephisto.vpin.ui.launcher.InstallationDialogController;
 import de.mephisto.vpin.ui.players.dialogs.PlayerDialogController;
@@ -54,7 +54,7 @@ public class Dialogs {
   public static void openUpdateInfoDialog(String version, boolean force) {
     UISettings uiSettings = client.getPreferenceService().getJsonPreference(PreferenceNames.UI_SETTINGS, UISettings.class);
     if (force || !uiSettings.isHideUpdateInfo()) {
-      FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialog.class.getResource("dialog-update-info.fxml"));
+      FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
       Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
       stage.showAndWait();
 
@@ -65,6 +65,14 @@ public class Dialogs {
         ClientUpdatePostProcessing.executePostProcessing();
       }
     }
+  }
+
+  public static void openNextUpdateDialog(String version) {
+    FXMLLoader fxmlLoader = new FXMLLoader(UpdateInfoDialogController.class.getResource("dialog-update-info.fxml"));
+    Stage stage = WidgetFactory.createDialogStage(fxmlLoader, Studio.stage, "Release Notes for " + version);
+    UpdateInfoDialogController controller = (UpdateInfoDialogController) stage.getUserData();
+    controller.setForUpdate(version);
+    stage.showAndWait();
   }
 
   public static boolean openUpdateDialog() {

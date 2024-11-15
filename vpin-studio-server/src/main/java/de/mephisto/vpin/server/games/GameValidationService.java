@@ -137,6 +137,15 @@ public class GameValidationService implements InitializingBean, PreferenceChange
       }
     }
 
+    if (isVPX && isValidationEnabled(game, CODE_VR_DISABLED)) {
+      if (game.isVrRoomSupport() && !game.isVrRoomEnabled()) {
+        result.add(GameValidationStateFactory.create(GameValidationCode.CODE_VR_DISABLED));
+        if (findFirst) {
+          return result;
+        }
+      }
+    }
+
     if (isVPX && isValidationEnabled(game, GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK)) {
       if (game.getDirectB2SPath() == null && game.getPupPackPath() == null) {
         result.add(GameValidationStateFactory.create(GameValidationCode.CODE_NO_DIRECTB2S_OR_PUPPACK));

@@ -50,6 +50,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   @FXML
   private Button deleteResetBtn;
 
+  @FXML
+  private Button deleteRecordingBtn;
+
 
   @FXML
   private Button bindStartBtn;
@@ -69,6 +72,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
   @FXML
   private Button bindResetBtn;
 
+  @FXML
+  private Button bindRecordingBtn;
+
 
   @FXML
   private Label keyCodeStart;
@@ -87,6 +93,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
 
   @FXML
   private Label keyCodeReset;
+
+  @FXML
+  private Label keyCodeRecording;
 
 
   private PauseMenuSettings pauseMenuSettings;
@@ -111,6 +120,9 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     }
     else if (source.equals(deleteResetBtn)) {
       pauseMenuSettings.setResetButton(null);
+    }
+    else if (source.equals(deleteRecordingBtn)) {
+      pauseMenuSettings.setRecordingButton(null);
     }
     refreshView();
   }
@@ -149,6 +161,11 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
       keyCodeReset.setText(PRESS_KEY);
       keyCodeReset.requestFocus();
     }
+    else if (source.equals(bindRecordingBtn)) {
+      bindRecordingBtn.setDisable(true);
+      keyCodeRecording.setText(PRESS_KEY);
+      keyCodeRecording.requestFocus();
+    }
   }
 
   private void refreshView() {
@@ -158,6 +175,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     bindRightBtn.setDisable(false);
     bindOverlayBtn.setDisable(false);
     bindResetBtn.setDisable(false);
+    bindRecordingBtn.setDisable(false);
 
 
     keyCodePause.setText(getInputValue(pauseMenuSettings.getPauseButton()));
@@ -166,6 +184,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     keyCodeRight.setText(getInputValue(pauseMenuSettings.getRightButton()));
     keyCodeOverlay.setText(getInputValue(pauseMenuSettings.getOverlayButton()));
     keyCodeReset.setText(getInputValue(pauseMenuSettings.getResetButton()));
+    keyCodeRecording.setText(getInputValue(pauseMenuSettings.getRecordingButton()));
   }
 
   private String getInputValue(String customButton) {
@@ -198,6 +217,7 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
     pauseMenuSettings.setRightButton(null);
     pauseMenuSettings.setOverlayButton(null);
     pauseMenuSettings.setResetButton(null);
+    pauseMenuSettings.setRecordingButton(null);
     client.getPreferenceService().setJsonPreference(PreferenceNames.PAUSE_MENU_SETTINGS, pauseMenuSettings);
     refreshView();
   }
@@ -253,6 +273,12 @@ public class BtnRecorderDialogController implements Initializable, DialogControl
         keyCodeReset.setText(value);
         pauseMenuSettings.setResetButton(value);
         LOG.info("Registered " + value + " for reset.");
+      }
+      else if (bindRecordingBtn.isDisabled()) {
+        bindRecordingBtn.setDisable(false);
+        keyCodeRecording.setText(value);
+        pauseMenuSettings.setRecordingButton(value);
+        LOG.info("Registered " + value + " for recording.");
       }
       refreshView();
     });

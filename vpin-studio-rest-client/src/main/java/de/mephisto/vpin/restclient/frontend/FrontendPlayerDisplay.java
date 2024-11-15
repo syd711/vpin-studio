@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class FrontendPlayerDisplay {
   private int monitor;
+  private VPinScreen screen;
   private String name;
   private int x;
   private int y;
@@ -25,6 +26,14 @@ public class FrontendPlayerDisplay {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public VPinScreen getScreen() {
+    return screen;
+  }
+
+  public void setScreen(VPinScreen screen) {
+    this.screen = screen;
   }
 
   public int getX() {
@@ -82,6 +91,6 @@ public class FrontendPlayerDisplay {
 
   @Override
   public String toString() {
-    return name + "[" + x + "/" + y + " - " + width + "x" + height + "]";
+    return name + " [" + x + "/" + y + " - " + width + "x" + height + "]";
   }
 }

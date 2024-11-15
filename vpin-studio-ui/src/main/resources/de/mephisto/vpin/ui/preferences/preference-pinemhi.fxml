@@ -29,7 +29,7 @@
                         <Insets />
                      </VBox.margin>
                   </Label>
-                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challanges." textFill="WHITE">
+                  <Label layoutX="34.0" layoutY="104.0" styleClass="preference-description" text="This section configures all configuration option for PINemHi challenges." textFill="WHITE">
                      <VBox.margin>
                         <Insets top="12.0" />
                      </VBox.margin></Label>
@@ -217,12 +217,12 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Challange Key:" textFill="WHITE">
+                              <Label text="Challenge Key:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="keyChallange" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="keyChallenge" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />
@@ -247,7 +247,7 @@
                                     <Font size="14.0" />
                                  </font>
                               </Label>
-                              <ComboBox fx:id="keyWeeklyChallange" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
+                              <ComboBox fx:id="keyWeeklyChallenge" prefHeight="30.0" prefWidth="250.0" GridPane.columnIndex="1" />
                            </children>
                            <VBox.margin>
                               <Insets top="6.0" />
@@ -398,7 +398,7 @@
                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                            </rowConstraints>
                            <children>
-                              <Label text="Challanges Skill:" textFill="WHITE">
+                              <Label text="Challenges Skill:" textFill="WHITE">
                                  <font>
                                     <Font size="14.0" />
                                  </font>

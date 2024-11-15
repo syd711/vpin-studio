@@ -1,5 +1,6 @@
 package de.mephisto.vpin.ui.tables.models;
 
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import de.mephisto.vpin.restclient.assets.AssetType;
 import de.mephisto.vpin.restclient.frontend.VPinScreen;
 import de.mephisto.vpin.restclient.games.GameEmulatorRepresentation;
@@ -28,11 +29,11 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
   private final GameEmulatorRepresentation emulator;
   private boolean folder;
   private final UploaderAnalysis uploaderAnalysis;
-  private final boolean filterMode;
+  private final AssetType filterMode;
   private boolean selected = true;
   private Image image;
 
-  public MediaUploadArchiveItem(String bean, GameEmulatorRepresentation emulator, UploaderAnalysis uploaderAnalysis, boolean filterMode) {
+  public MediaUploadArchiveItem(String bean, GameEmulatorRepresentation emulator, UploaderAnalysis uploaderAnalysis, AssetType filterMode) {
     super(bean);
     this.name = bean;
     this.emulator = emulator;
@@ -50,9 +51,16 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
     return assetType.equals(AssetType.VPX) || assetType.equals(AssetType.FPT);
   }
 
+  public boolean isPatch() {
+    return assetType.equals(AssetType.DIF);
+  }
+
   public void setSelected(boolean selected) {
     //you can't de-select on selection mode
-    if (filterMode && isTableAsset()) {
+    if(filterMode.equals(AssetType.TABLE) && isTableAsset()) {
+      return;
+    }
+    else if(filterMode.equals(AssetType.DIF) && isPatch()) {
       return;
     }
     this.selected = selected;
@@ -171,6 +179,11 @@ public class MediaUploadArchiveItem extends BaseLoadingModel<String, MediaUpload
       else if (asset.equals(AssetType.ZIP) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.ROM) == null) {
         this.assetType = AssetType.ROM;
         this.target = client.getFrontendService().getDefaultGameEmulator().getRomDirectory();
+        LOG.info(fileNameWithPath + ": " + assetType.name());
+      }
+      else if (asset.equals(AssetType.DIF) && uploaderAnalysis.validateAssetTypeInArchive(AssetType.DIF) == null) {
+        this.assetType = AssetType.DIF;
+        this.target = "-";
         LOG.info(fileNameWithPath + ": " + assetType.name());
       }
     }

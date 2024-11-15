@@ -56,6 +56,11 @@ public class GameValidationTexts {
         text = "The VPinMAME ROM check failed for this ROM. Upload a correct ROM file for this table.";
         break;
       }
+      case CODE_VR_DISABLED: {
+        label = "The VR room setting is disabled.";
+        text = "The table has VR support, but it is disabled. Change the VR room variable inside the script to enabled it.";
+        break;
+      }
       case CODE_NVOFFSET_MISMATCH: {
         label = "\"NVOffset\" mismatch found.";
         text = "This table has an \"NVOffset\" of \"" + state.getOptions().get(1) + "\" set, but table \"" + state.getOptions().get(0) + "\" has the NVOffset value \"" + state.getOptions().get(2) + "\".";

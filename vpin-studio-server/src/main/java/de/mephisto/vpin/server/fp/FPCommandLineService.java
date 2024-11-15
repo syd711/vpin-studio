@@ -12,7 +12,10 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -23,19 +26,19 @@ import java.util.List;
  * "Future Pinball.exe"  -open "C:\vPinball\FuturePinball\Tables\Retroflair - BAM Edition 1.4 (PinEvent 1.1).fpt" -play -exit
  */
 @Service
-public class FPCommandLineService {
+public class FPCommandLineService implements ApplicationContextAware {
   private final static Logger LOG = LoggerFactory.getLogger(FPCommandLineService.class);
 
   @Autowired
   private SystemService systemService;
 
-  @Autowired
-  private FrontendService frontendService;
+  private ApplicationContext applicationContext;
 
   public boolean execute(@NonNull Game game, @Nullable String altExe) {
     File gameFile = game.getGameFile();
     File fpExe = game.getEmulator().getExe();
 
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     TableDetails tableDetails = frontendService.getTableDetails(game.getId());
     String altLaunchExe = tableDetails != null ? tableDetails.getAltLaunchExe() : null;
     if (altExe != null) {
@@ -105,6 +108,7 @@ public class FPCommandLineService {
   }
 
   public boolean launch() {
+    FrontendService frontendService = applicationContext.getBean(FrontendService.class);
     List<GameEmulator> gameEmulators = frontendService.getGameEmulators();
     for (GameEmulator gameEmulator : gameEmulators) {
       if (gameEmulator.isFpEmulator()) {
@@ -131,5 +135,10 @@ public class FPCommandLineService {
 
     LOG.warn("No Future Pinball emulator found to launch.");
     return false;
+  }
+
+  @Override
+  public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+    this.applicationContext = applicationContext;
   }
 }
