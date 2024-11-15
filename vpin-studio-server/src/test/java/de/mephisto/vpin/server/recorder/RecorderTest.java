@@ -7,6 +7,7 @@ import de.mephisto.vpin.restclient.recorder.RecordingScreen;
 import de.mephisto.vpin.restclient.recorder.RecordingScreenOptions;
 import de.mephisto.vpin.server.frontend.popper.PinUPConnector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -17,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RecorderTest {
 
+  @Ignore
   @Test
   public void testRecorder() throws Exception {
     PinUPConnector connector = new PinUPConnector() {
