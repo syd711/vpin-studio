@@ -126,13 +126,7 @@ public class ToolbarController implements Initializable, StudioEventListener, Pr
 
   @FXML
   private void onUpdate() {
-    Optional<ButtonType> result = WidgetFactory.showConfirmation(Studio.stage, "Update " + newVersion, "A new update has been found. Download and install update for server and client?");
-    if (result.isPresent() && result.get().equals(ButtonType.OK)) {
-      Dialogs.openUpdateDialog();
-      Platform.runLater(() -> {
-        runUpdateCheck();
-      });
-    }
+    Dialogs.openNextUpdateDialog(newVersion);
   }
 
   @FXML
