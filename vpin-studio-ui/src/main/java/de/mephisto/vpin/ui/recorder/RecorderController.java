@@ -435,6 +435,40 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
 
     super.loadFilterPanel(TableFilterController.class, "scene-tables-overview-filter.fxml");
 
+    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
+    List<RecordingScreenOptions> options = new ArrayList<>();
+    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
+    for (RecordingScreen recordingScreen : recordingScreens) {
+      try {
+        FXMLLoader loader = new FXMLLoader(ScreenRecorderPanelController.class.getResource("screen-recorder-panel.fxml"));
+        Parent panelRoot = loader.load();
+        ScreenRecorderPanelController screenPanelController = loader.getController();
+        screenRecorderPanelControllers.add(screenPanelController);
+        screenPanelController.setVisible(settings.isEnabled(recordingScreen.getScreen()));
+        screenPanelController.setData(this, recordingScreen);
+        recordingOptions.getChildren().add(panelRoot);
+      }
+      catch (IOException e) {
+        LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
+      }
+      RecordingScreenOptions recordingScreenOption = settings.getRecordingScreenOption(recordingScreen);
+      if(recordingScreenOption != null) {
+        options.add(recordingScreenOption);
+      }
+      else {
+        RecordingScreenOptions opt = new RecordingScreenOptions();
+        opt.setDisplayName(recordingScreen.getName());
+        options.add(opt);
+      }
+    }
+    // get only the options that have a valid RecordingScreen and ignore all other ones
+    settings.setRecordingScreenOptions(options);
+    client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
+
+
+    /**
+     * Configure columns after creating the screen panels, the settings are only initialized then
+     */
     BaseLoadingColumn.configureColumn(columnDisplayName, (value, model) -> {
       Label label = new Label(value.getGameDisplayName());
       label.getStyleClass().add("default-text");
@@ -468,34 +502,12 @@ public class RecorderController extends BaseTableController<GameRepresentation, 
       return columnCheckbox;
     }, true);
 
-
-    RecorderSettings settings = client.getPreferenceService().getJsonPreference(PreferenceNames.RECORDER_SETTINGS, RecorderSettings.class);
     BaseLoadingColumn.configureColumn(columnPlayfield, (value, model) -> createScreenCell(value, model, VPinScreen.PlayField), settings.isEnabled(VPinScreen.PlayField));
     BaseLoadingColumn.configureColumn(columnBackglass, (value, model) -> createScreenCell(value, model, VPinScreen.BackGlass), settings.isEnabled(VPinScreen.BackGlass));
     BaseLoadingColumn.configureColumn(columnDMD, (value, model) -> createScreenCell(value, model, VPinScreen.DMD), settings.isEnabled(VPinScreen.DMD));
     BaseLoadingColumn.configureColumn(columnTopper, (value, model) -> createScreenCell(value, model, VPinScreen.Topper), settings.isEnabled(VPinScreen.Topper));
     BaseLoadingColumn.configureColumn(columnFullDMD, (value, model) -> createScreenCell(value, model, VPinScreen.Menu), settings.isEnabled(VPinScreen.Menu));
 
-    List<RecordingScreenOptions> options = new ArrayList<>();
-    List<RecordingScreen> recordingScreens = client.getRecorderService().getRecordingScreens();
-    for (RecordingScreen recordingScreen : recordingScreens) {
-      try {
-        FXMLLoader loader = new FXMLLoader(ScreenRecorderPanelController.class.getResource("screen-recorder-panel.fxml"));
-        Parent panelRoot = loader.load();
-        ScreenRecorderPanelController screenPanelController = loader.getController();
-        screenRecorderPanelControllers.add(screenPanelController);
-        screenPanelController.setVisible(settings.isEnabled(recordingScreen.getScreen()));
-        screenPanelController.setData(this, recordingScreen);
-        recordingOptions.getChildren().add(panelRoot);
-      }
-      catch (IOException e) {
-        LOG.error("failed to load recorder options tab: " + e.getMessage(), e);
-      }
-      options.add(settings.getRecordingScreenOption(recordingScreen));
-    }
-    // get only the options that have a valid RecordingScreen and ignore all other ones
-    settings.setRecordingScreenOptions(options);
-    client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
 
     screenSizeChangeListener = new ScreenSizeChangeListener();
 

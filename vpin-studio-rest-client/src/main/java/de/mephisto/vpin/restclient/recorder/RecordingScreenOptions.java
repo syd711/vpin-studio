@@ -2,9 +2,9 @@ package de.mephisto.vpin.restclient.recorder;
 
 public class RecordingScreenOptions {
   private String displayName;
-  private int recordingDuration;
-  private int initialDelay;
-  private RecordMode recordMode;
+  private int recordingDuration = 10;
+  private int initialDelay = 2;
+  private RecordMode recordMode = RecordMode.ifMissing;
   private boolean enabled = true;
   private boolean fps60 = false;
   private boolean inGameRecording = false;

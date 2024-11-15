@@ -90,8 +90,6 @@ public class ScreenRecorderPanelController implements Initializable {
       option.setDisplayName(recordingScreen.getScreen().name());
       option.setRecordMode(RecordMode.ifMissing);
       settings.getRecordingScreenOptions().add(option);
-
-      client.getPreferenceService().setJsonPreference(PreferenceNames.RECORDER_SETTINGS, settings);
     }
 
     recordModeComboBox.setValue(option.getRecordMode());
